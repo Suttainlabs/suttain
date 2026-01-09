@@ -1,0 +1,120 @@
+import React, { useState, useEffect, useContext } from 'react';
+import { motion } from 'framer-motion';
+import AuthContext from '../auth/AuthContext';
+import { getUserStats } from '@/functions/getUserStats';
+import { base44 } from '@/api/base44Client';
+
+// Import Dashboard Components
+import DashboardHeader from '../dashboard/DashboardHeader';
+import QuickAccess from '../dashboard/QuickAccess';
+import UserStats from '../dashboard/UserStats';
+import RecentFormulas from '../dashboard/RecentFormulas';
+import SavedSimulations from '../dashboard/SavedSimulations';
+import ScannedProducts from '../dashboard/ScannedProducts';
+import NotificationsSummary from '../dashboard/NotificationsSummary';
+import RewardsSummary from '../dashboard/RewardsSummary';
+import NotificationCenter from '../notifications/NotificationCenter';
+
+export default function ProfilePage() {
+    const { user, refreshUser } = useContext(AuthContext);
+    const [stats, setStats] = useState({ totalFormulas: 0, totalSimulations: 0, totalScans: 0 });
+    const [formulas, setFormulas] = useState([]);
+    const [simulations, setSimulations] = useState([]);
+    const [scans, setScans] = useState([]);
+    const [notifications, setNotifications] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [showNotifications, setShowNotifications] = useState(false);
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            if (!user) return;
+            setIsLoading(true);
+            try {
+                const [statsData, formulasData, simulationsData, scansData, notificationsData] = await Promise.all([
+                    getUserStats(),
+                    base44.entities.Formula.list('-updated_date', 5),
+                    base44.entities.Simulation.list('-created_date', 5),
+                    base44.entities.BarcodeHistory.list('-created_date', 5),
+                    base44.entities.Notification.list('-created_date', 10),
+                ]);
+
+                if (statsData?.data) {
+                    setStats(statsData.data);
+                }
+
+                setFormulas(formulasData || []);
+                setSimulations(simulationsData || []);
+                setScans(scansData || []);
+                setNotifications(notificationsData || []);
+
+            } catch (error) {
+                console.error("Failed to fetch dashboard data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, [user]);
+
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good morning";
+        if (hour < 17) return "Good afternoon";
+        return "Good evening";
+    };
+    
+    if (!user) {
+        return null;
+    }
+
+    return (
+        <div className="bg-slate-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    transition={{ duration: 0.5 }}
+                    className="space-y-6"
+                >
+                    {/* Profile Header */}
+                    <DashboardHeader user={user} greeting={getGreeting()} />
+
+                    {/* Quick Access Tools */}
+                    <QuickAccess />
+
+                    {/* Stats Overview */}
+                    <UserStats stats={stats} isLoading={isLoading} />
+
+                    {/* Main Dashboard Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Left Column - Recent Formulas & Simulations */}
+                        <div className="lg:col-span-2 space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <RecentFormulas formulas={formulas} isLoading={isLoading} />
+                                <SavedSimulations simulations={simulations} isLoading={isLoading} />
+                            </div>
+                            <ScannedProducts scans={scans} isLoading={isLoading} />
+                        </div>
+
+                        {/* Right Column - Notifications & Rewards */}
+                        <div className="space-y-6">
+                            <RewardsSummary user={user} />
+                            <NotificationsSummary 
+                                notifications={notifications} 
+                                isLoading={isLoading}
+                                onOpenNotifications={() => setShowNotifications(true)}
+                            />
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+
+            {/* Notification Center Modal */}
+            <NotificationCenter 
+                isOpen={showNotifications} 
+                onClose={() => setShowNotifications(false)} 
+            />
+        </div>
+    );
+}
