@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User } from '@/entities/User';
@@ -128,24 +127,6 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
                                 Continue with Google
                             </>
                         )}
-                    </Button>
-                    <Button 
-                        onClick={handleLogin} 
-                        variant="outline" 
-                        className="w-full text-base font-semibold justify-center h-12 border-slate-300 text-slate-700 hover:bg-slate-50"
-                        disabled={isLoading}
-                    >
-                        <AppleIcon />
-                        Continue with Apple
-                    </Button>
-                     <Button 
-                        onClick={handleLogin} 
-                        variant="outline" 
-                        className="w-full text-base font-semibold justify-center h-12 border-slate-300 text-slate-700 hover:bg-slate-50"
-                        disabled={isLoading}
-                    >
-                        <Mail className="w-5 h-5 mr-2" />
-                        Continue with Email
                     </Button>
                 </div>
               </div>
