@@ -41,7 +41,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
     
     try {
       // Use OAuth login with Google
-      await base44.auth.loginWithOAuth('google');
+      await base44.auth.loginWithOAuth({ provider: 'google' });
     } catch (err) {
       console.error("Login error:", err);
       setError("Login failed. Please try again.");
