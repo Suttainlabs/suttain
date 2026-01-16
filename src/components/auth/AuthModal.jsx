@@ -29,34 +29,16 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async () => {
-    setIsLoading(true);
-    setError('');
-    
+  const handleLogin = () => {
     // Track login/signup attempt
     base44.analytics.track({
       eventName: mode === 'signup' ? 'signup_attempt' : 'login_attempt',
       properties: { provider: 'google' }
     });
     
-    try {
-      const currentUrl = window.location.href;
-      await base44.auth.loginWithOAuth({ 
-        provider: 'google', 
-        redirectTo: currentUrl 
-      });
-    } catch (err) {
-      setError("Login failed. Please try again.");
-      console.error("Login error:", err);
-      
-      // Track failed attempt
-      base44.analytics.track({
-        eventName: mode === 'signup' ? 'signup_failed' : 'login_failed',
-        properties: { provider: 'google', error: err.message }
-      });
-      
-      setIsLoading(false);
-    }
+    // Redirect to Base44 login which handles OAuth
+    const currentUrl = window.location.href;
+    base44.auth.redirectToLogin(currentUrl);
   };
 
   const featureList = [
