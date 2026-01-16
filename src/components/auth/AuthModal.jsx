@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User } from '@/entities/User';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { X, Shield, Atom, Sparkles, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
