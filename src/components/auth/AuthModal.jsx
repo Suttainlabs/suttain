@@ -29,12 +29,17 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    setIsLoading(true);
+    
     // Track login/signup attempt
     base44.analytics.track({
       eventName: mode === 'signup' ? 'signup_attempt' : 'login_attempt',
       properties: { provider: 'google' }
     });
+    
+    // Small delay to ensure analytics is sent
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     // Redirect to Base44 login which handles OAuth
     const currentUrl = window.location.href;
