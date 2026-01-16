@@ -41,6 +41,7 @@ import { User } from "@/entities/User";
 import { Review } from "@/entities/Review";
 import { createPageUrl } from "@/utils";
 import AuthContext from '../auth/AuthContext';
+import { base44 } from "@/api/base44Client";
 
 import PDFExportModal from "./PDFExportModal";
 import PrintLabelModal from "./PrintLabelModal";
