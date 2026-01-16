@@ -365,6 +365,17 @@ export default function Generator() {
       setCurrentStep(5);
       await awardPoints(15, "Full formula generated");
 
+      // Track formula creation
+      base44.analytics.track({
+        eventName: 'formula_created',
+        properties: {
+          product_type: selectedProductType.id,
+          business_mode: businessMode,
+          ingredient_count: fullRecipe.ingredients.length,
+          formula_variant: formula.variant || 'custom'
+        }
+      });
+
       // Send email notification
       if (user) {
         sendFeatureUsageEmail(user, 'formula', {
