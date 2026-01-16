@@ -35,13 +35,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { InvokeLLM } from "@/integrations/Core";
-import * as base44 from "@/integrations/base44"; // Assuming base44 is an SDK or client for API calls
+import { base44 } from "@/api/base44Client";
 import { Formula } from "@/entities/Formula";
 import { User } from "@/entities/User";
 import { Review } from "@/entities/Review";
 import { createPageUrl } from "@/utils";
 import AuthContext from '../auth/AuthContext';
-import { base44 } from "@/api/base44Client";
 
 import PDFExportModal from "./PDFExportModal";
 import PrintLabelModal from "./PrintLabelModal";
