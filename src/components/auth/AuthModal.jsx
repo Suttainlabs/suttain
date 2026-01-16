@@ -41,7 +41,10 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
     
     try {
       const currentUrl = window.location.href;
-      await base44.auth.redirectToLogin(currentUrl);
+      await base44.auth.loginWithOAuth({ 
+        provider: 'google', 
+        redirectTo: currentUrl 
+      });
     } catch (err) {
       setError("Login failed. Please try again.");
       console.error("Login error:", err);
