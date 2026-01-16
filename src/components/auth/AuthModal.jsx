@@ -32,6 +32,13 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
   const handleLogin = async () => {
     setIsLoading(true);
     setError('');
+    
+    // Track login/signup attempt
+    base44.analytics.track({
+      eventName: mode === 'signup' ? 'signup_attempt' : 'login_attempt',
+      properties: { provider: 'google' }
+    });
+    
     try {
       // Trigger Google OAuth directly without intermediate page
       const currentUrl = window.location.href;
@@ -39,6 +46,13 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
     } catch (err) {
       setError("Login failed. Please try again.");
       console.error("Login error:", err);
+      
+      // Track failed attempt
+      base44.analytics.track({
+        eventName: mode === 'signup' ? 'signup_failed' : 'login_failed',
+        properties: { provider: 'google', error: err.message }
+      });
+      
       setIsLoading(false);
     }
   };
