@@ -40,9 +40,8 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
     });
     
     try {
-      // Trigger Google OAuth directly without intermediate page
       const currentUrl = window.location.href;
-      await base44.auth.loginWithOAuth({ provider: 'google', redirectTo: currentUrl });
+      await base44.auth.redirectToLogin(currentUrl);
     } catch (err) {
       setError("Login failed. Please try again.");
       console.error("Login error:", err);
