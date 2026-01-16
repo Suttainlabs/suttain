@@ -447,6 +447,17 @@ export default function FormulaEditor({
 
       setSaveStatus('saved');
       
+      // Track formula save
+      base44.analytics.track({
+        eventName: 'formula_saved',
+        properties: {
+          is_update: isUpdate,
+          product_type: productType,
+          business_mode: businessMode,
+          ingredient_count: formula.ingredients.length
+        }
+      });
+      
       // Show subtle feedback notification after successful save
       triggerFeedback(); // Call feedback trigger
 
