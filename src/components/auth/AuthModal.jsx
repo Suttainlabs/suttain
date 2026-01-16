@@ -31,6 +31,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
 
   const handleLogin = async () => {
     setIsLoading(true);
+    setError('');
     
     // Track login/signup attempt
     base44.analytics.track({
@@ -38,12 +39,14 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
       properties: { provider: 'google' }
     });
     
-    // Small delay to ensure analytics is sent
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    // Redirect to Base44 login which handles OAuth
-    const currentUrl = window.location.href;
-    base44.auth.redirectToLogin(currentUrl);
+    try {
+      // Use OAuth login with Google
+      await base44.auth.loginWithOAuth('google');
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Login failed. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   const featureList = [
