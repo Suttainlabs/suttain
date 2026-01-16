@@ -20,6 +20,15 @@ export default function UserAcknowledgementModal({ isOpen, onClose }) {
     try {
       const currentUser = await base44.auth.me();
       
+      // Track successful signup completion
+      base44.analytics.track({
+        eventName: 'signup_completed',
+        properties: {
+          generator_category: generatorCategory,
+          simulator_category: simulatorCategory
+        }
+      });
+      
       await User.updateMyUserData({
         first_login: false,
         generator_category: generatorCategory,
