@@ -31,15 +31,12 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
 
   const handleLogin = async () => {
     setIsLoading(true);
-    setError(''); // Clear previous errors
+    setError('');
     try {
-      await User.login();
-      // On successful login, the page will reload, triggering onSuccess via the Layout's useEffect
-      // This modal's direct onSuccess prop is not called here as per the new flow.
+      await base44.auth.redirectToLogin();
     } catch (err) {
       setError("Login failed. Please try again.");
       console.error("Login error:", err);
-    } finally {
       setIsLoading(false);
     }
   };
