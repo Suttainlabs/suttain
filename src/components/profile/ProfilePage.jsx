@@ -14,6 +14,9 @@ import ScannedProducts from '../dashboard/ScannedProducts';
 import NotificationsSummary from '../dashboard/NotificationsSummary';
 import RewardsSummary from '../dashboard/RewardsSummary';
 import NotificationCenter from '../notifications/NotificationCenter';
+import ProjectsOverview from '../dashboard/ProjectsOverview';
+import SustainabilityScores from '../dashboard/SustainabilityScores';
+import HistoricalDataChart from '../dashboard/HistoricalDataChart';
 
 export default function ProfilePage() {
     const { user, refreshUser } = useContext(AuthContext);
@@ -32,9 +35,9 @@ export default function ProfilePage() {
             try {
                 const [statsData, formulasData, simulationsData, scansData, notificationsData] = await Promise.all([
                     getUserStats(),
-                    base44.entities.Formula.list('-updated_date', 5),
-                    base44.entities.Simulation.list('-created_date', 5),
-                    base44.entities.BarcodeHistory.list('-created_date', 5),
+                    base44.entities.Formula.list('-updated_date', 20),
+                    base44.entities.Simulation.list('-created_date', 20),
+                    base44.entities.BarcodeHistory.list('-created_date', 20),
                     base44.entities.Notification.list('-created_date', 10),
                 ]);
 
@@ -86,20 +89,34 @@ export default function ProfilePage() {
                     {/* Stats Overview */}
                     <UserStats stats={stats} isLoading={isLoading} />
 
+                    {/* Projects Overview */}
+                    <ProjectsOverview 
+                        formulas={formulas}
+                        simulations={simulations}
+                        isLoading={isLoading}
+                    />
+
                     {/* Main Dashboard Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Left Column - Recent Formulas & Simulations */}
+                        {/* Left Column - Activity & History */}
                         <div className="lg:col-span-2 space-y-6">
+                            <HistoricalDataChart 
+                                formulas={formulas}
+                                simulations={simulations}
+                                scans={scans}
+                                isLoading={isLoading}
+                            />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <RecentFormulas formulas={formulas} isLoading={isLoading} />
-                                <SavedSimulations simulations={simulations} isLoading={isLoading} />
+                                <RecentFormulas formulas={formulas.slice(0, 5)} isLoading={isLoading} />
+                                <SavedSimulations simulations={simulations.slice(0, 5)} isLoading={isLoading} />
                             </div>
-                            <ScannedProducts scans={scans} isLoading={isLoading} />
+                            <ScannedProducts scans={scans.slice(0, 5)} isLoading={isLoading} />
                         </div>
 
-                        {/* Right Column - Notifications & Rewards */}
+                        {/* Right Column - Insights & Notifications */}
                         <div className="space-y-6">
                             <RewardsSummary user={user} />
+                            <SustainabilityScores formulas={formulas} isLoading={isLoading} />
                             <NotificationsSummary 
                                 notifications={notifications} 
                                 isLoading={isLoading}
