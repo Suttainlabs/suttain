@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
     }
 
     try {
-        let allChemicals = await base44.asServiceRole.entities.Chemical.filter({});
+        let allChemicals = await base44.asServiceRole.entities.Chemical.list();
 
         // NEW: Apply category filter if provided
         if (category && category !== 'all') {
