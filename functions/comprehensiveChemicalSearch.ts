@@ -59,18 +59,23 @@ const disambiguateWithLLM = async (base44, searchTerm) => {
             The user searched for "${searchTerm}", which is an ambiguous chemical term. Provide a list of up to 5 specific, common chemical names that this term could refer to.
             For example, if the search is "alcohol", you could return ["Ethanol", "Isopropyl Alcohol", "Methanol"].
             If the search is "vitamin c", return ["Ascorbic Acid"].
-            Your response MUST be a single, valid JSON array of strings and nothing else. For example:
-            ["Chemical Name 1", "Chemical Name 2"]
+            Return the names in the "names" array field.
         `;
         const schema = {
-            type: "array",
-            items: { type: "string" }
+            type: "object",
+            properties: {
+                names: {
+                    type: "array",
+                    items: { type: "string" }
+                }
+            },
+            required: ["names"]
         };
         const llmResponse = await base44.integrations.Core.InvokeLLM({
             prompt: prompt,
             response_json_schema: schema,
         });
-        return Array.isArray(llmResponse) ? llmResponse : null;
+        return llmResponse?.names && Array.isArray(llmResponse.names) ? llmResponse.names : null;
     } catch (error) {
         console.error(`LLM disambiguation failed for "${searchTerm}":`, error);
         return null;
