@@ -1,5 +1,4 @@
-
-import { createClientFromRequest } from 'npm:@base44/sdk@0.5.0';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { format, subDays, startOfDay } from 'npm:date-fns@2.30.0';
 
 const aggregateActivityByDay = (records) => {
@@ -31,46 +30,34 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
     }
 
-    // --- Fetch Total Counts Explicitly and Resiliently ---
-    const entityNames = ['User', 'Formula', 'Simulation', 'Review', 'EnterpriseWaitlist', 'DemoRequest', 'JobPosting', 'ContactSubmission'];
-    
-    // Most robust method: fetch all IDs and count them.
-    const countPromises = entityNames.map(name => 
-        base44.asServiceRole.entities[name].filter({}, null, null, false, ['id']).then(records => records.length)
-    );
-
-    // Use Promise.allSettled to prevent one failure from crashing the entire function
-    const settledResults = await Promise.allSettled(countPromises);
-
-    const counts = settledResults.map((result, index) => {
-        if (result.status === 'fulfilled') {
-            return result.value || 0;
-        } else {
-            console.error(`Failed to get count for entity: ${entityNames[index]}`, result.reason);
-            return 0; // Gracefully default to 0 on failure
-        }
-    });
+    // --- Fetch Total Counts using list() method ---
+    const [users, formulas, simulations, reviews, waitlist, demos, jobs, contacts] = await Promise.all([
+      base44.asServiceRole.entities.User.list().catch(() => []),
+      base44.asServiceRole.entities.Formula.list().catch(() => []),
+      base44.asServiceRole.entities.Simulation.list().catch(() => []),
+      base44.asServiceRole.entities.Review.list().catch(() => []),
+      base44.asServiceRole.entities.EnterpriseWaitlist.list().catch(() => []),
+      base44.asServiceRole.entities.DemoRequest.list().catch(() => []),
+      base44.asServiceRole.entities.JobPosting.list().catch(() => []),
+      base44.asServiceRole.entities.ContactSubmission.list().catch(() => []),
+    ]);
 
     const totals = {
-      user: counts[0],
-      formula: counts[1],
-      simulation: counts[2],
-      review: counts[3],
-      enterprise_waitlist: counts[4],
-      demo_request: counts[5],
-      job_posting: counts[6],
-      contact_submission: counts[7],
+      user: users.length,
+      formula: formulas.length,
+      simulation: simulations.length,
+      review: reviews.length,
+      enterprise_waitlist: waitlist.length,
+      demo_request: demos.length,
+      job_posting: jobs.length,
+      contact_submission: contacts.length,
     };
 
     // --- Fetch Recent Activity for Charts ---
     const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
-    const recentUsersPromise = base44.asServiceRole.entities.User.filter({ created_date: { '$gte': thirtyDaysAgo } }, null, null, false, ['created_date']);
-    const recentFormulasPromise = base44.asServiceRole.entities.Formula.filter({ created_date: { '$gte': thirtyDaysAgo } }, null, null, false, ['created_date']);
     
-    const [recentUsers, recentFormulas] = await Promise.all([
-        recentUsersPromise,
-        recentFormulasPromise,
-    ]);
+    const recentUsers = users.filter(u => u.created_date && new Date(u.created_date) >= new Date(thirtyDaysAgo));
+    const recentFormulas = formulas.filter(f => f.created_date && new Date(f.created_date) >= new Date(thirtyDaysAgo));
     
     // --- Aggregate Data ---
     const usersByDay = aggregateActivityByDay(recentUsers);
