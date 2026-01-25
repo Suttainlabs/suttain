@@ -100,7 +100,10 @@ const CATEGORY_KEYWORDS = {
 
 Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
-    const { query, productType, category } = await req.json(); // Changed: accept category
+    const body = await req.json();
+    const query = body.query || '';
+    const productType = body.productType;
+    const category = body.category;
     const searchTerm = query.trim().toLowerCase();
 
     if (!searchTerm) {
