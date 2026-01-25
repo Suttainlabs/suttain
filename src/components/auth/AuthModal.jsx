@@ -29,7 +29,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     setIsLoading(true);
     setError('');
     
@@ -39,14 +39,8 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
       properties: { provider: 'google' }
     });
     
-    try {
-      // Use OAuth login with Google
-      await base44.auth.loginWithOAuth({ provider: 'google' });
-    } catch (err) {
-      console.error("Login error:", err);
-      setError("Login failed. Please try again.");
-      setIsLoading(false);
-    }
+    // Use Base44's redirectToLogin method
+    base44.auth.redirectToLogin();
   };
 
   const featureList = [
