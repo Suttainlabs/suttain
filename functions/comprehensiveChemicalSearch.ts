@@ -1,5 +1,4 @@
-
-import { createClientFromRequest } from 'npm:@base44/sdk@0.5.0';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 const dedupAndPrioritize = (results) => {
     const uniqueMap = new Map();
