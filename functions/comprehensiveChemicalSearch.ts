@@ -100,7 +100,17 @@ const CATEGORY_KEYWORDS = {
 
 Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
-    const body = await req.json();
+    
+    let body;
+    try {
+        body = await req.json();
+    } catch (parseErr) {
+        return new Response(JSON.stringify({ error: "Invalid JSON body", results: [] }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+        });
+    }
+    
     const query = body.query || '';
     const productType = body.productType;
     const category = body.category;
