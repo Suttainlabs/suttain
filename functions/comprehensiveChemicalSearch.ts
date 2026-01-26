@@ -125,7 +125,10 @@ Deno.serve(async (req) => {
     try {
         let allChemicals = [];
         try {
-            allChemicals = await base44.asServiceRole.entities.Chemical.list();
+            const rawChemicals = await base44.asServiceRole.entities.Chemical.list();
+            // Ensure we're working with an array
+            allChemicals = Array.isArray(rawChemicals) ? rawChemicals : [];
+            console.log(`Loaded ${allChemicals.length} chemicals from database`);
         } catch (listErr) {
             console.error("Failed to list chemicals:", listErr);
             allChemicals = [];
@@ -140,8 +143,10 @@ Deno.serve(async (req) => {
             c.name?.toLowerCase().includes(searchTerm) ||
             c.scientific_name?.toLowerCase().includes(searchTerm) ||
             c.iupac_name?.toLowerCase().includes(searchTerm) ||
-            c.cas_number?.includes(searchTerm)
+            (c.cas_number && c.cas_number.includes(searchTerm))
         );
+        
+        console.log(`Found ${internalResults.length} internal results for "${searchTerm}"`);
 
         let finalResults = dedupAndPrioritize(internalResults);
 
