@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -85,7 +84,9 @@ export default function ChemicalInput({
         limit: 10,
         persona: persona || 'household'
       });
-      setSuggestions(response.data?.results || []);
+      // Response can be in response.data or response.data.results depending on SDK version
+      const results = response?.data?.results || response?.results || [];
+      setSuggestions(results);
     } catch (error) {
       console.error("Failed to fetch suggestions:", error);
       setSuggestions([]);
