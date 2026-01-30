@@ -209,6 +209,7 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: <Sparkles className="w-4 h-4" /> },
+        { id: 'visualization', label: 'Visualization', icon: <Eye className="w-4 h-4" /> },
         { id: 'reaction', label: 'Reaction', icon: <ArrowRightLeft className="w-4 h-4" /> },
         { id: 'health', label: 'Health & Safety', icon: <Heart className="w-4 h-4" /> },
         { id: 'analysis', label: 'Advanced Analysis', icon: <BarChart className="w-4 h-4" /> },
