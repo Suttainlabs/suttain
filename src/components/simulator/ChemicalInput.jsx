@@ -59,8 +59,42 @@ export default function ChemicalInput({
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showAdvancedParams, setShowAdvancedParams] = useState(false);
+  
+  // Advanced reaction parameters
+  const [reactionParams, setReactionParams] = useState({
+    temperature: 25,
+    pressure: 1,
+    pH: 7,
+    reactionTime: 60,
+    timeUnit: 'min'
+  });
+  
+  // Stoichiometry state - coefficient and limiting reactant per chemical
+  const [stoichiometry, setStoichiometry] = useState({});
+  
   const searchInputRef = useRef(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  
+  // Update stoichiometry when chemicals change
+  useEffect(() => {
+    setStoichiometry(prev => {
+      const newStoich = { ...prev };
+      // Add new chemicals
+      chemicals.forEach(chem => {
+        if (!newStoich[chem.id]) {
+          newStoich[chem.id] = { coefficient: 1, amount: 0, unit: 'mol', isLimiting: false };
+        }
+      });
+      // Remove old chemicals
+      Object.keys(newStoich).forEach(id => {
+        if (!chemicals.find(c => c.id === parseInt(id))) {
+          delete newStoich[id];
+        }
+      });
+      return newStoich;
+    });
+  }, [chemicals]);
 
   useEffect(() => {
     if (debouncedSearchTerm && debouncedSearchTerm.length > 1) {
