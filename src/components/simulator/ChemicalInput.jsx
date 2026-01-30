@@ -205,8 +205,42 @@ export default function ChemicalInput({
     }
   };
 
+  const handleStoichiometryChange = (chemId, field, value) => {
+    setStoichiometry(prev => {
+      const newStoich = { ...prev };
+      if (!newStoich[chemId]) {
+        newStoich[chemId] = { coefficient: 1, amount: 0, unit: 'mol', isLimiting: false };
+      }
+      newStoich[chemId][field] = value;
+      
+      // If setting one as limiting, unset others
+      if (field === 'isLimiting' && value) {
+        Object.keys(newStoich).forEach(id => {
+          if (id !== String(chemId)) {
+            newStoich[id].isLimiting = false;
+          }
+        });
+      }
+      return newStoich;
+    });
+  };
+
   const handleRunClick = () => {
-    onRunSimulation();
+    // Pass advanced parameters to the simulation
+    const enhancedData = {
+      parameterSets: [{
+        temperature: reactionParams.temperature,
+        pressure: reactionParams.pressure,
+        time: reactionParams.reactionTime
+      }],
+      experimentalConditions: {
+        phValue: reactionParams.pH,
+        reactionTime: reactionParams.reactionTime,
+        timeUnit: reactionParams.timeUnit
+      },
+      stoichiometry
+    };
+    onRunSimulation(enhancedData);
   };
 
   // Determine icon based on persona
