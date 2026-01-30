@@ -117,7 +117,9 @@ export default function ResearchChemicalInput({
             limit: 20,
             persona: persona
           });
-          setSuggestions(response.data?.results || []);
+          // Response can be in response.data or response.data.results depending on SDK version
+          const results = response?.data?.results || response?.results || [];
+          setSuggestions(results);
         } catch (error) {
           console.error("Failed to fetch chemicals:", error);
           setSuggestions([]);
