@@ -470,6 +470,202 @@ export default function ChemicalInput({
           </div>
         )}
 
+        {/* Advanced Reaction Parameters - Collapsible */}
+        {chemicals.length >= 2 && (
+          <TooltipProvider>
+            <Collapsible open={showAdvancedParams} onOpenChange={setShowAdvancedParams}>
+              <CollapsibleTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-between border-2 border-dashed border-slate-300 hover:border-[var(--suttain-teal)] hover:bg-teal-50/50"
+                >
+                  <div className="flex items-center gap-2">
+                    <Settings2 className="w-4 h-4 text-slate-500" />
+                    <span className="font-medium text-slate-700">Advanced Reaction Parameters</span>
+                    <Badge variant="outline" className="text-xs bg-teal-50 text-teal-700 border-teal-200">
+                      Optional
+                    </Badge>
+                  </div>
+                  {showAdvancedParams ? (
+                    <ChevronUp className="w-4 h-4 text-slate-500" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-slate-500" />
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+              
+              <CollapsibleContent className="mt-4 space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-gradient-to-br from-slate-50 to-teal-50/30 rounded-xl border border-slate-200"
+                >
+                  {/* Environmental Conditions */}
+                  <div className="space-y-5">
+                    <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                      <Thermometer className="w-4 h-4 text-orange-500" />
+                      <h4 className="font-semibold text-slate-800 text-sm">Environmental Conditions</h4>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Temperature */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs font-medium text-slate-600 flex items-center gap-1">
+                            <Thermometer className="w-3 h-3 text-orange-500" />
+                            Temperature
+                          </Label>
+                          <span className="text-xs font-bold text-orange-600">{reactionParams.temperature}°C</span>
+                        </div>
+                        <Slider
+                          value={[reactionParams.temperature]}
+                          onValueChange={([value]) => setReactionParams(p => ({ ...p, temperature: value }))}
+                          min={-50}
+                          max={200}
+                          step={1}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-[10px] text-slate-400">
+                          <span>-50°C</span>
+                          <span className="text-green-600">Room (25°C)</span>
+                          <span>200°C</span>
+                        </div>
+                      </div>
+
+                      {/* pH Level */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs font-medium text-slate-600 flex items-center gap-1">
+                            <Droplets className="w-3 h-3 text-cyan-500" />
+                            pH Level
+                          </Label>
+                          <span className={`text-xs font-bold ${
+                            reactionParams.pH < 6 ? 'text-red-600' : 
+                            reactionParams.pH > 8 ? 'text-purple-600' : 'text-green-600'
+                          }`}>
+                            {reactionParams.pH}
+                          </span>
+                        </div>
+                        <Slider
+                          value={[reactionParams.pH]}
+                          onValueChange={([value]) => setReactionParams(p => ({ ...p, pH: value }))}
+                          min={0}
+                          max={14}
+                          step={0.5}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-[10px] text-slate-400">
+                          <span className="text-red-500">Acidic</span>
+                          <span className="text-green-500">Neutral (7)</span>
+                          <span className="text-purple-500">Basic</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Stoichiometry Section */}
+                  {chemicals.length > 0 && (
+                    <div className="space-y-4 mt-6 pt-4 border-t border-slate-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Scale className="w-4 h-4 text-emerald-500" />
+                          <h4 className="font-semibold text-slate-800 text-sm">Stoichiometry</h4>
+                        </div>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="w-4 h-4 text-slate-400" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <p className="text-xs">Set coefficients for balanced equations and identify the limiting reactant for yield calculations.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {chemicals.map((chem) => {
+                          const stoichData = stoichiometry[chem.id] || { coefficient: 1, amount: 0, unit: 'mol', isLimiting: false };
+                          return (
+                            <div 
+                              key={chem.id} 
+                              className={`p-3 rounded-lg border-2 transition-all ${
+                                stoichData.isLimiting 
+                                  ? 'border-amber-400 bg-amber-50' 
+                                  : 'border-slate-200 bg-white'
+                              }`}
+                            >
+                              <div className="flex flex-wrap items-center gap-3">
+                                <div className="flex items-center gap-2 min-w-[120px]">
+                                  <div className="w-6 h-6 bg-gradient-to-br from-teal-100 to-blue-100 rounded flex items-center justify-center">
+                                    <TestTube className="w-3 h-3 text-[var(--suttain-teal)]" />
+                                  </div>
+                                  <span className="font-medium text-sm text-slate-800 truncate capitalize">
+                                    {chem.display_name || chem.name}
+                                  </span>
+                                </div>
+                                
+                                <div className="flex items-center gap-2">
+                                  <Label className="text-xs text-slate-500">Coeff:</Label>
+                                  <Input
+                                    type="number"
+                                    value={stoichData.coefficient}
+                                    onChange={(e) => handleStoichiometryChange(chem.id, 'coefficient', parseInt(e.target.value) || 1)}
+                                    className="w-14 h-7 text-center text-xs"
+                                    min={1}
+                                    max={10}
+                                  />
+                                </div>
+                                
+                                <div className="flex items-center gap-2">
+                                  <Label className="text-xs text-slate-500">Amount:</Label>
+                                  <Input
+                                    type="number"
+                                    value={stoichData.amount}
+                                    onChange={(e) => handleStoichiometryChange(chem.id, 'amount', parseFloat(e.target.value) || 0)}
+                                    className="w-16 h-7 text-xs"
+                                    min={0}
+                                    step={0.1}
+                                  />
+                                  <Select
+                                    value={stoichData.unit}
+                                    onValueChange={(value) => handleStoichiometryChange(chem.id, 'unit', value)}
+                                  >
+                                    <SelectTrigger className="w-16 h-7 text-xs">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="mol">mol</SelectItem>
+                                      <SelectItem value="g">g</SelectItem>
+                                      <SelectItem value="mL">mL</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                
+                                <Button
+                                  variant={stoichData.isLimiting ? "default" : "outline"}
+                                  size="sm"
+                                  onClick={() => handleStoichiometryChange(chem.id, 'isLimiting', !stoichData.isLimiting)}
+                                  className={`h-7 text-xs ${
+                                    stoichData.isLimiting 
+                                      ? 'bg-amber-500 hover:bg-amber-600 text-white' 
+                                      : 'border-amber-300 text-amber-700 hover:bg-amber-50'
+                                  }`}
+                                >
+                                  <AlertTriangle className="w-3 h-3 mr-1" />
+                                  {stoichData.isLimiting ? 'Limiting' : 'Set Limiting'}
+                                </Button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </CollapsibleContent>
+            </Collapsible>
+          </TooltipProvider>
+        )}
+
         {/* Run Simulation Button */}
         <Button
           onClick={handleRunClick}
