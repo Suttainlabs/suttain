@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     AlertTriangle, CheckCircle, Shield, FlaskConical, Zap, Leaf, Heart,
     Thermometer, BarChart, Beaker, FileText, ChevronRight, CornerUpLeft, BookOpen, Microscope,
-    Download, Calculator, Share2, ClipboardCheck, Loader2, X, ChevronLeft, Atom, TrendingUp, TrendingDown, Info, Sparkles, ArrowRightLeft
+    Download, Calculator, Share2, ClipboardCheck, Loader2, X, ChevronLeft, Atom, TrendingUp, TrendingDown, Info, Sparkles, ArrowRightLeft, Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,6 +29,9 @@ import { toast } from "sonner";
 import ReportCustomizationModal from './ReportCustomizationModal';
 import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';
 import AdvancedAnalysisPanel from './AdvancedAnalysisPanel';
+
+// Lazy load visualization component
+const ChemicalVisualization = lazy(() => import('./ChemicalVisualization'));
 
 const getSafetyStyling = (level) => {
     switch (level) {
