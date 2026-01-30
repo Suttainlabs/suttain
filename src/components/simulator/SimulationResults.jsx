@@ -554,6 +554,17 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
                         )}
                     </div>
                 );
+            case 'visualization':
+                return (
+                    <Suspense fallback={
+                        <div className="flex items-center justify-center py-12">
+                            <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                            <span className="ml-3 text-slate-600">Loading visualization...</span>
+                        </div>
+                    }>
+                        <ChemicalVisualization data={data} />
+                    </Suspense>
+                );
             case 'reaction':
                 return (
                     <div className="space-y-4">
