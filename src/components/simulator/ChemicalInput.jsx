@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { TestTube, Plus, Trash2, AlertTriangle, ChevronLeft, Home, Hammer, GraduationCap, Atom, Play } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { TestTube, Plus, Trash2, AlertTriangle, ChevronLeft, Home, Hammer, GraduationCap, Atom, Play, Thermometer, Droplets, Settings2, ChevronDown, ChevronUp, Scale, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { base44 } from "@/api/base44Client";
 import { useDebounce } from "@/components/shared/useDebounce";
 
