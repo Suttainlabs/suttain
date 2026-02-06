@@ -69,13 +69,14 @@ import PersonalizedSafety from './pages/PersonalizedSafety';
 import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Profile from './pages/Profile';
+import Reports from './pages/Reports';
 import ReviewRewards from './pages/ReviewRewards';
 import Settings from './pages/Settings';
 import Simulator from './pages/Simulator';
 import Sustainability from './pages/Sustainability';
 import TermsOfService from './pages/TermsOfService';
 import generator from './pages/generator';
-import Reports from './pages/Reports';
+import ChemicalImport from './pages/ChemicalImport';
 import __Layout from './Layout.jsx';
 
 
@@ -102,13 +103,14 @@ export const PAGES = {
     "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
     "Profile": Profile,
+    "Reports": Reports,
     "ReviewRewards": ReviewRewards,
     "Settings": Settings,
     "Simulator": Simulator,
     "Sustainability": Sustainability,
     "TermsOfService": TermsOfService,
     "generator": generator,
-    "Reports": Reports,
+    "ChemicalImport": ChemicalImport,
 }
 
 export const pagesConfig = {
