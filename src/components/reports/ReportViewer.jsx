@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
   FileText, Download, Share2, Send, Printer, Calendar, Clock,
   BarChart3, PieChart, Brain, Atom, Table, ChevronDown, ChevronRight,
-  Loader2, Check, AlertTriangle, Sparkles, ExternalLink, Mail
+  Loader2, Check, AlertTriangle, Sparkles, ExternalLink, Mail, ShieldAlert
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 
 const ChemicalVisualization = lazy(() => import('../simulator/ChemicalVisualization'));
+const SafetyAdvisor = lazy(() => import('../simulator/SafetyAdvisor'));
 
 const CHART_COLORS = ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e'];
 
@@ -152,6 +153,7 @@ export default function ReportViewer({ report, onClose }) {
     const icons = {
       summary: <FileText className="w-4 h-4 text-indigo-500" />,
       ai_insights: <Brain className="w-4 h-4 text-purple-500" />,
+      safety_advisor: <ShieldAlert className="w-4 h-4 text-red-500" />,
       visualization_2d: <Atom className="w-4 h-4 text-cyan-500" />,
       visualization_3d: <Atom className="w-4 h-4 text-cyan-500" />,
       chart: <BarChart3 className="w-4 h-4 text-green-500" />,
@@ -243,6 +245,24 @@ export default function ReportViewer({ report, onClose }) {
               </div>
             ))}
           </div>
+        );
+
+      case 'safety_advisor':
+        return (
+          <Suspense fallback={
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
+            </div>
+          }>
+            <SafetyAdvisor 
+              chemicals={report.visualization_data?.embedded_3d_models?.map(s => ({ name: s })) || []}
+              simulationResults={{
+                risk_score: report.ai_insights?.risk_score,
+                ...report.source_data
+              }}
+              compact={false}
+            />
+          </Suspense>
         );
 
       default:

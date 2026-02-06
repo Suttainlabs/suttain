@@ -50,6 +50,42 @@ Deno.serve(async (req) => {
     // Generate chart data based on source
     const chartData = generateChartData(sourceData, reportConfig);
 
+    // Generate safety advisor data if section is enabled
+    let safetyAdvisorData = null;
+    const hasSafetyAdvisorSection = reportConfig?.sections?.some(s => s.type === 'safety_advisor' && s.enabled);
+    
+    if (hasSafetyAdvisorSection && sourceData?.chemicals?.length) {
+      const safetyPrompt = `
+        Analyze these chemicals for safety: ${JSON.stringify(sourceData.chemicals)}
+        Provide a brief safety analysis in JSON format with:
+        {
+          "overall_risk": "low|medium|high|critical",
+          "required_ppe": ["item1", "item2"],
+          "key_hazards": ["hazard1", "hazard2"],
+          "emergency_contact": "string",
+          "storage_note": "string"
+        }
+      `;
+      
+      try {
+        safetyAdvisorData = await base44.integrations.Core.InvokeLLM({
+          prompt: safetyPrompt,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              overall_risk: { type: "string" },
+              required_ppe: { type: "array", items: { type: "string" } },
+              key_hazards: { type: "array", items: { type: "string" } },
+              emergency_contact: { type: "string" },
+              storage_note: { type: "string" }
+            }
+          }
+        });
+      } catch (e) {
+        console.error('Safety advisor generation failed:', e);
+      }
+    }
+
     const result = {
       ai_insights: {
         ...aiResponse,
@@ -58,7 +94,8 @@ Deno.serve(async (req) => {
       visualization_data: {
         charts: chartData,
         embedded_3d_models: sourceData?.chemicals?.map(c => c.smiles || c.name) || [],
-        reaction_diagrams: []
+        reaction_diagrams: [],
+        safety_advisor: safetyAdvisorData
       },
       metadata: {
         generated_at: new Date().toISOString(),

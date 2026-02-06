@@ -4,7 +4,7 @@ import {
   FileText, Settings, Eye, Send, Calendar, Mail, MessageSquare,
   Link2, ChevronRight, ChevronDown, GripVertical, Plus, Trash2,
   BarChart3, PieChart, LineChart, Atom, Brain, Table, FileCode,
-  Loader2, Check, X, Clock, Sparkles
+  Loader2, Check, X, Clock, Sparkles, ShieldAlert
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +27,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const SECTION_TYPES = [
   { id: 'summary', label: 'Executive Summary', icon: FileText, description: 'AI-generated overview' },
+  { id: 'safety_advisor', label: 'AI Safety Advisor', icon: ShieldAlert, description: 'PPE, protocols & hazard analysis' },
   { id: 'visualization_2d', label: '2D Structures', icon: Atom, description: 'Molecular diagrams' },
   { id: 'visualization_3d', label: '3D Models', icon: Atom, description: 'Interactive 3D molecules' },
   { id: 'chart', label: 'Charts & Graphs', icon: BarChart3, description: 'Data visualizations' },
@@ -38,10 +39,11 @@ const SECTION_TYPES = [
 
 const DEFAULT_SECTIONS = [
   { id: 'sec_1', title: 'Executive Summary', type: 'summary', enabled: true, order: 0 },
-  { id: 'sec_2', title: 'Risk Assessment', type: 'ai_insights', enabled: true, order: 1 },
-  { id: 'sec_3', title: 'Chemical Structures', type: 'visualization_2d', enabled: true, order: 2 },
-  { id: 'sec_4', title: 'Interactive 3D View', type: 'visualization_3d', enabled: true, order: 3 },
-  { id: 'sec_5', title: 'Analysis Charts', type: 'chart', enabled: true, order: 4 },
+  { id: 'sec_2', title: 'AI Safety Advisor', type: 'safety_advisor', enabled: true, order: 1 },
+  { id: 'sec_3', title: 'Risk Assessment', type: 'ai_insights', enabled: true, order: 2 },
+  { id: 'sec_4', title: 'Chemical Structures', type: 'visualization_2d', enabled: true, order: 3 },
+  { id: 'sec_5', title: 'Interactive 3D View', type: 'visualization_3d', enabled: true, order: 4 },
+  { id: 'sec_6', title: 'Analysis Charts', type: 'chart', enabled: true, order: 5 },
 ];
 
 export default function ReportBuilder({ sourceData, sourceType, onClose, onSave }) {
@@ -625,6 +627,7 @@ export default function ReportBuilder({ sourceData, sourceType, onClose, onSave 
                           {section.type === 'visualization_3d' ? 'Interactive 3D Model' :
                            section.type === 'chart' ? 'Dynamic Chart' :
                            section.type === 'ai_insights' ? 'AI-Generated Analysis' :
+                           section.type === 'safety_advisor' ? 'AI Safety Analysis: PPE, Protocols & Hazards' :
                            'Content Preview'}
                         </div>
                       </div>
