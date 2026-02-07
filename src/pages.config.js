@@ -54,6 +54,7 @@ import BarcodeScanner from './pages/BarcodeScanner';
 import BookADemo from './pages/BookADemo';
 import BookDemo from './pages/BookDemo';
 import Careers from './pages/Careers';
+import ChemicalImport from './pages/ChemicalImport';
 import Collaboration from './pages/Collaboration';
 import CommunityReviews from './pages/CommunityReviews';
 import ComplianceCoPilot from './pages/ComplianceCoPilot';
@@ -76,7 +77,7 @@ import Simulator from './pages/Simulator';
 import Sustainability from './pages/Sustainability';
 import TermsOfService from './pages/TermsOfService';
 import generator from './pages/generator';
-import ChemicalImport from './pages/ChemicalImport';
+import ExternalDatabases from './pages/ExternalDatabases';
 import __Layout from './Layout.jsx';
 
 
@@ -88,6 +89,7 @@ export const PAGES = {
     "BookADemo": BookADemo,
     "BookDemo": BookDemo,
     "Careers": Careers,
+    "ChemicalImport": ChemicalImport,
     "Collaboration": Collaboration,
     "CommunityReviews": CommunityReviews,
     "ComplianceCoPilot": ComplianceCoPilot,
@@ -110,7 +112,7 @@ export const PAGES = {
     "Sustainability": Sustainability,
     "TermsOfService": TermsOfService,
     "generator": generator,
-    "ChemicalImport": ChemicalImport,
+    "ExternalDatabases": ExternalDatabases,
 }
 
 export const pagesConfig = {
