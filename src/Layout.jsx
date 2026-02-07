@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import AuthContext from './components/auth/AuthContext';
 import NotificationCenter from './components/notifications/NotificationCenter';
+import BottomNavBar from './components/navigation/BottomNavBar';
 import { useQuery } from '@tanstack/react-query';
 
 // Import components with error boundaries
@@ -808,7 +809,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1">
+      <main className="flex-1 pb-16 lg:pb-0">
         <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: fetchUserAndSetState }}>
           {children}
           {/* Clara AI Assistant */}
@@ -908,6 +909,9 @@ export default function Layout({ children, currentPageName }) {
           </footer>
           )}
       
+      {/* Bottom Navigation Bar - Mobile Only */}
+      {user && <BottomNavBar />}
+
       {/* Auth Modal */}
       <React.Suspense fallback={null}>
         {showAuthModal && (
