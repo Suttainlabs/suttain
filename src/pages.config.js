@@ -60,6 +60,7 @@ import CommunityReviews from './pages/CommunityReviews';
 import ComplianceCoPilot from './pages/ComplianceCoPilot';
 import ComplianceGuide from './pages/ComplianceGuide';
 import EnterpriseAPI from './pages/EnterpriseAPI';
+import ExternalDatabases from './pages/ExternalDatabases';
 import FAQ from './pages/FAQ';
 import Feedback from './pages/Feedback';
 import FormulaHistory from './pages/FormulaHistory';
@@ -77,7 +78,6 @@ import Simulator from './pages/Simulator';
 import Sustainability from './pages/Sustainability';
 import TermsOfService from './pages/TermsOfService';
 import generator from './pages/generator';
-import ExternalDatabases from './pages/ExternalDatabases';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +95,7 @@ export const PAGES = {
     "ComplianceCoPilot": ComplianceCoPilot,
     "ComplianceGuide": ComplianceGuide,
     "EnterpriseAPI": EnterpriseAPI,
+    "ExternalDatabases": ExternalDatabases,
     "FAQ": FAQ,
     "Feedback": Feedback,
     "FormulaHistory": FormulaHistory,
@@ -112,7 +113,6 @@ export const PAGES = {
     "Sustainability": Sustainability,
     "TermsOfService": TermsOfService,
     "generator": generator,
-    "ExternalDatabases": ExternalDatabases,
 }
 
 export const pagesConfig = {
