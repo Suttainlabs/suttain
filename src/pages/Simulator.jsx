@@ -12,6 +12,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { MessageSquare, Star, X } from "lucide-react";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
+import SEOHead, { pageSEO } from "../components/shared/SEOHead";
 
 // Lazy load RatingModal
 const RatingModal = lazy(() => import("../components/shared/RatingModal")); // Assuming this path for the RatingModal component
@@ -871,6 +872,7 @@ export default function Simulator() {
 
   return (
     <AuthGate featureName="Chemical Simulator" featureDescription="Test chemical interactions safely with our advanced simulation engine. Log in to save your simulations and access the full database.">
+      <SEOHead {...pageSEO.simulator} />
       <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50/30 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-20">
