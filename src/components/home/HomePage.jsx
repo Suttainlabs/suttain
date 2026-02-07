@@ -10,6 +10,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AuthContext from "../auth/AuthContext";
+import SEOHead, { pageSEO } from "../shared/SEOHead";
 
 export default function HomePage() {
   const { user } = useContext(AuthContext);
@@ -103,6 +104,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead {...pageSEO.home} />
+      
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Gradient background */}
