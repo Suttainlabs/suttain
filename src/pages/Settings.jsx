@@ -6,6 +6,7 @@ import { createPageUrl } from '@/utils';
 import AuthContext from '../components/auth/AuthContext';
 import SafetyProfileManager from '../components/profile/SafetyProfileManager';
 import NotificationPreferences from '../components/notifications/NotificationPreferences';
+import AccountDeletionSection from '../components/settings/AccountDeletionSection';
 
 export default function Settings() {
   const { user } = useContext(AuthContext);
@@ -32,6 +33,8 @@ export default function Settings() {
           
           <SafetyProfileManager />
           <NotificationPreferences />
+          
+          <AccountDeletionSection user={user} />
         </motion.div>
       </div>
     </div>
