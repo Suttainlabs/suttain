@@ -5,7 +5,7 @@ import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Users, Target, ArrowRight, Linkedin, Eye, Briefcase } from 'lucide-react';
+import { Users, Target, ArrowRight, Eye } from 'lucide-react';
 
 
 
