@@ -6,12 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, ArrowRight, Eye } from 'lucide-react';
+import SEOHead, { pageSEO } from '../components/shared/SEOHead';
 
 
 
 const AboutUsPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/20 to-blue-50/20">
+      <SEOHead {...pageSEO.about} />
+      
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center bg-white">
         <motion.div
