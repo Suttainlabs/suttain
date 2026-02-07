@@ -7,24 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, ArrowRight, Linkedin, Eye, Briefcase } from 'lucide-react';
 
-const teamMembers = [
-  {
-    name: 'Abel Egbemhenghe',
-    role: 'Founder & Advisor', // Updated role as per the outline
-    bio: 'A visionary computational chemist with a passion for sustainable innovation.',
-    avatar: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/44c39db8e_undraw_pic-profile_nr491.png',
-    linkedin: 'https://www.linkedin.com/in/abelegbemhenghe/',
-  },
-];
 
-const openPositions = [
-  { role: 'Co-founder, Product Marketing', description: 'Driving our go-to-market strategy and shaping the future of our product.' },
-  { role: 'AI Engineer', description: 'Building the core machine learning models for predictive chemical analysis.' },
-  { role: 'Software Engineer', description: 'Developing the robust platform that powers our AI solutions.' },
-  { role: 'Product Lead', description: 'Bridging the gap between complex science and user-friendly design.' },
-  { role: 'Regulatory Specialist', description: 'Ensuring our solutions meet global compliance and safety standards.' },
-  { role: 'AI Research Scientist', description: 'Pushing the boundaries of what\'s possible in computational chemistry.' }
-];
 
 const AboutUsPage = () => {
   return (
