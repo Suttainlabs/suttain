@@ -59,9 +59,12 @@ const ComplianceSettings = ({ onBack }) => {
     );
   };
 
+  const [saveError, setSaveError] = useState(null);
+
   const handleSave = async () => {
     setIsSaving(true);
     setSaveSuccess(false);
+    setSaveError(null);
     
     try {
       await base44.auth.updateMe({
@@ -76,6 +79,7 @@ const ComplianceSettings = ({ onBack }) => {
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
       console.error('Failed to save settings:', error);
+      setSaveError(error.message || 'Failed to save settings. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -326,6 +330,18 @@ const ComplianceSettings = ({ onBack }) => {
               </CardContent>
             </Card>
           </motion.div>
+
+          {/* Error Message */}
+          {saveError && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3"
+            >
+              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+              <p className="text-red-800 text-sm">{saveError}</p>
+            </motion.div>
+          )}
 
           {/* Save Button */}
           <motion.div
