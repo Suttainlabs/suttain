@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 // This import is not used in the updated code but was in original, keeping for completeness
 import { 
   Sparkles, Droplets, Beaker, AlertTriangle, 
-  Lightbulb, ChevronDown, Loader2, Info
+  Lightbulb, ChevronDown, Loader2, Info, Shield, Zap
 } from 'lucide-react';
+import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 
