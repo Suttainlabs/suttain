@@ -934,6 +934,19 @@ export default function FormulaEditor({
                     </div>
                   </div>
 
+                  {/* AI Suggestions Panel */}
+                  <AISuggestionsPanel
+                    formula={formula}
+                    productType={productType}
+                    businessMode={businessMode}
+                    onAddIngredient={(newIng) => {
+                      setFormula(prev => ({
+                        ...prev,
+                        ingredients: [...prev.ingredients, newIng]
+                      }));
+                    }}
+                  />
+
                   {/* AI Formula Optimizer */}
                   <FormulaOptimizer 
                     formula={formula}
