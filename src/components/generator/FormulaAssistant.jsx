@@ -132,6 +132,36 @@ Focus on practical, formula-specific feedback. Consider ingredient interactions,
 
           {!isAnalyzing && analysis && (
             <>
+              {/* Scores */}
+              {(analysis.efficacy_score || analysis.safety_score) && (
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  {analysis.efficacy_score && (
+                    <div className="p-2 bg-gradient-to-br from-emerald-50 to-green-50 rounded-lg border border-emerald-200">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Zap className="w-3 h-3 text-emerald-600" />
+                        <span className="text-[10px] font-medium text-emerald-800">Efficacy</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Progress value={analysis.efficacy_score * 10} className="h-1.5 flex-1" />
+                        <span className="text-xs font-bold text-emerald-700">{analysis.efficacy_score}/10</span>
+                      </div>
+                    </div>
+                  )}
+                  {analysis.safety_score && (
+                    <div className="p-2 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Shield className="w-3 h-3 text-blue-600" />
+                        <span className="text-[10px] font-medium text-blue-800">Safety</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Progress value={analysis.safety_score * 10} className="h-1.5 flex-1" />
+                        <span className="text-xs font-bold text-blue-700">{analysis.safety_score}/10</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Predicted Properties */}
               <Card className="border-2 border-blue-200 bg-blue-50/50">
                 <CardHeader 
