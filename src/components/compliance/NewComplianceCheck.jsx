@@ -538,7 +538,7 @@ CRITICAL: Ensure compliance_details array has an entry for EVERY ingredient prov
               <ShieldCheck className="w-6 h-6 text-white" />
             </div>
             <div>
-              <CardTitle className="text-xl sm:text-2xl">AI Compliance Co-Pilot</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl">Compliance Co-Pilot</CardTitle>
               <CardDescription className="text-white/90 text-sm">Search products and analyze regulatory compliance</CardDescription>
             </div>
           </div>
@@ -551,7 +551,7 @@ CRITICAL: Ensure compliance_details array has an entry for EVERY ingredient prov
                 <Search className="w-5 h-5 text-purple-600" />
                 Product Search
               </label>
-              <Badge variant="outline" className="text-xs self-start sm:self-auto">AI-Powered</Badge>
+
             </div>
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none z-10" />
