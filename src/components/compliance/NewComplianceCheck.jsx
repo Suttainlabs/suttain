@@ -577,36 +577,28 @@ CRITICAL: Ensure compliance_details array has an entry for EVERY ingredient prov
                   className="absolute left-0 right-0 top-full mt-2 bg-white border-2 border-purple-200 rounded-2xl shadow-2xl max-h-[28rem] overflow-y-auto z-50 overscroll-contain"
                   style={{ WebkitOverflowScrolling: 'touch' }}
                 >
-                  {productSuggestions.map((product, index) => (
+                  {productSuggestions.slice(0, 8).map((product, index) => (
                     <div
                       key={index}
                       onClick={() => handleSelectProduct(product)}
-                      className="p-4 hover:bg-purple-50 cursor-pointer border-b border-slate-100 last:border-b-0 transition-colors active:bg-purple-100"
+                      className="p-3 hover:bg-purple-50 cursor-pointer border-b border-slate-100 last:border-b-0 transition-colors active:bg-purple-100"
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                          <Package className="w-7 h-7 text-white" />
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Package className="w-4 h-4 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-base text-slate-900 mb-1 leading-tight">
+                          <h4 className="font-semibold text-sm text-slate-900 truncate">
                             {product.product_name}
                           </h4>
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <Badge className="bg-purple-600 text-white text-xs font-semibold px-2.5 py-0.5">
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <Badge className="bg-purple-600 text-white text-[10px] font-medium px-1.5 py-0">
                               {product.brand}
                             </Badge>
-                            <Badge variant="outline" className="text-purple-700 border-purple-300 text-xs font-medium px-2.5 py-0.5">
+                            <Badge variant="outline" className="text-purple-700 border-purple-300 text-[10px] font-medium px-1.5 py-0">
                               {product.category}
                             </Badge>
-                          </div>
-                          {product.description && (
-                            <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed mb-2">
-                              {product.description}
-                            </p>
-                          )}
-                          <div className="flex items-center gap-1.5 text-blue-600">
-                            <FlaskConical className="w-4 h-4" />
-                            <span className="text-sm font-semibold">{product.ingredients?.length || 0} ingredients</span>
+                            <span className="text-[10px] text-slate-500 ml-auto">{product.ingredients?.length || 0} ingredients</span>
                           </div>
                         </div>
                       </div>
