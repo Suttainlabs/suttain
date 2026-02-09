@@ -28,7 +28,7 @@ export default function HomePage() {
       id: 'generator',
       icon: Atom,
       title: 'Formula Generator',
-      description: 'AI-powered recipes for skincare, cleaning & more',
+      description: 'Custom recipes for skincare, cleaning & more',
       gradient: 'from-[#9531F5] to-[#09D2FF]',
       link: 'generator'
     },
