@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 // This import is not used in the updated code but was in original, keeping for completeness
@@ -50,16 +49,18 @@ export default function FormulaAssistant({ formula, productType, businessMode })
       ).join(', ');
 
       // Updated prompt to match new schema keys
-      const prompt = `Analyze this ${productType} formula and provide insights for a ${businessMode ? 'B2B' : 'B2C'} context:
+      const prompt = `Analyze this ${productType} formula and provide comprehensive insights for a ${businessMode ? 'commercial B2B' : 'DIY home formulation'} context:
 
 Ingredients: ${ingredientList}
 
 Please analyze and return JSON with:
 1. properties: { ph_level: string, viscosity: string, stability: string }
-2. warnings: array of critical issues or missing components
-3. suggestions: array of 2-3 actionable improvement recommendations
+2. warnings: array of critical safety issues, incompatibilities, or missing essential components
+3. suggestions: array of 3-4 actionable improvement recommendations for safety, efficacy, or cost-effectiveness
+4. efficacy_score: number from 1-10 rating formula effectiveness
+5. safety_score: number from 1-10 rating overall safety
 
-Focus on practical, formula-specific feedback. Keep responses concise and directly actionable.`;
+Focus on practical, formula-specific feedback. Consider ingredient interactions, concentration safety limits, and ${businessMode ? 'regulatory compliance' : 'ease of sourcing ingredients'}. Keep responses concise and directly actionable.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
