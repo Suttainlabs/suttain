@@ -22,8 +22,8 @@ export default function ComplianceCoPilot() {
 
   return (
     <PremiumFeatureGate
-      featureName="AI Compliance Co-Pilot"
-      featureDescription="Automate regulatory compliance checks across global markets with AI-powered analysis."
+      featureName="Compliance Co-Pilot"
+      featureDescription="Automate regulatory compliance checks across global markets with intelligent analysis."
     >
       {view === 'dashboard' && (
         <ComplianceDashboard 
