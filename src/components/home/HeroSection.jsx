@@ -36,16 +36,7 @@ export default function HeroSection() {
               <Sparkles className="w-7 h-7 text-white" />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-            >
-              <div className="inline-flex items-center gap-2 bg-teal-100 text-teal-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <Sparkles className="w-4 h-4" />
-                Smart Chemistry Platform
-              </div>
-            </motion.div>
+
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
