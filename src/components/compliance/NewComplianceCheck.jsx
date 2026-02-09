@@ -111,12 +111,15 @@ const PRODUCT_DATABASE = [
 ];
 
 const REGIONS = [
-  { id: 'EU', name: 'European Union (EU)', regulations: ['REACH', 'CLP', 'EU Cosmetics Regulation'] },
-  { id: 'USA', name: 'United States (All Federal & State)', regulations: ['FDA', 'EPA', 'TSCA', 'CPSC', 'OSHA', 'Prop 65', 'ASTM', 'FD&C Act'] },
-  { id: 'Canada', name: 'Canada', regulations: ['WHMIS', 'CEPA', 'Health Canada', 'Cosmetic Regulations'] },
-  { id: 'Global_GHS', name: 'Global (GHS)', regulations: ['GHS', 'OECD Guidelines'] },
-  { id: 'Asia_Pacific', name: 'Asia Pacific', regulations: ['China NMPA', 'Japan PMDA', 'Korea MFDS'] },
+  { id: 'EU', name: 'European Union (EU)', regulations: ['REACH', 'CLP', 'EU Cosmetics Regulation'], flag: '🇪🇺' },
+  { id: 'USA', name: 'United States (All Federal & State)', regulations: ['FDA', 'EPA', 'TSCA', 'CPSC', 'OSHA', 'Prop 65', 'ASTM', 'FD&C Act'], flag: '🇺🇸' },
+  { id: 'Canada', name: 'Canada', regulations: ['WHMIS', 'CEPA', 'Health Canada', 'Cosmetic Regulations'], flag: '🇨🇦' },
+  { id: 'Global_GHS', name: 'Global (GHS)', regulations: ['GHS', 'OECD Guidelines'], flag: '🌐' },
+  { id: 'Asia_Pacific', name: 'Asia Pacific', regulations: ['China NMPA', 'Japan PMDA', 'Korea MFDS'], flag: '🌏' },
 ];
+
+// Valid region IDs for filtering
+const VALID_REGION_IDS = REGIONS.map(r => r.id);
 
 const NewComplianceCheck = ({ onBack, onComplete }) => {
   const [productSearch, setProductSearch] = useState('');
@@ -145,7 +148,11 @@ const NewComplianceCheck = ({ onBack, onComplete }) => {
     try {
       const user = await base44.auth.me();
       if (user?.compliance_preferences?.default_regions) {
-        setSelectedRegions(user.compliance_preferences.default_regions);
+        // Filter to only include valid region IDs
+        const validRegions = user.compliance_preferences.default_regions.filter(
+          regionId => VALID_REGION_IDS.includes(regionId)
+        );
+        setSelectedRegions(validRegions);
       }
     } catch (error) {
       console.error('Failed to load user preferences:', error);
