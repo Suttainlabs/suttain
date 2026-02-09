@@ -67,10 +67,10 @@ Focus on practical, formula-specific feedback. Consider ingredient interactions,
         response_json_schema: {
           type: "object",
           properties: {
-            properties: { // Changed from predicted_properties
+            properties: {
               type: "object",
               properties: {
-                ph_level: { type: "string" }, // Changed from ph
+                ph_level: { type: "string" },
                 viscosity: { type: "string" },
                 stability: { type: "string" }
               }
@@ -82,9 +82,11 @@ Focus on practical, formula-specific feedback. Consider ingredient interactions,
             suggestions: {
               type: "array",
               items: { type: "string" }
-            }
+            },
+            efficacy_score: { type: "number" },
+            safety_score: { type: "number" }
           },
-          required: ["properties", "warnings", "suggestions"] // Add required fields
+          required: ["properties", "warnings", "suggestions"]
         }
       });
 
