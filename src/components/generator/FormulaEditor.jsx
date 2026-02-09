@@ -48,6 +48,7 @@ import ComplianceChecker from "./ComplianceChecker";
 import SustainabilityAnalyzer from "./SustainabilityAnalyzer";
 import FormulaAssistant from "./FormulaAssistant";
 import FormulaOptimizer from "./FormulaOptimizer";
+import AISuggestionsPanel from "./AISuggestionsPanel";
 import { useDebounce } from "../shared/useDebounce";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
