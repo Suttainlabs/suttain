@@ -9,12 +9,13 @@ import { base44 } from '@/api/base44Client';
 import { ArrowLeft, Check, Bell, Globe, Save, Loader2, Settings, Shield, Mail, AlertTriangle, FileText } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+// Must match the region IDs in NewComplianceCheck
 const REGIONS = [
-  { id: 'EU', name: 'European Union', flag: '🇪🇺', regulations: ['REACH', 'CLP'] },
-  { id: 'USA_Prop65', name: 'USA - California', flag: '🇺🇸', regulations: ['Prop 65'] },
-  { id: 'USA_TSCA', name: 'USA - Federal', flag: '🇺🇸', regulations: ['TSCA'] },
-  { id: 'Canada', name: 'Canada', flag: '🇨🇦', regulations: ['WHMIS'] },
-  { id: 'Global_GHS', name: 'Global', flag: '🌍', regulations: ['GHS'] },
+  { id: 'EU', name: 'European Union (EU)', flag: '🇪🇺', regulations: ['REACH', 'CLP', 'EU Cosmetics Regulation'] },
+  { id: 'USA', name: 'United States (All Federal & State)', flag: '🇺🇸', regulations: ['FDA', 'EPA', 'TSCA', 'Prop 65'] },
+  { id: 'Canada', name: 'Canada', flag: '🇨🇦', regulations: ['WHMIS', 'CEPA', 'Health Canada'] },
+  { id: 'Global_GHS', name: 'Global (GHS)', flag: '🌍', regulations: ['GHS', 'OECD Guidelines'] },
+  { id: 'Asia_Pacific', name: 'Asia Pacific', flag: '🌏', regulations: ['China NMPA', 'Japan PMDA', 'Korea MFDS'] },
 ];
 
 const ComplianceSettings = ({ onBack }) => {
