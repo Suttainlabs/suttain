@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Review } from "@/entities/Review";
 import { motion } from "framer-motion";
@@ -32,7 +31,23 @@ export default function CommunityReviewsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50/50 via-purple-50/50 to-blue-50/50">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50/50 via-purple-50/50 to-blue-50/50 relative overflow-hidden">
+      {/* Decorative watermarks */}
+      <div className="absolute top-40 left-0 w-48 h-48 opacity-5 pointer-events-none hidden lg:block">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/aefe18831_clay-mask-on-pink-bakground-skincare-product-2026-01-08-05-38-14-utc.jpg"
+          alt=""
+          className="w-full h-full object-cover rounded-full"
+        />
+      </div>
+      <div className="absolute bottom-20 right-0 w-56 h-56 opacity-5 pointer-events-none hidden lg:block">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/7bb6cfd96_clean-waffle-towels-and-other-bath-products-on-woo-2026-01-11-10-51-01-utc.jpg"
+          alt=""
+          className="w-full h-full object-cover"
+        />
+      </div>
+      
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">

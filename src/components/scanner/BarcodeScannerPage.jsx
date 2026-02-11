@@ -168,14 +168,14 @@ export default function BarcodeScannerPage() {
             {/* Decorative watermarks */}
             <div className="absolute top-10 right-0 w-48 h-48 opacity-5 pointer-events-none hidden lg:block">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/24e9e62d3_colorful-sunscreen-bottles-arranged-on-sandy-beach-2026-01-08-06-02-42-utc.jpg"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/61947ef64_bright-travel-pack-of-hygiene-product-mini-packag-2026-01-07-00-44-39-utc.jpg"
                 alt=""
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
             <div className="absolute bottom-20 left-0 w-40 h-40 opacity-5 pointer-events-none hidden lg:block">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/ee1fe1c1c_kids-summer-accesories-and-sun-screen-bottle-for-s-2026-01-09-00-08-34-utc.jpg"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/bf10a155b_close-up-view-of-female-customer-refilling-deterge-2026-01-07-01-28-58-utc.jpg"
                 alt=""
                 className="w-full h-full object-cover rounded-full"
               />

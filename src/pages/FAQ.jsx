@@ -110,7 +110,16 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20 relative overflow-hidden">
+      {/* Decorative watermark */}
+      <div className="absolute top-40 right-0 w-56 h-56 opacity-5 pointer-events-none hidden lg:block">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/76fc85d0c_a-woman-holds-the-skincare-jar-for-beauty-wellne-2026-01-07-02-20-26-utc.jpg"
+          alt=""
+          className="w-full h-full object-cover rounded-full"
+        />
+      </div>
+      
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">

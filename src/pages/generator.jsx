@@ -424,18 +424,18 @@ export default function Generator() {
           className="w-1/2 max-w-xl h-auto opacity-5 select-none"
         />
       </div>
-      {/* Cosmetic products watermark */}
+      {/* Serum bottles watermark */}
       <div className="absolute top-20 left-0 w-64 h-64 opacity-5 pointer-events-none hidden lg:block">
         <img
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/2343edb55_a-fashionable-cosmetic-product-in-glass-matte-whit-2026-01-08-08-26-24-utc.jpg"
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/71d10cfe3_bottles-with-serum-or-oil-2026-01-07-01-31-15-utc.jpg"
           alt=""
           className="w-full h-full object-cover select-none rounded-full"
         />
       </div>
-      {/* Hair dye samples watermark */}
+      {/* Cosmetics on wooden background watermark */}
       <div className="absolute bottom-20 right-0 w-72 h-72 opacity-5 pointer-events-none hidden lg:block">
         <img
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/70a29c76f_hair-dye-kit-samples-of-different-colors-on-neut-2026-01-11-09-10-47-utc.jpg"
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/7e24c77e6_beautiful-composition-with-cosmetics-on-wooden-bac-2026-02-05-20-53-27-utc.jpg"
           alt=""
           className="w-full h-full object-cover select-none"
         />

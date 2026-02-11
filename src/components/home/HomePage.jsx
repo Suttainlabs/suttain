@@ -15,7 +15,10 @@ const PRODUCT_IMAGES = {
   serumTextures: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/b0c7eb1bf_demonstration-of-serum-textures-in-a-scientific-wa-2026-01-08-08-12-57-utc.jpg",
   hairDyeKit: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/70a29c76f_hair-dye-kit-samples-of-different-colors-on-neut-2026-01-11-09-10-47-utc.jpg",
   kidsSunscreen: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/ee1fe1c1c_kids-summer-accesories-and-sun-screen-bottle-for-s-2026-01-09-00-08-34-utc.jpg",
-  labGlassware: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/025e8ec13_laboratory-glassware-and-molecular-structure-sitti-2026-01-09-09-41-04-utc.jpg"
+  labGlassware: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/025e8ec13_laboratory-glassware-and-molecular-structure-sitti-2026-01-09-09-41-04-utc.jpg",
+  cosmeticsWooden: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/7e24c77e6_beautiful-composition-with-cosmetics-on-wooden-bac-2026-02-05-20-53-27-utc.jpg",
+  blankContainers: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/ad03a94a9_blank-cosmetic-skincare-makeup-containers-2026-01-07-00-38-06-utc.jpg",
+  serumBottles: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/71d10cfe3_bottles-with-serum-or-oil-2026-01-07-01-31-15-utc.jpg"
 };
 import { Zap, TestTube, Atom, ArrowRight, Brain,
   CheckCircle2, Home, Building2, Rocket, Leaf,
@@ -130,10 +133,10 @@ export default function HomePage() {
         
         {/* Decorative product images */}
         <div className="absolute top-20 left-0 w-32 h-32 opacity-10 pointer-events-none hidden lg:block">
-          <img src={PRODUCT_IMAGES.cosmeticJars} alt="" className="w-full h-full object-cover rounded-full" />
+          <img src={PRODUCT_IMAGES.cosmeticsWooden} alt="" className="w-full h-full object-cover rounded-full" />
         </div>
         <div className="absolute bottom-10 right-0 w-40 h-40 opacity-10 pointer-events-none hidden lg:block">
-          <img src={PRODUCT_IMAGES.serumTextures} alt="" className="w-full h-full object-cover rounded-full" />
+          <img src={PRODUCT_IMAGES.serumBottles} alt="" className="w-full h-full object-cover rounded-full" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20 sm:pb-28">

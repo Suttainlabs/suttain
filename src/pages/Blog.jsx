@@ -21,9 +21,8 @@ import { fetchMediumArticles } from '@/functions/fetchMediumArticles';
 const MEDIUM_URL = "https://medium.com/@suttainlabs";
 
 const BLOG_IMAGES = {
-  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg",
-  granola: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/e5dc59747_hand-holding-a-jar-of-granola-with-bright-colors-i-2026-01-08-08-20-47-utc.jpg",
-  serumTextures: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/b0c7eb1bf_demonstration-of-serum-textures-in-a-scientific-wa-2026-01-08-08-12-57-utc.jpg"
+  waffleTowels: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/7bb6cfd96_clean-waffle-towels-and-other-bath-products-on-woo-2026-01-11-10-51-01-utc.jpg",
+  amberBottles: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/f86502577_amber-glass-dropper-bottles-and-cream-jar-on-white-2026-01-07-06-29-24-utc.jpg"
 };
 
 // Fallback articles if Medium feed is empty
@@ -149,14 +148,14 @@ export default function Blog() {
         {/* Decorative background */}
         <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
           <img 
-            src={BLOG_IMAGES.serumTextures} 
+            src={BLOG_IMAGES.waffleTowels} 
             alt="" 
             className="w-full h-full object-cover"
           />
         </div>
         <div className="absolute bottom-0 left-0 w-40 h-40 opacity-10 pointer-events-none hidden lg:block">
           <img 
-            src={BLOG_IMAGES.granola} 
+            src={BLOG_IMAGES.amberBottles} 
             alt="" 
             className="w-full h-full object-cover rounded-full"
           />

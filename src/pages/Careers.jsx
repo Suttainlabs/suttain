@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { JobPosting } from '@/entities/JobPosting';
 import { motion } from 'framer-motion';
@@ -164,8 +163,17 @@ export default function CareersPage() {
       </section>
 
       {/* Why Join Suttain Section */}
-      <section className="py-16 sm:py-20 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-20 bg-white relative overflow-hidden">
+        {/* Decorative watermark */}
+        <div className="absolute bottom-0 right-0 w-64 h-64 opacity-5 pointer-events-none hidden lg:block">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/f816cfd98_children-demonstrating-their-palms-painted-with-wa-2026-01-07-06-00-23-utc.jpg"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="text-3xl font-bold text-center text-slate-900">Why Join Suttain?</h2>
           <p className="text-center mt-4 max-w-3xl mx-auto text-slate-600">
             We're not just building a product; we're building a movement towards a safer and more sustainable future. By joining us, you'll be part of a team that's making a real-world impact.

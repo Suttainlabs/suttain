@@ -64,8 +64,24 @@ export default function BookADemo() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-100 py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-100 py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Decorative watermarks */}
+      <div className="absolute top-20 left-0 w-48 h-48 opacity-5 pointer-events-none hidden lg:block">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/f86502577_amber-glass-dropper-bottles-and-cream-jar-on-white-2026-01-07-06-29-24-utc.jpg"
+          alt=""
+          className="w-full h-full object-cover rounded-full"
+        />
+      </div>
+      <div className="absolute bottom-20 right-0 w-52 h-52 opacity-5 pointer-events-none hidden lg:block">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/8fc040e63_bath-accessories-toilet-bag-for-different-self-ca-2026-01-09-07-49-49-utc.jpg"
+          alt=""
+          className="w-full h-full object-cover"
+        />
+      </div>
+      
+      <div className="max-w-xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

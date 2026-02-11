@@ -51,6 +51,7 @@ import AboutUs from './pages/AboutUs';
 import ActivityHistory from './pages/ActivityHistory';
 import AdminDashboard from './pages/AdminDashboard';
 import BarcodeScanner from './pages/BarcodeScanner';
+import Blog from './pages/Blog';
 import BookADemo from './pages/BookADemo';
 import BookDemo from './pages/BookDemo';
 import Careers from './pages/Careers';
@@ -78,7 +79,6 @@ import Simulator from './pages/Simulator';
 import Sustainability from './pages/Sustainability';
 import TermsOfService from './pages/TermsOfService';
 import generator from './pages/generator';
-import Blog from './pages/Blog';
 import __Layout from './Layout.jsx';
 
 
@@ -87,6 +87,7 @@ export const PAGES = {
     "ActivityHistory": ActivityHistory,
     "AdminDashboard": AdminDashboard,
     "BarcodeScanner": BarcodeScanner,
+    "Blog": Blog,
     "BookADemo": BookADemo,
     "BookDemo": BookDemo,
     "Careers": Careers,
@@ -114,7 +115,6 @@ export const PAGES = {
     "Sustainability": Sustainability,
     "TermsOfService": TermsOfService,
     "generator": generator,
-    "Blog": Blog,
 }
 
 export const pagesConfig = {

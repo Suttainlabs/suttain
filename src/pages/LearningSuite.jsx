@@ -9,8 +9,8 @@ import PersonalizedLearningPath from '../components/learning/PersonalizedLearnin
 import AuthContext from '../components/auth/AuthContext';
 
 const LEARNING_IMAGES = {
-  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg",
-  labGlassware: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/025e8ec13_laboratory-glassware-and-molecular-structure-sitti-2026-01-09-09-41-04-utc.jpg"
+  essentialOilSoap: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/82e0d0bab_adding-essential-oil-in-soap-base-2026-01-07-07-10-18-utc.jpg",
+  carbonEmissions: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/fd872eb60_carbon-emissions-to-limit-global-warming-and-clima-2026-01-05-23-25-04-utc.jpg"
 };
 
 export default function LearningSuite() {
@@ -22,14 +22,14 @@ export default function LearningSuite() {
       {/* Decorative watermark */}
       <div className="absolute bottom-0 left-0 w-80 h-80 opacity-5 pointer-events-none hidden lg:block">
         <img 
-          src={LEARNING_IMAGES.handsPlanting} 
+          src={LEARNING_IMAGES.essentialOilSoap} 
           alt="" 
           className="w-full h-full object-cover"
         />
       </div>
       <div className="absolute top-20 right-0 w-64 h-64 opacity-5 pointer-events-none hidden lg:block">
         <img 
-          src={LEARNING_IMAGES.labGlassware} 
+          src={LEARNING_IMAGES.carbonEmissions} 
           alt="" 
           className="w-full h-full object-cover rounded-full"
         />

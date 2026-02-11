@@ -69,14 +69,14 @@ export default function PersonalizedSafetyDashboard() {
       {/* Decorative watermarks */}
       <div className="absolute top-20 right-0 w-56 h-56 opacity-5 pointer-events-none hidden lg:block">
         <img 
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/2343edb55_a-fashionable-cosmetic-product-in-glass-matte-whit-2026-01-08-08-26-24-utc.jpg"
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/76fc85d0c_a-woman-holds-the-skincare-jar-for-beauty-wellne-2026-01-07-02-20-26-utc.jpg"
           alt=""
           className="w-full h-full object-cover"
         />
       </div>
       <div className="absolute bottom-10 left-0 w-48 h-48 opacity-5 pointer-events-none hidden lg:block">
         <img 
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/b7e910c95_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/aefe18831_clay-mask-on-pink-bakground-skincare-product-2026-01-08-05-38-14-utc.jpg"
           alt=""
           className="w-full h-full object-cover rounded-full"
         />

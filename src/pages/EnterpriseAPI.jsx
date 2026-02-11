@@ -12,8 +12,24 @@ export default function EnterpriseAPI() {
       featureName="Enterprise API Access"
       featureDescription="Integrate Suttain's data and tools into your enterprise systems."
     >
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 relative overflow-hidden">
+        {/* Decorative watermarks */}
+        <div className="absolute top-40 right-0 w-56 h-56 opacity-5 pointer-events-none hidden lg:block">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/dc994d8c7_closeup-shot-of-a-molecule-structure-on-a-lab-tabl-2026-01-07-23-07-24-utc.jpg"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute bottom-20 left-0 w-48 h-48 opacity-5 pointer-events-none hidden lg:block">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/fd872eb60_carbon-emissions-to-limit-global-warming-and-clima-2026-01-05-23-25-04-utc.jpg"
+            alt=""
+            className="w-full h-full object-cover rounded-full"
+          />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
           
           {/* Hero Section */}
           <motion.div

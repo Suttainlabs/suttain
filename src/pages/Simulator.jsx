@@ -886,10 +886,10 @@ export default function Simulator() {
             className="w-full h-full object-cover select-none"
           />
         </div>
-        {/* Serum textures watermark */}
+        {/* Molecule structure watermark */}
         <div className="absolute top-20 left-0 w-64 h-64 opacity-5 pointer-events-none hidden lg:block">
           <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/b0c7eb1bf_demonstration-of-serum-textures-in-a-scientific-wa-2026-01-08-08-12-57-utc.jpg"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/dc994d8c7_closeup-shot-of-a-molecule-structure-on-a-lab-tabl-2026-01-07-23-07-24-utc.jpg"
             alt=""
             className="w-full h-full object-cover select-none rounded-full"
           />
