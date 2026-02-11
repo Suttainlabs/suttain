@@ -1,5 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
+
+const SUSTAINABILITY_IMAGES = {
+  globeBicycle: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/9b1ee8422_globe-and-bicycle-save-the-planet-idea-internati-2026-01-08-02-40-42-utc.jpg"
+};
 import { ShieldCheck, PlusCircle, Bell, FileText, CheckCircle2, AlertTriangle, Sparkles, BookOpen, HelpCircle, Eye, Download, Settings, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
