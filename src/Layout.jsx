@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, CalendarCheck, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, CalendarCheck, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -171,7 +171,8 @@ export default function Layout({ children, currentPageName }) {
 
   const companyMenuItems = [
     { href: "AboutUs", label: "About Us", icon: Building2, description: "Learn about our mission and team" },
-    { href: "Careers", label: "Careers", icon: Briefcase, description: "View open positions and join us" }
+    { href: "Careers", label: "Careers", icon: Briefcase, description: "View open positions and join us" },
+    { href: "Blog", label: "Blog", icon: BookOpen, description: "Read our latest articles and insights" }
   ];
 
   const helpMenuItems = [
@@ -865,10 +866,11 @@ export default function Layout({ children, currentPageName }) {
                 <li><Link to={createPageUrl('AboutUs')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
                 <li><Link to={createPageUrl('FAQ')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Help & FAQ</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
-              </ul>
-            </div>
+                <li><Link to={createPageUrl('Blog')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
+                </ul>
+                </div>
 
-            {/* Column 3: Legal */}
+                {/* Column 3: Legal */}
             <div>
               <ul className="space-y-1.5 text-xs">
                 <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Privacy Policy</Link></li>

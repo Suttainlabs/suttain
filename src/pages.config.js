@@ -78,6 +78,7 @@ import Simulator from './pages/Simulator';
 import Sustainability from './pages/Sustainability';
 import TermsOfService from './pages/TermsOfService';
 import generator from './pages/generator';
+import Blog from './pages/Blog';
 import __Layout from './Layout.jsx';
 
 
@@ -113,6 +114,7 @@ export const PAGES = {
     "Sustainability": Sustainability,
     "TermsOfService": TermsOfService,
     "generator": generator,
+    "Blog": Blog,
 }
 
 export const pagesConfig = {
