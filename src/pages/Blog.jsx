@@ -20,6 +20,12 @@ import { fetchMediumArticles } from '@/functions/fetchMediumArticles';
 
 const MEDIUM_URL = "https://medium.com/@suttainlabs";
 
+const SUSTAINABILITY_IMAGES = {
+  earthDay: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/e46816a88_earth-day-environment-concept-and-eco-concept-2026-01-09-07-31-34-utc.jpg",
+  globeBicycle: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/9b1ee8422_globe-and-bicycle-save-the-planet-idea-internati-2026-01-08-02-40-42-utc.jpg",
+  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
+};
+
 // Fallback articles if Medium feed is empty
 const FALLBACK_ARTICLES = [
   {
@@ -139,8 +145,17 @@ export default function Blog() {
       />
 
       {/* Hero Section */}
-      <section className="relative py-16 px-4 bg-gradient-to-br from-[var(--suttain-teal)]/10 via-white to-[var(--suttain-violet)]/10">
-        <div className="max-w-6xl mx-auto text-center">
+      <section className="relative py-16 px-4 bg-gradient-to-br from-[var(--suttain-teal)]/10 via-white to-[var(--suttain-violet)]/10 overflow-hidden">
+        {/* Decorative background */}
+        <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
+          <img 
+            src={SUSTAINABILITY_IMAGES.handsPlanting} 
+            alt="" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="max-w-6xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

@@ -424,6 +424,14 @@ export default function Generator() {
           className="w-1/2 max-w-xl h-auto opacity-5 select-none"
         />
       </div>
+      {/* Sustainability corner watermark */}
+      <div className="absolute top-20 left-0 w-64 h-64 opacity-5 pointer-events-none">
+        <img
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/9b1ee8422_globe-and-bicycle-save-the-planet-idea-internati-2026-01-08-02-40-42-utc.jpg"
+          alt=""
+          className="w-full h-full object-cover select-none rounded-full"
+        />
+      </div>
 
       {/* Mode Indicator Badge - Top Right - Fixed Position */}
       {currentStep > 1 && (

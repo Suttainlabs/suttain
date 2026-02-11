@@ -5,8 +5,14 @@ import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Users, Target, ArrowRight, Eye } from 'lucide-react';
+import { Users, Target, ArrowRight, Eye, Leaf } from 'lucide-react';
 import SEOHead, { pageSEO } from '../components/shared/SEOHead';
+
+const SUSTAINABILITY_IMAGES = {
+  earthDay: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/e46816a88_earth-day-environment-concept-and-eco-concept-2026-01-09-07-31-34-utc.jpg",
+  globeBicycle: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/9b1ee8422_globe-and-bicycle-save-the-planet-idea-internati-2026-01-08-02-40-42-utc.jpg",
+  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
+};
 
 
 
@@ -16,11 +22,21 @@ const AboutUsPage = () => {
       <SEOHead {...pageSEO.about} />
       
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 text-center bg-white">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 text-center bg-white relative overflow-hidden">
+        {/* Decorative background */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <img 
+            src={SUSTAINABILITY_IMAGES.earthDay} 
+            alt="" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          className="relative z-10"
         >
           <Badge className="bg-green-100 text-green-700 border-green-200 text-sm px-4 py-2">
             Our Story
@@ -176,6 +192,72 @@ const AboutUsPage = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sustainability Vision Section */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-teal-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                <Leaf className="w-4 h-4" />
+                Our Commitment
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">
+                Sustainability is at Our Core
+              </h2>
+              <p className="text-slate-600 mb-6">
+                We believe that safer chemistry and sustainability go hand in hand. Every tool we build helps reduce environmental impact while ensuring product safety.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm font-bold">✓</span>
+                  </div>
+                  <p className="text-slate-600">Eco-scoring for every formula generated</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm font-bold">✓</span>
+                  </div>
+                  <p className="text-slate-600">Biodegradability analysis and recommendations</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm font-bold">✓</span>
+                  </div>
+                  <p className="text-slate-600">Green alternatives suggested automatically</p>
+                </div>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="grid grid-cols-2 gap-4"
+            >
+              <div className="rounded-2xl overflow-hidden shadow-xl">
+                <img 
+                  src={SUSTAINABILITY_IMAGES.globeBicycle} 
+                  alt="Sustainable future" 
+                  className="w-full h-40 object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="rounded-2xl overflow-hidden shadow-xl mt-8">
+                <img 
+                  src={SUSTAINABILITY_IMAGES.handsPlanting} 
+                  alt="Growing together" 
+                  className="w-full h-40 object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
