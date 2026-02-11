@@ -20,10 +20,10 @@ import { fetchMediumArticles } from '@/functions/fetchMediumArticles';
 
 const MEDIUM_URL = "https://medium.com/@suttainlabs";
 
-const SUSTAINABILITY_IMAGES = {
-  earthDay: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/e46816a88_earth-day-environment-concept-and-eco-concept-2026-01-09-07-31-34-utc.jpg",
-  globeBicycle: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/9b1ee8422_globe-and-bicycle-save-the-planet-idea-internati-2026-01-08-02-40-42-utc.jpg",
-  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
+const BLOG_IMAGES = {
+  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg",
+  granola: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/e5dc59747_hand-holding-a-jar-of-granola-with-bright-colors-i-2026-01-08-08-20-47-utc.jpg",
+  serumTextures: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/b0c7eb1bf_demonstration-of-serum-textures-in-a-scientific-wa-2026-01-08-08-12-57-utc.jpg"
 };
 
 // Fallback articles if Medium feed is empty
@@ -149,9 +149,16 @@ export default function Blog() {
         {/* Decorative background */}
         <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
           <img 
-            src={SUSTAINABILITY_IMAGES.handsPlanting} 
+            src={BLOG_IMAGES.serumTextures} 
             alt="" 
             className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 opacity-10 pointer-events-none hidden lg:block">
+          <img 
+            src={BLOG_IMAGES.granola} 
+            alt="" 
+            className="w-full h-full object-cover rounded-full"
           />
         </div>
         

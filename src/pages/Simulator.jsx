@@ -878,12 +878,20 @@ export default function Simulator() {
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(2,152,140,0.05)_50%,transparent_75%)] bg-[length:60px_60px)]"></div>
         </div>
-        {/* Sustainability watermark */}
+        {/* Lab glassware watermark */}
         <div className="absolute bottom-0 right-0 w-96 h-96 opacity-5 pointer-events-none">
           <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/e46816a88_earth-day-environment-concept-and-eco-concept-2026-01-09-07-31-34-utc.jpg"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/025e8ec13_laboratory-glassware-and-molecular-structure-sitti-2026-01-09-09-41-04-utc.jpg"
             alt=""
             className="w-full h-full object-cover select-none"
+          />
+        </div>
+        {/* Serum textures watermark */}
+        <div className="absolute top-20 left-0 w-64 h-64 opacity-5 pointer-events-none hidden lg:block">
+          <img
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/b0c7eb1bf_demonstration-of-serum-textures-in-a-scientific-wa-2026-01-08-08-12-57-utc.jpg"
+            alt=""
+            className="w-full h-full object-cover select-none rounded-full"
           />
         </div>
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">

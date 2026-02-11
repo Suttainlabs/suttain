@@ -7,6 +7,16 @@ const SUSTAINABILITY_IMAGES = {
   globeBicycle: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/9b1ee8422_globe-and-bicycle-save-the-planet-idea-internati-2026-01-08-02-40-42-utc.jpg",
   handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
 };
+
+// Product images
+const PRODUCT_IMAGES = {
+  cosmeticJars: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/2343edb55_a-fashionable-cosmetic-product-in-glass-matte-whit-2026-01-08-08-26-24-utc.jpg",
+  sunscreenBeach: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/24e9e62d3_colorful-sunscreen-bottles-arranged-on-sandy-beach-2026-01-08-06-02-42-utc.jpg",
+  serumTextures: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/b0c7eb1bf_demonstration-of-serum-textures-in-a-scientific-wa-2026-01-08-08-12-57-utc.jpg",
+  hairDyeKit: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/70a29c76f_hair-dye-kit-samples-of-different-colors-on-neut-2026-01-11-09-10-47-utc.jpg",
+  kidsSunscreen: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/ee1fe1c1c_kids-summer-accesories-and-sun-screen-bottle-for-s-2026-01-09-00-08-34-utc.jpg",
+  labGlassware: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/025e8ec13_laboratory-glassware-and-molecular-structure-sitti-2026-01-09-09-41-04-utc.jpg"
+};
 import { Zap, TestTube, Atom, ArrowRight, Brain,
   CheckCircle2, Home, Building2, Rocket, Leaf,
   QrCode, Play, ChevronRight, Clock,
@@ -117,6 +127,14 @@ export default function HomePage() {
       <section className="relative overflow-hidden">
         {/* Gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-white via-[#02988C]/5 to-[#9531F5]/10" />
+        
+        {/* Decorative product images */}
+        <div className="absolute top-20 left-0 w-32 h-32 opacity-10 pointer-events-none hidden lg:block">
+          <img src={PRODUCT_IMAGES.cosmeticJars} alt="" className="w-full h-full object-cover rounded-full" />
+        </div>
+        <div className="absolute bottom-10 right-0 w-40 h-40 opacity-10 pointer-events-none hidden lg:block">
+          <img src={PRODUCT_IMAGES.serumTextures} alt="" className="w-full h-full object-cover rounded-full" />
+        </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20 sm:pb-28">
           <div className="text-center max-w-4xl mx-auto">
@@ -204,8 +222,13 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 sm:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 sm:py-28 bg-white relative overflow-hidden">
+        {/* Decorative watermark */}
+        <div className="absolute top-0 right-0 w-64 h-64 opacity-5 pointer-events-none">
+          <img src={PRODUCT_IMAGES.labGlassware} alt="" className="w-full h-full object-cover" />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

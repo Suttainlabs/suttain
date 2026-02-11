@@ -7,7 +7,9 @@ import PremiumFeatureGate from '../components/shared/PremiumFeatureGate';
 const SUSTAINABILITY_IMAGES = {
   earthDay: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/e46816a88_earth-day-environment-concept-and-eco-concept-2026-01-09-07-31-34-utc.jpg",
   globeBicycle: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/9b1ee8422_globe-and-bicycle-save-the-planet-idea-internati-2026-01-08-02-40-42-utc.jpg",
-  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
+  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg",
+  sunscreenBeach: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/24e9e62d3_colorful-sunscreen-bottles-arranged-on-sandy-beach-2026-01-08-06-02-42-utc.jpg",
+  kidsSunscreen: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/ee1fe1c1c_kids-summer-accesories-and-sun-screen-bottle-for-s-2026-01-09-00-08-34-utc.jpg"
 };
 
 export default function Sustainability() {
@@ -85,8 +87,8 @@ export default function Sustainability() {
                 className="rounded-2xl overflow-hidden shadow-xl"
               >
                 <img 
-                  src={SUSTAINABILITY_IMAGES.earthDay} 
-                  alt="Earth Day" 
+                  src={SUSTAINABILITY_IMAGES.sunscreenBeach} 
+                  alt="Eco-friendly products" 
                   className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
                 />
               </motion.div>
@@ -97,8 +99,8 @@ export default function Sustainability() {
                 className="rounded-2xl overflow-hidden shadow-xl"
               >
                 <img 
-                  src={SUSTAINABILITY_IMAGES.globeBicycle} 
-                  alt="Sustainable transport" 
+                  src={SUSTAINABILITY_IMAGES.handsPlanting} 
+                  alt="Growing together" 
                   className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
                 />
               </motion.div>
@@ -109,8 +111,8 @@ export default function Sustainability() {
                 className="rounded-2xl overflow-hidden shadow-xl"
               >
                 <img 
-                  src={SUSTAINABILITY_IMAGES.handsPlanting} 
-                  alt="Growing together" 
+                  src={SUSTAINABILITY_IMAGES.kidsSunscreen} 
+                  alt="Safe products for all" 
                   className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
                 />
               </motion.div>
