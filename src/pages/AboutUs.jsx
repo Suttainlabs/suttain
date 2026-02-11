@@ -252,15 +252,15 @@ const AboutUsPage = () => {
             >
               <div className="rounded-2xl overflow-hidden shadow-xl">
                 <img 
-                  src={SUSTAINABILITY_IMAGES.globeBicycle} 
+                  src={SUSTAINABILITY_IMAGES.earthDay} 
                   alt="Sustainable future" 
                   className="w-full h-40 object-cover hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="rounded-2xl overflow-hidden shadow-xl mt-8">
                 <img 
-                  src={SUSTAINABILITY_IMAGES.handsPlanting} 
-                  alt="Growing together" 
+                  src={SUSTAINABILITY_IMAGES.cosmeticJars} 
+                  alt="Eco-friendly products" 
                   className="w-full h-40 object-cover hover:scale-105 transition-transform duration-500"
                 />
               </div>
