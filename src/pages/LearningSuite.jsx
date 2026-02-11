@@ -8,8 +8,9 @@ import KnowledgeBase from '../components/learning/KnowledgeBase';
 import PersonalizedLearningPath from '../components/learning/PersonalizedLearningPath';
 import AuthContext from '../components/auth/AuthContext';
 
-const SUSTAINABILITY_IMAGES = {
-  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
+const LEARNING_IMAGES = {
+  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg",
+  labGlassware: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/025e8ec13_laboratory-glassware-and-molecular-structure-sitti-2026-01-09-09-41-04-utc.jpg"
 };
 
 export default function LearningSuite() {
@@ -19,11 +20,18 @@ export default function LearningSuite() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Decorative watermark */}
-      <div className="absolute bottom-0 left-0 w-80 h-80 opacity-5 pointer-events-none">
+      <div className="absolute bottom-0 left-0 w-80 h-80 opacity-5 pointer-events-none hidden lg:block">
         <img 
-          src={SUSTAINABILITY_IMAGES.handsPlanting} 
+          src={LEARNING_IMAGES.handsPlanting} 
           alt="" 
           className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="absolute top-20 right-0 w-64 h-64 opacity-5 pointer-events-none hidden lg:block">
+        <img 
+          src={LEARNING_IMAGES.labGlassware} 
+          alt="" 
+          className="w-full h-full object-cover rounded-full"
         />
       </div>
       

@@ -11,7 +11,9 @@ import SEOHead, { pageSEO } from '../components/shared/SEOHead';
 const SUSTAINABILITY_IMAGES = {
   earthDay: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/e46816a88_earth-day-environment-concept-and-eco-concept-2026-01-09-07-31-34-utc.jpg",
   globeBicycle: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/9b1ee8422_globe-and-bicycle-save-the-planet-idea-internati-2026-01-08-02-40-42-utc.jpg",
-  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
+  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg",
+  labGlassware: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/025e8ec13_laboratory-glassware-and-molecular-structure-sitti-2026-01-09-09-41-04-utc.jpg",
+  cosmeticJars: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/2343edb55_a-fashionable-cosmetic-product-in-glass-matte-whit-2026-01-08-08-26-24-utc.jpg"
 };
 
 
@@ -79,8 +81,13 @@ const AboutUsPage = () => {
       </section>
       
       {/* Why Suttain Section */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white/70">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white/70 relative overflow-hidden">
+        {/* Decorative watermark */}
+        <div className="absolute bottom-0 right-0 w-64 h-64 opacity-5 pointer-events-none">
+          <img src={SUSTAINABILITY_IMAGES.labGlassware} alt="" className="w-full h-full object-cover" />
+        </div>
+        
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
               <Target className="w-4 h-4" />

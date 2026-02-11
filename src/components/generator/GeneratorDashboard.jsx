@@ -151,8 +151,24 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
         : 'bg-gradient-to-br from-violet-500 to-purple-600';
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-6xl mx-auto space-y-12">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+            {/* Decorative watermarks */}
+            <div className="absolute top-10 left-0 w-52 h-52 opacity-5 pointer-events-none hidden lg:block">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/b0c7eb1bf_demonstration-of-serum-textures-in-a-scientific-wa-2026-01-08-08-12-57-utc.jpg"
+                alt=""
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            <div className="absolute bottom-20 right-0 w-60 h-60 opacity-5 pointer-events-none hidden lg:block">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/70a29c76f_hair-dye-kit-samples-of-different-colors-on-neut-2026-01-11-09-10-47-utc.jpg"
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            <div className="max-w-6xl mx-auto space-y-12 relative z-10">
                 {/* Header */}
                 <div className="text-center space-y-3">
                     <motion.h1 

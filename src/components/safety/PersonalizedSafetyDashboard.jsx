@@ -65,8 +65,24 @@ export default function PersonalizedSafetyDashboard() {
   const totalFlagged = alerts.reduce((sum, alert) => sum + (alert.flagged_ingredients?.length || 0), 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 relative overflow-hidden">
+      {/* Decorative watermarks */}
+      <div className="absolute top-20 right-0 w-56 h-56 opacity-5 pointer-events-none hidden lg:block">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/2343edb55_a-fashionable-cosmetic-product-in-glass-matte-whit-2026-01-08-08-26-24-utc.jpg"
+          alt=""
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="absolute bottom-10 left-0 w-48 h-48 opacity-5 pointer-events-none hidden lg:block">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/b7e910c95_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
+          alt=""
+          className="w-full h-full object-cover rounded-full"
+        />
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         
         {/* Hero Header */}
         <motion.div
