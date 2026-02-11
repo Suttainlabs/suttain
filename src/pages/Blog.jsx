@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ExternalLink, BookOpen, Calendar, Clock, ArrowRight, 
-  X, Mail, Bell, Sparkles, ChevronRight
+  X, Mail, Bell, Sparkles, ChevronRight, Loader2, RefreshCw
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,11 +16,12 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import SEOHead from '@/components/shared/SEOHead';
+import { fetchMediumArticles } from '@/functions/fetchMediumArticles';
 
 const MEDIUM_URL = "https://medium.com/@suttainlabs";
 
-// Featured articles from Medium
-const FEATURED_ARTICLES = [
+// Fallback articles if Medium feed is empty
+const FALLBACK_ARTICLES = [
   {
     id: 1,
     title: "The Future of Sustainable Chemical Formulation",
@@ -29,7 +30,7 @@ const FEATURED_ARTICLES = [
     readTime: "5 min read",
     date: "Feb 10, 2026",
     image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&h=400&fit=crop",
-    mediumUrl: MEDIUM_URL
+    link: MEDIUM_URL
   },
   {
     id: 2,
@@ -39,7 +40,7 @@ const FEATURED_ARTICLES = [
     readTime: "7 min read",
     date: "Feb 5, 2026",
     image: "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&h=400&fit=crop",
-    mediumUrl: MEDIUM_URL
+    link: MEDIUM_URL
   },
   {
     id: 3,
@@ -49,41 +50,9 @@ const FEATURED_ARTICLES = [
     readTime: "6 min read",
     date: "Jan 28, 2026",
     image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&h=400&fit=crop",
-    mediumUrl: MEDIUM_URL
-  },
-  {
-    id: 4,
-    title: "Regulatory Compliance: A Guide for Small Businesses",
-    excerpt: "Navigate the complex world of cosmetic and cleaning product regulations with our simplified breakdown.",
-    category: "Compliance",
-    readTime: "8 min read",
-    date: "Jan 20, 2026",
-    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&h=400&fit=crop",
-    mediumUrl: MEDIUM_URL
-  },
-  {
-    id: 5,
-    title: "Green Chemistry: Principles for a Cleaner Future",
-    excerpt: "Discover how green chemistry principles are shaping the next generation of consumer products.",
-    category: "Sustainability",
-    readTime: "4 min read",
-    date: "Jan 15, 2026",
-    image: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=600&h=400&fit=crop",
-    mediumUrl: MEDIUM_URL
-  },
-  {
-    id: 6,
-    title: "Ingredient Spotlight: Natural Preservatives",
-    excerpt: "Exploring effective natural alternatives to synthetic preservatives in cosmetic formulations.",
-    category: "Ingredients",
-    readTime: "5 min read",
-    date: "Jan 8, 2026",
-    image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&h=400&fit=crop",
-    mediumUrl: MEDIUM_URL
+    link: MEDIUM_URL
   }
 ];
-
-const CATEGORIES = ["All", "Sustainability", "Safety", "DIY", "Compliance", "Ingredients"];
 
 export default function Blog() {
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
@@ -91,6 +60,35 @@ export default function Blog() {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [articles, setArticles] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [categories, setCategories] = useState(["All"]);
+
+  // Fetch articles from Medium
+  useEffect(() => {
+    const loadArticles = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetchMediumArticles({});
+        if (response.data?.articles && response.data.articles.length > 0) {
+          setArticles(response.data.articles);
+          // Extract unique categories
+          const uniqueCategories = ["All", ...new Set(response.data.articles.map(a => a.category).filter(Boolean))];
+          setCategories(uniqueCategories);
+        } else {
+          setArticles(FALLBACK_ARTICLES);
+          setCategories(["All", "Sustainability", "Safety", "DIY"]);
+        }
+      } catch (error) {
+        console.error("Error loading articles:", error);
+        setArticles(FALLBACK_ARTICLES);
+        setCategories(["All", "Sustainability", "Safety", "DIY"]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadArticles();
+  }, []);
 
   // Show popup after 5 seconds
   useEffect(() => {
@@ -122,8 +120,8 @@ export default function Blog() {
   };
 
   const filteredArticles = selectedCategory === "All" 
-    ? FEATURED_ARTICLES 
-    : FEATURED_ARTICLES.filter(a => a.category === selectedCategory);
+    ? articles 
+    : articles.filter(a => a.category === selectedCategory);
 
   const categoryColors = {
     Sustainability: "bg-green-100 text-green-700",
@@ -174,7 +172,7 @@ export default function Blog() {
       <section className="py-6 px-4 border-b border-slate-200 sticky top-16 bg-white/80 backdrop-blur-md z-40">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
@@ -194,6 +192,27 @@ export default function Blog() {
       {/* Articles Grid */}
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="w-10 h-10 text-[var(--suttain-teal)] animate-spin mb-4" />
+              <p className="text-slate-500">Loading articles...</p>
+            </div>
+          ) : filteredArticles.length === 0 ? (
+            <div className="text-center py-20">
+              <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-slate-700 mb-2">No articles yet</h3>
+              <p className="text-slate-500 mb-4">Check back soon for new content!</p>
+              <a 
+                href={MEDIUM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[var(--suttain-teal)] font-medium hover:underline"
+              >
+                Follow us on Medium
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+          ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredArticles.map((article, index) => (
               <motion.div
@@ -203,21 +222,28 @@ export default function Blog() {
                 transition={{ delay: index * 0.1 }}
               >
                 <a 
-                  href={article.mediumUrl}
+                  href={article.link || MEDIUM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block group"
                 >
                   <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-slate-200 h-full">
-                    <div className="relative h-48 overflow-hidden">
-                      <img 
-                        src={article.image} 
-                        alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
+                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                      {article.image ? (
+                        <img 
+                          src={article.image} 
+                          alt={article.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <BookOpen className="w-12 h-12 text-slate-300" />
+                        </div>
+                      )}
                       <div className="absolute top-3 left-3">
-                        <Badge className={categoryColors[article.category]}>
-                          {article.category}
+                        <Badge className={categoryColors[article.category] || "bg-slate-100 text-slate-700"}>
+                          {article.category || "General"}
                         </Badge>
                       </div>
                     </div>
@@ -248,6 +274,7 @@ export default function Blog() {
               </motion.div>
             ))}
           </div>
+          )}
 
           {/* View More on Medium */}
           <div className="text-center mt-12">
