@@ -12,7 +12,7 @@ import {
   Droplets, Clock, BrainCircuit, History, Save, Loader2, MessageSquare, Star, X,
   Menu, Printer, Search,
   Calculator,
-  Leaf // Added Leaf icon for sustainability tab
+  Leaf, Sparkles // Added icons
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -50,6 +50,7 @@ import FormulaAssistant from "./FormulaAssistant";
 import FormulaOptimizer from "./FormulaOptimizer";
 import AISuggestionsPanel from "./AISuggestionsPanel";
 import { useDebounce } from "../shared/useDebounce";
+import IngredientBrowser from "../ingredients/IngredientBrowser";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -165,6 +166,7 @@ export default function FormulaEditor({
   const [isSaving, setIsSaving] = useState(false); // New state for explicit saving status
   const [showFeedbackNotification, setShowFeedbackNotification] = useState(false); // New state for feedback notification
   const [showRatingModal, setShowRatingModal] = useState(false); // Existing state for rating modal
+  const [showIngredientBrowser, setShowIngredientBrowser] = useState(false); // Ingredient browser modal
 
   // NEW: Ingredient search states
   const [ingredientSearchTerm, setIngredientSearchTerm] = useState("");
@@ -759,15 +761,25 @@ export default function FormulaEditor({
 
                   {/* Ingredient Search */}
                   <div className="relative" ref={ingredientSearchRef}>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <Input
-                        placeholder="Search to add ingredients..."
-                        value={ingredientSearchTerm}
-                        onChange={(e) => setIngredientSearchTerm(e.target.value)}
-                        className="pl-10 h-11"
-                      />
-                      {isSearchingIngredients && <Loader2 className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${modeColors.loaderIcon} animate-spin`} />}
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Input
+                          placeholder="Search to add ingredients..."
+                          value={ingredientSearchTerm}
+                          onChange={(e) => setIngredientSearchTerm(e.target.value)}
+                          className="pl-10 h-11"
+                        />
+                        {isSearchingIngredients && <Loader2 className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${modeColors.loaderIcon} animate-spin`} />}
+                      </div>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowIngredientBrowser(true)}
+                        className="h-11 px-4"
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Browse
+                      </Button>
                     </div>
                     
                     <AnimatePresence>
@@ -1189,6 +1201,21 @@ export default function FormulaEditor({
           />
         )}
       </Suspense>
+
+      {/* Ingredient Browser Modal */}
+      <IngredientBrowser
+        isOpen={showIngredientBrowser}
+        onClose={() => setShowIngredientBrowser(false)}
+        productType={productType}
+        currentIngredients={formula.ingredients}
+        onSelectIngredient={(newIng) => {
+          setFormula(prev => ({
+            ...prev,
+            ingredients: [...prev.ingredients, newIng]
+          }));
+          setShowIngredientBrowser(false);
+        }}
+      />
     </div>
   );
 }
