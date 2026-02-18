@@ -51,6 +51,9 @@ import FormulaOptimizer from "./FormulaOptimizer";
 import AISuggestionsPanel from "./AISuggestionsPanel";
 import { useDebounce } from "../shared/useDebounce";
 import IngredientBrowser from "../ingredients/IngredientBrowser";
+import IngredientInteractionAnalyzer from "./IngredientInteractionAnalyzer";
+import IngredientSustainabilityScore from "./IngredientSustainabilityScore";
+import HazardAlternativesPanel from "./HazardAlternativesPanel";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -1039,6 +1042,22 @@ export default function FormulaEditor({
                 </TabsContent>
 
                 <TabsContent value="safety" className="mt-0 space-y-6">
+                  {/* Ingredient Interactions */}
+                  <IngredientInteractionAnalyzer 
+                    ingredients={formula.ingredients} 
+                    productType={productType}
+                  />
+
+                  {/* Hazard Alternatives */}
+                  <HazardAlternativesPanel
+                    ingredients={formula.ingredients}
+                    onReplaceIngredient={(index, newIngredient) => {
+                      const newIngredients = [...formula.ingredients];
+                      newIngredients[index] = newIngredient;
+                      setFormula(prev => ({ ...prev, ingredients: newIngredients }));
+                    }}
+                  />
+
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <Card className="border-2 border-emerald-200">
                       <CardHeader className="p-4">
@@ -1099,7 +1118,11 @@ export default function FormulaEditor({
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="sustainability" className="mt-0">
+                <TabsContent value="sustainability" className="mt-0 space-y-6">
+                  {/* Individual Ingredient Sustainability */}
+                  <IngredientSustainabilityScore ingredients={formula.ingredients} />
+                  
+                  {/* Overall Formula Sustainability */}
                   <Suspense fallback={<div className="flex items-center justify-center p-4"><Loader2 className="w-6 h-6 animate-spin mr-2"/>Loading sustainability insights...</div>}>
                     <SustainabilityAnalyzer formula={formula} />
                   </Suspense>
