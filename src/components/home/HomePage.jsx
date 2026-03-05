@@ -159,7 +159,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-lg sm:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed"
             >
-              Test chemical safety, generate professional formulas, and build sustainable products — all from your browser.
+              <span className="font-semibold text-slate-700">No chemistry degree needed.</span> Just tell us what results you want — moisturizing, anti-aging, acne-fighting — and we'll generate professional formulas for you.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -357,6 +357,95 @@ export default function HomePage() {
                 />
               </motion.div>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Zero Experience Needed Section */}
+      <section className="py-20 sm:py-28 bg-gradient-to-br from-purple-50 via-white to-blue-50 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+              <Brain className="w-4 h-4" />
+              For Complete Beginners
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              "I Know Nothing About Formulation" — Perfect! 🎉
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Want to start a skincare brand but have no idea what ingredients to use? Just tell us what results you want, and our AI does the rest.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100"
+            >
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 text-2xl">
+                1️⃣
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Tell Us Your Goal</h3>
+              <p className="text-slate-600 text-sm">
+                "I want an anti-aging serum" or "I need a moisturizer for oily skin" — just describe what you want to create.
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-white rounded-2xl p-6 shadow-lg border border-blue-100"
+            >
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 text-2xl">
+                2️⃣
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">AI Generates Your Formula</h3>
+              <p className="text-slate-600 text-sm">
+                We create a complete formula with exact percentages, ingredient list, and step-by-step manufacturing instructions.
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-2xl p-6 shadow-lg border border-teal-100"
+            >
+              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4 text-2xl">
+                3️⃣
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Start Your Brand</h3>
+              <p className="text-slate-600 text-sm">
+                Get compliance checks, sustainability scores, and everything you need to launch your product line with confidence.
+              </p>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <Link to={createPageUrl("generator")}>
+              <Button size="lg" className="bg-[#9531F5] hover:bg-[#8025e0] text-white px-8 py-4 text-base rounded-full font-semibold shadow-lg">
+                <Atom className="w-5 h-5 mr-2" />
+                Create My First Formula
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+            <p className="text-sm text-slate-500 mt-4">No chemistry knowledge required • Takes 2 minutes</p>
           </motion.div>
         </div>
       </section>
