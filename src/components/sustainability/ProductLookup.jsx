@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Loader2, QrCode, Clock } from "lucide-react";
+import { Search, Loader2, Clock, AlertCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const CATEGORIES = [
@@ -20,10 +20,12 @@ export default function ProductLookup({ onAnalyze, recentSearches }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleAnalyze = async () => {
     if (!query.trim()) return;
     setIsAnalyzing(true);
+    setError(null);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Analyze the sustainability of this product: "${query}" (category: ${category}).
@@ -42,6 +44,8 @@ Also provide:
 - Key reasons explaining the score
 - 3 greener alternative products with their scores, why they're better, score improvement, and any certifications
 - Specific improvement suggestions with percentage impact on score`,
+        add_context_from_internet: true,
+        model: "gemini_3_flash",
         response_json_schema: {
           type: "object",
           properties: {
@@ -88,8 +92,9 @@ Also provide:
         }
       });
       onAnalyze(result);
-    } catch (error) {
-      console.error("Sustainability analysis failed:", error);
+    } catch (err) {
+      console.error("Sustainability analysis failed:", err);
+      setError("Analysis failed. Please try again with a more specific product name.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -124,6 +129,22 @@ Also provide:
           Analyze
         </Button>
       </div>
+
+      {/* Error */}
+      {error && (
+        <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          {error}
+        </div>
+      )}
+
+      {/* Loading state */}
+      {isAnalyzing && (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-6 h-6 animate-spin text-[#02988C] mr-3" />
+          <span className="text-slate-600">Analyzing sustainability data...</span>
+        </div>
+      )}
 
       {/* Recent Searches */}
       {recentSearches?.length > 0 && (
