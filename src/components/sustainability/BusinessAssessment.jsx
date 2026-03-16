@@ -43,6 +43,8 @@ Provide:
 - Specific ingredient/packaging swaps with % score impact
 - 3 greener product alternatives
 - Industry average comparison`,
+        add_context_from_internet: true,
+        model: "gemini_3_flash",
         response_json_schema: {
           type: "object",
           properties: {
