@@ -577,7 +577,7 @@ export default function Generator() {
               />
             )}
 
-            {/* Step 2: Product Type Catalog */
+            {/* Step 2: Product Type Catalog */}
             {currentStep === 2 && (
               <ProductTypeCatalog
                 businessMode={businessMode}
