@@ -9,6 +9,7 @@ import {
   FlaskConical, FileText, BarChart2, Clock
 } from 'lucide-react';
 import LoadFormulaModal from './LoadFormulaModal';
+import { Wand2 } from 'lucide-react';
 
 const ModeCard = ({ icon: Icon, title, description, features, isActive, onSelect, colorClass }) => (
     <motion.div
@@ -234,6 +235,36 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
                             text: 'text-violet-600'
                         }}
                     />
+                </motion.div>
+
+                {/* Smart Start - Beginner CTA */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25 }}
+                >
+                    <button
+                        onClick={() => onModeSelect('smart_start')}
+                        className="w-full p-6 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-400 to-pink-400 text-left shadow-lg hover:shadow-xl transition-all duration-300 group"
+                    >
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="w-14 h-14 bg-white/25 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                                    <Wand2 className="w-7 h-7 text-white" />
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h3 className="text-xl font-bold text-white">I'm New — Help Me Start!</h3>
+                                        <Badge className="bg-white/25 text-white border-0 text-xs">Recommended</Badge>
+                                    </div>
+                                    <p className="text-white/90 text-sm max-w-lg">
+                                        No chemistry knowledge needed! Answer a few simple questions and we'll create the perfect formula for you.
+                                    </p>
+                                </div>
+                            </div>
+                            <ArrowRight className="w-6 h-6 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0" />
+                        </div>
+                    </button>
                 </motion.div>
 
                 {/* Action Cards */}

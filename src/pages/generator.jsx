@@ -12,6 +12,7 @@ import ProductTypeCatalog from "../components/generator/ProductTypeCatalog";
 import ProductDescriptionStep from "../components/generator/ProductDescriptionStep";
 import FormulaOptionsStep from "../components/generator/FormulaOptionsStep";
 import FormulaEditor from "../components/generator/FormulaEditor";
+import SmartStartWizard from "../components/generator/SmartStartWizard";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
 
 export default function Generator() {
@@ -27,6 +28,7 @@ export default function Generator() {
   const [selectedFormula, setSelectedFormula] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPointsNotification, setShowPointsNotification] = useState(false);
+  const [showSmartStart, setShowSmartStart] = useState(false);
 
   const awardPoints = async (points, reason) => {
     try {
@@ -51,8 +53,22 @@ export default function Generator() {
   };
 
   const handleModeSelected = (mode) => {
+    if (mode === 'smart_start') {
+      setShowSmartStart(true);
+      return;
+    }
     setBusinessMode(mode === 'business');
     setCurrentStep(2);
+  };
+
+  const handleSmartStartComplete = ({ productType, description, businessMode: isBusiness }) => {
+    setShowSmartStart(false);
+    setBusinessMode(isBusiness);
+    setSelectedProductType(productType);
+    setProductDescription(description);
+    setCurrentStep(3);
+    // Auto-trigger generation with the built description
+    handleGenerateOptions(description, productType, isBusiness);
   };
 
   const handleProductTypeSelected = (product) => {
@@ -60,18 +76,20 @@ export default function Generator() {
     setCurrentStep(3);
   };
 
-  const handleGenerateOptions = async (description) => {
+  const handleGenerateOptions = async (description, productTypeOverride, businessModeOverride) => {
     setProductDescription(description);
     setIsGenerating(true);
+    const activeProductType = productTypeOverride || selectedProductType;
+    const isBusinessMode = businessModeOverride !== undefined ? businessModeOverride : businessMode;
 
     try {
       let prompt;
 
-      if (businessMode) {
+      if (isBusinessMode) {
         // BUSINESS MODE - Professional, regulatory-focused, scalable
         prompt = `You are a senior cosmetic formulation chemist with 20+ years experience in commercial product development.
 
-  PRODUCT REQUEST: "${selectedProductType.name}" - "${description}"
+  PRODUCT REQUEST: "${activeProductType.name}" - "${description}"
 
   MODE: COMMERCIAL/BUSINESS FORMULATION
   This formula will be manufactured at scale and sold commercially. All requirements must meet industry standards.
@@ -110,7 +128,7 @@ export default function Generator() {
         // INDIVIDUAL MODE - Simple, beginner-friendly, home-made
         prompt = `You are a friendly DIY cosmetics teacher helping a beginner make their first homemade product.
 
-  PRODUCT REQUEST: "${selectedProductType.name}" - "${description}"
+  PRODUCT REQUEST: "${activeProductType.name}" - "${description}"
 
   MODE: HOME/DIY FORMULATION
   This is for personal use, made in a home kitchen with easily available ingredients.
@@ -400,6 +418,7 @@ export default function Generator() {
     setProductDescription('');
     setFormulaOptions([]);
     setSelectedFormula(null);
+    setShowSmartStart(false);
     navigate(createPageUrl('generator'), { replace: true });
   };
 
@@ -538,12 +557,19 @@ export default function Generator() {
               </motion.div>
             )}
 
+            {/* Smart Start Wizard */}
+            {showSmartStart && (
+              <SmartStartWizard
+                onComplete={handleSmartStartComplete}
+                onBack={() => setShowSmartStart(false)}
+              />
+            )}
+
             {/* Step 1: Dashboard */}
-            {currentStep === 1 && (
+            {currentStep === 1 && !showSmartStart && (
               <GeneratorDashboard
                 onModeSelect={handleModeSelected}
                 onFormulaSelect={(formula) => {
-                  // Handle loading existing formula
                   setBusinessMode(formula.is_business_mode);
                   setSelectedFormula(formula.full_recipe_data || formula);
                   setCurrentStep(5);
@@ -551,7 +577,7 @@ export default function Generator() {
               />
             )}
 
-            {/* Step 2: Product Type Catalog */}
+            {/* Step 2: Product Type Catalog */
             {currentStep === 2 && (
               <ProductTypeCatalog
                 businessMode={businessMode}
