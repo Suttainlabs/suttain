@@ -16,16 +16,16 @@ const STEPS = [
     question: "What do you want to make?",
     subtitle: "Select a product category to get started",
     options: [
-      { id: "face_cream", label: "Face Cream / Moisturizer", icon: Heart, desc: "Hydrating creams, serums, lotions" },
-      { id: "cleanser", label: "Face Cleanser / Wash", icon: Droplets, desc: "Gentle cleansers, micellar waters" },
-      { id: "sunscreen", label: "Sunscreen / SPF", icon: Sun, desc: "Sun protection products" },
-      { id: "body_lotion", label: "Body Lotion / Butter", icon: Sparkles, desc: "Rich body moisturizers" },
-      { id: "lip_balm", label: "Lip Balm / Lip Care", icon: Flower2, desc: "Lip balms, glosses, treatments" },
-      { id: "hair_care", label: "Hair Care", icon: Scissors, desc: "Shampoo, conditioner, hair masks" },
-      { id: "soap", label: "Soap / Body Wash", icon: Bath, desc: "Bar soaps, liquid soaps, body washes" },
-      { id: "baby_care", label: "Baby / Kids Products", icon: Baby, desc: "Ultra-gentle baby-safe products" },
-      { id: "cleaning", label: "Household Cleaning", icon: Home, desc: "Cleaners, sprays, detergents" },
-      { id: "other", label: "Something Else", icon: Wand2, desc: "Describe what you need" },
+      { id: "face_cream", label: "Face Cream / Moisturizer", icon: Heart, desc: "Hydrating creams, serums, lotions", color: "bg-rose-50 text-rose-600" },
+      { id: "cleanser", label: "Face Cleanser / Wash", icon: Droplets, desc: "Gentle cleansers, micellar waters", color: "bg-sky-50 text-sky-600" },
+      { id: "sunscreen", label: "Sunscreen / SPF", icon: Sun, desc: "Sun protection products", color: "bg-amber-50 text-amber-600" },
+      { id: "body_lotion", label: "Body Lotion / Butter", icon: Sparkles, desc: "Rich body moisturizers", color: "bg-violet-50 text-violet-600" },
+      { id: "lip_balm", label: "Lip Balm / Lip Care", icon: Flower2, desc: "Lip balms, glosses, treatments", color: "bg-pink-50 text-pink-600" },
+      { id: "hair_care", label: "Hair Care", icon: Scissors, desc: "Shampoo, conditioner, hair masks", color: "bg-emerald-50 text-emerald-600" },
+      { id: "soap", label: "Soap / Body Wash", icon: Bath, desc: "Bar soaps, liquid soaps, body washes", color: "bg-cyan-50 text-cyan-600" },
+      { id: "baby_care", label: "Baby / Kids Products", icon: Baby, desc: "Ultra-gentle baby-safe products", color: "bg-orange-50 text-orange-600" },
+      { id: "cleaning", label: "Household Cleaning", icon: Home, desc: "Cleaners, sprays, detergents", color: "bg-teal-50 text-teal-600" },
+      { id: "other", label: "Something Else", icon: Wand2, desc: "Describe what you need", color: "bg-slate-100 text-slate-600" },
     ]
   },
   {
@@ -300,9 +300,19 @@ export default function SmartStartWizard({ onComplete, onBack }) {
                   >
                     <div className="flex items-start gap-3">
                       <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        isSelected ? "bg-slate-700" : "bg-slate-100"
+                        isSelected 
+                          ? "bg-slate-700" 
+                          : option.color 
+                            ? option.color.split(" ")[0] 
+                            : "bg-slate-100"
                       }`}>
-                        <Icon className={`w-4 h-4 ${isSelected ? "text-white" : "text-slate-600"}`} />
+                        <Icon className={`w-4 h-4 ${
+                          isSelected 
+                            ? "text-white" 
+                            : option.color 
+                              ? option.color.split(" ")[1] 
+                              : "text-slate-600"
+                        }`} />
                       </div>
                       <div className="min-w-0">
                         <p className={`font-semibold text-sm ${isSelected ? "text-slate-900" : "text-slate-800"}`}>
