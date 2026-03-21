@@ -4,12 +4,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { HeartPulse, Plus, Shield, Activity, TrendingUp, AlertTriangle, UserPlus } from 'lucide-react';
+import { HeartPulse, Plus, Shield, Activity, TrendingUp, AlertTriangle, UserPlus, ArrowRight } from 'lucide-react';
 import ProfileSetupModal from './ProfileSetupModal';
 import ProfileCard from './ProfileCard';
 import AlertsHistory from './AlertsHistory';
 import SafetyInsights from './SafetyInsights';
 import SafetyAlertDemo from './SafetyAlertDemo';
+
+const StatCard = ({ icon: Icon, label, value, iconBg, iconColor }) => (
+  <Card className="border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+    <CardContent className="p-5">
+      <div className={`w-10 h-10 ${iconBg} rounded-xl flex items-center justify-center mb-4`}>
+        <Icon className={`w-5 h-5 ${iconColor}`} />
+      </div>
+      <p className="text-sm text-slate-500 font-medium">{label}</p>
+      <p className="text-3xl font-bold text-slate-900 mt-1">{value}</p>
+    </CardContent>
+  </Card>
+);
 
 export default function PersonalizedSafetyDashboard() {
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -59,193 +71,119 @@ export default function PersonalizedSafetyDashboard() {
     refetchProfiles();
   };
 
-  // Calculate stats
   const criticalAlerts = alerts.filter(a => a.severity === 'critical').length;
-  const highAlerts = alerts.filter(a => a.severity === 'high').length;
   const totalFlagged = alerts.reduce((sum, alert) => sum + (alert.flagged_ingredients?.length || 0), 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 relative overflow-hidden">
-      {/* Decorative watermarks */}
-      <div className="absolute top-20 right-0 w-56 h-56 opacity-5 pointer-events-none hidden lg:block">
-        <img 
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/76fc85d0c_a-woman-holds-the-skincare-jar-for-beauty-wellne-2026-01-07-02-20-26-utc.jpg"
-          alt=""
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <div className="absolute bottom-10 left-0 w-48 h-48 opacity-5 pointer-events-none hidden lg:block">
-        <img 
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/aefe18831_clay-mask-on-pink-bakground-skincare-product-2026-01-08-05-38-14-utc.jpg"
-          alt=""
-          className="w-full h-full object-cover rounded-full"
-        />
-      </div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         
-        {/* Hero Header */}
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 relative overflow-hidden"
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 via-pink-500/5 to-purple-500/5 rounded-3xl"></div>
-          <div className="relative p-8 sm:p-10">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-500/30">
-                  <HeartPulse className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                    Safety Profiles
-                  </h1>
-                  <p className="text-slate-600 text-lg">
-                    Your personalized health guardian
-                  </p>
-                </div>
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
+                <HeartPulse className="w-5 h-5 text-white" />
               </div>
-              <Button 
-                onClick={handleCreateProfile}
-                className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 px-6 py-6 text-base"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                New Profile
-              </Button>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                Safety Profiles
+              </h1>
             </div>
+            <p className="text-slate-500 mt-1 ml-[52px]">
+              Personalized health monitoring and ingredient alerts
+            </p>
           </div>
+          <Button 
+            onClick={handleCreateProfile}
+            className="bg-slate-900 hover:bg-slate-800 text-white px-5"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Profile
+          </Button>
         </motion.div>
 
-        {/* Stats Overview - Redesigned */}
+        {/* Stats Grid */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8"
+          transition={{ delay: 0.05 }}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10"
         >
-          <motion.div
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            className="group"
-          >
-            <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-cyan-50 overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-200/30 rounded-full -mr-8 -mt-8"></div>
-              <CardContent className="p-5 sm:p-6 relative">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
-                    <UserPlus className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-                <p className="text-xs sm:text-sm text-blue-700 font-medium mb-1">Active Profiles</p>
-                <p className="text-3xl sm:text-4xl font-bold text-blue-900">{profiles.length}</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            className="group"
-          >
-            <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-amber-50 to-orange-50 overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-200/30 rounded-full -mr-8 -mt-8"></div>
-              <CardContent className="p-5 sm:p-6 relative">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
-                    <Activity className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-                <p className="text-xs sm:text-sm text-amber-700 font-medium mb-1">Total Alerts</p>
-                <p className="text-3xl sm:text-4xl font-bold text-amber-900">{alerts.length}</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            className="group"
-          >
-            <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-red-50 to-rose-50 overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-red-200/30 rounded-full -mr-8 -mt-8"></div>
-              <CardContent className="p-5 sm:p-6 relative">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform">
-                    <AlertTriangle className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-                <p className="text-xs sm:text-sm text-red-700 font-medium mb-1">Critical Alerts</p>
-                <p className="text-3xl sm:text-4xl font-bold text-red-900">{criticalAlerts}</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            className="group"
-          >
-            <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-purple-50 to-pink-50 overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-200/30 rounded-full -mr-8 -mt-8"></div>
-              <CardContent className="p-5 sm:p-6 relative">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform">
-                    <TrendingUp className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-                <p className="text-xs sm:text-sm text-purple-700 font-medium mb-1">Ingredients Flagged</p>
-                <p className="text-3xl sm:text-4xl font-bold text-purple-900">{totalFlagged}</p>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <StatCard 
+            icon={UserPlus} 
+            label="Active Profiles" 
+            value={profiles.length}
+            iconBg="bg-blue-50"
+            iconColor="text-blue-600"
+          />
+          <StatCard 
+            icon={Activity} 
+            label="Total Alerts" 
+            value={alerts.length}
+            iconBg="bg-amber-50"
+            iconColor="text-amber-600"
+          />
+          <StatCard 
+            icon={AlertTriangle} 
+            label="Critical Alerts" 
+            value={criticalAlerts}
+            iconBg="bg-red-50"
+            iconColor="text-red-600"
+          />
+          <StatCard 
+            icon={TrendingUp} 
+            label="Ingredients Flagged" 
+            value={totalFlagged}
+            iconBg="bg-violet-50"
+            iconColor="text-violet-600"
+          />
         </motion.div>
 
-        {/* Main Content Grid */}
+        {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Left Column - Profiles */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Active Profiles */}
+          {/* Left Column — Profiles */}
+          <div className="lg:col-span-2 space-y-8">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl flex items-center justify-center shadow-md">
-                  <Shield className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Your Safety Profiles
-                </h2>
-              </div>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">
+                Your Profiles
+              </h2>
 
               {profiles.length === 0 ? (
-                <Card className="border-0 shadow-xl bg-gradient-to-br from-white via-rose-50/30 to-pink-50/30 overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-rose-100/20 to-pink-100/20 opacity-50"></div>
-                  <CardContent className="p-12 sm:p-16 text-center relative">
-                    <div className="w-20 h-20 bg-gradient-to-br from-rose-500 to-pink-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-rose-500/30">
-                      <UserPlus className="w-10 h-10 text-white" />
+                <Card className="border border-dashed border-slate-300 shadow-none">
+                  <CardContent className="p-10 sm:p-14 text-center">
+                    <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                      <UserPlus className="w-7 h-7 text-slate-400" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-3">No Profiles Yet</h3>
-                    <p className="text-slate-600 text-lg mb-8 max-w-md mx-auto">
-                      Create your first safety profile to start receiving personalized alerts about products that may affect your health
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">No profiles yet</h3>
+                    <p className="text-slate-500 mb-6 max-w-sm mx-auto">
+                      Create a safety profile to receive personalized alerts about ingredients that may affect your health.
                     </p>
                     <Button 
                       onClick={handleCreateProfile}
-                      className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 px-8 py-6 text-lg"
+                      className="bg-slate-900 hover:bg-slate-800 text-white px-6"
                     >
-                      <Plus className="w-5 h-5 mr-2" />
-                      Create Your First Profile
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create First Profile
                     </Button>
                   </CardContent>
                 </Card>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {profiles.map((profile, idx) => (
                     <motion.div
                       key={profile.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * idx }}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 * idx }}
                     >
                       <ProfileCard
                         profile={profile}
@@ -261,31 +199,36 @@ export default function PersonalizedSafetyDashboard() {
             {/* Recent Alerts */}
             {alerts.length > 0 && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.15 }}
               >
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">
+                  Recent Alerts
+                </h2>
                 <AlertsHistory alerts={recentAlerts} />
               </motion.div>
             )}
           </div>
 
-          {/* Right Column - Insights */}
+          {/* Right Column — Insights */}
           <div className="space-y-6">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.2 }}
             >
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">
+                Insights
+              </h2>
               <SafetyInsights alerts={alerts} profiles={profiles} />
             </motion.div>
 
-            {/* Test Alert System */}
             {defaultProfile && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.25 }}
               >
                 <SafetyAlertDemo profile={defaultProfile} />
               </motion.div>
