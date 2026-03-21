@@ -245,20 +245,20 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
                 >
                     <button
                         onClick={() => onModeSelect('smart_start')}
-                        className="w-full p-6 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-400 to-pink-400 text-left shadow-lg hover:shadow-xl transition-all duration-300 group"
+                        className="w-full p-6 rounded-2xl bg-slate-800 text-left shadow-lg hover:shadow-xl hover:bg-slate-900 transition-all duration-300 group"
                     >
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 bg-white/25 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                                <div className="w-14 h-14 bg-white/15 backdrop-blur-sm rounded-2xl flex items-center justify-center">
                                     <Wand2 className="w-7 h-7 text-white" />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <h3 className="text-xl font-bold text-white">I'm New — Help Me Start!</h3>
-                                        <Badge className="bg-white/25 text-white border-0 text-xs">Recommended</Badge>
+                                        <h3 className="text-xl font-bold text-white">New Here? Let Us Guide You</h3>
+                                        <Badge className="bg-white/20 text-white border-0 text-xs">Recommended</Badge>
                                     </div>
-                                    <p className="text-white/90 text-sm max-w-lg">
-                                        No chemistry knowledge needed! Answer a few simple questions and we'll create the perfect formula for you.
+                                    <p className="text-white/80 text-sm max-w-lg">
+                                        No chemistry knowledge needed. Answer a few simple questions and we'll create the perfect formula for you.
                                     </p>
                                 </div>
                             </div>

@@ -1,99 +1,100 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft, ArrowRight, Sparkles, Heart, Droplets, Sun,
-  Baby, Leaf, Home, Building2, Wallet, Clock, Shield,
-  Loader2, ChevronRight, Wand2
+  Baby, Leaf, Home, Building2, Wallet, Shield,
+  Wand2, Scissors, Bath, Pipette, Flower2, Wind,
+  Brush, CircleDot, ThermometerSun, Eye, Palette,
+  Layers, Timer, Gem, Ban, Rabbit, Recycle, Zap, Check
 } from "lucide-react";
 
 const STEPS = [
   {
     id: "goal",
     question: "What do you want to make?",
-    subtitle: "Don't worry about technical names — just pick what sounds right!",
+    subtitle: "Select a product category to get started",
     options: [
-      { id: "face_cream", label: "Face Cream / Moisturizer", emoji: "🧴", icon: Heart, desc: "Hydrating creams, serums, lotions" },
-      { id: "cleanser", label: "Face Cleanser / Wash", emoji: "🫧", icon: Droplets, desc: "Gentle cleansers, micellar waters" },
-      { id: "sunscreen", label: "Sunscreen / SPF", emoji: "☀️", icon: Sun, desc: "Sun protection products" },
-      { id: "body_lotion", label: "Body Lotion / Butter", emoji: "✨", icon: Sparkles, desc: "Rich body moisturizers" },
-      { id: "lip_balm", label: "Lip Balm / Lip Care", emoji: "💋", icon: Heart, desc: "Lip balms, glosses, treatments" },
-      { id: "hair_care", label: "Hair Care", emoji: "💇", icon: Droplets, desc: "Shampoo, conditioner, hair masks" },
-      { id: "soap", label: "Soap / Body Wash", emoji: "🧼", icon: Droplets, desc: "Bar soaps, liquid soaps, body washes" },
-      { id: "baby_care", label: "Baby / Kids Products", emoji: "👶", icon: Baby, desc: "Ultra-gentle baby-safe products" },
-      { id: "cleaning", label: "Household Cleaning", emoji: "🏠", icon: Home, desc: "Cleaners, sprays, detergents" },
-      { id: "other", label: "Something Else", emoji: "🔬", icon: Wand2, desc: "Tell me what you need" },
+      { id: "face_cream", label: "Face Cream / Moisturizer", icon: Heart, desc: "Hydrating creams, serums, lotions" },
+      { id: "cleanser", label: "Face Cleanser / Wash", icon: Droplets, desc: "Gentle cleansers, micellar waters" },
+      { id: "sunscreen", label: "Sunscreen / SPF", icon: Sun, desc: "Sun protection products" },
+      { id: "body_lotion", label: "Body Lotion / Butter", icon: Sparkles, desc: "Rich body moisturizers" },
+      { id: "lip_balm", label: "Lip Balm / Lip Care", icon: Flower2, desc: "Lip balms, glosses, treatments" },
+      { id: "hair_care", label: "Hair Care", icon: Scissors, desc: "Shampoo, conditioner, hair masks" },
+      { id: "soap", label: "Soap / Body Wash", icon: Bath, desc: "Bar soaps, liquid soaps, body washes" },
+      { id: "baby_care", label: "Baby / Kids Products", icon: Baby, desc: "Ultra-gentle baby-safe products" },
+      { id: "cleaning", label: "Household Cleaning", icon: Home, desc: "Cleaners, sprays, detergents" },
+      { id: "other", label: "Something Else", icon: Wand2, desc: "Describe what you need" },
     ]
   },
   {
     id: "results",
     question: "What results are you looking for?",
-    subtitle: "Pick all that apply — we'll build the perfect formula for you",
+    subtitle: "Select all that apply — we'll tailor the formula accordingly",
     multi: true,
     optionsByGoal: {
       face_cream: [
-        { id: "hydrating", label: "Deep Hydration", emoji: "💧" },
-        { id: "anti_aging", label: "Anti-Aging / Wrinkles", emoji: "⏳" },
-        { id: "brightening", label: "Brightening / Glow", emoji: "✨" },
-        { id: "acne", label: "Acne / Blemish Control", emoji: "🎯" },
-        { id: "soothing", label: "Soothing / Redness Relief", emoji: "🌿" },
-        { id: "firming", label: "Firming / Tightening", emoji: "💪" },
+        { id: "hydrating", label: "Deep Hydration", icon: Droplets },
+        { id: "anti_aging", label: "Anti-Aging / Wrinkles", icon: Timer },
+        { id: "brightening", label: "Brightening / Glow", icon: Sparkles },
+        { id: "acne", label: "Acne / Blemish Control", icon: CircleDot },
+        { id: "soothing", label: "Soothing / Redness Relief", icon: Leaf },
+        { id: "firming", label: "Firming / Tightening", icon: Layers },
       ],
       cleanser: [
-        { id: "gentle", label: "Gentle / Sensitive Skin", emoji: "🌸" },
-        { id: "deep_clean", label: "Deep Pore Cleaning", emoji: "🫧" },
-        { id: "makeup_removal", label: "Makeup Removal", emoji: "💄" },
-        { id: "oil_control", label: "Oil Control", emoji: "🎯" },
-        { id: "exfoliating", label: "Exfoliating", emoji: "✨" },
+        { id: "gentle", label: "Gentle / Sensitive Skin", icon: Flower2 },
+        { id: "deep_clean", label: "Deep Pore Cleaning", icon: Droplets },
+        { id: "makeup_removal", label: "Makeup Removal", icon: Brush },
+        { id: "oil_control", label: "Oil Control", icon: CircleDot },
+        { id: "exfoliating", label: "Exfoliating", icon: Sparkles },
       ],
       sunscreen: [
-        { id: "lightweight", label: "Lightweight / No White Cast", emoji: "☁️" },
-        { id: "moisturizing_spf", label: "Moisturizing SPF", emoji: "💧" },
-        { id: "sport", label: "Water-Resistant / Sport", emoji: "🏊" },
-        { id: "tinted", label: "Tinted / BB Cream", emoji: "🎨" },
+        { id: "lightweight", label: "Lightweight / No White Cast", icon: Wind },
+        { id: "moisturizing_spf", label: "Moisturizing SPF", icon: Droplets },
+        { id: "sport", label: "Water-Resistant / Sport", icon: ThermometerSun },
+        { id: "tinted", label: "Tinted / BB Cream", icon: Palette },
       ],
       body_lotion: [
-        { id: "ultra_hydrating", label: "Ultra Hydrating", emoji: "💧" },
-        { id: "firming_body", label: "Firming / Toning", emoji: "💪" },
-        { id: "scented", label: "Beautifully Scented", emoji: "🌹" },
-        { id: "sensitive_body", label: "Sensitive Skin Safe", emoji: "🌿" },
+        { id: "ultra_hydrating", label: "Ultra Hydrating", icon: Droplets },
+        { id: "firming_body", label: "Firming / Toning", icon: Layers },
+        { id: "scented", label: "Beautifully Scented", icon: Flower2 },
+        { id: "sensitive_body", label: "Sensitive Skin Safe", icon: Leaf },
       ],
       lip_balm: [
-        { id: "moisturizing_lip", label: "Super Moisturizing", emoji: "💧" },
-        { id: "tinted_lip", label: "Tinted / Colored", emoji: "💋" },
-        { id: "spf_lip", label: "SPF Protection", emoji: "☀️" },
-        { id: "healing", label: "Healing / Repair", emoji: "🩹" },
+        { id: "moisturizing_lip", label: "Super Moisturizing", icon: Droplets },
+        { id: "tinted_lip", label: "Tinted / Colored", icon: Palette },
+        { id: "spf_lip", label: "SPF Protection", icon: Sun },
+        { id: "healing", label: "Healing / Repair", icon: Shield },
       ],
       hair_care: [
-        { id: "moisturizing_hair", label: "Moisturizing / Dry Hair", emoji: "💧" },
-        { id: "volumizing", label: "Volume / Thin Hair", emoji: "💨" },
-        { id: "damage_repair", label: "Damage Repair", emoji: "🔧" },
-        { id: "dandruff", label: "Dandruff / Scalp Care", emoji: "🎯" },
-        { id: "curly", label: "Curl Definition", emoji: "〰️" },
+        { id: "moisturizing_hair", label: "Moisturizing / Dry Hair", icon: Droplets },
+        { id: "volumizing", label: "Volume / Thin Hair", icon: Wind },
+        { id: "damage_repair", label: "Damage Repair", icon: Shield },
+        { id: "dandruff", label: "Dandruff / Scalp Care", icon: CircleDot },
+        { id: "curly", label: "Curl Definition", icon: Sparkles },
       ],
       soap: [
-        { id: "moisturizing_soap", label: "Moisturizing", emoji: "💧" },
-        { id: "antibacterial", label: "Antibacterial", emoji: "🛡️" },
-        { id: "fragrant", label: "Luxurious Scent", emoji: "🌹" },
-        { id: "sensitive_soap", label: "Sensitive / Unscented", emoji: "🌿" },
+        { id: "moisturizing_soap", label: "Moisturizing", icon: Droplets },
+        { id: "antibacterial", label: "Antibacterial", icon: Shield },
+        { id: "fragrant", label: "Luxurious Scent", icon: Flower2 },
+        { id: "sensitive_soap", label: "Sensitive / Unscented", icon: Leaf },
       ],
       baby_care: [
-        { id: "gentle_wash", label: "Gentle Wash", emoji: "🫧" },
-        { id: "diaper_cream", label: "Diaper Cream", emoji: "🩹" },
-        { id: "baby_lotion", label: "Baby Lotion", emoji: "💧" },
-        { id: "baby_shampoo", label: "Baby Shampoo", emoji: "💇" },
+        { id: "gentle_wash", label: "Gentle Wash", icon: Droplets },
+        { id: "diaper_cream", label: "Diaper Cream", icon: Shield },
+        { id: "baby_lotion", label: "Baby Lotion", icon: Heart },
+        { id: "baby_shampoo", label: "Baby Shampoo", icon: Scissors },
       ],
       cleaning: [
-        { id: "all_purpose", label: "All-Purpose Cleaner", emoji: "🏠" },
-        { id: "kitchen_clean", label: "Kitchen / Degreaser", emoji: "🍳" },
-        { id: "bathroom_clean", label: "Bathroom Cleaner", emoji: "🚿" },
-        { id: "laundry", label: "Laundry Detergent", emoji: "👕" },
-        { id: "glass", label: "Glass / Window", emoji: "🪟" },
+        { id: "all_purpose", label: "All-Purpose Cleaner", icon: Home },
+        { id: "kitchen_clean", label: "Kitchen / Degreaser", icon: Sparkles },
+        { id: "bathroom_clean", label: "Bathroom Cleaner", icon: Bath },
+        { id: "laundry", label: "Laundry Detergent", icon: Wind },
+        { id: "glass", label: "Glass / Window", icon: Eye },
       ],
       other: [
-        { id: "custom_desc", label: "I'll describe it myself", emoji: "✍️" },
+        { id: "custom_desc", label: "I'll describe it myself", icon: Pipette },
       ],
     }
   },
@@ -102,25 +103,25 @@ const STEPS = [
     question: "Who is this for?",
     subtitle: "This helps us tailor the complexity and instructions",
     options: [
-      { id: "personal", label: "Just for Me", icon: Heart, desc: "Simple recipes with easy-to-find ingredients", emoji: "🏠" },
-      { id: "gifts", label: "Gifts / Small Batches", icon: Sparkles, desc: "Pretty enough to gift, easy to make in small quantities", emoji: "🎁" },
-      { id: "sell", label: "I Want to Sell It", icon: Building2, desc: "Commercial-grade formulas with compliance guidance", emoji: "💼" },
+      { id: "personal", label: "Just for Me", icon: Heart, desc: "Simple recipes with easy-to-find ingredients" },
+      { id: "gifts", label: "Gifts / Small Batches", icon: Sparkles, desc: "Presentable enough to gift, easy to make in small quantities" },
+      { id: "sell", label: "I Want to Sell It", icon: Building2, desc: "Commercial-grade formulas with compliance guidance" },
     ]
   },
   {
     id: "preferences",
     question: "Any preferences?",
-    subtitle: "Pick all that matter to you (optional — skip if unsure)",
+    subtitle: "Select all that matter to you (optional — skip if unsure)",
     multi: true,
     options: [
-      { id: "natural", label: "All Natural / Organic", emoji: "🌿" },
-      { id: "budget", label: "Budget Friendly", emoji: "💰" },
-      { id: "vegan", label: "Vegan / Cruelty-Free", emoji: "🐰" },
-      { id: "fragrance_free", label: "Fragrance Free", emoji: "🚫" },
-      { id: "sensitive_skin", label: "Sensitive Skin Safe", emoji: "🌸" },
-      { id: "quick", label: "Quick & Easy (Under 15 min)", emoji: "⚡" },
-      { id: "eco", label: "Eco-Friendly / Sustainable", emoji: "♻️" },
-      { id: "luxurious", label: "Luxurious / Premium Feel", emoji: "💎" },
+      { id: "natural", label: "All Natural / Organic", icon: Leaf },
+      { id: "budget", label: "Budget Friendly", icon: Wallet },
+      { id: "vegan", label: "Vegan / Cruelty-Free", icon: Rabbit },
+      { id: "fragrance_free", label: "Fragrance Free", icon: Ban },
+      { id: "sensitive_skin", label: "Sensitive Skin Safe", icon: Flower2 },
+      { id: "quick", label: "Quick & Easy (Under 15 min)", icon: Zap },
+      { id: "eco", label: "Eco-Friendly / Sustainable", icon: Recycle },
+      { id: "luxurious", label: "Luxurious / Premium Feel", icon: Gem },
     ]
   }
 ];
@@ -164,7 +165,6 @@ export default function SmartStartWizard({ onComplete, onBack }) {
       });
     } else {
       setAnswers(prev => ({ ...prev, [currentStep.id]: optionId }));
-      // Auto-advance on single select
       if (step < STEPS.length - 1) {
         setTimeout(() => setStep(step + 1), 300);
       }
@@ -172,7 +172,7 @@ export default function SmartStartWizard({ onComplete, onBack }) {
   };
 
   const canProceed = () => {
-    if (currentStep.multi) return true; // Multi-select steps are optional
+    if (currentStep.multi) return true;
     return answers[currentStep.id] != null;
   };
 
@@ -188,7 +188,6 @@ export default function SmartStartWizard({ onComplete, onBack }) {
     const product = GOAL_TO_PRODUCT[answers.goal] || GOAL_TO_PRODUCT.other;
     const isBusinessMode = answers.audience === "sell";
 
-    // Build a natural description from answers
     const options = getResultsOptions();
     const resultLabels = (answers.results || []).map(id => {
       const opt = options.find(o => o.id === id);
@@ -247,9 +246,9 @@ export default function SmartStartWizard({ onComplete, onBack }) {
           <span>Question {step + 1} of {STEPS.length}</span>
           <span>{Math.round(progress)}% complete</span>
         </div>
-        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full"
+            className="h-full bg-slate-700 rounded-full"
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.4 }}
           />
@@ -263,7 +262,7 @@ export default function SmartStartWizard({ onComplete, onBack }) {
         exit={{ opacity: 0, x: -30 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="bg-white border-0 shadow-xl max-w-3xl mx-auto">
+        <Card className="bg-white border border-slate-200 shadow-lg max-w-3xl mx-auto">
           <CardContent className="p-6 sm:p-8">
             {/* Question */}
             <div className="text-center mb-8">
@@ -285,6 +284,7 @@ export default function SmartStartWizard({ onComplete, onBack }) {
                 const isSelected = currentStep.multi
                   ? (answers[currentStep.id] || []).includes(option.id)
                   : answers[currentStep.id] === option.id;
+                const Icon = option.icon;
 
                 return (
                   <motion.button
@@ -294,14 +294,18 @@ export default function SmartStartWizard({ onComplete, onBack }) {
                     onClick={() => handleSelect(option.id)}
                     className={`p-4 rounded-xl border-2 text-left transition-all ${
                       isSelected
-                        ? "border-teal-400 bg-teal-50 shadow-md"
+                        ? "border-slate-700 bg-slate-50 shadow-md"
                         : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <span className="text-2xl flex-shrink-0">{option.emoji}</span>
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                        isSelected ? "bg-slate-700" : "bg-slate-100"
+                      }`}>
+                        <Icon className={`w-4 h-4 ${isSelected ? "text-white" : "text-slate-600"}`} />
+                      </div>
                       <div className="min-w-0">
-                        <p className={`font-semibold text-sm ${isSelected ? "text-teal-800" : "text-slate-800"}`}>
+                        <p className={`font-semibold text-sm ${isSelected ? "text-slate-900" : "text-slate-800"}`}>
                           {option.label}
                         </p>
                         {option.desc && (
@@ -311,10 +315,8 @@ export default function SmartStartWizard({ onComplete, onBack }) {
                     </div>
                     {isSelected && (
                       <div className="mt-2 flex justify-end">
-                        <div className="w-5 h-5 bg-teal-500 rounded-full flex items-center justify-center">
-                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
+                        <div className="w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
                         </div>
                       </div>
                     )}
@@ -331,7 +333,7 @@ export default function SmartStartWizard({ onComplete, onBack }) {
                   placeholder="Describe what you want to make..."
                   value={customInput}
                   onChange={(e) => setCustomInput(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-teal-400 focus:outline-none text-sm"
+                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-slate-500 focus:outline-none text-sm"
                 />
               </div>
             )}
@@ -344,7 +346,7 @@ export default function SmartStartWizard({ onComplete, onBack }) {
               <Button
                 onClick={handleNext}
                 disabled={!currentStep.multi && !canProceed()}
-                className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white px-6"
+                className="bg-slate-800 hover:bg-slate-900 text-white px-6"
               >
                 {step === STEPS.length - 1 ? (
                   <>

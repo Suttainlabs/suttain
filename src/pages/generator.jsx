@@ -434,7 +434,7 @@ export default function Generator() {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-blue-50/20 overflow-hidden">
+    <div className="relative min-h-screen bg-slate-50 overflow-hidden">
       {/* Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
         <img
