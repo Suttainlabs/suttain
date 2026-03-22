@@ -46,12 +46,12 @@ export default function HomePage() {
   ];
 
   const benefits = [
-    { icon: ShieldCheck, title: 'Safety First', description: 'Get instant alerts about dangerous chemical combinations' },
-    { icon: Zap, title: 'Lightning Fast', description: 'AI generates professional formulas in seconds' },
-    { icon: Brain, title: 'Smart Analysis', description: 'Deep insights into every ingredient interaction' },
-    { icon: Leaf, title: 'Eco-Friendly', description: 'Sustainability scoring for greener products' },
-    { icon: BarChart3, title: 'Compliance Ready', description: 'Meet global regulatory standards automatically' },
-    { icon: Award, title: 'Pro Results', description: 'Lab-quality analysis without lab costs' }
+    { icon: ShieldCheck, title: 'Safety First', description: 'Get instant alerts about dangerous chemical combinations', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
+    { icon: Zap, title: 'Lightning Fast', description: 'AI generates professional formulas in seconds', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
+    { icon: Brain, title: 'Smart Analysis', description: 'Deep insights into every ingredient interaction', iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
+    { icon: Leaf, title: 'Eco-Friendly', description: 'Sustainability scoring for greener products', iconBg: 'bg-green-50', iconColor: 'text-green-600' },
+    { icon: BarChart3, title: 'Compliance Ready', description: 'Meet global regulatory standards automatically', iconBg: 'bg-violet-50', iconColor: 'text-violet-600' },
+    { icon: Award, title: 'Pro Results', description: 'Lab-quality analysis without lab costs', iconBg: 'bg-rose-50', iconColor: 'text-rose-600' }
   ];
 
   const audiences = [
@@ -315,8 +315,8 @@ export default function HomePage() {
               >
                 <Card className="h-full border border-slate-200 hover:shadow-md transition-all bg-white">
                   <CardContent className="p-6">
-                    <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center mb-4">
-                      <benefit.icon className="w-5 h-5 text-slate-700" />
+                    <div className={`w-11 h-11 rounded-xl ${benefit.iconBg} flex items-center justify-center mb-4`}>
+                      <benefit.icon className={`w-5 h-5 ${benefit.iconColor}`} />
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 mb-2">{benefit.title}</h3>
                     <p className="text-slate-500 text-sm">{benefit.description}</p>
