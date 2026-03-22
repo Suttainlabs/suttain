@@ -55,9 +55,9 @@ export default function HomePage() {
   ];
 
   const audiences = [
-    { icon: Home, title: 'DIY Creators', description: 'Create safe skincare, soaps, and cleaning products at home' },
-    { icon: Building2, title: 'Small Businesses', description: 'Launch product lines without expensive lab testing' },
-    { icon: Rocket, title: 'Startups', description: 'Validate and scale formulations with confidence' }
+    { icon: Home, title: 'DIY Creators', description: 'Create safe skincare, soaps, and cleaning products at home', iconBg: 'bg-teal-50', iconColor: 'text-[#02988C]' },
+    { icon: Building2, title: 'Small Businesses', description: 'Launch product lines without expensive lab testing', iconBg: 'bg-cyan-50', iconColor: 'text-[#09D2FF]' },
+    { icon: Rocket, title: 'Startups', description: 'Validate and scale formulations with confidence', iconBg: 'bg-violet-50', iconColor: 'text-[#9531F5]' }
   ];
 
   return (
@@ -276,8 +276,8 @@ export default function HomePage() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center mx-auto mb-6">
-                  <audience.icon className="w-8 h-8 text-white" />
+                <div className={`w-16 h-16 rounded-2xl ${audience.iconBg} flex items-center justify-center mx-auto mb-6`}>
+                  <audience.icon className={`w-8 h-8 ${audience.iconColor}`} />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">{audience.title}</h3>
                 <p className="text-slate-500">{audience.description}</p>
