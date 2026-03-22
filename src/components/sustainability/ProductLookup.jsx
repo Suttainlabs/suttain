@@ -130,6 +130,24 @@ Also provide:
         </Button>
       </div>
 
+      {/* Quick Suggestions */}
+      {!isAnalyzing && !error && (
+        <div>
+          <p className="text-xs text-slate-500 font-medium mb-2">Try these popular products</p>
+          <div className="flex flex-wrap gap-2">
+            {['CeraVe Moisturizer', 'Dove Body Wash', 'Mrs. Meyers Cleaner', 'The Ordinary Niacinamide', 'Method Hand Soap', 'Olaplex Shampoo'].map((s) => (
+              <button
+                key={s}
+                onClick={() => setQuery(s)}
+                className="px-3 py-1.5 bg-slate-100 hover:bg-[#02988C]/10 hover:text-[#02988C] rounded-full text-xs text-slate-600 transition-colors"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Error */}
       {error && (
         <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
