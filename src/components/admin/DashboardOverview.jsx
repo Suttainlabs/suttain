@@ -1,26 +1,46 @@
-
 import React, { useState, useEffect } from 'react';
-import { Users, Beaker, TestTube, Star, List, FileText, Loader2, Download } from 'lucide-react';
+import { Users, Beaker, TestTube, Star, List, FileText, Loader2, Download, QrCode, ShieldCheck, HeartPulse, TrendingUp, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
 import { getAdminStats } from '@/functions/getAdminStats';
 import { exportAdminData } from '@/functions/exportAdminData';
-import OverviewChart from './charts/OverviewChart';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AdminActivityChart from './charts/AdminActivityChart';
+import AdminAnalyticsCards from './AdminAnalyticsCards';
 
-const StatCard = ({ title, value, icon: Icon, color, loading }) => (
-  <div className="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-    <div>
-      <p className="text-sm font-medium text-slate-500">{title}</p>
-      {loading ? (
-        <div className="h-8 w-12 bg-slate-200 animate-pulse rounded-md mt-1"></div>
-      ) : (
-        <p className="text-3xl font-bold text-slate-900">{value}</p>
-      )}
-    </div>
-    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${color}`}>
-      <Icon className="w-5 h-5 text-white" />
-    </div>
-  </div>
-);
+const StatCard = ({ title, value, icon: Icon, color, bgColor, weekCount, loading }) => {
+  const trend = weekCount > 0 ? 'up' : weekCount === 0 ? 'flat' : 'flat';
+  return (
+    <Card className="border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
+            {loading ? (
+              <div className="h-9 w-16 bg-slate-100 animate-pulse rounded-md" />
+            ) : (
+              <p className="text-3xl font-bold text-slate-900">{(value || 0).toLocaleString()}</p>
+            )}
+            {!loading && weekCount !== undefined && (
+              <div className="flex items-center gap-1 mt-2">
+                {trend === 'up' ? (
+                  <ArrowUpRight className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <Minus className="w-3.5 h-3.5 text-slate-400" />
+                )}
+                <span className={`text-xs font-medium ${trend === 'up' ? 'text-emerald-600' : 'text-slate-400'}`}>
+                  {weekCount} this week
+                </span>
+              </div>
+            )}
+          </div>
+          <div className={`w-11 h-11 rounded-xl ${bgColor} flex items-center justify-center flex-shrink-0`}>
+            <Icon className={`w-5 h-5 ${color}`} />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default function DashboardOverview() {
   const [stats, setStats] = useState(null);
@@ -46,68 +66,109 @@ export default function DashboardOverview() {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-        const response = await exportAdminData();
-        // Assuming the `exportAdminData` function returns a response object
-        // where `response.data` contains the raw CSV string or Blob.
-        // If it's a string, we need to ensure it's treated as a Blob.
-        const blobData = typeof response.data === 'string' ? new TextEncoder().encode(response.data) : response.data;
-        
-        const url = window.URL.createObjectURL(new Blob([blobData], { type: 'text/csv' }));
-        const link = document.createElement('a');
-        link.href = url;
-        const filename = `suttain_platform_report_${new Date().toISOString().split('T')[0]}.csv`;
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-        window.URL.revokeObjectURL(url);
+      const response = await exportAdminData();
+      const blobData = typeof response.data === 'string' ? new TextEncoder().encode(response.data) : response.data;
+      const url = window.URL.createObjectURL(new Blob([blobData], { type: 'text/csv' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `suttain_report_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-        console.error("Failed to export data:", error);
+      console.error("Failed to export data:", error);
     } finally {
-        setIsExporting(false);
+      setIsExporting(false);
     }
   };
 
-  const statCards = [
-    { title: 'Total Users', value: stats?.totals?.user, icon: Users, color: 'bg-blue-500' },
-    { title: 'Formulas Created', value: stats?.totals?.formula, icon: Beaker, color: 'bg-teal-500' },
-    { title: 'Simulations Run', value: stats?.totals?.simulation, icon: TestTube, color: 'bg-violet-500' },
-    { title: 'Reviews Submitted', value: stats?.totals?.review, icon: Star, color: 'bg-amber-500' },
-    { title: 'Enterprise Waitlist', value: stats?.totals?.enterprise_waitlist, icon: List, color: 'bg-purple-500' },
-    { title: 'Demo Requests', value: stats?.totals?.demo_request, icon: FileText, color: 'bg-sky-500' },
+  const growth = stats?.weeklyGrowth || {};
+
+  const primaryStats = [
+    { title: 'Total Users', value: stats?.totals?.user, weekCount: growth.weekUsers, icon: Users, color: 'text-blue-600', bgColor: 'bg-blue-50' },
+    { title: 'Formulas Created', value: stats?.totals?.formula, weekCount: growth.weekFormulas, icon: Beaker, color: 'text-emerald-600', bgColor: 'bg-emerald-50' },
+    { title: 'Simulations Run', value: stats?.totals?.simulation, weekCount: growth.weekSimulations, icon: TestTube, color: 'text-violet-600', bgColor: 'bg-violet-50' },
+    { title: 'Products Scanned', value: stats?.totals?.barcode_scan, weekCount: growth.weekScans, icon: QrCode, color: 'text-cyan-600', bgColor: 'bg-cyan-50' },
+  ];
+
+  const secondaryStats = [
+    { title: 'Reviews', value: stats?.totals?.review, icon: Star, color: 'text-amber-600', bgColor: 'bg-amber-50' },
+    { title: 'Compliance Checks', value: stats?.totals?.compliance_check, icon: ShieldCheck, color: 'text-teal-600', bgColor: 'bg-teal-50' },
+    { title: 'Safety Profiles', value: stats?.totals?.safety_profile, icon: HeartPulse, color: 'text-rose-600', bgColor: 'bg-rose-50' },
+    { title: 'Demo Requests', value: stats?.totals?.demo_request, icon: FileText, color: 'text-sky-600', bgColor: 'bg-sky-50' },
+    { title: 'Waitlist', value: stats?.totals?.enterprise_waitlist, icon: List, color: 'text-purple-600', bgColor: 'bg-purple-50' },
+    { title: 'Contact Messages', value: stats?.totals?.contact_submission, icon: FileText, color: 'text-slate-600', bgColor: 'bg-slate-100' },
   ];
 
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-slate-900">Admin Overview</h1>
-        <Button onClick={handleExport} disabled={isExporting}>
-          {isExporting ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Download className="w-4 h-4 mr-2" />
-          )}
-          {isExporting ? 'Exporting...' : 'Download Report'}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+          <p className="text-sm text-slate-500 mt-1">Platform overview and analytics</p>
+        </div>
+        <Button onClick={handleExport} disabled={isExporting} variant="outline" size="sm">
+          {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+          {isExporting ? 'Exporting...' : 'Export CSV'}
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
-        {statCards.map((card) => (
-          <StatCard key={card.title} {...card} loading={loading} value={card.value || 0} />
+
+      {/* Primary Stats */}
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        {primaryStats.map((card) => (
+          <StatCard key={card.title} {...card} loading={loading} />
         ))}
       </div>
-       <div className="mt-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">Platform Activity (Last 30 Days)</h2>
-            <div className="bg-white p-4 rounded-lg shadow-sm" style={{ height: '400px' }}>
-                {loading ? (
-                    <div className="w-full h-full flex items-center justify-center text-slate-500">
-                        <Loader2 className="w-6 h-6 animate-spin mr-2" />
-                        <span>Loading Chart Data...</span>
-                    </div>
-                ) : (
-                    <OverviewChart data={stats?.activityData || []} />
-                )}
-            </div>
+
+      {/* Chart */}
+      <Card className="border border-slate-200 shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-semibold text-slate-800">Platform Activity (Last 30 Days)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div style={{ height: '320px' }}>
+            {loading ? (
+              <div className="w-full h-full flex items-center justify-center text-slate-400">
+                <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                Loading...
+              </div>
+            ) : (
+              <AdminActivityChart data={stats?.activityData || []} />
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Analytics Row */}
+      {!loading && stats && <AdminAnalyticsCards stats={stats} />}
+
+      {/* Secondary Stats */}
+      <div>
+        <h2 className="text-base font-semibold text-slate-800 mb-3">Other Metrics</h2>
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+          {secondaryStats.map((card) => (
+            <Card key={card.title} className="border border-slate-200 shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-lg ${card.bgColor} flex items-center justify-center flex-shrink-0`}>
+                    <card.icon className={`w-4 h-4 ${card.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">{card.title}</p>
+                    {loading ? (
+                      <div className="h-5 w-8 bg-slate-100 animate-pulse rounded mt-0.5" />
+                    ) : (
+                      <p className="text-lg font-bold text-slate-900">{(card.value || 0).toLocaleString()}</p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
+      </div>
     </div>
   );
 }
