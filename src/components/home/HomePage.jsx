@@ -46,18 +46,18 @@ export default function HomePage() {
   ];
 
   const benefits = [
-    { icon: ShieldCheck, title: 'Safety First', description: 'Get instant alerts about dangerous chemical combinations', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
-    { icon: Zap, title: 'Lightning Fast', description: 'AI generates professional formulas in seconds', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
-    { icon: Lightbulb, title: 'Smart Analysis', description: 'Deep insights into every ingredient interaction', iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
-    { icon: Leaf, title: 'Eco-Friendly', description: 'Sustainability scoring for greener products', iconBg: 'bg-green-50', iconColor: 'text-green-600' },
-    { icon: BarChart3, title: 'Compliance Ready', description: 'Meet global regulatory standards automatically', iconBg: 'bg-blue-100', iconColor: 'text-blue-700' },
-    { icon: Award, title: 'Pro Results', description: 'Lab-quality analysis without lab costs', iconBg: 'bg-green-100', iconColor: 'text-green-700' }
+    { icon: ShieldCheck, title: 'Safety First', description: 'Get instant alerts about dangerous chemical combinations', iconBg: 'bg-teal-50', iconColor: 'text-[#02988C]' },
+    { icon: Zap, title: 'Lightning Fast', description: 'AI generates professional formulas in seconds', iconBg: 'bg-cyan-50', iconColor: 'text-[#09D2FF]' },
+    { icon: Lightbulb, title: 'Smart Analysis', description: 'Deep insights into every ingredient interaction', iconBg: 'bg-violet-50', iconColor: 'text-[#9531F5]' },
+    { icon: Leaf, title: 'Eco-Friendly', description: 'Sustainability scoring for greener products', iconBg: 'bg-teal-50', iconColor: 'text-[#02988C]' },
+    { icon: BarChart3, title: 'Compliance Ready', description: 'Meet global regulatory standards automatically', iconBg: 'bg-cyan-50', iconColor: 'text-[#09D2FF]' },
+    { icon: Award, title: 'Pro Results', description: 'Lab-quality analysis without lab costs', iconBg: 'bg-violet-50', iconColor: 'text-[#9531F5]' }
   ];
 
   const audiences = [
-    { icon: Home, title: 'DIY Creators', description: 'Create safe skincare, soaps, and cleaning products at home', iconBg: 'bg-green-50', iconColor: 'text-green-600' },
-    { icon: Building2, title: 'Small Businesses', description: 'Launch product lines without expensive lab testing', iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
-    { icon: Rocket, title: 'Startups', description: 'Validate and scale formulations with confidence', iconBg: 'bg-blue-100', iconColor: 'text-blue-700' }
+    { icon: Home, title: 'DIY Creators', description: 'Create safe skincare, soaps, and cleaning products at home', iconBg: 'bg-teal-50', iconColor: 'text-[#02988C]' },
+    { icon: Building2, title: 'Small Businesses', description: 'Launch product lines without expensive lab testing', iconBg: 'bg-cyan-50', iconColor: 'text-[#09D2FF]' },
+    { icon: Rocket, title: 'Startups', description: 'Validate and scale formulations with confidence', iconBg: 'bg-violet-50', iconColor: 'text-[#9531F5]' }
   ];
 
   return (
@@ -74,7 +74,7 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-slate-900"
             >
-              Create <span className="text-green-600">Safe Products</span>
+              Create <span className="text-[#02988C]">Safe Products</span>
               <br />
               Without the Lab
             </motion.h1>
@@ -95,7 +95,7 @@ export default function HomePage() {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link to={createPageUrl("Simulator")}>
-                <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-base rounded-full font-semibold shadow-md">
+                <Button size="lg" className="w-full sm:w-auto bg-[#02988C] hover:bg-[#027d73] text-white px-8 py-4 text-base rounded-full font-semibold shadow-md">
                   <Zap className="w-5 h-5 mr-2" />
                   Start 14-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
@@ -123,7 +123,7 @@ export default function HomePage() {
               ].map((stat, i) => (
                 <div key={i} className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-1">
-                    <stat.icon className="w-4 h-4 text-green-600" />
+                    <stat.icon className="w-4 h-4 text-[#02988C]" />
                     <span className="text-2xl sm:text-3xl font-bold text-slate-800">{stat.value}</span>
                   </div>
                   <p className="text-sm text-slate-500">{stat.label}</p>
@@ -161,14 +161,14 @@ export default function HomePage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Link to={createPageUrl(feature.link)}>
-                  <Card className="group h-full border border-slate-200 hover:border-green-600/30 hover:shadow-xl transition-all duration-300 cursor-pointer">
+                  <Card className="group h-full border border-slate-200 hover:border-[#02988C]/30 hover:shadow-xl transition-all duration-300 cursor-pointer">
                    <CardContent className="p-8">
-                     <div className="w-14 h-14 rounded-2xl bg-green-600/10 flex items-center justify-center mb-6 group-hover:bg-green-600 transition-colors duration-300">
-                       <feature.icon className="w-7 h-7 text-green-600 group-hover:text-white transition-colors duration-300" />
+                     <div className="w-14 h-14 rounded-2xl bg-[#02988C]/10 flex items-center justify-center mb-6 group-hover:bg-[#02988C] transition-colors duration-300">
+                       <feature.icon className="w-7 h-7 text-[#02988C] group-hover:text-white transition-colors duration-300" />
                      </div>
                      <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
                      <p className="text-slate-500 mb-4">{feature.description}</p>
-                     <div className="flex items-center text-green-600 font-semibold text-sm group-hover:translate-x-1 transition-transform">
+                     <div className="flex items-center text-[#02988C] font-semibold text-sm group-hover:translate-x-1 transition-transform">
                        Start free trial <ChevronRight className="w-4 h-4 ml-1" />
                       </div>
                     </CardContent>
@@ -190,7 +190,7 @@ export default function HomePage() {
             className="grid lg:grid-cols-2 gap-12 items-center"
           >
             <div>
-              <span className="inline-flex items-center gap-2 bg-green-600/10 text-green-600 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+              <span className="inline-flex items-center gap-2 bg-[#02988C]/10 text-[#02988C] px-4 py-2 rounded-full text-sm font-semibold mb-6">
                 <Leaf className="w-4 h-4" />
                 Sustainability First
               </span>
@@ -203,8 +203,8 @@ export default function HomePage() {
               <div className="grid grid-cols-2 gap-6">
                 {['Eco Scoring', 'Green Alternatives'].map((title, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-green-600/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    <div className="w-10 h-10 bg-[#02988C]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <CheckCircle2 className="w-5 h-5 text-[#02988C]" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-900">{title}</h4>
@@ -345,7 +345,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to={createPageUrl("Simulator")}>
-                <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-base rounded-full font-semibold">
+                <Button size="lg" className="w-full sm:w-auto bg-[#02988C] hover:bg-[#027d73] text-white px-8 py-4 text-base rounded-full font-semibold">
                   Start 14-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
@@ -358,7 +358,7 @@ export default function HomePage() {
               </Link>
             </div>
             <p className="text-sm text-slate-400 mt-6 flex items-center justify-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-green-500" />
+              <CheckCircle2 className="w-4 h-4 text-[#02988C]" />
               No credit card required • 14-day free trial included
             </p>
           </motion.div>
