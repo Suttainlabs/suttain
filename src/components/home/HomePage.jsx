@@ -85,7 +85,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-lg sm:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed"
             >
-              Simulate chemical reactions, generate ready-to-make formulas, and ensure product safety — no lab required.
+              Simulate chemical reactions, generate ready-to-make formulas, and ensure product safety. No lab required.
             </motion.p>
 
             <motion.div
