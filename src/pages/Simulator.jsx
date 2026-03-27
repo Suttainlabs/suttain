@@ -2,6 +2,8 @@ import React, { useState, useContext, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useTrialStatus from "../hooks/useTrialStatus";
+import TrialExpiredBanner from "../components/trial/TrialExpiredBanner";
 import AuthGate from "../components/auth/AuthGate";
 import AuthContext from '../components/auth/AuthContext';
 import ChemicalInput from "../components/simulator/ChemicalInput";
@@ -501,6 +503,7 @@ const ADVANCED_PERSONAS = new Set(['business', 'teacher', 'researcher']);
 
 export default function Simulator() {
   const { user, refreshUser } = useContext(AuthContext);
+  const trialStatus = useTrialStatus(user);
   const [persona, setPersona] = useState(null);
   const [step, setStep] = useState(1);
   const [chemicals, setChemicals] = useState([]);
@@ -873,6 +876,9 @@ export default function Simulator() {
   return (
     <AuthGate featureName="Chemical Simulator" featureDescription="Test chemical interactions safely with our advanced simulation engine. Start your 14-day free trial to save simulations and access the full database.">
       <SEOHead {...pageSEO.simulator} />
+      {user && trialStatus.isExpired ? (
+        <TrialExpiredBanner featureName="Chemical Simulator" />
+      ) : (
       <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-slate-50 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-20">
@@ -1139,6 +1145,7 @@ export default function Simulator() {
           )}
         </Suspense>
       </div>
+      )}
     </AuthGate>
   );
 }

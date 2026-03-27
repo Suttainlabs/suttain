@@ -2,9 +2,12 @@ import React, { useContext } from 'react';
 import BarcodeScannerPage from '../components/scanner/BarcodeScannerPage';
 import AuthGate from '../components/auth/AuthGate';
 import AuthContext from '../components/auth/AuthContext';
+import useTrialStatus from '../hooks/useTrialStatus';
+import TrialExpiredBanner from '../components/trial/TrialExpiredBanner';
 
 export default function BarcodeScanner() {
     const { user } = useContext(AuthContext);
+    const trialStatus = useTrialStatus(user);
 
     if (!user) {
         return (
@@ -16,5 +19,10 @@ export default function BarcodeScanner() {
             </div>
         );
     }
+
+    if (trialStatus.isExpired) {
+        return <TrialExpiredBanner featureName="Quick Scan" />;
+    }
+
     return <BarcodeScannerPage />;
 }

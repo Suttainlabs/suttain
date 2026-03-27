@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Sparkles, Building2, Zap, Shield, Leaf, HeartPulse, MessageSquare } from 'lucide-react';
+import { Check, Sparkles, Building2, Zap, Shield, Leaf, HeartPulse, MessageSquare, Clock, AlertTriangle } from 'lucide-react';
+import useTrialStatus from '../hooks/useTrialStatus';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,24 +10,24 @@ import AuthContext from '../components/auth/AuthContext';
 
 const plans = [
   {
-    id: 'free',
-    name: 'Free',
-    description: 'Perfect for getting started',
+    id: 'trial',
+    name: '14-Day Trial',
+    description: 'Try everything free for 14 days',
     monthlyPrice: 0,
     yearlyPrice: 0,
     features: [
-      'Chemical Simulator (5 simulations/day)',
-      'Formula Generator (3 formulas/day)',
-      'Basic Barcode Scanner',
+      'Full access to all tools for 14 days',
+      'Chemical Simulator',
+      'Formula Generator',
+      'Barcode Scanner',
       'Community Support',
       'Learning Center Access'
     ],
     limitations: [
-      'Limited daily usage',
-      'Basic analysis only',
-      'No priority support'
+      'Expires after 14 days',
+      'Upgrade to continue using'
     ],
-    cta: 'Current Plan',
+    cta: 'Trial Plan',
     popular: false,
     icon: Zap
   },
@@ -84,6 +85,7 @@ const featureDetails = [
 
 export default function Pricing() {
   const { user } = useContext(AuthContext);
+  const trialStatus = useTrialStatus(user);
   const [isYearly, setIsYearly] = useState(true);
 
   const handleUpgrade = (planId) => {
@@ -108,9 +110,33 @@ export default function Pricing() {
           <h1 className="text-4xl font-bold text-slate-900 mb-4">
             Choose Your <span className="gradient-text">Perfect Plan</span>
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
             Unlock powerful features to create safer, more sustainable formulations
           </p>
+
+          {/* Trial Status Banner */}
+          {user && trialStatus.plan === 'trial' && (
+            <div className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-6 ${
+              trialStatus.isExpired
+                ? 'bg-red-100 border border-red-300'
+                : trialStatus.daysLeft <= 3
+                ? 'bg-orange-100 border border-orange-300'
+                : 'bg-blue-50 border border-blue-200'
+            }`}>
+              {trialStatus.isExpired ? (
+                <AlertTriangle className="w-4 h-4 text-red-600" />
+              ) : (
+                <Clock className="w-4 h-4 text-blue-600" />
+              )}
+              <span className={`text-sm font-semibold ${
+                trialStatus.isExpired ? 'text-red-700' : trialStatus.daysLeft <= 3 ? 'text-orange-700' : 'text-blue-700'
+              }`}>
+                {trialStatus.isExpired
+                  ? 'Your 14-day free trial has expired. Upgrade now to continue.'
+                  : `${trialStatus.daysLeft} day${trialStatus.daysLeft !== 1 ? 's' : ''} left in your free trial`}
+              </span>
+            </div>
+          )}
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center gap-4">
@@ -180,7 +206,7 @@ export default function Pricing() {
                         : 'bg-slate-900 hover:bg-slate-800'
                     }`}
                     onClick={() => handleUpgrade(plan.id)}
-                    disabled={plan.id === 'free'}
+                    disabled={plan.id === 'trial'}
                   >
                     {plan.cta}
                   </Button>

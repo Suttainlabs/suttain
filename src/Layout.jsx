@@ -18,6 +18,8 @@ import AuthContext from './components/auth/AuthContext';
 import NotificationCenter from './components/notifications/NotificationCenter';
 import BottomNavBar from './components/navigation/BottomNavBar';
 import { useQuery } from '@tanstack/react-query';
+import useTrialStatus from './hooks/useTrialStatus';
+import TrialBadge from './components/trial/TrialBadge';
 
 // Import components with error boundaries
 const ClaraAssistant = React.lazy(() => import("./components/shared/ClaraAssistant").catch(() => ({ default: () => null })));
@@ -40,6 +42,8 @@ export default function Layout({ children, currentPageName }) {
   const [showAcknowledgementModal, setShowAcknowledgementModal] = useState(false);
   const [currentGreeting, setCurrentGreeting] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
+
+  const trialStatus = useTrialStatus(user);
 
   // Fetch unread notification count
   const { data: notifications = [] } = useQuery({
@@ -67,6 +71,14 @@ export default function Layout({ children, currentPageName }) {
       const currentUser = await User.me();
       setUser(currentUser);
       setCurrentGreeting(getGreetingText(currentUser));
+      // Set trial_start_date if not already set
+      if (currentUser && !currentUser.trial_start_date) {
+        try {
+          await User.updateMyUserData({ trial_start_date: new Date().toISOString(), subscription_plan: currentUser.subscription_plan || 'trial' });
+        } catch (e) {
+          console.error('Failed to set trial start date:', e);
+        }
+      }
       if (currentUser && currentUser.first_login) {
         setShowAcknowledgementModal(true);
         // Send admin notification for new user signup
@@ -411,8 +423,10 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Auth Buttons / User Menu */}
             <div className="flex items-center gap-3">
-              {!isAuthLoading && user && ( // Conditionally render user info only when not loading AND user exists
+              {!isAuthLoading && user && (
                 <div className="hidden md:flex items-center gap-3">
+                  {/* Trial Status Badge */}
+                  <TrialBadge trialStatus={trialStatus} />
                   {/* Notification Bell */}
                   <button
                     onClick={() => setShowNotifications(true)}

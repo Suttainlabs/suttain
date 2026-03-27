@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
+import useTrialStatus from "../hooks/useTrialStatus";
+import TrialExpiredBanner from "../components/trial/TrialExpiredBanner";
 import AuthGate from "../components/auth/AuthGate";
 import AuthContext from "../components/auth/AuthContext";
 import { Check } from "lucide-react";
@@ -17,6 +19,7 @@ import { sendFeatureUsageEmail } from "../components/shared/featureNotifications
 
 export default function Generator() {
   const { user, refreshUser } = useContext(AuthContext);
+  const trialStatus = useTrialStatus(user);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -431,6 +434,10 @@ export default function Generator() {
         />
       </div>
     );
+  }
+
+  if (trialStatus.isExpired) {
+    return <TrialExpiredBanner featureName="Formula Generator" />;
   }
 
   return (
