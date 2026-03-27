@@ -10,67 +10,57 @@ export default function FinalCTA() {
   const { user, openAuthModal } = useContext(AuthContext);
 
   return (
-    <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-white">
+    <section className="py-20 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="max-w-4xl mx-auto"
+        className="max-w-3xl mx-auto text-center"
       >
-        <div className="relative rounded-3xl overflow-hidden">
-          {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
-          
-          {/* Accent orbs */}
-          <div className="absolute -top-20 -right-20 w-60 h-60 bg-teal-500 rounded-full blur-3xl opacity-10" />
-          <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-violet-500 rounded-full blur-3xl opacity-10" />
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl px-6 py-14 sm:px-14 sm:py-20 relative overflow-hidden">
+          {/* Subtle accent */}
+          <div className="absolute top-0 right-0 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-violet-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
 
-          <div className="relative px-8 py-14 sm:px-16 sm:py-20 text-center">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
-              Ready to Create
-              <br />
-              <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-                Safer Products?
-              </span>
+          <div className="relative">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight leading-tight">
+              Ready to create safer products?
             </h2>
-            <p className="text-base sm:text-lg text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
-              Join thousands of formulators who trust Suttain for chemical safety, compliance, and sustainable product development.
+            <p className="text-slate-400 mb-8 max-w-md mx-auto">
+              Join formulators who trust Suttain for safety, compliance, and sustainability.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               {user ? (
                 <Link to={createPageUrl("Simulator")}>
-                  <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white px-10 py-6 text-base rounded-xl font-semibold shadow-lg shadow-teal-500/25 border-0">
-                    <Sparkles className="w-5 h-5 mr-2" />
+                  <Button className="w-full sm:w-auto h-12 px-8 text-[15px] rounded-xl font-semibold bg-[#02988C] hover:bg-[#027d73] text-white">
+                    <Sparkles className="w-[18px] h-[18px] mr-2" />
                     Open Simulator
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
               ) : (
                 <Button
-                  size="lg"
                   onClick={() => openAuthModal("signup")}
-                  className="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white px-10 py-6 text-base rounded-xl font-semibold shadow-lg shadow-teal-500/25 border-0"
+                  className="w-full sm:w-auto h-12 px-8 text-[15px] rounded-xl font-semibold bg-[#02988C] hover:bg-[#027d73] text-white"
                 >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Start 14-Day Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <Sparkles className="w-[18px] h-[18px] mr-2" />
+                  Start Free Trial
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               )}
               <Link to={createPageUrl("Pricing")}>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white/5 border border-white/10 text-white hover:bg-white/10 px-10 py-6 text-base rounded-xl font-semibold">
+                <Button variant="outline" className="w-full sm:w-auto h-12 px-8 text-[15px] rounded-xl font-semibold bg-transparent border-slate-600 text-white hover:bg-white/5">
                   View Pricing
                 </Button>
               </Link>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-8">
-              {["No credit card required", "14-day free trial", "Cancel anytime"].map((text, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-teal-400" />
-                  <span className="text-sm text-slate-400">{text}</span>
-                </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-7">
+              {["No credit card", "14-day trial", "Cancel anytime"].map((t, i) => (
+                <span key={i} className="flex items-center gap-1.5 text-sm text-slate-400">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" />{t}
+                </span>
               ))}
             </div>
           </div>
