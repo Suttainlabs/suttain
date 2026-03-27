@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { TestTube, ChevronRight, Sparkles, Beaker, Shield, Target, Zap } from "lucide-react";
+import { FlaskConical, ChevronRight, Sparkles, Beaker, Shield, Target, Zap } from "lucide-react";
 
 export default function HeroSection() {
   return (
@@ -78,7 +78,7 @@ export default function HeroSection() {
                   className="bg-white/90 border-2 border-violet-300 text-violet-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-400 px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:w-auto"
                 >
                   Simulate Chemical Mix
-                  <TestTube className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
+                   <FlaskConical className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
               </Link>
             </motion.div>
