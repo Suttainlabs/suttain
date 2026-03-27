@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 const defaultMeta = {
   title: 'Suttain - AI-Powered Chemical Safety & Formula Generator',
-  description: 'Create safe skincare, cleaning products & formulas with AI. Test chemical interactions, scan product barcodes, and get instant safety analysis. Free chemical simulator for DIY creators & businesses.',
+  description: 'Create safe skincare, cleaning products & formulas with AI. Test chemical interactions, scan product barcodes, and get instant safety analysis. 14-day free trial for DIY creators & businesses.',
   keywords: 'chemical safety, formula generator, chemical simulator, skincare formulation, cleaning products, ingredient analysis, product safety, chemical reactions, AI formulation, sustainable products, cosmetic formulation, household cleaners, DIY skincare, chemical database',
   image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png',
   url: 'https://suttain.com',
@@ -125,9 +125,10 @@ export default function SEOHead({
       "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "USD"
+        "priceCurrency": "USD",
+        "description": "14-day free trial"
       },
-      "description": "Test chemical interactions and generate safe product formulas with AI",
+      "description": "Test chemical interactions and generate safe product formulas with AI. 14-day free trial.",
       "featureList": [
         "Chemical safety simulation",
         "AI-powered formula generation",
@@ -149,7 +150,7 @@ export default function SEOHead({
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD",
-        "description": "Free tier available"
+        "description": "14-day free trial"
       },
       "aggregateRating": {
         "@type": "AggregateRating",
@@ -183,12 +184,12 @@ export default function SEOHead({
 export const pageSEO = {
   home: {
     title: null, // Uses default
-    description: 'Create safe skincare, cleaning products & formulas with AI. Test chemical interactions, scan product barcodes, and get instant safety analysis. Free for DIY creators & businesses.',
+    description: 'Create safe skincare, cleaning products & formulas with AI. Test chemical interactions, scan product barcodes, and get instant safety analysis. 14-day free trial for DIY creators & businesses.',
     keywords: 'chemical safety, AI formula generator, chemical simulator, skincare formulation, cleaning products DIY, ingredient safety, product formulation software'
   },
   simulator: {
     title: 'Chemical Safety Simulator',
-    description: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations. Free AI-powered chemical interaction simulator.',
+    description: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations. AI-powered chemical interaction simulator with 14-day free trial.',
     keywords: 'chemical simulator, chemical reactions, hazard analysis, chemical safety testing, mixing chemicals safely, chemical compatibility'
   },
   generator: {
@@ -213,7 +214,7 @@ export const pageSEO = {
   },
   learning: {
     title: 'Learning Center',
-    description: 'Free tutorials and guides on chemical safety, product formulation, and sustainable manufacturing. Learn chemistry basics to advanced formulation techniques.',
+    description: 'Tutorials and guides on chemical safety, product formulation, and sustainable manufacturing. Learn chemistry basics to advanced formulation techniques.',
     keywords: 'chemistry tutorials, formulation guides, chemical safety training, DIY product making courses'
   }
 };

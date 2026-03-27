@@ -427,7 +427,7 @@ export default function Generator() {
       <div className="min-h-[calc(100vh-80px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <AuthGate
           featureName="Formula Generator"
-          featureDescription="Create custom formulas for cleaning products, skincare, and more. Log in to save your recipes and track your progress."
+          featureDescription="Create custom formulas for cleaning products, skincare, and more. Start your 14-day free trial to save recipes and track your progress."
         />
       </div>
     );

@@ -1,4 +1,3 @@
-
 import React, { useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -65,11 +64,11 @@ export default function AuthGate({ children, featureName, featureDescription }) 
                   className="flex-1 btn-primary"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Sign Up for Free
+                  Start 14-Day Free Trial
                 </Button>
               </div>
               <p className="text-xs text-slate-500">
-                Creating an account allows you to save your formulas, simulations, and earn rewards.
+                Sign up for a 14-day free trial. Save formulas, run simulations, and earn rewards.
               </p>
             </CardContent>
           </Card>

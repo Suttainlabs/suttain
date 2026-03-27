@@ -97,7 +97,7 @@ export default function HomePage() {
               <Link to={createPageUrl("Simulator")}>
                 <Button size="lg" className="w-full sm:w-auto bg-[#02988C] hover:bg-[#027d73] text-white px-8 py-4 text-base rounded-full font-semibold shadow-md">
                   <TestTube className="w-5 h-5 mr-2" />
-                  Start Free Analysis
+                  Start 14-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
@@ -118,7 +118,7 @@ export default function HomePage() {
               {[
                 { icon: Beaker, value: '5,000+', label: 'Chemicals in Database' },
                 { icon: Zap, value: '<1s', label: 'Analysis Speed' },
-                { icon: CheckCircle2, value: '100%', label: 'Free to Start' },
+                { icon: CheckCircle2, value: '14 Days', label: 'Free Trial' },
                 { icon: Clock, value: '24/7', label: 'Available' },
               ].map((stat, i) => (
                 <div key={i} className="text-center">
@@ -169,7 +169,7 @@ export default function HomePage() {
                       <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
                       <p className="text-slate-500 mb-4">{feature.description}</p>
                       <div className="flex items-center text-[#02988C] font-semibold text-sm group-hover:translate-x-1 transition-transform">
-                        Try it free <ChevronRight className="w-4 h-4 ml-1" />
+                        Start free trial <ChevronRight className="w-4 h-4 ml-1" />
                       </div>
                     </CardContent>
                   </Card>
@@ -346,7 +346,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to={createPageUrl("Simulator")}>
                 <Button size="lg" className="w-full sm:w-auto bg-[#02988C] hover:bg-[#027d73] text-white px-8 py-4 text-base rounded-full font-semibold">
-                  Get Started Free
+                  Start 14-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
@@ -359,7 +359,7 @@ export default function HomePage() {
             </div>
             <p className="text-sm text-slate-400 mt-6 flex items-center justify-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-[#02988C]" />
-              No credit card required • Free forever plan available
+              No credit card required • 14-day free trial included
             </p>
           </motion.div>
         </div>

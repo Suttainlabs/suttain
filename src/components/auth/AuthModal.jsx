@@ -82,7 +82,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
                   {mode === 'signup' ? 'Join Suttain' : 'Welcome Back'}
                 </h2>
                 <p className="mt-2 text-slate-600">
-                  {mode === 'signup' ? 'Start creating safer, sustainable formulas today' : 'Log in to access your projects'}
+                  {mode === 'signup' ? 'Start your 14-day free trial today' : 'Log in to access your projects'}
                 </p>
               </div>
 
@@ -99,7 +99,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
                   ))}
                   <div className="pt-2 text-center">
                       <span className="text-sm font-semibold text-emerald-600 bg-emerald-100/70 border border-emerald-200/80 rounded-full px-4 py-2">
-                        Free Trial - No Credit Card Required
+                        14-Day Free Trial — No Credit Card Required
                       </span>
                   </div>
                 </div>

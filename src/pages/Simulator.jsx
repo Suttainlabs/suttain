@@ -871,7 +871,7 @@ export default function Simulator() {
   const isBusinessMode = persona === 'business';
 
   return (
-    <AuthGate featureName="Chemical Simulator" featureDescription="Test chemical interactions safely with our advanced simulation engine. Log in to save your simulations and access the full database.">
+    <AuthGate featureName="Chemical Simulator" featureDescription="Test chemical interactions safely with our advanced simulation engine. Start your 14-day free trial to save simulations and access the full database.">
       <SEOHead {...pageSEO.simulator} />
       <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-slate-50 relative overflow-hidden">
         {/* Background Pattern */}
