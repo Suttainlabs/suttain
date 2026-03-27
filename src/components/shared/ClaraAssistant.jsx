@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -167,7 +166,7 @@ ${conversationHistory}`;
                                 <Sparkles className="w-5 h-5 text-[#02988C]" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-white">Clara, your AI Assistant</h3>
+                                <h3 className="font-bold text-white">Clara, your Assistant</h3>
                                 <p className="text-xs text-white/90">Powered by Suttain's Safety Agent</p>
                             </div>
                         </div>

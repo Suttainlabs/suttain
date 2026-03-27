@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 const defaultMeta = {
-  title: 'Suttain - AI-Powered Chemical Safety & Formula Generator',
+  title: 'Suttain - Chemical Safety & Formula Generator',
   description: 'Create safe skincare, cleaning products & formulas with AI. Test chemical interactions, scan product barcodes, and get instant safety analysis. 14-day free trial for DIY creators & businesses.',
   keywords: 'chemical safety, formula generator, chemical simulator, skincare formulation, cleaning products, ingredient analysis, product safety, chemical reactions, AI formulation, sustainable products, cosmetic formulation, household cleaners, DIY skincare, chemical database',
   image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png',
@@ -102,7 +102,7 @@ export default function SEOHead({
       "alternateName": "Suttain Labs",
       "url": "https://suttain.com",
       "logo": defaultMeta.image,
-      "description": "AI-powered chemical safety and sustainable product formulation platform",
+      "description": "Chemical safety and product formulation platform",
       "sameAs": [
         "https://www.linkedin.com/company/suttainlabs/",
         "https://www.instagram.com/suttainlabs/",
@@ -128,10 +128,10 @@ export default function SEOHead({
         "priceCurrency": "USD",
         "description": "14-day free trial"
       },
-      "description": "Test chemical interactions and generate safe product formulas with AI. 14-day free trial.",
+      "description": "Test chemical interactions and generate safe product formulas. 14-day free trial.",
       "featureList": [
         "Chemical safety simulation",
-        "AI-powered formula generation",
+        "Smart formula generation",
         "Barcode product scanning",
         "Ingredient analysis",
         "Compliance checking",
@@ -185,17 +185,17 @@ export const pageSEO = {
   home: {
     title: null, // Uses default
     description: 'Create safe skincare, cleaning products & formulas with AI. Test chemical interactions, scan product barcodes, and get instant safety analysis. 14-day free trial for DIY creators & businesses.',
-    keywords: 'chemical safety, AI formula generator, chemical simulator, skincare formulation, cleaning products DIY, ingredient safety, product formulation software'
+    keywords: 'chemical safety, formula generator, chemical simulator, skincare formulation, cleaning products DIY, ingredient safety, product formulation software'
   },
   simulator: {
     title: 'Chemical Safety Simulator',
-    description: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations. AI-powered chemical interaction simulator with 14-day free trial.',
+    description: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations. Chemical interaction simulator with 14-day free trial.',
     keywords: 'chemical simulator, chemical reactions, hazard analysis, chemical safety testing, mixing chemicals safely, chemical compatibility'
   },
   generator: {
-    title: 'AI Formula Generator',
-    description: 'Create professional skincare, soap, and cleaning product formulas with AI. Get ingredient recommendations, safety validation, and step-by-step instructions.',
-    keywords: 'formula generator, skincare recipes, soap making, cleaning product formulas, DIY cosmetics, product formulation, AI recipe generator'
+    title: 'Formula Generator',
+    description: 'Create professional skincare, soap, and cleaning product formulas. Get ingredient recommendations, safety validation, and step-by-step instructions.',
+    keywords: 'formula generator, skincare recipes, soap making, cleaning product formulas, DIY cosmetics, product formulation, recipe generator'
   },
   scanner: {
     title: 'Product Barcode Scanner',
@@ -203,13 +203,13 @@ export const pageSEO = {
     keywords: 'barcode scanner, ingredient checker, product safety scanner, allergen detector, ingredient analysis app'
   },
   compliance: {
-    title: 'AI Compliance Co-Pilot',
-    description: 'Automate regulatory compliance checking for cosmetics and household products. Meet FDA, EU, and global standards with AI-powered compliance analysis.',
+    title: 'Compliance Co-Pilot',
+    description: 'Automate regulatory compliance checking for cosmetics and household products. Meet FDA, EU, and global standards with advanced compliance analysis.',
     keywords: 'regulatory compliance, FDA compliance, EU cosmetics regulation, product compliance, ingredient regulations'
   },
   about: {
     title: 'About Us',
-    description: 'Suttain makes chemical safety accessible to everyone with AI-powered tools. Learn about our mission to democratize chemical knowledge for safer products.',
+    description: 'Suttain makes chemical safety accessible to everyone. Learn about our mission to democratize chemical knowledge for safer products.',
     keywords: 'Suttain company, chemical safety platform, sustainable products, about Suttain'
   },
   learning: {

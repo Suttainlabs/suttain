@@ -197,7 +197,7 @@ export default function HomePage() {
               From Idea to Safe Product in Minutes
             </h2>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-              Skip the guesswork. Our AI-powered platform guides you through every step of product creation.
+              Skip the guesswork. Our platform guides you through every step of product creation.
             </p>
           </motion.div>
 
