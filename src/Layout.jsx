@@ -183,13 +183,9 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const productSuiteItems = [
-    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Test chemical interactions & safety", type: 'product' },
-    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with compliance & sustainability", type: 'product' },
-    { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Scan products for safety & eco analysis", type: 'product' },
-    { type: 'separator' },
-    { href: "ComplianceCoPilot", label: "AI Compliance Co-Pilot", icon: ShieldCheck, description: "Regulatory compliance dashboard", type: 'product' },
-    { href: "PersonalizedSafety", label: "Safety Profiles", icon: HeartPulse, description: "Manage your health-based safety alerts", type: 'product' },
-    { href: "Sustainability", label: "Sustainability Scoring", icon: Leaf, description: "Standalone eco-impact analysis", type: 'product' },
+    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", type: 'product' },
+    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", type: 'product' },
+    { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Scan products for full safety & eco analysis", type: 'product' },
     { type: 'separator' },
     { href: "EnterpriseAPI", label: "Enterprise API Access", icon: AppWindow, description: "Integrate Suttain into your enterprise systems", type: 'premium', status: 'coming_soon' },
   ];
