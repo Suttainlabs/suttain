@@ -180,72 +180,54 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sustainability */}
+      {/* How It Works */}
       <section className="py-20 sm:py-28 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="grid lg:grid-cols-2 gap-12 items-center"
+            className="text-center mb-16"
           >
-            <div>
-              <span className="inline-flex items-center gap-2 bg-[#02988C]/10 text-[#02988C] px-4 py-2 rounded-full text-sm font-semibold mb-6">
-                <Leaf className="w-4 h-4" />
-                Sustainability First
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-                Building a Greener Future, One Formula at a Time
-              </h2>
-              <p className="text-lg text-slate-500 mb-8">
-                Every product you create with Suttain is analyzed for environmental impact. We help you choose biodegradable ingredients, reduce carbon footprint, and meet eco-certifications.
-              </p>
-              <div className="grid grid-cols-2 gap-6">
-                {['Eco Scoring', 'Green Alternatives'].map((title, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#02988C]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <CheckCircle2 className="w-5 h-5 text-[#02988C]" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-slate-900">{title}</h4>
-                      <p className="text-sm text-slate-500">
-                        {i === 0 ? 'Real-time sustainability metrics' : 'Eco-friendly ingredient suggestions'}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="rounded-2xl overflow-hidden shadow-lg"
-              >
-                <img 
-                  src={SUSTAINABILITY_IMAGES.globeBicycle} 
-                  alt="Sustainable planet" 
-                  className="w-full h-48 object-cover"
-                />
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="rounded-2xl overflow-hidden shadow-lg mt-8"
-              >
-                <img 
-                  src={SUSTAINABILITY_IMAGES.handsPlanting} 
-                  alt="Growing together" 
-                  className="w-full h-48 object-cover"
-                />
-              </motion.div>
-            </div>
+            <span className="inline-flex items-center gap-2 bg-[#9531F5]/10 text-[#9531F5] px-4 py-2 rounded-full text-sm font-semibold mb-6">
+              <Zap className="w-4 h-4" />
+              How It Works
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              From Idea to Safe Product in Minutes
+            </h2>
+            <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+              Skip the guesswork. Our AI-powered platform guides you through every step of product creation.
+            </p>
           </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { step: '01', title: 'Choose Your Product', description: 'Select from skincare, cleaning, hair care, and more — or describe your own custom idea.', color: 'bg-[#02988C]' },
+              { step: '02', title: 'AI Generates Formulas', description: 'Get multiple professional-grade formula options tailored to your needs in seconds.', color: 'bg-[#09D2FF]' },
+              { step: '03', title: 'Test & Refine', description: 'Run safety simulations, check compliance, and fine-tune your formula before production.', color: 'bg-[#9531F5]' },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.15 }}
+                className="relative"
+              >
+                <div className="bg-white rounded-2xl p-8 border border-slate-200 h-full">
+                  <div className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center mb-6`}>
+                    <span className="text-white font-bold text-lg">{item.step}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                  <p className="text-slate-500">{item.description}</p>
+                </div>
+                {index < 2 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-slate-300"></div>
+                )}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
