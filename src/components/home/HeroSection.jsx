@@ -7,12 +7,12 @@ import { Layers, ChevronRight, Sparkles, Database, Shield, Target, Zap } from "l
 
 export default function HeroSection() {
   return (
-    <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-white to-cyan-50 relative overflow-hidden">
+    <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-white to-green-50 relative overflow-hidden">
         {/* Decorative background elements */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-teal-200/30 rounded-full blur-3xl opacity-50"></div>
-          <div className="absolute top-40 right-10 w-96 h-96 bg-cyan-200/20 rounded-full blur-3xl opacity-50"></div>
-          <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-violet-200/25 rounded-full blur-3xl opacity-50"></div>
+          <div className="absolute top-20 left-10 w-72 h-72 bg-green-200/30 rounded-full blur-3xl opacity-50"></div>
+          <div className="absolute top-40 right-10 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl opacity-50"></div>
+          <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-green-200/25 rounded-full blur-3xl opacity-50"></div>
         </div>
         
         {/* Grid pattern */}
@@ -21,7 +21,7 @@ export default function HeroSection() {
         <div className="max-w-4xl mx-auto text-center relative z-10">
             {/* Floating icons */}
             <motion.div 
-              className="absolute -top-10 left-10 w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg"
+              className="absolute -top-10 left-10 w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
             >
@@ -29,7 +29,7 @@ export default function HeroSection() {
             </motion.div>
             
             <motion.div 
-              className="absolute top-20 right-10 w-14 h-14 bg-gradient-to-r from-violet-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg"
+              className="absolute top-20 right-10 w-14 h-14 bg-gradient-to-r from-blue-500 to-sky-500 rounded-full flex items-center justify-center shadow-lg"
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 4, repeat: Infinity, delay: 1 }}
             >
@@ -46,7 +46,7 @@ export default function HeroSection() {
             >
               Safer, smarter product formulation for
               <br className="hidden sm:block" /> 
-              <span className="bg-gradient-to-r from-teal-600 via-cyan-600 to-violet-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-blue-600 bg-clip-text text-transparent">
                 eco-conscious creators
               </span>
             </motion.h1>
@@ -67,7 +67,7 @@ export default function HeroSection() {
               className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
             >
               <Link to={createPageUrl("Generator")}>
-                <Button className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:w-auto">
+                <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:w-auto">
                   Start Formula Generator
                   <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -75,7 +75,7 @@ export default function HeroSection() {
               <Link to={createPageUrl("Simulator")}>
                 <Button 
                   variant="outline" 
-                  className="bg-white/90 border-2 border-violet-300 text-violet-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-400 px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:w-auto"
+                  className="bg-white/90 border-2 border-blue-300 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:w-auto"
                 >
                   Simulate Chemical Mix
                    <Layers className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
@@ -90,15 +90,15 @@ export default function HeroSection() {
               className="flex flex-wrap justify-center gap-6 text-sm text-slate-500"
             >
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-emerald-500" />
+                <Shield className="w-4 h-4 text-green-500" />
                 Minimize trial-and-error
               </div>
               <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-blue-500" />
+                <Target className="w-4 h-4 text-blue-600" />
                 Avoid risky combinations
               </div>
               <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-violet-500" />
+                <Zap className="w-4 h-4 text-green-600" />
                 Formulate clean, compliant products — faster
               </div>
             </motion.div>
