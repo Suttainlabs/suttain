@@ -235,23 +235,19 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-slate-50">
       <style>{`
-        @import url('https://api.fontshare.com/v2/css?f[]=gilroy@700,400,600&display=swap');
-        
         :root {
           --suttain-teal: #02988C;
           --suttain-blue: #09D2FF;
           --suttain-violet: #9531F5;
-          
           --suttain-dark: #1e293b;
           --suttain-text: #475569;
-          
           --light-background: #f8fafc;
           --warning-orange: #f97316;
           --success-green: #22c55e;
         }
 
         body {
-          font-family: 'Gilroy', sans-serif;
+          font-family: var(--font-gilroy, 'Gilroy', sans-serif);
           background-color: var(--light-background);
           color: var(--suttain-text);
           -webkit-font-smoothing: antialiased;
@@ -259,7 +255,7 @@ export default function Layout({ children, currentPageName }) {
         }
         
         h1, h2, h3, h4, h5, h6, .font-heading {
-          font-family: 'Gilroy', sans-serif;
+          font-family: var(--font-gilroy, 'Gilroy', sans-serif);
           font-weight: 700;
           color: var(--suttain-dark);
         }
@@ -272,7 +268,7 @@ export default function Layout({ children, currentPageName }) {
         }
 
         .btn-primary {
-          background: linear-gradient(to right, var(--suttain-teal), var(--suttain-blue));
+          background: linear-gradient(135deg, var(--suttain-teal), var(--suttain-blue));
           color: white;
           transition: all 0.3s ease;
         }
@@ -840,7 +836,7 @@ export default function Layout({ children, currentPageName }) {
       
       {/* Footer - Hidden on Dashboard/Profile page */}
       {currentPageName !== 'Profile' && (
-      <footer className="bg-slate-900 text-sm pb-[env(safe-area-inset-bottom)]">
+      <footer className="bg-gradient-to-br from-[#1a3a35] via-slate-900 to-slate-900 text-sm pb-[env(safe-area-inset-bottom)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Column 1: Logo & Tagline */}

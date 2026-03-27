@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import {
   Layers, Sparkles, ArrowRight, Lightbulb,
   CheckCircle2, Home, Building2, Rocket, Leaf,
-  ScanLine, Play, ChevronRight, Zap,
-  Database, ShieldCheck, BarChart3, Award, Clock
+  ScanLine, ChevronRight, Zap,
+  Database, ShieldCheck, BarChart3, Award, Clock, FlaskConical
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -12,11 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AuthContext from "../auth/AuthContext";
 import SEOHead, { pageSEO } from "../shared/SEOHead";
-
-const SUSTAINABILITY_IMAGES = {
-  globeBicycle: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/9b1ee8422_globe-and-bicycle-save-the-planet-idea-internati-2026-01-08-02-40-42-utc.jpg",
-  handsPlanting: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/c8f95960f_good-soil-makes-growth-easier-2026-01-09-09-55-54-utc.jpg"
-};
 
 export default function HomePage() {
   const { user } = useContext(AuthContext);
@@ -26,55 +21,73 @@ export default function HomePage() {
       id: 'simulator',
       icon: Layers,
       title: 'Chemical Simulator',
-      description: 'Test chemical interactions safely before mixing',
-      link: 'Simulator'
+      description: 'Test chemical interactions safely before mixing. Get instant hazard analysis and reaction predictions.',
+      link: 'Simulator',
+      color: 'bg-suttain-teal'
     },
     {
       id: 'generator',
       icon: Sparkles,
       title: 'Formula Generator',
-      description: 'Custom recipes for skincare, cleaning & more',
-      link: 'generator'
+      description: 'Custom recipes for skincare, cleaning products and more. Professional-grade formulas in seconds.',
+      link: 'generator',
+      color: 'bg-suttain-purple'
     },
     {
       id: 'scanner',
       icon: ScanLine,
       title: 'Quick Scan',
-      description: 'Scan any product to analyze ingredients instantly',
-      link: 'BarcodeScanner'
+      description: 'Scan any product barcode to analyze ingredients instantly. Safety ratings and allergen alerts.',
+      link: 'BarcodeScanner',
+      color: 'bg-suttain-blue'
     }
   ];
 
   const benefits = [
-    { icon: ShieldCheck, title: 'Safety First', description: 'Get instant alerts about dangerous chemical combinations', iconBg: 'bg-teal-50', iconColor: 'text-[#02988C]' },
-    { icon: Zap, title: 'Lightning Fast', description: 'AI generates professional formulas in seconds', iconBg: 'bg-cyan-50', iconColor: 'text-[#09D2FF]' },
-    { icon: Lightbulb, title: 'Smart Analysis', description: 'Deep insights into every ingredient interaction', iconBg: 'bg-violet-50', iconColor: 'text-[#9531F5]' },
-    { icon: Leaf, title: 'Eco-Friendly', description: 'Sustainability scoring for greener products', iconBg: 'bg-teal-50', iconColor: 'text-[#02988C]' },
-    { icon: BarChart3, title: 'Compliance Ready', description: 'Meet global regulatory standards automatically', iconBg: 'bg-cyan-50', iconColor: 'text-[#09D2FF]' },
-    { icon: Award, title: 'Pro Results', description: 'Lab-quality analysis without lab costs', iconBg: 'bg-violet-50', iconColor: 'text-[#9531F5]' }
+    { icon: ShieldCheck, title: 'Safety First', description: 'Get instant alerts about dangerous chemical combinations' },
+    { icon: Zap, title: 'Lightning Fast', description: 'Professional formulas generated in seconds' },
+    { icon: Lightbulb, title: 'Smart Analysis', description: 'Deep insights into every ingredient interaction' },
+    { icon: Leaf, title: 'Eco-Friendly', description: 'Sustainability scoring for greener products' },
+    { icon: BarChart3, title: 'Compliance Ready', description: 'Meet global regulatory standards automatically' },
+    { icon: Award, title: 'Pro Results', description: 'Lab-quality analysis without lab costs' }
   ];
 
   const audiences = [
-    { icon: Home, title: 'DIY Creators', description: 'Create safe skincare, soaps, and cleaning products at home', iconBg: 'bg-teal-50', iconColor: 'text-[#02988C]' },
-    { icon: Building2, title: 'Small Businesses', description: 'Launch product lines without expensive lab testing', iconBg: 'bg-cyan-50', iconColor: 'text-[#09D2FF]' },
-    { icon: Rocket, title: 'Startups', description: 'Validate and scale formulations with confidence', iconBg: 'bg-violet-50', iconColor: 'text-[#9531F5]' }
+    { icon: Home, title: 'DIY Creators', description: 'Create safe skincare, soaps, and cleaning products at home' },
+    { icon: Building2, title: 'Small Businesses', description: 'Launch product lines without expensive lab testing' },
+    { icon: Rocket, title: 'Startups', description: 'Validate and scale formulations with confidence' }
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen font-gilroy">
       <SEOHead {...pageSEO.home} />
       
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-slate-50">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20 sm:pb-28">
+      {/* Hero Section — Brand Gradient */}
+      <section className="relative overflow-hidden">
+        {/* Brand gradient background inspired by brand guide cover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#3a8c6e] via-[#02988C] to-[#09D2FF]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(149,49,245,0.15),transparent_60%)]" />
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-24 sm:pb-32">
           <div className="text-center max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white/90 px-4 py-2 rounded-full text-sm font-medium mb-8 border border-white/20"
+            >
+              <FlaskConical className="w-4 h-4" />
+              Chemical Safety & Formulation Platform
+            </motion.div>
+
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-slate-900"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white"
             >
-              Create <span className="text-[#02988C]">Safe Products</span>
+              Create{" "}
+              <span className="text-suttain-blue">Safe Products</span>
               <br />
               Without the Lab
             </motion.h1>
@@ -83,7 +96,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-lg sm:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed"
+              className="text-lg sm:text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed"
             >
               Simulate chemical reactions, generate ready-to-make formulas, and ensure product safety. No lab required.
             </motion.p>
@@ -95,15 +108,15 @@ export default function HomePage() {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link to={createPageUrl("Simulator")}>
-                <Button size="lg" className="w-full sm:w-auto bg-[#02988C] hover:bg-[#027d73] text-white px-8 py-4 text-base rounded-full font-semibold shadow-md">
+                <Button size="lg" className="w-full sm:w-auto bg-white text-suttain-teal hover:bg-white/90 px-8 py-4 text-base rounded-full font-semibold shadow-lg shadow-black/10">
                   <Zap className="w-5 h-5 mr-2" />
                   Start 14-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
               <Link to={createPageUrl("generator")}>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 px-8 py-4 text-base rounded-full font-semibold">
-                  <Sparkles className="w-5 h-5 mr-2 text-slate-500" />
+                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-8 py-4 text-base rounded-full font-semibold">
+                  <Sparkles className="w-5 h-5 mr-2" />
                   Create Formula
                 </Button>
               </Link>
@@ -116,21 +129,28 @@ export default function HomePage() {
               className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-12 max-w-3xl mx-auto"
             >
               {[
-                { icon: Database, value: '5,000+', label: 'Chemicals in Database' },
+                { icon: Database, value: '5,000+', label: 'Chemicals' },
                 { icon: Zap, value: '<1s', label: 'Analysis Speed' },
                 { icon: CheckCircle2, value: '14 Days', label: 'Free Trial' },
                 { icon: Clock, value: '24/7', label: 'Available' },
               ].map((stat, i) => (
                 <div key={i} className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-1">
-                    <stat.icon className="w-4 h-4 text-[#02988C]" />
-                    <span className="text-2xl sm:text-3xl font-bold text-slate-800">{stat.value}</span>
+                    <stat.icon className="w-4 h-4 text-suttain-blue" />
+                    <span className="text-2xl sm:text-3xl font-bold text-white">{stat.value}</span>
                   </div>
-                  <p className="text-sm text-slate-500">{stat.label}</p>
+                  <p className="text-sm text-white/60">{stat.label}</p>
                 </div>
               ))}
             </motion.div>
           </div>
+        </div>
+
+        {/* Curved bottom edge */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0 60V0C240 40 480 60 720 60C960 60 1200 40 1440 0V60H0Z" fill="white" />
+          </svg>
         </div>
       </section>
 
@@ -161,14 +181,14 @@ export default function HomePage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Link to={createPageUrl(feature.link)}>
-                  <Card className="group h-full border border-slate-200 hover:border-[#02988C]/30 hover:shadow-xl transition-all duration-300 cursor-pointer">
+                  <Card className="group h-full border border-slate-200 hover:border-suttain-teal/30 hover:shadow-xl transition-all duration-300 cursor-pointer bg-white">
                    <CardContent className="p-8">
-                     <div className="w-14 h-14 rounded-2xl bg-[#02988C]/10 flex items-center justify-center mb-6 group-hover:bg-[#02988C] transition-colors duration-300">
-                       <feature.icon className="w-7 h-7 text-[#02988C] group-hover:text-white transition-colors duration-300" />
+                     <div className={`w-14 h-14 rounded-2xl ${feature.color}/10 flex items-center justify-center mb-6 group-hover:${feature.color} transition-colors duration-300`}>
+                       <feature.icon className={`w-7 h-7 ${feature.color === 'bg-suttain-teal' ? 'text-suttain-teal' : feature.color === 'bg-suttain-purple' ? 'text-suttain-purple' : 'text-suttain-blue'} group-hover:text-white transition-colors duration-300`} />
                      </div>
                      <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
-                     <p className="text-slate-500 mb-4">{feature.description}</p>
-                     <div className="flex items-center text-[#02988C] font-semibold text-sm group-hover:translate-x-1 transition-transform">
+                     <p className="text-slate-500 mb-4 leading-relaxed">{feature.description}</p>
+                     <div className="flex items-center text-suttain-teal font-semibold text-sm group-hover:translate-x-1 transition-transform">
                        Explore <ChevronRight className="w-4 h-4 ml-1" />
                       </div>
                     </CardContent>
@@ -189,7 +209,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="inline-flex items-center gap-2 bg-[#9531F5]/10 text-[#9531F5] px-4 py-2 rounded-full text-sm font-semibold mb-6">
+            <span className="inline-flex items-center gap-2 bg-suttain-purple/10 text-suttain-purple px-4 py-2 rounded-full text-sm font-semibold mb-6">
               <Zap className="w-4 h-4" />
               How It Works
             </span>
@@ -203,9 +223,9 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { step: '01', title: 'Choose Your Product', description: 'Select from skincare, cleaning, hair care, and more — or describe your own custom idea.', color: 'bg-[#02988C]' },
-              { step: '02', title: 'AI Generates Formulas', description: 'Get multiple professional-grade formula options tailored to your needs in seconds.', color: 'bg-[#09D2FF]' },
-              { step: '03', title: 'Test & Refine', description: 'Run safety simulations, check compliance, and fine-tune your formula before production.', color: 'bg-[#9531F5]' },
+              { step: '01', title: 'Choose Your Product', description: 'Select from skincare, cleaning, hair care, and more or describe your own custom idea.', color: 'bg-suttain-teal' },
+              { step: '02', title: 'Generate Formulas', description: 'Get multiple professional-grade formula options tailored to your needs in seconds.', color: 'bg-suttain-purple' },
+              { step: '03', title: 'Test & Refine', description: 'Run safety simulations, check compliance, and fine-tune your formula before production.', color: 'bg-suttain-blue' },
             ].map((item, index) => (
               <motion.div
                 key={index}
@@ -215,12 +235,12 @@ export default function HomePage() {
                 transition={{ delay: index * 0.15 }}
                 className="relative"
               >
-                <div className="bg-white rounded-2xl p-8 border border-slate-200 h-full">
+                <div className="bg-white rounded-2xl p-8 border border-slate-200 h-full shadow-sm">
                   <div className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center mb-6`}>
                     <span className="text-white font-bold text-lg">{item.step}</span>
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
-                  <p className="text-slate-500">{item.description}</p>
+                  <p className="text-slate-500 leading-relaxed">{item.description}</p>
                 </div>
                 {index < 2 && (
                   <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-slate-300"></div>
@@ -244,7 +264,7 @@ export default function HomePage() {
               Built for Creators Like You
             </h2>
             <p className="text-lg text-slate-500">
-              From hobbyists to entrepreneurs, we've got you covered
+              From hobbyists to entrepreneurs
             </p>
           </motion.div>
 
@@ -258,8 +278,8 @@ export default function HomePage() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className={`w-16 h-16 rounded-2xl ${audience.iconBg} flex items-center justify-center mx-auto mb-6`}>
-                  <audience.icon className={`w-8 h-8 ${audience.iconColor}`} />
+                <div className={`w-16 h-16 rounded-2xl ${index === 0 ? 'bg-suttain-teal/10' : index === 1 ? 'bg-suttain-purple/10' : 'bg-suttain-blue/10'} flex items-center justify-center mx-auto mb-6`}>
+                  <audience.icon className={`w-8 h-8 ${index === 0 ? 'text-suttain-teal' : index === 1 ? 'text-suttain-purple' : 'text-suttain-blue'}`} />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">{audience.title}</h3>
                 <p className="text-slate-500">{audience.description}</p>
@@ -297,8 +317,8 @@ export default function HomePage() {
               >
                 <Card className="h-full border border-slate-200 hover:shadow-md transition-all bg-white">
                   <CardContent className="p-6">
-                    <div className={`w-11 h-11 rounded-xl ${benefit.iconBg} flex items-center justify-center mb-4`}>
-                      <benefit.icon className={`w-5 h-5 ${benefit.iconColor}`} />
+                    <div className={`w-11 h-11 rounded-xl ${index % 3 === 0 ? 'bg-suttain-teal/10' : index % 3 === 1 ? 'bg-suttain-purple/10' : 'bg-suttain-blue/10'} flex items-center justify-center mb-4`}>
+                      <benefit.icon className={`w-5 h-5 ${index % 3 === 0 ? 'text-suttain-teal' : index % 3 === 1 ? 'text-suttain-purple' : 'text-suttain-blue'}`} />
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 mb-2">{benefit.title}</h3>
                     <p className="text-slate-500 text-sm">{benefit.description}</p>
@@ -310,39 +330,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Final CTA */}
+      {/* Final CTA — Brand Gradient */}
       <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-slate-900 rounded-3xl p-10 sm:p-14 text-center"
+            className="bg-gradient-to-br from-[#3a8c6e] via-[#02988C] to-[#09D2FF] rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-              Ready to Create Safer Products?
-            </h2>
-            <p className="text-base text-slate-400 mb-8 max-w-lg mx-auto">
-              Join thousands of creators who trust Suttain for chemical safety and formulation.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to={createPageUrl("Simulator")}>
-                <Button size="lg" className="w-full sm:w-auto bg-[#02988C] hover:bg-[#027d73] text-white px-8 py-4 text-base rounded-full font-semibold">
-                  Start 14-Day Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </Link>
-              <Link to={createPageUrl("BookADemo")}>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent border border-slate-600 text-white hover:bg-slate-800 px-8 py-4 text-base rounded-full font-semibold">
-                  <Play className="w-4 h-4 mr-2" />
-                  Book a Demo
-                </Button>
-              </Link>
+            {/* Subtle purple glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-suttain-purple/20 rounded-full blur-3xl" />
+            
+            <div className="relative z-10">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                Ready to Create Safer Products?
+              </h2>
+              <p className="text-base text-white/70 mb-8 max-w-lg mx-auto">
+                Join thousands of creators who trust Suttain for chemical safety and formulation.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to={createPageUrl("Simulator")}>
+                  <Button size="lg" className="w-full sm:w-auto bg-white text-suttain-teal hover:bg-white/90 px-8 py-4 text-base rounded-full font-semibold">
+                    Start 14-Day Free Trial
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <Link to={createPageUrl("BookADemo")}>
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-8 py-4 text-base rounded-full font-semibold">
+                    Book a Demo
+                  </Button>
+                </Link>
+              </div>
+              <p className="text-sm text-white/50 mt-6 flex items-center justify-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-white/60" />
+                No credit card required
+              </p>
             </div>
-            <p className="text-sm text-slate-400 mt-6 flex items-center justify-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-[#02988C]" />
-              No credit card required • 14-day free trial included
-            </p>
           </motion.div>
         </div>
       </section>

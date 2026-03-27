@@ -3,105 +3,87 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Layers, ChevronRight, Sparkles, Database, Shield, Target, Zap } from "lucide-react";
+import { Layers, ChevronRight, Sparkles, Shield, Target, Zap } from "lucide-react";
 
 export default function HeroSection() {
   return (
-    <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-white to-cyan-50 relative overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-teal-200/30 rounded-full blur-3xl opacity-50"></div>
-          <div className="absolute top-40 right-10 w-96 h-96 bg-cyan-200/20 rounded-full blur-3xl opacity-50"></div>
-          <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-violet-200/25 rounded-full blur-3xl opacity-50"></div>
-        </div>
-        
-        {/* Grid pattern */}
-        <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem] opacity-20"></div>
+    <section className="relative overflow-hidden">
+      {/* Brand gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#3a8c6e] via-[#02988C] to-[#09D2FF]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(149,49,245,0.15),transparent_60%)]" />
       
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-            {/* Floating icons */}
-            <motion.div 
-              className="absolute -top-10 left-10 w-16 h-16 bg-gradient-to-r from-[#02988C] to-[#09D2FF] rounded-full flex items-center justify-center shadow-lg"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              <Database className="w-8 h-8 text-white" />
-            </motion.div>
-            
-            <motion.div 
-              className="absolute top-20 right-10 w-14 h-14 bg-gradient-to-r from-[#9531F5] to-[#09D2FF] rounded-full flex items-center justify-center shadow-lg"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-            >
-              <Sparkles className="w-7 h-7 text-white" />
-            </motion.div>
+      <div className="relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 leading-tight"
+        >
+          Safer, smarter product formulation for
+          <br className="hidden sm:block" /> 
+          <span className="text-suttain-blue">
+            eco-conscious creators
+          </span>
+        </motion.h1>
 
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-lg md:text-xl text-white/80 mb-8 max-w-3xl mx-auto leading-relaxed"
+        >
+          Designed for startups, indie brands, and small labs. Simulate chemical interactions, generate clean DIY recipes, and test ingredient compatibility without needing a full-scale lab.
+        </motion.p>
 
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-800 mb-6 leading-tight"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
+        >
+          <Link to={createPageUrl("generator")}>
+            <Button className="bg-white text-suttain-teal hover:bg-white/90 px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-lg w-full sm:w-auto">
+              Start Formula Generator
+              <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
+          <Link to={createPageUrl("Simulator")}>
+            <Button 
+              variant="outline" 
+              className="bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-lg w-full sm:w-auto"
             >
-              Safer, smarter product formulation for
-              <br className="hidden sm:block" /> 
-              <span className="bg-gradient-to-r from-[#02988C] via-[#09D2FF] to-[#9531F5] bg-clip-text text-transparent">
-                eco-conscious creators
-              </span>
-            </motion.h1>
+              Simulate Chemical Mix
+               <Layers className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
+            </Button>
+          </Link>
+        </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-lg md:text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed"
-            >
-              Designed for startups, indie brands, and small labs. Simulate chemical interactions, generate clean DIY recipes, and test ingredient compatibility — without needing a full-scale lab.
-            </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex flex-wrap justify-center gap-6 text-sm text-white/70"
+        >
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4 text-suttain-blue" />
+            Minimize trial-and-error
+          </div>
+          <div className="flex items-center gap-2">
+            <Target className="w-4 h-4 text-suttain-blue" />
+            Avoid risky combinations
+          </div>
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-suttain-blue" />
+            Formulate clean, compliant products faster
+          </div>
+        </motion.div>
+      </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
-            >
-              <Link to={createPageUrl("Generator")}>
-                <Button className="bg-gradient-to-r from-[#02988C] to-[#09D2FF] hover:from-[#027d73] hover:to-[#08b8e0] text-white px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:w-auto">
-                  Start Formula Generator
-                  <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Link to={createPageUrl("Simulator")}>
-                <Button 
-                  variant="outline" 
-                  className="bg-white/90 border-2 border-[#9531F5]/30 text-[#9531F5] hover:bg-violet-50 hover:text-[#8125d9] hover:border-[#9531F5]/50 px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:w-auto"
-                >
-                  Simulate Chemical Mix
-                   <Layers className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
-                </Button>
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-wrap justify-center gap-6 text-sm text-slate-500"
-            >
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#02988C]" />
-                Minimize trial-and-error
-              </div>
-              <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-[#09D2FF]" />
-                Avoid risky combinations
-              </div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[#9531F5]" />
-                Formulate clean, compliant products — faster
-              </div>
-            </motion.div>
+      {/* Curved bottom edge */}
+      <div className="absolute bottom-0 left-0 right-0">
+        <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+          <path d="M0 60V0C240 40 480 60 720 60C960 60 1200 40 1440 0V60H0Z" fill="white" />
+        </svg>
       </div>
     </section>
   );
