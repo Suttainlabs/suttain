@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import {
-  TestTube, Atom, ArrowRight, Brain,
+  Layers, Sparkles, ArrowRight, Lightbulb,
   CheckCircle2, Home, Building2, Rocket, Leaf,
-  QrCode, Play, ChevronRight, Zap,
-  Beaker, ShieldCheck, BarChart3, Award, Clock
+  ScanLine, Play, ChevronRight, Zap,
+  Database, ShieldCheck, BarChart3, Award, Clock
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -24,21 +24,21 @@ export default function HomePage() {
   const features = [
     {
       id: 'simulator',
-      icon: TestTube,
+      icon: Layers,
       title: 'Chemical Simulator',
       description: 'Test chemical interactions safely before mixing',
       link: 'Simulator'
     },
     {
       id: 'generator',
-      icon: Atom,
+      icon: Sparkles,
       title: 'Formula Generator',
       description: 'Custom recipes for skincare, cleaning & more',
       link: 'generator'
     },
     {
       id: 'scanner',
-      icon: QrCode,
+      icon: ScanLine,
       title: 'Quick Scan',
       description: 'Scan any product to analyze ingredients instantly',
       link: 'BarcodeScanner'
@@ -48,7 +48,7 @@ export default function HomePage() {
   const benefits = [
     { icon: ShieldCheck, title: 'Safety First', description: 'Get instant alerts about dangerous chemical combinations', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
     { icon: Zap, title: 'Lightning Fast', description: 'AI generates professional formulas in seconds', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
-    { icon: Brain, title: 'Smart Analysis', description: 'Deep insights into every ingredient interaction', iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
+    { icon: Lightbulb, title: 'Smart Analysis', description: 'Deep insights into every ingredient interaction', iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
     { icon: Leaf, title: 'Eco-Friendly', description: 'Sustainability scoring for greener products', iconBg: 'bg-green-50', iconColor: 'text-green-600' },
     { icon: BarChart3, title: 'Compliance Ready', description: 'Meet global regulatory standards automatically', iconBg: 'bg-violet-50', iconColor: 'text-violet-600' },
     { icon: Award, title: 'Pro Results', description: 'Lab-quality analysis without lab costs', iconBg: 'bg-rose-50', iconColor: 'text-rose-600' }
@@ -96,14 +96,14 @@ export default function HomePage() {
             >
               <Link to={createPageUrl("Simulator")}>
                 <Button size="lg" className="w-full sm:w-auto bg-[#02988C] hover:bg-[#027d73] text-white px-8 py-4 text-base rounded-full font-semibold shadow-md">
-                  <TestTube className="w-5 h-5 mr-2" />
+                  <Zap className="w-5 h-5 mr-2" />
                   Start 14-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
               <Link to={createPageUrl("generator")}>
                 <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 px-8 py-4 text-base rounded-full font-semibold">
-                  <Atom className="w-5 h-5 mr-2 text-slate-500" />
+                  <Sparkles className="w-5 h-5 mr-2 text-slate-500" />
                   Create Formula
                 </Button>
               </Link>
@@ -116,7 +116,7 @@ export default function HomePage() {
               className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-12 max-w-3xl mx-auto"
             >
               {[
-                { icon: Beaker, value: '5,000+', label: 'Chemicals in Database' },
+                { icon: Database, value: '5,000+', label: 'Chemicals in Database' },
                 { icon: Zap, value: '<1s', label: 'Analysis Speed' },
                 { icon: CheckCircle2, value: '14 Days', label: 'Free Trial' },
                 { icon: Clock, value: '24/7', label: 'Available' },

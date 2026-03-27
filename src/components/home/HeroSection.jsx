@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { FlaskConical, ChevronRight, Sparkles, Beaker, Shield, Target, Zap } from "lucide-react";
+import { Layers, ChevronRight, Sparkles, Database, Shield, Target, Zap } from "lucide-react";
 
 export default function HeroSection() {
   return (
@@ -19,13 +19,13 @@ export default function HeroSection() {
         <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem] opacity-20"></div>
       
         <div className="max-w-4xl mx-auto text-center relative z-10">
-            {/* Floating chemistry icons */}
+            {/* Floating icons */}
             <motion.div 
               className="absolute -top-10 left-10 w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
             >
-              <Beaker className="w-8 h-8 text-white" />
+              <Database className="w-8 h-8 text-white" />
             </motion.div>
             
             <motion.div 
@@ -78,7 +78,7 @@ export default function HeroSection() {
                   className="bg-white/90 border-2 border-violet-300 text-violet-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-400 px-8 py-3 text-base font-medium rounded-full transition-all duration-300 flex items-center group shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:w-auto"
                 >
                   Simulate Chemical Mix
-                   <FlaskConical className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
+                   <Layers className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
               </Link>
             </motion.div>
