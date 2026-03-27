@@ -169,7 +169,7 @@ export default function HomePage() {
                      <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
                      <p className="text-slate-500 mb-4">{feature.description}</p>
                      <div className="flex items-center text-[#02988C] font-semibold text-sm group-hover:translate-x-1 transition-transform">
-                       Start free trial <ChevronRight className="w-4 h-4 ml-1" />
+                       Explore <ChevronRight className="w-4 h-4 ml-1" />
                       </div>
                     </CardContent>
                   </Card>
