@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import PremiumFeatureGate from '../components/shared/PremiumFeatureGate';
+import React, { useState, useContext } from 'react';
+import AuthGate from '../components/auth/AuthGate';
+import AuthContext from '../components/auth/AuthContext';
 import ComplianceDashboard from '../components/compliance/ComplianceDashboard';
 import NewComplianceCheck from '../components/compliance/NewComplianceCheck';
 import ComplianceSettings from '../components/compliance/ComplianceSettings';
@@ -20,11 +21,21 @@ export default function ComplianceCoPilot() {
     setView('view');
   };
 
+  const { user } = useContext(AuthContext);
+
+  if (!user) {
+    return (
+      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
+        <AuthGate
+          featureName="Compliance Co-Pilot"
+          featureDescription="Automate regulatory compliance checks across global markets with intelligent analysis."
+        />
+      </div>
+    );
+  }
+
   return (
-    <PremiumFeatureGate
-      featureName="Compliance Co-Pilot"
-      featureDescription="Automate regulatory compliance checks across global markets with intelligent analysis."
-    >
+    <>
       {view === 'dashboard' && (
         <ComplianceDashboard 
           onNewCheck={handleNewCheck}
@@ -53,6 +64,6 @@ export default function ComplianceCoPilot() {
           onBack={handleBack}
         />
       )}
-    </PremiumFeatureGate>
+    </>
   );
 }
