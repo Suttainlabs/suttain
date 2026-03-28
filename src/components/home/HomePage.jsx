@@ -62,19 +62,15 @@ export default function HomePage() {
     <div className="min-h-screen font-gilroy">
       <SEOHead {...pageSEO.home} />
       
-      {/* Hero Section — Brand Gradient */}
-      <section className="relative overflow-hidden">
-        {/* Brand gradient background inspired by brand guide cover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#3a8c6e] via-[#02988C] to-[#09D2FF]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(149,49,245,0.15),transparent_60%)]" />
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-24 sm:pb-32">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-white">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20 sm:pb-24">
           <div className="text-center max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white/90 px-4 py-2 rounded-full text-sm font-medium mb-8 border border-white/20"
+              className="inline-flex items-center gap-2 bg-suttain-teal/10 text-suttain-teal px-4 py-2 rounded-full text-sm font-medium mb-8"
             >
               <FlaskConical className="w-4 h-4" />
               Chemical Safety & Formulation Platform
@@ -84,10 +80,10 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-slate-900"
             >
               Create{" "}
-              <span className="text-suttain-blue">Safe Products</span>
+              <span className="text-suttain-teal">Safe Products</span>
               <br />
               Without the Lab
             </motion.h1>
@@ -96,7 +92,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-lg sm:text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed"
+              className="text-lg sm:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed"
             >
               Simulate chemical reactions, generate ready-to-make formulas, and ensure product safety. No lab required.
             </motion.p>
@@ -108,14 +104,14 @@ export default function HomePage() {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link to={createPageUrl("Simulator")}>
-                <Button size="lg" className="w-full sm:w-auto bg-white text-suttain-teal hover:bg-white/90 px-8 py-4 text-base rounded-full font-semibold shadow-lg shadow-black/10">
+                <Button size="lg" className="w-full sm:w-auto bg-suttain-teal hover:bg-suttain-teal/90 text-white px-8 py-4 text-base rounded-full font-semibold shadow-md">
                   <Zap className="w-5 h-5 mr-2" />
                   Start 14-Day Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
               <Link to={createPageUrl("generator")}>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-8 py-4 text-base rounded-full font-semibold">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-suttain-purple/30 text-suttain-purple hover:bg-suttain-purple/5 px-8 py-4 text-base rounded-full font-semibold">
                   <Sparkles className="w-5 h-5 mr-2" />
                   Create Formula
                 </Button>
@@ -136,21 +132,14 @@ export default function HomePage() {
               ].map((stat, i) => (
                 <div key={i} className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-1">
-                    <stat.icon className="w-4 h-4 text-suttain-blue" />
-                    <span className="text-2xl sm:text-3xl font-bold text-white">{stat.value}</span>
+                    <stat.icon className="w-4 h-4 text-suttain-teal" />
+                    <span className="text-2xl sm:text-3xl font-bold text-slate-800">{stat.value}</span>
                   </div>
-                  <p className="text-sm text-white/60">{stat.label}</p>
+                  <p className="text-sm text-slate-500">{stat.label}</p>
                 </div>
               ))}
             </motion.div>
           </div>
-        </div>
-
-        {/* Curved bottom edge */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-            <path d="M0 60V0C240 40 480 60 720 60C960 60 1200 40 1440 0V60H0Z" fill="white" />
-          </svg>
         </div>
       </section>
 
