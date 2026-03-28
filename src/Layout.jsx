@@ -81,6 +81,18 @@ export default function Layout({ children, currentPageName }) {
       }
       if (currentUser && currentUser.first_login) {
         setShowAcknowledgementModal(true);
+        // Send welcome email to the new user
+        try {
+          const firstName = currentUser.full_name?.split(' ')[0] || 'there';
+          await base44.integrations.Core.SendEmail({
+            to: currentUser.email,
+            from_name: 'Suttain',
+            subject: 'Welcome to Suttain — Your 14-Day Free Trial Starts Now! 🧪',
+            body: `Hi ${firstName},\n\nWelcome to Suttain! We're thrilled to have you on board.\n\nYour 14-day free trial is now active. Here's what you can explore:\n\n🔬 Chemical Simulator — Test chemical interactions safely before mixing\n⚗️ Formula Generator — Create professional-grade formulas in seconds\n📱 Quick Scan — Scan any product barcode for instant ingredient analysis\n\nYour trial includes full access to all features — no credit card required.\n\nAfter your 14-day trial, you can subscribe to our Pro plan starting at $29/month (or $290/year — save 17%) to keep using all features and save your work.\n\nReady to get started? Visit https://suttain.com and dive in!\n\nIf you have any questions, reply to this email or reach us at contact@suttain.com.\n\nHappy formulating!\nThe Suttain Team`
+          });
+        } catch (welcomeErr) {
+          console.error('Failed to send welcome email:', welcomeErr);
+        }
         // Send admin notification for new user signup
         try {
           await base44.integrations.Core.SendEmail({
