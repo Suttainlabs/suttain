@@ -79,60 +79,17 @@ export default function Layout({ children, currentPageName }) {
           console.error('Failed to set trial start date:', e);
         }
       }
-      if (currentUser && currentUser.first_login) {
+      if (currentUser && currentUser.first_login !== false) {
         setShowAcknowledgementModal(true);
-        // Send welcome email to the new user
+        // Send welcome email via backend function (reliable, server-side)
         try {
-          const firstName = currentUser.full_name?.split(' ')[0] || 'there';
-          await base44.integrations.Core.SendEmail({
-            to: currentUser.email,
-            from_name: 'Suttain',
-            subject: 'Welcome to Suttain — Your 14-Day Free Trial Starts Now! 🧪',
-            body: `Hi ${firstName},
-
-Welcome to Suttain! We're so excited to have you on board.
-
-Your 14-day free trial is now active — no credit card required. Here's what you can explore:
-
-🔬 Chemical Simulator — Safely test chemical interactions before mixing
-⚗️ Formula Generator — Create professional-grade formulas in seconds
-📱 Quick Scan — Scan any product barcode for instant ingredient analysis
-🛡️ AI Compliance Co-Pilot — Stay compliant across 50+ global regulations
-
-Your trial gives you full access to every feature for 14 days, completely free.
-
-When your trial ends, choose the plan that fits you best:
-
-✅ Monthly Plan — $4.99/month
-   Full access, billed monthly. Cancel anytime.
-
-✅ Yearly Plan — $49.99/year (Save 16% vs monthly!)
-   ~$4.17/month. Best value for regular users.
-
-✅ Lifetime Access — $250 one-time payment
-   Pay once. Use Suttain forever. The smartest long-term investment.
-
-No rush — explore freely for 14 days and upgrade whenever you're ready.
-
-👉 Get started now: https://suttain.com
-
-If you have any questions, reply to this email or reach us at contact@suttain.com.
-
-Happy formulating!
-The Suttain Team`
+          await base44.functions.invoke('sendWelcomeEmail', {
+            email: currentUser.email,
+            full_name: currentUser.full_name || ''
           });
+          console.log('Welcome email triggered for:', currentUser.email);
         } catch (welcomeErr) {
           console.error('Failed to send welcome email:', welcomeErr);
-        }
-        // Send admin notification for new user signup
-        try {
-          await base44.integrations.Core.SendEmail({
-            to: 'contact@suttain.com',
-            subject: 'New User Signup on Suttain',
-            body: `A new user has signed up on Suttain!\n\nName: ${currentUser.full_name || 'N/A'}\nEmail: ${currentUser.email}\nDate: ${new Date().toLocaleString()}\n\nLog in to your admin dashboard to view more details.`
-          });
-        } catch (emailErr) {
-          console.error('Failed to send admin notification:', emailErr);
         }
       }
     } catch (error) {
