@@ -66,16 +66,6 @@ export default function HomePage() {
       <section className="relative overflow-hidden bg-white">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20 sm:pb-24">
           <div className="text-center max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-suttain-teal/10 text-suttain-teal px-4 py-2 rounded-full text-sm font-medium mb-8"
-            >
-              <FlaskConical className="w-4 h-4" />
-              Chemical Safety & Formulation Platform
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
