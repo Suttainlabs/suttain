@@ -207,14 +207,87 @@ export default function ProductAnalysis({ product, onClear, user }) {
     const [similarProducts, setSimilarProducts] = useState(null);
     const [isFindingSimilar, setIsFindingSimilar] = useState(false);
     const [safetyAlert, setSafetyAlert] = useState(null);
+    const [complianceData, setComplianceData] = useState(null);
+    const [isLoadingCompliance, setIsLoadingCompliance] = useState(false);
+    const [sustainabilityData, setSustainabilityData] = useState(null);
+    const [isLoadingSustainability, setIsLoadingSustainability] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         setImageError(false);
         setSimilarProducts(null);
         setSafetyAlert(null);
+        setComplianceData(null);
+        setSustainabilityData(null);
         checkSafetyProfile();
     }, [product]);
+
+    const handleLoadCompliance = async () => {
+        if (complianceData || isLoadingCompliance) return;
+        setIsLoadingCompliance(true);
+        try {
+            const ingredients = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
+            const result = await base44.integrations.Core.InvokeLLM({
+                prompt: `You are a regulatory compliance expert. Analyze these product ingredients for global regulatory compliance:\n\nProduct: ${product.name}\nCategory: ${product.category}\nIngredients: ${ingredients}\n\nCheck compliance for EU, US FDA, and Canada regulations. Flag any restricted or banned substances.`,
+                response_json_schema: {
+                    type: 'object',
+                    properties: {
+                        overall_status: { type: 'string', enum: ['Compliant', 'Issues Found', 'Requires Review'] },
+                        summary: { type: 'string' },
+                        flagged_ingredients: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    region: { type: 'string' },
+                                    issue: { type: 'string' },
+                                    severity: { type: 'string', enum: ['low', 'medium', 'high'] }
+                                }
+                            }
+                        },
+                        recommendations: { type: 'array', items: { type: 'string' } }
+                    }
+                }
+            });
+            setComplianceData(result);
+        } catch (e) {
+            console.error('Compliance check failed:', e);
+            setComplianceData({ overall_status: 'Requires Review', summary: 'Could not complete analysis. Please try again.', flagged_ingredients: [], recommendations: [] });
+        } finally {
+            setIsLoadingCompliance(false);
+        }
+    };
+
+    const handleLoadSustainability = async () => {
+        if (sustainabilityData || isLoadingSustainability) return;
+        setIsLoadingSustainability(true);
+        try {
+            const ingredients = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
+            const result = await base44.integrations.Core.InvokeLLM({
+                prompt: `You are an environmental sustainability expert. Analyze the eco-impact of these product ingredients:\n\nProduct: ${product.name}\nCategory: ${product.category}\nIngredients: ${ingredients}\n\nAssess biodegradability, bioaccumulation, carbon footprint, and overall sustainability.`,
+                response_json_schema: {
+                    type: 'object',
+                    properties: {
+                        overall_score: { type: 'number' },
+                        grade: { type: 'string', enum: ['A', 'B', 'C', 'D', 'F'] },
+                        biodegradability: { type: 'string' },
+                        carbon_footprint: { type: 'string' },
+                        summary: { type: 'string' },
+                        eco_concerns: { type: 'array', items: { type: 'string' } },
+                        green_positives: { type: 'array', items: { type: 'string' } },
+                        improvement_tips: { type: 'array', items: { type: 'string' } }
+                    }
+                }
+            });
+            setSustainabilityData(result);
+        } catch (e) {
+            console.error('Sustainability analysis failed:', e);
+            setSustainabilityData({ overall_score: 0, grade: 'C', summary: 'Could not complete analysis. Please try again.', eco_concerns: [], green_positives: [], improvement_tips: [] });
+        } finally {
+            setIsLoadingSustainability(false);
+        }
+    };
 
     const checkSafetyProfile = async () => {
         if (!user || !product.ingredients || product.ingredients.length === 0) return;
@@ -454,12 +527,14 @@ For each product provide:
             </div>
           </div>
 
-          <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4 bg-slate-100/80 rounded-xl">
-                 <TabsTrigger value="overview" className="data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Overview</TabsTrigger>
-                 <TabsTrigger value="ingredients" className="data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Ingredients</TabsTrigger>
-                 <TabsTrigger value="safety" className="data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Safety</TabsTrigger>
-                 <TabsTrigger value="diy" className="data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">DIY</TabsTrigger>
+          <Tabs defaultValue="overview" className="w-full" onValueChange={(v) => { setActiveTab(v); if (v === 'compliance') handleLoadCompliance(); if (v === 'sustainability') handleLoadSustainability(); }}>
+            <TabsList className="grid w-full grid-cols-6 bg-slate-100/80 rounded-xl">
+                 <TabsTrigger value="overview" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Overview</TabsTrigger>
+                 <TabsTrigger value="ingredients" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Ingredients</TabsTrigger>
+                 <TabsTrigger value="safety" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Safety</TabsTrigger>
+                 <TabsTrigger value="compliance" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Compliance</TabsTrigger>
+                 <TabsTrigger value="sustainability" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Eco</TabsTrigger>
+                 <TabsTrigger value="diy" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">DIY</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview" className="pt-6 space-y-6">
@@ -636,6 +711,145 @@ For each product provide:
                     </div>
                  </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="compliance" className="pt-6 space-y-4">
+              {isLoadingCompliance && (
+                <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Running compliance checks across EU, US, and Canada regulations...</span>
+                </div>
+              )}
+              {!isLoadingCompliance && complianceData && (
+                <>
+                  <Card className={`bg-white/60 border-2 ${
+                    complianceData.overall_status === 'Compliant' ? 'border-emerald-200' :
+                    complianceData.overall_status === 'Issues Found' ? 'border-red-200' : 'border-amber-200'
+                  }`}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Badge className={`text-sm px-3 py-1 ${
+                          complianceData.overall_status === 'Compliant' ? 'bg-emerald-100 text-emerald-800' :
+                          complianceData.overall_status === 'Issues Found' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'
+                        }`}>
+                          {complianceData.overall_status === 'Compliant' ? <CheckCircle className="w-3.5 h-3.5 mr-1 inline" /> : <AlertTriangle className="w-3.5 h-3.5 mr-1 inline" />}
+                          {complianceData.overall_status}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-slate-600">{complianceData.summary}</p>
+                    </CardContent>
+                  </Card>
+
+                  {complianceData.flagged_ingredients?.length > 0 && (
+                    <Card className="bg-white/60">
+                      <CardHeader><CardTitle className="text-base">Flagged Ingredients</CardTitle></CardHeader>
+                      <CardContent className="space-y-2">
+                        {complianceData.flagged_ingredients.map((f, i) => (
+                          <div key={i} className={`p-3 rounded-lg border ${
+                            f.severity === 'high' ? 'bg-red-50 border-red-200' :
+                            f.severity === 'medium' ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200'
+                          }`}>
+                            <p className="font-semibold text-sm text-slate-800">{f.name}</p>
+                            <p className="text-xs text-slate-500">{f.region} &bull; {f.issue}</p>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {complianceData.recommendations?.length > 0 && (
+                    <Card className="bg-white/60">
+                      <CardHeader><CardTitle className="text-base">Recommendations</CardTitle></CardHeader>
+                      <CardContent>
+                        <ul className="space-y-2">
+                          {complianceData.recommendations.map((r, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                              <CheckCircle className="w-4 h-4 text-[var(--suttain-teal)] mt-0.5 flex-shrink-0" />
+                              {r}
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+                </>
+              )}
+            </TabsContent>
+
+            <TabsContent value="sustainability" className="pt-6 space-y-4">
+              {isLoadingSustainability && (
+                <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Analyzing environmental impact...</span>
+                </div>
+              )}
+              {!isLoadingSustainability && sustainabilityData && (
+                <>
+                  <Card className="bg-white/60">
+                    <CardContent className="p-4 flex items-center gap-6">
+                      <div className={`w-20 h-20 rounded-2xl flex flex-col items-center justify-center text-white font-bold ${
+                        sustainabilityData.overall_score >= 70 ? 'bg-emerald-500' :
+                        sustainabilityData.overall_score >= 45 ? 'bg-amber-500' : 'bg-red-500'
+                      }`}>
+                        <span className="text-3xl">{sustainabilityData.grade}</span>
+                        <span className="text-xs opacity-80">{sustainabilityData.overall_score}/100</span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-slate-600 mb-2">{sustainabilityData.summary}</p>
+                        <div className="flex gap-4 text-xs text-slate-500">
+                          {sustainabilityData.biodegradability && <span>♻️ {sustainabilityData.biodegradability}</span>}
+                          {sustainabilityData.carbon_footprint && <span>🌍 {sustainabilityData.carbon_footprint}</span>}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {sustainabilityData.green_positives?.length > 0 && (
+                    <Card className="bg-emerald-50/60 border border-emerald-200">
+                      <CardHeader><CardTitle className="text-base text-emerald-800">Eco Positives</CardTitle></CardHeader>
+                      <CardContent>
+                        <ul className="space-y-1.5">
+                          {sustainabilityData.green_positives.map((p, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-emerald-700">
+                              <Leaf className="w-4 h-4 mt-0.5 flex-shrink-0" />{p}
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {sustainabilityData.eco_concerns?.length > 0 && (
+                    <Card className="bg-white/60">
+                      <CardHeader><CardTitle className="text-base">Eco Concerns</CardTitle></CardHeader>
+                      <CardContent>
+                        <ul className="space-y-1.5">
+                          {sustainabilityData.eco_concerns.map((c, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                              <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />{c}
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {sustainabilityData.improvement_tips?.length > 0 && (
+                    <Card className="bg-white/60">
+                      <CardHeader><CardTitle className="text-base">Improvement Tips</CardTitle></CardHeader>
+                      <CardContent>
+                        <ul className="space-y-1.5">
+                          {sustainabilityData.improvement_tips.map((t, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                              <CheckCircle className="w-4 h-4 text-[var(--suttain-teal)] mt-0.5 flex-shrink-0" />{t}
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+                </>
+              )}
             </TabsContent>
 
             <TabsContent value="diy" className="pt-6 space-y-6">
