@@ -1,4 +1,5 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 import {
   Layers, Sparkles, ArrowRight, Lightbulb,
@@ -11,10 +12,12 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AuthContext from "../auth/AuthContext";
+import FreeTrialBanner from "./FreeTrialBanner";
 import SEOHead, { pageSEO } from "../shared/SEOHead";
 
 export default function HomePage() {
   const { user } = useContext(AuthContext);
+  const [showTrialBanner, setShowTrialBanner] = useState(true);
 
   const features = [
     {
@@ -61,6 +64,13 @@ export default function HomePage() {
   return (
     <div className="min-h-screen font-gilroy">
       <SEOHead {...pageSEO.home} />
+
+      {/* Free Trial Banner */}
+      {!user && showTrialBanner && (
+        <AnimatePresence>
+          <FreeTrialBanner onDismiss={() => setShowTrialBanner(false)} />
+        </AnimatePresence>
+      )}
       
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-white">
