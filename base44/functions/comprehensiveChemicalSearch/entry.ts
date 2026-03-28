@@ -1,232 +1,179 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+
+// Common household names to scientific names for PubChem lookup
+const COMMON_NAME_MAP = {
+  'bleach': 'sodium hypochlorite',
+  'baking soda': 'sodium bicarbonate',
+  'vinegar': 'acetic acid',
+  'rubbing alcohol': 'isopropyl alcohol',
+  'ammonia': 'ammonia',
+  'hydrogen peroxide': 'hydrogen peroxide',
+  'muriatic acid': 'hydrochloric acid',
+  'lye': 'sodium hydroxide',
+  'caustic soda': 'sodium hydroxide',
+  'pool chlorine': 'calcium hypochlorite',
+  'washing soda': 'sodium carbonate',
+  'salt': 'sodium chloride',
+  'sugar': 'sucrose',
+  'water': 'water',
+  'ethanol': 'ethanol',
+  'acetone': 'acetone',
+  'benzene': 'benzene',
+  'toluene': 'toluene',
+  'methanol': 'methanol',
+  'sulfuric acid': 'sulfuric acid',
+  'nitric acid': 'nitric acid',
+  'phosphoric acid': 'phosphoric acid',
+  'citric acid': 'citric acid',
+  'glycerin': 'glycerol',
+  'borax': 'sodium tetraborate',
+  'epsom salt': 'magnesium sulfate',
+  'cream of tartar': 'potassium bitartrate',
+  'alum': 'potassium aluminum sulfate',
+  'alcohol': 'ethanol',
+  'iso alcohol': 'isopropyl alcohol',
+  'table salt': 'sodium chloride',
+  'baking powder': 'sodium bicarbonate',
+  'peroxide': 'hydrogen peroxide',
+};
+
+// Built-in chemical database for instant results when DB is empty
+const BUILTIN_CHEMICALS = [
+  { name: 'Bleach', scientific_name: 'Sodium Hypochlorite', molecular_formula: 'NaClO', chemical_type: 'compound', category: 'cleaning', safety_level: 'hazardous', keywords: ['bleach', 'sodium hypochlorite', 'naocl', 'chlorine'] },
+  { name: 'Baking Soda', scientific_name: 'Sodium Bicarbonate', molecular_formula: 'NaHCO₃', chemical_type: 'compound', category: 'cleaning', safety_level: 'safe', keywords: ['baking soda', 'sodium bicarbonate', 'nahco3', 'bicarb'] },
+  { name: 'Vinegar', scientific_name: 'Acetic Acid', molecular_formula: 'CH₃COOH', chemical_type: 'compound', category: 'cleaning', safety_level: 'safe', keywords: ['vinegar', 'acetic acid', 'ethanoic acid'] },
+  { name: 'Rubbing Alcohol', scientific_name: 'Isopropyl Alcohol', molecular_formula: 'C₃H₈O', chemical_type: 'compound', category: 'cleaning', safety_level: 'moderate', keywords: ['rubbing alcohol', 'isopropyl alcohol', 'isopropanol', 'propan-2-ol'] },
+  { name: 'Ammonia', scientific_name: 'Ammonia', molecular_formula: 'NH₃', chemical_type: 'compound', category: 'cleaning', safety_level: 'hazardous', keywords: ['ammonia', 'nh3'] },
+  { name: 'Hydrogen Peroxide', scientific_name: 'Hydrogen Peroxide', molecular_formula: 'H₂O₂', chemical_type: 'compound', category: 'cleaning', safety_level: 'moderate', keywords: ['hydrogen peroxide', 'h2o2', 'peroxide'] },
+  { name: 'Muriatic Acid', scientific_name: 'Hydrochloric Acid', molecular_formula: 'HCl', chemical_type: 'compound', category: 'industrial', safety_level: 'hazardous', keywords: ['muriatic acid', 'hydrochloric acid', 'hcl'] },
+  { name: 'Lye', scientific_name: 'Sodium Hydroxide', molecular_formula: 'NaOH', chemical_type: 'compound', category: 'cleaning', safety_level: 'hazardous', keywords: ['lye', 'sodium hydroxide', 'caustic soda', 'naoh'] },
+  { name: 'Pool Chlorine', scientific_name: 'Calcium Hypochlorite', molecular_formula: 'Ca(ClO)₂', chemical_type: 'compound', category: 'cleaning', safety_level: 'hazardous', keywords: ['pool chlorine', 'calcium hypochlorite'] },
+  { name: 'Washing Soda', scientific_name: 'Sodium Carbonate', molecular_formula: 'Na₂CO₃', chemical_type: 'compound', category: 'cleaning', safety_level: 'moderate', keywords: ['washing soda', 'sodium carbonate', 'soda ash'] },
+  { name: 'Salt', scientific_name: 'Sodium Chloride', molecular_formula: 'NaCl', chemical_type: 'compound', category: 'food_additive', safety_level: 'safe', keywords: ['salt', 'sodium chloride', 'nacl', 'table salt'] },
+  { name: 'Water', scientific_name: 'Water', molecular_formula: 'H₂O', chemical_type: 'compound', category: 'solvent', safety_level: 'safe', keywords: ['water', 'h2o', 'aqua'] },
+  { name: 'Ethanol', scientific_name: 'Ethanol', molecular_formula: 'C₂H₅OH', chemical_type: 'compound', category: 'solvent', safety_level: 'moderate', keywords: ['ethanol', 'alcohol', 'ethyl alcohol', 'drinking alcohol'] },
+  { name: 'Acetone', scientific_name: 'Acetone', molecular_formula: 'C₃H₆O', chemical_type: 'compound', category: 'solvent', safety_level: 'moderate', keywords: ['acetone', 'nail polish remover', 'propanone'] },
+  { name: 'Benzene', scientific_name: 'Benzene', molecular_formula: 'C₆H₆', chemical_type: 'compound', category: 'industrial', safety_level: 'hazardous', keywords: ['benzene'] },
+  { name: 'Sulfuric Acid', scientific_name: 'Sulfuric Acid', molecular_formula: 'H₂SO₄', chemical_type: 'compound', category: 'industrial', safety_level: 'highly_hazardous', keywords: ['sulfuric acid', 'h2so4', 'battery acid'] },
+  { name: 'Citric Acid', scientific_name: 'Citric Acid', molecular_formula: 'C₆H₈O₇', chemical_type: 'compound', category: 'food_additive', safety_level: 'safe', keywords: ['citric acid', 'lemon acid'] },
+  { name: 'Glycerin', scientific_name: 'Glycerol', molecular_formula: 'C₃H₈O₃', chemical_type: 'compound', category: 'skincare', safety_level: 'safe', keywords: ['glycerin', 'glycerol', 'glycerine'] },
+  { name: 'Borax', scientific_name: 'Sodium Tetraborate', molecular_formula: 'Na₂B₄O₇', chemical_type: 'compound', category: 'cleaning', safety_level: 'moderate', keywords: ['borax', 'sodium tetraborate', 'sodium borate'] },
+  { name: 'Epsom Salt', scientific_name: 'Magnesium Sulfate', molecular_formula: 'MgSO₄', chemical_type: 'compound', category: 'skincare', safety_level: 'safe', keywords: ['epsom salt', 'magnesium sulfate'] },
+  { name: 'Phosphoric Acid', scientific_name: 'Phosphoric Acid', molecular_formula: 'H₃PO₄', chemical_type: 'compound', category: 'industrial', safety_level: 'hazardous', keywords: ['phosphoric acid', 'h3po4'] },
+  { name: 'Nitric Acid', scientific_name: 'Nitric Acid', molecular_formula: 'HNO₃', chemical_type: 'compound', category: 'industrial', safety_level: 'highly_hazardous', keywords: ['nitric acid', 'hno3'] },
+  { name: 'Methanol', scientific_name: 'Methanol', molecular_formula: 'CH₃OH', chemical_type: 'compound', category: 'solvent', safety_level: 'hazardous', keywords: ['methanol', 'methyl alcohol', 'wood alcohol'] },
+  { name: 'Toluene', scientific_name: 'Toluene', molecular_formula: 'C₇H₈', chemical_type: 'compound', category: 'solvent', safety_level: 'hazardous', keywords: ['toluene', 'methylbenzene'] },
+  { name: 'Coconut Oil', scientific_name: 'Coconut Oil', molecular_formula: 'Fatty Acid Mixture', chemical_type: 'mixture', category: 'skincare', safety_level: 'safe', keywords: ['coconut oil', 'cocos nucifera'] },
+  { name: 'Shea Butter', scientific_name: 'Butyrospermum Parkii Butter', molecular_formula: 'Lipid Mixture', chemical_type: 'mixture', category: 'skincare', safety_level: 'safe', keywords: ['shea butter', 'butyrospermum parkii'] },
+  { name: 'Tea Tree Oil', scientific_name: 'Melaleuca Alternifolia Oil', molecular_formula: 'Terpene Mixture', chemical_type: 'mixture', category: 'skincare', safety_level: 'moderate', keywords: ['tea tree oil', 'melaleuca'] },
+  { name: 'Aloe Vera', scientific_name: 'Aloe Barbadensis Leaf Juice', molecular_formula: 'Complex Mixture', chemical_type: 'extract', category: 'skincare', safety_level: 'safe', keywords: ['aloe vera', 'aloe'] },
+  { name: 'Vitamin C', scientific_name: 'Ascorbic Acid', molecular_formula: 'C₆H₈O₆', chemical_type: 'compound', category: 'skincare', safety_level: 'safe', keywords: ['vitamin c', 'ascorbic acid'] },
+  { name: 'Vitamin E', scientific_name: 'Tocopherol', molecular_formula: 'C₂₉H₅₀O₂', chemical_type: 'compound', category: 'skincare', safety_level: 'safe', keywords: ['vitamin e', 'tocopherol'] },
+];
 
 const dedupAndPrioritize = (results) => {
-    const uniqueMap = new Map();
-    results.forEach(chem => {
-        const key = (chem.cas_number || chem.name).toLowerCase();
-        const existing = uniqueMap.get(key);
-
-        // Prioritize records that have a formula and are not just custom entries
-        if (!existing || (!existing.molecular_formula && chem.molecular_formula) || (existing.source === 'user_input' && chem.source !== 'user_input')) {
-            uniqueMap.set(key, chem);
-        }
-    });
-    return Array.from(uniqueMap.values());
-};
-
-const enrichWithLLM = async (base44, chemicalName) => {
-    try {
-        const prompt = `
-            Given the chemical name "${chemicalName}", provide its most likely chemical type, primary category, and a brief, descriptive molecular formula string suitable for a layperson.
-            For 'chemical_type', choose from: element, compound, mixture, extract, polymer, enzyme, material, pharmaceutical, other.
-            For 'category', choose a single primary use like: skincare, cleaning, solvent, food_additive, industrial, aromatherapy, other.
-            For 'molecular_formula', if it's a simple compound, use the chemical formula (e.g., 'H₂O'). If it's a complex mixture (like an essential oil), provide a descriptive string (e.g., 'Complex Mixture of Terpenes', 'Blend of Fatty Acids').
-
-            Your response MUST be a single, valid JSON object with the following keys and nothing else:
-            {"chemical_type": "...", "category": "...", "molecular_formula": "..."}
-        `;
-
-        const schema = {
-            type: "object",
-            properties: {
-                chemical_type: { type: "string" },
-                category: { type: "string" },
-                molecular_formula: { type: "string" },
-            },
-            required: ["chemical_type", "category", "molecular_formula"],
-        };
-
-        const llmResponse = await base44.integrations.Core.InvokeLLM({
-            prompt: prompt,
-            response_json_schema: schema,
-        });
-
-        // The InvokeLLM integration now directly returns the parsed JSON object
-        if (llmResponse && llmResponse.chemical_type) {
-            return llmResponse;
-        }
-        return null;
-
-    } catch (error) {
-        console.error(`LLM enrichment failed for "${chemicalName}":`, error);
-        return null;
+  const uniqueMap = new Map();
+  results.forEach(chem => {
+    const key = (chem.cas_number || chem.scientific_name || chem.name).toLowerCase();
+    const existing = uniqueMap.get(key);
+    if (!existing || (!existing.molecular_formula && chem.molecular_formula)) {
+      uniqueMap.set(key, chem);
     }
-};
-
-const disambiguateWithLLM = async (base44, searchTerm) => {
-    try {
-        const prompt = `
-            The user searched for "${searchTerm}", which is an ambiguous chemical term. Provide a list of up to 5 specific, common chemical names that this term could refer to.
-            For example, if the search is "alcohol", you could return ["Ethanol", "Isopropyl Alcohol", "Methanol"].
-            If the search is "vitamin c", return ["Ascorbic Acid"].
-            Return the names in the "names" array field.
-        `;
-        const schema = {
-            type: "object",
-            properties: {
-                names: {
-                    type: "array",
-                    items: { type: "string" }
-                }
-            },
-            required: ["names"]
-        };
-        const llmResponse = await base44.integrations.Core.InvokeLLM({
-            prompt: prompt,
-            response_json_schema: schema,
-        });
-        return llmResponse?.names && Array.isArray(llmResponse.names) ? llmResponse.names : null;
-    } catch (error) {
-        console.error(`LLM disambiguation failed for "${searchTerm}":`, error);
-        return null;
-    }
-};
-
-const CATEGORY_KEYWORDS = {
-  all_purpose_cleaner: ['cleaning', 'surfactant', 'solvent', 'ph_adjuster', 'disinfectant'],
-  glass_cleaner: ['cleaning', 'solvent', 'surfactant', 'anti-fog'],
-  bathroom_cleaner: ['cleaning', 'acid', 'disinfectant', 'surfactant', 'chelating_agent'],
-  kitchen_degreaser: ['cleaning', 'solvent', 'surfactant', 'base', 'degreaser'],
-  facial_moisturizer: ['skincare', 'moisturizer', 'emollient', 'humectant', 'occlusive', 'antioxidant'],
-  hand_soap: ['cleaning', 'surfactant', 'moisturizer', 'antimicrobial'],
-  body_wash: ['cleaning', 'surfactant', 'moisturizer', 'fragrance'],
-  shampoo: ['hair_care', 'surfactant', 'conditioner', 'thickener'],
-  sunscreen: ['skincare', 'uv_filter', 'sunscreen', 'antioxidant'],
-  baby_products: ['skincare', 'gentle', 'soothing', 'moisturizer'],
-  car_care: ['automotive', 'cleaning', 'wax', 'sealant', 'polish'],
-  laundry_detergent: ['laundry', 'cleaning', 'enzyme', 'surfactant', 'fabric_softener'],
-  eco_friendly: ['biodegradable', 'natural', 'plant-derived', 'eco-friendly'],
+  });
+  return Array.from(uniqueMap.values());
 };
 
 Deno.serve(async (req) => {
-    const base44 = createClientFromRequest(req);
-    
-    let body;
+  const base44 = createClientFromRequest(req);
+  
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return Response.json({ error: "Invalid JSON body", results: [] }, { status: 400 });
+  }
+  
+  const query = body.query || '';
+  const productType = body.productType;
+  const category = body.category;
+  const searchTerm = query.trim().toLowerCase();
+
+  if (!searchTerm) {
+    return Response.json({ results: [] });
+  }
+
+  try {
+    // 1. Search built-in chemicals first (instant, always available)
+    const builtinResults = BUILTIN_CHEMICALS.filter(c =>
+      c.keywords.some(kw => kw.includes(searchTerm) || searchTerm.includes(kw)) ||
+      c.name.toLowerCase().includes(searchTerm) ||
+      c.scientific_name.toLowerCase().includes(searchTerm)
+    ).map(c => ({ ...c, source: 'builtin' }));
+
+    // 2. Search database chemicals
+    let dbResults = [];
     try {
-        body = await req.json();
-    } catch (parseErr) {
-        return new Response(JSON.stringify({ error: "Invalid JSON body", results: [] }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-        });
-    }
-    
-    const query = body.query || '';
-    const productType = body.productType;
-    const category = body.category;
-    const searchTerm = query.trim().toLowerCase();
-
-    if (!searchTerm) {
-        return new Response(JSON.stringify({ results: [] }), {
-            headers: { "Content-Type": "application/json" },
-        });
+      const allChemicals = await base44.asServiceRole.entities.Chemical.list();
+      const chemicals = Array.isArray(allChemicals) ? allChemicals : [];
+      
+      if (chemicals.length > 0) {
+        dbResults = chemicals.filter(c =>
+          c.name?.toLowerCase().includes(searchTerm) ||
+          c.scientific_name?.toLowerCase().includes(searchTerm) ||
+          c.iupac_name?.toLowerCase().includes(searchTerm) ||
+          (c.cas_number && c.cas_number.includes(searchTerm))
+        ).map(c => ({ ...c, source: 'database' }));
+      }
+    } catch (e) {
+      console.error("DB search failed:", e);
     }
 
-    try {
-        let allChemicals = [];
-        try {
-            const rawChemicals = await base44.asServiceRole.entities.Chemical.list();
-            // Ensure we're working with an array
-            allChemicals = Array.isArray(rawChemicals) ? rawChemicals : [];
-            console.log(`Loaded ${allChemicals.length} chemicals from database`);
-        } catch (listErr) {
-            console.error("Failed to list chemicals:", listErr);
-            allChemicals = [];
+    // 3. Combine and deduplicate (DB results take priority over builtin)
+    let finalResults = dedupAndPrioritize([...dbResults, ...builtinResults]);
+
+    // 4. If still no results, try PubChem with resolved name
+    if (finalResults.length === 0) {
+      const resolvedName = COMMON_NAME_MAP[searchTerm] || searchTerm;
+      
+      try {
+        const pubchemUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(resolvedName)}/property/IUPACName,MolecularFormula,MolecularWeight/JSON`;
+        const pubchemResponse = await fetch(pubchemUrl);
+
+        if (pubchemResponse.ok) {
+          const pubchemData = await pubchemResponse.json();
+          const properties = pubchemData?.PropertyTable?.Properties?.[0];
+
+          if (properties && properties.CID) {
+            finalResults = [{
+              name: query,
+              scientific_name: properties.IUPACName || resolvedName,
+              iupac_name: properties.IUPACName,
+              molecular_formula: properties.MolecularFormula,
+              molecular_weight: properties.MolecularWeight,
+              chemical_type: 'compound',
+              category: 'other',
+              safety_level: 'unknown',
+              source: 'pubchem'
+            }];
+          }
         }
-
-        // NEW: Apply category filter if provided
-        if (category && category !== 'all') {
-            allChemicals = allChemicals.filter(c => c.category?.toLowerCase() === category.toLowerCase());
-        }
-        
-        let internalResults = allChemicals.filter(c =>
-            c.name?.toLowerCase().includes(searchTerm) ||
-            c.scientific_name?.toLowerCase().includes(searchTerm) ||
-            c.iupac_name?.toLowerCase().includes(searchTerm) ||
-            (c.cas_number && c.cas_number.includes(searchTerm))
-        );
-        
-        console.log(`Found ${internalResults.length} internal results for "${searchTerm}"`);
-
-        let finalResults = dedupAndPrioritize(internalResults);
-
-        // If no sufficient results internally, try PubChem (only if not filtering by a specific category)
-        if (finalResults.length === 0 && (!category || category === 'all')) {
-            const pubchemUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(searchTerm)}/property/IUPACName,MolecularFormula,MolecularWeight/JSON`;
-            const pubchemResponse = await fetch(pubchemUrl);
-
-            if (pubchemResponse.ok) {
-                const pubchemData = await pubchemResponse.json();
-                const properties = pubchemData?.PropertyTable?.Properties?.[0];
-
-                if (properties && properties.CID) {
-                    let newChemical = {
-                        name: query, // Use original query casing for name
-                        scientific_name: properties.IUPACName || query,
-                        iupac_name: properties.IUPACName,
-                        cas_number: null, // PubChem name search doesn't easily provide CAS
-                        molecular_formula: properties.MolecularFormula,
-                        molecular_weight: properties.MolecularWeight,
-                        chemical_type: 'compound',
-                        category: 'other',
-                        safety_level: 'unknown',
-                        radioactive: false,
-                        source: 'pubchem_cache'
-                    };
-
-                    // Enrich with LLM if formula seems ambiguous or type is generic
-                    const llmEnrichment = await enrichWithLLM(base44, newChemical.name);
-                    if (llmEnrichment) {
-                        newChemical = { ...newChemical, ...llmEnrichment };
-                    }
-                    
-                    finalResults = [newChemical];
-
-                    // Asynchronously cache the enriched result without waiting for it
-                    base44.asServiceRole.entities.Chemical.create(newChemical)
-                        .catch(e => console.error("Failed to cache new chemical:", e));
-                }
-            }
-        }
-
-        // If still no results after direct internal and pubchem search, try AI disambiguation
-        if (finalResults.length === 0 && (!category || category === 'all')) {
-            const specificNames = await disambiguateWithLLM(base44, searchTerm);
-            if (specificNames && specificNames.length > 0) {
-                // Re-run the internal search for each specific name suggested by the AI
-                const disambiguatedResults = allChemicals.filter(c => 
-                    specificNames.some(specificName => 
-                        c.name?.toLowerCase() === specificName.toLowerCase() ||
-                        c.scientific_name?.toLowerCase() === specificName.toLowerCase() ||
-                        c.iupac_name?.toLowerCase() === specificName.toLowerCase()
-                    )
-                );
-                finalResults = dedupAndPrioritize(disambiguatedResults);
-            }
-        }
-        
-        // New: Prioritize results based on productType
-        if (productType && CATEGORY_KEYWORDS[productType] && finalResults.length > 0) {
-            const keywords = new Set(CATEGORY_KEYWORDS[productType]);
-            finalResults.sort((a, b) => {
-                const aIsRelevant = keywords.has(a.category) || a.function_description?.toLowerCase().split(' ').some(word => keywords.has(word));
-                const bIsRelevant = keywords.has(b.category) || b.function_description?.toLowerCase().split(' ').some(word => keywords.has(word));
-                
-                if (aIsRelevant && !bIsRelevant) return -1;
-                if (!aIsRelevant && bIsRelevant) return 1;
-                return 0;
-            });
-        }
-
-        return new Response(JSON.stringify({ results: finalResults }), {
-            headers: { "Content-Type": "application/json" },
-        });
-
-    } catch (error) {
-        console.error("Chemical search error:", error);
-        return new Response(JSON.stringify({ error: "Search failed", details: error.message }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-        });
+      } catch (e) {
+        console.error("PubChem lookup failed:", e);
+      }
     }
+
+    // 5. Apply category filter if needed
+    if (category && category !== 'all') {
+      finalResults = finalResults.filter(c => c.category?.toLowerCase() === category.toLowerCase());
+    }
+
+    // Limit results
+    finalResults = finalResults.slice(0, 15);
+
+    return Response.json({ results: finalResults });
+
+  } catch (error) {
+    console.error("Chemical search error:", error);
+    return Response.json({ error: "Search failed", details: error.message }, { status: 500 });
+  }
 });
