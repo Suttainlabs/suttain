@@ -4,10 +4,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
 const PRICE_MAP = {
-  pro_monthly: 'price_1TG2ZkI8DTqT2BKbfkFimGcy',
-  pro_yearly: 'price_1TG2ZkI8DTqT2BKbOZiR9MyH',
-  enterprise_monthly: 'price_1TG2ZoI8DTqT2BKblQyrjkjN',
-  enterprise_yearly: 'price_1TG2ZoI8DTqT2BKbbeAfaPW2',
+  pro_monthly: 'price_1TG2yuI8DTqT2BKbU468bE7j',
+  pro_yearly: 'price_1TG2yuI8DTqT2BKbyHPDN6uI',
+  lifetime: 'price_1TG2yuI8DTqT2BKb2VSB4d0D',
 };
 
 Deno.serve(async (req) => {
@@ -31,8 +30,9 @@ Deno.serve(async (req) => {
       console.log('No authenticated user');
     }
 
+    const isLifetime = priceKey === 'lifetime';
     const sessionConfig = {
-      mode: 'subscription',
+      mode: isLifetime ? 'payment' : 'subscription',
       payment_method_types: ['card'],
       line_items: [{ price: PRICE_MAP[priceKey], quantity: 1 }],
       success_url: successUrl || `${req.headers.get('origin')}/Pricing?success=true`,
