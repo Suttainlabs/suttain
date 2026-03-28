@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import useTrialStatus from "../hooks/useTrialStatus";
 import TrialExpiredBanner from "../components/trial/TrialExpiredBanner";
+import { incrementUsage } from "../utils/usageTracker";
 import AuthGate from "../components/auth/AuthGate";
 import AuthContext from "../components/auth/AuthContext";
 import { Check } from "lucide-react";
@@ -227,6 +228,11 @@ export default function Generator() {
       if (response && response.formulas && response.formulas.length >= 3) {
         setFormulaOptions(response.formulas);
         setCurrentStep(4);
+        // Increment usage for free tier users
+        if (user && trialStatus && !trialStatus.isPro) {
+          await incrementUsage(user, 'formulas').catch(console.error);
+          if (refreshUser) refreshUser();
+        }
         await awardPoints(10, "Formula options generated");
       } else {
         throw new Error("Invalid response format");
@@ -436,7 +442,7 @@ export default function Generator() {
     );
   }
 
-  if (trialStatus.isExpired) {
+  if (!trialStatus.isPro && !trialStatus.canFormulate) {
     return <TrialExpiredBanner featureName="Formula Generator" />;
   }
 

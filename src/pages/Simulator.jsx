@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useTrialStatus from "../hooks/useTrialStatus";
 import TrialExpiredBanner from "../components/trial/TrialExpiredBanner";
+import { incrementUsage } from "../utils/usageTracker";
 import AuthGate from "../components/auth/AuthGate";
 import AuthContext from '../components/auth/AuthContext';
 import ChemicalInput from "../components/simulator/ChemicalInput";
@@ -769,6 +770,12 @@ export default function Simulator() {
       setSimulationData(finalData);
       setStep(2);
 
+      // Increment usage for free tier users
+      if (user && trialStatus && !trialStatus.isPro) {
+        await incrementUsage(user, 'simulations').catch(console.error);
+        if (refreshUser) refreshUser();
+      }
+
       // Save simulation to database
       try {
         await base44.entities.Simulation.create({
@@ -876,7 +883,7 @@ export default function Simulator() {
   return (
     <AuthGate featureName="Chemical Simulator" featureDescription="Test chemical interactions safely with our advanced simulation engine. Start your 14-day free trial to save simulations and access the full database.">
       <SEOHead {...pageSEO.simulator} />
-      {user && trialStatus.isExpired ? (
+      {user && !trialStatus.isPro && !trialStatus.canSimulate ? (
         <TrialExpiredBanner featureName="Chemical Simulator" />
       ) : (
       <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-slate-50 relative overflow-hidden">

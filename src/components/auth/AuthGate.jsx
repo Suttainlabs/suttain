@@ -64,11 +64,11 @@ export default function AuthGate({ children, featureName, featureDescription }) 
                   className="flex-1 btn-primary"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Start 14-Day Free Trial
+                  Sign Up Free
                 </Button>
               </div>
               <p className="text-xs text-slate-500">
-                Sign up for a 14-day free trial. Save formulas, run simulations, and earn rewards.
+                Free tier includes 3 simulations, 5 formulas, and 2 product scans per month.
               </p>
             </CardContent>
           </Card>

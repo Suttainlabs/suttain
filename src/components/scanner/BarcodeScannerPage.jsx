@@ -11,6 +11,8 @@ import BarcodeHistory from './BarcodeHistory';
 import { base44 } from '@/api/base44Client';
 import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud } from 'lucide-react';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
+import { incrementUsage } from '../../utils/usageTracker';
+import useTrialStatus from '../../hooks/useTrialStatus';
 
 const containerVariants = {
   initial: { opacity: 0, y: 30 },
@@ -43,7 +45,8 @@ export default function BarcodeScannerPage() {
     const [history, setHistory] = useState([]);
     const fileInputRef = useRef(null);
 
-    const { user, openAuthModal } = useContext(AuthContext);
+    const { user, openAuthModal, refreshUser } = useContext(AuthContext);
+    const trialStatus = useTrialStatus(user);
 
     const loadHistory = useCallback(async () => {
         try {
@@ -90,8 +93,13 @@ export default function BarcodeScannerPage() {
                           ingredient_count: data.ingredients?.length || 0,
                           analysis_completed: true
                        });
+                       // Increment usage for free tier
+                       if (user && trialStatus && !trialStatus.isPro) {
+                         await incrementUsage(user, 'scans').catch(console.error);
+                         if (refreshUser) refreshUser();
+                       }
                        loadHistory();
-                       
+
                        // Send email notification
                        sendFeatureUsageEmail(user, 'barcode_scan', {
                          productName: data.name,

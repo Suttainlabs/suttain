@@ -11,23 +11,21 @@ import AuthContext from '../components/auth/AuthContext';
 
 const plans = [
   {
-    id: 'trial',
-    name: '14-Day Free Trial',
-    description: 'Explore every feature free for 14 days — no credit card required.',
+    id: 'free',
+    name: 'Free',
+    description: 'Get started with core features every month, no credit card needed.',
     monthlyPrice: 0,
     yearlyPrice: 0,
     lifetimePrice: 0,
     features: [
-      'Full access to all tools for 14 days',
-      'Chemical Simulator',
-      'Formula Generator',
-      'Barcode Scanner',
+      '3 Chemical Simulations per month',
+      '5 Formula Generations per month',
+      '2 Product Scans per month',
       'Community Support',
       'Learning Center Access'
     ],
     limitations: [
-      'Expires after 14 days',
-      'Upgrade to continue'
+      'Monthly usage limits apply'
     ],
     cta: 'Current Plan',
     popular: false,
@@ -36,22 +34,22 @@ const plans = [
   {
     id: 'pro',
     name: 'Pro',
-    description: 'Everything you need to formulate safely and efficiently — at an unbeatable price.',
+    description: 'Everything you need to formulate safely and efficiently — unlimited access.',
     monthlyPrice: 4.99,
-    yearlyPrice: 49.99,
+    yearlyPrice: null,
     lifetimePrice: null,
     features: [
       'Unlimited Chemical Simulations',
       'Unlimited Formula Generation',
+      'Unlimited Product Scans',
       'AI Compliance Co-Pilot',
       'Personalized Safety Alerts',
       'Sustainability Scoring',
       'Priority Email Support',
-      'Export to PDF/Print',
-      'Formula History (Unlimited)'
+      'Export to PDF/Print'
     ],
     limitations: [],
-    cta: 'Start Free Trial',
+    cta: 'Upgrade to Pro',
     popular: true,
     icon: Sparkles
   },
@@ -61,14 +59,14 @@ const plans = [
     description: 'Pay once, use forever. The smartest investment for serious formulators.',
     monthlyPrice: null,
     yearlyPrice: null,
-    lifetimePrice: 250,
+    lifetimePrice: 99.99,
     features: [
       'Everything in Pro — forever',
       'All future feature updates included',
       'Unlimited Chemical Simulations',
       'Unlimited Formula Generation',
+      'Unlimited Product Scans',
       'AI Compliance Co-Pilot',
-      'Sustainability Scoring',
       'Priority Support for Life',
       'Export to PDF/Print'
     ],
@@ -90,12 +88,12 @@ const featureDetails = [
 export default function Pricing() {
   const { user } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
-  const [isYearly, setIsYearly] = useState(false);
+  const [isYearly, setIsYearly] = useState(false); // kept for future use
 
   const [checkoutLoading, setCheckoutLoading] = useState(null);
 
   const handleUpgrade = async (planId) => {
-    if (planId === 'trial') return;
+    if (planId === 'free') return;
 
     if (window.self !== window.top) {
       alert('Checkout works only from the published app. Please open the app in a new tab.');
@@ -160,44 +158,13 @@ export default function Pricing() {
             Choose Your <span className="gradient-text">Perfect Plan</span>
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
-            Unlock powerful features to create safer, more sustainable formulations
+            Start free with monthly limits, or upgrade for unlimited access
           </p>
-
-          {/* Trial Status Banner */}
-          {user && trialStatus.plan === 'trial' && (
-            <div className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-6 ${
-              trialStatus.isExpired
-                ? 'bg-red-100 border border-red-300'
-                : trialStatus.daysLeft <= 3
-                ? 'bg-orange-100 border border-orange-300'
-                : 'bg-blue-50 border border-blue-200'
-            }`}>
-              {trialStatus.isExpired ? (
-                <AlertTriangle className="w-4 h-4 text-red-600" />
-              ) : (
-                <Clock className="w-4 h-4 text-blue-600" />
-              )}
-              <span className={`text-sm font-semibold ${
-                trialStatus.isExpired ? 'text-red-700' : trialStatus.daysLeft <= 3 ? 'text-orange-700' : 'text-blue-700'
-              }`}>
-                {trialStatus.isExpired
-                  ? 'Your 14-day free trial has expired. Upgrade now to continue.'
-                  : `${trialStatus.daysLeft} day${trialStatus.daysLeft !== 1 ? 's' : ''} left in your free trial`}
-              </span>
-            </div>
-          )}
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center gap-4">
-            <span className={`text-sm font-medium ${!isYearly ? 'text-slate-900' : 'text-slate-500'}`}>Monthly</span>
-            <Switch
-              checked={isYearly}
-              onCheckedChange={setIsYearly}
-              className="data-[state=checked]:bg-[var(--suttain-violet)]"
-            />
-            <span className={`text-sm font-medium ${isYearly ? 'text-slate-900' : 'text-slate-500'}`}>
-              Yearly <Badge className="ml-2 bg-green-100 text-green-700">Save 16%</Badge>
-            </span>
+
+
           </div>
         </motion.div>
 
@@ -235,7 +202,7 @@ export default function Pricing() {
                     plan.id === 'lifetime' ? 'bg-gradient-to-r from-amber-500 to-orange-500' :
                     'bg-slate-100'
                   }`}>
-                    <plan.icon className={`w-6 h-6 ${plan.id !== 'trial' ? 'text-white' : 'text-slate-600'}`} />
+                    <plan.icon className={`w-6 h-6 ${plan.id !== 'free' ? 'text-white' : 'text-slate-600'}`} />
                   </div>
                   <CardTitle className="text-xl">{plan.name}</CardTitle>
                   <CardDescription className="text-sm leading-relaxed">{plan.description}</CardDescription>
@@ -243,7 +210,7 @@ export default function Pricing() {
                 <CardContent className="space-y-6">
                   {/* Price */}
                   <div className="text-center">
-                    {plan.id === 'trial' ? (
+                    {plan.id === 'free' ? (
                       <div>
                         <span className="text-4xl font-bold text-slate-900">Free</span>
                         <p className="text-sm text-slate-500 mt-1">No credit card required</p>
@@ -258,21 +225,10 @@ export default function Pricing() {
                     ) : (
                       <div>
                         <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-4xl font-bold text-slate-900">
-                            ${isYearly ? plan.yearlyPrice : plan.monthlyPrice}
-                          </span>
-                          <span className="text-slate-500">/{isYearly ? 'year' : 'month'}</span>
+                          <span className="text-4xl font-bold text-slate-900">$4.99</span>
+                          <span className="text-slate-500">/month</span>
                         </div>
-                        {isYearly && (
-                          <p className="text-sm text-green-600 font-medium mt-1">
-                            ~$4.17/month — save vs monthly!
-                          </p>
-                        )}
-                        {!isYearly && (
-                          <p className="text-sm text-slate-500 mt-1">
-                            or $49.99/year and save 16%
-                          </p>
-                        )}
+                        <p className="text-sm text-slate-500 mt-1">Cancel anytime</p>
                       </div>
                     )}
                   </div>
@@ -287,9 +243,9 @@ export default function Pricing() {
                         : 'bg-slate-100 text-slate-500 cursor-default'
                     }`}
                     onClick={() => handleUpgrade(plan.id)}
-                    disabled={plan.id === 'trial' || checkoutLoading !== null}
+                    disabled={plan.id === 'free' || checkoutLoading !== null}
                   >
-                    {checkoutLoading === (plan.id === 'lifetime' ? 'lifetime' : isYearly ? 'pro_yearly' : 'pro_monthly') ? (
+                    {checkoutLoading === (plan.id === 'lifetime' ? 'lifetime' : 'pro_monthly') ? (
                       <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</>
                     ) : plan.cta}
                   </Button>

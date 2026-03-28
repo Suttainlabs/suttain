@@ -14,13 +14,13 @@ export default function BarcodeScanner() {
             <div className="min-h-[calc(100vh-80px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
                  <AuthGate 
                     featureName="Barcode Scanner"
-                    featureDescription="Want to scan a product? Start your 14-day free trial to instantly analyze product ingredients from a barcode."
+                    featureDescription="Sign up free to scan products. Free tier includes 2 scans per month."
                 />
             </div>
         );
     }
 
-    if (trialStatus.isExpired) {
+    if (!trialStatus.isPro && !trialStatus.canScan) {
         return <TrialExpiredBanner featureName="Quick Scan" />;
     }
 

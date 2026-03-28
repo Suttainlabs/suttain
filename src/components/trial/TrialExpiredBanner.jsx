@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Lock, Sparkles, Clock, ArrowRight } from 'lucide-react';
+import { Lock, Sparkles, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
@@ -20,24 +20,20 @@ export default function TrialExpiredBanner({ featureName }) {
               <Lock className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">
-              Your Free Trial Has Ended
+              Monthly Limit Reached
             </h2>
             <p className="text-white/80 text-sm">
-              Your 14-day free trial for {featureName || 'Suttain tools'} has expired
+              You've used your free monthly allowance for {featureName || 'this feature'}
             </p>
           </div>
           <CardContent className="p-8 space-y-6">
             <div className="space-y-3 text-left">
               <p className="text-slate-600 text-center">
-                Upgrade to continue using all Suttain features including unlimited simulations, formula generation, and product scanning.
+                Upgrade to Pro for unlimited simulations, formula generation, and product scanning every month.
               </p>
               <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
                 <Sparkles className="w-5 h-5 text-purple-600 flex-shrink-0" />
                 <span className="text-sm text-purple-800 font-medium">Unlimited access to all tools</span>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-teal-50 rounded-lg">
-                <Clock className="w-5 h-5 text-teal-600 flex-shrink-0" />
-                <span className="text-sm text-teal-800 font-medium">Keep all your saved formulas & simulations</span>
               </div>
             </div>
 
@@ -50,7 +46,7 @@ export default function TrialExpiredBanner({ featureName }) {
             </Link>
 
             <p className="text-xs text-slate-500 text-center">
-              Questions? Contact us at <a href="mailto:contact@suttain.com" className="underline">contact@suttain.com</a>
+              Your free limits reset at the start of each month. Questions? <a href="mailto:contact@suttain.com" className="underline">Contact us</a>
             </p>
           </CardContent>
         </Card>

@@ -71,14 +71,7 @@ export default function Layout({ children, currentPageName }) {
       const currentUser = await User.me();
       setUser(currentUser);
       setCurrentGreeting(getGreetingText(currentUser));
-      // Set trial_start_date if not already set
-      if (currentUser && !currentUser.trial_start_date) {
-        try {
-          await User.updateMyUserData({ trial_start_date: new Date().toISOString(), subscription_plan: currentUser.subscription_plan || 'trial' });
-        } catch (e) {
-          console.error('Failed to set trial start date:', e);
-        }
-      }
+
       if (currentUser && currentUser.first_login !== false) {
         setShowAcknowledgementModal(true);
         // Send welcome email via backend function (reliable, server-side)
@@ -518,7 +511,7 @@ export default function Layout({ children, currentPageName }) {
                       className="bg-gradient-to-r from-suttain-teal to-suttain-blue text-white hover:opacity-90 rounded-full px-5 font-bold shadow-md"
                     >
                       <Sparkles className="w-4 h-4 mr-2" />
-                      Start Free 14-Day Trial
+                      Sign Up Free
                     </Button>
                   </div>
                 )
@@ -797,7 +790,7 @@ export default function Layout({ children, currentPageName }) {
                           className="w-full justify-center text-base font-semibold bg-gradient-to-r from-suttain-teal to-suttain-blue text-white py-3 rounded-full"
                         >
                           <Sparkles className="w-5 h-5 mr-2" />
-                          Start Free 14-Day Trial
+                          Sign Up Free
                         </Button>
                       </motion.div>
                     )

@@ -1,37 +1,33 @@
 import { useMemo } from 'react';
-
-const TRIAL_DURATION_DAYS = 14;
+import { getCurrentUsage, FREE_LIMITS } from '../utils/usageTracker';
 
 export default function useTrialStatus(user) {
   return useMemo(() => {
-    if (!user) return { isActive: false, daysLeft: 0, isExpired: true, plan: null };
-
-    // Admins always have full access
-    if (user.role === 'admin') return { isActive: true, daysLeft: 999, isExpired: false, plan: 'admin' };
-
-    // Paid users always have access
-    const plan = user.subscription_plan || 'trial';
-    if (plan === 'pro' || plan === 'enterprise') {
-      return { isActive: true, daysLeft: 999, isExpired: false, plan };
+    if (!user) {
+      return { isPro: false, plan: null, isExpired: false, canSimulate: false, canFormulate: false, canScan: false, usage: { simulations: 0, formulas: 0, scans: 0 }, limits: FREE_LIMITS };
     }
 
-    // Trial users - check trial_start_date
-    const trialStart = user.trial_start_date || user.created_date;
-    if (!trialStart) return { isActive: true, daysLeft: TRIAL_DURATION_DAYS, isExpired: false, plan: 'trial' };
+    if (user.role === 'admin') {
+      return { isPro: true, plan: 'admin', isExpired: false, canSimulate: true, canFormulate: true, canScan: true, usage: null, limits: FREE_LIMITS };
+    }
 
-    const startDate = new Date(trialStart);
-    const now = new Date();
-    const diffMs = now - startDate;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const daysLeft = Math.max(0, TRIAL_DURATION_DAYS - diffDays);
-    const isExpired = daysLeft <= 0;
+    const plan = user.subscription_plan || 'free';
+    if (plan === 'pro' || plan === 'enterprise') {
+      return { isPro: true, plan, isExpired: false, canSimulate: true, canFormulate: true, canScan: true, usage: null, limits: FREE_LIMITS };
+    }
 
+    // Free tier — check monthly usage
+    const usage = getCurrentUsage(user);
     return {
-      isActive: !isExpired,
-      daysLeft,
-      isExpired,
-      plan: 'trial',
-      trialStart: trialStart
+      isPro: false,
+      plan: 'free',
+      isExpired: false, // free tier never expires, just gets limited
+      canSimulate: usage.simulations < FREE_LIMITS.simulations,
+      canFormulate: usage.formulas < FREE_LIMITS.formulas,
+      canScan: usage.scans < FREE_LIMITS.scans,
+      usage,
+      limits: FREE_LIMITS,
+      daysLeft: 0 // kept for backward compatibility
     };
   }, [user]);
 }
