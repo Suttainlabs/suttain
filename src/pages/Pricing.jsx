@@ -162,9 +162,24 @@ export default function Pricing() {
           </p>
 
           {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-4">
-
-
+          <div className="flex items-center justify-center gap-3">
+            <span className={`text-sm font-semibold ${!isYearly ? 'text-slate-900' : 'text-slate-400'}`}>Monthly</span>
+            <button
+              onClick={() => setIsYearly(!isYearly)}
+              className={`relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none ${
+                isYearly ? 'bg-[var(--suttain-violet)]' : 'bg-slate-300'
+              }`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300 ${
+                isYearly ? 'translate-x-6' : 'translate-x-0'
+              }`} />
+            </button>
+            <span className={`text-sm font-semibold ${isYearly ? 'text-slate-900' : 'text-slate-400'}`}>
+              Yearly
+            </span>
+            {isYearly && (
+              <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">Save 16%</span>
+            )}
           </div>
         </motion.div>
 
@@ -224,11 +239,23 @@ export default function Pricing() {
                       </div>
                     ) : (
                       <div>
-                        <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-4xl font-bold text-slate-900">$4.99</span>
-                          <span className="text-slate-500">/month</span>
-                        </div>
-                        <p className="text-sm text-slate-500 mt-1">Cancel anytime</p>
+                        {isYearly ? (
+                          <>
+                            <div className="flex items-baseline justify-center gap-1">
+                              <span className="text-4xl font-bold text-slate-900">$49.99</span>
+                              <span className="text-slate-500">/year</span>
+                            </div>
+                            <p className="text-sm text-green-600 font-semibold mt-1">~$4.17/mo · Save $9.89/year</p>
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex items-baseline justify-center gap-1">
+                              <span className="text-4xl font-bold text-slate-900">$4.99</span>
+                              <span className="text-slate-500">/month</span>
+                            </div>
+                            <p className="text-sm text-slate-500 mt-1">Cancel anytime</p>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>

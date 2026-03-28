@@ -137,7 +137,7 @@ export default function HomePage() {
                 className="mt-4 text-sm text-slate-400 flex items-center justify-center gap-1.5"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                No credit card required &middot; 14-day free trial
+                No credit card required &middot; Free tier available
               </motion.p>
             )}
 
@@ -150,7 +150,7 @@ export default function HomePage() {
               {[
                 { icon: Database, value: '5,000+', label: 'Chemicals' },
                 { icon: Zap, value: '<1s', label: 'Analysis Speed' },
-                { icon: CheckCircle2, value: '14 Days', label: 'Free Trial' },
+                { icon: CheckCircle2, value: 'Free', label: 'Tier Available' },
                 { icon: Clock, value: '24/7', label: 'Available' },
               ].map((stat, i) => (
                 <div key={i} className="text-center">
@@ -364,7 +364,7 @@ export default function HomePage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to={createPageUrl("Simulator")}>
                   <Button size="lg" className="w-full sm:w-auto bg-white text-suttain-teal hover:bg-white/90 px-8 py-4 text-base rounded-full font-semibold">
-                    Start 14-Day Free Trial
+                    Get Started Free
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
