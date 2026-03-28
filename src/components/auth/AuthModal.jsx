@@ -25,7 +25,6 @@ const AppleIcon = () => (
 
 
 export default function AuthModal({ isOpen, onClose, initialMode = "signup", onSuccess }) {
-  const [mode, setMode] = useState(initialMode);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -35,7 +34,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
     
     // Track login/signup attempt
     base44.analytics.track({
-      eventName: mode === 'signup' ? 'signup_attempt' : 'login_attempt',
+      eventName: 'auth_attempt',
       properties: { provider: 'google' }
     });
     
@@ -78,34 +77,20 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
 
               <div className="text-center">
                 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain Logo" className="h-14 w-auto mx-auto mb-4"/>
-                <h2 className="text-2xl font-bold text-slate-900">
-                  {mode === 'signup' ? 'Join Suttain' : 'Welcome Back'}
-                </h2>
-                <p className="mt-2 text-slate-600">
-                  {mode === 'signup' ? 'Start your 14-day free trial today' : 'Log in to access your projects'}
-                </p>
+                <h2 className="text-2xl font-bold text-slate-900">Sign In or Sign Up</h2>
+                <p className="mt-2 text-slate-600">Get started free — no credit card required</p>
               </div>
 
-              {mode === 'signup' && (
-                <div className="mt-6 space-y-3">
-                  {featureList.map((feature, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg"
-                    >
-                      <feature.icon className={`w-5 h-5 ${feature.color}`} />
-                      <span className="font-medium text-slate-700">{feature.text}</span>
-                    </div>
-                  ))}
-                  <div className="pt-2 text-center">
-                      <span className="text-sm font-semibold text-emerald-600 bg-emerald-100/70 border border-emerald-200/80 rounded-full px-4 py-2">
-                        14-Day Free Trial — No Credit Card Required
-                      </span>
+              <div className="mt-6 space-y-3">
+                {featureList.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                    <feature.icon className={`w-5 h-5 ${feature.color}`} />
+                    <span className="font-medium text-slate-700">{feature.text}</span>
                   </div>
-                </div>
-              )}
+                ))}
+              </div>
 
-              <div className={`mt-8 ${mode === 'login' ? 'pt-4' : ''}`}>
+              <div className="mt-6">
                  {error && (
                     <p className="text-center text-sm text-red-600 mb-4 bg-red-50 p-2 rounded-lg">{error}</p>
                  )}
@@ -144,17 +129,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
                 <p className="mt-1">Your formulas and data remain private and secure.</p>
               </div>
 
-               <div className="mt-6 pt-4 border-t border-slate-200 text-center">
-                  <p className="text-sm text-slate-600">
-                    {mode === 'signup' ? 'Already have an account?' : "Don't have an account?"}{' '}
-                    <button 
-                      onClick={() => setMode(mode === 'signup' ? 'login' : 'signup')} 
-                      className="font-semibold text-[var(--suttain-teal)] hover:text-[#028a7f]"
-                    >
-                      {mode === 'signup' ? 'Log In' : 'Sign Up'}
-                    </button>
-                  </p>
-              </div>
+
 
             </div>
           </motion.div>
