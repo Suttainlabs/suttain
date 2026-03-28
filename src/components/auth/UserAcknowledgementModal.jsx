@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from '@/components/ui/label';
 import { base44 } from '@/api/base44Client';
 
-export default function UserAcknowledgementModal({ isOpen, onClose }) {
+export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) {
   const [generatorCategory, setGeneratorCategory] = useState("");
   const [simulatorCategory, setSimulatorCategory] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -81,7 +81,7 @@ export default function UserAcknowledgementModal({ isOpen, onClose }) {
         console.error('Failed to send Slack notification:', slackError);
       }
 
-      onClose();
+      if (onAccept) onAccept(); else onClose();
     } catch (error) {
       console.error("Failed to save user preferences:", error);
       alert("Could not save your preferences. Please try again.");
