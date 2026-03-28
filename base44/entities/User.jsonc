@@ -2,23 +2,26 @@
   "name": "User",
   "type": "object",
   "properties": {
-    "display_name": {
+    "role": {
       "type": "string",
-      "description": "User's preferred display name"
+      "enum": [
+        "admin",
+        "user"
+      ]
+    },
+    "display_name": {
+      "type": "string"
     },
     "profile_image_url": {
-      "type": "string",
-      "description": "URL to user's profile image"
+      "type": "string"
     },
     "reward_points": {
       "type": "number",
-      "default": 0,
-      "description": "Total reward points earned by the user"
+      "default": 0
     },
-    "first_login": {
-      "type": "boolean",
-      "default": true,
-      "description": "Flag to track if this is user's first login"
+    "trial_start_date": {
+      "type": "string",
+      "format": "date-time"
     },
     "subscription_plan": {
       "type": "string",
@@ -27,113 +30,34 @@
         "pro",
         "enterprise"
       ],
-      "default": "trial",
-      "description": "Current subscription plan"
+      "default": "trial"
     },
-    "trial_start_date": {
+    "subscription_status": {
       "type": "string",
-      "format": "date-time",
-      "description": "When the 14-day trial started (set on first login)"
+      "enum": [
+        "active",
+        "canceled",
+        "past_due",
+        "trialing"
+      ],
+      "default": "trialing"
     },
-    "learning_progress": {
-      "type": "object",
-      "properties": {
-        "tutorials": {
-          "type": "object",
-          "additionalProperties": true,
-          "description": "Completed tutorial lessons keyed by tutorial-lesson ID"
-        },
-        "walkthroughs": {
-          "type": "object",
-          "additionalProperties": true,
-          "description": "Completed walkthrough steps keyed by walkthrough ID"
-        }
-      },
-      "description": "User's learning center progress"
+    "subscription_billing": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "yearly"
+      ]
     },
-    "compliance_preferences": {
-      "type": "object",
-      "properties": {
-        "default_regions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Default target market regions for compliance checks"
-        },
-        "notification_settings": {
-          "type": "object",
-          "properties": {
-            "email_alerts": {
-              "type": "boolean",
-              "default": true
-            },
-            "banned_ingredient_alerts": {
-              "type": "boolean",
-              "default": true
-            },
-            "regulatory_updates": {
-              "type": "boolean",
-              "default": false
-            }
-          }
-        },
-        "preferred_standards": {
-          "type": "string",
-          "enum": [
-            "US",
-            "EU",
-            "Global"
-          ],
-          "default": "Global",
-          "description": "Preferred regional compliance standard"
-        }
-      }
+    "stripe_customer_id": {
+      "type": "string"
     },
-    "saved_compliance_filters": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "filters": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        }
-      },
-      "description": "User's saved compliance filter presets"
+    "stripe_subscription_id": {
+      "type": "string"
     },
-    "news_preferences": {
-      "type": "object",
-      "properties": {
-        "saved_articles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "IDs of saved news articles"
-        },
-        "notifications": {
-          "type": "object",
-          "additionalProperties": true,
-          "description": "Notification preferences for news categories"
-        }
-      },
-      "description": "User's regulatory news feed preferences"
+    "first_login": {
+      "type": "boolean",
+      "default": true
     }
-  },
-  "required": [
-    "display_name",
-    "profile_image_url",
-    "learning_progress",
-    "compliance_preferences",
-    "saved_compliance_filters",
-    "news_preferences"
-  ]
+  }
 }

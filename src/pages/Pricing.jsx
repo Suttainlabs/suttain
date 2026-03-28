@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Sparkles, Building2, Zap, Shield, Leaf, HeartPulse, MessageSquare, Clock, AlertTriangle } from 'lucide-react';
+import { Check, Sparkles, Building2, Zap, Shield, Leaf, HeartPulse, MessageSquare, Clock, AlertTriangle, Loader2 } from 'lucide-react';
+import { createCheckoutSession } from '@/functions/createCheckoutSession';
 import useTrialStatus from '../hooks/useTrialStatus';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -88,18 +89,62 @@ export default function Pricing() {
   const trialStatus = useTrialStatus(user);
   const [isYearly, setIsYearly] = useState(true);
 
-  const handleUpgrade = (planId) => {
+  const [checkoutLoading, setCheckoutLoading] = useState(null);
+
+  const handleUpgrade = async (planId) => {
     if (planId === 'enterprise') {
       window.location.href = 'mailto:contact@suttain.com?subject=Enterprise Plan Inquiry';
-    } else if (planId === 'pro') {
-      // For now, show an alert. In production, this would integrate with Stripe
-      alert('Payment integration coming soon! Contact us at contact@suttain.com to upgrade.');
+      return;
+    }
+
+    if (planId === 'pro') {
+      // Check if running in iframe
+      if (window.self !== window.top) {
+        alert('Checkout works only from the published app. Please open the app in a new tab.');
+        return;
+      }
+
+      const priceKey = isYearly ? 'pro_yearly' : 'pro_monthly';
+      setCheckoutLoading(priceKey);
+      try {
+        const res = await createCheckoutSession({
+          priceKey,
+          successUrl: window.location.origin + '/Pricing?success=true',
+          cancelUrl: window.location.origin + '/Pricing?canceled=true',
+        });
+        if (res.data?.url) {
+          window.location.href = res.data.url;
+        }
+      } catch (error) {
+        console.error('Checkout failed:', error);
+        alert('Failed to start checkout. Please try again.');
+      } finally {
+        setCheckoutLoading(null);
+      }
     }
   };
+
+  // Handle success/canceled URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const isSuccess = urlParams.get('success') === 'true';
+  const isCanceled = urlParams.get('canceled') === 'true';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 py-12 px-4">
       <div className="max-w-6xl mx-auto">
+        {/* Success/Cancel Banners */}
+        {isSuccess && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+            className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+            <p className="text-green-800 font-semibold">🎉 Payment successful! Your Pro subscription is now active.</p>
+          </motion.div>
+        )}
+        {isCanceled && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+            className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
+            <p className="text-yellow-800 font-semibold">Checkout was canceled. You can try again anytime.</p>
+          </motion.div>
+        )}
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -201,14 +246,16 @@ export default function Pricing() {
                     className={`w-full ${
                       plan.popular
                         ? 'bg-gradient-to-r from-[var(--suttain-violet)] to-purple-600 hover:opacity-90'
-                        : plan.id === 'free'
+                        : plan.id === 'trial'
                         ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         : 'bg-slate-900 hover:bg-slate-800'
                     }`}
                     onClick={() => handleUpgrade(plan.id)}
-                    disabled={plan.id === 'trial'}
+                    disabled={plan.id === 'trial' || checkoutLoading !== null}
                   >
-                    {plan.cta}
+                    {checkoutLoading && (plan.id === 'pro' || plan.id === 'enterprise') ? (
+                      <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</>
+                    ) : plan.cta}
                   </Button>
 
                   {/* Features */}
