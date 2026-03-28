@@ -21,38 +21,38 @@ Deno.serve(async (req) => {
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: email,
       from_name: 'Suttain',
-      subject: 'Welcome to Suttain — Your 14-Day Free Trial Starts Now! 🧪',
+      subject: 'Welcome to Suttain — Your 14-Day Free Trial Has Begun',
       body: `Hi ${firstName},
 
-Welcome to Suttain! We're so excited to have you on board.
+Welcome to Suttain. We are glad to have you on board.
 
-Your 14-day free trial is now active — no credit card required. Here's what you can explore:
+Your 14-day free trial is now active — no credit card required. Here is what you can explore:
 
-🔬 Chemical Simulator — Safely test chemical interactions before mixing
-⚗️ Formula Generator — Create professional-grade formulas in seconds
-📱 Quick Scan — Scan any product barcode for instant ingredient analysis
-🛡️ AI Compliance Co-Pilot — Stay compliant across 50+ global regulations
+- Chemical Simulator: Safely test chemical interactions before mixing
+- Formula Generator: Create professional-grade formulas in seconds
+- Quick Scan: Scan any product barcode for instant ingredient analysis
+- AI Compliance Co-Pilot: Stay compliant across 50+ global regulations
 
 Your trial gives you full access to every feature for 14 days, completely free.
 
 When your trial ends, choose the plan that fits you best:
 
-✅ Monthly Plan — $4.99/month
-   Full access, billed monthly. Cancel anytime.
+  Monthly Plan — $4.99/month
+  Full access, billed monthly. Cancel anytime.
 
-✅ Yearly Plan — $49.99/year (Save 16% vs monthly!)
-   ~$4.17/month. Best value for regular users.
+  Yearly Plan — $49.99/year (save 16% vs. monthly)
+  Approximately $4.17/month. Best value for regular users.
 
-✅ Lifetime Access — $250 one-time payment
-   Pay once. Use Suttain forever. The smartest long-term investment.
+  Lifetime Access — $250 one-time payment
+  Pay once. Use Suttain indefinitely.
 
-No rush — explore freely for 14 days and upgrade whenever you're ready.
+Explore freely for 14 days and upgrade whenever you are ready.
 
-👉 Get started now: https://suttain.com
+Get started: https://suttain.com
 
-If you have any questions, reply to this email or reach us at contact@suttain.com.
+If you have any questions, reply to this email or contact us at contact@suttain.com.
 
-Happy formulating!
+Best regards,
 The Suttain Team`
     });
 
