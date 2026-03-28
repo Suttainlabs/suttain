@@ -289,7 +289,7 @@ export default function Pricing() {
                     onClick={() => handleUpgrade(plan.id)}
                     disabled={plan.id === 'trial' || checkoutLoading !== null}
                   >
-                    {checkoutLoading ? (
+                    {checkoutLoading === (plan.id === 'lifetime' ? 'lifetime' : isYearly ? 'pro_yearly' : 'pro_monthly') ? (
                       <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</>
                     ) : plan.cta}
                   </Button>
