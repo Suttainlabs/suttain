@@ -44,6 +44,7 @@ import AuthContext from '../auth/AuthContext';
 
 import PDFExportModal from "./PDFExportModal";
 import PrintLabelModal from "./PrintLabelModal";
+import FormulaExportDialog from "./FormulaExportUtils";
 import ComplianceChecker from "./ComplianceChecker";
 import SustainabilityAnalyzer from "./SustainabilityAnalyzer";
 import FormulaAssistant from "./FormulaAssistant";
@@ -165,6 +166,7 @@ export default function FormulaEditor({
   const [updatingOption, setUpdatingOption] = useState(null); // Track which option is loading
   const [showPDFModal, setShowPDFModal] = useState(false);
   const [showPrintModal, setShowPrintModal] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [saveStatus, setSaveStatus] = useState('idle'); // idle, saving, saved, error
   const [isSaving, setIsSaving] = useState(false); // New state for explicit saving status
   const [showFeedbackNotification, setShowFeedbackNotification] = useState(false); // New state for feedback notification
@@ -587,9 +589,13 @@ export default function FormulaEditor({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => setShowPDFModal(true)}>
+                <DropdownMenuItem onClick={() => setShowExportDialog(true)}>
                   <Download className="w-4 h-4 mr-2" />
-                  Export PDF
+                  Export (PDF / CSV)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowPDFModal(true)}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Custom PDF Report
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowPrintModal(true)}>
                   <Printer className="w-4 h-4 mr-2" />
@@ -1224,6 +1230,13 @@ export default function FormulaEditor({
           />
         )}
       </Suspense>
+
+      {/* Export Dialog */}
+      <FormulaExportDialog
+        isOpen={showExportDialog}
+        onClose={() => setShowExportDialog(false)}
+        formula={formula}
+      />
 
       {/* Ingredient Browser Modal */}
       <IngredientBrowser
