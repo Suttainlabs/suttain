@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Beaker, TestTube, Star, List, FileText, Loader2, Download, QrCode, ShieldCheck, HeartPulse, TrendingUp, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
+import { Users, Beaker, TestTube, Star, List, FileText, Loader2, Download, QrCode, ShieldCheck, HeartPulse, TrendingUp, ArrowUpRight, ArrowDownRight, Minus, CreditCard } from 'lucide-react';
 import { getAdminStats } from '@/functions/getAdminStats';
 import { exportAdminData } from '@/functions/exportAdminData';
+import { exportSubscriptionReport } from '@/functions/exportSubscriptionReport';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AdminActivityChart from './charts/AdminActivityChart';
@@ -46,6 +47,7 @@ export default function DashboardOverview() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
+  const [isExportingSubscriptions, setIsExportingSubscriptions] = useState(false);
 
   const fetchStats = async () => {
     setLoading(true);
@@ -83,6 +85,26 @@ export default function DashboardOverview() {
     }
   };
 
+  const handleExportSubscriptions = async () => {
+    setIsExportingSubscriptions(true);
+    try {
+      const response = await exportSubscriptionReport();
+      const blobData = typeof response.data === 'string' ? new TextEncoder().encode(response.data) : response.data;
+      const url = window.URL.createObjectURL(new Blob([blobData], { type: 'text/csv' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `suttain_subscription_report_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to export subscription report:", error);
+    } finally {
+      setIsExportingSubscriptions(false);
+    }
+  };
+
   const growth = stats?.weeklyGrowth || {};
 
   const primaryStats = [
@@ -109,10 +131,16 @@ export default function DashboardOverview() {
           <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
           <p className="text-sm text-slate-500 mt-1">Platform overview and analytics</p>
         </div>
-        <Button onClick={handleExport} disabled={isExporting} variant="outline" size="sm">
-          {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-          {isExporting ? 'Exporting...' : 'Export CSV'}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleExportSubscriptions} disabled={isExportingSubscriptions} variant="outline" size="sm" className="border-violet-200 text-violet-700 hover:bg-violet-50">
+            {isExportingSubscriptions ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CreditCard className="w-4 h-4 mr-2" />}
+            {isExportingSubscriptions ? 'Exporting...' : 'Subscription Report'}
+          </Button>
+          <Button onClick={handleExport} disabled={isExporting} variant="outline" size="sm">
+            {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+            {isExporting ? 'Exporting...' : 'Export CSV'}
+          </Button>
+        </div>
       </div>
 
       {/* Primary Stats */}
