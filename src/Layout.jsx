@@ -292,9 +292,8 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
-              {navLinks.map(({ href, label, icon: Icon }) => (
+              {navLinks.map(({ href, label }) => (
                 <Link key={href} to={createPageUrl(href)} className={getLinkClasses(href)}>
-                  <Icon className="w-4 h-4" />
                   <span>{label}</span>
                 </Link>
               ))}
@@ -307,7 +306,6 @@ export default function Layout({ children, currentPageName }) {
                       ? "bg-rose-100 text-rose-600"
                       : "text-slate-700 hover:bg-rose-50 hover:text-rose-600"
                   }`}>
-                    <Building2 className="w-4 h-4" />
                     <span>Company</span>
                     <ChevronDown className="w-3 h-3" />
                   </button>
@@ -337,7 +335,6 @@ export default function Layout({ children, currentPageName }) {
                       ? "bg-purple-100 text-purple-600"
                       : "text-slate-700 hover:bg-purple-50 hover:text-purple-600"
                   }`}>
-                    <HelpCircle className="w-4 h-4" />
                     <span>Help</span>
                     <ChevronDown className="w-3 h-3" />
                   </button>
@@ -367,7 +364,6 @@ export default function Layout({ children, currentPageName }) {
                       ? "bg-cyan-100 text-cyan-600"
                       : "text-slate-700 hover:bg-cyan-50 hover:text-cyan-600"
                   }`}>
-                    <AppWindow className="w-4 h-4" />
                     <span>Tools</span>
                     <ChevronDown className="w-3 h-3" />
                   </button>
