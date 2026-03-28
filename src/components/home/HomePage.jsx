@@ -91,13 +91,24 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
+              {!user && (
+                <Link to={createPageUrl("Simulator")}>
+                  <Button size="lg" className="w-full sm:w-auto relative overflow-hidden bg-gradient-to-r from-suttain-teal to-suttain-blue text-white px-10 py-5 text-base rounded-full font-bold shadow-lg shadow-suttain-teal/25 hover:shadow-xl hover:shadow-suttain-teal/30 hover:scale-105 transition-all duration-300">
+                    <Zap className="w-5 h-5 mr-2" />
+                    Start Free Trial
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+              )}
               <Link to={createPageUrl("Simulator")}>
-                <Button size="lg" className="w-full sm:w-auto bg-suttain-teal hover:bg-suttain-teal/90 text-white px-8 py-4 text-base rounded-full font-semibold shadow-md">
-                  <Zap className="w-5 h-5 mr-2" />
-                  Start 14-Day Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                <Button size="lg" variant={user ? "default" : "outline"} className={user
+                  ? "w-full sm:w-auto bg-suttain-teal hover:bg-suttain-teal/90 text-white px-8 py-4 text-base rounded-full font-semibold shadow-md"
+                  : "w-full sm:w-auto border-2 border-slate-300 text-slate-700 hover:bg-slate-50 px-8 py-4 text-base rounded-full font-semibold"
+                }>
+                  <Layers className="w-5 h-5 mr-2" />
+                  {user ? 'Go to Simulator' : 'Try Simulator'}
                 </Button>
               </Link>
               <Link to={createPageUrl("generator")}>
@@ -107,6 +118,18 @@ export default function HomePage() {
                 </Button>
               </Link>
             </motion.div>
+
+            {!user && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="mt-4 text-sm text-slate-400 flex items-center justify-center gap-1.5"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                No credit card required &middot; 14-day free trial
+              </motion.p>
+            )}
 
             <motion.div
               initial={{ opacity: 0 }}
