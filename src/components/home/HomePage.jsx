@@ -147,15 +147,15 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mt-16 flex justify-center"
             >
-              <div className="inline-flex items-center gap-0 bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden">
+              <div className="inline-flex flex-wrap items-center gap-0 bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden w-full sm:w-auto">
                 {[
                   { icon: Database, value: '250k+', label: 'Chemicals', color: 'text-suttain-teal' },
                   { icon: Zap, value: '<1s', label: 'Analysis Speed', color: 'text-amber-500' },
                   { icon: Clock, value: '24/7', label: 'Always On', color: 'text-suttain-purple' },
                 ].map((stat, i) => (
                   <React.Fragment key={i}>
-                    {i > 0 && <div className="w-px h-12 bg-slate-200" />}
-                    <div className="flex items-center gap-3 px-8 py-5 group hover:bg-slate-50 transition-colors">
+                    {i > 0 && <div className="w-px h-12 bg-slate-200 hidden sm:block" />}
+                    <div className="flex items-center gap-3 px-6 py-4 group hover:bg-slate-50 transition-colors flex-1 sm:flex-none justify-center sm:justify-start">
                       <div className={`w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0`}>
                         <stat.icon className={`w-4 h-4 ${stat.color}`} />
                       </div>
