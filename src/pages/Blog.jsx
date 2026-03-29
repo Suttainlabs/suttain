@@ -76,9 +76,10 @@ export default function Blog() {
       try {
         const response = await fetchMediumArticles({});
         if (response.data?.articles && response.data.articles.length > 0) {
-          setArticles(response.data.articles);
+          const normalized = response.data.articles.map(a => ({ ...a, category: formatCategory(a.category) }));
+          setArticles(normalized);
           // Extract unique categories
-          const uniqueCategories = ["All", ...new Set(response.data.articles.map(a => a.category).filter(Boolean))];
+          const uniqueCategories = ["All", ...new Set(response.data.articles.map(a => formatCategory(a.category)).filter(Boolean))];
           setCategories(uniqueCategories);
         } else {
           setArticles(FALLBACK_ARTICLES);
@@ -127,6 +128,14 @@ export default function Blog() {
   const filteredArticles = selectedCategory === "All" 
     ? articles 
     : articles.filter(a => a.category === selectedCategory);
+
+  const formatCategory = (cat) => {
+    if (!cat) return 'General';
+    return cat
+      .split(/[-_]/)  
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
 
   const categoryColors = {
     Sustainability: "bg-green-100 text-green-700",
@@ -263,8 +272,8 @@ export default function Blog() {
                         </div>
                       )}
                       <div className="absolute top-3 left-3">
-                        <Badge className={categoryColors[article.category] || "bg-slate-100 text-slate-700"}>
-                          {article.category || "General"}
+                        <Badge className={categoryColors[formatCategory(article.category)] || "bg-slate-100 text-slate-700"}>
+                          {formatCategory(article.category)}
                         </Badge>
                       </div>
                     </div>
