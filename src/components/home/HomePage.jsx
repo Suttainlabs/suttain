@@ -148,9 +148,9 @@ export default function HomePage() {
               className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-12 max-w-3xl mx-auto"
             >
               {[
-                { icon: Database, value: '5,000+', label: 'Chemicals' },
+                { icon: Database, value: '10,000+', label: 'Chemicals' },
                 { icon: Zap, value: '<1s', label: 'Analysis Speed' },
-                { icon: CheckCircle2, value: 'Free', label: 'Tier Available' },
+                { icon: FlaskConical, value: '100%', label: 'AI-Powered' },
                 { icon: Clock, value: '24/7', label: 'Available' },
               ].map((stat, i) => (
                 <div key={i} className="text-center">
