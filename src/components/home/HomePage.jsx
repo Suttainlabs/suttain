@@ -142,24 +142,31 @@ export default function HomePage() {
             )}
 
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-12 max-w-3xl mx-auto"
+              className="mt-16 flex justify-center"
             >
-              {[
-                { icon: Database, value: '10k+', label: 'Chemicals' },
-                { icon: Zap, value: '<1s', label: 'Analysis Speed' },
-                { icon: Clock, value: '24/7', label: 'Available' },
-              ].map((stat, i) => (
-                <div key={i} className="text-center">
-                  <div className="flex items-center justify-center gap-2 mb-1">
-                    <stat.icon className="w-4 h-4 text-suttain-teal" />
-                    <span className="text-2xl sm:text-3xl font-bold text-slate-800">{stat.value}</span>
-                  </div>
-                  <p className="text-sm text-slate-500">{stat.label}</p>
-                </div>
-              ))}
+              <div className="inline-flex items-center gap-0 bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden">
+                {[
+                  { icon: Database, value: '10k+', label: 'Chemicals', color: 'text-suttain-teal' },
+                  { icon: Zap, value: '<1s', label: 'Analysis Speed', color: 'text-amber-500' },
+                  { icon: Clock, value: '24/7', label: 'Always On', color: 'text-suttain-purple' },
+                ].map((stat, i) => (
+                  <React.Fragment key={i}>
+                    {i > 0 && <div className="w-px h-12 bg-slate-200" />}
+                    <div className="flex items-center gap-3 px-8 py-5 group hover:bg-slate-50 transition-colors">
+                      <div className={`w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0`}>
+                        <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-xl font-extrabold text-slate-900 leading-none">{stat.value}</p>
+                        <p className="text-xs text-slate-500 mt-0.5 font-medium">{stat.label}</p>
+                      </div>
+                    </div>
+                  </React.Fragment>
+                ))}
+              </div>
             </motion.div>
           </div>
         </div>
