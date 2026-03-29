@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, CalendarCheck, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -182,9 +182,7 @@ export default function Layout({ children, currentPageName }) {
 
   const helpMenuItems = [
     { href: "LearningSuite", label: "Learning Center", icon: GraduationCap, description: "Tutorials, guides, and knowledge base" },
-    { href: "BookADemo", label: "Book a Demo", icon: CalendarCheck, description: "Schedule a live demo with our team" },
-    { href: "FAQ", label: "FAQs & Contact", icon: HelpCircle, description: "Get answers and reach out to us" },
-    { href: "CommunityReviews", label: "Community Reviews", icon: MessageSquare, description: "See what others are saying" },
+    { href: "FAQ", label: "FAQs, Reviews & Contact", icon: HelpCircle, description: "Get answers, read reviews, and reach out to us" },
   ];
 
   const productSuiteItems = [

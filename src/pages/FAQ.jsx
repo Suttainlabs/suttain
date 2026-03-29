@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ContactSubmission } from '@/entities/ContactSubmission';
 import { base44 } from '@/api/base44Client';
@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { HelpCircle, MessageSquare, Send, CheckCircle, Phone } from 'lucide-react';
+import { HelpCircle, MessageSquare, Send, CheckCircle, Phone, Star } from 'lucide-react';
 
 const faqData = [
   {
@@ -52,6 +52,12 @@ const faqData = [
 
 
 export default function FAQPage() {
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    base44.entities.Review.list('-created_date', 20).then(setReviews).catch(() => {});
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -296,6 +302,36 @@ export default function FAQPage() {
             </motion.div>
           </div>
         </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <Star className="w-8 h-8 text-yellow-500" />
+            <h2 className="text-3xl font-bold text-slate-900">Community Reviews</h2>
+          </div>
+        </motion.div>
+        {reviews.length === 0 ? (
+          <p className="text-slate-500 text-center py-8">No reviews yet. Be the first to share your experience!</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reviews.map((review, i) => (
+              <motion.div key={review.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md border border-white/50 p-6">
+                <div className="flex items-center gap-1 mb-3">
+                  {[1,2,3,4,5].map(s => (
+                    <Star key={s} className={`w-4 h-4 ${s <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300'}`} />
+                  ))}
+                </div>
+                {review.feedback && <p className="text-slate-600 text-sm mb-3 italic">"{review.feedback}"</p>}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[var(--suttain-teal)] capitalize">{review.feature_used?.replace('_', ' ')}</span>
+                  <span className="text-xs text-slate-400">{new Date(review.created_date).toLocaleDateString()}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
