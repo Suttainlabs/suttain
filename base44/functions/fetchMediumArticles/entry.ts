@@ -112,7 +112,11 @@ function extractAllTags(content, tagName) {
   const matches = [];
   let match;
   while ((match = regex.exec(content)) !== null) {
-    matches.push(match[1].trim());
+    let value = match[1].trim();
+    // Strip CDATA wrappers
+    const cdataMatch = value.match(/^<!\[CDATA\[([\s\S]*)\]\]>$/);
+    if (cdataMatch) value = cdataMatch[1].trim();
+    matches.push(value);
   }
   return matches;
 }
