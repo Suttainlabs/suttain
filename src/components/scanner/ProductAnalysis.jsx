@@ -160,13 +160,22 @@ const FeedbackSection = ({ product, user }) => {
     const [feedbackGiven, setFeedbackGiven] = useState(false);
     const { toast } = useToast();
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         setFeedbackGiven(true);
+        try {
+            await base44.entities.ContactSubmission.create({
+                name: user?.full_name || 'Anonymous User',
+                email: user?.email || 'anonymous@unknown.com',
+                subject: `✅ Accuracy Confirmed: ${product.barcode} (${product.name})`,
+                message: `User confirmed that the product information for "${product.name}" (Barcode: ${product.barcode}) is accurate.`
+            });
+        } catch (error) {
+            console.error('Failed to save confirmation:', error);
+        }
         toast({
             title: "Thank You!",
             description: "Your confirmation helps improve our data accuracy.",
         });
-        // Here you could make an API call to a backend function to +1 this barcode's accuracy score
     };
     
     if (feedbackGiven) {
