@@ -528,7 +528,7 @@ For each product provide:
           </div>
 
           <Tabs defaultValue="overview" className="w-full" onValueChange={(v) => { setActiveTab(v); if (v === 'compliance') handleLoadCompliance(); if (v === 'sustainability') handleLoadSustainability(); }}>
-            <TabsList className="grid w-full grid-cols-6 bg-slate-100/80 rounded-xl">
+            <TabsList className="flex w-full overflow-x-auto bg-slate-100/80 rounded-xl scrollbar-hide">
                  <TabsTrigger value="overview" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Overview</TabsTrigger>
                  <TabsTrigger value="ingredients" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Ingredients</TabsTrigger>
                  <TabsTrigger value="safety" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Safety</TabsTrigger>
