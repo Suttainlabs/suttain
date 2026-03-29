@@ -149,7 +149,7 @@ export default function HomePage() {
             >
               <div className="inline-flex items-center gap-0 bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden">
                 {[
-                  { icon: Database, value: '10k+', label: 'Chemicals', color: 'text-suttain-teal' },
+                  { icon: Database, value: '250k+', label: 'Chemicals', color: 'text-suttain-teal' },
                   { icon: Zap, value: '<1s', label: 'Analysis Speed', color: 'text-amber-500' },
                   { icon: Clock, value: '24/7', label: 'Always On', color: 'text-suttain-purple' },
                 ].map((stat, i) => (
