@@ -150,7 +150,6 @@ export default function HomePage() {
               {[
                 { icon: Database, value: '10,000+', label: 'Chemicals' },
                 { icon: Zap, value: '<1s', label: 'Analysis Speed' },
-                { icon: FlaskConical, value: '100%', label: 'AI-Powered' },
                 { icon: Clock, value: '24/7', label: 'Available' },
               ].map((stat, i) => (
                 <div key={i} className="text-center">
