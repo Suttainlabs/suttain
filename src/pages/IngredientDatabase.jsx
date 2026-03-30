@@ -192,6 +192,11 @@ export default function IngredientDatabase() {
   const [toxFilter, setToxFilter] = useState("all");
   const [originFilter, setOriginFilter] = useState("all");
   const [ecoFilter, setEcoFilter] = useState("all");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchRef = useRef(null);
+  const suggestTimer = useRef(null);
 
   useEffect(() => {
     base44.entities.Chemical.list("-created_date", 200)
@@ -199,17 +204,64 @@ export default function IngredientDatabase() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const filtered = chemicals.filter(c => {
-    const q = search.toLowerCase();
-    if (q && !c.name?.toLowerCase().includes(q) && !c.scientific_name?.toLowerCase().includes(q) && !c.cas_number?.includes(q)) return false;
-    if (toxFilter !== "all" && c.safety_level !== toxFilter) return false;
-    if (originFilter !== "all" && getOrigin(c) !== originFilter) return false;
-    if (ecoFilter !== "all" && getEcoLevel(c) !== ecoFilter) return false;
-    return true;
-  });
+  // Live suggestions from API as user types
+  useEffect(() => {
+    clearTimeout(suggestTimer.current);
+    if (!search.trim() || search.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    suggestTimer.current = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const q = search.toLowerCase();
+        // Search locally first from already loaded chemicals
+        const localMatches = chemicals.filter(c =>
+          c.name?.toLowerCase().includes(q) ||
+          c.scientific_name?.toLowerCase().includes(q) ||
+          c.cas_number?.includes(q)
+        ).slice(0, 8);
+        // Also fetch from API to catch items not in initial 200
+        const apiResults = await base44.entities.Chemical.list("-created_date", 500);
+        const allMatches = apiResults.filter(c =>
+          c.name?.toLowerCase().includes(q) ||
+          c.scientific_name?.toLowerCase().includes(q) ||
+          c.cas_number?.includes(q)
+        );
+        // Merge and dedupe
+        const seen = new Set();
+        const merged = [];
+        for (const c of [...allMatches]) {
+          if (!seen.has(c.id)) { seen.add(c.id); merged.push(c); }
+        }
+        setSuggestions(merged.slice(0, 8));
+        // Also update the chemicals list with new results so filtering works
+        setChemicals(prev => {
+          const prevIds = new Set(prev.map(x => x.id));
+          const newItems = apiResults.filter(x => !prevIds.has(x.id));
+          return [...prev, ...newItems];
+        });
+        setShowSuggestions(merged.length > 0);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+  }, [search]);
 
-  const hasFilters = toxFilter !== "all" || originFilter !== "all" || ecoFilter !== "all" || search;
-  const clearFilters = () => { setToxFilter("all"); setOriginFilter("all"); setEcoFilter("all"); setSearch(""); };
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handler = (e) => { if (searchRef.current && !searchRef.current.contains(e.target)) setShowSuggestions(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const handleSuggestionClick = (name) => {
+    setSearch(name);
+    setShowSuggestions(false);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -235,20 +287,49 @@ export default function IngredientDatabase() {
       <section className="sticky top-16 z-30 bg-white/90 backdrop-blur border-b border-slate-200 px-4 py-3">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           {/* Search */}
-          <div className="relative flex-shrink-0 w-full sm:w-64">
+          <div className="relative flex-shrink-0 w-full sm:w-72" ref={searchRef}>
             <Search className="absolute top-1/2 -translate-y-1/2 left-3 w-4 h-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => { setSearch(e.target.value); setShowSuggestions(true); }}
+              onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
               placeholder="Search ingredients…"
               className="w-full pl-9 pr-8 py-2 text-sm rounded-full border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-400"
             />
-            {search && (
-              <button onClick={() => setSearch("")} className="absolute top-1/2 -translate-y-1/2 right-3 text-slate-400 hover:text-slate-600">
+            {(search || isSearching) && (
+              <button onClick={() => { setSearch(""); setSuggestions([]); setShowSuggestions(false); }} className="absolute top-1/2 -translate-y-1/2 right-3 text-slate-400 hover:text-slate-600">
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
+            <AnimatePresence>
+              {showSuggestions && suggestions.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  className="absolute top-full mt-2 left-0 right-0 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden"
+                >
+                  {suggestions.map(c => (
+                    <button
+                      key={c.id}
+                      onMouseDown={() => handleSuggestionClick(c.name)}
+                      className="w-full text-left px-4 py-2.5 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
+                        {c.scientific_name && <p className="text-xs text-slate-400 truncate">{c.scientific_name}</p>}
+                      </div>
+                      {c.safety_level && (
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${TOXICITY_CONFIG[c.safety_level]?.bg} ${TOXICITY_CONFIG[c.safety_level]?.color}`}>
+                          {TOXICITY_CONFIG[c.safety_level]?.label}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Filter Groups */}
