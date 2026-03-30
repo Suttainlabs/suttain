@@ -86,6 +86,9 @@ const ChemicalCard = ({ chemical }) => {
   const originConfig = ORIGIN_CONFIG[origin] || ORIGIN_CONFIG.synthetic;
   const OriginIcon = originConfig.icon;
   const ecoLevel = getEcoLevel(chemical);
+  const [summary, setSummary] = useState(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   const ecoColors = {
     low: "text-green-600 bg-green-100",
@@ -99,6 +102,37 @@ const ChemicalCard = ({ chemical }) => {
     : chemical.category
     ? `Category: ${chemical.category.replace(/_/g, " ")}`
     : null;
+
+  const handleSummary = async () => {
+    if (showSummary) { setShowSummary(false); return; }
+    setShowSummary(true);
+    if (summary) return;
+    setSummaryLoading(true);
+    try {
+      // Try PubChem description first
+      let text = null;
+      if (chemical._pubchem_cid) {
+        const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${chemical._pubchem_cid}/description/JSON`);
+        if (res.ok) {
+          const json = await res.json();
+          const descs = json.InformationList?.Information || [];
+          text = descs.find(d => d.Description)?.Description || null;
+        }
+      }
+      // Fallback: AI summary
+      if (!text) {
+        const aiRes = await base44.integrations.Core.InvokeLLM({
+          prompt: `Give a concise 2-3 sentence summary of the chemical ingredient "${chemical.name}" (${chemical.scientific_name || ""}). Cover its main uses, safety notes, and any notable properties. Be factual and brief.`
+        });
+        text = aiRes;
+      }
+      setSummary(text);
+    } catch {
+      setSummary("Summary unavailable.");
+    } finally {
+      setSummaryLoading(false);
+    }
+  };
 
   return (
     <motion.div
@@ -118,41 +152,47 @@ const ChemicalCard = ({ chemical }) => {
             <p className="text-xs text-slate-300 mt-0.5">CAS: {chemical.cas_number}</p>
           )}
         </div>
-        {tooltipContent && (
-          <Tooltip content={tooltipContent}>
-            <button className="ml-2 flex-shrink-0 text-slate-400 hover:text-teal-500 transition-colors">
-              <Info className="w-4 h-4" />
-            </button>
-          </Tooltip>
-        )}
+        <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+          {chemical._pubchem_cid && (
+            <a
+              href={`https://pubchem.ncbi.nlm.nih.gov/compound/${chemical._pubchem_cid}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-teal-500 hover:text-teal-700 transition-colors"
+              title="View on PubChem"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          )}
+          {tooltipContent && (
+            <Tooltip content={tooltipContent}>
+              <button className="text-slate-400 hover:text-teal-500 transition-colors">
+                <Info className="w-4 h-4" />
+              </button>
+            </Tooltip>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-1.5">
-        {/* Toxicity */}
         <Tooltip content={`Toxicity: ${toxConfig.label}${chemical.toxicity_data?.ld50_oral ? ` — LD50 oral: ${chemical.toxicity_data.ld50_oral}` : ""}`}>
           <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full cursor-default ${toxConfig.bg} ${toxConfig.color}`}>
             <ToxIcon className="w-3 h-3" />
             {toxConfig.label}
           </span>
         </Tooltip>
-
-        {/* Origin */}
         <Tooltip content={`Origin: ${originConfig.label}`}>
           <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full cursor-default ${originConfig.bg} ${originConfig.color}`}>
             <OriginIcon className="w-3 h-3" />
             {originConfig.label}
           </span>
         </Tooltip>
-
-        {/* Eco Impact */}
         <Tooltip content={`Environmental impact: ${ecoLevel}${chemical.environmental_data?.biodegradability ? ` — Biodegradability: ${chemical.environmental_data.biodegradability}` : ""}`}>
           <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full cursor-default ${ecoColors[ecoLevel]}`}>
             <Leaf className="w-3 h-3" />
             {ecoLevel === "low" ? "Low Impact" : ecoLevel === "medium" ? "Medium" : ecoLevel === "high" ? "High Impact" : "Eco Unknown"}
           </span>
         </Tooltip>
-
-        {/* Category */}
         {chemical.category && (
           <span className="inline-flex items-center text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
             {chemical.category.replace(/_/g, " ")}
@@ -160,10 +200,45 @@ const ChemicalCard = ({ chemical }) => {
         )}
       </div>
 
-      {/* Formula function tooltip hint */}
-      {chemical.function_description && (
-        <p className="text-xs text-slate-400 mt-2 line-clamp-2">{chemical.function_description}</p>
-      )}
+      {/* Summary toggle */}
+      <button
+        onClick={handleSummary}
+        className="mt-3 text-xs font-semibold text-teal-600 hover:text-teal-800 flex items-center gap-1 transition-colors"
+      >
+        {summaryLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+        {showSummary ? "Hide summary" : "Get summary"}
+      </button>
+
+      <AnimatePresence>
+        {showSummary && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-2 pt-2 border-t border-slate-100">
+              {summaryLoading ? (
+                <div className="flex items-center gap-2 text-xs text-slate-400">
+                  <Loader2 className="w-3 h-3 animate-spin" /> Loading summary…
+                </div>
+              ) : (
+                <p className="text-xs text-slate-600 leading-relaxed">{summary}</p>
+              )}
+              {chemical._pubchem_cid && !summaryLoading && (
+                <a
+                  href={`https://pubchem.ncbi.nlm.nih.gov/compound/${chemical._pubchem_cid}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-teal-600 hover:underline mt-1.5"
+                >
+                  <ExternalLink className="w-3 h-3" /> Full details on PubChem
+                </a>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
