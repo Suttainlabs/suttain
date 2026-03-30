@@ -149,8 +149,8 @@ export default function ProductDescriptionStep({
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <Input
                   placeholder={businessMode 
-                    ? `e.g., anti-aging serum with 2% retinol for EU market, targeting 35-55 age group...`
-                    : `e.g., gentle ${productType.name.toLowerCase()} for sensitive skin using natural ingredients...`
+                    ? `e.g., anti-aging serum with 2% retinol for EU market...`
+                    : `e.g., gentle ${productType.name.toLowerCase()} for sensitive skin...`
                   }
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
