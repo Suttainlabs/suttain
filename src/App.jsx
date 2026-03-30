@@ -6,6 +6,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import IngredientDatabase from './pages/IngredientDatabase';
+import FormulaComparison from './pages/FormulaComparison';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/IngredientDatabase" element={<LayoutWrapper currentPageName="IngredientDatabase"><IngredientDatabase /></LayoutWrapper>} />
+      <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><FormulaComparison /></LayoutWrapper>} /> element={<LayoutWrapper currentPageName="IngredientDatabase"><IngredientDatabase /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
