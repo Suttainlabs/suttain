@@ -194,62 +194,36 @@ export default function IngredientDatabase() {
   const [ecoFilter, setEcoFilter] = useState("all");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
   const searchRef = useRef(null);
-  const suggestTimer = useRef(null);
 
   useEffect(() => {
-    base44.entities.Chemical.list("-created_date", 200)
-      .then(setChemicals)
+    base44.entities.Chemical.list("-created_date", 500)
+      .then(data => {
+        setChemicals(data || []);
+      })
+      .catch(err => {
+        console.error("Failed to load chemicals:", err);
+        setChemicals([]);
+      })
       .finally(() => setIsLoading(false));
   }, []);
 
-  // Live suggestions from API as user types
+  // Live suggestions filtered from loaded chemicals
   useEffect(() => {
-    clearTimeout(suggestTimer.current);
     if (!search.trim() || search.length < 2) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
     }
-    suggestTimer.current = setTimeout(async () => {
-      setIsSearching(true);
-      try {
-        const q = search.toLowerCase();
-        // Search locally first from already loaded chemicals
-        const localMatches = chemicals.filter(c =>
-          c.name?.toLowerCase().includes(q) ||
-          c.scientific_name?.toLowerCase().includes(q) ||
-          c.cas_number?.includes(q)
-        ).slice(0, 8);
-        // Also fetch from API to catch items not in initial 200
-        const apiResults = await base44.entities.Chemical.list("-created_date", 500);
-        const allMatches = apiResults.filter(c =>
-          c.name?.toLowerCase().includes(q) ||
-          c.scientific_name?.toLowerCase().includes(q) ||
-          c.cas_number?.includes(q)
-        );
-        // Merge and dedupe
-        const seen = new Set();
-        const merged = [];
-        for (const c of [...allMatches]) {
-          if (!seen.has(c.id)) { seen.add(c.id); merged.push(c); }
-        }
-        setSuggestions(merged.slice(0, 8));
-        // Also update the chemicals list with new results so filtering works
-        setChemicals(prev => {
-          const prevIds = new Set(prev.map(x => x.id));
-          const newItems = apiResults.filter(x => !prevIds.has(x.id));
-          return [...prev, ...newItems];
-        });
-        setShowSuggestions(merged.length > 0);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsSearching(false);
-      }
-    }, 300);
-  }, [search]);
+    const q = search.toLowerCase();
+    const matches = chemicals.filter(c =>
+      c.name?.toLowerCase().includes(q) ||
+      c.scientific_name?.toLowerCase().includes(q) ||
+      c.cas_number?.includes(q)
+    ).slice(0, 8);
+    setSuggestions(matches);
+    setShowSuggestions(matches.length > 0);
+  }, [search, chemicals]);
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -309,7 +283,7 @@ export default function IngredientDatabase() {
               placeholder="Search ingredients…"
               className="w-full pl-9 pr-8 py-2 text-sm rounded-full border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-400"
             />
-            {(search || isSearching) && (
+            {search && (
               <button onClick={() => { setSearch(""); setSuggestions([]); setShowSuggestions(false); }} className="absolute top-1/2 -translate-y-1/2 right-3 text-slate-400 hover:text-slate-600">
                 <X className="w-3.5 h-3.5" />
               </button>
