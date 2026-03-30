@@ -17,6 +17,7 @@ import {
 import AuthContext from './components/auth/AuthContext';
 import NotificationCenter from './components/notifications/NotificationCenter';
 import BottomNavBar from './components/navigation/BottomNavBar';
+import GlobalSearch from './components/navigation/GlobalSearch';
 import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
@@ -287,6 +288,9 @@ export default function Layout({ children, currentPageName }) {
                 className="h-10 w-auto"
               />
             </Link>
+
+            {/* Global Search */}
+            <GlobalSearch user={user} />
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
