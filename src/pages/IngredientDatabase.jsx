@@ -65,15 +65,37 @@ const getEcoLevel = (chemical) => {
 };
 
 const getOrigin = (chemical) => {
-  const name = (chemical.name + " " + (chemical.function_description || "")).toLowerCase();
-  const naturalKeywords = ["plant", "botanical", "natural", "vegetable", "fruit", "herb", "essential oil", "extract", "bio"];
-  const syntheticKeywords = ["synthetic", "polymer", "petroleum", "chemical synthesis", "artificial"];
+  const name = (chemical.name + " " + (chemical.scientific_name || "") + " " + (chemical.function_description || "")).toLowerCase();
+  const formula = (chemical.molecular_formula || "").toUpperCase();
+
+  // Natural origin keywords
+  const naturalKeywords = ["plant", "botanical", "natural", "vegetable", "fruit", "herb", "essential oil", "extract", "bio", "aloe", "coconut", "jojoba", "shea", "castor", "olive", "avocado", "argan", "vitamin", "amino acid", "peptide", "honey", "beeswax", "lanolin", "collagen", "keratin", "enzyme", "ferment"];
+  // Synthetic keywords
+  const syntheticKeywords = ["synthetic", "polymer", "petroleum", "silicone", "parabens", "paraben", "phthalate", "sulfate", "acrylate", "polyethylene", "polypropylene", "artificial", "perfluoro", "trifluoro", "fluoromet"];
+
   const isNatural = naturalKeywords.some(k => name.includes(k));
   const isSynthetic = syntheticKeywords.some(k => name.includes(k));
   if (isNatural && isSynthetic) return "both";
   if (isNatural) return "natural";
+  if (isSynthetic) return "synthetic";
+
   const type = chemical.chemical_type || "";
-  if (["element", "salt", "inorganic_acid", "inorganic_base", "oxide"].includes(type)) return "synthetic";
+  // Pure elements are not synthetic (they're naturally occurring)
+  if (type === "element") return "natural";
+  // Inorganic minerals/salts occur naturally
+  if (["salt", "inorganic_acid", "inorganic_base", "oxide"].includes(type)) {
+    // Simple inorganic: no Carbon or only CO3/carbonate
+    if (!formula.includes("C") || formula.match(/^[^C]*CO3[^C]*$/)) return "natural";
+  }
+  // Organic acids/bases — check for carbon chains
+  if (type === "organic_acid" || type === "organic_base") return "synthetic";
+  // Semi-synthetic: has C but also natural-sounding name
+  const iupac = (chemical.scientific_name || "").toLowerCase();
+  if (iupac.includes("oleate") || iupac.includes("palmitate") || iupac.includes("stearate") || iupac.includes("linoleate") || iupac.includes("laurate") || iupac.includes("myristate")) return "both";
+  // Fluorinated / halogenated = synthetic
+  if (formula.includes("F") || (formula.match(/CL/i) && formula.includes("C"))) return "synthetic";
+  // Metals and their salts occur in nature
+  if (/^(FE|NA|MG|CA|ZN|CU|MN|CO|NI|AG|AU|AL|K|LI|SI)[0-9]*/i.test(formula.replace(/\s/g,""))) return "natural";
   return "synthetic";
 };
 
@@ -319,6 +341,7 @@ export default function IngredientDatabase() {
   const [isPubchemLoading, setIsPubchemLoading] = useState(false);
   const searchRef = useRef(null);
   const debounceRef = useRef(null);
+  const suppressSuggestRef = useRef(false);
 
   useEffect(() => {
     base44.entities.Chemical.list("-created_date", 500)
@@ -336,6 +359,7 @@ export default function IngredientDatabase() {
       return;
     }
     debounceRef.current = setTimeout(async () => {
+      if (suppressSuggestRef.current) { suppressSuggestRef.current = false; return; }
       setIsSuggestLoading(true);
       const q = search.toLowerCase();
       // Local matches
@@ -394,6 +418,7 @@ export default function IngredientDatabase() {
 
   const handleSuggestionClick = (suggestion) => {
     const name = suggestion.label;
+    suppressSuggestRef.current = true;
     setSearch(name);
     setShowSuggestions(false);
     fetchPubchemResults(name);
@@ -464,7 +489,7 @@ export default function IngredientDatabase() {
             <input
               type="text"
               value={search}
-              onChange={e => { setSearch(e.target.value); setShowSuggestions(true); }}
+              onChange={e => { suppressSuggestRef.current = false; setSearch(e.target.value); setShowSuggestions(true); }}
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
               onKeyDown={handleSearchSubmit}
               placeholder="Search 250k+ chemicals… (Enter)"
