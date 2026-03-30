@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
-import { Search, Filter, Leaf, FlaskConical, Droplets, ShieldCheck, AlertTriangle, Skull, Info, X, ExternalLink, Loader2 } from "lucide-react";
+import { Search, Filter, Leaf, FlaskConical, Droplets, ShieldCheck, AlertTriangle, Skull, Info, X, ExternalLink, Loader2, FileDown } from "lucide-react";
 
 // --- Tooltip Component ---
 const Tooltip = ({ content, children }) => {
@@ -200,14 +200,39 @@ const ChemicalCard = ({ chemical }) => {
         )}
       </div>
 
-      {/* Summary toggle */}
-      <button
-        onClick={handleSummary}
-        className="mt-3 text-xs font-semibold text-teal-600 hover:text-teal-800 flex items-center gap-1 transition-colors"
-      >
-        {summaryLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
-        {showSummary ? "Hide summary" : "Get summary"}
-      </button>
+      {/* Action row */}
+      <div className="mt-3 flex items-center gap-3 flex-wrap">
+        <button
+          onClick={handleSummary}
+          className="text-xs font-semibold text-teal-600 hover:text-teal-800 flex items-center gap-1 transition-colors"
+        >
+          {summaryLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+          {showSummary ? "Hide summary" : "Get summary"}
+        </button>
+        <a
+          href={chemical._pubchem_cid
+            ? `https://pubchem.ncbi.nlm.nih.gov/compound/${chemical._pubchem_cid}#section=Safety-and-Hazards`
+            : `https://cameochemicals.noaa.gov/search/simple?q=${encodeURIComponent(chemical.name)}`
+          }
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors"
+          title="Download free Safety Data Sheet"
+        >
+          <FileDown className="w-3.5 h-3.5" />
+          Free SDS
+        </a>
+        <a
+          href={`https://cameochemicals.noaa.gov/search/simple?q=${encodeURIComponent(chemical.name)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1 transition-colors"
+          title="Search NOAA CAMEO Chemicals database"
+        >
+          <ExternalLink className="w-3 h-3" />
+          CAMEO
+        </a>
+      </div>
 
       <AnimatePresence>
         {showSummary && (
