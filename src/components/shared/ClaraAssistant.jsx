@@ -24,12 +24,13 @@ export default function ClaraAssistant() {
         fetchUser();
     }, []);
 
-    const handleSendMessage = async () => {
-        if (!userMessage.trim() || isLoading) return;
+    const handleSendMessage = async (overrideMessage) => {
+        const content = (overrideMessage || userMessage).trim();
+        if (!content || isLoading) return;
 
         const newMessage = {
             role: 'user',
-            content: userMessage.trim()
+            content
         };
 
         setMessages(prev => [...prev, newMessage]);
@@ -137,10 +138,7 @@ ${conversationHistory}`;
     };
 
     const handleSuggestionClick = (suggestion) => {
-        setUserMessage(suggestion);
-        setTimeout(() => {
-            handleSendMessage();
-        }, 100);
+        handleSendMessage(suggestion);
     };
 
     const handleKeyPress = (e) => {
