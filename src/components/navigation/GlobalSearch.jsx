@@ -98,7 +98,7 @@ export default function GlobalSearch({ user }) {
   return (
     <div ref={containerRef} className="relative hidden md:block w-64 lg:w-80">
       <div className="relative flex items-center">
-        <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none" />
+        <Search className="absolute top-1/2 -translate-y-1/2 left-3 w-4 h-4 text-slate-400 pointer-events-none" />
         <input
           ref={inputRef}
           type="text"
