@@ -1,7 +1,8 @@
 import React, { useState, useContext } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Leaf, Search, Building2 } from "lucide-react";
+import { Leaf, Search, Building2, FlaskConical } from "lucide-react";
+import FormulaIngredientScorer from "../components/sustainability/FormulaIngredientScorer";
 import AuthGate from "../components/auth/AuthGate";
 import AuthContext from "../components/auth/AuthContext";
 import ProductLookup from "../components/sustainability/ProductLookup";
@@ -11,7 +12,7 @@ import ScoreResultView from "../components/sustainability/ScoreResultView";
 export default function Sustainability() {
   const { user } = useContext(AuthContext);
   const [result, setResult] = useState(null);
-  const [mode, setMode] = useState("individual");
+  const [mode, setMode] = useState("formula");
   const [recentSearches, setRecentSearches] = useState([]);
 
   const handleResult = (data) => {
@@ -63,7 +64,11 @@ export default function Sustainability() {
         ) : (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
             <Tabs value={mode} onValueChange={(v) => { setMode(v); setResult(null); }}>
-              <TabsList className="grid w-full grid-cols-2 max-w-sm mx-auto mb-8">
+              <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto mb-8">
+                <TabsTrigger value="formula" className="gap-2">
+                  <FlaskConical className="w-4 h-4" />
+                  Formula
+                </TabsTrigger>
                 <TabsTrigger value="individual" className="gap-2">
                   <Search className="w-4 h-4" />
                   Individual
@@ -73,6 +78,10 @@ export default function Sustainability() {
                   Business
                 </TabsTrigger>
               </TabsList>
+
+              <TabsContent value="formula">
+                <FormulaIngredientScorer />
+              </TabsContent>
 
               <TabsContent value="individual">
                 <ProductLookup onAnalyze={handleResult} recentSearches={recentSearches} />
