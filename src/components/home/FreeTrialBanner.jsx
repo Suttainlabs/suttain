@@ -27,10 +27,10 @@ export default function FreeTrialBanner({ onDismiss }) {
             </div>
             <div className="text-center sm:text-left">
               <p className="font-bold text-sm sm:text-base leading-tight">
-                Get Started with a 14-Day Free Trial
+                Get Started — It's Free!
               </p>
               <p className="text-white/80 text-xs sm:text-sm hidden sm:block">
-                Full access to Simulator, Formula Generator & Quick Scan — no credit card needed
+                Access the Simulator, Formula Generator & Quick Scan — no credit card needed
               </p>
             </div>
           </div>
@@ -45,7 +45,7 @@ export default function FreeTrialBanner({ onDismiss }) {
                 size="sm"
                 className="bg-white text-suttain-teal hover:bg-white/90 font-bold px-5 rounded-full shadow-lg shadow-black/10"
               >
-                Start Free Trial
+                Get Started Free
                 <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
