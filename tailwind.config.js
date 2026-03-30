@@ -5,7 +5,7 @@ module.exports = {
   theme: {
   	extend: {
   		fontFamily: {
-  			gilroy: ['var(--font-gilroy)', 'sans-serif'],
+  			gilroy: ['Calibri', 'Gill Sans', 'Trebuchet MS', 'ui-sans-serif', 'sans-serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

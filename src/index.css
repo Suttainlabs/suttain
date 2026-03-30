@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://api.fontshare.com/v2/css?f[]=gilroy@700,400,600,500&display=swap');
+
 
 @layer base {
   :root {
-    --font-gilroy: 'Gilroy', sans-serif;
+    --font-gilroy: 'Calibri', 'Gill Sans', 'Trebuchet MS', ui-sans-serif, sans-serif;
 
     --background: 150 20% 98%;
     --foreground: 210 40% 12%;
@@ -88,7 +88,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-gilroy, 'Gilroy', ui-sans-serif, system-ui, -apple-system, sans-serif);
+    font-family: 'Calibri', 'Gill Sans', 'Trebuchet MS', ui-sans-serif, system-ui, sans-serif;
     font-size: 1rem;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -103,7 +103,7 @@
   h6 { font-size: 1rem; line-height: 1.5; font-weight: 600; }
 
   p, li, span, label, input, textarea, select, button {
-    font-family: var(--font-gilroy, 'Gilroy', ui-sans-serif, system-ui, -apple-system, sans-serif);
+    font-family: 'Calibri', 'Gill Sans', 'Trebuchet MS', ui-sans-serif, system-ui, sans-serif;
   }
 
   @media (max-width: 640px) {
