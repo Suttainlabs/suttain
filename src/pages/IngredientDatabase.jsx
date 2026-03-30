@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
-import { Search, Filter, Leaf, FlaskConical, Droplets, ShieldCheck, AlertTriangle, Skull, Info, X, ChevronDown } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Search, Filter, Leaf, FlaskConical, Droplets, ShieldCheck, AlertTriangle, Skull, Info, X, ExternalLink, Loader2 } from "lucide-react";
 
 // --- Tooltip Component ---
 const Tooltip = ({ content, children }) => {
@@ -184,9 +182,31 @@ const FilterPill = ({ active, onClick, children }) => (
   </button>
 );
 
+// --- PubChem helpers ---
+const PUBCHEM_BASE = "https://pubchem.ncbi.nlm.nih.gov/rest/pug";
+const PUBCHEM_AUTO = "https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound";
+
+const mapPubchemToChemical = (props, name) => ({
+  id: `pubchem_${props.CID}`,
+  name: name,
+  scientific_name: props.IUPACName || name,
+  cas_number: null,
+  molecular_formula: props.MolecularFormula || null,
+  molecular_weight: props.MolecularWeight || null,
+  smiles: props.CanonicalSMILES || null,
+  safety_level: "unknown",
+  category: null,
+  chemical_type: "compound",
+  environmental_data: null,
+  toxicity_data: null,
+  function_description: props.IUPACName ? `IUPAC: ${props.IUPACName}` : null,
+  _pubchem_cid: props.CID,
+  _source: "pubchem",
+});
+
 // --- Main Page ---
 export default function IngredientDatabase() {
-  const [chemicals, setChemicals] = useState([]);
+  const [localChemicals, setLocalChemicals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [toxFilter, setToxFilter] = useState("all");
@@ -194,36 +214,76 @@ export default function IngredientDatabase() {
   const [ecoFilter, setEcoFilter] = useState("all");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSuggestLoading, setIsSuggestLoading] = useState(false);
+  const [pubchemResults, setPubchemResults] = useState([]);
+  const [isPubchemLoading, setIsPubchemLoading] = useState(false);
   const searchRef = useRef(null);
+  const debounceRef = useRef(null);
 
   useEffect(() => {
     base44.entities.Chemical.list("-created_date", 500)
-      .then(data => {
-        setChemicals(data || []);
-      })
-      .catch(err => {
-        console.error("Failed to load chemicals:", err);
-        setChemicals([]);
-      })
+      .then(data => setLocalChemicals(data || []))
+      .catch(() => setLocalChemicals([]))
       .finally(() => setIsLoading(false));
   }, []);
 
-  // Live suggestions filtered from loaded chemicals
+  // Debounced autocomplete: local filter + PubChem autocomplete
   useEffect(() => {
+    clearTimeout(debounceRef.current);
     if (!search.trim() || search.length < 2) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
     }
-    const q = search.toLowerCase();
-    const matches = chemicals.filter(c =>
-      c.name?.toLowerCase().includes(q) ||
-      c.scientific_name?.toLowerCase().includes(q) ||
-      c.cas_number?.includes(q)
-    ).slice(0, 8);
-    setSuggestions(matches);
-    setShowSuggestions(matches.length > 0);
-  }, [search, chemicals]);
+    debounceRef.current = setTimeout(async () => {
+      setIsSuggestLoading(true);
+      const q = search.toLowerCase();
+      // Local matches
+      const local = localChemicals
+        .filter(c => c.name?.toLowerCase().includes(q) || c.scientific_name?.toLowerCase().includes(q) || c.cas_number?.includes(q))
+        .slice(0, 4)
+        .map(c => ({ label: c.name, sublabel: c.scientific_name, source: "local", data: c }));
+      // PubChem autocomplete
+      let pubchem = [];
+      try {
+        const res = await fetch(`${PUBCHEM_AUTO}/${encodeURIComponent(search)}/JSON?limit=8`);
+        if (res.ok) {
+          const json = await res.json();
+          pubchem = (json.dictionary_terms?.compound || []).slice(0, 8 - local.length).map(name => ({
+            label: name, sublabel: "PubChem database", source: "pubchem", name
+          }));
+        }
+      } catch {}
+      const combined = [...local, ...pubchem];
+      setSuggestions(combined);
+      setShowSuggestions(combined.length > 0);
+      setIsSuggestLoading(false);
+    }, 300);
+  }, [search, localChemicals]);
+
+  // Fetch PubChem compound details when search is committed
+  const fetchPubchemResults = useCallback(async (query) => {
+    if (!query || query.length < 2) { setPubchemResults([]); return; }
+    setIsPubchemLoading(true);
+    try {
+      const res = await fetch(`${PUBCHEM_BASE}/compound/name/${encodeURIComponent(query)}/property/IUPACName,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON?MaxRecords=20`);
+      if (res.ok) {
+        const json = await res.json();
+        const props = json.PropertyTable?.Properties || [];
+        const mapped = props.map(p => mapPubchemToChemical(p, query));
+        // Dedupe by CID
+        const seen = new Set();
+        const deduped = mapped.filter(c => { if (seen.has(c._pubchem_cid)) return false; seen.add(c._pubchem_cid); return true; });
+        setPubchemResults(deduped);
+      } else {
+        setPubchemResults([]);
+      }
+    } catch {
+      setPubchemResults([]);
+    } finally {
+      setIsPubchemLoading(false);
+    }
+  }, []);
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -232,15 +292,27 @@ export default function IngredientDatabase() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleSuggestionClick = (name) => {
+  const handleSuggestionClick = (suggestion) => {
+    const name = suggestion.label;
     setSearch(name);
     setShowSuggestions(false);
+    fetchPubchemResults(name);
+  };
+
+  const handleSearchSubmit = (e) => {
+    if (e.key === "Enter") {
+      setShowSuggestions(false);
+      fetchPubchemResults(search);
+    }
   };
 
   const hasFilters = toxFilter !== "all" || originFilter !== "all" || ecoFilter !== "all" || search;
-  const clearFilters = () => { setToxFilter("all"); setOriginFilter("all"); setEcoFilter("all"); setSearch(""); setSuggestions([]); setShowSuggestions(false); };
+  const clearFilters = () => {
+    setToxFilter("all"); setOriginFilter("all"); setEcoFilter("all");
+    setSearch(""); setSuggestions([]); setShowSuggestions(false); setPubchemResults([]);
+  };
 
-  const filtered = chemicals.filter(c => {
+  const filteredLocal = localChemicals.filter(c => {
     const q = search.toLowerCase();
     if (q && !c.name?.toLowerCase().includes(q) && !c.scientific_name?.toLowerCase().includes(q) && !c.cas_number?.includes(q)) return false;
     if (toxFilter !== "all" && c.safety_level !== toxFilter) return false;
@@ -248,6 +320,11 @@ export default function IngredientDatabase() {
     if (ecoFilter !== "all" && getEcoLevel(c) !== ecoFilter) return false;
     return true;
   });
+
+  // Merge: local first, then pubchem (deduped by name)
+  const localNames = new Set(filteredLocal.map(c => c.name?.toLowerCase()));
+  const filteredPubchem = pubchemResults.filter(c => !localNames.has(c.name?.toLowerCase()));
+  const filtered = [...filteredLocal, ...filteredPubchem];
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -263,8 +340,16 @@ export default function IngredientDatabase() {
               Visual Ingredient Explorer
             </h1>
             <p className="text-slate-500 max-w-xl mx-auto text-sm">
-              Browse chemicals by toxicity, origin, and environmental impact. Hover any badge or info icon to learn how each ingredient functions in a formula.
+              Search 250,000+ chemicals from PubChem plus our curated database. Explore toxicity, origin, and environmental impact.
             </p>
+            <div className="flex items-center justify-center gap-4 mt-4">
+              <span className="inline-flex items-center gap-1.5 text-xs text-slate-400 bg-slate-100 px-3 py-1.5 rounded-full">
+                <FlaskConical className="w-3.5 h-3.5" /> Local database
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-teal-700 bg-teal-50 px-3 py-1.5 rounded-full">
+                <ExternalLink className="w-3.5 h-3.5" /> PubChem 250k+ compounds
+              </span>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -273,18 +358,20 @@ export default function IngredientDatabase() {
       <section className="sticky top-16 z-30 bg-white/90 backdrop-blur border-b border-slate-200 px-4 py-3">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           {/* Search */}
-          <div className="relative flex-shrink-0 w-full sm:w-72" ref={searchRef}>
+          <div className="relative flex-shrink-0 w-full sm:w-80" ref={searchRef}>
             <Search className="absolute top-1/2 -translate-y-1/2 left-3 w-4 h-4 text-slate-400 pointer-events-none" />
+            {isSuggestLoading && <Loader2 className="absolute top-1/2 -translate-y-1/2 right-8 w-3.5 h-3.5 text-teal-400 animate-spin pointer-events-none" />}
             <input
               type="text"
               value={search}
               onChange={e => { setSearch(e.target.value); setShowSuggestions(true); }}
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-              placeholder="Search ingredients…"
+              onKeyDown={handleSearchSubmit}
+              placeholder="Search 250k+ chemicals… (Enter)"
               className="w-full pl-9 pr-8 py-2 text-sm rounded-full border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-400"
             />
             {search && (
-              <button onClick={() => { setSearch(""); setSuggestions([]); setShowSuggestions(false); }} className="absolute top-1/2 -translate-y-1/2 right-3 text-slate-400 hover:text-slate-600">
+              <button onClick={clearFilters} className="absolute top-1/2 -translate-y-1/2 right-3 text-slate-400 hover:text-slate-600">
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
@@ -296,21 +383,21 @@ export default function IngredientDatabase() {
                   exit={{ opacity: 0, y: -4 }}
                   className="absolute top-full mt-2 left-0 right-0 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden"
                 >
-                  {suggestions.map(c => (
+                  {suggestions.map((s, i) => (
                     <button
-                      key={c.id}
-                      onMouseDown={() => handleSuggestionClick(c.name)}
+                      key={i}
+                      onMouseDown={() => handleSuggestionClick(s)}
                       className="w-full text-left px-4 py-2.5 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
-                        {c.scientific_name && <p className="text-xs text-slate-400 truncate">{c.scientific_name}</p>}
+                        <p className="text-sm font-semibold text-slate-800 truncate">{s.label}</p>
+                        {s.sublabel && <p className="text-xs text-slate-400 truncate">{s.sublabel}</p>}
                       </div>
-                      {c.safety_level && (
-                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${TOXICITY_CONFIG[c.safety_level]?.bg} ${TOXICITY_CONFIG[c.safety_level]?.color}`}>
-                          {TOXICITY_CONFIG[c.safety_level]?.label}
-                        </span>
-                      )}
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${
+                        s.source === "local" ? "bg-slate-100 text-slate-500" : "bg-teal-50 text-teal-700"
+                      }`}>
+                        {s.source === "local" ? "Local" : "PubChem"}
+                      </span>
                     </button>
                   ))}
                 </motion.div>
@@ -355,9 +442,21 @@ export default function IngredientDatabase() {
       {/* Results */}
       <section className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-slate-500">
-            {isLoading ? "Loading…" : `${filtered.length} ingredient${filtered.length !== 1 ? "s" : ""} found`}
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-slate-500">
+              {isLoading ? "Loading…" : `${filtered.length} ingredient${filtered.length !== 1 ? "s" : ""} found`}
+            </p>
+            {isPubchemLoading && (
+              <span className="inline-flex items-center gap-1.5 text-xs text-teal-600">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Searching PubChem…
+              </span>
+            )}
+            {filteredPubchem.length > 0 && !isPubchemLoading && (
+              <span className="inline-flex items-center gap-1.5 text-xs text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">
+                <ExternalLink className="w-3 h-3" /> {filteredPubchem.length} from PubChem
+              </span>
+            )}
+          </div>
         </div>
 
         {isLoading ? (
@@ -378,6 +477,13 @@ export default function IngredientDatabase() {
               {filtered.map(c => <ChemicalCard key={c.id} chemical={c} />)}
             </AnimatePresence>
           </motion.div>
+        )}
+        {!isLoading && search && filtered.length === 0 && !isPubchemLoading && (
+          <div className="text-center py-16">
+            <FlaskConical className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-400 font-semibold">No results found locally.</p>
+            <p className="text-slate-400 text-sm mt-1">Press <kbd className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">Enter</kbd> to search PubChem's 250k+ compound database.</p>
+          </div>
         )}
       </section>
     </div>
