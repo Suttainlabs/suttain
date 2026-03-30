@@ -266,6 +266,15 @@ export default function IngredientDatabase() {
   const hasFilters = toxFilter !== "all" || originFilter !== "all" || ecoFilter !== "all" || search;
   const clearFilters = () => { setToxFilter("all"); setOriginFilter("all"); setEcoFilter("all"); setSearch(""); setSuggestions([]); setShowSuggestions(false); };
 
+  const filtered = chemicals.filter(c => {
+    const q = search.toLowerCase();
+    if (q && !c.name?.toLowerCase().includes(q) && !c.scientific_name?.toLowerCase().includes(q) && !c.cas_number?.includes(q)) return false;
+    if (toxFilter !== "all" && c.safety_level !== toxFilter) return false;
+    if (originFilter !== "all" && getOrigin(c) !== originFilter) return false;
+    if (ecoFilter !== "all" && getEcoLevel(c) !== ecoFilter) return false;
+    return true;
+  });
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero */}
