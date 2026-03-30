@@ -247,20 +247,18 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
                         onClick={() => onModeSelect('smart_start')}
                         className="w-full p-6 rounded-2xl bg-slate-800 text-left shadow-lg hover:shadow-xl hover:bg-slate-900 transition-all duration-300 group"
                     >
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 bg-white/15 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                                    <Wand2 className="w-7 h-7 text-white" />
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 bg-white/15 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
+                                <Wand2 className="w-7 h-7 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                    <h3 className="text-xl font-bold text-white">New Here? Let Us Guide You</h3>
+                                    <Badge className="bg-white/20 text-white border-0 text-xs">Recommended</Badge>
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <h3 className="text-xl font-bold text-white">New Here? Let Us Guide You</h3>
-                                        <Badge className="bg-white/20 text-white border-0 text-xs">Recommended</Badge>
-                                    </div>
-                                    <p className="text-white/80 text-sm max-w-lg">
-                                        No chemistry knowledge needed. Answer a few simple questions and we'll create the perfect formula for you.
-                                    </p>
-                                </div>
+                                <p className="text-white/80 text-sm">
+                                    No chemistry knowledge needed. Answer a few simple questions and we'll create the perfect formula for you.
+                                </p>
                             </div>
                             <ArrowRight className="w-6 h-6 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0" />
                         </div>
