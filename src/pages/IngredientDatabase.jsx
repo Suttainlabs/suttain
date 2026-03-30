@@ -263,6 +263,9 @@ export default function IngredientDatabase() {
     setShowSuggestions(false);
   };
 
+  const hasFilters = toxFilter !== "all" || originFilter !== "all" || ecoFilter !== "all" || search;
+  const clearFilters = () => { setToxFilter("all"); setOriginFilter("all"); setEcoFilter("all"); setSearch(""); setSuggestions([]); setShowSuggestions(false); };
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero */}
