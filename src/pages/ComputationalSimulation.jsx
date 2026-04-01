@@ -52,9 +52,9 @@ const SIM_TYPES = [
     description: "Protein folding, membrane dynamics, ligand binding, trajectory analysis",
     fields: [
       { key: "system", label: "System Description", placeholder: "e.g. Lysozyme in water box, 50ns NPT simulation" },
-      { key: "force_field", label: "Force Field", placeholder: "e.g. AMBER99SB-ILDN, CHARMM36, OPLS-AA", default: "AMBER99SB-ILDN" },
-      { key: "temperature", label: "Temperature (K)", placeholder: "e.g. 300", default: "300" },
-      { key: "simulation_time", label: "Simulation Time", placeholder: "e.g. 100 ns, 10 ns NPT" },
+      { key: "force_field", label: "Force Field", type: "select", options: ["AMBER99SB-ILDN", "CHARMM36", "OPLS-AA", "GROMOS54A7", "ff14SB", "CHARMM36m", "AMBER14SB", "TraPPE"], default: "AMBER99SB-ILDN" },
+      { key: "temperature", label: "Temperature (K)", type: "select", options: ["298", "300", "310", "273", "320", "350", "400"], default: "300" },
+      { key: "simulation_time", label: "Simulation Time", type: "select", options: ["1 ns", "10 ns", "50 ns", "100 ns", "500 ns", "1 µs", "Custom"], default: "100 ns" },
     ]
   },
   {
@@ -94,9 +94,9 @@ const SIM_TYPES = [
     description: "Excited states, TDDFT, reaction pathways, transition states, photochemistry",
     fields: [
       { key: "system", label: "Chemical System", placeholder: "e.g. photocatalytic water splitting, A→B→C reaction" },
-      { key: "method", label: "QM Method", placeholder: "e.g. CCSD(T), MP2, TDDFT, EOM-CCSD", default: "TDDFT/B3LYP" },
-      { key: "properties", label: "Properties of Interest", placeholder: "e.g. excitation energies, reaction barrier, dipole moment" },
-      { key: "environment", label: "Environment", placeholder: "e.g. gas phase, solvent water (PCM/COSMO)" },
+      { key: "method", label: "QM Method", type: "select", options: ["TDDFT/B3LYP", "TDDFT/CAM-B3LYP", "EOM-CCSD", "CASPT2", "CASSCF", "ADC(2)", "CC2", "MP2", "DLPNO-CCSD(T)"], default: "TDDFT/B3LYP" },
+      { key: "properties", label: "Properties of Interest", type: "select", options: ["Excitation energies", "Oscillator strengths", "Reaction barrier", "Dipole moment", "Transition state", "IRC path", "Natural transition orbitals", "Spin-orbit coupling"], default: "Excitation energies" },
+      { key: "environment", label: "Environment", type: "select", options: ["Gas phase", "Water (PCM)", "Solvent (COSMO)", "DMSO (PCM)", "Benzene (PCM)", "Ethanol (PCM)"], default: "Gas phase" },
     ]
   },
   {
@@ -108,9 +108,9 @@ const SIM_TYPES = [
     description: "Solid-state DFT, band structure, density of states, surface reactions",
     fields: [
       { key: "material", label: "Material / Crystal", placeholder: "e.g. TiO2 rutile, graphene, perovskite BaTiO3" },
-      { key: "property", label: "Property to Calculate", placeholder: "e.g. band gap, DOS, phonons, adsorption energy" },
-      { key: "kpoints", label: "k-point Sampling", placeholder: "e.g. 4x4x4 Monkhorst-Pack", default: "4x4x4" },
-      { key: "functional", label: "Functional / Method", placeholder: "e.g. PBE, PBE+U, HSE06, vdW-DF" },
+      { key: "property", label: "Property to Calculate", type: "select", options: ["Band gap", "Density of States (DOS)", "Band structure", "Phonons", "Adsorption energy", "Formation energy", "Magnetic moment", "Dielectric constant"], default: "Band gap" },
+      { key: "kpoints", label: "k-point Sampling", type: "select", options: ["2x2x2", "4x4x4", "6x6x6", "8x8x8", "10x10x10", "Gamma only", "Custom"], default: "4x4x4" },
+      { key: "functional", label: "Functional / Method", type: "select", options: ["PBE", "PBE+U", "HSE06", "vdW-DF", "SCAN", "r2SCAN", "PBEsol", "LDA"], default: "PBE" },
     ]
   },
   {
@@ -122,9 +122,9 @@ const SIM_TYPES = [
     description: "Phase equilibria, adsorption isotherms, grand canonical MC, free energy",
     fields: [
       { key: "system", label: "System Description", placeholder: "e.g. CO2 adsorption in MOF-5 at 298K" },
-      { key: "ensemble", label: "Ensemble", placeholder: "e.g. GCMC, NPT, NVT, Gibbs", default: "GCMC" },
-      { key: "temperature", label: "Temperature (K)", placeholder: "e.g. 298", default: "298" },
-      { key: "property", label: "Property to Calculate", placeholder: "e.g. adsorption isotherm, Henry constant, selectivity" },
+      { key: "ensemble", label: "Ensemble", type: "select", options: ["GCMC", "NPT", "NVT", "Gibbs", "NPT-GEMC", "µVT"], default: "GCMC" },
+      { key: "temperature", label: "Temperature (K)", type: "select", options: ["273", "298", "300", "310", "350", "400", "500"], default: "298" },
+      { key: "property", label: "Property to Calculate", type: "select", options: ["Adsorption isotherm", "Henry constant", "Selectivity", "Heat of adsorption", "Radial distribution function", "Free energy", "Phase diagram"], default: "Adsorption isotherm" },
     ]
   },
   {
@@ -136,9 +136,9 @@ const SIM_TYPES = [
     description: "Pollutant degradation, atmospheric chemistry, ecotoxicology, fate & transport",
     fields: [
       { key: "compound", label: "Compound / Pollutant", placeholder: "e.g. atrazine herbicide, PFAS, CO2" },
-      { key: "environment", label: "Environmental Matrix", placeholder: "e.g. aquatic system pH 7, atmospheric OH radical" },
-      { key: "process", label: "Process to Model", placeholder: "e.g. photodegradation, biodegradation, sorption" },
-      { key: "metrics", label: "Metrics / Outputs", placeholder: "e.g. half-life, degradation products, ecotoxicity LC50" },
+      { key: "environment", label: "Environmental Matrix", type: "select", options: ["Aquatic (freshwater)", "Aquatic (marine)", "Atmospheric", "Soil / sediment", "Groundwater", "Air-water interface"], default: "Aquatic (freshwater)" },
+      { key: "process", label: "Process to Model", type: "select", options: ["Photodegradation", "Biodegradation", "Sorption", "Hydrolysis", "Atmospheric OH oxidation", "Volatilization", "Bioaccumulation"], default: "Photodegradation" },
+      { key: "metrics", label: "Metrics / Outputs", type: "select", options: ["Half-life", "Degradation products", "Ecotoxicity LC50", "LogKow / LogKoc", "Henry's law constant", "BCF (bioconcentration)"], default: "Half-life" },
     ]
   },
   {
@@ -150,9 +150,9 @@ const SIM_TYPES = [
     description: "Molecular visualization, trajectory analysis, electrostatic potential maps, 3D rendering",
     fields: [
       { key: "molecule_or_trajectory", label: "Molecule / Trajectory / PDB", placeholder: "e.g. protein.pdb, trajectory.xtc, C6H6 benzene" },
-      { key: "viz_type", label: "Visualization Type", placeholder: "e.g. electrostatic potential map, orbital density, RMSD plot" },
-      { key: "tool_preference", label: "Preferred Tool", placeholder: "e.g. VMD, PyMOL, Avogadro, VESTA, ChimeraX" },
-      { key: "output_format", label: "Output Format", placeholder: "e.g. PNG image, movie, interactive session, script" },
+      { key: "viz_type", label: "Visualization Type", type: "select", options: ["Electrostatic potential map", "Orbital density", "RMSD plot", "Ramachandran plot", "Surface representation", "Cartoon/ribbon", "Space-filling model", "Electron density map"], default: "Electrostatic potential map" },
+      { key: "tool_preference", label: "Preferred Tool", type: "select", options: ["VMD", "PyMOL", "Avogadro", "VESTA", "ChimeraX"], default: "VMD" },
+      { key: "output_format", label: "Output Format", type: "select", options: ["PNG image", "High-res TIFF", "Movie (MP4)", "Interactive session", "Script only", "PDF report"], default: "PNG image" },
     ]
   },
 ];
