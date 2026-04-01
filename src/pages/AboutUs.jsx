@@ -34,10 +34,10 @@ export default function AboutUsPage() {
             Our Story
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Science Meets Intelligence
+            Powerful Tools for Everyone
           </h1>
           <p className="text-xl text-slate-600 leading-relaxed">
-            Suttain brings advanced research tools, molecular modeling, and formulation design to everyone—turning complex analysis into accessible tools for creators, researchers, and enterprises worldwide.
+            Suttain brings powerful tools and insights to everyone—making it easy for creators, teams, and businesses to create, test, and innovate with confidence.
           </p>
         </motion.div>
       </section>
@@ -57,7 +57,7 @@ export default function AboutUsPage() {
               <h2 className="text-2xl font-bold text-slate-800">Our Mission</h2>
             </div>
             <p className="text-slate-600 leading-relaxed">
-              Empower individuals, startups, and enterprises with AI-driven tools for advanced analysis, molecular modeling, and formulation design—removing barriers to innovation while ensuring safety, compliance, and environmental responsibility.
+              Empower individuals, startups, and enterprises with AI tools for creating, testing, and optimizing products—removing barriers to innovation while ensuring safety, compliance, and environmental responsibility.
             </p>
           </motion.div>
 
@@ -73,7 +73,7 @@ export default function AboutUsPage() {
               <h2 className="text-2xl font-bold text-slate-800">Our Vision</h2>
             </div>
             <p className="text-slate-600 leading-relaxed">
-              A world where advanced research tools and safety analysis are accessible to everyone—from DIY creators to Fortune 500 companies—accelerating innovation while protecting people and the planet.
+              A world where powerful tools and safety insights are accessible to everyone—from DIY creators to Fortune 500 companies—accelerating innovation while protecting people and the planet.
             </p>
           </motion.div>
         </div>
@@ -171,10 +171,10 @@ export default function AboutUsPage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Why Choose Suttain
+             Why Choose Suttain
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Science-backed intelligence meets user-friendly design.
+             Reliable intelligence meets easy-to-use design.
             </p>
           </motion.div>
 
@@ -192,8 +192,8 @@ export default function AboutUsPage() {
               },
               {
                 icon: Zap,
-                title: 'Speed & Accuracy',
-                desc: 'Get research-grade analysis in seconds. AI-powered insights with scientific rigor.'
+                title: 'Fast & Reliable',
+                desc: 'Get accurate analysis in seconds. AI-powered insights you can trust.'
               }
             ].map((item, idx) => (
               <motion.div
@@ -238,8 +238,8 @@ export default function AboutUsPage() {
                 color: 'from-teal-500 to-cyan-500'
               },
               {
-                title: 'Researchers',
-                desc: 'Run advanced research simulations without expensive lab infrastructure.',
+                title: 'Experts & Teams',
+                desc: 'Run advanced analysis and detailed simulations without expensive infrastructure.',
                 color: 'from-purple-500 to-violet-500'
               },
               {
