@@ -290,8 +290,7 @@ export default function Layout({ children, currentPageName }) {
               />
             </Link>
 
-            {/* Global Search */}
-            <GlobalSearch user={user} />
+
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
