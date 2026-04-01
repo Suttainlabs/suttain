@@ -916,7 +916,6 @@ export default function Layout({ children, currentPageName }) {
               </div>
             </div>
             </div>
-          </div>
 
           <div className="mt-4 pt-4 border-t border-slate-700 text-center text-slate-400 text-xs">
             © {new Date().getFullYear()} Suttain. All rights reserved.
