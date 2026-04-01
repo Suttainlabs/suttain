@@ -81,7 +81,7 @@ export default function BatchResultsTable({ results, isRunning }) {
         <Card>
           <CardContent className="p-4">
             <p className="text-2xl font-bold text-red-600">{riskyCombos}</p>
-            <p className="text-xs text-slate-500">High Risk (>70)</p>
+            <p className="text-xs text-slate-500">High Risk (&gt;70)</p>
           </CardContent>
         </Card>
       </div>
