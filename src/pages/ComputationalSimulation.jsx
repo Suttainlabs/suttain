@@ -1,5 +1,8 @@
 import React, { useState, useContext } from "react";
 import MolViewer from "../components/simulation/MolViewer";
+import useTrialStatus from "../hooks/useTrialStatus";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import AuthGate from "../components/auth/AuthGate";
@@ -173,6 +176,7 @@ function SelectField({ label, options, value, onChange }) {
 
 export default function ComputationalSimulation() {
   const { user } = useContext(AuthContext);
+  const trialStatus = useTrialStatus(user);
   const [selectedType, setSelectedType] = useState(null);
   const [selectedEngine, setSelectedEngine] = useState(null);
   const [inputs, setInputs] = useState({});
@@ -288,10 +292,33 @@ Provide a focused, technical analysis. Return JSON with:
   const reset = () => { setSelectedType(null); setInputs({}); setResults(null); setSelectedEngine(null); };
   const sim = selectedType ? SIM_TYPES.find(s => s.id === selectedType) : null;
 
+  // Pro gate — allow if Pro OR still in trial
+  const canAccess = !user || trialStatus.isPro || trialStatus.trialDaysLeft > 0;
+
+  if (user && !canAccess) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border border-violet-100 p-8 text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
+            <Cpu className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Pro Feature</h2>
+          <p className="text-slate-600 mb-1">Computational Simulations require a <span className="font-semibold text-violet-700">Pro subscription</span>.</p>
+          <p className="text-slate-500 text-sm mb-6">Run DFT, MD, drug discovery, protein modeling, materials science and more — with ready-to-run scripts for ORCA, GROMACS, VASP, and 20+ tools.</p>
+          <div className="space-y-3">
+            <Link to={createPageUrl('Pricing')} className="block w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all">
+              Upgrade to Pro
+            </Link>
+            <Link to="/" className="block w-full text-slate-500 hover:text-slate-700 text-sm py-2">← Back to Home</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <AuthGate featureName="Computational Simulation" featureDescription="AI-powered computational chemistry simulations.">
-      <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+    <AuthGate featureName="Computational Simulation" featureDescription="AI-powered computational chemistry simulations — Pro feature.">
+      <div className="max-w-6xl mx-auto">
 
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
@@ -587,7 +614,6 @@ Provide a focused, technical analysis. Return JSON with:
             </>
           )}
         </div>
-      </div>
     </AuthGate>
   );
 }

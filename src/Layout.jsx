@@ -187,11 +187,16 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const productSuiteItems = [
-    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", type: 'product' },
-    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", type: 'product' },
-    { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Scan products for full safety & eco analysis", type: 'product' },
-    { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf, description: "Explore chemicals by toxicity, origin & eco-impact", type: 'product' },
-    { href: "ComputationalSimulation", label: "Computational Simulations", icon: Cpu, description: "DFT, MD, drug discovery, protein modeling & QM scripts", type: 'product' },
+    { type: 'header', label: '🧪 Safety & Formulation', icon: TestTube },
+    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", type: 'product', tier: 'free' },
+    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", type: 'product', tier: 'free' },
+    { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Scan products for full safety & eco analysis", type: 'product', tier: 'free' },
+    { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf, description: "Explore chemicals by toxicity, origin & eco-impact", type: 'product', tier: 'free' },
+    { type: 'separator' },
+    { type: 'header', label: '⚗️ Advanced Science', icon: Cpu },
+    { href: "ComputationalSimulation", label: "Computational Simulations", icon: Cpu, description: "DFT, MD, drug discovery, protein modeling & QM scripts", type: 'product', tier: 'pro' },
+    { href: "ComplianceCoPilot", label: "Compliance Co-Pilot", icon: ShieldCheck, description: "Global regulatory compliance for any product", type: 'premium', tier: 'pro' },
+    { href: "Sustainability", label: "Sustainability Scoring", icon: Leaf, description: "Environmental impact, biodegradability & eco scoring", type: 'premium', tier: 'pro' },
     { type: 'separator' },
     { href: "EnterpriseAPI", label: "Enterprise API Access", icon: AppWindow, description: "Integrate Suttain into your enterprise systems", type: 'premium', status: 'coming_soon' },
   ];
@@ -381,35 +386,32 @@ export default function Layout({ children, currentPageName }) {
                     <ChevronDown className="w-3 h-3" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-72">
+                <DropdownMenuContent align="end" className="w-80">
                   {productSuiteItems.map((item, index) => {
-                    if (item.type === 'separator') {
-                      return <DropdownMenuSeparator key={index} className="my-2" />;
-                    }
-                    if (item.type === 'header') {
-                      return (
-                        <DropdownMenuLabel key={index} className="px-3 py-2 text-xs font-semibold text-purple-800 bg-purple-50/60 flex items-center gap-2">
-                           <item.icon className="w-4 h-4" />
-                           {item.label}
-                        </DropdownMenuLabel>
-                      );
-                    }
+                    if (item.type === 'separator') return <DropdownMenuSeparator key={index} className="my-1" />;
+                    if (item.type === 'header') return (
+                      <div key={index} className="px-3 pt-2 pb-1">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{item.label}</p>
+                      </div>
+                    );
+                    const iconBg = item.tier === 'pro' ? 'bg-[var(--suttain-violet)]' : item.type === 'premium' ? 'bg-[var(--suttain-violet)]' : 'bg-[var(--suttain-teal)]';
                     return (
                       <DropdownMenuItem key={item.href} asChild>
-                        <Link to={createPageUrl(item.href)} className="flex items-start gap-3 p-3">
-                           <div className={`w-8 h-8 ${item.type === 'premium' ? 'bg-[var(--suttain-violet)]' : 'bg-[var(--suttain-teal)]'} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                        <Link to={createPageUrl(item.href)} className="flex items-start gap-3 p-2.5 mx-1 rounded-lg">
+                          <div className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5`}>
                             <item.icon className="w-4 h-4 text-white" />
                           </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
                               <p className="font-semibold text-suttain-dark text-sm">{item.label}</p>
-                              {item.type === 'premium' && (
-                                <span className="px-1.5 py-0.5 text-xs bg-purple-100 text-[var(--suttain-violet)] rounded font-medium">
-                                  {item.status === 'coming_soon' ? 'Soon' : 'Premium'}
-                                </span>
+                              {item.tier === 'pro' && (
+                                <span className="px-1.5 py-0.5 text-[10px] bg-violet-100 text-violet-700 rounded font-bold">PRO</span>
+                              )}
+                              {item.status === 'coming_soon' && (
+                                <span className="px-1.5 py-0.5 text-[10px] bg-slate-100 text-slate-500 rounded font-medium">Soon</span>
                               )}
                             </div>
-                            <p className="text-xs text-suttain-text/80">{item.description}</p>
+                            <p className="text-xs text-slate-500 truncate">{item.description}</p>
                           </div>
                         </Link>
                       </DropdownMenuItem>
