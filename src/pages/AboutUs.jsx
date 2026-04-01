@@ -5,7 +5,7 @@ import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Target, Eye, ArrowRight, Users, Zap, Cpu, Building2 } from 'lucide-react';
+import { Target, Eye, ArrowRight, Users, Zap, Cpu, Building2, Beaker, Sparkles, Smartphone, Microscope, CheckCircle, Rocket, Home } from 'lucide-react';
 import SEOHead, { pageSEO } from '../components/shared/SEOHead';
 
 const IMAGES = {
@@ -104,37 +104,37 @@ export default function AboutUsPage() {
                 num: '1',
                 title: 'Chemical Safety Simulator',
                 desc: 'Test interactions and predict reactions before mixing chemicals. Get instant hazard profiles.',
-                icon: '⚗️'
+                icon: Beaker
               },
               {
                 num: '2',
                 title: 'AI Formula Generator',
                 desc: 'Create custom skincare, cleaning, and specialty formulas with AI guidance and safety validation.',
-                icon: '✨'
+                icon: Sparkles
               },
               {
                 num: '3',
                 title: 'Quick Product Scanner',
                 desc: 'Scan barcodes to analyze ingredients, allergens, and safety ratings instantly.',
-                icon: '📱'
+                icon: Smartphone
               },
               {
                 num: '4',
                 title: 'Advanced Research Simulations',
                 desc: 'Molecular modeling, dynamics, drug discovery, protein analysis, and quantum research—pro-only.',
-                icon: '🔬'
+                icon: Microscope
               },
               {
                 num: '5',
                 title: 'Compliance & Regulatory',
                 desc: 'Stay compliant with global regulations. AI-powered compliance checking and documentation.',
-                icon: '✅'
+                icon: CheckCircle
               },
               {
                 num: '6',
                 title: 'Enterprise API',
                 desc: 'Integrate Suttain into enterprise systems for advanced chemical analysis at scale.',
-                icon: '🚀'
+                icon: Rocket
               }
             ].map((item, idx) => (
               <motion.div
@@ -146,7 +146,9 @@ export default function AboutUsPage() {
                 <Card className="h-full hover:shadow-lg transition-all border-slate-200">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="text-3xl">{item.icon}</div>
+                      <div className="w-10 h-10 flex-shrink-0 text-violet-600">
+                        <item.icon className="w-full h-full" />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-slate-900 mb-2">{item.title}</h3>
                         <p className="text-sm text-slate-600">{item.desc}</p>
@@ -253,8 +255,8 @@ export default function AboutUsPage() {
                 transition={{ delay: idx * 0.1 }}
                 className="text-center"
               >
-                <div className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center text-white text-3xl font-bold`}>
-                  {idx === 0 ? '🏡' : idx === 1 ? '🔭' : '🏢'}
+                <div className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center`}>
+                  {idx === 0 ? <Home className="w-10 h-10 text-white" /> : idx === 1 ? <Microscope className="w-10 h-10 text-white" /> : <Building2 className="w-10 h-10 text-white" />}
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-2">{item.title}</h3>
                 <p className="text-slate-600">{item.desc}</p>
