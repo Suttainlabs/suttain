@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import usePullToRefresh from '../hooks/usePullToRefresh';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -107,6 +108,10 @@ export default function ActivityHistory() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const { pullDistance, isRefreshing } = usePullToRefresh(
+    useCallback(() => loadAllActivity(), [user])
+  );
+
   useEffect(() => {
     if (user) {
       loadAllActivity();
@@ -183,7 +188,23 @@ export default function ActivityHistory() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 relative">
+      {/* Pull-to-refresh indicator */}
+      <AnimatePresence>
+        {(pullDistance > 10 || isRefreshing) && (
+          <motion.div
+            initial={{ opacity: 0, y: -40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -40 }}
+            className="fixed top-16 left-0 right-0 z-40 flex justify-center pointer-events-none"
+          >
+            <div className="bg-white rounded-full shadow-lg px-4 py-2 flex items-center gap-2 text-sm text-slate-600 border border-slate-200">
+              <Loader2 className={`w-4 h-4 text-teal-600 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Refreshing…' : 'Pull to refresh'}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
           {/* Header */}

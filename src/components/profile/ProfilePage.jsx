@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import AuthContext from '../auth/AuthContext';
+import usePullToRefresh from '../../hooks/usePullToRefresh';
+import { Loader2 } from 'lucide-react';
 import { getUserStats } from '@/functions/getUserStats';
 import { base44 } from '@/api/base44Client';
 
@@ -60,6 +62,31 @@ export default function ProfilePage() {
         fetchDashboardData();
     }, [user]);
 
+    const handleRefresh = useCallback(async () => {
+        if (!user) return;
+        setIsLoading(true);
+        try {
+            const [statsData, formulasData, simulationsData, scansData, notificationsData] = await Promise.all([
+                getUserStats(),
+                base44.entities.Formula.list('-updated_date', 20),
+                base44.entities.Simulation.list('-created_date', 20),
+                base44.entities.BarcodeHistory.list('-created_date', 20),
+                base44.entities.Notification.list('-created_date', 10),
+            ]);
+            if (statsData?.data) setStats(statsData.data);
+            setFormulas(formulasData || []);
+            setSimulations(simulationsData || []);
+            setScans(scansData || []);
+            setNotifications(notificationsData || []);
+        } catch (error) {
+            console.error('Refresh failed:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [user]);
+
+    const { pullDistance, isRefreshing } = usePullToRefresh(handleRefresh);
+
     const getGreeting = () => {
         const hour = new Date().getHours();
         if (hour < 12) return "Good morning";
@@ -72,7 +99,23 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="bg-slate-50">
+        <div className="bg-slate-50 relative">
+            {/* Pull-to-refresh indicator */}
+            <AnimatePresence>
+                {(pullDistance > 10 || isRefreshing) && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -40 }}
+                        className="fixed top-16 left-0 right-0 z-40 flex justify-center pointer-events-none"
+                    >
+                        <div className="bg-white rounded-full shadow-lg px-4 py-2 flex items-center gap-2 text-sm text-slate-600 border border-slate-200">
+                            <Loader2 className={`w-4 h-4 text-teal-600 ${isRefreshing ? 'animate-spin' : ''}`} />
+                            {isRefreshing ? 'Refreshing…' : 'Pull to refresh'}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }} 

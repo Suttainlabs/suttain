@@ -111,4 +111,15 @@
     h2 { font-size: 1.625rem; }
     h3 { font-size: 1.25rem; }
   }
+
+  /* 44px minimum touch targets on mobile */
+  @media (max-width: 1024px) {
+    button, a, [role="tab"], [role="menuitem"], [role="option"],
+    input[type="checkbox"], input[type="radio"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    /* Inline/icon buttons that shouldn't stretch */
+    button.inline-touch { min-height: unset; min-width: unset; }
+  }
 }
