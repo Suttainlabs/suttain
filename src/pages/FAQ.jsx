@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ContactSubmission } from '@/entities/ContactSubmission';
 import { base44 } from '@/api/base44Client';
+
+const REVIEW_CATEGORIES = [
+  { id: 'all', label: 'All' },
+  { id: 'simulator', label: '⚗️ Simulator' },
+  { id: 'generator', label: '🧪 Generator' },
+  { id: 'scanner', label: '📷 Scanner' },
+];
 import {
   Accordion,
   AccordionContent,
@@ -53,6 +60,7 @@ const faqData = [
 
 export default function FAQPage() {
   const [reviews, setReviews] = useState([]);
+  const [activeReviewCat, setActiveReviewCat] = useState('all');
 
   useEffect(() => {
     base44.entities.Review.list('-created_date', 20).then(setReviews).catch(() => {});
@@ -306,32 +314,74 @@ export default function FAQPage() {
 
       {/* Reviews Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Star className="w-8 h-8 text-yellow-500" />
-            <h2 className="text-3xl font-bold text-slate-900">Community Reviews</h2>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="mb-6">
+          <div className="flex items-center gap-3 mb-5">
+            <Star className="w-7 h-7 text-yellow-500" />
+            <h2 className="text-2xl font-bold text-slate-900">Community Reviews</h2>
+          </div>
+          {/* Category Filter Tabs */}
+          <div className="flex flex-wrap gap-2">
+            {REVIEW_CATEGORIES.map(cat => {
+              const count = cat.id === 'all' ? reviews.length : reviews.filter(r => r.feature_used === cat.id).length;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveReviewCat(cat.id)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all ${
+                    activeReviewCat === cat.id
+                      ? 'bg-slate-800 text-white border-transparent shadow-sm'
+                      : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  {cat.label} <span className="opacity-60">({count})</span>
+                </button>
+              );
+            })}
           </div>
         </motion.div>
-        {reviews.length === 0 ? (
-          <p className="text-slate-500 text-center py-8">No reviews yet. Be the first to share your experience!</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reviews.map((review, i) => (
-              <motion.div key={review.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md border border-white/50 p-6">
-                <div className="flex items-center gap-1 mb-3">
-                  {[1,2,3,4,5].map(s => (
-                    <Star key={s} className={`w-4 h-4 ${s <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300'}`} />
-                  ))}
-                </div>
-                {review.feedback && <p className="text-slate-600 text-sm mb-3 italic">"{review.feedback}"</p>}
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[var(--suttain-teal)] capitalize">{review.feature_used?.replace('_', ' ')}</span>
-                  <span className="text-xs text-slate-400">{new Date(review.created_date).toLocaleDateString()}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
+        {(() => {
+          const filtered = activeReviewCat === 'all' ? reviews : reviews.filter(r => r.feature_used === activeReviewCat);
+          return filtered.length === 0 ? (
+            <p className="text-slate-500 text-center py-8">
+              {reviews.length === 0 ? 'No reviews yet. Be the first to share your experience!' : 'No reviews in this category yet.'}
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filtered.map((review, i) => (
+                <motion.div
+                  key={review.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3"
+                >
+                  {/* Top: category badge + date */}
+                  <div className="flex items-center justify-between">
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full capitalize ${
+                      review.feature_used === 'simulator' ? 'bg-teal-100 text-teal-700' :
+                      review.feature_used === 'generator' ? 'bg-violet-100 text-violet-700' :
+                      review.feature_used === 'scanner' ? 'bg-cyan-100 text-cyan-700' :
+                      'bg-slate-100 text-slate-600'
+                    }`}>
+                      {review.feature_used?.replace('_', ' ') || 'General'}
+                    </span>
+                    <span className="text-xs text-slate-400">{new Date(review.created_date).toLocaleDateString()}</span>
+                  </div>
+                  {/* Stars */}
+                  <div className="flex items-center gap-0.5">
+                    {[1,2,3,4,5].map(s => (
+                      <Star key={s} className={`w-4 h-4 ${s <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} />
+                    ))}
+                  </div>
+                  {/* Feedback */}
+                  {review.feedback && (
+                    <p className="text-slate-600 text-sm leading-relaxed line-clamp-4">&ldquo;{review.feedback}&rdquo;</p>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
