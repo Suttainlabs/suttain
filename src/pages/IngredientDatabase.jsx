@@ -531,8 +531,8 @@ export default function IngredientDatabase() {
           </div>
 
           {/* Filter Groups */}
-          <div className="flex flex-wrap gap-2 items-center flex-1">
-            <span className="text-xs text-slate-400 font-semibold flex items-center gap-1"><Filter className="w-3 h-3" />Toxicity:</span>
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-1 pb-1">
+            <span className="text-xs text-slate-400 font-semibold flex items-center gap-1 flex-shrink-0"><Filter className="w-3 h-3" />Tox:</span>
             {["all", "safe", "moderate", "hazardous", "highly_hazardous"].map(v => (
               <FilterPill key={v} active={toxFilter === v} onClick={() => setToxFilter(v)}>
                 {v === "all" ? "All" : TOXICITY_CONFIG[v]?.label}
@@ -541,15 +541,15 @@ export default function IngredientDatabase() {
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto flex flex-wrap gap-2 items-center mt-2">
-          <span className="text-xs text-slate-400 font-semibold">Origin:</span>
+        <div className="max-w-5xl mx-auto flex items-center gap-2 mt-2 overflow-x-auto no-scrollbar pb-1">
+          <span className="text-xs text-slate-400 font-semibold flex-shrink-0">Origin:</span>
           {["all", "natural", "synthetic", "both"].map(v => (
             <FilterPill key={v} active={originFilter === v} onClick={() => setOriginFilter(v)}>
               {v === "all" ? "All" : ORIGIN_CONFIG[v]?.label}
             </FilterPill>
           ))}
 
-          <span className="text-xs text-slate-400 font-semibold ml-2">Eco Impact:</span>
+          <span className="text-xs text-slate-400 font-semibold ml-2 flex-shrink-0">Eco:</span>
           {ECO_LEVELS.map(({ value, label }) => (
             <FilterPill key={value} active={ecoFilter === value} onClick={() => setEcoFilter(value)}>
               {label}
@@ -557,7 +557,7 @@ export default function IngredientDatabase() {
           ))}
 
           {hasFilters && (
-            <button onClick={clearFilters} className="text-xs text-red-400 hover:text-red-600 font-semibold ml-1 flex items-center gap-1">
+            <button onClick={clearFilters} className="text-xs text-red-400 hover:text-red-600 font-semibold ml-1 flex items-center gap-1 flex-shrink-0">
               <X className="w-3 h-3" /> Clear
             </button>
           )}

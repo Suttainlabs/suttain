@@ -3,12 +3,14 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { AnimatePresence } from 'framer-motion'
 import PageTransition from './components/shared/PageTransition'
+import { Suspense, lazy } from 'react'
+const IngredientDatabase = lazy(() => import('./pages/IngredientDatabase'));
+const FormulaComparison = lazy(() => import('./pages/FormulaComparison'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import IngredientDatabase from './pages/IngredientDatabase';
-import FormulaComparison from './pages/FormulaComparison';
+// IngredientDatabase and FormulaComparison are lazy-loaded above
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
@@ -64,8 +66,8 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
-      <Route path="/IngredientDatabase" element={<LayoutWrapper currentPageName="IngredientDatabase"><PageTransition><IngredientDatabase /></PageTransition></LayoutWrapper>} />
-      <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><PageTransition><FormulaComparison /></PageTransition></LayoutWrapper>} />
+      <Route path="/IngredientDatabase" element={<LayoutWrapper currentPageName="IngredientDatabase"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><IngredientDatabase /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaComparison /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Home, TestTube, Atom, QrCode, User } from 'lucide-react';
 
@@ -19,6 +19,17 @@ const isNavItemActive = (href, pathname) => {
 
 export default function BottomNavBar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleNavClick = (e, href) => {
+    const target = href === 'Home' ? '/' : createPageUrl(href);
+    const isActive = isNavItemActive(href, location.pathname);
+    if (isActive) {
+      e.preventDefault();
+      navigate(target, { replace: true });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 pb-[env(safe-area-inset-bottom)] lg:hidden">
@@ -28,7 +39,8 @@ export default function BottomNavBar() {
           return (
             <Link
               key={href}
-              to={createPageUrl(href)}
+              to={href === 'Home' ? '/' : createPageUrl(href)}
+              onClick={(e) => handleNavClick(e, href)}
               className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
                 isActive
                   ? 'text-[var(--suttain-teal)]'
