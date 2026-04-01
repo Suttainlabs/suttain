@@ -5,9 +5,9 @@ import { base44 } from '@/api/base44Client';
 
 const REVIEW_CATEGORIES = [
   { id: 'all', label: 'All' },
-  { id: 'simulator', label: '⚗️ Simulator' },
-  { id: 'generator', label: '🧪 Generator' },
-  { id: 'scanner', label: '📷 Scanner' },
+  { id: 'simulator', label: 'Simulator' },
+  { id: 'generator', label: 'Generator' },
+  { id: 'scanner', label: 'Scanner' },
 ];
 import {
   Accordion,
