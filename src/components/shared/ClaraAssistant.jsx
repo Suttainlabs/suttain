@@ -104,6 +104,11 @@ export default function ClaraAssistant() {
     const [messages, setMessages] = useState([]);
     const [userMessage, setUserMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [liveAgentRequested, setLiveAgentRequested] = useState(false);
+    const [liveAgentEmail, setLiveAgentEmail] = useState('');
+    const [liveAgentName, setLiveAgentName] = useState('');
+    const [liveAgentSent, setLiveAgentSent] = useState(false);
+    const [liveAgentLoading, setLiveAgentLoading] = useState(false);
 
     const handleSendMessage = async (overrideMessage) => {
         const content = (overrideMessage || userMessage).trim();
@@ -139,6 +144,30 @@ export default function ClaraAssistant() {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSendMessage();
+        }
+    };
+
+    const handleLiveAgentRequest = async () => {
+        if (!liveAgentName.trim() || !liveAgentEmail.trim()) return;
+        setLiveAgentLoading(true);
+        try {
+            const transcript = messages.map(m => `${m.role === 'user' ? 'User' : 'Clara'}: ${m.content}`).join('\n') || 'No prior conversation.';
+            await base44.integrations.Core.SendEmail({
+                to: 'contact@suttain.com',
+                subject: `Live Agent Request from ${liveAgentName}`,
+                body: `A user has requested to speak with a live agent on Suttain.\n\nName: ${liveAgentName}\nEmail: ${liveAgentEmail}\n\n--- Conversation Transcript ---\n${transcript}\n\nPlease follow up with the user as soon as possible.`
+            });
+            setLiveAgentSent(true);
+            setMessages(prev => [...prev, {
+                role: 'assistant',
+                content: `Thanks ${liveAgentName}! A live agent will reach out to you at ${liveAgentEmail} shortly. We typically respond within a few hours during business hours.`
+            }]);
+            setLiveAgentRequested(false);
+        } catch (e) {
+            setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I had trouble submitting your request. Please email us directly at contact@suttain.com.' }]);
+            setLiveAgentRequested(false);
+        } finally {
+            setLiveAgentLoading(false);
         }
     };
 
@@ -219,8 +248,52 @@ export default function ClaraAssistant() {
                         )}
                     </div>
 
+                    {/* Live Agent Form */}
+                    {liveAgentRequested && (
+                        <div className="mx-3 mb-2 p-3 bg-teal-50 border border-teal-200 rounded-xl flex-shrink-0">
+                            <p className="text-xs font-semibold text-teal-800 mb-2">Connect to a Live Agent</p>
+                            <input
+                                type="text"
+                                placeholder="Your name"
+                                value={liveAgentName}
+                                onChange={e => setLiveAgentName(e.target.value)}
+                                className="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 mb-1.5 focus:outline-none focus:ring-1 focus:ring-teal-400"
+                            />
+                            <input
+                                type="email"
+                                placeholder="Your email"
+                                value={liveAgentEmail}
+                                onChange={e => setLiveAgentEmail(e.target.value)}
+                                className="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 mb-2 focus:outline-none focus:ring-1 focus:ring-teal-400"
+                            />
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handleLiveAgentRequest}
+                                    disabled={liveAgentLoading || !liveAgentName.trim() || !liveAgentEmail.trim()}
+                                    className="flex-1 text-xs bg-gradient-to-r from-[#02988C] to-[#09D2FF] text-white rounded-lg py-1.5 font-semibold disabled:opacity-50"
+                                >
+                                    {liveAgentLoading ? 'Sending...' : 'Submit'}
+                                </button>
+                                <button
+                                    onClick={() => setLiveAgentRequested(false)}
+                                    className="text-xs text-slate-500 hover:text-slate-700 px-2"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Input Area */}
                     <div className="p-3 border-t border-slate-200 bg-slate-50 flex-shrink-0">
+                        {!liveAgentSent && (
+                            <button
+                                onClick={() => setLiveAgentRequested(true)}
+                                className="w-full text-xs text-teal-600 hover:text-teal-800 font-semibold mb-2 text-center transition-colors"
+                            >
+                                💬 Talk to a live agent
+                            </button>
+                        )}
                         <div className="flex gap-2">
                             <Input
                                 value={userMessage}
