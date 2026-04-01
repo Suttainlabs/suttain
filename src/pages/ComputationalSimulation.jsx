@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import MolViewer from "../components/simulation/MolViewer";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import AuthGate from "../components/auth/AuthGate";
@@ -444,14 +445,21 @@ Provide a focused, technical analysis. Return JSON with:
               )}
 
               {activeTab === "viz" && (
-                <Card>
-                  <CardContent className="p-5">
-                    <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Eye className="w-4 h-4 text-fuchsia-600" /> Visualization & Analysis Commands</h3>
-                    <pre className="bg-slate-900 text-cyan-300 rounded-xl p-5 overflow-x-auto text-xs leading-relaxed font-mono whitespace-pre-wrap">
-                      {results.visualization_commands}
-                    </pre>
-                  </CardContent>
-                </Card>
+                <div className="space-y-5">
+                  {/* 3D Interactive Viewer */}
+                  <MolViewer simType={results.simType?.id} inputs={results.inputs} />
+                  {/* CLI Visualization Commands */}
+                  {results.visualization_commands && (
+                    <Card>
+                      <CardContent className="p-5">
+                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Eye className="w-4 h-4 text-fuchsia-600" /> CLI Visualization Commands (VMD / PyMOL / Avogadro)</h3>
+                        <pre className="bg-slate-900 text-cyan-300 rounded-xl p-5 overflow-x-auto text-xs leading-relaxed font-mono whitespace-pre-wrap">
+                          {results.visualization_commands}
+                        </pre>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
               )}
 
               <div className="flex justify-center mt-6 gap-3">
