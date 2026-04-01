@@ -489,12 +489,6 @@ export default function Layout({ children, currentPageName }) {
                           My Analytics
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to={createPageUrl("ReviewRewards")} className="cursor-pointer">
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          My Rewards
-                        </Link>
-                      </DropdownMenuItem>
                       {user.role === 'admin' && (
                         <DropdownMenuItem asChild>
                           <Link to={createPageUrl("AdminDashboard")} className="cursor-pointer">
