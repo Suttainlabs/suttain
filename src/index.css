@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,7 +8,7 @@
 
 @layer base {
   :root {
-    --font-gilroy: 'Calibri', 'Gill Sans', 'Trebuchet MS', ui-sans-serif, sans-serif;
+    --font-gilroy: 'Source Sans 3', sans-serif;
 
     --background: 150 20% 98%;
     --foreground: 210 40% 12%;
