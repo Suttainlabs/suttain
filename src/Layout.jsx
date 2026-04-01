@@ -921,8 +921,8 @@ export default function Layout({ children, currentPageName }) {
           <div className="mt-4 pt-4 border-t border-slate-700 text-center text-slate-400 text-xs">
             © {new Date().getFullYear()} Suttain. All rights reserved.
           </div>
-          </div>
-          </footer>
+        </div>
+      </footer>
           )}
       
       {/* Bottom Navigation Bar - Mobile Only */}
