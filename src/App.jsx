@@ -8,6 +8,7 @@ const IngredientDatabase = lazy(() => import('./pages/IngredientDatabase'));
 const MyAnalytics = lazy(() => import('./pages/MyAnalytics'));
 const ComputationalSimulation = lazy(() => import('./pages/ComputationalSimulation'));
 const FormulaComparison = lazy(() => import('./pages/FormulaComparison'));
+const BatchSimulation = lazy(() => import('./pages/BatchSimulation'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
       <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaComparison /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/MyAnalytics" element={<LayoutWrapper currentPageName="MyAnalytics"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MyAnalytics /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/ComputationalSimulation" element={<LayoutWrapper currentPageName="ComputationalSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalSimulation /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/BatchSimulation" element={<LayoutWrapper currentPageName="BatchSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><BatchSimulation /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
