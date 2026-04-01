@@ -9,11 +9,11 @@ import SustainabilityTrend from "../components/analytics/SustainabilityTrend";
 import { Card, CardContent } from "@/components/ui/card";
 import { BarChart2, TestTube, Atom, QrCode } from "lucide-react";
 
-function StatCard({ icon: Icon, label, value, color }) {
+function StatCard({ icon: Icon, label, value, colorClass }) {
   return (
     <Card>
       <CardContent className="p-5 flex items-center gap-4">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}>
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorClass}`}>
           <Icon className="w-6 h-6 text-white" />
         </div>
         <div>
@@ -57,9 +57,8 @@ export default function MyAnalytics() {
       <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto space-y-8">
 
-          {/* Header */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-[var(--suttain-teal)] to-[var(--suttain-blue)] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-400 rounded-xl flex items-center justify-center">
               <BarChart2 className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -68,17 +67,14 @@ export default function MyAnalytics() {
             </div>
           </div>
 
-          {/* Stat cards */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <StatCard icon={TestTube} label="Simulations Run" value={simulations.length} color="bg-[var(--suttain-teal)]" />
-            <StatCard icon={Atom} label="Formulas Created" value={formulas.length} color="bg-[var(--suttain-violet)]" />
-            <StatCard icon={QrCode} label="Products Scanned" value={scans.length} color="bg-[var(--suttain-blue)]" />
+            <StatCard icon={TestTube} label="Simulations Run" value={simulations.length} colorClass="bg-teal-500" />
+            <StatCard icon={Atom} label="Formulas Created" value={formulas.length} colorClass="bg-violet-600" />
+            <StatCard icon={QrCode} label="Products Scanned" value={scans.length} colorClass="bg-cyan-500" />
           </div>
 
-          {/* Activity chart */}
           <UsageChart simulations={simulations} formulas={formulas} scans={scans} />
 
-          {/* Two column: chemicals + sustainability */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <TopChemicals simulations={simulations} />
             <SustainabilityTrend profiles={sustainabilityProfiles} />
