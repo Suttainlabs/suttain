@@ -38,10 +38,21 @@ export default function CustomLibraries() {
 
   const createLibraryMutation = useMutation({
     mutationFn: (data) => base44.entities.CustomLibrary.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['libraries']);
+    onMutate: async (data) => {
+      await queryClient.cancelQueries(['libraries']);
+      const prev = queryClient.getQueryData(['libraries', user?.email]);
+      const optimistic = { ...data, id: `temp_${Date.now()}`, created_by: user?.email };
+      queryClient.setQueryData(['libraries', user?.email], old => [...(old || []), optimistic]);
       setShowCreateDialog(false);
       setNewLibrary({ name: '', description: '', is_public: false, chemicals: [] });
+      return { prev };
+    },
+    onError: (_e, _v, ctx) => {
+      queryClient.setQueryData(['libraries', user?.email], ctx.prev);
+      toast.error('Failed to create library');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(['libraries']);
       toast.success('Library created!');
     }
   });
@@ -57,7 +68,17 @@ export default function CustomLibraries() {
 
   const deleteLibraryMutation = useMutation({
     mutationFn: (id) => base44.entities.CustomLibrary.delete(id),
-    onSuccess: () => {
+    onMutate: async (id) => {
+      await queryClient.cancelQueries(['libraries']);
+      const prev = queryClient.getQueryData(['libraries', user?.email]);
+      queryClient.setQueryData(['libraries', user?.email], old => (old || []).filter(l => l.id !== id));
+      return { prev };
+    },
+    onError: (_e, _v, ctx) => {
+      queryClient.setQueryData(['libraries', user?.email], ctx.prev);
+      toast.error('Failed to delete library');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries(['libraries']);
       toast.success('Library deleted');
     }
@@ -101,7 +122,7 @@ export default function CustomLibraries() {
               <Plus className="w-4 h-4" /> Create Library
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto pb-[env(safe-area-inset-bottom)]">
             <DialogHeader>
               <DialogTitle>Create Chemical Library</DialogTitle>
             </DialogHeader>
@@ -240,7 +261,7 @@ export default function CustomLibraries() {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingLibrary} onOpenChange={() => setEditingLibrary(null)}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto pb-[env(safe-area-inset-bottom)]">
           <DialogHeader>
             <DialogTitle>Edit Library</DialogTitle>
           </DialogHeader>

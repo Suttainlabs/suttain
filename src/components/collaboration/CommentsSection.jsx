@@ -29,17 +29,38 @@ export default function CommentsSection({ targetType, targetId, annotationSectio
 
   const addCommentMutation = useMutation({
     mutationFn: (data) => base44.entities.Comment.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['comments', targetType, targetId]);
+    onMutate: async (data) => {
+      await queryClient.cancelQueries(['comments', targetType, targetId]);
+      const prev = queryClient.getQueryData(['comments', targetType, targetId]);
+      const optimistic = { ...data, id: `temp_${Date.now()}`, created_date: new Date().toISOString(), is_resolved: false };
+      queryClient.setQueryData(['comments', targetType, targetId], old => [...(old || []), optimistic]);
       setNewComment('');
       setReplyingTo(null);
+      return { prev };
+    },
+    onError: (_e, _v, ctx) => {
+      queryClient.setQueryData(['comments', targetType, targetId], ctx.prev);
+      toast.error('Failed to add comment');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(['comments', targetType, targetId]);
       toast.success('Comment added');
     }
   });
 
   const deleteCommentMutation = useMutation({
     mutationFn: (id) => base44.entities.Comment.delete(id),
-    onSuccess: () => {
+    onMutate: async (id) => {
+      await queryClient.cancelQueries(['comments', targetType, targetId]);
+      const prev = queryClient.getQueryData(['comments', targetType, targetId]);
+      queryClient.setQueryData(['comments', targetType, targetId], old => (old || []).filter(c => c.id !== id));
+      return { prev };
+    },
+    onError: (_e, _v, ctx) => {
+      queryClient.setQueryData(['comments', targetType, targetId], ctx.prev);
+      toast.error('Failed to delete comment');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries(['comments', targetType, targetId]);
       toast.success('Comment deleted');
     }

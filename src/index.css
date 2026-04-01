@@ -132,6 +132,15 @@
   }
 }
 
+/* ── Safe-area padding for fixed modals/drawers on iOS ── */
+@layer utilities {
+  /* Applied to any fixed bottom sheet or drawer content */
+  [data-radix-dialog-content],
+  [data-vaul-drawer-content] {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
 /* ── Scrollbar hiding utility ── */
 @layer utilities {
   .no-scrollbar {
