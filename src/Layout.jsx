@@ -891,23 +891,30 @@ export default function Layout({ children, currentPageName }) {
             <div className="bg-slate-800 rounded-lg p-4">
               <h3 className="font-semibold mb-1 text-white text-sm">Get the App</h3>
               <p className="text-slate-400 text-xs mb-3">
-                Coming soon to iOS and Android.
+                Android app available now. iOS coming soon.
               </p>
               <div className="space-y-1.5">
-                <a href="#" className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-3 py-2 rounded-lg transition-colors">
-                  <Apple className="w-4 h-4 text-white" />
-                  <span className="text-xs text-white font-medium">App Store</span>
-                </a>
-                <a href="#" className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-3 py-2 rounded-lg transition-colors">
+                <a href="https://drive.google.com/file/d/1pEBpCMv5BTutrpfaa_uKnQCpK1swDYBy/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-[#02988C] hover:bg-[#028a7f] px-3 py-2 rounded-lg transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M3 20.5V3.5c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35z"/>
                     <path fill="#34A853" d="m13.69 12 3.49-3.49 1.38.8c.7.4.7 1.08 0 1.48l-1.38.8-3.49 3.49V12z"/>
                     <path fill="#FBBC05" d="M3.84 2.15 13.69 12l-9.85 9.85c.5.24 1.11.08 1.35-.84l8.5-8.5-8.5-8.5c-.24-.92-.85-1.08-1.35-.86z"/>
                     <path fill="#EA4335" d="m17.18 8.51-3.49 3.49 3.49 3.49 1.38-.8c.7-.4.7-1.08 0-1.48l-1.38-.8 1.38-.8c.7-.4.7-1.08 0-1.48l-1.38-.62z"/>
                   </svg>
-                  <span className="text-xs text-white font-medium">Google Play</span>
+                  <div>
+                    <span className="text-xs text-white font-bold block">Download for Android</span>
+                    <span className="text-[10px] text-green-200">Free APK — Available Now</span>
+                  </div>
                 </a>
+                <div className="flex items-center gap-2 bg-slate-700 px-3 py-2 rounded-lg opacity-60 cursor-not-allowed">
+                  <Apple className="w-4 h-4 text-white" />
+                  <div>
+                    <span className="text-xs text-white font-medium block">App Store</span>
+                    <span className="text-[10px] text-slate-400">Coming Soon</span>
+                  </div>
+                </div>
               </div>
+            </div>
             </div>
           </div>
 

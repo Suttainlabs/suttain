@@ -95,6 +95,18 @@ Deno.serve(async (req) => {
               </tr>
             </table>
 
+            <!-- Mobile App -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;margin-bottom:28px;">
+              <tr>
+                <td style="padding:16px 20px;">
+                  <p style="margin:0 0 6px;font-size:14px;font-weight:700;color:#15803d;">📱 Suttain Android App — Now Available!</p>
+                  <p style="margin:0 0 12px;font-size:13px;color:#334155;line-height:1.6;">The Suttain mobile app for Android is now available as a free download. Install it directly on your Android device to access all Suttain features on the go.</p>
+                  <a href="https://drive.google.com/file/d/1pEBpCMv5BTutrpfaa_uKnQCpK1swDYBy/view?usp=sharing" style="display:inline-block;background:#16a34a;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;padding:10px 24px;border-radius:50px;">Download Android APK (Free)</a>
+                  <p style="margin:8px 0 0;font-size:12px;color:#64748b;">iOS version coming soon.</p>
+                </td>
+              </tr>
+            </table>
+
             <!-- CTA -->
             <table width="100%" cellpadding="0" cellspacing="0">
               <tr>
