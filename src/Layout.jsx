@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, ChevronLeft, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, ChevronLeft, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -191,6 +191,7 @@ export default function Layout({ children, currentPageName }) {
     { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", type: 'product' },
     { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Scan products for full safety & eco analysis", type: 'product' },
     { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf, description: "Explore chemicals by toxicity, origin & eco-impact", type: 'product' },
+    { href: "ComputationalSimulation", label: "Computational Simulations", icon: Cpu, description: "DFT, MD, drug discovery, protein modeling & QM scripts", type: 'product' },
     { type: 'separator' },
     { href: "EnterpriseAPI", label: "Enterprise API Access", icon: AppWindow, description: "Integrate Suttain into your enterprise systems", type: 'premium', status: 'coming_soon' },
   ];
