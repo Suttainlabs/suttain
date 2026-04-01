@@ -90,7 +90,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Calibri', 'Gill Sans', 'Trebuchet MS', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
     font-size: 1rem;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -113,7 +113,7 @@
   h6 { font-size: 1rem; line-height: 1.5; font-weight: 600; }
 
   p, li, span, label, input, textarea, select, button {
-    font-family: 'Calibri', 'Gill Sans', 'Trebuchet MS', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
   }
 
   @media (max-width: 640px) {
