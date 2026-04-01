@@ -34,10 +34,10 @@ export default function AboutUsPage() {
             Our Story
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Chemistry Meets Intelligence
+            Science Meets Intelligence
           </h1>
           <p className="text-xl text-slate-600 leading-relaxed">
-            Suttain democratizes advanced chemical analysis, molecular modeling, and formulation design—turning complex science into accessible tools for creators, researchers, and enterprises worldwide.
+            Suttain brings advanced research tools, molecular modeling, and formulation design to everyone—turning complex analysis into accessible tools for creators, researchers, and enterprises worldwide.
           </p>
         </motion.div>
       </section>
@@ -57,7 +57,7 @@ export default function AboutUsPage() {
               <h2 className="text-2xl font-bold text-slate-800">Our Mission</h2>
             </div>
             <p className="text-slate-600 leading-relaxed">
-              Empower individuals, startups, and enterprises with AI-driven tools for chemical analysis, molecular modeling, and sustainable formulation—removing barriers to innovation while ensuring safety, compliance, and environmental responsibility.
+              Empower individuals, startups, and enterprises with AI-driven tools for advanced analysis, molecular modeling, and formulation design—removing barriers to innovation while ensuring safety, compliance, and environmental responsibility.
             </p>
           </motion.div>
 
@@ -73,7 +73,7 @@ export default function AboutUsPage() {
               <h2 className="text-2xl font-bold text-slate-800">Our Vision</h2>
             </div>
             <p className="text-slate-600 leading-relaxed">
-              A world where advanced computational chemistry and safety analysis are accessible to everyone—from DIY creators to Fortune 500 companies—accelerating innovation while protecting people and the planet.
+              A world where advanced research tools and safety analysis are accessible to everyone—from DIY creators to Fortune 500 companies—accelerating innovation while protecting people and the planet.
             </p>
           </motion.div>
         </div>
@@ -91,10 +91,10 @@ export default function AboutUsPage() {
               Our Platform
             </Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              A Complete Ecosystem for Chemical Innovation
+              A Complete Ecosystem for Innovation
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              From quick safety checks to advanced research simulations—all in one platform.
+              From quick safety checks to advanced research simulations—all in one platform for everyone.
             </p>
           </motion.div>
 
@@ -120,8 +120,8 @@ export default function AboutUsPage() {
               },
               {
                 num: '4',
-                title: 'Computational Simulations',
-                desc: 'DFT, Molecular Dynamics, drug discovery, protein modeling, and quantum chemistry—pro-only.',
+                title: 'Advanced Research Simulations',
+                desc: 'Molecular modeling, dynamics, drug discovery, protein analysis, and quantum research—pro-only.',
                 icon: '🔬'
               },
               {
@@ -185,8 +185,8 @@ export default function AboutUsPage() {
               },
               {
                 icon: Cpu,
-                title: 'Advanced Science',
-                desc: 'Access computational chemistry tools (DFT, MD) previously limited to large research institutions.'
+                title: 'Advanced Tools',
+                desc: 'Access research-grade simulations and modeling previously limited to large institutions.'
               },
               {
                 icon: Zap,
@@ -237,12 +237,12 @@ export default function AboutUsPage() {
               },
               {
                 title: 'Researchers',
-                desc: 'Run computational simulations—DFT, MD, QM—without expensive lab infrastructure.',
+                desc: 'Run advanced research simulations without expensive lab infrastructure.',
                 color: 'from-purple-500 to-violet-500'
               },
               {
                 title: 'Enterprises',
-                desc: 'Integrate Suttain API into your systems for automated chemical analysis at scale.',
+                desc: 'Integrate Suttain API into your systems for automated analysis at scale.',
                 color: 'from-blue-500 to-cyan-500'
               }
             ].map((item, idx) => (
@@ -271,7 +271,7 @@ export default function AboutUsPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Join the Chemical Innovation Revolution</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">Join the Innovation Revolution</h2>
             <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
               Start with our free tier or explore enterprise solutions for your team.
             </p>
