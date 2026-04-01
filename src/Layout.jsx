@@ -195,8 +195,7 @@ export default function Layout({ children, currentPageName }) {
     { type: 'separator' },
     { type: 'header', label: '⚗️ Advanced Science', icon: Cpu },
     { href: "ComputationalSimulation", label: "Computational Simulations", icon: Cpu, description: "DFT, MD, drug discovery, protein modeling & QM scripts", type: 'product', tier: 'pro' },
-    { href: "ComplianceCoPilot", label: "Compliance Co-Pilot", icon: ShieldCheck, description: "Global regulatory compliance for any product", type: 'premium', tier: 'pro' },
-    { href: "Sustainability", label: "Sustainability Scoring", icon: Leaf, description: "Environmental impact, biodegradability & eco scoring", type: 'premium', tier: 'pro' },
+
     { type: 'separator' },
     { href: "EnterpriseAPI", label: "Enterprise API Access", icon: AppWindow, description: "Integrate Suttain into your enterprise systems", type: 'premium', status: 'coming_soon' },
   ];
