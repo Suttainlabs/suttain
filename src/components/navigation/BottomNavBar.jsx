@@ -11,6 +11,12 @@ const navItems = [
   { href: 'Profile', label: 'Profile', icon: User },
 ];
 
+// Check active: Home is active for both '/' and '/Home'
+const isNavItemActive = (href, pathname) => {
+  if (href === 'Home') return pathname === '/' || pathname === '/Home';
+  return pathname === createPageUrl(href);
+};
+
 export default function BottomNavBar() {
   const location = useLocation();
 
@@ -18,7 +24,7 @@ export default function BottomNavBar() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 pb-[env(safe-area-inset-bottom)] lg:hidden">
       <div className="flex items-center justify-around h-16">
         {navItems.map(({ href, label, icon: Icon }) => {
-          const isActive = location.pathname === createPageUrl(href);
+          const isActive = isNavItemActive(href, location.pathname);
           return (
             <Link
               key={href}

@@ -93,6 +93,14 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+  }
+
+  /* Prevent text selection on UI chrome elements */
+  button, nav, [role="tab"], [role="menuitem"], [role="tablist"],
+  header, .bottom-nav {
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   h1 { font-size: 2.5rem; line-height: 1.15; font-weight: 700; }
@@ -121,5 +129,16 @@
     }
     /* Inline/icon buttons that shouldn't stretch */
     button.inline-touch { min-height: unset; min-width: unset; }
+  }
+}
+
+/* ── Scrollbar hiding utility ── */
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }

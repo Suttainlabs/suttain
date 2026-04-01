@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, ChevronLeft, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -282,6 +282,16 @@ export default function Layout({ children, currentPageName }) {
       <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
+            {/* Back button — mobile only, hidden on home routes */}
+            {location.pathname !== '/' && location.pathname !== '/Home' && (
+              <button
+                onClick={() => navigate(-1)}
+                aria-label="Go back"
+                className="lg:hidden p-2 -ml-1 mr-1 rounded-lg text-slate-600 hover:bg-slate-100 flex-shrink-0"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
             <Link to={createPageUrl("Home")} className="flex items-center gap-3">
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
