@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   Layers, Sparkles, ArrowRight, Lightbulb,
   CheckCircle2, Home, Building2, Rocket, Leaf,
-  ScanLine, ChevronRight, Zap,
+  ScanLine, ChevronRight, Zap, Cpu,
   Database, ShieldCheck, BarChart3, Award, Clock, FlaskConical
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -32,17 +32,17 @@ export default function HomePage() {
       id: 'generator',
       icon: Sparkles,
       title: 'Formula Generator',
-      description: 'Custom recipes for skincare, cleaning products and more. Professional-grade formulas in seconds.',
+      description: 'Create custom skincare, cleaning, and specialty formulas with AI guidance and safety validation.',
       link: 'generator',
       color: 'bg-suttain-purple'
     },
     {
-      id: 'scanner',
-      icon: ScanLine,
-      title: 'Quick Scan',
-      description: 'Scan any product barcode to analyze ingredients instantly. Safety ratings and allergen alerts.',
-      link: 'BarcodeScanner',
-      color: 'bg-suttain-blue'
+      id: 'computational',
+      icon: Cpu,
+      title: 'Computational Simulations',
+      description: 'Run DFT, Molecular Dynamics, drug discovery, and quantum chemistry—advanced research tools.',
+      link: 'ComputationalSimulation',
+      color: 'bg-violet-600'
     }
   ];
 
@@ -57,8 +57,8 @@ export default function HomePage() {
 
   const audiences = [
     { icon: Home, title: 'DIY Creators', description: 'Create safe skincare, soaps, and cleaning products at home' },
-    { icon: Building2, title: 'Small Businesses', description: 'Launch product lines without expensive lab testing' },
-    { icon: Rocket, title: 'Startups', description: 'Validate and scale formulations with confidence' }
+    { icon: Cpu, title: 'Researchers', description: 'Run computational chemistry without expensive lab infrastructure' },
+    { icon: Building2, title: 'Enterprises', description: 'Integrate Suttain API for chemical analysis at scale' }
   ];
 
   return (
