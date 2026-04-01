@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Review } from "@/entities/Review";
+import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import { MessageSquare, Star, Users } from "lucide-react";
 
@@ -7,14 +7,22 @@ import FeedbackForm from "../components/feedback/FeedbackForm";
 import FeedbackCard from "../components/feedback/FeedbackCard";
 import FeedbackStats from "../components/feedback/FeedbackStats";
 
+const CATEGORIES = [
+  { id: 'all', label: 'All Reviews', color: 'bg-slate-700 text-white' },
+  { id: 'simulator', label: '⚗️ Simulator', color: 'bg-teal-600 text-white' },
+  { id: 'generator', label: '🧪 Generator', color: 'bg-violet-600 text-white' },
+  { id: 'scanner', label: '📷 Scanner', color: 'bg-cyan-600 text-white' },
+];
+
 export default function CommunityReviewsPage() {
   const [reviews, setReviews] = useState([]);
+  const [activeCategory, setActiveCategory] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
 
   const loadReviews = async () => {
     setIsLoading(true);
     try {
-      const fetchedReviews = await Review.list('-created_date', 10); // Show more reviews
+      const fetchedReviews = await base44.entities.Review.list('-created_date', 50);
       setReviews(fetchedReviews);
     } catch (error) {
       console.error("Error loading reviews:", error);
@@ -103,17 +111,37 @@ export default function CommunityReviewsPage() {
 
             {/* Right column for feedback list - takes 3/5 of width */}
             <div className="lg:col-span-3 space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-3">
                 <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
                   <MessageSquare className="w-6 h-6 text-[var(--suttain-violet)]" />
                   Community Reviews
                 </h2>
-                <span className="text-sm text-slate-500">Latest {reviews.length} reviews</span>
+                <span className="text-sm text-slate-500">{reviews.length} reviews total</span>
               </div>
-              
+
+              {/* Category Filter Tabs */}
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map(cat => {
+                  const count = cat.id === 'all' ? reviews.length : reviews.filter(r => r.feature_used === cat.id).length;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveCategory(cat.id)}
+                      className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all ${
+                        activeCategory === cat.id
+                          ? cat.color + ' border-transparent shadow-sm'
+                          : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      {cat.label} <span className="opacity-70">({count})</span>
+                    </button>
+                  );
+                })}
+              </div>
+
               {isLoading ? (
                 <div className="space-y-4">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(3)].map((_, i) => (
                     <div key={i} className="animate-pulse">
                       <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 space-y-3">
                         <div className="flex items-center gap-3">
@@ -124,14 +152,15 @@ export default function CommunityReviewsPage() {
                           </div>
                         </div>
                         <div className="h-4 bg-slate-200 rounded w-full"></div>
-                        <div className="h-4 bg-slate-200 rounded w-3/4"></div>
                       </div>
                     </div>
                   ))}
                 </div>
-              ) : reviews.length > 0 ? (
+              ) : (() => {
+                const filtered = activeCategory === 'all' ? reviews : reviews.filter(r => r.feature_used === activeCategory);
+                return filtered.length > 0 ? (
                 <div className="space-y-4">
-                  {reviews.map((review, index) => (
+                  {filtered.map((review, index) => (
                     <motion.div
                       key={review.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -142,15 +171,18 @@ export default function CommunityReviewsPage() {
                     </motion.div>
                   ))}
                 </div>
-              ) : (
+                ) : (
                 <div className="text-center py-16 bg-white/60 backdrop-blur-sm rounded-2xl border-2 border-dashed border-purple-200">
                   <Star className="w-16 h-16 text-purple-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-medium text-slate-800 mb-2">No reviews yet</h3>
+                  <h3 className="text-xl font-medium text-slate-800 mb-2">
+                    {activeCategory === 'all' ? 'No reviews yet' : 'No reviews in this category'}
+                  </h3>
                   <p className="text-slate-500 max-w-sm mx-auto">
-                    Be the first to share your feedback and help others discover the power of Suttain!
+                    {activeCategory === 'all' ? 'Be the first to share your feedback!' : 'Switch category or be the first to review this feature.'}
                   </p>
                 </div>
-              )}
+                );
+              })()}
             </div>
           </div>
         </div>

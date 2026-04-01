@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -60,37 +59,35 @@ export default function FeedbackCard({ review }) {
   const featureInfo = getFeatureInfo(review.feature_used);
 
   return (
-    <Card className="bg-white/70 backdrop-blur-sm border border-slate-200 hover:shadow-md transition-all duration-200">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center">
-              <UserCircle className="w-6 h-6 text-teal-600" />
-            </div>
-            <div>
-              <p className="font-semibold text-slate-800 text-sm">{getAnonymizedEmail(review.created_by)}</p>
-              <p className="text-xs text-slate-500">
-                {formatDistanceToNow(new Date(review.created_date))} ago
-              </p>
-            </div>
-          </div>
-          <Badge variant="outline" className={`${featureInfo.color} font-medium flex items-center gap-1`}>
+    <Card className="bg-white border border-slate-200 hover:shadow-md transition-all duration-200">
+      <CardContent className="p-5">
+        {/* Top row: feature badge + date */}
+        <div className="flex items-center justify-between mb-3">
+          <Badge variant="outline" className={`${featureInfo.color} font-medium flex items-center gap-1 text-xs`}>
             <featureInfo.icon className="w-3 h-3" />
             {featureInfo.label}
           </Badge>
+          <span className="text-xs text-slate-400">
+            {formatDistanceToNow(new Date(review.created_date))} ago
+          </span>
         </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-3">
-          {renderStars(review.rating)}
-          
-          {review.feedback && (
-            <div className="bg-slate-50 rounded-lg p-3 border-l-4 border-teal-200">
-              <p className="text-slate-700 text-sm italic leading-relaxed">
-                "{review.feedback}"
-              </p>
-            </div>
-          )}
+
+        {/* Stars */}
+        {renderStars(review.rating)}
+
+        {/* Feedback text */}
+        {review.feedback && (
+          <p className="mt-3 text-slate-700 text-sm leading-relaxed line-clamp-4">
+            &ldquo;{review.feedback}&rdquo;
+          </p>
+        )}
+
+        {/* Author row */}
+        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100">
+          <div className="w-7 h-7 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <UserCircle className="w-4 h-4 text-teal-600" />
+          </div>
+          <span className="text-xs text-slate-500 font-medium">{getAnonymizedEmail(review.created_by)}</span>
         </div>
       </CardContent>
     </Card>
