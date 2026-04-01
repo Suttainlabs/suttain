@@ -5,34 +5,111 @@ import { Input } from '@/components/ui/input';
 import { Sparkles, X, Send, MessageSquare, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
+const SYSTEM_PROMPT = `You are Clara, Suttain's intelligent AI assistant for the Suttain platform (suttain.com) — a chemical safety and sustainability platform for individuals, researchers, and businesses.
+
+You have FULL knowledge of every Suttain feature, page, and update as described below. Always respond based on this knowledge.
+
+RESPONSE FORMATTING RULES:
+- Use PLAIN TEXT ONLY - NO markdown, NO asterisks (**), NO special formatting
+- Keep responses SHORT and CONCISE (2-4 sentences maximum)
+- Use simple bullet points with dashes (-) if listing items
+- Be direct, friendly, and helpful
+
+COMPLETE SUTTAIN PLATFORM KNOWLEDGE:
+
+1. CHEMICAL SIMULATOR (Tools > Chemical Simulator)
+   - Test chemical interactions safely before mixing
+   - Select your persona: Household, Student, DIY, Business, Teacher, or Researcher
+   - Add 2+ chemicals, click Run Simulation to get risk scores, reaction details, safety warnings, energy profiles, and safer alternatives
+   - Saves simulation history to your dashboard
+   - Each simulation earns 5 reward points
+
+2. FORMULA GENERATOR (Tools > Formula Generator)
+   - AI-powered tool to create custom product formulas (skincare, cleaning, hair care, etc.)
+   - Choose Individual or Business mode
+   - Step-by-step wizard: select product type, describe your needs, review AI-generated formula with ingredients and percentages
+   - Business mode includes compliance checks, sustainability scoring, and export options (PDF, labels)
+   - Formulas saved to your dashboard under Formula History
+
+3. QUICK SCAN / BARCODE SCANNER (Tools > Quick Scan)
+   - Scan any product barcode to get full ingredient breakdown
+   - Supports manual barcode entry, image upload, or live camera scan
+   - Shows safety analysis, toxicity ratings, and eco-impact per ingredient
+   - Scan history saved to dashboard
+
+4. INGREDIENT DATABASE (Tools > Ingredient Database)
+   - Visual explorer for 250,000+ chemicals from PubChem plus Suttain's curated database
+   - Filter by toxicity (Safe, Moderate, Hazardous, Highly Hazardous), origin (Natural, Synthetic, Semi-synthetic), and eco impact
+   - Each ingredient card shows: toxicity badge, origin, eco level, Get Summary button (AI or PubChem), Free SDS download link, and CAMEO link
+   - Search with live autocomplete from both local database and PubChem
+
+5. COMPLIANCE CO-PILOT (Premium - Tools > Compliance Co-Pilot)
+   - Check formula/product compliance against global regulations
+   - Covers: FDA (US), EU Cosmetics Regulation, Canada Health, Australia TGA, and more
+   - Input ingredients + target markets to get per-ingredient compliance status and recommendations
+   - Includes predictive insights on emerging regulatory trends
+
+6. PERSONALIZED SAFETY (Premium - Profile > Personalized Safety)
+   - Create safety profiles with health conditions and allergies
+   - Receive alerts when scanned/analyzed products contain flagged ingredients
+   - Supports multiple profiles (e.g., pregnancy mode, asthma profile)
+
+7. SUSTAINABILITY SCORING (Premium)
+   - Analyze the environmental impact of formulas and products
+   - Scores: carbon footprint, biodegradability, renewable content, water usage
+   - Suggests eco-friendly ingredient swaps and certifications (ECOCERT, COSMOS, etc.)
+
+8. FORMULA COMPARISON (Dashboard)
+   - Side-by-side comparison of two formulas for toxicity, sustainability, and ingredient overlap
+
+9. LEARNING CENTER (Help > Learning Center)
+   - Tutorials, guided walkthroughs, and knowledge base articles
+   - Personalized learning paths based on your usage
+
+10. REWARDS SYSTEM
+    - Earn points for: completing simulations (+5), submitting feedback/reviews (+5-10), using features
+    - View points balance in the header (gold star icon)
+    - Redeem or track under My Rewards in the user menu
+
+11. DASHBOARD / PROFILE (User menu > My Dashboard)
+    - View all saved simulations, formulas, scans, sustainability scores
+    - See activity history, notifications, and reward points
+    - Manage safety profiles and subscription
+
+12. ADMIN FEATURES (Admin users only)
+    - Admin Dashboard: user management, analytics, job postings, announcements
+    - Send notifications to all users
+    - View contact submissions and demo requests
+
+13. PRICING & PLANS
+    - Free tier: limited simulations and formula generations per month
+    - Pro/Premium: unlimited access to all tools including Compliance Co-Pilot, Personalized Safety, and Sustainability Scoring
+    - Enterprise API (coming soon): integrate Suttain into your own systems
+    - 14-day free trial available on signup
+
+14. ACCOUNT & AUTH
+    - Sign up / login via Google or Apple OAuth
+    - Profile customization: display name, profile image
+    - Account deletion available in Settings
+
+SCOPE RULES:
+- ONLY answer questions about the Suttain platform and its features
+- For chemical safety analysis -> direct to Chemical Simulator
+- For barcode/ingredient lookup -> direct to Quick Scan
+- For compliance questions -> direct to Compliance Co-Pilot
+- For unrelated questions -> "I'm Clara, Suttain's assistant. I can help you navigate and use the Suttain platform. What would you like to know?"`;
+
 export default function ClaraAssistant() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [userMessage, setUserMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const currentUser = await base44.auth.me();
-                setUser(currentUser);
-            } catch (error) {
-                setUser(null);
-            }
-        };
-        fetchUser();
-    }, []);
 
     const handleSendMessage = async (overrideMessage) => {
         const content = (overrideMessage || userMessage).trim();
         if (!content || isLoading) return;
 
-        const newMessage = {
-            role: 'user',
-            content
-        };
-
+        const newMessage = { role: 'user', content };
         setMessages(prev => [...prev, newMessage]);
         setUserMessage('');
         setIsLoading(true);
@@ -42,103 +119,20 @@ export default function ClaraAssistant() {
                 .map(msg => `${msg.role === 'user' ? 'User' : 'Clara'}: ${msg.content}`)
                 .join('\n');
 
-            const systemPrompt = `You are Clara, Suttain's AI Assistant - a helpful and knowledgeable guide for the Suttain chemical safety platform.
-
-RESPONSE FORMATTING RULES:
-- Use PLAIN TEXT ONLY - NO markdown, NO asterisks (**), NO special formatting
-- Keep responses SHORT and CONCISE (2-4 sentences maximum)
-- Use simple bullet points with dashes (-) if listing items
-- Be direct and to the point
-
-IMPORTANT SCOPE RESTRICTIONS:
-- You ONLY respond to questions about the Suttain platform, its features, navigation, and how to use it
-- You help users understand Suttain's tools: Chemical Simulator, Formula Generator, Barcode Scanner, Compliance Co-Pilot, etc.
-- You answer questions about navigating the Suttain website and accessing different features
-- You explain Suttain's pricing, accounts, rewards system, and platform policies
-- You CAN answer compliance and regulatory questions specifically related to using Suttain's Compliance Co-Pilot feature
-
-WHAT YOU DO NOT DO:
-- You DO NOT answer general chemical questions unrelated to using Suttain
-- You DO NOT provide chemical safety advice outside of directing users to Suttain's features
-- You DO NOT discuss topics unrelated to the Suttain platform
-- You DO NOT analyze chemical combinations directly (direct users to the Simulator)
-- You DO NOT look up barcodes or ingredients (direct users to the Barcode Scanner)
-
-If a user asks something outside your scope, politely redirect them:
-- For chemical safety questions -> "I can help you analyze that using our Chemical Simulator! Click on 'Tools' in the menu to get started."
-- For barcode/ingredient questions -> "You can scan that using our Barcode Scanner feature! Find it under the Tools menu."
-- For compliance/regulatory questions -> "You can check that using our Compliance Co-Pilot! It's available under Premium Suite in the Tools menu."
-- For unrelated questions -> "I'm Clara, Suttain's platform assistant. I help with navigating Suttain and using our features. What would you like to know about Suttain?"
-
-SUTTAIN FEATURES YOU CAN DISCUSS (keep descriptions brief):
-1. Chemical Simulator - Test chemical interactions safely
-2. Formula Generator - Create custom formulas for skincare, cleaning products
-3. Barcode Scanner - Scan products to analyze ingredients
-4. Compliance Co-Pilot (Premium) - Check regulatory compliance for products, get guidance on FDA, EU, and global regulations
-5. Personalized Safety Alerts (Premium) - Get safety alerts based on your health profile
-6. Sustainability Scoring (Premium) - Analyze environmental impact
-7. Enterprise API (Coming Soon) - For business integration
-8. Rewards System - Earn points for reviews and feedback
-9. Community Reviews - See what others are saying
-
-COMPLIANCE CO-PILOT SPECIFIC GUIDANCE:
-- The Compliance Co-Pilot helps businesses check if their formulas meet regulatory requirements
-- It covers FDA (US), EU regulations, and other global standards
-- Users can input their formula and target markets to get compliance analysis
-- It's a premium feature available under the Tools menu
-- For specific regulatory questions, direct users to start a new compliance check in the Co-Pilot
-
-EXAMPLE GOOD RESPONSES (notice the plain text and brevity):
-User: "What features does Suttain offer?"
-Clara: "Suttain offers several key features:
-- Chemical Simulator: Test chemical interactions safely
-- Formula Generator: Create custom formulas
-- Barcode Scanner: Analyze product ingredients
-- Compliance Co-Pilot: Check regulatory compliance (Premium)
-All accessible from the Tools menu!"
-
-User: "How do I use the simulator?"
-Clara: "Using the Chemical Simulator is easy! Select your user type (student, household, DIY, business, teacher, or researcher), add 2 or more chemicals you want to test, then click 'Run Simulation'. You'll get a detailed safety analysis with risk scores and recommendations."
-
-User: "How do I check if my formula is FDA compliant?"
-Clara: "You can use our Compliance Co-Pilot for that! Go to Tools menu, select Compliance Co-Pilot (Premium Suite), then start a New Formula Check. Input your formula ingredients and select US/FDA as your target market. The AI will analyze your formula against FDA regulations and provide detailed compliance insights."
-
-User: "What regulations does the Compliance Co-Pilot cover?"
-Clara: "The Compliance Co-Pilot covers major global regulations including:
-- FDA regulations (United States)
-- EU Cosmetics Regulation
-- Canada regulations
-- Australia regulations
-You can select multiple target markets and get comprehensive compliance analysis for each region."
-
-Current conversation:
-${conversationHistory}`;
-
             const response = await base44.integrations.Core.InvokeLLM({
-                prompt: systemPrompt + `\n\nUser's latest question: ${newMessage.content}\n\nProvide a helpful, CONCISE response in PLAIN TEXT (no markdown formatting) focused on the Suttain platform:`,
+                prompt: `${SYSTEM_PROMPT}\n\nCurrent conversation:\n${conversationHistory}\n\nUser's latest question: ${content}\n\nProvide a helpful, CONCISE response in PLAIN TEXT focused on the Suttain platform:`,
                 add_context_from_internet: false
             });
 
-            const assistantMessage = {
-                role: 'assistant',
-                content: response
-            };
-
-            setMessages(prev => [...prev, assistantMessage]);
+            setMessages(prev => [...prev, { role: 'assistant', content: response }]);
         } catch (error) {
-            console.error('Clara error:', error);
-            const errorMessage = {
+            setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: "I apologize, but I'm having trouble connecting right now. Please try again in a moment, or feel free to browse our FAQ page for common questions about Suttain!"
-            };
-            setMessages(prev => [...prev, errorMessage]);
+                content: "I'm having trouble connecting right now. Please try again or check our FAQ page for help!"
+            }]);
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const handleSuggestionClick = (suggestion) => {
-        handleSendMessage(suggestion);
     };
 
     const handleKeyPress = (e) => {
@@ -148,6 +142,12 @@ ${conversationHistory}`;
         }
     };
 
+    const suggestions = [
+        "How do I use the Chemical Simulator?",
+        "What features does Suttain offer?",
+        "How do I earn rewards on Suttain?"
+    ];
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -155,110 +155,88 @@ ${conversationHistory}`;
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="fixed bottom-36 lg:bottom-20 right-6 w-96 max-w-[calc(100vw-3rem)] h-[600px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col z-50 overflow-hidden"
+                    className="fixed bottom-36 lg:bottom-20 right-6 w-80 max-w-[calc(100vw-2rem)] h-[420px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col z-50 overflow-hidden"
                 >
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-[#02988C] to-[#09D2FF] p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                                <Sparkles className="w-5 h-5 text-[#02988C]" />
+                    <div className="bg-gradient-to-r from-[#02988C] to-[#09D2FF] px-4 py-3 flex items-center justify-between flex-shrink-0">
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                <Sparkles className="w-4 h-4 text-[#02988C]" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-white">Clara, your Assistant</h3>
-                                <p className="text-xs text-white/90">Powered by Suttain's Safety Agent</p>
+                                <h3 className="font-bold text-white text-sm">Clara, your Assistant</h3>
+                                <p className="text-xs text-white/80">Suttain Platform Guide</p>
                             </div>
                         </div>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setIsOpen(false)}
-                            className="text-white hover:bg-white/20"
-                        >
-                            <X className="w-5 h-5" />
-                        </Button>
+                        <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors">
+                            <X className="w-4 h-4" />
+                        </button>
                     </div>
 
                     {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div className="flex-1 overflow-y-auto p-3 space-y-3">
                         {messages.length === 0 && (
-                            <div className="text-center py-8">
-                                <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <Sparkles className="w-8 h-8 text-teal-600" />
+                            <div className="text-center pt-4 pb-2">
+                                <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Sparkles className="w-6 h-6 text-teal-600" />
                                 </div>
-                                <h4 className="font-semibold text-lg text-slate-900 mb-2">Ask me anything!</h4>
-                                <p className="text-sm text-slate-600 mb-6">
-                                    I can help you navigate Suttain and use our features.
-                                </p>
-                                <div className="space-y-2">
-                                    <button
-                                        onClick={() => handleSuggestionClick("How do I use the Chemical Simulator?")}
-                                        className="w-full p-3 text-left bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors text-sm text-slate-700 flex items-center gap-2"
-                                    >
-                                        <MessageSquare className="w-4 h-4 text-teal-600" />
-                                        How do I use the Chemical Simulator?
-                                    </button>
-                                    <button
-                                        onClick={() => handleSuggestionClick("What features does Suttain offer?")}
-                                        className="w-full p-3 text-left bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors text-sm text-slate-700 flex items-center gap-2"
-                                    >
-                                        <MessageSquare className="w-4 h-4 text-teal-600" />
-                                        What features does Suttain offer?
-                                    </button>
-                                    <button
-                                        onClick={() => handleSuggestionClick("How do I earn rewards on Suttain?")}
-                                        className="w-full p-3 text-left bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors text-sm text-slate-700 flex items-center gap-2"
-                                    >
-                                        <MessageSquare className="w-4 h-4 text-teal-600" />
-                                        How do I earn rewards on Suttain?
-                                    </button>
+                                <h4 className="font-semibold text-slate-900 mb-1 text-sm">Ask me anything!</h4>
+                                <p className="text-xs text-slate-500 mb-4">I can help you navigate Suttain and use our features.</p>
+                                <div className="space-y-1.5">
+                                    {suggestions.map((s) => (
+                                        <button
+                                            key={s}
+                                            onClick={() => handleSendMessage(s)}
+                                            className="w-full px-3 py-2 text-left bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors text-xs text-slate-700 flex items-center gap-2"
+                                        >
+                                            <MessageSquare className="w-3.5 h-3.5 text-teal-600 flex-shrink-0" />
+                                            {s}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
                         )}
 
                         {messages.map((msg, idx) => (
-                            <div
-                                key={idx}
-                                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                            >
-                                <div
-                                    className={`max-w-[80%] rounded-2xl p-3 ${
-                                        msg.role === 'user'
-                                            ? 'bg-gradient-to-r from-[#02988C] to-[#09D2FF] text-white'
-                                            : 'bg-slate-100 text-slate-900'
-                                    }`}
-                                >
-                                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`max-w-[82%] rounded-xl px-3 py-2 text-xs leading-relaxed whitespace-pre-wrap ${
+                                    msg.role === 'user'
+                                        ? 'bg-gradient-to-r from-[#02988C] to-[#09D2FF] text-white'
+                                        : 'bg-slate-100 text-slate-800'
+                                }`}>
+                                    {msg.content}
                                 </div>
                             </div>
                         ))}
 
                         {isLoading && (
                             <div className="flex justify-start">
-                                <div className="bg-slate-100 rounded-2xl p-3 flex items-center gap-2">
-                                    <Loader2 className="w-4 h-4 animate-spin text-teal-600" />
-                                    <span className="text-sm text-slate-600">Clara is typing...</span>
+                                <div className="bg-slate-100 rounded-xl px-3 py-2 flex items-center gap-2">
+                                    <Loader2 className="w-3 h-3 animate-spin text-teal-600" />
+                                    <span className="text-xs text-slate-500">Clara is typing…</span>
                                 </div>
                             </div>
                         )}
                     </div>
 
                     {/* Input Area */}
-                    <div className="p-4 border-t border-slate-200 bg-slate-50">
+                    <div className="p-3 border-t border-slate-200 bg-slate-50 flex-shrink-0">
                         <div className="flex gap-2">
                             <Input
                                 value={userMessage}
                                 onChange={(e) => setUserMessage(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 placeholder="Ask about Suttain features..."
-                                className="flex-1"
+                                className="flex-1 text-xs h-8"
                                 disabled={isLoading}
                             />
                             <Button
-                                onClick={handleSendMessage}
+                                onClick={() => handleSendMessage()}
                                 disabled={!userMessage.trim() || isLoading}
-                                className="bg-gradient-to-r from-[#02988C] to-[#09D2FF] hover:opacity-90"
+                                size="icon"
+                                className="h-8 w-8 bg-gradient-to-r from-[#02988C] to-[#09D2FF] hover:opacity-90"
                             >
-                                <Send className="w-4 h-4" />
+                                <Send className="w-3.5 h-3.5" />
                             </Button>
                         </div>
                     </div>
