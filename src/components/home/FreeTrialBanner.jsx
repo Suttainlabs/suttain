@@ -39,6 +39,9 @@ export default function FreeTrialBanner({ onDismiss }) {
             <div className="hidden md:flex items-center gap-3 text-white/90 text-xs">
               <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Unlimited simulations</span>
               <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Save formulas</span>
+              <span className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full font-semibold text-white text-xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" /> No credit card required
+              </span>
             </div>
             <Link to={createPageUrl("Simulator")}>
               <Button
