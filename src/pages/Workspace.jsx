@@ -138,17 +138,17 @@ export default function Workspace() {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-4">
             {isLoading ? (
-              <div className="flex items-center justify-center h-48">
+              <div className="flex items-center justify-center h-32">
                 <div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin" />
               </div>
             ) : filtered.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 text-center">
-                <FolderOpen className="w-16 h-16 text-slate-200 mb-4" />
-                <h3 className="text-lg font-semibold text-slate-600 mb-1">No sessions yet</h3>
-                <p className="text-sm text-slate-400 max-w-sm">
-                  Use the simulator, formula generator, or scanner and save sessions to your workspace from those tools.
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <FolderOpen className="w-12 h-12 text-slate-200 mb-3" />
+                <h3 className="text-base font-semibold text-slate-500 mb-1">No sessions yet</h3>
+                <p className="text-sm text-slate-400 max-w-xs">
+                  Run a simulation, formula, or scan — then save it to your workspace.
                 </p>
               </div>
             ) : (
