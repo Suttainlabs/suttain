@@ -1,0 +1,60 @@
+{
+  "name": "WorkspaceSession",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Session title"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "simulation",
+        "formula",
+        "scan",
+        "compliance"
+      ],
+      "description": "Type of analysis session"
+    },
+    "folder_id": {
+      "type": "string",
+      "description": "Reference to WorkspaceFolder"
+    },
+    "reference_id": {
+      "type": "string",
+      "description": "ID of the linked entity record"
+    },
+    "notes": {
+      "type": "string",
+      "description": "User notes about the session"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Custom tags"
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Snapshot of key result data for quick preview"
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "type"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

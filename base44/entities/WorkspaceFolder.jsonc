@@ -1,0 +1,33 @@
+{
+  "name": "WorkspaceFolder",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Folder name"
+    },
+    "color": {
+      "type": "string",
+      "description": "Hex color for the folder"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Icon name for the folder"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional folder description"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
