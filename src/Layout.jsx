@@ -215,6 +215,7 @@ export default function Layout({ children, currentPageName }) {
     { type: 'header', label: 'Advanced Tools', icon: Cpu },
     { href: "ComputationalSimulation", label: "Computational Simulations", icon: Cpu, description: "DFT, MD, drug discovery, protein modeling & QM scripts", type: 'product', tier: 'pro' },
 
+    { href: "ComparativeImpactReport", label: "Comparative Impact Report", icon: BarChart2, description: "Benchmark your formula's eco-score vs. industry averages", type: 'product', tier: 'free' },
     { type: 'separator' },
     { href: "EnterpriseAPI", label: "Enterprise API Access", icon: AppWindow, description: "Integrate Suttain into your enterprise systems", type: 'premium', status: 'coming_soon' },
   ];
