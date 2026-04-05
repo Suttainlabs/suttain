@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { User } from "@/entities/User";
+import { base44 } from '@/api/base44Client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
-import { base44 } from '@/api/base44Client';
 import { CheckCircle2, Beaker, Atom, QrCode, Leaf, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -60,7 +59,7 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
         properties: { goals: selectedGoals.join(','), role, industry }
       });
 
-      await User.updateMyUserData({
+      await base44.auth.updateMe({
         first_login: false,
         onboarding_goals: selectedGoals,
         generator_category: role === 'business' || role === 'formulator' ? 'business' : 'individual',
