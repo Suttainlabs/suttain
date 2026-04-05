@@ -191,7 +191,7 @@ export default function Layout({ children, currentPageName }) {
     { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", type: 'product', tier: 'free' },
     { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", type: 'product', tier: 'free' },
     { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Scan products for full safety & eco analysis", type: 'product', tier: 'free' },
-    { href: "BulkScan", label: "Bulk Scan", icon: ShoppingCart, description: "Scan your entire grocery haul for a consolidated health report", type: 'product', tier: 'free' },
+
     { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf, description: "Explore chemicals by toxicity, origin & eco-impact", type: 'product', tier: 'free' },
     { href: "SustainabilityImpact", label: "My Impact Dashboard", icon: BarChart2, description: "Track badges, carbon reduction & eco milestones", type: 'product', tier: 'free' },
     { type: 'separator' },

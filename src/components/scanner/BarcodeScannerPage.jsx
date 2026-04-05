@@ -9,7 +9,8 @@ import LiveScanner from './LiveScanner';
 import BarcodeAnalysis from './ProductAnalysis';
 import BarcodeHistory from './BarcodeHistory';
 import { base44 } from '@/api/base44Client';
-import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud } from 'lucide-react';
+import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, ShoppingCart, QrCode } from 'lucide-react';
+import BulkScanDashboard from './BulkScanDashboard';
 import ToolFeedbackToast from '../shared/ToolFeedbackToast';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
 import { incrementUsage } from '../../utils/usageTracker';
@@ -36,6 +37,7 @@ const BarcodeHint = ({ barcode }) => {
 };
 
 export default function BarcodeScannerPage() {
+    const [mode, setMode] = useState('quick'); // quick, bulk
     const [view, setView] = useState('main'); // main, history
     const [productInfo, setProductInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -208,6 +210,37 @@ export default function BarcodeScannerPage() {
                 onScanSuccess={handleScanSuccess}
             />
             
+            {/* Mode tabs */}
+            <div className="flex justify-center mb-8">
+                <div className="inline-flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+                    <button
+                        onClick={() => setMode('quick')}
+                        className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                            mode === 'quick'
+                                ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow'
+                                : 'text-slate-600 hover:text-slate-800'
+                        }`}
+                    >
+                        <QrCode className="w-4 h-4" />
+                        Quick Scan
+                    </button>
+                    <button
+                        onClick={() => setMode('bulk')}
+                        className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                            mode === 'bulk'
+                                ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow'
+                                : 'text-slate-600 hover:text-slate-800'
+                        }`}
+                    >
+                        <ShoppingCart className="w-4 h-4" />
+                        Bulk Scan
+                    </button>
+                </div>
+            </div>
+
+            {mode === 'bulk' && <BulkScanDashboard user={user} />}
+
+            {mode === 'quick' && (
             <header className="text-center mb-12 max-w-4xl mx-auto">
               <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
                   <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 gradient-text">
@@ -217,8 +250,9 @@ export default function BarcodeScannerPage() {
                       Instantly analyze product ingredients, safety, and sustainability by scanning a barcode.
                   </p>
               </motion.div>
-            </header>
+            </header>)}
 
+            {mode === 'quick' && (
             <div className="max-w-xl mx-auto">
                 <AnimatePresence mode="wait">
                     {productInfo ? (
@@ -303,6 +337,7 @@ export default function BarcodeScannerPage() {
                     )}
                 </AnimatePresence>
             </div>
+            )}
         </div>
         </>
     );
