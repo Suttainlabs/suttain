@@ -193,6 +193,7 @@ export default function Layout({ children, currentPageName }) {
     { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Scan products for full safety & eco analysis", type: 'product', tier: 'free' },
     { href: "BulkScan", label: "Bulk Scan", icon: ShoppingCart, description: "Scan your entire grocery haul for a consolidated health report", type: 'product', tier: 'free' },
     { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf, description: "Explore chemicals by toxicity, origin & eco-impact", type: 'product', tier: 'free' },
+    { href: "SustainabilityImpact", label: "My Impact Dashboard", icon: BarChart2, description: "Track badges, carbon reduction & eco milestones", type: 'product', tier: 'free' },
     { type: 'separator' },
     { type: 'header', label: 'Advanced Tools', icon: Cpu },
     { href: "ComputationalSimulation", label: "Computational Simulations", icon: Cpu, description: "DFT, MD, drug discovery, protein modeling & QM scripts", type: 'product', tier: 'pro' },
