@@ -161,6 +161,17 @@ const SIM_TYPES = [
 
 const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
 
+const DOMAIN_SIM_MAP = {
+  "Chemistry":        ["dft", "quantum_mechanics", "monte_carlo", "visualization"],
+  "Biochemistry":     ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "visualization"],
+  "Drug Discovery":   ["drug_discovery", "molecular_dynamics", "protein_modeling", "visualization"],
+  "Engineering":      ["materials", "monte_carlo", "dft", "visualization"],
+  "Biology":          ["protein_modeling", "molecular_dynamics", "visualization"],
+  "Environmental":    ["environmental", "monte_carlo", "dft", "visualization"],
+  "Materials Science":["materials", "dft", "monte_carlo", "visualization"],
+  "Biophysics":       ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "visualization"],
+};
+
 function SelectField({ label, options, value, onChange }) {
   return (
     <div>
@@ -728,7 +739,7 @@ Provide a focused, technical analysis. Return JSON with:
           {!results && (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                {SIM_TYPES.map(s => {
+                {SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id)).map(s => {
                   const Icon = s.icon;
                   const isSelected = selectedType === s.id;
                   return (
