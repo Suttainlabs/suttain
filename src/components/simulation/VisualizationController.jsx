@@ -46,9 +46,11 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
         if (res.ok) {
           const molData = await res.text();
           viewer.addModel(molData, 'sdf');
-          viewer.setStyle({}, { stick: { colorscheme: 'element' } });
-          viewer.zoomTo();
+          viewer.setStyle({ model: -1 }, { stick: { colorscheme: 'element' } });
+          viewer.zoom(0.8);
           viewer.render();
+        } else {
+          console.warn(`PubChem fetch failed for ${molecule.smiles}`);
         }
       } catch (e) {
         console.warn('Could not load molecule into viewer:', e);
