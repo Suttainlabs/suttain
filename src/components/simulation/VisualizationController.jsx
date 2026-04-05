@@ -138,13 +138,11 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
         </button>
         <button
            onClick={() => setShowSeparateMode(true)}
-           disabled={!hasProteinStructure}
-           className={`flex-1 px-4 py-2.5 text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-            showSeparateMode && hasProteinStructure
+           className={`flex-1 px-4 py-2.5 text-sm font-semibold transition-all ${
+            showSeparateMode
               ? 'text-purple-600 bg-purple-50 border-b-2 border-purple-600'
               : 'text-slate-600 hover:bg-slate-50'
            }`}
-           title={!hasProteinStructure ? 'Load a protein structure to use this feature' : ''}
          >
            <Layers className="w-4 h-4 inline mr-1.5" /> Residues
          </button>
