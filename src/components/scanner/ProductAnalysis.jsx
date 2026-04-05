@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Shield, Leaf, Beaker, CheckCircle, AlertTriangle, HelpCircle, ImageOff, ChevronLeft, ExternalLink, ChevronDown, TestTube, FlaskConical, ListChecks, ShieldCheck, ThumbsUp, MessageSquareWarning, Loader2, Sparkles } from 'lucide-react';
+import { Shield, Leaf, Beaker, CheckCircle, AlertTriangle, HelpCircle, ImageOff, ChevronLeft, ExternalLink, ChevronDown, TestTube, FlaskConical, ListChecks, ShieldCheck, ThumbsUp, MessageSquareWarning, Loader2, Sparkles, HeartPulse, Apple, Wheat, Salad } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -220,6 +220,8 @@ export default function ProductAnalysis({ product, onClear, user }) {
     const [isLoadingCompliance, setIsLoadingCompliance] = useState(false);
     const [sustainabilityData, setSustainabilityData] = useState(null);
     const [isLoadingSustainability, setIsLoadingSustainability] = useState(false);
+    const [healthData, setHealthData] = useState(null);
+    const [isLoadingHealth, setIsLoadingHealth] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -228,6 +230,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
         setSafetyAlert(null);
         setComplianceData(null);
         setSustainabilityData(null);
+        setHealthData(null);
         checkSafetyProfile();
     }, [product]);
 
@@ -265,6 +268,73 @@ export default function ProductAnalysis({ product, onClear, user }) {
             setComplianceData({ overall_status: 'Requires Review', summary: 'Could not complete analysis. Please try again.', flagged_ingredients: [], recommendations: [] });
         } finally {
             setIsLoadingCompliance(false);
+        }
+    };
+
+    const handleLoadHealth = async () => {
+        if (healthData || isLoadingHealth) return;
+        setIsLoadingHealth(true);
+        try {
+            const ingredients = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
+            const nutritionText = product.nutritionFacts ? JSON.stringify(product.nutritionFacts) : 'not available';
+            const result = await base44.integrations.Core.InvokeLLM({
+                prompt: `You are a certified nutritionist and dietitian. Analyze this product for health and dietary insights:
+
+Product: ${product.name}
+Brand: ${product.brand}
+Category: ${product.category}
+Ingredients: ${ingredients}
+Nutritional Info: ${nutritionText}
+
+Provide a comprehensive health analysis including dietary suitability, specific warnings, and healthier alternatives.`,
+                response_json_schema: {
+                    type: 'object',
+                    properties: {
+                        health_summary: { type: 'string' },
+                        overall_health_rating: { type: 'string', enum: ['Excellent', 'Good', 'Fair', 'Poor'] },
+                        dietary_suitability: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    diet: { type: 'string' },
+                                    suitable: { type: 'boolean' },
+                                    reason: { type: 'string' }
+                                }
+                            }
+                        },
+                        health_warnings: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    warning: { type: 'string' },
+                                    severity: { type: 'string', enum: ['low', 'medium', 'high'] },
+                                    affected_groups: { type: 'string' }
+                                }
+                            }
+                        },
+                        nutritional_highlights: { type: 'array', items: { type: 'string' } },
+                        healthier_alternatives: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    name: { type: 'string' },
+                                    benefit: { type: 'string' }
+                                }
+                            }
+                        },
+                        consumption_tips: { type: 'array', items: { type: 'string' } }
+                    }
+                }
+            });
+            setHealthData(result);
+        } catch (e) {
+            console.error('Health analysis failed:', e);
+            setHealthData({ health_summary: 'Could not complete health analysis. Please try again.', overall_health_rating: 'Fair', dietary_suitability: [], health_warnings: [], nutritional_highlights: [], healthier_alternatives: [], consumption_tips: [] });
+        } finally {
+            setIsLoadingHealth(false);
         }
     };
 
@@ -536,13 +606,14 @@ For each product provide:
             </div>
           </div>
 
-          <Tabs defaultValue="overview" className="w-full" onValueChange={(v) => { setActiveTab(v); if (v === 'compliance') handleLoadCompliance(); if (v === 'sustainability') handleLoadSustainability(); }}>
+          <Tabs defaultValue="overview" className="w-full" onValueChange={(v) => { setActiveTab(v); if (v === 'compliance') handleLoadCompliance(); if (v === 'sustainability') handleLoadSustainability(); if (v === 'health') handleLoadHealth(); }}>
             <TabsList className="flex w-full overflow-x-auto bg-slate-100/80 rounded-xl scrollbar-hide">
                  <TabsTrigger value="overview" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Overview</TabsTrigger>
                  <TabsTrigger value="ingredients" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Ingredients</TabsTrigger>
                  <TabsTrigger value="safety" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Safety</TabsTrigger>
                  <TabsTrigger value="compliance" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Compliance</TabsTrigger>
                  <TabsTrigger value="sustainability" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Eco</TabsTrigger>
+                 <TabsTrigger value="health" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">Health</TabsTrigger>
                  <TabsTrigger value="diy" className="text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">DIY</TabsTrigger>
             </TabsList>
             
@@ -851,6 +922,136 @@ For each product provide:
                           {sustainabilityData.improvement_tips.map((t, i) => (
                             <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
                               <CheckCircle className="w-4 h-4 text-[var(--suttain-teal)] mt-0.5 flex-shrink-0" />{t}
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+                </>
+              )}
+            </TabsContent>
+
+            <TabsContent value="health" className="pt-6 space-y-4">
+              {isLoadingHealth && (
+                <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Analyzing nutritional & health insights...</span>
+                </div>
+              )}
+              {!isLoadingHealth && !healthData && (
+                <div className="text-center py-12">
+                  <HeartPulse className="w-12 h-12 text-rose-300 mx-auto mb-4" />
+                  <p className="text-slate-500 text-sm">Loading health analysis...</p>
+                </div>
+              )}
+              {!isLoadingHealth && healthData && (
+                <>
+                  {/* Overall Rating */}
+                  <Card className={`bg-white/60 border-2 ${
+                    healthData.overall_health_rating === 'Excellent' ? 'border-emerald-200' :
+                    healthData.overall_health_rating === 'Good' ? 'border-teal-200' :
+                    healthData.overall_health_rating === 'Fair' ? 'border-amber-200' : 'border-red-200'
+                  }`}>
+                    <CardContent className="p-4 flex items-center gap-4">
+                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 ${
+                        healthData.overall_health_rating === 'Excellent' ? 'bg-emerald-500' :
+                        healthData.overall_health_rating === 'Good' ? 'bg-teal-500' :
+                        healthData.overall_health_rating === 'Fair' ? 'bg-amber-500' : 'bg-red-500'
+                      }`}>
+                        <HeartPulse className="w-8 h-8 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 text-lg">{healthData.overall_health_rating}</p>
+                        <p className="text-sm text-slate-500">Health Rating</p>
+                        <p className="text-sm text-slate-600 mt-1">{healthData.health_summary}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Dietary Suitability */}
+                  {healthData.dietary_suitability?.length > 0 && (
+                    <Card className="bg-white/60">
+                      <CardHeader><CardTitle className="text-base flex items-center gap-2"><Salad className="w-4 h-4 text-emerald-600" /> Dietary Suitability</CardTitle></CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-2">
+                          {healthData.dietary_suitability.map((d, i) => (
+                            <div key={i} className={`p-3 rounded-lg border flex items-start gap-2 ${
+                              d.suitable ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'
+                            }`}>
+                              <span className="text-base">{d.suitable ? '✅' : '❌'}</span>
+                              <div>
+                                <p className={`text-xs font-bold ${ d.suitable ? 'text-emerald-800' : 'text-red-800'}`}>{d.diet}</p>
+                                <p className={`text-[11px] ${ d.suitable ? 'text-emerald-600' : 'text-red-600'}`}>{d.reason}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Health Warnings */}
+                  {healthData.health_warnings?.length > 0 && (
+                    <Card className="bg-white/60">
+                      <CardHeader><CardTitle className="text-base flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-500" /> Health Warnings</CardTitle></CardHeader>
+                      <CardContent className="space-y-2">
+                        {healthData.health_warnings.map((w, i) => (
+                          <div key={i} className={`p-3 rounded-lg border ${
+                            w.severity === 'high' ? 'bg-red-50 border-red-200' :
+                            w.severity === 'medium' ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200'
+                          }`}>
+                            <p className="text-sm font-semibold text-slate-800">{w.warning}</p>
+                            {w.affected_groups && <p className="text-xs text-slate-500 mt-0.5">Affects: {w.affected_groups}</p>}
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Nutritional Highlights */}
+                  {healthData.nutritional_highlights?.length > 0 && (
+                    <Card className="bg-white/60">
+                      <CardHeader><CardTitle className="text-base flex items-center gap-2"><Apple className="w-4 h-4 text-rose-500" /> Nutritional Highlights</CardTitle></CardHeader>
+                      <CardContent>
+                        <ul className="space-y-1.5">
+                          {healthData.nutritional_highlights.map((h, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                              <CheckCircle className="w-4 h-4 text-teal-500 mt-0.5 flex-shrink-0" />{h}
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Healthier Alternatives */}
+                  {healthData.healthier_alternatives?.length > 0 && (
+                    <Card className="bg-teal-50/60 border border-teal-200">
+                      <CardHeader><CardTitle className="text-base text-teal-800 flex items-center gap-2"><Sparkles className="w-4 h-4" /> Healthier Alternatives</CardTitle></CardHeader>
+                      <CardContent className="space-y-2">
+                        {healthData.healthier_alternatives.map((alt, i) => (
+                          <div key={i} className="flex items-start gap-2 text-sm">
+                            <Leaf className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <span className="font-semibold text-teal-800">{alt.name}</span>
+                              <span className="text-teal-600"> — {alt.benefit}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Consumption Tips */}
+                  {healthData.consumption_tips?.length > 0 && (
+                    <Card className="bg-white/60">
+                      <CardHeader><CardTitle className="text-base">Consumption Tips</CardTitle></CardHeader>
+                      <CardContent>
+                        <ul className="space-y-1.5">
+                          {healthData.consumption_tips.map((t, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                              <CheckCircle className="w-4 h-4 text-violet-500 mt-0.5 flex-shrink-0" />{t}
                             </li>
                           ))}
                         </ul>
