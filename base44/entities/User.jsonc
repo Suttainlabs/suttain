@@ -58,6 +58,38 @@
     "first_login": {
       "type": "boolean",
       "default": true
+    },
+    "onboarding_goals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User's selected onboarding goals"
+    },
+    "generator_category": {
+      "type": "string",
+      "enum": [
+        "individual",
+        "business"
+      ],
+      "description": "User's formula generator preference"
+    },
+    "simulator_category": {
+      "type": "string",
+      "description": "User's simulator category (role)"
+    },
+    "industry": {
+      "type": "string",
+      "description": "User's industry"
     }
-  }
+  },
+  "required": [
+    "role",
+    "display_name",
+    "profile_image_url",
+    "trial_start_date",
+    "subscription_billing",
+    "stripe_customer_id",
+    "stripe_subscription_id"
+  ]
 }
