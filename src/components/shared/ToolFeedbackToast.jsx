@@ -18,8 +18,10 @@ export default function ToolFeedbackToast({ isOpen, onClose, feature, featureLab
   const [hovered, setHovered] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [reviewed, setReviewed] = useState(false);
 
   const handleRate = async (stars) => {
+    if (reviewed) return; // Prevent double submission
     setRating(stars);
     setSubmitting(true);
     try {
@@ -34,6 +36,7 @@ export default function ToolFeedbackToast({ isOpen, onClose, feature, featureLab
         await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 5 });
       }
       setSubmitted(true);
+      setReviewed(true);
       setTimeout(onClose, 1800);
     } catch (e) {
       console.error("Failed to submit rating:", e);
