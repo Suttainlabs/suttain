@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench, Plus } from "lucide-react";
+import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench, Plus, Camera } from "lucide-react";
 import VisualizationController from './VisualizationController';
 import { Button } from "@/components/ui/button";
 import InteractiveMolecularEditor from "./InteractiveMolecularEditor";
@@ -295,6 +295,20 @@ export default function MolViewer({ simType, inputs }) {
         <Eye className="w-4 h-4 text-fuchsia-400 flex-shrink-0" />
         <span className="text-sm font-semibold text-white">3D Molecular Viewer</span>
         <div className="ml-auto flex items-center gap-3">
+          <button
+            onClick={() => {
+              if (viewerRef.current) {
+                const a = document.createElement("a");
+                a.href = viewerRef.current.pngURI();
+                a.download = `suttain-snapshot-${new Date().getTime()}.png`;
+                a.click();
+              }
+            }}
+            title="Download viewport as PNG"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors flex items-center gap-1.5">
+            <Camera className="w-4 h-4" />
+            <span className="text-xs font-semibold hidden sm:inline">Snapshot</span>
+          </button>
           <span className="text-xs text-slate-400 hidden sm:block">Tools:</span>
           <button
             onClick={() => {
@@ -315,6 +329,8 @@ export default function MolViewer({ simType, inputs }) {
             <Wrench className="w-4 h-4" />
           </button>
           <span className="text-xs text-slate-400 hidden sm:block">View:</span>
+        </div>
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setCompareMode(false)}
             title="Single view"
