@@ -31,15 +31,26 @@ export default function Workspace() {
   const [folders, setFolders] = useState([]);
 
   const { data: sessions = [], isLoading } = useQuery({
-    queryKey: ['workspace-sessions'],
-    queryFn: () => base44.entities.WorkspaceSession.list('-created_date'),
+    queryKey: ['workspace-sessions', user?.role],
+    queryFn: () => {
+      // Admins see all sessions; regular users see only their own
+      if (user?.role === 'admin') {
+        return base44.entities.WorkspaceSession.list('-created_date');
+      }
+      return base44.entities.WorkspaceSession.filter({ created_by: user?.email }, '-created_date');
+    },
     enabled: !!user,
-    onSuccess: () => {},
   });
 
   const { data: foldersData = [] } = useQuery({
-    queryKey: ['workspace-folders'],
-    queryFn: () => base44.entities.WorkspaceFolder.list('name'),
+    queryKey: ['workspace-folders', user?.role],
+    queryFn: () => {
+      // Admins see all folders; regular users see only their own
+      if (user?.role === 'admin') {
+        return base44.entities.WorkspaceFolder.list('name');
+      }
+      return base44.entities.WorkspaceFolder.filter({ created_by: user?.email }, 'name');
+    },
     enabled: !!user,
     onSuccess: (data) => setFolders(data),
   });
