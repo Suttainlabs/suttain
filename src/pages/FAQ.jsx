@@ -314,7 +314,7 @@ export default function FAQPage() {
 
       {/* Reviews Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="mb-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
           <div className="flex items-center gap-3 mb-5">
             <Star className="w-7 h-7 text-yellow-500" />
             <h2 className="text-2xl font-bold text-slate-900">Community Reviews</h2>
