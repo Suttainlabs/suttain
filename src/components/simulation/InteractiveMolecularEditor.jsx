@@ -171,7 +171,11 @@ export default function InteractiveMolecularEditor({ viewer, loaded }) {
                 <button
                   key={lig.name}
                   onClick={() => addLigand(lig.smiles)}
-                  className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs rounded-lg border border-slate-600 transition-colors"
+                  className={`px-3 py-2 text-white text-xs rounded-lg border transition-all font-medium ${
+                    selectedLigand === lig.smiles
+                      ? 'bg-cyan-600 border-cyan-400 text-cyan-100 shadow-lg shadow-cyan-500/50'
+                      : 'bg-slate-700 hover:bg-slate-600 border-slate-600 hover:border-slate-500'
+                  }`}
                 >
                   <Plus className="w-3 h-3 inline mr-1" /> {lig.name}
                 </button>
@@ -202,7 +206,7 @@ export default function InteractiveMolecularEditor({ viewer, loaded }) {
                   <button
                     key={fg.name}
                     onClick={() => addFunctionalGroup(fg.smiles)}
-                    className={`px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs rounded-lg border border-slate-600 transition-colors`}
+                    className="px-3 py-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-500 text-white text-xs rounded-lg border border-slate-600 hover:border-slate-500 transition-all font-medium cursor-pointer"
                   >
                     <Plus className="w-3 h-3 inline mr-1" />
                     <span className={fg.color}>{fg.icon}</span> {fg.name}
