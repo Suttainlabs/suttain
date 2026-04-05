@@ -187,6 +187,14 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
         </div>
       )}
 
+      {/* Presets */}
+      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 border-b border-slate-700">
+        <span className="text-xs text-slate-400 font-semibold">Presets:</span>
+        {[{ name: 'H₂O', smiles: 'O' }, { name: 'Ethanol', smiles: 'CCO' }, { name: 'Benzene', smiles: 'c1ccccc1' }].map(p => (
+          <button key={p.name} onClick={() => { setQuery(p.smiles); }} className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded border border-slate-600">{p.name}</button>
+        ))}
+      </div>
+
       {/* Search bar */}
       <div className="flex items-center gap-2 px-3 py-2 bg-slate-800 border-b border-slate-700">
         <input
