@@ -17,7 +17,7 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
   const [showSeparateMode, setShowSeparateMode] = useState(false);
   const [residueChains, setResidueChains] = useState([]);
 
-  const addMolecule = (molecule) => {
+  const addMolecule = async (molecule) => {
     const itemId = `${molecule.label}-${Date.now()}`;
     const newItem = {
       id: itemId,
@@ -35,12 +35,20 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
       onAddMolecule(newItem);
     }
 
-    // Visual feedback if viewer exists
-    if (viewer) {
+    // Load molecule into viewer
+    if (viewer && molecule.smiles) {
       try {
-        viewer.render();
+        const smilesUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(molecule.smiles)}/SDF`;
+        const res = await fetch(smilesUrl);
+        if (res.ok) {
+          const molData = await res.text();
+          viewer.addModel(molData, 'sdf');
+          viewer.setStyle({}, { stick: { colorscheme: 'element' } });
+          viewer.zoomTo();
+          viewer.render();
+        }
       } catch (e) {
-        console.warn('Could not render viewer:', e);
+        console.warn('Could not load molecule into viewer:', e);
       }
     }
   };
