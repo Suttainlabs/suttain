@@ -18,8 +18,6 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
   const [residueChains, setResidueChains] = useState([]);
 
   const addMolecule = (molecule) => {
-    if (!viewer) return;
-
     const itemId = `${molecule.label}-${Date.now()}`;
     const newItem = {
       id: itemId,
@@ -37,8 +35,14 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
       onAddMolecule(newItem);
     }
 
-    // Visual feedback
-    viewer.render();
+    // Visual feedback if viewer exists
+    if (viewer) {
+      try {
+        viewer.render();
+      } catch (e) {
+        console.warn('Could not render viewer:', e);
+      }
+    }
   };
 
   const removeMolecule = (itemId) => {
@@ -127,15 +131,19 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
                 {PRESET_MOLECULES.map(mol => (
                   <button
                     key={mol.label}
-                    onClick={() => addMolecule(mol)}
-                    className="px-2.5 py-2 rounded-lg border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all text-xs font-medium text-slate-700 hover:text-blue-700 text-left"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addMolecule(mol);
+                    }}
+                    className="px-2.5 py-2 rounded-lg border-2 border-slate-200 bg-white hover:border-blue-500 hover:bg-blue-50 active:bg-blue-100 transition-all text-xs font-medium text-slate-700 hover:text-blue-700 cursor-pointer"
                   >
                     <div className="flex items-center gap-1.5">
                       <div
                         className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                         style={{ backgroundColor: mol.color }}
                       />
-                      <span>{mol.name}</span>
+                      <span className="truncate">{mol.name}</span>
                     </div>
                   </button>
                 ))}
@@ -143,11 +151,11 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
             </div>
 
             {/* Added Items */}
-            {addedItems.length > 0 && (
+            {addedItems && addedItems.length > 0 ? (
               <div>
                 <p className="text-xs font-semibold text-slate-600 mb-2.5 block">Active ({addedItems.length}):</p>
                 <div className="space-y-1.5">
-                  {addedItems.map(item => (
+                  {addedItems.map((item) => (
                     <div
                       key={item.id}
                       onClick={() => setSelectedItem(item.id)}
@@ -199,9 +207,7 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
                   ))}
                 </div>
               </div>
-            )}
-
-            {addedItems.length === 0 && (
+            ) : (
               <div className="text-center py-6 text-slate-500">
                 <Plus className="w-8 h-8 mx-auto mb-2 opacity-30" />
                 <p className="text-xs font-medium">Click molecules above to add to scene</p>
