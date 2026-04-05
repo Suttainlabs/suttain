@@ -20,11 +20,11 @@ const BADGES = [
 ];
 
 const MILESTONES = [
-    { threshold: 1,   label: 'First Step',        icon: '🌱' },
-    { threshold: 10,  label: 'Eco Aware',          icon: '🌿' },
-    { threshold: 25,  label: 'Green Advocate',     icon: '♻️' },
-    { threshold: 50,  label: 'Planet Protector',   icon: '🌍' },
-    { threshold: 100, label: 'Sustainability Hero', icon: '🏆' },
+    { threshold: 1,   label: 'First Step',        icon: Leaf },
+    { threshold: 10,  label: 'Eco Aware',          icon: Leaf },
+    { threshold: 25,  label: 'Green Advocate',     icon: Recycle },
+    { threshold: 50,  label: 'Planet Protector',   icon: Globe },
+    { threshold: 100, label: 'Sustainability Hero', icon: Award },
 ];
 
 function BadgeCard({ badge, earned }) {
@@ -147,7 +147,7 @@ export default function ImpactDashboard({ user }) {
 
                 {/* Header */}
                 <div className="text-center">
-                    <h1 className="text-3xl font-bold text-slate-800">🌿 Your Sustainability Impact</h1>
+                    <h1 className="text-3xl font-bold text-slate-800">Your Sustainability Impact</h1>
                     <p className="text-slate-500 mt-1">Track your eco-friendly shopping journey and milestones</p>
                 </div>
 
@@ -164,12 +164,12 @@ export default function ImpactDashboard({ user }) {
                     <div className="flex items-center justify-between mb-4">
                         <div>
                             <h2 className="font-bold text-slate-800 text-lg">
-                                {currentMilestone ? `${currentMilestone.icon} ${currentMilestone.label}` : '🌱 Getting Started'}
+                                {currentMilestone ? currentMilestone.label : 'Getting Started'}
                             </h2>
                             <p className="text-sm text-slate-500">
                                 {nextMilestone
                                     ? `${totalActions} / ${nextMilestone.threshold} actions to reach "${nextMilestone.label}"`
-                                    : 'You have reached the highest milestone! 🏆'}
+                                    : 'You have reached the highest milestone!'}
                             </p>
                         </div>
                         <span className="text-2xl font-bold text-teal-600">{totalActions}</span>
@@ -183,11 +183,14 @@ export default function ImpactDashboard({ user }) {
                         />
                     </div>
                     <div className="flex justify-between mt-2 text-xs text-slate-400">
-                        {MILESTONES.map((m) => (
-                            <span key={m.threshold} className={totalActions >= m.threshold ? 'text-teal-600 font-bold' : ''}>
-                                {m.icon} {m.threshold}
-                            </span>
-                        ))}
+                        {MILESTONES.map((m) => {
+                            const MIcon = m.icon;
+                            return (
+                                <span key={m.threshold} className={`flex items-center gap-0.5 ${totalActions >= m.threshold ? 'text-teal-600 font-bold' : ''}`}>
+                                    <MIcon className="w-3 h-3" /> {m.threshold}
+                                </span>
+                            );
+                        })}
                     </div>
                 </div>
 
