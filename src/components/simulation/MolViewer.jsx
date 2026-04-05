@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench } from "lucide-react";
+import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench, Plus } from "lucide-react";
+import VisualizationController from './VisualizationController';
 import { Button } from "@/components/ui/button";
 import InteractiveMolecularEditor from "./InteractiveMolecularEditor";
 
@@ -273,6 +274,7 @@ export default function MolViewer({ simType, inputs }) {
   const [compareMode, setCompareMode] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [moleculeLoaded, setMoleculeLoaded] = useState(false);
+  const [showController, setShowController] = useState(false);
   const viewerRef = useRef(null);
 
   const getMoleculeIdentifier = () => {
@@ -295,7 +297,19 @@ export default function MolViewer({ simType, inputs }) {
         <div className="ml-auto flex items-center gap-3">
           <span className="text-xs text-slate-400 hidden sm:block">Tools:</span>
           <button
-            onClick={() => setShowEditor(!showEditor)}
+            onClick={() => {
+              setShowController(!showController);
+              if (showEditor) setShowEditor(false);
+            }}
+            title="Add/remove items"
+            className={`p-1.5 rounded-lg transition-colors ${showController ? "bg-emerald-600 text-white" : "text-slate-400 hover:text-white hover:bg-slate-700"}`}>
+            <Plus className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => {
+              setShowEditor(!showEditor);
+              if (showController) setShowController(false);
+            }}
             title="Structure editor"
             className={`p-1.5 rounded-lg transition-colors ${showEditor ? "bg-cyan-600 text-white" : "text-slate-400 hover:text-white hover:bg-slate-700"}`}>
             <Wrench className="w-4 h-4" />
@@ -315,6 +329,20 @@ export default function MolViewer({ simType, inputs }) {
           </button>
         </div>
       </div>
+
+      {/* Visualization Controller */}
+      {showController && (
+        <div style={{ height: '300px' }} className="overflow-y-auto border-t border-slate-700">
+          <div className="p-4">
+            <VisualizationController
+              viewer={viewerRef.current}
+              onAddMolecule={(mol) => console.log('Added:', mol)}
+              onRemoveItem={(id) => console.log('Removed:', id)}
+              onSeparateResidue={(sep) => console.log('Separated:', sep)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Panels */}
       {showEditor ? (
