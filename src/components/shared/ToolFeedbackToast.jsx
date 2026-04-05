@@ -31,9 +31,10 @@ export default function ToolFeedbackToast({ isOpen, onClose, feature, featureLab
         helpful: stars >= 3,
         points_earned: 5,
       });
-      // Award 5 bonus points for leaving feedback
+      // Award 5 bonus points for leaving feedback (ADD to existing points)
       if (user) {
-        await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 5 });
+        const newTotal = (user.reward_points || 0) + pointsToAward + 5;
+        await base44.auth.updateMe({ reward_points: newTotal });
       }
       setSubmitted(true);
       setReviewed(true);
