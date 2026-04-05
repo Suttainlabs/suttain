@@ -210,7 +210,7 @@ export default function FAQPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="sticky top-24"
+              className="sticky top-24 z-0"
             >
               <div className="flex items-center gap-3 mb-6">
                 <MessageSquare className="w-8 h-8 text-[var(--suttain-teal)]" />
@@ -313,7 +313,7 @@ export default function FAQPage() {
       </div>
 
       {/* Reviews Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
           <div className="flex items-center gap-3 mb-5">
             <Star className="w-7 h-7 text-yellow-500" />
