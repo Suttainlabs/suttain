@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square } from "lucide-react";
+import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import InteractiveMolecularEditor from "./InteractiveMolecularEditor";
 
 const VIEWER_STYLES = [
   { label: "Stick", value: "stick" },
@@ -66,9 +67,10 @@ async function fetchMoleculeData(identifier) {
 }
 
 // ── Single panel viewer ──────────────────────────────────────────────────────
-function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia" }) {
+const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia" }, ref) {
   const containerRef = useRef(null);
-  const viewerRef = useRef(null);
+  const internalViewerRef = useRef(null);
+  const viewerRefFinal = ref || internalViewerRef;
   const [query, setQuery] = useState(initialIdentifier || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -88,6 +90,12 @@ function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia" }) {
     text: "text-fuchsia-400",
     label: "text-fuchsia-300",
   };
+
+  React.useEffect(() => {
+    if (ref && internalViewerRef.current) {
+      ref.current = internalViewerRef.current;
+    }
+  }, [ref]);
 
   const applyStyle = (viewer) => {
     viewer.setStyle({}, {});
@@ -110,10 +118,10 @@ function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia" }) {
 
     load3Dmol(async () => {
       try {
-        if (viewerRef.current) {
-          viewerRef.current.clear();
+        if (internalViewerRef.current) {
+          internalViewerRef.current.clear();
         } else {
-          viewerRef.current = window.$3Dmol.createViewer(containerRef.current, {
+          internalViewerRef.current = window.$3Dmol.createViewer(containerRef.current, {
             backgroundColor: "#0f172a",
             antialias: true,
           });
@@ -131,11 +139,11 @@ function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia" }) {
           return;
         }
 
-        viewerRef.current.addModel(molData.data, molData.format);
-        applyStyle(viewerRef.current);
-        viewerRef.current.zoomTo();
-        viewerRef.current.zoom(0.8);
-        viewerRef.current.render();
+        internalViewerRef.current.addModel(molData.data, molData.format);
+        applyStyle(internalViewerRef.current);
+        internalViewerRef.current.zoomTo();
+        internalViewerRef.current.zoom(0.8);
+        internalViewerRef.current.render();
         setSource(molData.source);
         setLoaded(true);
       } catch (e) {
@@ -147,22 +155,22 @@ function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia" }) {
   };
 
   useEffect(() => {
-    if (viewerRef.current && loaded) applyStyle(viewerRef.current);
+    if (internalViewerRef.current && loaded) applyStyle(internalViewerRef.current);
   }, [style, colorScheme, loaded]);
 
   useEffect(() => {
     if (initialIdentifier) loadMolecule();
-    return () => { viewerRef.current = null; };
+    return () => { internalViewerRef.current = null; };
   }, []);
 
   const handleReset = () => {
-    if (viewerRef.current) { viewerRef.current.zoomTo(); viewerRef.current.zoom(0.8); viewerRef.current.render(); }
+    if (internalViewerRef.current) { internalViewerRef.current.zoomTo(); internalViewerRef.current.zoom(0.8); internalViewerRef.current.render(); }
   };
 
   const handleScreenshot = () => {
-    if (viewerRef.current) {
+    if (internalViewerRef.current) {
       const a = document.createElement("a");
-      a.href = viewerRef.current.pngURI();
+      a.href = internalViewerRef.current.pngURI();
       a.download = `molecule_${label || "A"}.png`;
       a.click();
     }
@@ -248,11 +256,13 @@ function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia" }) {
       </div>
     </div>
   );
-}
+});
 
 // ── Main MolViewer ────────────────────────────────────────────────────────────
 export default function MolViewer({ simType, inputs }) {
   const [compareMode, setCompareMode] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
+  const viewerRef = useRef(null);
 
   const getMoleculeIdentifier = () => {
     if (!inputs) return null;
@@ -271,8 +281,15 @@ export default function MolViewer({ simType, inputs }) {
       <div className="flex items-center gap-3 px-4 py-3 bg-slate-800 border-b border-slate-700">
         <Eye className="w-4 h-4 text-fuchsia-400 flex-shrink-0" />
         <span className="text-sm font-semibold text-white">3D Molecular Viewer</span>
-        <div className="ml-auto flex items-center gap-2">
-          <span className="text-xs text-slate-400 hidden sm:block">Split compare:</span>
+        <div className="ml-auto flex items-center gap-3">
+          <span className="text-xs text-slate-400 hidden sm:block">Tools:</span>
+          <button
+            onClick={() => setShowEditor(!showEditor)}
+            title="Structure editor"
+            className={`p-1.5 rounded-lg transition-colors ${showEditor ? "bg-cyan-600 text-white" : "text-slate-400 hover:text-white hover:bg-slate-700"}`}>
+            <Wrench className="w-4 h-4" />
+          </button>
+          <span className="text-xs text-slate-400 hidden sm:block">View:</span>
           <button
             onClick={() => setCompareMode(false)}
             title="Single view"
@@ -289,10 +306,14 @@ export default function MolViewer({ simType, inputs }) {
       </div>
 
       {/* Panels */}
-      {compareMode ? (
+      {showEditor ? (
+        <div style={{ height: "480px" }} className="flex flex-col overflow-y-auto px-4 py-4">
+          <InteractiveMolecularEditor viewer={viewerRef.current} loaded={!!initialIdentifier} />
+        </div>
+      ) : compareMode ? (
         <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-slate-700" style={{ height: "520px" }}>
           <div className="flex-1 flex flex-col overflow-hidden">
-            <SinglePanel initialIdentifier={initialIdentifier} label="Molecule A" accentColor="fuchsia" />
+            <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} label="Molecule A" accentColor="fuchsia" />
           </div>
           <div className="flex-1 flex flex-col overflow-hidden">
             <SinglePanel initialIdentifier={null} label="Molecule B" accentColor="cyan" />
@@ -300,7 +321,7 @@ export default function MolViewer({ simType, inputs }) {
         </div>
       ) : (
         <div style={{ height: "480px" }} className="flex flex-col">
-          <SinglePanel initialIdentifier={initialIdentifier} accentColor="fuchsia" />
+          <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} accentColor="fuchsia" />
         </div>
       )}
 
