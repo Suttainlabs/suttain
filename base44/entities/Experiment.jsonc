@@ -1,0 +1,95 @@
+{
+  "name": "Experiment",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the experiment"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of what this experiment studies"
+    },
+    "molecules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Molecules in the system"
+    },
+    "conditions": {
+      "type": "object",
+      "properties": {
+        "temperature": {
+          "type": "string"
+        },
+        "pressure": {
+          "type": "string"
+        },
+        "solvent": {
+          "type": "string"
+        },
+        "ph": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string"
+        }
+      }
+    },
+    "simulation_type": {
+      "type": "string",
+      "enum": [
+        "interaction",
+        "stability",
+        "reactivity",
+        "thermodynamics",
+        "spectroscopy"
+      ],
+      "description": "Type of simulation run"
+    },
+    "results": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Simulation output"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "running",
+        "completed"
+      ],
+      "default": "draft"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "molecules"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
