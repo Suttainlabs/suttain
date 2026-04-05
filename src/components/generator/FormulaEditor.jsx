@@ -12,7 +12,7 @@ import {
   Droplets, Clock, BrainCircuit, History, Save, Loader2, MessageSquare, Star, X,
   Menu, Printer, Search,
   Calculator,
-  Leaf, Sparkles // Added icons
+  Leaf, Sparkles, DollarSign // Added icons
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -56,6 +56,8 @@ import IngredientInteractionAnalyzer from "./IngredientInteractionAnalyzer";
 import IngredientSustainabilityScore from "./IngredientSustainabilityScore";
 import HazardAlternativesPanel from "./HazardAlternativesPanel";
 import RegulatoryScanner from "../compliance/RegulatoryScanner";
+import SupplierLinkModal from "../suppliers/SupplierLinkModal";
+import SupplierManager from "../suppliers/SupplierManager";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -174,6 +176,8 @@ export default function FormulaEditor({
   const [showRatingModal, setShowRatingModal] = useState(false); // Existing state for rating modal
   const [showIngredientBrowser, setShowIngredientBrowser] = useState(false); // Ingredient browser modal
   const [showRegulatoryCheck, setShowRegulatoryCheck] = useState(false); // Regulatory compliance check
+  const [showSupplierModal, setShowSupplierModal] = useState(false);
+  const [selectedIngredientForSupplier, setSelectedIngredientForSupplier] = useState(null);
 
   // NEW: Ingredient search states
   const [ingredientSearchTerm, setIngredientSearchTerm] = useState("");
@@ -704,6 +708,17 @@ export default function FormulaEditor({
                       <TooltipContent className="sm:hidden"><p>Compliance</p></TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="suppliers" className={`text-[10px] sm:text-xs py-1.5 sm:py-2 px-1 sm:px-2 flex flex-col sm:flex-row items-center gap-0.5 sm:gap-1 ${modeColors.tabsTriggerActive}`}>
+                          <DollarSign className="w-3 h-3" />
+                          <span className="hidden sm:inline">Suppliers</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent className="sm:hidden"><p>Suppliers</p></TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </TabsList>
               </CardHeader>
 
@@ -1144,7 +1159,37 @@ export default function FormulaEditor({
                      ingredients={formula.ingredients} 
                      onClose={() => setShowRegulatoryCheck(false)} 
                    />
-                 </TabsContent>
+                </TabsContent>
+                
+                <TabsContent value="suppliers" className="mt-0 space-y-6">
+                  <SupplierManager />
+                  
+                  <Card className="border-slate-200">
+                    <CardHeader>
+                      <CardTitle className="text-base">Ingredient Costs</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      {formula.ingredients.map((ing, idx) => (
+                        <div key={idx} className="p-3 bg-slate-50 rounded-lg flex items-center justify-between border border-slate-200">
+                          <div>
+                            <p className="font-medium text-slate-900">{ing.chemical_name}</p>
+                            <p className="text-xs text-slate-600">{ing.percentage}% | {ingredientAmounts[idx]?.value || '-'} {ingredientAmounts[idx]?.unit || ''}</p>
+                          </div>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedIngredientForSupplier(ing.chemical_name);
+                              setShowSupplierModal(true);
+                            }}
+                          >
+                            Link Suppliers
+                          </Button>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
               </CardContent>
             </Tabs>
           </Card>
@@ -1258,6 +1303,15 @@ export default function FormulaEditor({
           setShowIngredientBrowser(false);
         }}
       />
+
+      {/* Supplier Link Modal */}
+      {selectedIngredientForSupplier && (
+        <SupplierLinkModal
+          isOpen={showSupplierModal}
+          onClose={() => setShowSupplierModal(false)}
+          ingredientName={selectedIngredientForSupplier}
+        />
+      )}
     </div>
   );
 }

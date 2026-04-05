@@ -11,9 +11,11 @@ import ChemicalInput from "../components/simulator/ChemicalInput";
 import SimulationResults from "../components/simulator/SimulationResults";
 import SaferAlternatives from "../components/simulator/SaferAlternatives";
 import PersonaSelector from "../components/simulator/PersonaSelector";
+import SupplierManager from "../components/suppliers/SupplierManager";
+import SupplierLinkModal from "../components/suppliers/SupplierLinkModal";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { MessageSquare, Star, X } from "lucide-react";
+import { MessageSquare, Star, X, DollarSign } from "lucide-react";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
 import SEOHead, { pageSEO } from "../components/shared/SEOHead";
 
@@ -513,6 +515,8 @@ export default function Simulator() {
   const [error, setError] = useState(null);
   const [showFeedbackNotification, setShowFeedbackNotification] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showSupplierModal, setShowSupplierModal] = useState(false);
+  const [selectedIngredientForSupplier, setSelectedIngredientForSupplier] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -1063,21 +1067,49 @@ export default function Simulator() {
                 )}
 
                 {step === 2 && simulationData && (
-                  <motion.div
-                    key="results"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <SimulationResults
-                      data={simulationData}
-                      onViewAlternatives={() => setStep(3)}
-                      onStartNew={startNewSimulation}
-                      persona={persona}
-                    />
-                  </motion.div>
-                )}
+                   <motion.div
+                     key="results"
+                     initial={{ opacity: 0, x: 20 }}
+                     animate={{ opacity: 1, x: 0 }}
+                     exit={{ opacity: 0, x: -20 }}
+                     transition={{ duration: 0.3 }}
+                     className="space-y-6"
+                   >
+                     <SimulationResults
+                       data={simulationData}
+                       onViewAlternatives={() => setStep(3)}
+                       onStartNew={startNewSimulation}
+                       persona={persona}
+                     />
+                     <Card className="border-slate-200">
+                       <CardContent className="p-6">
+                         <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                           <DollarSign className="w-5 h-5 text-blue-600" />
+                           Ingredient Cost Tracking
+                         </h3>
+                         <div className="space-y-2">
+                           {chemicals.map((chem, idx) => (
+                             <div key={idx} className="p-3 bg-slate-50 rounded-lg flex items-center justify-between border border-slate-200">
+                               <p className="font-medium text-slate-900 text-sm">{chem.name || chem.scientific_name}</p>
+                               <Button 
+                                 size="sm" 
+                                 variant="outline"
+                                 onClick={() => {
+                                   setSelectedIngredientForSupplier(chem.name || chem.scientific_name);
+                                   setShowSupplierModal(true);
+                                 }}
+                                 className="text-xs"
+                               >
+                                 Link Suppliers
+                               </Button>
+                             </div>
+                           ))}
+                         </div>
+                       </CardContent>
+                     </Card>
+                     <SupplierManager />
+                   </motion.div>
+                 )}
 
                 {step === 3 && simulationData && (
                   <motion.div
@@ -1162,6 +1194,15 @@ export default function Simulator() {
             />
           )}
         </Suspense>
+
+        {/* Supplier Link Modal */}
+        {selectedIngredientForSupplier && (
+          <SupplierLinkModal
+            isOpen={showSupplierModal}
+            onClose={() => setShowSupplierModal(false)}
+            ingredientName={selectedIngredientForSupplier}
+          />
+        )}
       </div>
       )}
     </AuthGate>

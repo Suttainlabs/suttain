@@ -1,0 +1,67 @@
+{
+  "name": "Supplier",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Supplier company name"
+    },
+    "contact_email": {
+      "type": "string",
+      "format": "email"
+    },
+    "contact_phone": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string",
+      "format": "uri"
+    },
+    "region": {
+      "type": "string",
+      "enum": [
+        "North America",
+        "Europe",
+        "Asia",
+        "Australia",
+        "Global"
+      ]
+    },
+    "reliability_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "User rating of supplier reliability"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "min_order_quantity": {
+      "type": "string",
+      "description": "Minimum order requirement"
+    },
+    "lead_time_days": {
+      "type": "number",
+      "description": "Average delivery time in days"
+    },
+    "certifications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "ISO, organic, fair trade, etc."
+    }
+  },
+  "required": [
+    "name",
+    "contact_email"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

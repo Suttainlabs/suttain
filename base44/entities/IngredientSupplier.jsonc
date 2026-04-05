@@ -1,0 +1,97 @@
+{
+  "name": "IngredientSupplier",
+  "type": "object",
+  "properties": {
+    "ingredient_name": {
+      "type": "string",
+      "description": "Chemical or ingredient name"
+    },
+    "supplier_id": {
+      "type": "string",
+      "description": "Reference to Supplier entity"
+    },
+    "supplier_sku": {
+      "type": "string",
+      "description": "Supplier's product code"
+    },
+    "price_per_unit": {
+      "type": "number",
+      "description": "Cost per kg/L"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "USD",
+        "EUR",
+        "GBP",
+        "CAD",
+        "AUD"
+      ],
+      "default": "USD"
+    },
+    "unit_of_measure": {
+      "type": "string",
+      "enum": [
+        "kg",
+        "g",
+        "L",
+        "ml",
+        "unit"
+      ]
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sustainability_rating": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Eco-friendliness score from supplier data"
+    },
+    "sourcing_method": {
+      "type": "string",
+      "enum": [
+        "synthetic",
+        "natural",
+        "organic",
+        "wild-harvested",
+        "lab-grown",
+        "unknown"
+      ]
+    },
+    "carbon_footprint_kg": {
+      "type": "number",
+      "description": "CO2 emissions per kg of ingredient"
+    },
+    "is_preferred": {
+      "type": "boolean",
+      "default": false,
+      "description": "User's preferred supplier for this ingredient"
+    },
+    "availability": {
+      "type": "string",
+      "enum": [
+        "in_stock",
+        "limited",
+        "backorder",
+        "discontinued"
+      ],
+      "default": "in_stock"
+    }
+  },
+  "required": [
+    "ingredient_name",
+    "supplier_id",
+    "price_per_unit",
+    "unit_of_measure"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
