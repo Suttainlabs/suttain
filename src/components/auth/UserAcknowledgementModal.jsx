@@ -111,7 +111,7 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
         {step === 1 && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-2xl">Welcome to Suttain! 🎉</DialogTitle>
+              <DialogTitle className="text-2xl">Welcome to Suttain!</DialogTitle>
               <DialogDescription>What are you hoping to do here? Select all that apply.</DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-2 gap-3 py-4">
