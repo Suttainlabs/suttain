@@ -244,7 +244,7 @@ function SelectField({ label, options, value, onChange }) {
 }
 
 export default function ComputationalSimulation() {
-  const { user } = useContext(AuthContext);
+  const { user, refreshUser } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
   const [selectedType, setSelectedType] = useState(null);
   const [selectedEngine, setSelectedEngine] = useState(null);
@@ -334,7 +334,15 @@ Provide a focused, technical analysis. Return JSON with:
       setActiveTab("analysis");
       // Award 50 points for running a computational simulation
       if (user) {
-        await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
+        try {
+          await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
+          // Refresh user context to reflect updated points
+          if (refreshUser) {
+            await refreshUser();
+          }
+        } catch (pointError) {
+          console.error("Failed to update points:", pointError);
+        }
       }
       setShowFeedback(true);
       setTimeout(() => setShowFeedback(false), 15000);
