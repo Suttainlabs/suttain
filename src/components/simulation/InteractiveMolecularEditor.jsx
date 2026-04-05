@@ -4,6 +4,8 @@ import {
   Plus, Trash2, RotateCcw, Save, Play, Pause, 
   Zap, Sliders, TrendingUp, AlertCircle, Check 
 } from "lucide-react";
+import OptimizationPlotOverlay from "./OptimizationPlotOverlay";
+import GeometrySnapshotManager from "./GeometrySnapshotManager";
 
 const FUNCTIONAL_GROUPS = [
   { name: "Hydroxyl", smiles: "O", color: "text-red-400", icon: "OH" },
@@ -36,6 +38,8 @@ export default function InteractiveMolecularEditor({ viewer, loaded }) {
   const [selectedLigand, setSelectedLigand] = useState(null);
   const [showFunctionalGroups, setShowFunctionalGroups] = useState(false);
   const [atomInfo, setAtomInfo] = useState(null);
+  const [showPlotOverlay, setShowPlotOverlay] = useState(false);
+  const [selectedOptStep, setSelectedOptStep] = useState(null);
 
   // Simulate geometry optimization progress
   const runOptimization = async () => {
@@ -118,7 +122,26 @@ export default function InteractiveMolecularEditor({ viewer, loaded }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 relative">
+      {/* Plot Overlay */}
+      {optimizationSteps.length > 0 && showPlotOverlay && (
+        <OptimizationPlotOverlay
+          steps={optimizationSteps}
+          selectedStep={selectedOptStep}
+          onStepSelect={setSelectedOptStep}
+          onClose={() => setShowPlotOverlay(false)}
+        />
+      )}
+
+      {/* Geometry Snapshot Manager */}
+      {optimizationSteps.length > 0 && (
+        <GeometrySnapshotManager
+          steps={optimizationSteps}
+          selectedStep={selectedOptStep}
+          viewer={viewer}
+          onSnapshotTaken={() => {}}
+        />
+      )}
       {/* Edit Mode Toggle */}
       <div className="flex items-center gap-2 bg-slate-800 rounded-lg p-3 border border-slate-700">
         <button
@@ -228,26 +251,38 @@ export default function InteractiveMolecularEditor({ viewer, loaded }) {
             <TrendingUp className="w-4 h-4 text-amber-400" />
             <h4 className="text-sm font-semibold text-white">Geometry Optimization</h4>
           </div>
-          <Button
-            onClick={runOptimization}
-            disabled={optimizationRunning}
-            size="sm"
-            className={`h-7 px-3 gap-1.5 ${
-              optimizationRunning
-                ? "bg-amber-700 text-white"
-                : "bg-amber-600 hover:bg-amber-700 text-white"
-            }`}
-          >
-            {optimizationRunning ? (
-              <>
-                <Pause className="w-3 h-3" /> Running
-              </>
-            ) : (
-              <>
-                <Play className="w-3 h-3" /> Optimize
-              </>
+          <div className="flex gap-2">
+            <Button
+              onClick={runOptimization}
+              disabled={optimizationRunning}
+              size="sm"
+              className={`h-7 px-3 gap-1.5 ${
+                optimizationRunning
+                  ? "bg-amber-700 text-white"
+                  : "bg-amber-600 hover:bg-amber-700 text-white"
+              }`}
+            >
+              {optimizationRunning ? (
+                <>
+                  <Pause className="w-3 h-3" /> Running
+                </>
+              ) : (
+                <>
+                  <Play className="w-3 h-3" /> Optimize
+                </>
+              )}
+            </Button>
+            {optimizationSteps.length > 0 && (
+              <Button
+                onClick={() => setShowPlotOverlay(!showPlotOverlay)}
+                size="sm"
+                variant={showPlotOverlay ? "default" : "outline"}
+                className="h-7 px-3 gap-1.5 text-xs"
+              >
+                📊 Path
+              </Button>
             )}
-          </Button>
+          </div>
         </div>
 
         {/* Progress Bar */}
@@ -285,9 +320,12 @@ export default function InteractiveMolecularEditor({ viewer, loaded }) {
             )}
 
             {optimizationProgress === 100 && (
-              <div className="flex items-center gap-2 p-2 bg-emerald-900/30 border border-emerald-500/30 rounded-lg">
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span className="text-xs text-emerald-300 font-semibold">Geometry optimized ✓</span>
+              <div className="flex items-center justify-between gap-2 p-2 bg-emerald-900/30 border border-emerald-500/30 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-400" />
+                  <span className="text-xs text-emerald-300 font-semibold">Geometry optimized ✓</span>
+                </div>
+                <span className="text-xs text-emerald-400 font-mono font-semibold">Click path to explore</span>
               </div>
             )}
           </>
