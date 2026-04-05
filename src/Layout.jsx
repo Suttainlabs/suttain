@@ -213,6 +213,7 @@ export default function Layout({ children, currentPageName }) {
 
     { type: 'separator' },
     { type: 'header', label: 'Advanced Tools', icon: Cpu },
+    { href: "SimulationEngine", label: "Formula Simulation Engine", icon: Cpu, description: "Adjust ingredient % live and see cost & sustainability shift", type: 'product', tier: 'pro' },
     { href: "ComputationalSimulation", label: "Computational Simulations", icon: Cpu, description: "DFT, MD, drug discovery, protein modeling & QM scripts", type: 'product', tier: 'pro' },
 
     { href: "ComparativeImpactReport", label: "Comparative Impact Report", icon: BarChart2, description: "Benchmark your formula's eco-score vs. industry averages", type: 'product', tier: 'free' },
