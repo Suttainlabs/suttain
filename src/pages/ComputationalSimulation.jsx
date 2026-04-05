@@ -157,19 +157,75 @@ const SIM_TYPES = [
       { key: "output_format", label: "Output Format", type: "select", options: ["PNG image", "High-res TIFF", "Movie (MP4)", "Interactive session", "Script only", "PDF report"], default: "PNG image" },
     ]
   },
+  {
+    id: "surface_chemistry",
+    label: "Surface Chemistry & Catalysis",
+    icon: Beaker,
+    color: "from-red-500 to-orange-600",
+    engines: ["VASP", "CP2K", "ORCA", "Quantum ESPRESSO", "FHI-aims"],
+    description: "Surface reactions, catalyst design, heterogeneous catalysis, adsorption dynamics, reaction mechanisms",
+    fields: [
+      { key: "surface", label: "Surface / Catalyst Material", placeholder: "e.g. Pt(111), TiO2 rutile (110), Au nanoparticle, graphene" },
+      { key: "reactants", label: "Reactants / Adsorbates", placeholder: "e.g. CO + O2, NH3, N2, CO2" },
+      { key: "analysis_type", label: "Analysis Type", type: "select", options: ["Adsorption energy", "Activation barrier", "Reaction pathway (NEB)", "Reaction intermediate", "Transition state", "Surface structure optimization", "Thermodynamic stability", "Electron transfer"], default: "Adsorption energy" },
+      { key: "functional", label: "DFT Functional", type: "select", options: ["PBE", "PBE+U", "BEEF-vdW", "RPBE", "vdW-DF2", "HSE06", "SCAN"], default: "PBE" },
+    ]
+  },
+  {
+    id: "biomolecular_dynamics",
+    label: "Advanced Biomolecular Dynamics",
+    icon: Dna,
+    color: "from-cyan-500 to-blue-600",
+    engines: ["AMBER", "GROMACS", "NAMD", "OpenMM", "DESMOND"],
+    description: "Enhanced sampling (US, REUS), all-atom & coarse-grain, protein-protein/RNA/lipid interactions, free energy calculations",
+    fields: [
+      { key: "system", label: "Biomolecular System", placeholder: "e.g. SARS-CoV-2 spike protein in membrane, RNA hairpin folding" },
+      { key: "method", label: "Advanced Sampling Method", type: "select", options: ["Umbrella Sampling (US)", "Replica Exchange MD (REMD)", "Metadynamics", "Steered MD (SMD)", "Accelerated MD (aMD)", "REST2"], default: "Umbrella Sampling (US)" },
+      { key: "property", label: "Property to Calculate", type: "select", options: ["Binding free energy (PMF)", "Protein-protein interface", "RNA secondary structure", "Lipid diffusion", "Ion permeation", "Protein folding pathway", "Allosteric pathway"], default: "Binding free energy (PMF)" },
+      { key: "force_field", label: "Force Field", type: "select", options: ["AMBER14SB", "AMBER99SB-ILDN", "CHARMM36m", "OPLS-AA/M", "ff14SB", "Slipids"], default: "AMBER14SB" },
+    ]
+  },
+  {
+    id: "electron_spectroscopy",
+    label: "Electron Spectroscopy & Photochemistry",
+    icon: Zap,
+    color: "from-indigo-500 to-purple-600",
+    engines: ["ORCA", "Gaussian", "Q-Chem", "Molpro", "ADF"],
+    description: "X-ray/UV photoelectron spectroscopy, X-ray absorption, TDDFT excited states, nonlinear optics, spin-orbit coupling",
+    fields: [
+      { key: "system", label: "Molecular System / Complex", placeholder: "e.g. transition metal complex, organic dye, lanthanide complex" },
+      { key: "spectroscopy_type", label: "Spectroscopy Type", type: "select", options: ["XPS (X-ray photoelectron)", "UPS (Ultraviolet photoelectron)", "XANES (X-ray absorption)", "NEXAFS", "ECD (Electronic circular dichroism)", "ORD (Optical rotatory dispersion)"], default: "XPS (X-ray photoelectron)" },
+      { key: "theory_level", label: "Theory Level", type: "select", options: ["TDDFT/PBE", "TDDFT/CAM-B3LYP", "EOM-CCSD", "ADC(2/3)", "Bethe-Salpeter", "GW-BSE"], default: "TDDFT/CAM-B3LYP" },
+      { key: "spin_orbit", label: "Include Spin-Orbit Coupling?", type: "select", options: ["No", "Yes (2c-DKH)", "Yes (4c-DKH)"], default: "No" },
+    ]
+  },
+  {
+    id: "machine_learning_pot",
+    label: "Machine Learning Potentials & Neural Networks",
+    icon: Cpu,
+    color: "from-emerald-500 to-teal-600",
+    engines: ["SchNet", "DimeNet", "MACE", "CHARMNET", "PaiNN"],
+    description: "Fast MD with NN potentials, scalable simulations, transferable ML models, large-scale dynamics (millions of atoms)",
+    fields: [
+      { key: "system", label: "System Description", placeholder: "e.g. Large protein complex, nanoparticle, extended defect in crystal" },
+      { key: "model_type", label: "ML Potential Model", type: "select", options: ["SchNet", "DimeNet", "MACE", "Graph Neural Network", "EquivariantNet", "Transformer-based", "Pre-trained Universal Model"], default: "SchNet" },
+      { key: "task", label: "Task", type: "select", options: ["Molecular dynamics (10 ns to µs scale)", "Structure optimization", "Properties prediction (E, F, Stress)", "Dataset generation for fine-tuning", "Transfer learning to new systems"], default: "Molecular dynamics (10 ns to µs scale)" },
+      { key: "scale", label: "System Size", type: "select", options: ["100s - 1000s atoms", "1000s - 100k atoms", "100k - 1M atoms", "Custom (specify)"], default: "1000s - 100k atoms" },
+    ]
+  },
 ];
 
 const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
 
 const DOMAIN_SIM_MAP = {
-  "Chemistry":        ["dft", "quantum_mechanics", "monte_carlo", "visualization"],
-  "Biochemistry":     ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "visualization"],
-  "Drug Discovery":   ["drug_discovery", "molecular_dynamics", "protein_modeling", "visualization"],
-  "Engineering":      ["materials", "monte_carlo", "dft", "visualization"],
-  "Biology":          ["protein_modeling", "molecular_dynamics", "visualization"],
-  "Environmental":    ["environmental", "monte_carlo", "dft", "visualization"],
-  "Materials Science":["materials", "dft", "monte_carlo", "visualization"],
-  "Biophysics":       ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "visualization"],
+  "Chemistry":        ["dft", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization"],
+  "Biochemistry":     ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
+  "Drug Discovery":   ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
+  "Engineering":      ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization"],
+  "Biology":          ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
+  "Environmental":    ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization"],
+  "Materials Science":["materials", "dft", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  "Biophysics":       ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
 };
 
 function SelectField({ label, options, value, onChange }) {
