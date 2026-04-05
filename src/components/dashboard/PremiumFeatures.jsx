@@ -17,28 +17,27 @@ import { motion } from 'framer-motion';
 const premiumFeatures = [
   {
     name: "AI Compliance Co-Pilot",
-    description: "Automate regulatory checks",
+    description: "Automated regulatory checks across 50+ regions",
     icon: ShieldCheck,
     href: "ComplianceCoPilot",
   },
   {
-    name: "Personalized Safety",
-    description: "Alerts based on your health profile",
+    name: "Personalized Safety Alerts",
+    description: "Custom alerts based on your health profile",
     icon: HeartPulse,
     href: "PersonalizedSafety",
   },
   {
     name: "Sustainability Scoring",
-    description: "Analyze your product's eco-impact",
+    description: "Detailed eco-impact analysis for your formulas",
     icon: Leaf,
-    href: "Sustainability",
+    href: "ComparativeImpactReport",
   },
   {
-    name: "Enterprise API Access",
-    description: "Integrate Suttain into your systems",
+    name: "Priority Support",
+    description: "24/7 support with < 4 hour response time",
     icon: AppWindow,
-    href: "EnterpriseAPI",
-    status: "soon",
+    href: "FAQ",
   },
 ];
 
