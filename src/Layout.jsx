@@ -485,24 +485,14 @@ export default function Layout({ children, currentPageName }) {
                           My Dashboard
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to={createPageUrl("MyAnalytics")} className="cursor-pointer">
-                          <BarChart2 className="w-4 h-4 mr-2" />
-                          My Analytics
-                        </Link>
-                      </DropdownMenuItem>
+
                       <DropdownMenuItem asChild>
                         <Link to={createPageUrl("Workspace")} className="cursor-pointer">
                           <FolderOpen className="w-4 h-4 mr-2" />
                           My Workspace
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to={createPageUrl("SustainabilityImpact")} className="cursor-pointer">
-                          <Leaf className="w-4 h-4 mr-2" />
-                          My Impact Dashboard
-                        </Link>
-                      </DropdownMenuItem>
+
                       {user.role === 'admin' && (
                         <DropdownMenuItem asChild>
                           <Link to={createPageUrl("AdminDashboard")} className="cursor-pointer">
