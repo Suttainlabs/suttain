@@ -8,8 +8,9 @@ import AuthContext from '../auth/AuthContext';
 import LiveScanner from './LiveScanner';
 import BarcodeAnalysis from './ProductAnalysis';
 import BarcodeHistory from './BarcodeHistory';
+import RegulatoryScanner from '../compliance/RegulatoryScanner';
 import { base44 } from '@/api/base44Client';
-import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, ShoppingCart, QrCode } from 'lucide-react';
+import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, ShoppingCart, QrCode, Globe } from 'lucide-react';
 import BulkScanDashboard from './BulkScanDashboard';
 import ToolFeedbackToast from '../shared/ToolFeedbackToast';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
@@ -47,6 +48,7 @@ export default function BarcodeScannerPage() {
     const [barcodeInput, setBarcode] = useState('');
     const [history, setHistory] = useState([]);
     const [showFeedback, setShowFeedback] = useState(false);
+    const [showRegulatoryCheck, setShowRegulatoryCheck] = useState(false);
     const fileInputRef = useRef(null);
 
     const { user, openAuthModal, refreshUser } = useContext(AuthContext);
@@ -266,6 +268,24 @@ export default function BarcodeScannerPage() {
                     {productInfo ? (
                         <motion.div key="analysis" variants={containerVariants} initial="initial" animate="animate" exit="exit">
                             <BarcodeAnalysis product={productInfo} onClear={clearSearch} user={user} />
+                            {showRegulatoryCheck && (
+                              <div className="mt-6">
+                                <RegulatoryScanner 
+                                  ingredients={productInfo.ingredients?.map(ing => ({ chemical_name: ing }))} 
+                                  onClose={() => setShowRegulatoryCheck(false)} 
+                                />
+                              </div>
+                            )}
+                            {!showRegulatoryCheck && productInfo.ingredients?.length > 0 && (
+                              <Button 
+                                onClick={() => setShowRegulatoryCheck(true)} 
+                                variant="outline" 
+                                className="w-full mt-4 gap-2"
+                              >
+                                <Globe className="w-4 h-4" />
+                                Check Regional Regulations
+                              </Button>
+                            )}
                         </motion.div>
                     ) : (
                         <motion.div key="scanner" variants={containerVariants} initial="initial" animate="animate" exit="exit">

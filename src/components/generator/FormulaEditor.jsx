@@ -55,6 +55,7 @@ import IngredientBrowser from "../ingredients/IngredientBrowser";
 import IngredientInteractionAnalyzer from "./IngredientInteractionAnalyzer";
 import IngredientSustainabilityScore from "./IngredientSustainabilityScore";
 import HazardAlternativesPanel from "./HazardAlternativesPanel";
+import RegulatoryScanner from "../compliance/RegulatoryScanner";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -172,6 +173,7 @@ export default function FormulaEditor({
   const [showFeedbackNotification, setShowFeedbackNotification] = useState(false); // New state for feedback notification
   const [showRatingModal, setShowRatingModal] = useState(false); // Existing state for rating modal
   const [showIngredientBrowser, setShowIngredientBrowser] = useState(false); // Ingredient browser modal
+  const [showRegulatoryCheck, setShowRegulatoryCheck] = useState(false); // Regulatory compliance check
 
   // NEW: Ingredient search states
   const [ingredientSearchTerm, setIngredientSearchTerm] = useState("");
@@ -1134,11 +1136,15 @@ export default function FormulaEditor({
                   </Suspense>
                 </TabsContent>
                 
-                <TabsContent value="compliance" className="mt-0">
-                  <Suspense fallback={<div className="flex items-center justify-center p-4"><Loader2 className="w-6 h-6 animate-spin mr-2"/>Loading compliance checks...</div>}>
-                    <ComplianceChecker formula={formula} />
-                  </Suspense>
-                </TabsContent>
+                <TabsContent value="compliance" className="mt-0 space-y-6">
+                   <Suspense fallback={<div className="flex items-center justify-center p-4"><Loader2 className="w-6 h-6 animate-spin mr-2"/>Loading compliance checks...</div>}>
+                     <ComplianceChecker formula={formula} />
+                   </Suspense>
+                   <RegulatoryScanner 
+                     ingredients={formula.ingredients} 
+                     onClose={() => setShowRegulatoryCheck(false)} 
+                   />
+                 </TabsContent>
               </CardContent>
             </Tabs>
           </Card>
