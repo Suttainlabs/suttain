@@ -21,6 +21,7 @@ const HPCJobManagement = lazy(() => import('./pages/HPCJobManagement'));
 const JobQueueMonitor = lazy(() => import('./pages/JobQueueMonitor'));
 const StructureComparison = lazy(() => import('./pages/StructureComparison'));
 const SimulationDashboard = lazy(() => import('./pages/SimulationDashboard'));
+const SimulationSettings = lazy(() => import('./pages/SimulationSettings'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -98,6 +99,7 @@ const AuthenticatedApp = () => {
       <Route path="/JobQueueMonitor" element={<LayoutWrapper currentPageName="JobQueueMonitor"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><JobQueueMonitor /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/StructureComparison" element={<LayoutWrapper currentPageName="StructureComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-cyan-500 rounded-full animate-spin"/></div>}><PageTransition><StructureComparison /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationDashboard" element={<LayoutWrapper currentPageName="SimulationDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationDashboard /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/SimulationSettings" element={<LayoutWrapper currentPageName="SimulationSettings"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationSettings /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
