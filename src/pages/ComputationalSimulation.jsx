@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { jsPDF } from "jspdf";
 import MolViewer from "../components/simulation/MolViewer";
+import ToolFeedbackToast from "../components/shared/ToolFeedbackToast";
 import useTrialStatus from "../hooks/useTrialStatus";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -186,6 +187,7 @@ export default function ComputationalSimulation() {
   const [results, setResults] = useState(null);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("analysis");
+  const [showFeedback, setShowFeedback] = useState(false);
 
   const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
 
@@ -265,8 +267,10 @@ Provide a focused, technical analysis. Return JSON with:
       setActiveTab("analysis");
       // Award 50 points for running a computational simulation
       if (user) {
-        base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
+        await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
       }
+      setShowFeedback(true);
+      setTimeout(() => setShowFeedback(false), 15000);
     } catch (e) {
       console.error(e);
     } finally {
@@ -528,6 +532,14 @@ Provide a focused, technical analysis. Return JSON with:
 
   return (
     <AuthGate featureName="Computational Simulation" featureDescription="AI-powered computational chemistry simulations — Pro feature.">
+      <ToolFeedbackToast
+        isOpen={showFeedback}
+        onClose={() => setShowFeedback(false)}
+        feature="computational"
+        featureLabel="Computational Simulation"
+        user={user}
+        pointsToAward={50}
+      />
       <div className="max-w-6xl mx-auto">
 
           {/* Header */}

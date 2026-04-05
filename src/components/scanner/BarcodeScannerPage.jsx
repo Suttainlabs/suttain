@@ -10,6 +10,7 @@ import BarcodeAnalysis from './ProductAnalysis';
 import BarcodeHistory from './BarcodeHistory';
 import { base44 } from '@/api/base44Client';
 import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud } from 'lucide-react';
+import ToolFeedbackToast from '../shared/ToolFeedbackToast';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
 import { incrementUsage } from '../../utils/usageTracker';
 import useTrialStatus from '../../hooks/useTrialStatus';
@@ -43,6 +44,7 @@ export default function BarcodeScannerPage() {
     const [isLiveScannerOpen, setIsLiveScannerOpen] = useState(false);
     const [barcodeInput, setBarcode] = useState('');
     const [history, setHistory] = useState([]);
+    const [showFeedback, setShowFeedback] = useState(false);
     const fileInputRef = useRef(null);
 
     const { user, openAuthModal, refreshUser } = useContext(AuthContext);
@@ -99,6 +101,8 @@ export default function BarcodeScannerPage() {
                          if (refreshUser) refreshUser();
                        }
                        loadHistory();
+                       setShowFeedback(true);
+                       setTimeout(() => setShowFeedback(false), 12000);
 
                        // Send email notification
                        sendFeatureUsageEmail(user, 'barcode_scan', {
@@ -172,6 +176,15 @@ export default function BarcodeScannerPage() {
     };
 
     return (
+        <>
+        <ToolFeedbackToast
+            isOpen={showFeedback}
+            onClose={() => setShowFeedback(false)}
+            feature="scanner"
+            featureLabel="Quick Scan"
+            user={user}
+            pointsToAward={0}
+        />
         <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20 py-12 px-4 sm:px-6 lg:px-8 pb-24 relative overflow-hidden">
             {/* Decorative watermarks */}
             <div className="absolute top-10 right-0 w-48 h-48 opacity-5 pointer-events-none hidden lg:block">
@@ -291,5 +304,6 @@ export default function BarcodeScannerPage() {
                 </AnimatePresence>
             </div>
         </div>
+        </>
     );
 }

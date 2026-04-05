@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import ExperimentEditor from "../components/experimentation/ExperimentEditor";
 import ExperimentResults from "../components/experimentation/ExperimentResults";
+import ToolFeedbackToast from "../components/shared/ToolFeedbackToast";
 
 const SIM_TYPES = [
   { id: "interaction", label: "Molecular Interaction", color: "bg-violet-100 text-violet-700" },
@@ -35,6 +36,7 @@ export default function Experimentation() {
   const [view, setView] = useState("list"); // list | new | detail
   const [activeExperiment, setActiveExperiment] = useState(null);
   const [running, setRunning] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   const { data: experiments = [], isLoading } = useQuery({
     queryKey: ["experiments"],
@@ -120,6 +122,8 @@ Provide a realistic simulation result as JSON with:
       const saved = await saveMutation.mutateAsync(updated);
       setActiveExperiment(saved || updated);
       queryClient.invalidateQueries(["experiments"]);
+      setShowFeedback(true);
+      setTimeout(() => setShowFeedback(false), 12000);
     } catch (e) {
       console.error(e);
     } finally {
@@ -150,6 +154,14 @@ Provide a realistic simulation result as JSON with:
 
   return (
     <AuthGate featureName="Experimentation" featureDescription="Define, run, and save custom molecular experiments.">
+      <ToolFeedbackToast
+          isOpen={showFeedback}
+          onClose={() => setShowFeedback(false)}
+          feature="experimentation"
+          featureLabel="Experimentation Lab"
+          user={user}
+          pointsToAward={0}
+        />
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

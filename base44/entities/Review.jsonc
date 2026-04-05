@@ -1,0 +1,58 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "feature_used": {
+      "type": "string",
+      "enum": [
+        "simulator",
+        "generator",
+        "scanner",
+        "computational",
+        "experimentation"
+      ],
+      "description": "Which feature was reviewed"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Star rating from 1-5"
+    },
+    "feedback": {
+      "type": "string",
+      "description": "Optional user feedback"
+    },
+    "chemicals_tested": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Chemicals that were tested (for simulator)"
+    },
+    "formula_type": {
+      "type": "string",
+      "description": "Type of formula created (for generator)"
+    },
+    "helpful": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the user found the feature helpful"
+    },
+    "points_earned": {
+      "type": "number",
+      "description": "Points awarded for the review",
+      "default": 10
+    }
+  },
+  "required": [
+    "feature_used",
+    "rating"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
