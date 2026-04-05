@@ -16,6 +16,9 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
   const [selectedItem, setSelectedItem] = useState(null);
   const [showSeparateMode, setShowSeparateMode] = useState(false);
   const [residueChains, setResidueChains] = useState([]);
+  const [selectedChain, setSelectedChain] = useState(null);
+  const [selectedResidue, setSelectedResidue] = useState(null);
+  const [hasProteinStructure, setHasProteinStructure] = useState(false);
 
   const addMolecule = async (molecule) => {
     const itemId = `${molecule.label}-${Date.now()}`;
@@ -80,24 +83,41 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
   };
 
   const separateResidueByChain = (chainId) => {
+    setSelectedChain(selectedChain === chainId ? null : chainId);
+    
     if (onSeparateResidue) {
       onSeparateResidue({ type: 'chain', value: chainId });
     }
 
     if (viewer) {
-      // Highlight the selected chain
-      viewer.setStyle({ chain: chainId }, { cartoon: { color: 'spectrum' } });
+      if (selectedChain === chainId) {
+        // Deselect - reset all styles
+        viewer.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'element' } });
+      } else {
+        // Select - highlight only this chain
+        viewer.setStyle({}, { cartoon: { color: 'gray' }, stick: { colorscheme: 'gray' } });
+        viewer.setStyle({ chain: chainId }, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'spectrum' } });
+      }
       viewer.render();
     }
   };
 
   const separateByResidueType = (residueType) => {
+    setSelectedResidue(selectedResidue === residueType ? null : residueType);
+    
     if (onSeparateResidue) {
       onSeparateResidue({ type: 'residue', value: residueType });
     }
 
     if (viewer) {
-      viewer.setStyle({ resn: residueType }, { stick: { colorscheme: 'whiteCarbon' } });
+      if (selectedResidue === residueType) {
+        // Deselect - reset all styles
+        viewer.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'element' } });
+      } else {
+        // Select - highlight only this residue type
+        viewer.setStyle({}, { cartoon: { color: 'gray' }, stick: { colorscheme: 'gray' } });
+        viewer.setStyle({ resn: residueType }, { stick: { colorscheme: 'whiteCarbon' }, cartoon: { color: 'orange' } });
+      }
       viewer.render();
     }
   };
@@ -117,15 +137,17 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
           <Plus className="w-4 h-4 inline mr-1.5" /> Add Items
         </button>
         <button
-          onClick={() => setShowSeparateMode(true)}
-          className={`flex-1 px-4 py-2.5 text-sm font-semibold transition-all ${
-            showSeparateMode
+           onClick={() => setShowSeparateMode(true)}
+           disabled={!hasProteinStructure}
+           className={`flex-1 px-4 py-2.5 text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+            showSeparateMode && hasProteinStructure
               ? 'text-purple-600 bg-purple-50 border-b-2 border-purple-600'
               : 'text-slate-600 hover:bg-slate-50'
-          }`}
-        >
-          <Layers className="w-4 h-4 inline mr-1.5" /> Residues
-        </button>
+           }`}
+           title={!hasProteinStructure ? 'Load a protein structure to use this feature' : ''}
+         >
+           <Layers className="w-4 h-4 inline mr-1.5" /> Residues
+         </button>
       </div>
 
       {/* Content */}
@@ -229,13 +251,17 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
               <p className="text-xs font-semibold text-slate-600 mb-2.5 block">Separate by Chain:</p>
               <div className="grid grid-cols-2 gap-2">
                 {['A', 'B', 'C', 'D'].map(chain => (
-                  <button
-                    key={chain}
-                    onClick={() => separateResidueByChain(chain)}
-                    className="px-3 py-2 rounded-lg border border-slate-200 hover:border-purple-400 hover:bg-purple-50 transition-all text-xs font-semibold text-slate-700 hover:text-purple-700"
-                  >
-                    Chain {chain}
-                  </button>
+                   <button
+                     key={chain}
+                     onClick={() => separateResidueByChain(chain)}
+                     className={`px-3 py-2 rounded-lg border-2 transition-all text-xs font-semibold ${
+                       selectedChain === chain
+                         ? 'border-purple-600 bg-purple-100 text-purple-800'
+                         : 'border-slate-200 text-slate-700 hover:border-purple-400 hover:bg-purple-50'
+                     }`}
+                   >
+                     Chain {chain}
+                   </button>
                 ))}
               </div>
             </div>
@@ -245,13 +271,17 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
               <p className="text-xs font-semibold text-slate-600 mb-2.5 block">Highlight Residues:</p>
               <div className="grid grid-cols-2 gap-2">
                 {['ALA', 'GLY', 'SER', 'ARG', 'ASP', 'LYS'].map(residue => (
-                  <button
-                    key={residue}
-                    onClick={() => separateByResidueType(residue)}
-                    className="px-2 py-1.5 rounded text-xs font-semibold bg-slate-100 hover:bg-purple-100 text-slate-700 hover:text-purple-700 transition-all"
-                  >
-                    {residue}
-                  </button>
+                   <button
+                     key={residue}
+                     onClick={() => separateByResidueType(residue)}
+                     className={`px-2 py-1.5 rounded border-2 text-xs font-semibold transition-all ${
+                       selectedResidue === residue
+                         ? 'border-purple-600 bg-purple-100 text-purple-800'
+                         : 'border-slate-200 bg-slate-100 text-slate-700 hover:border-purple-400 hover:bg-purple-50 hover:text-purple-700'
+                     }`}
+                   >
+                     {residue}
+                   </button>
                 ))}
               </div>
             </div>
