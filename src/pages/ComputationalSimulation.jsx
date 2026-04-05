@@ -263,6 +263,10 @@ Provide a focused, technical analysis. Return JSON with:
 
       setResults({ ...response, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs } });
       setActiveTab("analysis");
+      // Award 50 points for running a computational simulation
+      if (user) {
+        base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
+      }
     } catch (e) {
       console.error(e);
     } finally {
