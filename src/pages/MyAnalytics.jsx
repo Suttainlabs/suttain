@@ -7,7 +7,7 @@ import UsageChart from "../components/analytics/UsageChart";
 import TopChemicals from "../components/analytics/TopChemicals";
 import SustainabilityTrend from "../components/analytics/SustainabilityTrend";
 import { Card, CardContent } from "@/components/ui/card";
-import { BarChart2, TestTube, Atom, QrCode } from "lucide-react";
+import { BarChart2, TestTube, Atom, QrCode, Cpu } from "lucide-react";
 
 function StatCard({ icon: Icon, label, value, colorClass }) {
   return (
@@ -46,6 +46,12 @@ export default function MyAnalytics() {
     enabled: !!user,
   });
 
+  const { data: compSimulations = [] } = useQuery({
+    queryKey: ["my-comp-simulations"],
+    queryFn: () => base44.entities.Experiment.filter({ created_by: user?.email }),
+    enabled: !!user,
+  });
+
   const { data: sustainabilityProfiles = [] } = useQuery({
     queryKey: ["my-sustainability"],
     queryFn: () => base44.entities.SustainabilityProfile.filter({ created_by: user?.email }),
@@ -67,8 +73,9 @@ export default function MyAnalytics() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard icon={TestTube} label="Simulations Run" value={simulations.length} colorClass="bg-teal-500" />
+            <StatCard icon={Cpu} label="Computational Sims" value={compSimulations.length} colorClass="bg-violet-500" />
             <StatCard icon={Atom} label="Formulas Created" value={formulas.length} colorClass="bg-violet-600" />
             <StatCard icon={QrCode} label="Products Scanned" value={scans.length} colorClass="bg-cyan-500" />
           </div>
