@@ -33,10 +33,20 @@ function load3Dmol(cb) {
   document.head.appendChild(script);
 }
 
+// Returns true if identifier looks like a process/description, not a molecule
+function looksLikeDescription(str) {
+  const words = str.trim().split(/\s+/);
+  // More than 3 words and no special SMILES chars → likely a description
+  return words.length > 3 && !str.includes('=') && !str.includes('(') && !str.includes('#') && !/^[A-Za-z0-9]{4}$/.test(str.trim());
+}
+
 // Try to get a PDB id from molecule string, or fetch SDF from PubChem
 async function fetchMoleculeData(identifier) {
   const clean = (identifier || "").trim();
   if (!clean) return null;
+
+  // If it looks like a process description rather than a molecule, skip
+  if (looksLikeDescription(clean)) return null;
 
   // If it looks like a PDB ID (4 chars alphanum), fetch from RCSB
   if (/^[A-Za-z0-9]{4}$/.test(clean)) {
@@ -45,7 +55,6 @@ async function fetchMoleculeData(identifier) {
     if (res.ok) return { format: "pdb", data: await res.text(), source: `PDB: ${clean.toUpperCase()}` };
   }
 
-  // If it looks like a UniProt ID, skip (can't auto-fetch easily in browser)
   // Try PubChem by name → SDF
   const nameUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(clean)}/SDF`;
   try {
@@ -124,7 +133,11 @@ export default function MolViewer({ simType, inputs }) {
         const molData = await fetchMoleculeData(identifier);
 
         if (!molData) {
-          setError(`Could not load "${identifier}". Try a PDB ID (e.g. 1HHO), drug name (e.g. aspirin), or SMILES string.`);
+          if (looksLikeDescription(identifier)) {
+            setError(`"${identifier}" is a process/reaction type, not a single molecule. Enter a specific molecule name (e.g. water, aspirin), PDB ID (e.g. 1HHO), or SMILES string.`);
+          } else {
+            setError(`Could not load "${identifier}". Try a PDB ID (e.g. 1HHO), drug name (e.g. aspirin), or SMILES string.`);
+          }
           setLoading(false);
           return;
         }
