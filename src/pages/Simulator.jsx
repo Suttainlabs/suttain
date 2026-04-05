@@ -794,6 +794,17 @@ export default function Simulator() {
           ai_recommendation: finalData.risk_assessment?.recommendation || '',
           safer_alternatives: finalData.safer_alternatives || []
         });
+        // Auto-save to Workspace
+        base44.entities.WorkspaceSession.create({
+          title: `Simulation: ${chemicals.map(c => c.name || c.scientific_name).join(' + ')}`,
+          type: 'simulation',
+          snapshot: {
+            chemicals: chemicals.map(c => c.name || c.scientific_name),
+            risk_score: finalData.risk_assessment?.overall_risk_score || 0,
+            safety_level: finalData.safety_status?.level,
+            persona
+          }
+        }).catch(() => {});
       } catch (saveError) {
         console.error('Failed to save simulation:', saveError);
       }

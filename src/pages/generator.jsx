@@ -403,6 +403,18 @@ export default function Generator() {
         }
       });
 
+      // Auto-save to Workspace
+      base44.entities.WorkspaceSession.create({
+        title: fullRecipe.name,
+        type: 'formula',
+        snapshot: {
+          product_type: selectedProductType?.name || fullRecipe.product_type,
+          ingredient_count: fullRecipe.ingredients?.length || 0,
+          business_mode: businessMode,
+          sustainability_score: fullRecipe.sustainability_score
+        }
+      }).catch(() => {});
+
       // Send email notification
       if (user) {
         sendFeatureUsageEmail(user, 'formula', {

@@ -97,11 +97,19 @@ export default function BarcodeScannerPage() {
                           ingredient_count: data.ingredients?.length || 0,
                           analysis_completed: true
                        });
-                       // Increment usage for free tier
-                       if (user && trialStatus && !trialStatus.isPro) {
-                         await incrementUsage(user, 'scans').catch(console.error);
-                         if (refreshUser) refreshUser();
-                       }
+                       // Auto-save to Workspace
+                       base44.entities.WorkspaceSession.create({
+                         title: data.name || `Scan: ${scannedBarcode}`,
+                         type: 'scan',
+                         notes: `Scanned via ${scanMethod}`,
+                         snapshot: {
+                           barcode: scannedBarcode,
+                           product_name: data.name,
+                           brand: data.brand,
+                           risk_level: data.riskAssessment?.overallRisk,
+                           ingredient_count: data.ingredients?.length || 0
+                         }
+                       }).catch(() => {});
                        loadHistory();
                        setShowFeedback(true);
                        setTimeout(() => setShowFeedback(false), 12000);
