@@ -11,20 +11,6 @@ export function getCurrentUsage(user) {
     scans: isCurrentMonth ? (user?.usage_scans || 0) : 0,
   };
 }
-    : { formulas: user.usage_formulas || 0, scans: user.usage_scans || 0 };
-
-  return {
-    simulations: user?.lifetime_simulations || 0, // lifetime, never resets
-    ...monthlyBase
-  };
-};
-  }
-  return {
-    simulations: user.usage_simulations || 0,
-    formulas: user.usage_formulas || 0,
-    scans: user.usage_scans || 0
-  };
-}
 
 export async function incrementUsage(user, type) {
   const currentMonth = new Date().toISOString().slice(0, 7);
@@ -33,7 +19,6 @@ export async function incrementUsage(user, type) {
   const updates = { usage_month: currentMonth };
 
   if (type === 'simulations') {
-    // Lifetime counter — never resets
     updates.lifetime_simulations = (user.lifetime_simulations || 0) + 1;
   } else if (isNewMonth) {
     updates.usage_formulas = type === 'formulas' ? 1 : 0;
