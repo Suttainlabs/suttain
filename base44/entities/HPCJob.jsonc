@@ -1,0 +1,132 @@
+{
+  "name": "HPCJob",
+  "type": "object",
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "description": "Unique identifier from HPC cluster"
+    },
+    "job_name": {
+      "type": "string",
+      "description": "User-defined job name"
+    },
+    "script_content": {
+      "type": "string",
+      "description": "The simulation script submitted"
+    },
+    "script_type": {
+      "type": "string",
+      "enum": [
+        "ORCA",
+        "GROMACS",
+        "VASP",
+        "Quantum ESPRESSO",
+        "AMBER",
+        "AutoDock",
+        "Other"
+      ],
+      "description": "Type of simulation script"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Submitted",
+        "Queued",
+        "Running",
+        "Completed",
+        "Failed",
+        "Cancelled"
+      ],
+      "default": "Submitted",
+      "description": "Current job status"
+    },
+    "cluster_name": {
+      "type": "string",
+      "description": "Target HPC cluster name"
+    },
+    "cluster_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "SSH or API endpoint of cluster"
+    },
+    "queue_name": {
+      "type": "string",
+      "description": "Compute queue on cluster (e.g., 'gpu', 'cpu', 'long')"
+    },
+    "num_cores": {
+      "type": "integer",
+      "description": "Number of CPU cores requested"
+    },
+    "wall_time": {
+      "type": "string",
+      "description": "Maximum wall-clock time (e.g., '24:00:00')"
+    },
+    "gpu_requested": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether GPU resources requested"
+    },
+    "submit_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When job was submitted to cluster"
+    },
+    "start_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When job started running"
+    },
+    "end_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When job finished"
+    },
+    "cpu_hours_used": {
+      "type": "number",
+      "description": "Total CPU hours consumed"
+    },
+    "output_logs": {
+      "type": "string",
+      "description": "Complete stdout/stderr output"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error details if job failed"
+    },
+    "parsed_results": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Extracted/parsed data from output logs"
+    },
+    "result_file_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs to result files (e.g., geometry, energies)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "User notes about the job"
+    },
+    "linked_simulation_id": {
+      "type": "string",
+      "description": "Link to original computational simulation if applicable"
+    }
+  },
+  "required": [
+    "job_name",
+    "script_content",
+    "script_type",
+    "cluster_name",
+    "cluster_url"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

@@ -17,6 +17,7 @@ const BulkScan = lazy(() => import('./pages/BulkScan'));
 const SustainabilityImpact = lazy(() => import('./pages/SustainabilityImpact'));
 const ComparativeImpactReport = lazy(() => import('./pages/ComparativeImpactReport'));
 const SimulationEngine = lazy(() => import('./pages/SimulationEngine'));
+const HPCJobManagement = lazy(() => import('./pages/HPCJobManagement'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -90,6 +91,7 @@ const AuthenticatedApp = () => {
       <Route path="/SustainabilityImpact" element={<LayoutWrapper currentPageName="SustainabilityImpact"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><SustainabilityImpact /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/ComparativeImpactReport" element={<LayoutWrapper currentPageName="ComparativeImpactReport"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ComparativeImpactReport /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationEngine" element={<LayoutWrapper currentPageName="SimulationEngine"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationEngine /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/HPCJobManagement" element={<LayoutWrapper currentPageName="HPCJobManagement"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><HPCJobManagement /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
