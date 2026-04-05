@@ -67,7 +67,7 @@ async function fetchMoleculeData(identifier) {
 }
 
 // ── Single panel viewer ──────────────────────────────────────────────────────
-const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia" }, ref) {
+const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia", onLoadedChange }, ref) {
   const containerRef = useRef(null);
   const internalViewerRef = useRef(null);
   const viewerRefFinal = ref || internalViewerRef;
@@ -135,6 +135,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
           } else {
             setError(`Could not load "${identifier}". Try a PDB ID, drug name, or SMILES.`);
           }
+          if (onLoadedChange) onLoadedChange(false);
           setLoading(false);
           return;
         }
@@ -146,6 +147,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
         internalViewerRef.current.render();
         setSource(molData.source);
         setLoaded(true);
+        if (onLoadedChange) onLoadedChange(true);
       } catch (e) {
         setError("Failed to load molecule: " + e.message);
       } finally {
@@ -262,6 +264,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
 export default function MolViewer({ simType, inputs }) {
   const [compareMode, setCompareMode] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
+  const [moleculeLoaded, setMoleculeLoaded] = useState(false);
   const viewerRef = useRef(null);
 
   const getMoleculeIdentifier = () => {
@@ -308,12 +311,12 @@ export default function MolViewer({ simType, inputs }) {
       {/* Panels */}
       {showEditor ? (
         <div style={{ height: "480px" }} className="flex flex-col overflow-y-auto px-4 py-4">
-          <InteractiveMolecularEditor viewer={viewerRef.current} loaded={!!initialIdentifier} />
+          <InteractiveMolecularEditor viewer={viewerRef.current} loaded={moleculeLoaded} />
         </div>
       ) : compareMode ? (
         <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-slate-700" style={{ height: "520px" }}>
           <div className="flex-1 flex flex-col overflow-hidden">
-            <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} label="Molecule A" accentColor="fuchsia" />
+            <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} label="Molecule A" accentColor="fuchsia" onLoadedChange={setMoleculeLoaded} />
           </div>
           <div className="flex-1 flex flex-col overflow-hidden">
             <SinglePanel initialIdentifier={null} label="Molecule B" accentColor="cyan" />
@@ -321,7 +324,7 @@ export default function MolViewer({ simType, inputs }) {
         </div>
       ) : (
         <div style={{ height: "480px" }} className="flex flex-col">
-          <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} accentColor="fuchsia" />
+          <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} accentColor="fuchsia" onLoadedChange={setMoleculeLoaded} />
         </div>
       )}
 
