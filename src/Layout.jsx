@@ -919,7 +919,7 @@ export default function Layout({ children, currentPageName }) {
                 Android app available now. iOS coming soon.
               </p>
               <div className="space-y-1.5">
-                <a href="https://drive.google.com/file/d/1pEBpCMv5BTutrpfaa_uKnQCpK1swDYBy/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-[#02988C] hover:bg-[#028a7f] px-3 py-2 rounded-lg transition-colors">
+                <a href="https://drive.google.com/file/d/1N2daMqPWoG8WSxvoNEUCMpKhMdFsiJP4/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-[#02988C] hover:bg-[#028a7f] px-3 py-2 rounded-lg transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M3 20.5V3.5c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35z"/>
                     <path fill="#34A853" d="m13.69 12 3.49-3.49 1.38.8c.7.4.7 1.08 0 1.48l-1.38.8-3.49 3.49V12z"/>
