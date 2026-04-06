@@ -70,7 +70,10 @@ export default function RegulatoryScanner({ ingredients = [], onClose }) {
 
   const normalizeIngredient = (ing) => {
     if (typeof ing === 'string') return ing.toLowerCase().trim();
-    if (typeof ing === 'object' && ing.chemical_name) return ing.chemical_name.toLowerCase().trim();
+    if (ing && typeof ing === 'object') {
+      const name = ing.chemical_name || ing.name || ing.ingredient_name || '';
+      return String(name).toLowerCase().trim();
+    }
     return '';
   };
 
