@@ -213,6 +213,7 @@ const FeedbackSection = ({ product, user }) => {
 export default function ProductAnalysis({ product, onClear, user }) {
     const [activeTab, setActiveTab] = useState('overview');
     const [imageError, setImageError] = useState(false);
+    const [imageSrc, setImageSrc] = useState(null);
     const [similarProducts, setSimilarProducts] = useState(null);
     const [isFindingSimilar, setIsFindingSimilar] = useState(false);
     const [safetyAlert, setSafetyAlert] = useState(null);
@@ -226,6 +227,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
 
     useEffect(() => {
         setImageError(false);
+        setImageSrc(product.imageUrl || null);
         setSimilarProducts(null);
         setSafetyAlert(null);
         setComplianceData(null);
@@ -585,15 +587,25 @@ For each product provide:
 
           <div className="flex flex-col sm:flex-row items-center gap-6 mb-6">
             <div className="relative flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center p-2">
-              {product.imageUrl && !imageError ? (
+              {imageSrc && !imageError ? (
                 <img
-                  src={product.imageUrl}
+                  src={imageSrc}
                   alt={product.name}
                   className="max-w-full max-h-full object-contain"
-                  onError={(e) => { e.currentTarget.style.display = 'none'; setImageError(true); }}
+                  onError={() => {
+                    // Try Open Food Facts fallback
+                    const offUrl = product.barcode
+                      ? `https://images.openfoodfacts.org/images/products/${product.barcode}/front_en.jpg`
+                      : null;
+                    if (offUrl && imageSrc !== offUrl) {
+                      setImageSrc(offUrl);
+                    } else {
+                      setImageError(true);
+                    }
+                  }}
                 />
               ) : null}
-              {(!product.imageUrl || imageError) && (
+              {(!imageSrc || imageError) && (
                  <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 rounded-xl">
                     <ImageOff className="w-10 h-10 text-slate-400" />
                  </div>
