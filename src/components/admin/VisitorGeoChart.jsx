@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Text } from 'recharts';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe, Loader2, MapPin } from 'lucide-react';
@@ -67,7 +68,7 @@ export default function VisitorGeoChart() {
                     cx="50%"
                     cy="45%"
                     outerRadius={90}
-                    innerRadius={45}
+                    innerRadius={52}
                     dataKey="value"
                     nameKey="name"
                     paddingAngle={2}
@@ -75,6 +76,10 @@ export default function VisitorGeoChart() {
                     {countries.map((_, i) => (
                       <Cell key={i} fill={COLORS[i % COLORS.length]} />
                     ))}
+                    <text x="50%" y="43%" textAnchor="middle" dominantBaseline="middle" className="recharts-text">
+                      <tspan x="50%" dy="0" fontSize="22" fontWeight="700" fill="#1e293b">{total.toLocaleString()}</tspan>
+                      <tspan x="50%" dy="18" fontSize="11" fill="#94a3b8">total visitors</tspan>
+                    </text>
                   </Pie>
                   <Tooltip content={<CustomTooltip />} />
                   <Legend
