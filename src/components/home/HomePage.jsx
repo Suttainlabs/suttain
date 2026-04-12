@@ -130,15 +130,17 @@ export default function HomePage() {
             </motion.div>
 
             {!user && (
-              <motion.p
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="mt-4 text-sm text-slate-400 flex items-center justify-center gap-1.5"
+                className="mt-5 flex justify-center"
               >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                No credit card required &middot; Free tier available
-              </motion.p>
+                <span className="inline-flex items-center gap-2 bg-suttain-purple text-white px-5 py-2 rounded-full text-sm font-bold shadow-md shadow-suttain-purple/30">
+                  <CheckCircle2 className="w-4 h-4" />
+                  No credit card required
+                </span>
+              </motion.div>
             )}
 
             <motion.div
@@ -381,9 +383,9 @@ export default function HomePage() {
                 </Link>
               </div>
               <div className="mt-6 flex justify-center">
-                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300 flex-shrink-0" />
-                  <span className="text-sm font-medium text-white/90">No credit card required</span>
+                <div className="inline-flex items-center gap-2 bg-suttain-purple px-6 py-2.5 rounded-full shadow-lg shadow-suttain-purple/50 ring-2 ring-white/30">
+                  <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
+                  <span className="text-sm font-bold text-white tracking-wide">No credit card required</span>
                 </div>
               </div>
             </div>
