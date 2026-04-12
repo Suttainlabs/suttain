@@ -30,7 +30,7 @@ export default function FreeTrialBanner({ onDismiss }) {
                 Get Started — It's Free!
               </p>
               <p className="text-white/80 text-xs sm:text-sm hidden sm:block">
-                Access the Simulator, Formula Generator & Quick Scan — no credit card needed
+                Access the Simulator, Formula Generator & Quick Scan
               </p>
             </div>
           </div>
@@ -39,9 +39,7 @@ export default function FreeTrialBanner({ onDismiss }) {
             <div className="hidden md:flex items-center gap-3 text-white/90 text-xs">
               <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Unlimited simulations</span>
               <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Save formulas</span>
-              <span className="flex items-center gap-1.5 bg-suttain-purple px-3 py-1.5 rounded-full font-bold text-white text-xs shadow-lg shadow-suttain-purple/40 ring-2 ring-white/30">
-                <CheckCircle2 className="w-3.5 h-3.5 text-white" /> No credit card required
-              </span>
+
             </div>
             <Link to={createPageUrl("Simulator")}>
               <Button
