@@ -1,0 +1,41 @@
+{
+  "name": "VisitorLog",
+  "type": "object",
+  "properties": {
+    "country": {
+      "type": "string",
+      "description": "Country name of the visitor"
+    },
+    "country_code": {
+      "type": "string",
+      "description": "ISO 2-letter country code"
+    },
+    "region": {
+      "type": "string",
+      "description": "Region / state of the visitor"
+    },
+    "city": {
+      "type": "string",
+      "description": "City of the visitor"
+    },
+    "page": {
+      "type": "string",
+      "description": "Page path visited"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Random session ID to deduplicate per-session"
+    }
+  },
+  "required": [
+    "country"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {}
+  }
+}

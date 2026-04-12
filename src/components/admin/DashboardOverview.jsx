@@ -6,6 +6,7 @@ import { exportSubscriptionReport } from '@/functions/exportSubscriptionReport';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AdminActivityChart from './charts/AdminActivityChart';
+import VisitorGeoChart from './VisitorGeoChart';
 import AdminAnalyticsCards from './AdminAnalyticsCards';
 
 const StatCard = ({ title, value, icon: Icon, color, bgColor, weekCount, loading }) => {
@@ -168,6 +169,9 @@ export default function DashboardOverview() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Visitor Geo Analytics */}
+      <VisitorGeoChart />
 
       {/* Analytics Row */}
       {!loading && stats && <AdminAnalyticsCards stats={stats} />}
