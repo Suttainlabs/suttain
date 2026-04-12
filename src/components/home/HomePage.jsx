@@ -380,10 +380,12 @@ export default function HomePage() {
                   </Button>
                 </Link>
               </div>
-              <p className="text-sm text-white/50 mt-6 flex items-center justify-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-white/60" />
-                No credit card required
-              </p>
+              <div className="mt-6 flex justify-center">
+                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-300 flex-shrink-0" />
+                  <span className="text-sm font-medium text-white/90">No credit card required</span>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
