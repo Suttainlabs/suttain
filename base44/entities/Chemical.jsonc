@@ -1,0 +1,443 @@
+{
+  "name": "Chemical",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Common name of the chemical"
+    },
+    "scientific_name": {
+      "type": "string",
+      "description": "Scientific or INCI name"
+    },
+    "iupac_name": {
+      "type": "string",
+      "description": "IUPAC systematic name"
+    },
+    "cas_number": {
+      "type": "string",
+      "description": "Chemical Abstracts Service number"
+    },
+    "pubchem_cid": {
+      "type": "string",
+      "description": "PubChem Compound ID"
+    },
+    "pubchem_sid": {
+      "type": "string",
+      "description": "PubChem Substance ID"
+    },
+    "inchi": {
+      "type": "string",
+      "description": "International Chemical Identifier (InChI)"
+    },
+    "inchi_key": {
+      "type": "string",
+      "description": "Hashed InChI key for quick lookups"
+    },
+    "smiles": {
+      "type": "string",
+      "description": "Simplified Molecular Input Line Entry System notation"
+    },
+    "canonical_smiles": {
+      "type": "string",
+      "description": "Canonical SMILES representation"
+    },
+    "molecular_formula": {
+      "type": "string",
+      "description": "Chemical formula (e.g., H2O)"
+    },
+    "molecular_weight": {
+      "type": "number",
+      "description": "Molecular weight in g/mol"
+    },
+    "exact_mass": {
+      "type": "number",
+      "description": "Exact monoisotopic mass in Da"
+    },
+    "atomic_number": {
+      "type": "number",
+      "description": "The atomic number (Z), for elements and isotopes"
+    },
+    "mass_number": {
+      "type": "number",
+      "description": "Total number of protons and neutrons in atomic nucleus"
+    },
+    "stock_quantity": {
+      "type": "number",
+      "description": "Current inventory stock quantity (units). Deducted automatically when used in a simulation.",
+      "default": 0
+    },
+    "stock_unit": {
+      "type": "string",
+      "enum": [
+        "g",
+        "kg",
+        "ml",
+        "L",
+        "units"
+      ],
+      "description": "Unit of measurement for stock quantity",
+      "default": "g"
+    },
+    "chemical_type": {
+      "type": "string",
+      "enum": [
+        "element",
+        "compound",
+        "mixture",
+        "isotope",
+        "isomer",
+        "polymer",
+        "enzyme",
+        "nanomaterial",
+        "material",
+        "pharmaceutical",
+        "metabolite",
+        "natural_product",
+        "synthetic",
+        "inorganic_acid",
+        "inorganic_base",
+        "organic_acid",
+        "organic_base",
+        "oxidizing_agent",
+        "reducing_agent",
+        "buffer",
+        "salt",
+        "gas",
+        "alcohol",
+        "ketone",
+        "aldehyde",
+        "ester",
+        "ether",
+        "amine",
+        "amide",
+        "peroxide",
+        "hypochlorite",
+        "sugar",
+        "lipid",
+        "protein",
+        "nucleic_acid",
+        "oxide",
+        "indicator",
+        "oxidizer",
+        "sealant",
+        "radioactive",
+        "other"
+      ],
+      "description": "Fundamental type of the chemical substance"
+    },
+    "structure_type": {
+      "type": "string",
+      "enum": [
+        "linear",
+        "branched",
+        "cyclic",
+        "aromatic",
+        "heterocyclic",
+        "polycyclic",
+        "spiro",
+        "fused",
+        "ionic",
+        "molecular",
+        "metallic",
+        "covalent_network",
+        "polymeric",
+        "crystalline",
+        "amorphous",
+        "organometallic"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "cleaning",
+        "skincare",
+        "preservative",
+        "solvent",
+        "surfactant",
+        "emulsifier",
+        "fragrance",
+        "colorant",
+        "thickener",
+        "ph_adjuster",
+        "antioxidant",
+        "chelating_agent",
+        "moisturizer",
+        "antimicrobial",
+        "food_additive",
+        "industrial",
+        "laboratory",
+        "pharmaceutical",
+        "material_science",
+        "agriculture",
+        "petrochemical",
+        "biochemical",
+        "environmental",
+        "metal",
+        "buffer",
+        "acid",
+        "base",
+        "salt",
+        "catalyst",
+        "reagent",
+        "other"
+      ]
+    },
+    "safety_level": {
+      "type": "string",
+      "enum": [
+        "safe",
+        "moderate",
+        "hazardous",
+        "highly_hazardous",
+        "unknown"
+      ]
+    },
+    "radioactive": {
+      "type": "boolean",
+      "default": false
+    },
+    "physical_properties": {
+      "type": "object",
+      "properties": {
+        "melting_point": {
+          "type": "number",
+          "description": "Melting point in \u00b0C"
+        },
+        "boiling_point": {
+          "type": "number",
+          "description": "Boiling point in \u00b0C"
+        },
+        "density": {
+          "type": "number",
+          "description": "Density in g/cm\u00b3"
+        },
+        "solubility_water": {
+          "type": "string",
+          "description": "Water solubility"
+        },
+        "vapor_pressure": {
+          "type": "number",
+          "description": "Vapor pressure in mmHg at 25\u00b0C"
+        },
+        "log_p": {
+          "type": "number",
+          "description": "Partition coefficient (LogP)"
+        },
+        "pka": {
+          "type": "number",
+          "description": "Acid dissociation constant"
+        },
+        "flash_point": {
+          "type": "number",
+          "description": "Flash point in \u00b0C"
+        },
+        "refractive_index": {
+          "type": "number"
+        },
+        "viscosity": {
+          "type": "number",
+          "description": "Viscosity in cP"
+        },
+        "surface_tension": {
+          "type": "number",
+          "description": "Surface tension in mN/m"
+        },
+        "henry_law_constant": {
+          "type": "number"
+        },
+        "autoignition_temp": {
+          "type": "number",
+          "description": "Autoignition temperature in \u00b0C"
+        }
+      }
+    },
+    "pharmacological_data": {
+      "type": "object",
+      "properties": {
+        "drugbank_id": {
+          "type": "string"
+        },
+        "therapeutic_class": {
+          "type": "string"
+        },
+        "mechanism_of_action": {
+          "type": "string"
+        },
+        "half_life": {
+          "type": "string"
+        },
+        "bioavailability": {
+          "type": "string"
+        },
+        "protein_binding": {
+          "type": "string"
+        },
+        "metabolism": {
+          "type": "string"
+        },
+        "excretion": {
+          "type": "string"
+        },
+        "fda_approval_status": {
+          "type": "string"
+        }
+      }
+    },
+    "toxicity_data": {
+      "type": "object",
+      "properties": {
+        "ld50_oral": {
+          "type": "string",
+          "description": "LD50 oral in mg/kg"
+        },
+        "ld50_dermal": {
+          "type": "string"
+        },
+        "lc50_inhalation": {
+          "type": "string"
+        },
+        "carcinogenicity": {
+          "type": "string"
+        },
+        "mutagenicity": {
+          "type": "string"
+        },
+        "reproductive_toxicity": {
+          "type": "string"
+        },
+        "ghs_classification": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "signal_word": {
+          "type": "string",
+          "enum": [
+            "danger",
+            "warning",
+            "none"
+          ]
+        }
+      }
+    },
+    "environmental_data": {
+      "type": "object",
+      "properties": {
+        "biodegradability": {
+          "type": "string"
+        },
+        "bioaccumulation_factor": {
+          "type": "number"
+        },
+        "aquatic_toxicity": {
+          "type": "string"
+        },
+        "ozone_depletion_potential": {
+          "type": "number"
+        },
+        "global_warming_potential": {
+          "type": "number"
+        },
+        "persistence": {
+          "type": "string"
+        }
+      }
+    },
+    "spectral_data": {
+      "type": "object",
+      "properties": {
+        "ir_spectrum_url": {
+          "type": "string"
+        },
+        "nmr_spectrum_url": {
+          "type": "string"
+        },
+        "mass_spectrum_url": {
+          "type": "string"
+        },
+        "uv_vis_spectrum_url": {
+          "type": "string"
+        }
+      }
+    },
+    "biological_data": {
+      "type": "object",
+      "properties": {
+        "target_proteins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pathways": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gene_associations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bioassay_results_count": {
+          "type": "number"
+        }
+      }
+    },
+    "synonyms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Alternative names and trade names"
+    },
+    "function_description": {
+      "type": "string",
+      "description": "Detailed description of what this chemical does"
+    },
+    "storage_requirements": {
+      "type": "string",
+      "description": "How this chemical should be stored"
+    },
+    "incompatibilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of incompatible chemicals or conditions"
+    },
+    "data_source": {
+      "type": "string",
+      "enum": [
+        "pubchem",
+        "chemspider",
+        "drugbank",
+        "manual",
+        "imported",
+        "ai_enriched"
+      ],
+      "description": "Primary source of data"
+    },
+    "last_pubchem_sync": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time data was synced from PubChem"
+    }
+  },
+  "required": [
+    "name",
+    "chemical_type"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
