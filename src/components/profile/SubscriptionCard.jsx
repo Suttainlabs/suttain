@@ -5,7 +5,7 @@ import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Check, Sparkles, ArrowRight, Shield, Zap, HeartPulse, Star, Infinity, AlertTriangle, Loader2, XCircle, CalendarClock } from 'lucide-react';
+import { Crown, Check, Sparkles, ArrowRight, Shield, Zap, HeartPulse, Star, Infinity, AlertTriangle, Loader2, XCircle, CalendarClock, Leaf, FlaskConical, QrCode, BarChart3, Cpu, FolderOpen, FileText, Atom } from 'lucide-react';
 import AuthContext from '../auth/AuthContext';
 import { cancelSubscription } from '@/functions/cancelSubscription';
 import {
@@ -22,8 +22,8 @@ import {
 
 const PLAN_DISPLAY = {
   pro: {
-    monthly: { label: 'Pro Monthly', color: 'from-teal-500 to-cyan-500', badge: 'bg-teal-600 text-white', icon: Crown, price: '$19/mo' },
-    yearly: { label: 'Pro Yearly', color: 'from-teal-600 to-emerald-600', badge: 'bg-teal-700 text-white', icon: Crown, price: '$190/yr' },
+    monthly: { label: 'Pro Monthly', color: 'from-teal-500 to-cyan-500', badge: 'bg-teal-600 text-white', icon: Crown, price: '$4.99/mo' },
+    yearly: { label: 'Pro Yearly', color: 'from-teal-600 to-emerald-600', badge: 'bg-teal-700 text-white', icon: Crown, price: '$49.99/yr' },
     lifetime: { label: 'Pro Lifetime', color: 'from-violet-600 to-purple-700', badge: 'bg-violet-700 text-white', icon: Infinity, price: 'Lifetime' },
   },
   enterprise: {
@@ -33,10 +33,17 @@ const PLAN_DISPLAY = {
 };
 
 const premiumFeatures = [
-  { icon: Shield, label: 'AI Compliance Co-Pilot', description: 'Automated regulatory checks' },
-  { icon: HeartPulse, label: 'Personalized Safety Alerts', description: 'Health-based warnings' },
-  { icon: Sparkles, label: 'Sustainability Scoring', description: 'Environmental impact analysis' },
-  { icon: Zap, label: 'Priority Support', description: '24/7 dedicated assistance' },
+  { icon: Atom, label: 'Unlimited Chemical Simulations', description: 'No monthly limit on simulations' },
+  { icon: FlaskConical, label: 'Unlimited Formula Generation', description: 'Create as many formulas as you need' },
+  { icon: QrCode, label: 'Unlimited Quick Scans', description: 'Scan any product barcode instantly' },
+  { icon: Cpu, label: 'Computational Simulations', description: 'DFT, MD, protein modeling & more' },
+  { icon: Shield, label: 'AI Compliance Co-Pilot', description: '50+ global regulatory checks' },
+  { icon: HeartPulse, label: 'Personalized Safety Alerts', description: 'Health-based ingredient warnings' },
+  { icon: Leaf, label: 'Sustainability & Carbon Scoring', description: 'Full environmental impact analysis' },
+  { icon: BarChart3, label: 'Comparative Impact Reports', description: 'Benchmark your eco-score' },
+  { icon: FolderOpen, label: 'Unlimited Workspace Storage', description: 'Organize all your sessions' },
+  { icon: FileText, label: 'PDF & Lab Report Export', description: 'Professional report generation' },
+  { icon: Zap, label: 'Priority Email Support', description: 'Dedicated assistance when you need it' },
 ];
 
 export default function SubscriptionCard() {
@@ -135,14 +142,23 @@ export default function SubscriptionCard() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-xs font-semibold text-slate-700 mb-2">Your Premium Features:</p>
-              {premiumFeatures.map((feature, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-green-600 flex-shrink-0" />
-                  <span className="text-slate-700">{feature.label}</span>
-                </div>
-              ))}
+            <div className="space-y-1.5">
+              <p className="text-xs font-semibold text-slate-700 mb-3">Your Premium Features:</p>
+              {premiumFeatures.map((feature, idx) => {
+                const FIcon = feature.icon;
+                return (
+                  <div key={idx} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-teal-50/50 transition-colors">
+                    <div className="w-7 h-7 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <FIcon className="w-3.5 h-3.5 text-teal-700" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-slate-800 leading-tight">{feature.label}</p>
+                      <p className="text-xs text-slate-400 leading-tight">{feature.description}</p>
+                    </div>
+                    <Check className="w-4 h-4 text-green-500 flex-shrink-0 ml-auto" />
+                  </div>
+                );
+              })}
             </div>
 
             {/* Cancel subscription */}
