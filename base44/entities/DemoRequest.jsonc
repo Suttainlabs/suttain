@@ -1,0 +1,54 @@
+{
+  "name": "DemoRequest",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Full name of the person requesting the demo."
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Contact email for the demo."
+    },
+    "company_name": {
+      "type": "string",
+      "description": "The name of the company or organization."
+    },
+    "role": {
+      "type": "string",
+      "description": "The person's role in the company."
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "message": {
+      "type": "string",
+      "description": "An optional message about what they'd like to see in the demo."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "contacted",
+        "completed"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "name",
+    "email",
+    "company_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {}
+  }
+}

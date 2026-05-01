@@ -6,6 +6,11 @@
       "type": "string",
       "description": "Country name of the visitor"
     },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "country_code": {
       "type": "string",
       "description": "ISO 2-letter country code"

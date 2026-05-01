@@ -1,0 +1,120 @@
+{
+  "name": "Simulation",
+  "type": "object",
+  "properties": {
+    "chemicals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of chemical names being simulated"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "risk_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Overall risk score of the combination"
+    },
+    "reaction_summary": {
+      "type": "string",
+      "description": "Summary of potential reactions"
+    },
+    "health_impact": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "environmental_impact": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "voc_level": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "reactivity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "hazard_symbols": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "toxic",
+          "flammable",
+          "corrosive",
+          "irritant",
+          "environmental"
+        ]
+      }
+    },
+    "ai_recommendation": {
+      "type": "string",
+      "description": "AI-generated safety recommendation"
+    },
+    "safer_alternatives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "original": {
+            "type": "string"
+          },
+          "alternative": {
+            "type": "string"
+          },
+          "effectiveness": {
+            "type": "number"
+          },
+          "safety": {
+            "type": "number"
+          },
+          "cost": {
+            "type": "number"
+          },
+          "sustainability": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "chemicals"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

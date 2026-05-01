@@ -1,0 +1,47 @@
+{
+  "name": "ContactSubmission",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the person submitting the form."
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "The email address of the person."
+    },
+    "subject": {
+      "type": "string",
+      "description": "The subject of the message."
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "message": {
+      "type": "string",
+      "description": "The content of the message."
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Indicates if an admin has read the submission."
+    }
+  },
+  "required": [
+    "name",
+    "email",
+    "subject",
+    "message"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {}
+  }
+}

@@ -13,6 +13,11 @@
       ],
       "description": "Which feature was reviewed"
     },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "rating": {
       "type": "number",
       "minimum": 1,

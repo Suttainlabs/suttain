@@ -6,6 +6,11 @@
       "type": "string",
       "description": "Notification title"
     },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "message": {
       "type": "string",
       "description": "Notification message content"

@@ -1,0 +1,157 @@
+{
+  "name": "SustainabilityProfile",
+  "type": "object",
+  "properties": {
+    "formula_id": {
+      "type": "string",
+      "description": "Reference to the formula"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "overall_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "carbon_footprint": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "details": {
+          "type": "string"
+        }
+      }
+    },
+    "biodegradability": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "timeframe": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "string"
+        }
+      }
+    },
+    "renewable_content": {
+      "type": "object",
+      "properties": {
+        "percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "packaging_impact": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "recyclable": {
+          "type": "boolean"
+        },
+        "minimal": {
+          "type": "boolean"
+        }
+      }
+    },
+    "water_usage": {
+      "type": "object",
+      "properties": {
+        "production_water": {
+          "type": "string"
+        },
+        "usage_water": {
+          "type": "string"
+        },
+        "efficiency_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "certifications": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ECOCERT",
+          "COSMOS",
+          "USDA_Organic",
+          "Cradle_to_Cradle",
+          "Green_Seal",
+          "EcoLogo",
+          "EPEAT"
+        ]
+      }
+    },
+    "improvement_suggestions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "compliance_level": {
+      "type": "string",
+      "enum": [
+        "basic",
+        "good",
+        "excellent",
+        "outstanding"
+      ]
+    }
+  },
+  "required": [
+    "formula_id",
+    "overall_score"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

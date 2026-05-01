@@ -6,6 +6,11 @@
       "type": "string",
       "description": "Chemical or ingredient name"
     },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "supplier_id": {
       "type": "string",
       "description": "Reference to Supplier entity"
