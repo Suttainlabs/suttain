@@ -14,11 +14,7 @@ export default function PrivacyPolicy() {
       title: "Information We Collect",
       content: "<strong>Account Information</strong><br />When you create an account, we collect your name and email address. You may sign up using Apple Sign-In, Google Sign-In, or email and password. Authentication is handled by Base44.<br /><br /><strong>Subscription Data</strong><br />Subscription status and purchase history are managed by Stripe. We receive subscription status information to determine feature access but do not process or store payment details directly.<br /><br /><strong>Usage Data</strong><br />We use Base44 AI tools on our website, which collect anonymous usage data without cookies and without collecting personal information."
     },
-    {
-      icon: HeartPulse,
-      title: "Health Data (HealthKit)",
-      content: "With your explicit permission, we read weight data from Apple HealthKit. HealthKit access is entirely optional. We access HealthKit data in read-only mode and never write data to HealthKit. HealthKit data is never stored in iCloud, never used for advertising, and never shared with third parties."
-    },
+
     {
       icon: Cog,
       title: "How We Use Your Information",
