@@ -58,13 +58,6 @@ const PLAN_DETAILS = {
 
 async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
   const planInfo = PLAN_DETAILS[planKey] || PLAN_DETAILS['pro_monthly'];
-  const featuresHtml = planInfo.features.map(f => `
-    <tr>
-      <td style="padding:8px 0;border-bottom:1px solid #f1f5f9;">
-        <span style="color:#02988C;font-weight:bold;margin-right:8px;">•</span>
-        <span style="color:#1e293b;">${f}</span>
-      </td>
-    </tr>`).join('');
 
   const isLifetime = planInfo.billing === 'lifetime';
   const billingNote = isLifetime
@@ -111,15 +104,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
           </table>
         </div>
 
-        <!-- Features Section -->
-        <div style="margin-bottom:40px;">
-          <h3 style="color:#1e293b;font-size:17px;font-weight:700;margin:0 0 20px;">Your Access Includes</h3>
-          <table style="width:100%;border-collapse:collapse;">
-            <tbody>
-              ${featuresHtml}
-            </tbody>
-          </table>
-        </div>
+
 
         <!-- Getting Started Section -->
         <div style="background:#ecfdf5;padding:24px;border-radius:8px;margin-bottom:40px;">
