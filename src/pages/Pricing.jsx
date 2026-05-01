@@ -20,7 +20,7 @@ const plans = [
     features: [
       '3 Chemical Simulations per month',
       '5 Formula Generations per month',
-      '2 Product Scans per month',
+      'Unlimited Product Scans',
       'Community Support',
       'Learning Center Access'
     ],
