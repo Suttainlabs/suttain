@@ -3,12 +3,34 @@ import { motion } from 'framer-motion';
 import { ContactSubmission } from '@/entities/ContactSubmission';
 import { base44 } from '@/api/base44Client';
 
-const REVIEW_CATEGORIES = [
-  { id: 'all', label: 'All' },
-  { id: 'simulator', label: 'Simulator' },
-  { id: 'generator', label: 'Generator' },
-  { id: 'scanner', label: 'Scanner' },
-];
+const TOOL_COLORS = {
+  simulator: '#02988C',
+  generator: '#9531F5',
+  scanner: '#09D2FF',
+  computational: '#f97316',
+  experimentation: '#ec4899',
+  other: '#94a3b8',
+};
+
+const TOOL_LABELS = {
+  simulator: 'Simulator',
+  generator: 'Generator',
+  scanner: 'Scanner',
+  computational: 'Computational',
+  experimentation: 'Experimentation',
+};
+
+const CustomTooltip = ({ active, payload }) => {
+  if (!active || !payload?.length) return null;
+  const d = payload[0].payload;
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-lg p-3 text-sm">
+      <p className="font-bold text-slate-800 mb-1">{d.name}</p>
+      <p className="text-slate-600">{d.value} review{d.value !== 1 ? 's' : ''}</p>
+      <p className="text-yellow-500 font-semibold">Avg: {'★'.repeat(Math.round(d.avg))}{'☆'.repeat(5 - Math.round(d.avg))} {d.avg}</p>
+    </div>
+  );
+};
 import {
   Accordion,
   AccordionContent,
@@ -19,7 +41,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { HelpCircle, MessageSquare, Send, CheckCircle, Phone, Star } from 'lucide-react';
+import { HelpCircle, MessageSquare, Send, CheckCircle, Phone, Star, BarChart3 } from 'lucide-react';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const faqData = [
   {
@@ -60,11 +83,26 @@ const faqData = [
 
 export default function FAQPage() {
   const [reviews, setReviews] = useState([]);
-  const [activeReviewCat, setActiveReviewCat] = useState('all');
 
   useEffect(() => {
-    base44.entities.Review.list('-created_date', 20).then(setReviews).catch(() => {});
+    base44.entities.Review.list('-created_date', 200).then(setReviews).catch(() => {});
   }, []);
+
+  const chartData = (() => {
+    const grouped = {};
+    for (const r of reviews) {
+      const key = r.feature_used || 'other';
+      if (!grouped[key]) grouped[key] = { total: 0, sum: 0 };
+      grouped[key].total += 1;
+      grouped[key].sum += r.rating || 0;
+    }
+    return Object.entries(grouped).map(([key, val]) => ({
+      name: TOOL_LABELS[key] || key,
+      value: val.total,
+      avg: val.total > 0 ? (val.sum / val.total).toFixed(1) : '0.0',
+      color: TOOL_COLORS[key] || TOOL_COLORS.other,
+    }));
+  })();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -312,76 +350,77 @@ export default function FAQPage() {
         </div>
       </div>
 
-      {/* Reviews Section */}
+      {/* Ratings Chart Section */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <div className="flex items-center gap-3 mb-5">
-            <Star className="w-7 h-7 text-yellow-500" />
-            <h2 className="text-2xl font-bold text-slate-900">Community Reviews</h2>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <BarChart3 className="w-7 h-7 text-[var(--suttain-teal)]" />
+            <h2 className="text-2xl font-bold text-slate-900">User Ratings by Tool</h2>
           </div>
-          {/* Category Filter Tabs */}
-          <div className="flex flex-wrap gap-2">
-            {REVIEW_CATEGORIES.map(cat => {
-              const count = cat.id === 'all' ? reviews.length : reviews.filter(r => r.feature_used === cat.id).length;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveReviewCat(cat.id)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all ${
-                    activeReviewCat === cat.id
-                      ? 'bg-slate-800 text-white border-transparent shadow-sm'
-                      : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  {cat.label} <span className="opacity-60">({count})</span>
-                </button>
-              );
-            })}
-          </div>
+          <p className="text-slate-500 text-sm">Breakdown of community ratings across all Suttain tools.</p>
         </motion.div>
-        {(() => {
-          const filtered = activeReviewCat === 'all' ? reviews : reviews.filter(r => r.feature_used === activeReviewCat);
-          return filtered.length === 0 ? (
-            <p className="text-slate-500 text-center py-8">
-              {reviews.length === 0 ? 'No reviews yet. Be the first to share your experience!' : 'No reviews in this category yet.'}
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filtered.map((review, i) => (
-                <motion.div
-                  key={review.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                  className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3"
-                >
-                  {/* Top: category badge + date */}
-                  <div className="flex items-center justify-between">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full capitalize ${
-                      review.feature_used === 'simulator' ? 'bg-teal-100 text-teal-700' :
-                      review.feature_used === 'generator' ? 'bg-violet-100 text-violet-700' :
-                      review.feature_used === 'scanner' ? 'bg-cyan-100 text-cyan-700' :
-                      'bg-slate-100 text-slate-600'
-                    }`}>
-                      {review.feature_used?.replace('_', ' ') || 'General'}
-                    </span>
-                    <span className="text-xs text-slate-400">{new Date(review.created_date).toLocaleDateString()}</span>
-                  </div>
-                  {/* Stars */}
-                  <div className="flex items-center gap-0.5">
-                    {[1,2,3,4,5].map(s => (
-                      <Star key={s} className={`w-4 h-4 ${s <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} />
-                    ))}
-                  </div>
-                  {/* Feedback */}
-                  {review.feedback && (
-                    <p className="text-slate-600 text-sm leading-relaxed line-clamp-4">&ldquo;{review.feedback}&rdquo;</p>
-                  )}
-                </motion.div>
-              ))}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6 md:p-10"
+        >
+          {reviews.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <Star className="w-12 h-12 text-slate-200 mb-4" />
+              <p className="text-slate-500 font-medium">No ratings yet</p>
+              <p className="text-sm text-slate-400 mt-1">Ratings will appear here as users review the tools.</p>
             </div>
-          );
-        })()}
+          ) : (
+            <div className="flex flex-col lg:flex-row items-center gap-8">
+              {/* Pie Chart */}
+              <div className="w-full lg:w-1/2" style={{ height: 320 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={75}
+                      outerRadius={130}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={index} fill={entry.color} stroke="white" strokeWidth={2} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Legend + Stats */}
+              <div className="w-full lg:w-1/2 space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">Tool Breakdown</p>
+                {chartData.map((d) => (
+                  <div key={d.name} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} />
+                      <span className="font-semibold text-slate-800 text-sm">{d.name}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm">
+                      <span className="text-slate-500">{d.value} review{d.value !== 1 ? 's' : ''}</span>
+                      <div className="flex items-center gap-1">
+                        <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                        <span className="font-bold text-slate-700">{d.avg}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-slate-800 to-slate-700 mt-4">
+                  <span className="font-bold text-white text-sm">Total Reviews</span>
+                  <span className="font-bold text-white">{reviews.length}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </motion.div>
       </div>
     </div>
   );
