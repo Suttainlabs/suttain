@@ -1,0 +1,88 @@
+{
+  "name": "SupplierVerification",
+  "type": "object",
+  "properties": {
+    "formula_id": {
+      "type": "string",
+      "description": "ID of the formula being verified"
+    },
+    "formula_name": {
+      "type": "string",
+      "description": "Name of the formula for display"
+    },
+    "supplier_name": {
+      "type": "string",
+      "description": "Name of the supplier company"
+    },
+    "supplier_email": {
+      "type": "string",
+      "description": "Email of the supplier contact"
+    },
+    "ingredients_to_verify": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of ingredient names the supplier needs to verify"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "submitted",
+        "validated",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Current status of the verification request"
+    },
+    "token": {
+      "type": "string",
+      "description": "Unique secure token for the supplier's verification link"
+    },
+    "invited_by": {
+      "type": "string",
+      "description": "Email of the user who sent the invite"
+    },
+    "submitted_data": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Data submitted by the supplier (ingredient certs, COAs, safety sheets)"
+    },
+    "supplier_notes": {
+      "type": "string",
+      "description": "Notes or comments submitted by the supplier"
+    },
+    "document_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs of documents uploaded by the supplier"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the verification link expires"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Internal notes from the user reviewing the submission"
+    }
+  },
+  "required": [
+    "formula_id",
+    "formula_name",
+    "supplier_email",
+    "ingredients_to_verify",
+    "token"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

@@ -58,6 +58,7 @@ import HazardAlternativesPanel from "./HazardAlternativesPanel";
 import RegulatoryScanner from "../compliance/RegulatoryScanner";
 import SupplierLinkModal from "../suppliers/SupplierLinkModal";
 import SupplierManager from "../suppliers/SupplierManager";
+import SupplierVerificationPanel from "../suppliers/SupplierVerificationPanel";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -1181,6 +1182,9 @@ export default function FormulaEditor({
                 </TabsContent>
                 
                 <TabsContent value="suppliers" className="mt-0 space-y-6">
+                  {/* Supplier Verification — invite suppliers to verify ingredient data */}
+                  {formula.id && <SupplierVerificationPanel formula={formula} />}
+
                   <SupplierManager />
                   
                   <Card className="border-slate-200">
