@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, AlertTriangle, Info, Shield, Sparkles, ExternalLink, Clock, UserPlus } from 'lucide-react';
+import { Bell, X, AlertTriangle, Info, Shield, Sparkles, ExternalLink, Clock, UserPlus, FlaskConical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -17,6 +17,7 @@ const NotificationIcon = ({ type, severity }) => {
   switch (type) {
     case 'safety': return <Shield className="w-5 h-5 text-rose-600" />;
     case 'compliance': return <Shield className="w-5 h-5 text-blue-600" />;
+    case 'regulatory': return <FlaskConical className="w-5 h-5 text-orange-600" />;
     case 'subscription': return <Sparkles className="w-5 h-5 text-purple-600" />;
     case 'feature': return <Sparkles className="w-5 h-5 text-teal-600" />;
     case 'user_signup': return <UserPlus className="w-5 h-5 text-green-600" />;

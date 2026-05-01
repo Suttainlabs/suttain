@@ -1,0 +1,102 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Notification title"
+    },
+    "message": {
+      "type": "string",
+      "description": "Notification message content"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "safety",
+        "compliance",
+        "regulatory",
+        "subscription",
+        "feature",
+        "system",
+        "user_signup"
+      ],
+      "description": "Type of notification"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "warning",
+        "critical"
+      ],
+      "default": "info",
+      "description": "Notification severity level"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the notification has been read"
+    },
+    "is_snoozed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the notification is snoozed"
+    },
+    "snoozed_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date until which the notification is snoozed"
+    },
+    "action_url": {
+      "type": "string",
+      "description": "Optional URL to navigate when notification is clicked"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional metadata about the notification"
+    },
+    "target_user": {
+      "type": "string",
+      "description": "Email of user to receive the notification"
+    }
+  },
+  "required": [
+    "title",
+    "message",
+    "type"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "target_user": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
