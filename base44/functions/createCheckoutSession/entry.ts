@@ -4,9 +4,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
 const PRICE_MAP = {
-  pro_monthly: 'price_1TG2yuI8DTqT2BKbU468bE7j',
-  pro_yearly: 'price_1TG2yuI8DTqT2BKbyHPDN6uI',
-  lifetime: 'price_1TG2yuI8DTqT2BKb2VSB4d0D',
+  pro_monthly: 'price_1TOUN1I9tsZ7WvXe30IECjgi',   // $4.99/month
+  pro_yearly: 'price_1TOUN1I9tsZ7WvXemErMam6J',    // $49.99/year
+  lifetime: 'price_1TRCQ8I9tsZ7WvXeBoAnMI8m',      // $4.99 one-time
 };
 
 Deno.serve(async (req) => {
