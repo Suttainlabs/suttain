@@ -84,12 +84,9 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
       <!-- Body -->
       <div style="background:#ffffff;padding:36px 32px;border-radius:0 0 16px 16px;border:1px solid #e2e8f0;border-top:none;">
         
-        <p style="font-size:17px;color:#1e293b;margin:0 0 12px;font-weight:600;">Dear ${userName || 'User'},</p>
-        <p style="color:#475569;font-size:15px;line-height:1.8;margin:0 0 8px;">
-          Thank you for your subscription to Suttain Pro. Your account has been successfully activated and is now ready to use.
-        </p>
-        <p style="color:#475569;font-size:15px;line-height:1.8;margin:0 0 28px;">
-          You now have full access to all premium features and capabilities available in your subscription plan.
+        <p style="font-size:17px;color:#1e293b;margin:0 0 8px;">Hello ${userName || 'User'},</p>
+        <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 28px;">
+          Thank you for your subscription to Suttain Pro. Your account is now active and you have full access to all premium features. You can begin using your account immediately.
         </p>
 
         <!-- Plan Summary Box -->
@@ -105,35 +102,24 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
         </div>
 
         <!-- Features -->
-        <h3 style="color:#1e293b;font-size:16px;font-weight:700;margin:24px 0 16px;letter-spacing:0.5px;">YOUR SUBSCRIPTION INCLUDES</h3>
+        <h3 style="color:#1e293b;font-size:15px;font-weight:700;margin:0 0 12px;">Everything unlocked in your plan:</h3>
         <table style="width:100%;border-collapse:collapse;">
           <tbody>
             ${featuresHtml}
           </tbody>
         </table>
 
-        <!-- Getting Started -->
-        <h3 style="color:#1e293b;font-size:16px;font-weight:700;margin:28px 0 12px;letter-spacing:0.5px;">GETTING STARTED</h3>
-        <p style="color:#475569;font-size:15px;line-height:1.8;margin:0 0 24px;">
-          To begin using your new Pro features, navigate to the Tools section within your account and run your first simulation. Our comprehensive Learning Center provides detailed tutorials and guides to help you maximize your investment.
-        </p>
-
         <!-- CTA -->
-        <div style="text-align:center;margin:32px 0 28px;">
+        <div style="text-align:center;margin:32px 0 24px;">
           <a href="https://suttain.com/Simulator" style="display:inline-block;background:linear-gradient(135deg,#02988C,#09D2FF);color:white;text-decoration:none;font-weight:700;font-size:16px;padding:14px 40px;border-radius:50px;box-shadow:0 4px 15px rgba(2,152,140,0.3);">
-            Launch Your Account
+            Start Using Your Account
           </a>
         </div>
 
-        <!-- Support Section -->
-        <h3 style="color:#1e293b;font-size:16px;font-weight:700;margin:28px 0 12px;letter-spacing:0.5px;">SUPPORT AND ASSISTANCE</h3>
-        <p style="color:#475569;font-size:15px;line-height:1.8;margin:0 0 24px;">
-          Should you have any questions or require technical assistance, our dedicated support team is available to help. You may reach us at <a href="mailto:contact@suttain.com" style="color:#02988C;font-weight:600;text-decoration:none;">contact@suttain.com</a> or utilize the live chat feature available within the application.
-        </p>
-
-        <!-- Closing -->
-        <p style="color:#475569;font-size:15px;line-height:1.8;margin:0;padding-top:20px;border-top:1px solid #f1f5f9;">
-          We are committed to ensuring your success with Suttain Pro. We look forward to supporting your journey.
+        <!-- Footer note -->
+        <p style="color:#94a3b8;font-size:13px;margin:0;padding-top:20px;border-top:1px solid #f1f5f9;text-align:center;line-height:1.6;">
+          Questions? We're here to help.<br/>
+          Reply to this email or reach us at <a href="mailto:contact@suttain.com" style="color:#02988C;font-weight:600;">contact@suttain.com</a>
         </p>
       </div>
 

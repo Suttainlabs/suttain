@@ -10,35 +10,32 @@ Deno.serve(async (req) => {
     }
 
     const emailContent = `
-Dear ${full_name},
+Hello ${full_name},
 
-Thank you for subscribing to Suttain Pro. We are delighted to welcome you to our platform and look forward to supporting your success.
+Thank you for subscribing to Suttain Pro. We are excited to welcome you to our community.
 
-YOUR PREMIUM FEATURES
+You now have access to the following features:
 
-Your subscription now includes access to the following capabilities:
+- Unlimited Chemical Simulations
+- Unlimited Formula Generation
+- AI Compliance Co-Pilot (50+ regions)
+- Sustainability and Carbon Footprint Scoring
+- Computational Simulations (DFT, Molecular Dynamics, Quantum Mechanics)
+- Advanced Analytics and Reporting
+- Personalized Safety Alerts
+- Priority Email Support
 
-• Unlimited Chemical Simulations
-• Unlimited Formula Generation
-• AI Compliance Co-Pilot (50+ regions)
-• Sustainability and Carbon Footprint Scoring
-• Computational Simulations (DFT, Molecular Dynamics, Quantum Mechanics)
-• Advanced Analytics and Reporting
-• Personalized Safety Alerts
-• Priority Email Support
+Getting Started
 
-GETTING STARTED
+To begin using your new Pro features, navigate to the Tools section within your account and run your first simulation. Our learning center provides comprehensive tutorials and guides to help you maximize your investment.
 
-To begin using your new Pro features, please navigate to the Tools section within your account and run your first simulation. Our comprehensive Learning Center provides detailed tutorials and guides to help you maximize your investment in Suttain Pro.
+Support and Assistance
 
-SUPPORT AND ASSISTANCE
+If you have any questions or require assistance, please reach out to our support team at contact@suttain.com or use the live chat feature available in the application.
 
-Should you have any questions or require technical assistance, our dedicated support team is available to help. You may reach us at contact@suttain.com or utilize the live chat feature available within the application.
+We are committed to helping you succeed with Suttain Pro.
 
-We are committed to ensuring your success and would be pleased to address any inquiries you may have.
-
-Sincerely,
-
+Best regards,
 The Suttain Team
 https://suttain.com
     `.trim();
