@@ -7,6 +7,7 @@ import AuthContext from '../components/auth/AuthContext';
 import SafetyProfileManager from '../components/profile/SafetyProfileManager';
 import NotificationPreferences from '../components/notifications/NotificationPreferences';
 import AccountDeletionSection from '../components/settings/AccountDeletionSection';
+import SubscriptionCard from '../components/profile/SubscriptionCard';
 
 export default function Settings() {
   const { user } = useContext(AuthContext);
@@ -29,7 +30,13 @@ export default function Settings() {
             Back to Dashboard
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">Account Settings</h1>
-          <p className="text-gray-600">Manage your safety profiles, notification preferences, and other account settings.</p>
+          <p className="text-gray-600">Manage your subscription, safety profiles, notification preferences, and other account settings.</p>
+
+          {/* Subscription Management */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">Subscription & Billing</h2>
+            <SubscriptionCard />
+          </div>
           
           <SafetyProfileManager />
           <NotificationPreferences />
