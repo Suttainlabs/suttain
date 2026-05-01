@@ -394,51 +394,66 @@ export default function Layout({ children, currentPageName }) {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Combined Product Suite Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
-                    isProductSuiteActive 
-                      ? "bg-cyan-100 text-cyan-600"
-                      : "text-slate-700 hover:bg-cyan-50 hover:text-cyan-600"
-                  }`}>
-                    <span>Tools</span>
-                    <ChevronDown className="w-3 h-3" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-80">
-                  {productSuiteItems.map((item, index) => {
-                    if (item.type === 'separator') return <DropdownMenuSeparator key={index} className="my-1" />;
-                    if (item.type === 'header') return (
-                      <div key={index} className="px-3 pt-2 pb-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{item.label}</p>
-                      </div>
-                    );
-                    const iconBg = item.tier === 'pro' ? 'bg-[var(--suttain-violet)]' : item.type === 'premium' ? 'bg-[var(--suttain-violet)]' : 'bg-[var(--suttain-teal)]';
-                    return (
-                      <DropdownMenuItem key={item.href} asChild>
-                        <Link to={createPageUrl(item.href)} className="flex items-start gap-3 p-2.5 mx-1 rounded-lg">
-                          <div className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5`}>
+              {/* Combined Product Suite Dropdown — 2-column mega menu */}
+              <div className="relative group">
+                <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+                  isProductSuiteActive
+                    ? "bg-cyan-100 text-cyan-600"
+                    : "text-slate-700 hover:bg-cyan-50 hover:text-cyan-600"
+                }`}>
+                  <span>Tools</span>
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+                {/* Mega menu panel */}
+                <div className="absolute right-0 top-full mt-1 w-[560px] bg-white border border-slate-200 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-4">
+                  <div className="grid grid-cols-2 gap-x-4">
+                    {/* Column 1: Safety & Formulation */}
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Safety &amp; Formulation</p>
+                      {[
+                        { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety, compliance & sustainability" },
+                        { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with eco scoring" },
+                        { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Full safety & eco analysis" },
+                        { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf, description: "250k+ chemicals with eco data" },
+                      ].map(item => (
+                        <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
+                          <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
                             <item.icon className="w-4 h-4 text-white" />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <p className="font-semibold text-suttain-dark text-sm">{item.label}</p>
-                              {item.tier === 'pro' && (
-                                <span className="px-1.5 py-0.5 text-[10px] bg-violet-100 text-violet-700 rounded font-bold">PRO</span>
-                              )}
-                              {item.status === 'coming_soon' && (
-                                <span className="px-1.5 py-0.5 text-[10px] bg-slate-100 text-slate-500 rounded font-medium">Soon</span>
-                              )}
-                            </div>
-                            <p className="text-xs text-slate-500 truncate">{item.description}</p>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-slate-800 text-sm leading-tight">{item.label}</p>
+                            <p className="text-xs text-slate-500 leading-tight">{item.description}</p>
                           </div>
                         </Link>
-                      </DropdownMenuItem>
-                    );
-                  })}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      ))}
+                    </div>
+                    {/* Column 2: Advanced Tools */}
+                    <div className="border-l border-slate-100 pl-4">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Advanced Tools</p>
+                      {[
+                        { href: "SimulationEngine", label: "Formula Sim Engine", icon: Cpu, description: "Live cost & sustainability shifts" },
+                        { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, description: "DFT, MD, protein modeling", tier: 'pro' },
+                        { href: "ComparativeImpactReport", label: "Impact Report", icon: BarChart2, description: "Eco-score vs. industry averages" },
+                        { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, description: "Integrate into your systems", status: 'coming_soon' },
+                      ].map(item => (
+                        <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${item.tier === 'pro' || item.status === 'coming_soon' ? 'bg-[var(--suttain-violet)]' : 'bg-[var(--suttain-teal)]'}`}>
+                            <item.icon className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5">
+                              <p className="font-semibold text-slate-800 text-sm leading-tight">{item.label}</p>
+                              {item.tier === 'pro' && <span className="px-1 py-0.5 text-[9px] bg-violet-100 text-violet-700 rounded font-bold shrink-0">PRO</span>}
+                              {item.status === 'coming_soon' && <span className="px-1 py-0.5 text-[9px] bg-slate-100 text-slate-500 rounded font-medium shrink-0">Soon</span>}
+                            </div>
+                            <p className="text-xs text-slate-500 leading-tight">{item.description}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </nav>
 
             {/* Auth Buttons / User Menu */}
@@ -736,31 +751,40 @@ export default function Layout({ children, currentPageName }) {
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          className="pl-6 pt-2 flex flex-col gap-2 overflow-hidden"
+                          className="pl-4 pt-1 pb-1 overflow-hidden"
                         >
-                          {productSuiteItems.map((item) => {
-                             if (item.type === 'separator' || item.type === 'header') return null;
-                             return (
-                               <Link
-                                key={item.href}
-                                to={createPageUrl(item.href)}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
-                                  location.pathname === createPageUrl(item.href)
-                                    ? "bg-cyan-100 text-cyan-600"
-                                    : "text-suttain-dark hover:bg-cyan-50"
-                                }`}
-                              >
-                                <item.icon className={`w-4 h-4 flex-shrink-0 ${item.type === 'premium' ? 'text-[var(--suttain-violet)]' : ''}`} />
-                                <span className="flex-1 truncate">{item.label}</span>
-                                {item.type === 'premium' && (
-                                  <span className="px-1.5 py-0.5 text-[10px] bg-purple-100 text-[var(--suttain-violet)] rounded font-medium flex-shrink-0">
-                                    {item.status === 'coming_soon' ? 'Soon' : 'Premium'}
-                                  </span>
-                                )}
-                              </Link>
-                             )
-                          })}
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-2 pb-1">Safety &amp; Formulation</p>
+                          {[
+                            { href: "Simulator", label: "Chemical Simulator", icon: TestTube },
+                            { href: "generator", label: "Formula Generator", icon: Atom },
+                            { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode },
+                            { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf },
+                          ].map(item => (
+                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
+                              className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
+                                location.pathname === createPageUrl(item.href) ? "bg-cyan-100 text-cyan-600" : "text-suttain-dark hover:bg-cyan-50"
+                              }`}>
+                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-teal)]" />
+                              <span>{item.label}</span>
+                            </Link>
+                          ))}
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-3 pb-1">Advanced Tools</p>
+                          {[
+                            { href: "SimulationEngine", label: "Formula Sim Engine", icon: Cpu },
+                            { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, tier: 'pro' },
+                            { href: "ComparativeImpactReport", label: "Impact Report", icon: BarChart2 },
+                            { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, status: 'coming_soon' },
+                          ].map(item => (
+                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
+                              className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
+                                location.pathname === createPageUrl(item.href) ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
+                              }`}>
+                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
+                              <span className="flex-1">{item.label}</span>
+                              {item.tier === 'pro' && <span className="text-[10px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-bold">PRO</span>}
+                              {item.status === 'coming_soon' && <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-medium">Soon</span>}
+                            </Link>
+                          ))}
                         </motion.div>
                       )}
                     </AnimatePresence>
