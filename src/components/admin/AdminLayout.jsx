@@ -3,16 +3,18 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   LayoutDashboard, Users, FileText, Power,
-  Menu, X, Briefcase, Megaphone
+  Menu, X, Briefcase, Megaphone, Crown
 } from 'lucide-react';
 import DashboardOverview from './DashboardOverview';
 import UserManagement from './UserManagement';
 import SubmissionsManagement from './SubmissionsManagement';
 import JobManagement from './JobManagement';
 import SendUpdateAnnouncement from './SendUpdateAnnouncement';
+import SubscriptionsPanel from './SubscriptionsPanel';
 
 const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { id: 'subscriptions', label: 'Subscriptions', icon: Crown },
   { id: 'users', label: 'User Management', icon: Users },
   { id: 'submissions', label: 'Submissions', icon: FileText },
   { id: 'jobs', label: 'Job Postings', icon: Briefcase },
@@ -27,6 +29,8 @@ export default function AdminLayout() {
     switch (activeTab) {
       case 'overview':
         return <DashboardOverview />;
+      case 'subscriptions':
+        return <SubscriptionsPanel />;
       case 'users':
         return <UserManagement />;
       case 'submissions':

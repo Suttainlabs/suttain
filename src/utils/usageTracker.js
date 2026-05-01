@@ -1,6 +1,6 @@
 import { base44 } from '@/api/base44Client';
 
-export const FREE_LIMITS = { simulations: 2, formulas: 5, scans: 2 };
+export const FREE_LIMITS = { simulations: 2, formulas: 5, scans: Infinity }; // scans are free for all
 
 export function getCurrentUsage(user) {
   const currentMonth = new Date().toISOString().slice(0, 7);

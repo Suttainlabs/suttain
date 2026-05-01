@@ -72,7 +72,7 @@ export default function AuthGate({ children, featureName, featureDescription }) 
                 <p className="text-sm font-semibold text-green-700">No credit card required</p>
               </div>
               <p className="text-xs text-slate-500">
-                Free tier includes 3 simulations, 5 formulas, and 2 product scans per month.
+                Free tier includes simulations, formula generation, and unlimited product scans.
               </p>
             </CardContent>
           </Card>

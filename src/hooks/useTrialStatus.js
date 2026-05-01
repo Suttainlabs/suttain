@@ -24,7 +24,7 @@ export default function useTrialStatus(user) {
       isExpired: false, // free tier never expires, just gets limited
       canSimulate: usage.simulations < FREE_LIMITS.simulations,
       canFormulate: usage.formulas < FREE_LIMITS.formulas,
-      canScan: usage.scans < FREE_LIMITS.scans,
+      canScan: true, // Quick Scan is free for all users
       usage,
       limits: FREE_LIMITS,
       daysLeft: 0 // kept for backward compatibility
