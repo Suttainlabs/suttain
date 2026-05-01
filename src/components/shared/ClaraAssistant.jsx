@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, X, Send, MessageSquare, Loader2, Home } from 'lucide-react';
+import { Sparkles, X, Send, MessageSquare, Loader2, Home, Mic, MicOff, Crown, XCircle, ArrowRight, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { sendSlackNotification } from '@/functions/sendSlackNotification';
+import { cancelSubscription } from '@/functions/cancelSubscription';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 const SYSTEM_PROMPT = `You are Clara, Suttain's intelligent AI assistant for the Suttain platform (suttain.com) — a chemical safety, sustainability, and formulation platform for individuals, researchers, and businesses.
 
@@ -16,6 +19,10 @@ RESPONSE FORMATTING RULES:
 - Use simple bullet points with dashes (-) if listing items
 - Be direct, warm, and helpful
 - If you don't know something specific, say "For more details, please email contact@suttain.com"
+
+SPECIAL ACTIONS:
+- If the user wants to CANCEL their subscription (says things like "cancel my subscription", "cancel plan", "stop my subscription", "I want to cancel", "unsubscribe"), respond with exactly: ACTION:CANCEL_SUBSCRIPTION
+- If the user wants to UPGRADE or SUBSCRIBE (says things like "upgrade", "subscribe", "get pro", "buy pro", "I want premium", "sign up for pro", "upgrade my plan"), respond with exactly: ACTION:UPGRADE_SUBSCRIPTION
 
 === COMPLETE SUTTAIN PLATFORM KNOWLEDGE ===
 
@@ -30,171 +37,111 @@ TOOLS & FEATURES:
 
 1. CHEMICAL SIMULATOR (Tools > Chemical Simulator)
    - Test chemical interactions safely BEFORE mixing anything in real life
-   - Select a persona: Household, Student, DIY Creator, Business, Teacher, or Researcher
-   - Add 2 or more chemicals, click "Run Simulation"
-   - Results include: overall risk score (0-100), reaction summary, health impact, environmental impact, VOC level, reactivity score, hazard symbols, AI recommendations, and safer alternatives
-   - Safer alternatives compare original vs. substitute on effectiveness, safety, cost, and sustainability
-   - Each simulation is saved to your Dashboard history
    - Earns 5 reward points per simulation
 
 2. FORMULA GENERATOR (Tools > Formula Generator)
    - AI-powered wizard to create professional-grade product formulas from scratch
-   - Supports: skincare, hair care, body wash, cleaning products, hand soap, deodorant, sunscreen, and more
-   - Choose Individual mode (personal/DIY) or Business mode (commercial production)
-   - Steps: (1) Pick product type, (2) Describe your needs, (3) Review AI-generated formula options, (4) Customize ingredients & percentages, (5) View mixing instructions, safety, sustainability, compliance
-   - Business mode adds: compliance checks, supplier sourcing, cost analysis, label printing, PDF export, sustainability scoring
-   - Formulas saved under Formula History in Dashboard
    - Free tier: 5 formula generations per month. Pro: Unlimited.
 
-3. QUICK SCAN / BARCODE SCANNER (Tools > Quick Scan)
-   - Scan any consumer product barcode to instantly see its full ingredient analysis
-   - Three scan methods: manual barcode entry, upload a product image, or live camera scan
-   - Results show: ingredient list, safety ratings per ingredient (Safe / Moderate / Hazardous), toxicity details, eco-impact score
-   - Scan history saved to Dashboard
-   - FREE for all users — no monthly limit
-   - Great for checking products before buying
+3. QUICK SCAN / BARCODE SCANNER - FREE for all users, no limit
 
-4. INGREDIENT DATABASE (Tools > Ingredient Database)
-   - Search and explore 250,000+ chemicals from PubChem + Suttain's curated database
-   - Filters: toxicity level (Safe, Moderate, Hazardous, Highly Hazardous), origin (Natural, Synthetic, Semi-synthetic), eco-impact
-   - Each chemical card shows: INCI name, CAS number, molecular formula, toxicity badge, origin, eco level, safety data
-   - Buttons: "Get AI Summary", free SDS (Safety Data Sheet) download, CAMEO Chemicals link
-   - Live autocomplete search across local + PubChem databases
+4. INGREDIENT DATABASE - 250,000+ chemicals from PubChem
 
-5. FORMULA SIMULATION ENGINE (Tools > Formula Simulation Engine)
-   - Interactive tool to adjust ingredient percentages live
-   - See real-time changes to: cost per batch, pH estimates, sustainability score
-   - Great for optimizing formulas before finalizing
-   - Available to Pro users
+5. FORMULA SIMULATION ENGINE - Pro users only
 
-6. COMPUTATIONAL SIMULATIONS (Tools > Computational Simulations) [PRO]
-   - Advanced scientific simulation for researchers
-   - Supports: DFT (Density Functional Theory), Molecular Dynamics (MD), ORCA, GROMACS, Quantum ESPRESSO, AMBER, AutoDock
-   - Submit scripts, monitor job queue, view parsed results
-   - HPC job management: track status (Submitted, Queued, Running, Completed, Failed)
-   - Download result files (geometry, energies, logs)
+6. COMPUTATIONAL SIMULATIONS - DFT, MD, ORCA, GROMACS, Quantum ESPRESSO [PRO]
 
-7. COMPARATIVE IMPACT REPORT (Tools > Comparative Impact Report)
-   - Benchmark your formula's sustainability score against industry averages
-   - Visual charts comparing carbon footprint, biodegradability, renewable content
-   - Export as PDF report
+7. COMPARATIVE IMPACT REPORT - Benchmark eco-score vs industry
 
-8. AI COMPLIANCE CO-PILOT (Premium)
-   - Check product/formula compliance against 50+ global regulations
-   - Covers: FDA (US), EU Cosmetics Regulation, Health Canada, Australia TGA, ASEAN, and more
-   - Input ingredients + select target regions → get per-ingredient compliance status and recommendations
-   - Includes predictive insights on emerging regulatory trends
-   - Generates compliance documentation
+8. AI COMPLIANCE CO-PILOT - 50+ global regulations [Premium]
 
-9. PERSONALIZED SAFETY ALERTS (Premium - Profile > Personalized Safety)
-   - Create personal health profiles with conditions (asthma, pregnancy, allergies, skin conditions, etc.)
-   - Receive automatic alerts when scanned or analyzed products contain flagged ingredients
-   - Supports multiple profiles (e.g., separate profiles for different family members)
+9. PERSONALIZED SAFETY ALERTS [Premium]
 
-10. SUSTAINABILITY SCORING (Premium)
-    - Full environmental impact analysis for any formula
-    - Scores: overall sustainability (0-100), carbon footprint, biodegradability timeline, renewable content %, water usage, packaging impact
-    - Certifications possible: ECOCERT, COSMOS, USDA Organic, Green Seal, Cradle-to-Cradle
-    - Suggests eco-friendly ingredient swaps
-
-11. WORKSPACE (User menu > My Workspace)
-    - Personal folder system to organize all your sessions: simulations, formulas, scans, compliance checks
-    - Create folders with custom names, colors, and icons
-    - Pin important sessions, add notes and tags
-    - Free users: limited storage. Pro: Unlimited workspace.
-
-12. LEARNING CENTER (Help > Learning Center)
-    - Free tutorials, guided walkthroughs, and knowledge base articles for all users
-    - Personalized learning paths based on your activity
-    - Covers: how to use each tool, chemical safety basics, formulation science
-
-13. REWARDS SYSTEM
-    - Earn points for platform activity:
-      - Completing a simulation: +5 points
-      - Submitting a review or feedback: +5-10 points
-      - Completing learning modules: points awarded
-    - View your points balance in the top navigation bar (gold star icon)
-    - Track rewards under My Rewards in the user menu
-
-14. DASHBOARD / PROFILE (User menu > My Dashboard)
-    - Central hub for all your saved data: simulations, formulas, scans, sustainability scores
-    - View activity history, notifications, and reward points summary
-    - Manage your subscription, safety profiles, and account settings
-    - Pull-to-refresh on mobile
-
-15. ENTERPRISE API (Coming Soon)
-    - Integrate Suttain's chemical analysis directly into your own enterprise systems
-    - Join the waitlist from the Tools menu > Enterprise API
+10. SUSTAINABILITY SCORING [Premium]
 
 PRICING & PLANS:
 
-FREE TIER (No credit card required):
-- 3 Chemical Simulations per month
-- 5 Formula Generations per month
-- UNLIMITED Quick Scans (barcode scanning) — always free
-- Ingredient Database access
-- Learning Center access
-- Community support
+FREE TIER: 3 simulations/month, 5 formulas/month, unlimited scans
 
-PRO PLAN — $4.99/month (cancel anytime):
-- Unlimited Chemical Simulations
-- Unlimited Formula Generation
-- Unlimited Quick Scans
-- Computational Simulations (DFT, MD, QM)
-- Formula Simulation Engine
-- AI Compliance Co-Pilot (50+ regions)
-- Personalized Safety Alerts
-- Sustainability & Carbon Footprint Scoring
-- Comparative Impact Reports
-- Ingredient Database (250k+ chemicals)
-- Unlimited Workspace Storage
-- PDF & Lab Report Export
-- Priority Email Support
-- Yearly option: $49.99/year (save ~17%)
+PRO PLAN — $4.99/month or $49.99/year:
+- Unlimited everything, Computational Simulations, Compliance Co-Pilot, Safety Alerts, Sustainability Scoring, PDF Export, Priority Support
 
-LIFETIME ACCESS — $99.99 one-time payment:
-- Everything in Pro — forever
-- All future feature updates included
-- Priority support for life
-- Pay once, never pay again
-
-HOW TO UPGRADE:
-- Go to the Pricing page (linked in the navigation or user menu)
-- Choose Pro Monthly, Pro Yearly, or Lifetime
-- Checkout is powered by Stripe (secure)
-- Subscription activates instantly after payment
+LIFETIME ACCESS — $99.99 one-time: Everything in Pro forever
 
 HOW TO CANCEL:
-- Go to Account Settings (user menu > Settings)
-- Scroll to "Subscription & Billing"
-- Click "Cancel Subscription"
-- You keep Pro access until the end of your current billing period
-- You will NOT be charged again after canceling
+- Users can ask Clara to cancel directly and she will do it automatically
+- Or go to Account Settings > Subscription & Billing > Cancel Subscription
 
-ACCOUNT & AUTH:
-- Sign up / login via Google OAuth or email
-- Profile customization: display name, profile image upload
-- Account deletion available in Settings > Account Deletion
-- Inactivity auto-logout after 10 minutes for security
-
-COMPANY:
-- About Us page: learn about Suttain's mission and team
-- Careers page: view open positions
-- Blog: articles on chemical safety, formulation, sustainability (also on Medium)
-- FAQ page: answers to common questions, user reviews, and contact form
-- Book a Demo: available for businesses wanting a guided walkthrough
-
-MOBILE APP:
-- Android APK available now — free download from the website footer
-- iOS App Store version coming soon
-- Same features as the web app, optimized for mobile
+HOW TO UPGRADE:
+- Users can ask Clara to upgrade and she will redirect them
+- Or go to the Pricing page
 
 SCOPE RULES:
 - Answer ALL questions about Suttain — pricing, features, how-to, policies, account issues
-- If a user asks how to do something on the platform, give them clear step-by-step directions
 - For billing or payment issues → "Please email contact@suttain.com for billing support"
-- For questions completely unrelated to Suttain → "I'm Clara, Suttain's assistant. I'm here to help with anything about the Suttain platform. What would you like to know?"
+- For questions completely unrelated to Suttain → "I'm Clara, Suttain's assistant. I'm here to help with anything about the Suttain platform."
 - NEVER make up features, prices, or policies that aren't listed above`;
+
+// Detect subscription intent locally (fast, no LLM needed)
+const detectIntent = (text) => {
+    const t = text.toLowerCase();
+    const cancelWords = ['cancel', 'unsubscribe', 'stop subscription', 'stop my plan', 'end subscription', 'terminate', 'discontinue'];
+    const upgradeWords = ['upgrade', 'subscribe', 'get pro', 'buy pro', 'want premium', 'sign up for pro', 'purchase pro', 'go pro', 'want pro', 'start pro'];
+    if (cancelWords.some(w => t.includes(w))) return 'cancel';
+    if (upgradeWords.some(w => t.includes(w))) return 'upgrade';
+    return null;
+};
+
+// Action card components
+const CancelActionCard = ({ onConfirm, onDismiss, loading, done }) => (
+    <div className="mx-0 p-3 bg-red-50 border border-red-200 rounded-xl">
+        {done ? (
+            <div className="flex items-center gap-2 text-green-700">
+                <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                <p className="text-xs font-semibold">Subscription cancelled. You keep access until the end of your billing period.</p>
+            </div>
+        ) : (
+            <>
+                <div className="flex items-center gap-2 mb-2">
+                    <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                    <p className="text-xs font-semibold text-red-800">Cancel your subscription?</p>
+                </div>
+                <p className="text-xs text-red-700 mb-3">You'll keep Pro access until the end of your current billing period, then revert to the free tier.</p>
+                <div className="flex gap-2">
+                    <button
+                        onClick={onConfirm}
+                        disabled={loading}
+                        className="flex-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded-lg py-1.5 font-semibold disabled:opacity-50 flex items-center justify-center gap-1"
+                    >
+                        {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
+                        {loading ? 'Cancelling…' : 'Yes, Cancel'}
+                    </button>
+                    <button onClick={onDismiss} className="flex-1 text-xs bg-white border border-slate-200 text-slate-700 rounded-lg py-1.5 font-semibold hover:bg-slate-50">
+                        Keep Plan
+                    </button>
+                </div>
+            </>
+        )}
+    </div>
+);
+
+const UpgradeActionCard = ({ onDismiss }) => (
+    <div className="mx-0 p-3 bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 rounded-xl">
+        <div className="flex items-center gap-2 mb-2">
+            <Crown className="w-4 h-4 text-violet-600 flex-shrink-0" />
+            <p className="text-xs font-semibold text-violet-800">Upgrade to Pro</p>
+        </div>
+        <p className="text-xs text-violet-700 mb-3">Get unlimited access to all features from just $4.99/month. Cancel anytime.</p>
+        <div className="flex gap-2">
+            <Link to={createPageUrl('Pricing')} className="flex-1 text-xs bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg py-1.5 font-semibold flex items-center justify-center gap-1 hover:opacity-90">
+                <Crown className="w-3 h-3" /> View Plans <ArrowRight className="w-3 h-3" />
+            </Link>
+            <button onClick={onDismiss} className="text-xs text-slate-500 hover:text-slate-700 px-2">
+                Later
+            </button>
+        </div>
+    </div>
+);
 
 export default function ClaraAssistant() {
     const [isOpen, setIsOpen] = useState(false);
@@ -206,6 +153,41 @@ export default function ClaraAssistant() {
     const [liveAgentName, setLiveAgentName] = useState('');
     const [liveAgentSent, setLiveAgentSent] = useState(false);
     const [liveAgentLoading, setLiveAgentLoading] = useState(false);
+    const [actionCard, setActionCard] = useState(null); // 'cancel' | 'upgrade' | null
+    const [cancelLoading, setCancelLoading] = useState(false);
+    const [cancelDone, setCancelDone] = useState(false);
+    const [isListening, setIsListening] = useState(false);
+    const messagesEndRef = useRef(null);
+    const recognitionRef = useRef(null);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages, actionCard]);
+
+    // Voice input setup
+    const startListening = () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return;
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        recognition.onresult = (e) => {
+            const transcript = e.results[0][0].transcript;
+            setUserMessage(transcript);
+            setIsListening(false);
+        };
+        recognition.onerror = () => setIsListening(false);
+        recognition.onend = () => setIsListening(false);
+        recognitionRef.current = recognition;
+        recognition.start();
+        setIsListening(true);
+    };
+
+    const stopListening = () => {
+        recognitionRef.current?.stop();
+        setIsListening(false);
+    };
 
     const handleSendMessage = async (overrideMessage) => {
         const content = (overrideMessage || userMessage).trim();
@@ -215,6 +197,22 @@ export default function ClaraAssistant() {
         setMessages(prev => [...prev, newMessage]);
         setUserMessage('');
         setIsLoading(true);
+        setActionCard(null);
+
+        // Local intent detection first (instant)
+        const intent = detectIntent(content);
+        if (intent === 'cancel') {
+            setMessages(prev => [...prev, { role: 'assistant', content: 'I can cancel your subscription right now. Please confirm below:' }]);
+            setActionCard('cancel');
+            setIsLoading(false);
+            return;
+        }
+        if (intent === 'upgrade') {
+            setMessages(prev => [...prev, { role: 'assistant', content: 'Great choice! Here are the Pro plans available for you:' }]);
+            setActionCard('upgrade');
+            setIsLoading(false);
+            return;
+        }
 
         try {
             const conversationHistory = [...messages, newMessage]
@@ -222,12 +220,21 @@ export default function ClaraAssistant() {
                 .join('\n');
 
             const response = await base44.integrations.Core.InvokeLLM({
-                prompt: `${SYSTEM_PROMPT}\n\nCurrent conversation:\n${conversationHistory}\n\nUser's latest question: ${content}\n\nProvide a helpful, CONCISE response in PLAIN TEXT focused on the Suttain platform. Be accurate — only use information from the knowledge base above:`,
+                prompt: `${SYSTEM_PROMPT}\n\nCurrent conversation:\n${conversationHistory}\n\nUser's latest question: ${content}\n\nProvide a helpful, CONCISE response in PLAIN TEXT focused on the Suttain platform:`,
                 add_context_from_internet: false,
                 model: 'gpt_5_mini'
             });
 
-            setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+            // Check if LLM detected an action
+            if (response.trim() === 'ACTION:CANCEL_SUBSCRIPTION') {
+                setMessages(prev => [...prev, { role: 'assistant', content: 'I can cancel your subscription right now. Please confirm below:' }]);
+                setActionCard('cancel');
+            } else if (response.trim() === 'ACTION:UPGRADE_SUBSCRIPTION') {
+                setMessages(prev => [...prev, { role: 'assistant', content: 'Great choice! Here are the Pro plans available for you:' }]);
+                setActionCard('upgrade');
+            } else {
+                setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+            }
         } catch (error) {
             setMessages(prev => [...prev, {
                 role: 'assistant',
@@ -235,6 +242,26 @@ export default function ClaraAssistant() {
             }]);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleCancelConfirm = async () => {
+        setCancelLoading(true);
+        try {
+            const res = await cancelSubscription({});
+            if (res.data?.success) {
+                setCancelDone(true);
+                setMessages(prev => [...prev, { role: 'assistant', content: '✅ Done! Your subscription has been cancelled. You keep full Pro access until the end of your current billing period.' }]);
+                setTimeout(() => setActionCard(null), 3000);
+            } else {
+                setMessages(prev => [...prev, { role: 'assistant', content: 'I was unable to cancel automatically. Please go to Settings > Subscription & Billing, or email contact@suttain.com for help.' }]);
+                setActionCard(null);
+            }
+        } catch {
+            setMessages(prev => [...prev, { role: 'assistant', content: 'Something went wrong. Please try cancelling from Settings > Subscription & Billing or email contact@suttain.com.' }]);
+            setActionCard(null);
+        } finally {
+            setCancelLoading(false);
         }
     };
 
@@ -255,7 +282,6 @@ export default function ClaraAssistant() {
                 subject: `Live Agent Request from ${liveAgentName}`,
                 body: `A user has requested to speak with a live agent on Suttain.\n\nName: ${liveAgentName}\nEmail: ${liveAgentEmail}\n\n--- Conversation Transcript ---\n${transcript}\n\nPlease follow up with the user as soon as possible.`
             });
-            // Slack notification is non-critical — don't let it fail the whole flow
             sendSlackNotification({
                 channel: '#general',
                 type: 'live_agent',
@@ -264,22 +290,34 @@ export default function ClaraAssistant() {
             setLiveAgentSent(true);
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: `Thanks ${liveAgentName}! A live agent will reach out to you at ${liveAgentEmail} shortly. We typically respond within a few hours during business hours.`
+                content: `Thanks ${liveAgentName}! A live agent will reach out to you at ${liveAgentEmail} shortly.`
             }]);
             setLiveAgentRequested(false);
-        } catch (e) {
-            setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I had trouble submitting your request. Please email us directly at contact@suttain.com.' }]);
+        } catch {
+            setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, please email us directly at contact@suttain.com.' }]);
             setLiveAgentRequested(false);
         } finally {
             setLiveAgentLoading(false);
         }
     };
 
+    const resetChat = () => {
+        setMessages([]);
+        setLiveAgentRequested(false);
+        setLiveAgentSent(false);
+        setLiveAgentName('');
+        setLiveAgentEmail('');
+        setActionCard(null);
+        setCancelDone(false);
+    };
+
     const suggestions = [
-        "How do I use the Chemical Simulator?",
+        "Cancel my subscription",
+        "Upgrade to Pro",
         "What features does Suttain offer?",
-        "How do I earn rewards on Suttain?"
     ];
+
+    const hasSpeechAPI = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
 
     return (
         <AnimatePresence>
@@ -288,7 +326,7 @@ export default function ClaraAssistant() {
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="fixed bottom-36 lg:bottom-20 right-6 w-80 max-w-[calc(100vw-2rem)] h-[420px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col z-50 overflow-hidden"
+                    className="fixed bottom-36 lg:bottom-20 right-6 w-80 max-w-[calc(100vw-2rem)] h-[460px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col z-50 overflow-hidden"
                 >
                     {/* Header */}
                     <div className="bg-gradient-to-r from-[#02988C] to-[#09D2FF] px-4 py-3 flex items-center justify-between flex-shrink-0">
@@ -303,17 +341,7 @@ export default function ClaraAssistant() {
                         </div>
                         <div className="flex items-center gap-2">
                             {messages.length > 0 && (
-                                <button
-                                    onClick={() => {
-                                        setMessages([]);
-                                        setLiveAgentRequested(false);
-                                        setLiveAgentSent(false);
-                                        setLiveAgentName('');
-                                        setLiveAgentEmail('');
-                                    }}
-                                    className="text-white/80 hover:text-white transition-colors"
-                                    title="Back to home"
-                                >
+                                <button onClick={resetChat} className="text-white/80 hover:text-white transition-colors" title="Back to home">
                                     <Home className="w-4 h-4" />
                                 </button>
                             )}
@@ -331,7 +359,12 @@ export default function ClaraAssistant() {
                                     <Sparkles className="w-6 h-6 text-teal-600" />
                                 </div>
                                 <h4 className="font-semibold text-slate-900 mb-1 text-sm">Ask me anything!</h4>
-                                <p className="text-xs text-slate-500 mb-4">I can help you navigate Suttain and use our features.</p>
+                                <p className="text-xs text-slate-500 mb-1">I can help you navigate, subscribe, or cancel.</p>
+                                {hasSpeechAPI && (
+                                    <p className="text-xs text-teal-500 mb-3 flex items-center justify-center gap-1">
+                                        <Mic className="w-3 h-3" /> You can also speak to me
+                                    </p>
+                                )}
                                 <div className="space-y-1.5">
                                     {suggestions.map((s) => (
                                         <button
@@ -367,6 +400,21 @@ export default function ClaraAssistant() {
                                 </div>
                             </div>
                         )}
+
+                        {/* Action Cards */}
+                        {actionCard === 'cancel' && (
+                            <CancelActionCard
+                                onConfirm={handleCancelConfirm}
+                                onDismiss={() => setActionCard(null)}
+                                loading={cancelLoading}
+                                done={cancelDone}
+                            />
+                        )}
+                        {actionCard === 'upgrade' && (
+                            <UpgradeActionCard onDismiss={() => setActionCard(null)} />
+                        )}
+
+                        <div ref={messagesEndRef} />
                     </div>
 
                     {/* Live Agent Form */}
@@ -395,10 +443,7 @@ export default function ClaraAssistant() {
                                 >
                                     {liveAgentLoading ? 'Sending...' : 'Submit'}
                                 </button>
-                                <button
-                                    onClick={() => setLiveAgentRequested(false)}
-                                    className="text-xs text-slate-500 hover:text-slate-700 px-2"
-                                >
+                                <button onClick={() => setLiveAgentRequested(false)} className="text-xs text-slate-500 hover:text-slate-700 px-2">
                                     Cancel
                                 </button>
                             </div>
@@ -416,13 +461,29 @@ export default function ClaraAssistant() {
                             </button>
                         )}
                         <div className="flex gap-2">
+                            {hasSpeechAPI && (
+                                <button
+                                    onMouseDown={startListening}
+                                    onMouseUp={stopListening}
+                                    onTouchStart={startListening}
+                                    onTouchEnd={stopListening}
+                                    className={`h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
+                                        isListening
+                                            ? 'bg-red-500 text-white animate-pulse'
+                                            : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                    }`}
+                                    title="Hold to speak"
+                                >
+                                    {isListening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
+                                </button>
+                            )}
                             <Input
                                 value={userMessage}
                                 onChange={(e) => setUserMessage(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                placeholder="Ask about Suttain features..."
+                                placeholder={isListening ? '🎤 Listening…' : 'Ask or say "cancel" / "upgrade"…'}
                                 className="flex-1 text-xs h-8"
-                                disabled={isLoading}
+                                disabled={isLoading || isListening}
                             />
                             <Button
                                 onClick={() => handleSendMessage()}
