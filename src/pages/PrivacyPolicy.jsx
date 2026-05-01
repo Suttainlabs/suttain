@@ -12,7 +12,7 @@ export default function PrivacyPolicy() {
     {
       icon: Database,
       title: "Information We Collect",
-      content: "<strong>Account Information</strong><br />When you create an account, we collect your name and email address. You may sign up using Apple Sign-In, Google Sign-In, or email and password. Authentication is handled by Base44.<br /><br /><strong>Subscription Data</strong><br />Subscription status and purchase history are managed by Stripe. We receive subscription status information to determine feature access but do not process or store payment details directly.<br /><br /><strong>Usage Data</strong><br />We use Vercel Analytics on our website, which collects anonymous usage data without cookies and without collecting personal information."
+      content: "<strong>Account Information</strong><br />When you create an account, we collect your name and email address. You may sign up using Apple Sign-In, Google Sign-In, or email and password. Authentication is handled by Base44.<br /><br /><strong>Subscription Data</strong><br />Subscription status and purchase history are managed by Stripe. We receive subscription status information to determine feature access but do not process or store payment details directly.<br /><br /><strong>Usage Data</strong><br />We use Base44 AI tools on our website, which collect anonymous usage data without cookies and without collecting personal information."
     },
     {
       icon: HeartPulse,
