@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Loader2, Plus, Edit2, Trash2, Clock, AlertCircle, CheckCircle, MessageSquare } from 'lucide-react';
+import { Loader2, Plus, Edit2, Trash2, Clock, AlertCircle, CheckCircle, MessageSquare, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const statusColors = {
@@ -27,15 +27,18 @@ const priorityColors = {
 const categoryOptions = ['billing', 'technical', 'feature_request', 'bug', 'general', 'other'];
 const statusOptions = ['new', 'open', 'in_progress', 'waiting', 'resolved', 'closed'];
 const priorityOptions = ['low', 'medium', 'high', 'urgent'];
+const teamOptions = ['marketing', 'product', 'tech', 'sales', 'support', 'other'];
 
 export default function CustomerSupportCRM() {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState('tickets'); // 'tickets' or 'tasks'
+  const [activeTab, setActiveTab] = useState('tickets');
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewTicketForm, setShowNewTicketForm] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const [assignToSearch, setAssignToSearch] = useState('');
+  const [showEmailDropdown, setShowEmailDropdown] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -47,6 +50,7 @@ export default function CustomerSupportCRM() {
     category: 'general',
     status: 'new',
     assigned_to: '',
+    team_category: 'support',
   });
 
   // Fetch tickets
@@ -60,6 +64,18 @@ export default function CustomerSupportCRM() {
     queryKey: ['support-tasks'],
     queryFn: () => base44.entities.SupportTask.list('-created_date', 100),
   });
+
+  // Fetch users for email autocomplete
+  const { data: users = [] } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: () => base44.asServiceRole.entities.User.list('', 100),
+  });
+
+  // Filter emails based on search
+  const emailSuggestions = users
+    .filter(u => u.email && u.email.toLowerCase().includes(assignToSearch.toLowerCase()))
+    .slice(0, 5)
+    .map(u => u.email);
 
   // Create/Update ticket
   const ticketMutation = useMutation({
@@ -98,7 +114,10 @@ export default function CustomerSupportCRM() {
       category: 'general',
       status: 'new',
       assigned_to: '',
+      team_category: 'support',
     });
+    setAssignToSearch('');
+    setShowEmailDropdown(false);
     setEditingId(null);
     setShowNewTicketForm(false);
   };
@@ -188,7 +207,42 @@ export default function CustomerSupportCRM() {
                       {statusOptions.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
-                  <Input placeholder="Assign to (email)" value={formData.assigned_to} onChange={e => setFormData({...formData, assigned_to: e.target.value})} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="relative">
+                      <Input 
+                        placeholder="Assign to (email)" 
+                        value={assignToSearch} 
+                        onChange={e => {
+                          setAssignToSearch(e.target.value);
+                          setShowEmailDropdown(true);
+                        }}
+                        onFocus={() => setShowEmailDropdown(true)}
+                        className="pr-8"
+                      />
+                      <Mail className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                      {showEmailDropdown && emailSuggestions.length > 0 && (
+                        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="absolute top-full left-0 right-0 bg-white border border-slate-300 rounded shadow-md z-10 mt-1">
+                          {emailSuggestions.map(email => (
+                            <button
+                              key={email}
+                              type="button"
+                              onClick={() => {
+                                setFormData({...formData, assigned_to: email});
+                                setAssignToSearch(email);
+                                setShowEmailDropdown(false);
+                              }}
+                              className="w-full text-left px-3 py-2 hover:bg-slate-100 text-sm text-slate-700"
+                            >
+                              {email}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </div>
+                    <select className="border border-slate-300 rounded px-2 py-2 text-sm" value={formData.team_category} onChange={e => setFormData({...formData, team_category: e.target.value})}>
+                      {teamOptions.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </div>
                   <div className="flex gap-2">
                     <Button type="submit" className="bg-teal-600 hover:bg-teal-700" disabled={ticketMutation.isPending}>
                       {ticketMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
