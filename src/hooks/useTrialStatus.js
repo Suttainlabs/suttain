@@ -11,6 +11,11 @@ export default function useTrialStatus(user) {
       return { isPro: true, plan: 'admin', isExpired: false, canSimulate: true, canFormulate: true, canScan: true, usage: null, limits: FREE_LIMITS };
     }
 
+    // Admin-granted temporary full access
+    if (user.admin_granted_access) {
+      return { isPro: true, plan: 'admin_granted', isExpired: false, canSimulate: true, canFormulate: true, canScan: true, usage: null, limits: FREE_LIMITS };
+    }
+
     const plan = user.subscription_plan || 'free';
     if (plan === 'pro' || plan === 'enterprise') {
       return { isPro: true, plan, isExpired: false, canSimulate: true, canFormulate: true, canScan: true, usage: null, limits: FREE_LIMITS };
