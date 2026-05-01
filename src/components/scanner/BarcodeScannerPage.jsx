@@ -10,7 +10,8 @@ import BarcodeAnalysis from './ProductAnalysis';
 import BarcodeHistory from './BarcodeHistory';
 import RegulatoryScanner from '../compliance/RegulatoryScanner';
 import { base44 } from '@/api/base44Client';
-import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, ShoppingCart, QrCode, Globe } from 'lucide-react';
+import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, ShoppingCart, QrCode, Globe, Smartphone } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import BulkScanDashboard from './BulkScanDashboard';
 import ToolFeedbackToast from '../shared/ToolFeedbackToast';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
@@ -249,6 +250,19 @@ export default function BarcodeScannerPage() {
             </div>
 
             {mode === 'bulk' && <BulkScanDashboard user={user} />}
+
+            {/* Mobile Scanner CTA */}
+            {mode === 'quick' && (
+              <div className="flex justify-center mb-6">
+                <Link
+                  to="/MobileScan"
+                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-2xl font-semibold text-sm shadow-lg hover:opacity-90 transition-opacity"
+                >
+                  <Smartphone className="w-5 h-5" />
+                  Open Full-Screen Mobile Scanner
+                </Link>
+              </div>
+            )}
 
             {mode === 'quick' && (
             <header className="text-center mb-12 max-w-4xl mx-auto">
