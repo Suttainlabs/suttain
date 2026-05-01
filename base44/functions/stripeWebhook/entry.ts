@@ -61,7 +61,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
   const featuresHtml = planInfo.features.map(f => `
     <tr>
       <td style="padding:8px 0;border-bottom:1px solid #f1f5f9;">
-        <span style="color:#02988C;font-weight:bold;margin-right:8px;">✓</span>
+        <span style="color:#02988C;font-weight:bold;margin-right:8px;">•</span>
         <span style="color:#1e293b;">${f}</span>
       </td>
     </tr>`).join('');
@@ -77,18 +77,16 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
       <!-- Header -->
       <div style="background:linear-gradient(135deg,#02988C 0%,#09D2FF 100%);padding:40px 32px;border-radius:16px 16px 0 0;text-align:center;">
         <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:44px;margin-bottom:20px;" />
-        <div style="font-size:48px;margin-bottom:12px;">🎉</div>
-        <h1 style="color:white;margin:0 0 8px;font-size:28px;font-weight:700;">Welcome to ${planInfo.name}!</h1>
-        <p style="color:rgba(255,255,255,0.85);margin:0;font-size:16px;">Your account has been upgraded successfully</p>
+        <h1 style="color:white;margin:0 0 8px;font-size:28px;font-weight:700;">Welcome to ${planInfo.name}</h1>
+        <p style="color:rgba(255,255,255,0.85);margin:0;font-size:16px;">Your account has been successfully activated</p>
       </div>
 
       <!-- Body -->
       <div style="background:#ffffff;padding:36px 32px;border-radius:0 0 16px 16px;border:1px solid #e2e8f0;border-top:none;">
         
-        <p style="font-size:17px;color:#1e293b;margin:0 0 8px;">Hi ${userName || 'there'} 👋</p>
+        <p style="font-size:17px;color:#1e293b;margin:0 0 8px;">Hello ${userName || 'User'},</p>
         <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 28px;">
-          Thank you for your subscription! You now have full Pro access to everything Suttain has to offer. 
-          Your account is active and ready to use.
+          Thank you for your subscription to Suttain Pro. Your account is now active and you have full access to all premium features. You can begin using your account immediately.
         </p>
 
         <!-- Plan Summary Box -->
@@ -99,7 +97,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
           </div>
           <div style="text-align:right;">
             <p style="margin:0;font-weight:800;font-size:22px;color:#064e3b;">${planInfo.price}</p>
-            <p style="margin:4px 0 0;font-size:12px;color:#10b981;font-weight:600;">● ACTIVE</p>
+            <p style="margin:4px 0 0;font-size:12px;color:#10b981;font-weight:600;">ACTIVE</p>
           </div>
         </div>
 
@@ -114,7 +112,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
         <!-- CTA -->
         <div style="text-align:center;margin:32px 0 24px;">
           <a href="https://suttain.com/Simulator" style="display:inline-block;background:linear-gradient(135deg,#02988C,#09D2FF);color:white;text-decoration:none;font-weight:700;font-size:16px;padding:14px 40px;border-radius:50px;box-shadow:0 4px 15px rgba(2,152,140,0.3);">
-            Start Using Pro Now →
+            Start Using Your Account
           </a>
         </div>
 
@@ -135,7 +133,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
   try {
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: email,
-      subject: `🎉 You're now on ${planInfo.name} — Welcome to Pro!`,
+      subject: `Welcome to ${planInfo.name} — Your Account is Active`,
       body,
       from_name: 'Suttain'
     });

@@ -12,21 +12,28 @@ Deno.serve(async (req) => {
     const emailContent = `
 Hello ${full_name},
 
-Thank you for subscribing to Suttain ${plan_name}! 🎉
+Thank you for subscribing to Suttain Pro. We are excited to welcome you to our community.
 
-We're excited to have you on board. You now have access to:
+You now have access to the following features:
+
 - Unlimited Chemical Simulations
 - Unlimited Formula Generation
 - AI Compliance Co-Pilot (50+ regions)
-- Sustainability & Carbon Footprint Scoring
-- Computational Simulations (DFT, MD, QM)
-- And much more!
+- Sustainability and Carbon Footprint Scoring
+- Computational Simulations (DFT, Molecular Dynamics, Quantum Mechanics)
+- Advanced Analytics and Reporting
+- Personalized Safety Alerts
+- Priority Email Support
 
-Get started by heading to the Tools section and running your first simulation.
+Getting Started
 
-If you have any questions or need help, reach out to us at contact@suttain.com or use the live chat in the app.
+To begin using your new Pro features, navigate to the Tools section within your account and run your first simulation. Our learning center provides comprehensive tutorials and guides to help you maximize your investment.
 
-Happy formulating! 🧪
+Support and Assistance
+
+If you have any questions or require assistance, please reach out to our support team at contact@suttain.com or use the live chat feature available in the application.
+
+We are committed to helping you succeed with Suttain Pro.
 
 Best regards,
 The Suttain Team
@@ -35,7 +42,7 @@ https://suttain.com
 
     const res = await base44.integrations.Core.SendEmail({
       to: email,
-      subject: `Welcome to Suttain ${plan_name}! 🎉 Thank You for Subscribing`,
+      subject: `Welcome to Suttain Pro — Thank You for Subscribing`,
       body: emailContent,
       from_name: 'Suttain'
     });
