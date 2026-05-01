@@ -18,7 +18,7 @@ import {
 import SEOHead from '@/components/shared/SEOHead';
 import { fetchMediumArticles } from '@/functions/fetchMediumArticles';
 
-const MEDIUM_URL = "https://medium.com/@suttainlabs";
+const MEDIUM_URL = "https://medium.com/@suttain";
 
 const BLOG_IMAGES = {
   waffleTowels: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/7bb6cfd96_clean-waffle-towels-and-other-bath-products-on-woo-2026-01-11-10-51-01-utc.jpg",

@@ -5,7 +5,7 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     
     // Medium RSS feed URL for Suttain Labs
-    const mediumUsername = "suttainlabs";
+    const mediumUsername = "suttain";
     const rssUrl = `https://medium.com/feed/@${mediumUsername}`;
     
     // Fetch the RSS feed
