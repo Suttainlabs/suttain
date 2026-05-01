@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Sparkles, Building2, Zap, Shield, Leaf, HeartPulse, MessageSquare, Clock, AlertTriangle, Loader2 } from 'lucide-react';
+import { Check, Sparkles, Building2, Zap, Shield, Leaf, HeartPulse, MessageSquare, Clock, AlertTriangle, Loader2, Cpu, BarChart3, QrCode, Atom, FlaskConical, FileText, Globe, Database, FolderOpen, Layers } from 'lucide-react';
 import { createCheckoutSession } from '@/functions/createCheckoutSession';
 import useTrialStatus from '../hooks/useTrialStatus';
 import { Button } from '@/components/ui/button';
@@ -42,11 +42,16 @@ const plans = [
       'Unlimited Chemical Simulations',
       'Unlimited Formula Generation',
       'Unlimited Product Scans',
-      'AI Compliance Co-Pilot',
+      'Computational Simulations (DFT, MD, QM)',
+      'Formula Simulation Engine',
+      'AI Compliance Co-Pilot (50+ regions)',
       'Personalized Safety Alerts',
-      'Sustainability Scoring',
-      'Priority Email Support',
-      'Export to PDF/Print'
+      'Sustainability & Carbon Footprint Scoring',
+      'Comparative Impact Reports',
+      'Ingredient Database (250k+ chemicals)',
+      'Unlimited Workspace Storage',
+      'PDF & Lab Report Export',
+      'Priority Email Support'
     ],
     limitations: [],
     cta: 'Upgrade to Pro',
@@ -79,10 +84,90 @@ const plans = [
 ];
 
 const featureDetails = [
-  { icon: Shield, title: 'AI Compliance Co-Pilot', description: 'Automated regulatory checks across 50+ regions' },
-  { icon: HeartPulse, title: 'Personalized Safety Alerts', description: 'Custom alerts based on your health profile' },
-  { icon: Leaf, title: 'Sustainability Scoring', description: 'Detailed eco-impact analysis for your formulas' },
-  { icon: MessageSquare, title: 'Priority Support', description: '24/7 support with < 4 hour response time' }
+  {
+    icon: Cpu,
+    title: 'Computational Simulations',
+    description: 'Run DFT, Molecular Dynamics, ORCA, GROMACS & quantum chemistry scripts — no lab needed.',
+    color: 'from-violet-500 to-purple-600',
+    badge: 'Advanced'
+  },
+  {
+    icon: Shield,
+    title: 'AI Compliance Co-Pilot',
+    description: 'Automated regulatory checks across 50+ global regions including EU, FDA, and ASEAN.',
+    color: 'from-teal-500 to-cyan-500',
+    badge: null
+  },
+  {
+    icon: HeartPulse,
+    title: 'Personalized Safety Alerts',
+    description: 'Custom alerts based on your health profile, conditions, and ingredient sensitivities.',
+    color: 'from-rose-500 to-pink-500',
+    badge: null
+  },
+  {
+    icon: Leaf,
+    title: 'Sustainability Scoring',
+    description: 'Detailed eco-impact analysis, biodegradability scores, and carbon footprint per formula.',
+    color: 'from-green-500 to-emerald-500',
+    badge: null
+  },
+  {
+    icon: BarChart3,
+    title: 'Comparative Impact Reports',
+    description: "Benchmark your formula's eco-score vs. industry averages with exportable reports.",
+    color: 'from-blue-500 to-indigo-500',
+    badge: null
+  },
+  {
+    icon: Atom,
+    title: 'Formula Simulation Engine',
+    description: 'Adjust ingredient percentages live and instantly see cost, pH, and sustainability shifts.',
+    color: 'from-amber-500 to-orange-500',
+    badge: null
+  },
+  {
+    icon: QrCode,
+    title: 'Unlimited Quick Scans',
+    description: 'Scan any product barcode for full ingredient safety, toxicity & eco analysis — no limits.',
+    color: 'from-cyan-500 to-teal-500',
+    badge: null
+  },
+  {
+    icon: Globe,
+    title: 'Ingredient Database Access',
+    description: 'Explore 250k+ chemicals with full toxicity, origin, INCI names, and eco-impact data.',
+    color: 'from-slate-600 to-slate-800',
+    badge: null
+  },
+  {
+    icon: FlaskConical,
+    title: 'Unlimited Simulations',
+    description: 'Run as many chemical interaction simulations as you need — no monthly cap.',
+    color: 'from-teal-600 to-green-600',
+    badge: null
+  },
+  {
+    icon: FileText,
+    title: 'PDF & Lab Report Export',
+    description: 'Export professional-grade formulas, safety reports, and lab documentation as PDFs.',
+    color: 'from-indigo-500 to-blue-600',
+    badge: null
+  },
+  {
+    icon: FolderOpen,
+    title: 'Unlimited Workspace',
+    description: 'Save, organize, and revisit all simulations, formulas, and scans in your personal workspace.',
+    color: 'from-violet-500 to-fuchsia-500',
+    badge: null
+  },
+  {
+    icon: MessageSquare,
+    title: 'Priority Support',
+    description: '24/7 dedicated support with under 4-hour response time and direct team access.',
+    color: 'from-rose-500 to-red-500',
+    badge: null
+  },
 ];
 
 export default function Pricing() {
@@ -298,20 +383,36 @@ export default function Pricing() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-2xl p-8 shadow-lg border border-slate-200"
+          className="space-y-6"
         >
-          <h2 className="text-2xl font-bold text-slate-900 text-center mb-8">
-            Premium Features Explained
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">Everything in Pro, Explained</h2>
+            <p className="text-slate-500">12 powerful features unlocked the moment you upgrade</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {featureDetails.map((feature, i) => (
-              <div key={i} className="text-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[var(--suttain-teal)] to-[var(--suttain-blue)] mx-auto mb-4 flex items-center justify-center">
-                  <feature.icon className="w-6 h-6 text-white" />
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 * i }}
+                className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 flex gap-4 items-start"
+              >
+                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center flex-shrink-0`}>
+                  <feature.icon className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="font-semibold text-slate-900 mb-2">{feature.title}</h3>
-                <p className="text-sm text-slate-600">{feature.description}</p>
-              </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <h3 className="font-semibold text-slate-900 text-sm leading-snug">{feature.title}</h3>
+                    {feature.badge && (
+                      <span className="text-[10px] px-1.5 py-0.5 bg-violet-100 text-violet-700 font-bold rounded">
+                        {feature.badge}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{feature.description}</p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
