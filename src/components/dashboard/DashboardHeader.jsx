@@ -42,7 +42,7 @@ export default function DashboardHeader({ greeting }) {
               {greeting}, {user.display_name || user.full_name?.split(' ')[0] || 'User'}!
               <Popover>
                 <PopoverTrigger asChild>
-                  {user.role === 'admin' ? (
+                  {(user.role === 'admin' || user.subscription_plan === 'pro' || user.subscription_plan === 'enterprise' || user.admin_granted_access) ? (
                     <button className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-amber-500 text-white shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                       <Crown className="w-3 h-3 mr-1" /> Premium
                     </button>
@@ -53,7 +53,7 @@ export default function DashboardHeader({ greeting }) {
                   )}
                 </PopoverTrigger>
                 <PopoverContent className="w-72 p-0" align="start">
-                  {user.role === 'admin' ? (
+                 {(user.role === 'admin' || user.subscription_plan === 'pro' || user.subscription_plan === 'enterprise' || user.admin_granted_access) ? (
                     <>
                       <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-4 rounded-t-lg">
                         <div className="flex items-center gap-2">
@@ -102,7 +102,7 @@ export default function DashboardHeader({ greeting }) {
               </Popover>
             </h1>
             <p className="text-sm sm:text-base text-gray-500 mt-0.5 font-medium">
-              {user.role === 'admin' ? 'Administrator' : 'User Dashboard'}
+              {user.role === 'admin' ? 'Administrator' : (user.subscription_plan === 'pro' || user.subscription_plan === 'enterprise') ? 'Pro Member' : 'User Dashboard'}
             </p>
           </div>
         </div>
