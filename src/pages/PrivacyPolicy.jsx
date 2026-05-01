@@ -15,11 +15,7 @@ export default function PrivacyPolicy() {
       content: "<strong>Account Information</strong><br />When you create an account, we collect your name and email address. You may sign up using Apple Sign-In, Google Sign-In, or email and password. Authentication is handled by Base44.<br /><br /><strong>Subscription Data</strong><br />Subscription status and purchase history are managed by Stripe. We receive subscription status information to determine feature access but do not process or store payment details directly.<br /><br /><strong>Usage Data</strong><br />We use Base44 AI tools on our website, which collect anonymous usage data without cookies and without collecting personal information."
     },
 
-    {
-      icon: Cog,
-      title: "How We Use Your Information",
-      content: "We use your information to:<ul><li>Generate personalized weekly meal plans using AI</li><li>Track your daily nutrition intake and progress toward your goals</li><li>Manage your subscription and feature access</li><li>Improve the App and develop new features</li></ul>"
-    },
+
     {
       icon: Apple,
       title: "AI-Generated Content",
