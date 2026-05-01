@@ -58,89 +58,59 @@ const PLAN_DETAILS = {
 
 async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
   const planInfo = PLAN_DETAILS[planKey] || PLAN_DETAILS['pro_monthly'];
-
-  const isLifetime = planInfo.billing === 'lifetime';
-  const billingNote = isLifetime
-    ? 'One-time payment · Access forever'
-    : `Billed ${planInfo.billing} · Cancel anytime`;
+  const firstName = userName ? userName.split(' ')[0] : 'there';
 
   const body = `
-    <div style="font-family:'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;max-width:600px;margin:0 auto;background:#f8fafc;padding:0;">
+    <div style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;max-width:600px;margin:0 auto;color:#333;">
       
-      <!-- Header -->
-      <div style="background:linear-gradient(135deg,#02988C 0%,#09D2FF 100%);padding:60px 40px;text-align:center;">
-        <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:48px;margin-bottom:24px;display:block;" />
-        <h1 style="color:white;margin:0;font-size:32px;font-weight:700;letter-spacing:-0.5px;">Welcome to Suttain Pro</h1>
-        <p style="color:rgba(255,255,255,0.90);margin:12px 0 0;font-size:18px;font-weight:300;">Your subscription is now active</p>
-      </div>
-
       <!-- Body -->
-      <div style="background:#ffffff;padding:48px 40px;">
+      <div style="padding:40px 32px;">
         
-        <!-- Greeting -->
-        <p style="font-size:18px;color:#1e293b;margin:0 0 24px;font-weight:500;">Hello ${userName || 'User'},</p>
+        <p style="font-size:16px;color:#333;margin:0 0 24px;line-height:1.6;">Hello ${firstName},</p>
         
-        <!-- Introduction -->
-        <p style="color:#475569;font-size:16px;line-height:1.8;margin:0 0 32px;">
-          Thank you for subscribing to Suttain Pro. We are thrilled to welcome you to our community of formulators and chemists who trust Suttain for safety, compliance, and sustainability.
+        <p style="color:#555;font-size:15px;line-height:1.8;margin:0 0 24px;">
+          Thank you for subscribing to Suttain Pro - we're excited to welcome you to our community.
         </p>
 
-        <!-- Plan Summary Box -->
-        <div style="background:#f0fdf4;border-left:4px solid #02988C;padding:24px;margin-bottom:40px;border-radius:8px;">
-          <p style="margin:0 0 12px;font-weight:700;font-size:16px;color:#1e293b;">Your Subscription Details</p>
-          <table style="width:100%;font-size:15px;color:#475569;line-height:1.8;">
-            <tr>
-              <td style="padding:6px 0;">Plan:</td>
-              <td style="text-align:right;font-weight:600;color:#1e293b;">${planInfo.name}</td>
-            </tr>
-            <tr>
-              <td style="padding:6px 0;">Billing:</td>
-              <td style="text-align:right;font-weight:600;color:#1e293b;">${billingNote}</td>
-            </tr>
-            <tr style="border-top:1px solid rgba(2,152,140,0.2);">
-              <td style="padding:12px 0 0;">Amount:</td>
-              <td style="text-align:right;padding:12px 0 0;font-size:20px;font-weight:700;color:#02988C;">${planInfo.price}</td>
-            </tr>
-          </table>
-        </div>
-
-
-
-        <!-- Getting Started Section -->
-        <div style="background:#ecfdf5;padding:24px;border-radius:8px;margin-bottom:40px;">
-          <h3 style="color:#1e293b;font-size:16px;font-weight:700;margin:0 0 12px;">Getting Started</h3>
-          <p style="color:#475569;font-size:15px;line-height:1.8;margin:0;">
-            Log in to your account and navigate to the Tools section to begin your first chemical simulation. Our comprehensive learning center provides tutorials and guides to help you maximize your investment.
-          </p>
-        </div>
-
-        <!-- CTA Button -->
-        <div style="text-align:center;margin-bottom:40px;">
-          <a href="https://suttain.com/Simulator" style="display:inline-block;background:linear-gradient(135deg,#02988C,#09D2FF);color:white;text-decoration:none;font-weight:600;font-size:16px;padding:16px 48px;border-radius:6px;box-shadow:0 4px 15px rgba(2,152,140,0.3);transition:transform 0.2s ease;">
-            Access Your Account
-          </a>
-        </div>
-
-        <!-- Support Section -->
-        <div style="border-top:1px solid #e2e8f0;padding-top:32px;margin-top:32px;">
-          <p style="color:#1e293b;font-size:15px;font-weight:600;margin:0 0 12px;">Need Assistance?</p>
-          <p style="color:#475569;font-size:15px;line-height:1.8;margin:0;">
-            Our support team is available to assist you. Contact us at <a href="mailto:contact@suttain.com" style="color:#02988C;text-decoration:none;font-weight:600;">contact@suttain.com</a> or use the live chat feature in your account.
-          </p>
-        </div>
-
-      </div>
-
-      <!-- Footer -->
-      <div style="background:#f8fafc;padding:32px 40px;border-top:1px solid #e2e8f0;text-align:center;">
-        <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0;">
-          Best regards,<br/>
-          <span style="font-weight:600;color:#1e293b;">The Suttain Team</span><br/>
-          <a href="https://suttain.com" style="color:#02988C;text-decoration:none;">suttain.com</a>
+        <p style="color:#555;font-size:15px;line-height:1.8;margin:0 0 16px;">
+          You now have access to a powerful suite of features designed to enhance your workflow:
         </p>
-        <p style="color:#94a3b8;font-size:12px;margin:16px 0 0;">
-          © ${new Date().getFullYear()} Suttain. All rights reserved.
+
+        <ul style="color:#555;font-size:15px;line-height:1.8;margin:0 0 24px;padding-left:20px;">
+          <li>Unlimited Chemical Simulations</li>
+          <li>Unlimited Formula Generation</li>
+          <li>AI Compliance Co-Pilot (50+ regions)</li>
+          <li>Sustainability and Carbon Footprint Scoring</li>
+          <li>Computational Simulations (DFT, Molecular Dynamics, Quantum Mechanics)</li>
+          <li>Advanced Analytics and Reporting</li>
+          <li>Personalized Safety Alerts</li>
+          <li>Priority Email Support</li>
+        </ul>
+
+        <h3 style="color:#333;font-size:16px;font-weight:600;margin:24px 0 12px;">Getting Started</h3>
+        <p style="color:#555;font-size:15px;line-height:1.8;margin:0 0 12px;">
+          To begin using your Pro features, navigate to the Tools section within your account and run your first simulation.
         </p>
+        <p style="color:#555;font-size:15px;line-height:1.8;margin:0 0 24px;">
+          Our Learning Center offers comprehensive tutorials and guides to help you get the most out of your subscription.
+        </p>
+
+        <h3 style="color:#333;font-size:16px;font-weight:600;margin:24px 0 12px;">Support and Assistance</h3>
+        <p style="color:#555;font-size:15px;line-height:1.8;margin:0 0 12px;">
+          If you have any questions or need help, feel free to reach out:
+        </p>
+        <ul style="color:#555;font-size:15px;line-height:1.8;margin:0 0 24px;padding-left:20px;">
+          <li>Email: <a href="mailto:contact@suttain.com" style="color:#02988C;text-decoration:none;">contact@suttain.com</a></li>
+          <li>Live chat: Available in the application</li>
+        </ul>
+
+        <p style="color:#555;font-size:15px;line-height:1.8;margin:0 0 32px;">
+          We're committed to helping you succeed with Suttain Pro.
+        </p>
+
+        <p style="color:#333;font-size:15px;margin:0 0 4px;font-weight:500;">Best regards,</p>
+        <p style="color:#333;font-size:15px;margin:0;font-weight:500;">The Suttain Team</p>
+
       </div>
 
     </div>
