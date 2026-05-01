@@ -1,0 +1,102 @@
+{
+  "name": "SupportTicket",
+  "type": "object",
+  "properties": {
+    "customer_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email of the customer who submitted the ticket"
+    },
+    "customer_name": {
+      "type": "string",
+      "description": "Name of the customer"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short title of the support request"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the issue"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "open",
+        "in_progress",
+        "waiting",
+        "resolved",
+        "closed"
+      ],
+      "default": "new",
+      "description": "Current status of the ticket"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium",
+      "description": "Priority level of the ticket"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "billing",
+        "technical",
+        "feature_request",
+        "bug",
+        "general",
+        "other"
+      ],
+      "description": "Category of the support request"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Email of the team member assigned to this ticket"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes and comments from the support team"
+    },
+    "resolution": {
+      "type": "string",
+      "description": "How the ticket was resolved"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the ticket was resolved"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for organizing tickets"
+    }
+  },
+  "required": [
+    "customer_email",
+    "customer_name",
+    "title",
+    "description"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {}
+  }
+}
