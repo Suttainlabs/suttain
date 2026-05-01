@@ -1,53 +1,52 @@
 import React from 'react';
 import { FlaskConical, TestTube, QrCode } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const StatCard = ({ icon: Icon, title, value, iconColor, isLoading }) => (
-    <Card className="border border-gray-200 hover:shadow-md transition-shadow">
-        <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${iconColor}`}>
-                    <Icon className="w-5 h-5 text-white" />
-                </div>
-            </div>
-            <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-            {isLoading ? (
-                <Skeleton className="h-8 w-16" />
-            ) : (
-                <p className="text-3xl font-bold text-gray-900">{value}</p>
-            )}
-        </CardContent>
-    </Card>
-);
+const stats_config = [
+    {
+        icon: FlaskConical,
+        title: 'Formulas',
+        key: 'totalFormulas',
+        gradient: 'from-purple-500 to-violet-500',
+        bg: 'bg-purple-50',
+        text: 'text-purple-700',
+    },
+    {
+        icon: TestTube,
+        title: 'Simulations',
+        key: 'totalSimulations',
+        gradient: 'from-teal-500 to-cyan-500',
+        bg: 'bg-teal-50',
+        text: 'text-teal-700',
+    },
+    {
+        icon: QrCode,
+        title: 'Scans',
+        key: 'totalScans',
+        gradient: 'from-sky-500 to-blue-500',
+        bg: 'bg-sky-50',
+        text: 'text-sky-700',
+    },
+];
 
 export default function UserStats({ stats, isLoading }) {
     return (
-        <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Activity Overview</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                <StatCard 
-                    icon={FlaskConical} 
-                    title="Formulas Created" 
-                    value={stats.totalFormulas} 
-                    iconColor="bg-purple-600"
-                    isLoading={isLoading}
-                />
-                <StatCard 
-                    icon={TestTube} 
-                    title="Simulations Run" 
-                    value={stats.totalSimulations}
-                    iconColor="bg-teal-600"
-                    isLoading={isLoading}
-                />
-                <StatCard 
-                    icon={QrCode} 
-                    title="Products Scanned" 
-                    value={stats.totalScans}
-                    iconColor="bg-blue-600"
-                    isLoading={isLoading}
-                />
-            </div>
+        <div className="grid grid-cols-3 gap-3">
+            {stats_config.map(({ icon: Icon, title, key, gradient, bg, text }) => (
+                <div key={key} className={`${bg} rounded-2xl p-4 flex items-center gap-3 border border-white shadow-sm`}>
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-md flex-shrink-0`}>
+                        <Icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className={`text-xs font-semibold ${text} uppercase tracking-wide`}>{title}</p>
+                        {isLoading ? (
+                            <Skeleton className="h-6 w-10 mt-1" />
+                        ) : (
+                            <p className="text-2xl font-bold text-slate-900 leading-tight">{stats[key] ?? 0}</p>
+                        )}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 }

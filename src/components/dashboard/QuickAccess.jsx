@@ -1,53 +1,72 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { TestTube, Atom, QrCode, ArrowRight } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { TestTube, Atom, QrCode, ArrowRight, Cpu, BarChart3, Leaf } from 'lucide-react';
 
 const tools = [
     {
-        title: 'Chemical Simulator',
-        description: 'Test chemical interactions.',
+        title: 'Simulator',
+        description: 'Test chemical interactions',
         icon: TestTube,
-        color: 'from-[var(--suttain-teal)] to-[var(--suttain-blue)]',
+        gradient: 'from-[#02988C] to-[#09D2FF]',
+        glow: 'hover:shadow-teal-200',
         link: 'Simulator'
     },
     {
         title: 'Formula Generator',
-        description: 'Create custom formulas.',
+        description: 'Create custom formulas',
         icon: Atom,
-        color: 'from-[var(--suttain-violet)] to-purple-400',
+        gradient: 'from-[#9531F5] to-purple-400',
+        glow: 'hover:shadow-purple-200',
         link: 'generator'
     },
     {
-        title: 'Product Quick Scan',
-        description: 'Analyze products via barcode.',
+        title: 'Quick Scan',
+        description: 'Analyze via barcode',
         icon: QrCode,
-        color: 'from-sky-400 to-cyan-400',
+        gradient: 'from-sky-500 to-cyan-400',
+        glow: 'hover:shadow-cyan-200',
         link: 'BarcodeScanner'
-    }
+    },
+    {
+        title: 'Sim Engine',
+        description: 'Live formula tuning',
+        icon: Cpu,
+        gradient: 'from-violet-500 to-indigo-500',
+        glow: 'hover:shadow-indigo-200',
+        link: 'SimulationEngine'
+    },
+    {
+        title: 'Impact Report',
+        description: 'Eco-score benchmark',
+        icon: BarChart3,
+        gradient: 'from-emerald-500 to-green-400',
+        glow: 'hover:shadow-green-200',
+        link: 'ComparativeImpactReport'
+    },
+    {
+        title: 'Sustainability',
+        description: 'Carbon & eco analysis',
+        icon: Leaf,
+        gradient: 'from-lime-500 to-emerald-500',
+        glow: 'hover:shadow-lime-200',
+        link: 'SustainabilityImpact'
+    },
 ];
 
 export default function QuickAccess() {
     return (
         <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Access</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-3">Quick Access</h2>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
                 {tools.map((tool) => (
                     <Link to={createPageUrl(tool.link)} key={tool.title} className="group">
-                        <Card className="h-full overflow-hidden border border-gray-200 hover:border-gray-300 transition-all hover:shadow-lg">
-                            <CardContent className="p-6">
-                                <div className={`w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br ${tool.color} mb-4 group-hover:scale-105 transition-transform`}>
-                                    <tool.icon className="w-6 h-6 text-white" />
-                                </div>
-                                <h3 className="font-semibold text-lg text-gray-900 mb-1">{tool.title}</h3>
-                                <p className="text-sm text-gray-600 mb-4">{tool.description}</p>
-                                <div className="flex items-center text-sm font-medium text-blue-600 group-hover:text-blue-700">
-                                    Open
-                                    <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <div className={`flex flex-col items-center gap-2 p-3 rounded-2xl bg-white border border-slate-100 hover:border-transparent hover:shadow-lg ${tool.glow} transition-all duration-200`}>
+                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br ${tool.gradient} group-hover:scale-110 transition-transform duration-200 shadow-md`}>
+                                <tool.icon className="w-5 h-5 text-white" />
+                            </div>
+                            <span className="text-[11px] font-semibold text-slate-700 text-center leading-tight">{tool.title}</span>
+                        </div>
                     </Link>
                 ))}
             </div>
