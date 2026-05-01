@@ -209,36 +209,35 @@ export default function CustomerSupportCRM() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="relative">
-                      <Input 
-                        placeholder="Assign to (email)" 
-                        value={assignToSearch} 
-                        onChange={e => {
-                          setAssignToSearch(e.target.value);
-                          setShowEmailDropdown(true);
-                        }}
-                        onFocus={() => setShowEmailDropdown(true)}
-                        className="pr-8"
-                      />
-                      <Mail className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
-                      {showEmailDropdown && emailSuggestions.length > 0 && (
-                        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="absolute top-full left-0 right-0 bg-white border border-slate-300 rounded shadow-md z-10 mt-1">
-                          {emailSuggestions.map(email => (
-                            <button
-                              key={email}
-                              type="button"
-                              onClick={() => {
-                                setFormData({...formData, assigned_to: email});
-                                setAssignToSearch(email);
-                                setShowEmailDropdown(false);
-                              }}
-                              className="w-full text-left px-3 py-2 hover:bg-slate-100 text-sm text-slate-700"
-                            >
-                              {email}
-                            </button>
-                          ))}
-                        </motion.div>
-                      )}
-                    </div>
+                       <Input 
+                         placeholder="Assign to (email)" 
+                         value={assignToSearch} 
+                         onChange={e => setAssignToSearch(e.target.value)}
+                         onFocus={() => setShowEmailDropdown(true)}
+                         onBlur={() => setTimeout(() => setShowEmailDropdown(false), 200)}
+                         className="pr-8"
+                       />
+                       <Mail className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                       {showEmailDropdown && emailSuggestions.length > 0 && (
+                         <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="absolute top-full left-0 right-0 bg-white border border-slate-300 rounded shadow-md z-10 mt-1 max-h-48 overflow-y-auto">
+                           {emailSuggestions.map(email => (
+                             <button
+                               key={email}
+                               type="button"
+                               onMouseDown={e => {
+                                 e.preventDefault();
+                                 setFormData({...formData, assigned_to: email});
+                                 setAssignToSearch(email);
+                                 setShowEmailDropdown(false);
+                               }}
+                               className="w-full text-left px-3 py-2 hover:bg-slate-100 text-sm text-slate-700"
+                             >
+                               {email}
+                             </button>
+                           ))}
+                         </motion.div>
+                       )}
+                     </div>
                     <select className="border border-slate-300 rounded px-2 py-2 text-sm" value={formData.team_category} onChange={e => setFormData({...formData, team_category: e.target.value})}>
                       {teamOptions.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
