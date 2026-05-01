@@ -43,38 +43,110 @@ Deno.serve(async (req) => {
         <tr>
           <td style="background:#ffffff;padding:36px 40px;">
 
-            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 8px;">Thank you for joining Suttain. We built Suttain to make chemical safety, sustainability, and formulation accessible to everyone - from individuals to global enterprises.</p>
-            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 24px;">Here is a full overview of what Suttain offers:</p>
+            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 8px;">Thank you for joining Suttain. We built Suttain to make chemical safety, sustainability, and formulation accessible to everyone — from individuals to global enterprises.</p>
+            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 24px;">Here is a complete overview of everything Suttain offers, organized by category:</p>
 
-            <!-- Features -->
-            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+            <!-- CATEGORY 1: Safety & Formulation -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;">
               <tr>
-                <td style="background:#f8fafc;border-left:4px solid #02988C;border-radius:6px;padding:14px 16px;">
-                  <p style="margin:0;font-size:14px;color:#1e293b;"><strong style="color:#02988C;">Chemical Simulator</strong><br/>Suttain's Chemical Simulator allows you to safely test chemical interactions before mixing. It includes built-in safety analysis, compliance checks, and sustainability scoring.</p>
+                <td style="background:linear-gradient(135deg,#02988C,#0d9488);border-radius:8px 8px 0 0;padding:10px 16px;">
+                  <p style="margin:0;font-size:11px;font-weight:700;color:#ffffff;letter-spacing:1.5px;text-transform:uppercase;">🧪 Safety &amp; Formulation</p>
                 </td>
               </tr>
-              <tr><td style="height:8px;"></td></tr>
+            </table>
+            <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;margin-bottom:24px;overflow:hidden;">
               <tr>
-                <td style="background:#f8fafc;border-left:4px solid #9531F5;border-radius:6px;padding:14px 16px;">
-                  <p style="margin:0;font-size:14px;color:#1e293b;"><strong style="color:#9531F5;">Formula Generator</strong><br/>Create professional-grade formulas with Suttain's AI-powered Formula Generator. Every formula includes safety validation, compliance scoring, and environmental impact assessment.</p>
+                <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#02988C;">Chemical Simulator</p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Safely test chemical interactions before mixing in a real lab. The simulator runs instant hazard analysis, predicts reaction outcomes, generates GHS safety warnings, checks regulatory compliance across global markets, and scores the environmental impact of every combination — all without touching a single chemical.</p>
                 </td>
               </tr>
-              <tr><td style="height:8px;"></td></tr>
               <tr>
-                <td style="background:#f8fafc;border-left:4px solid #09D2FF;border-radius:6px;padding:14px 16px;">
-                  <p style="margin:0;font-size:14px;color:#1e293b;"><strong style="color:#0891b2;">Quick Scan</strong><br/>Use Suttain's Quick Scan to scan any product barcode and get an instant, full safety and eco analysis of every ingredient listed on the product.</p>
+                <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#9531F5;">Formula Generator</p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Create professional-grade product formulas using AI. Choose your product type — skincare, cleaning, haircare, body wash, sunscreen, and more — then let Suttain generate a complete, lab-ready formula with ingredient percentages, mixing instructions, pH target, shelf life, safety validation, compliance scoring, and a full sustainability assessment.</p>
                 </td>
               </tr>
-              <tr><td style="height:8px;"></td></tr>
               <tr>
-                <td style="background:#f8fafc;border-left:4px solid #22c55e;border-radius:6px;padding:14px 16px;">
-                  <p style="margin:0;font-size:14px;color:#1e293b;"><strong style="color:#16a34a;">Ingredient Database</strong><br/>Suttain's Ingredient Database gives you access to over 250,000 chemicals. Explore any substance by toxicity level, natural or synthetic origin, and environmental impact.</p>
+                <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#0891b2;">Quick Scan</p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Scan any product barcode using your camera or by entering the code manually. Suttain instantly retrieves the full ingredient list and runs a comprehensive safety, toxicity, and eco-impact analysis on every ingredient — so you know exactly what is in any product before you use it.</p>
                 </td>
               </tr>
-              <tr><td style="height:8px;"></td></tr>
               <tr>
-                <td style="background:#f8fafc;border-left:4px solid #9531F5;border-radius:6px;padding:14px 16px;">
-                  <p style="margin:0;font-size:14px;color:#1e293b;"><strong style="color:#9531F5;">Enterprise API Access <span style="font-size:12px;background:#ede9fe;color:#7c3aed;padding:2px 8px;border-radius:20px;margin-left:6px;">Coming Soon</span></strong><br/>Integrate Suttain directly into your enterprise systems for bulk analysis, white-label solutions, and dedicated account management.</p>
+                <td style="padding:14px 16px;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#16a34a;">Ingredient Database</p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Access over 250,000 chemicals and ingredients from a single searchable database. For every substance, Suttain displays the INCI name, CAS number, SMILES notation, toxicity classification, GHS hazard symbols, biodegradability score, environmental impact rating, sourcing origin (natural vs. synthetic), and links to PubChem data — all in one place.</p>
+                </td>
+              </tr>
+            </table>
+
+            <!-- CATEGORY 2: Advanced Tools -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;">
+              <tr>
+                <td style="background:linear-gradient(135deg,#7c3aed,#9531F5);border-radius:8px 8px 0 0;padding:10px 16px;">
+                  <p style="margin:0;font-size:11px;font-weight:700;color:#ffffff;letter-spacing:1.5px;text-transform:uppercase;">⚙️ Advanced Tools</p>
+                </td>
+              </tr>
+            </table>
+            <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;margin-bottom:24px;overflow:hidden;">
+              <tr>
+                <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#7c3aed;">Formula Simulation Engine</p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Fine-tune your formulas in real time. Adjust individual ingredient percentages using interactive sliders and instantly see how each change affects the formula's total cost, pH level, sustainability score, and overall safety rating — giving you precise control over every formulation decision.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#7c3aed;">Computational Simulations <span style="font-size:11px;background:#ede9fe;color:#7c3aed;padding:2px 7px;border-radius:20px;margin-left:4px;font-weight:700;">PRO</span></p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Run advanced computational chemistry directly inside Suttain. Supported simulation types include Density Functional Theory (DFT), Molecular Dynamics (MD), Quantum Mechanics (QM), drug-receptor docking, protein structure modeling, and ORCA/GROMACS script generation — bringing research-grade computational power to your browser without needing a local HPC cluster.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#2563eb;">AI Compliance Co-Pilot <span style="font-size:11px;background:#dbeafe;color:#1d4ed8;padding:2px 7px;border-radius:20px;margin-left:4px;font-weight:700;">PRO</span></p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Automate regulatory compliance for your formulas and product ingredients across 50+ global regions including the EU, FDA (USA), Health Canada, ASEAN, and more. The AI Co-Pilot highlights restricted or banned substances, suggests compliant substitutes, and generates a full compliance report ready for regulatory submission.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#0d9488;">Sustainability &amp; Eco Impact Scoring <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:2px 7px;border-radius:20px;margin-left:4px;font-weight:700;">PRO</span></p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Measure the full environmental footprint of your formulas. Suttain scores each formula on biodegradability, carbon footprint per kilogram, aquatic toxicity, renewable content percentage, and packaging impact — helping you build genuinely greener products and track progress toward sustainability certifications like ECOCERT and COSMOS.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#0891b2;">Comparative Impact Reports <span style="font-size:11px;background:#e0f2fe;color:#0369a1;padding:2px 7px;border-radius:20px;margin-left:4px;font-weight:700;">PRO</span></p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Benchmark your formula's sustainability and safety score against industry averages for the same product category. Generate exportable PDF reports that show how your formulation compares across carbon footprint, biodegradability, toxicity, and compliance — ideal for brand transparency and B2B supplier presentations.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#dc2626;">Personalized Safety Alerts <span style="font-size:11px;background:#fee2e2;color:#dc2626;padding:2px 7px;border-radius:20px;margin-left:4px;font-weight:700;">PRO</span></p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Set up a personal health and sensitivity profile — including skin conditions, allergies, medical conditions, and ingredient intolerances. Suttain then automatically flags any ingredient in a scanned product or formula that conflicts with your profile, giving you personalized safety guidance tailored to your specific needs.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:14px 16px;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#6366f1;">My Workspace</p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Organize and revisit all your saved simulations, formulas, scans, and compliance checks in one personal workspace. Create folders, pin important sessions, add notes, and export your work as PDFs or lab reports — keeping your entire Suttain history structured and accessible.</p>
+                </td>
+              </tr>
+            </table>
+
+            <!-- CATEGORY 3: Enterprise -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;">
+              <tr>
+                <td style="background:linear-gradient(135deg,#1e293b,#334155);border-radius:8px 8px 0 0;padding:10px 16px;">
+                  <p style="margin:0;font-size:11px;font-weight:700;color:#ffffff;letter-spacing:1.5px;text-transform:uppercase;">🏢 Enterprise</p>
+                </td>
+              </tr>
+            </table>
+            <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;margin-bottom:28px;overflow:hidden;">
+              <tr>
+                <td style="padding:14px 16px;">
+                  <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:#475569;">Enterprise API Access <span style="font-size:11px;background:#f1f5f9;color:#64748b;padding:2px 7px;border-radius:20px;margin-left:4px;font-weight:700;">Coming Soon</span></p>
+                  <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Integrate Suttain's full chemical analysis, formula generation, compliance checking, and sustainability scoring directly into your enterprise systems via API. Designed for manufacturing companies, cosmetics brands, and research institutions that need bulk processing, white-label capabilities, team collaboration tools, and dedicated account management.</p>
                 </td>
               </tr>
             </table>
