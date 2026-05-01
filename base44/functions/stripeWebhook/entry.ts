@@ -1,7 +1,8 @@
 import Stripe from 'npm:stripe@17.7.0';
+import StripeLib from 'npm:stripe@15.0.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+const stripe = new StripeLib(Deno.env.get('STRIPE_SECRET_KEY'));
 
 const PLAN_DETAILS = {
   pro_monthly: {

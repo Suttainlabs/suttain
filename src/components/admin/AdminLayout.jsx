@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   LayoutDashboard, Users, FileText, Power,
-  Menu, X, Briefcase, Megaphone, Crown, Headphones
+  Menu, X, Briefcase, Megaphone, Crown, Headphones, Mail
 } from 'lucide-react';
 import DashboardOverview from './DashboardOverview';
 import UserManagement from './UserManagement';
@@ -12,11 +12,13 @@ import JobManagement from './JobManagement';
 import SendUpdateAnnouncement from './SendUpdateAnnouncement';
 import SubscriptionsPanel from './SubscriptionsPanel';
 import CustomerSupportCRM from './CustomerSupportCRM';
+import SubscriptionEmailPanel from './SubscriptionEmailPanel';
 
 const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'support', label: 'Support CRM', icon: Headphones },
   { id: 'subscriptions', label: 'Subscriptions', icon: Crown },
+  { id: 'subscription-emails', label: 'Subscription Emails', icon: Mail },
   { id: 'users', label: 'User Management', icon: Users },
   { id: 'submissions', label: 'Submissions', icon: FileText },
   { id: 'jobs', label: 'Job Postings', icon: Briefcase },
@@ -35,6 +37,8 @@ export default function AdminLayout() {
         return <CustomerSupportCRM />;
       case 'subscriptions':
         return <SubscriptionsPanel />;
+      case 'subscription-emails':
+        return <SubscriptionEmailPanel />;
       case 'users':
         return <UserManagement />;
       case 'submissions':
