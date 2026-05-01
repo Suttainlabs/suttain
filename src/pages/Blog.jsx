@@ -138,11 +138,13 @@ export default function Blog() {
   };
 
   const categoryColors = {
-    Sustainability: "bg-green-100 text-green-700",
-    Safety: "bg-blue-100 text-blue-700",
-    DIY: "bg-purple-100 text-purple-700",
-    Compliance: "bg-orange-100 text-orange-700",
-    Ingredients: "bg-cyan-100 text-cyan-700"
+    Sustainability: "bg-green-600 text-white",
+    Safety: "bg-blue-600 text-white",
+    DIY: "bg-purple-600 text-white",
+    Compliance: "bg-orange-500 text-white",
+    Ingredients: "bg-cyan-600 text-white",
+    Business: "bg-slate-800 text-white",
+    General: "bg-slate-600 text-white"
   };
 
   return (
@@ -272,7 +274,7 @@ export default function Blog() {
                         </div>
                       )}
                       <div className="absolute top-3 left-3">
-                        <Badge className={categoryColors[formatCategory(article.category)] || "bg-slate-100 text-slate-700"}>
+                        <Badge className={categoryColors[formatCategory(article.category)] || "bg-slate-700 text-white"}>
                           {formatCategory(article.category)}
                         </Badge>
                       </div>
