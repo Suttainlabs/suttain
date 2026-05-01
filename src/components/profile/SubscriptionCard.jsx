@@ -1,12 +1,24 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Check, Sparkles, ArrowRight, Shield, Zap, HeartPulse, Star, Infinity } from 'lucide-react';
+import { Crown, Check, Sparkles, ArrowRight, Shield, Zap, HeartPulse, Star, Infinity, AlertTriangle, Loader2, XCircle, CalendarClock } from 'lucide-react';
 import AuthContext from '../auth/AuthContext';
+import { cancelSubscription } from '@/functions/cancelSubscription';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 const PLAN_DISPLAY = {
   pro: {
@@ -28,12 +40,18 @@ const premiumFeatures = [
 ];
 
 export default function SubscriptionCard() {
-  const { user } = useContext(AuthContext);
-  const isAdmin = user?.role === 'admin';
+  const { user, refreshUser } = useContext(AuthContext);
+  const [canceling, setCanceling] = useState(false);
+  const [cancelResult, setCancelResult] = useState(null);
 
+  const isAdmin = user?.role === 'admin';
   const plan = isAdmin ? 'admin' : (user?.subscription_plan || 'free');
   const billing = user?.subscription_billing || 'monthly';
   const isPro = plan === 'pro' || plan === 'enterprise' || isAdmin;
+  const isCanceling = user?.subscription_status === 'canceling';
+  const isLifetimePlan = billing === 'lifetime';
+  // Only show cancel if they have a real Stripe subscription (not lifetime, not admin-granted)
+  const canCancel = isPro && !isAdmin && !isLifetimePlan && user?.stripe_subscription_id && !isCanceling;
 
   const planDisplay = isAdmin
     ? PLAN_DISPLAY.admin
@@ -43,6 +61,26 @@ export default function SubscriptionCard() {
   const badgeClass = planDisplay?.badge || 'bg-slate-500 text-white';
   const PlanIcon = planDisplay?.icon || Crown;
   const planLabel = planDisplay?.label || 'Free';
+
+  const cancelAt = cancelResult?.access_until || user?.subscription_cancel_at;
+  const cancelAtFormatted = cancelAt
+    ? new Date(cancelAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : null;
+
+  const handleCancel = async () => {
+    setCanceling(true);
+    try {
+      const res = await cancelSubscription({});
+      if (res.data?.success) {
+        setCancelResult(res.data);
+        if (refreshUser) refreshUser();
+      }
+    } catch (e) {
+      console.error('Cancel failed:', e);
+    } finally {
+      setCanceling(false);
+    }
+  };
 
   return (
     <Card className="border-0 shadow-lg overflow-hidden">
@@ -72,6 +110,19 @@ export default function SubscriptionCard() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
+            {/* Canceling notice */}
+            {(isCanceling || cancelResult) && cancelAtFormatted && (
+              <div className="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <CalendarClock className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-yellow-800">Subscription cancelled</p>
+                  <p className="text-xs text-yellow-700 mt-0.5">
+                    You won't be charged again. Full access remains until <strong>{cancelAtFormatted}</strong>.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className={`p-4 bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-200 rounded-lg`}>
               <div className="flex items-start gap-3">
                 <PlanIcon className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
@@ -83,6 +134,7 @@ export default function SubscriptionCard() {
                 </div>
               </div>
             </div>
+
             <div className="space-y-2">
               <p className="text-xs font-semibold text-slate-700 mb-2">Your Premium Features:</p>
               {premiumFeatures.map((feature, idx) => (
@@ -92,6 +144,51 @@ export default function SubscriptionCard() {
                 </div>
               ))}
             </div>
+
+            {/* Cancel subscription */}
+            {canCancel && (
+              <div className="pt-2 border-t border-slate-100">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 text-sm"
+                      disabled={canceling}
+                    >
+                      {canceling
+                        ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Cancelling…</>
+                        : <><XCircle className="w-4 h-4 mr-2" />Cancel Subscription</>
+                      }
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="flex items-center gap-2">
+                        <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                        Cancel your subscription?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="space-y-2 text-sm text-slate-600">
+                        <p>Your subscription will <strong>not renew</strong> and you won't be charged again.</p>
+                        <p>You'll keep full Pro access until the end of your current billing period, then your account will revert to the free tier.</p>
+                        <p>You can resubscribe anytime from the Pricing page.</p>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleCancel}
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        Yes, Cancel
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <p className="text-xs text-center text-slate-400 mt-2">
+                  You'll keep access until the end of your billing period.
+                </p>
+              </div>
+            )}
           </motion.div>
         ) : (
           <motion.div

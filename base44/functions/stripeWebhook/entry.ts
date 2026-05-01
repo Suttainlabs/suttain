@@ -218,17 +218,20 @@ Deno.serve(async (req) => {
 
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
-        console.log('Subscription canceled:', subscription.id);
+        console.log('Subscription fully ended:', subscription.id);
         try {
           const users = await base44.asServiceRole.entities.User.filter({
             stripe_subscription_id: subscription.id
           });
           if (users.length > 0) {
             await base44.asServiceRole.entities.User.update(users[0].id, {
-              subscription_plan: 'trial',
+              subscription_plan: null,
               subscription_status: 'canceled',
+              subscription_billing: null,
+              stripe_subscription_id: null,
+              subscription_cancel_at: null,
             });
-            console.log(`Downgraded user ${users[0].id}`);
+            console.log(`Downgraded user ${users[0].id} to free after subscription ended`);
           }
         } catch (e) {
           console.error('Failed to handle subscription deletion:', e);
@@ -238,16 +241,23 @@ Deno.serve(async (req) => {
 
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
-        console.log('Subscription updated:', subscription.id, 'status:', subscription.status);
+        console.log('Subscription updated:', subscription.id, 'status:', subscription.status, 'cancel_at_period_end:', subscription.cancel_at_period_end);
         try {
           const users = await base44.asServiceRole.entities.User.filter({
             stripe_subscription_id: subscription.id
           });
           if (users.length > 0) {
-            const newStatus = subscription.status === 'active' ? 'active' : subscription.status;
-            await base44.asServiceRole.entities.User.update(users[0].id, {
+            let newStatus = subscription.status;
+            if (subscription.cancel_at_period_end) {
+              newStatus = 'canceling';
+            }
+            const updateData = {
               subscription_status: newStatus,
-            });
+              subscription_cancel_at: subscription.cancel_at_period_end && subscription.current_period_end
+                ? new Date(subscription.current_period_end * 1000).toISOString()
+                : null,
+            };
+            await base44.asServiceRole.entities.User.update(users[0].id, updateData);
             console.log(`Updated subscription status for user ${users[0].id} to ${newStatus}`);
           }
         } catch (e) {
