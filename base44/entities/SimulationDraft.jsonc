@@ -1,0 +1,57 @@
+{
+  "name": "SimulationDraft",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "A user-defined name for the simulation session."
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "chemicals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of chemical names in the simulation."
+    },
+    "simulationParams": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "The parameters set for the simulation (temperature, pressure, etc.)"
+    }
+  },
+  "required": [
+    "name",
+    "chemicals"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

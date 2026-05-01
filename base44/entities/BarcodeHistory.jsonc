@@ -1,0 +1,55 @@
+{
+  "name": "BarcodeHistory",
+  "type": "object",
+  "properties": {
+    "barcode": {
+      "type": "string",
+      "description": "The scanned barcode number"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Name of the scanned product"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "product_image": {
+      "type": "string",
+      "description": "URL of the product image"
+    },
+    "scan_method": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "image_upload",
+        "history",
+        "live_scan"
+      ],
+      "description": "How the barcode was obtained"
+    },
+    "analysis_completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether full ingredient analysis was completed"
+    },
+    "ingredient_count": {
+      "type": "number",
+      "description": "Number of ingredients found in the product"
+    }
+  },
+  "required": [
+    "barcode",
+    "product_name",
+    "scan_method"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "EnterpriseWaitlist",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Full name of the person joining the waitlist."
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Contact email for the waitlist."
+    },
+    "company_name": {
+      "type": "string",
+      "description": "The name of the company or organization."
+    },
+    "role": {
+      "type": "string",
+      "description": "The person's role in the company."
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "notified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Flag to indicate if the user has been notified of the launch."
+    }
+  },
+  "required": [
+    "name",
+    "email",
+    "company_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {}
+  }
+}

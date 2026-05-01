@@ -1,0 +1,132 @@
+{
+  "name": "LearningProgress",
+  "type": "object",
+  "properties": {
+    "persona": {
+      "type": "string",
+      "enum": [
+        "researcher",
+        "teacher",
+        "student",
+        "business",
+        "diy",
+        "household"
+      ],
+      "description": "User's learning persona"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "skill_level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "expert"
+      ],
+      "default": "beginner",
+      "description": "Current skill level based on performance"
+    },
+    "completed_modules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of completed learning modules"
+    },
+    "completed_quizzes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "module_id": {
+            "type": "string"
+          },
+          "quiz_id": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "attempts": {
+            "type": "number"
+          },
+          "completed_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "certifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "certification_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "earned_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "score": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "total_points": {
+      "type": "number",
+      "default": 0,
+      "description": "Total learning points earned"
+    },
+    "streak_days": {
+      "type": "number",
+      "default": 0,
+      "description": "Consecutive days of learning"
+    },
+    "last_activity_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recommended_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Personalized recommended module IDs"
+    },
+    "usage_stats": {
+      "type": "object",
+      "properties": {
+        "simulations_run": {
+          "type": "number"
+        },
+        "formulas_created": {
+          "type": "number"
+        },
+        "scans_completed": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "persona"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "name": "SafetyProfile",
+  "type": "object",
+  "properties": {
+    "profile_name": {
+      "type": "string",
+      "description": "Name of the profile (e.g., 'Jane - Pregnancy Mode')"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is the default active profile"
+    },
+    "health_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of health conditions (e.g., Asthma, Diabetes, Eczema)"
+    },
+    "allergies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of specific allergens (e.g., Nickel, Fragrance, Parabens)"
+    },
+    "custom_sensitivities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional custom sensitivities"
+    },
+    "notification_preferences": {
+      "type": "object",
+      "properties": {
+        "email_alerts": {
+          "type": "boolean",
+          "default": true
+        },
+        "in_app_alerts": {
+          "type": "boolean",
+          "default": true
+        },
+        "alert_severity": {
+          "type": "string",
+          "enum": [
+            "all",
+            "medium_and_high",
+            "high_only"
+          ],
+          "default": "all"
+        }
+      }
+    },
+    "medical_documents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Encrypted URLs of uploaded medical documents"
+    }
+  },
+  "required": [
+    "profile_name"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

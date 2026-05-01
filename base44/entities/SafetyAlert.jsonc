@@ -1,0 +1,112 @@
+{
+  "name": "SafetyAlert",
+  "type": "object",
+  "properties": {
+    "profile_id": {
+      "type": "string",
+      "description": "Reference to the safety profile"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "alert_type": {
+      "type": "string",
+      "enum": [
+        "product_scan",
+        "formula_creation",
+        "ingredient_search",
+        "simulator"
+      ],
+      "description": "Where the alert was triggered"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Name of the product or formula"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Risk severity level"
+    },
+    "flagged_ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ingredient": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "risk_level": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Ingredients that triggered the alert"
+    },
+    "alert_message": {
+      "type": "string",
+      "description": "Main alert message"
+    },
+    "detailed_explanation": {
+      "type": "string",
+      "description": "Detailed risk explanation"
+    },
+    "safer_alternatives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Suggested safer alternatives"
+    },
+    "user_action": {
+      "type": "string",
+      "enum": [
+        "acknowledged",
+        "ignored",
+        "switched",
+        "saved_for_later"
+      ],
+      "description": "User's response to the alert"
+    },
+    "interaction_context": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional context about the interaction"
+    }
+  },
+  "required": [
+    "profile_id",
+    "alert_type",
+    "severity",
+    "alert_message"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
