@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sparkles, X, Send, MessageSquare, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { sendSlackNotification } from '@/functions/sendSlackNotification';
 
 const SYSTEM_PROMPT = `You are Clara, Suttain's intelligent AI assistant for the Suttain platform (suttain.com) — a chemical safety and sustainability platform for individuals, researchers, and businesses.
 
@@ -152,11 +153,18 @@ export default function ClaraAssistant() {
         setLiveAgentLoading(true);
         try {
             const transcript = messages.map(m => `${m.role === 'user' ? 'User' : 'Clara'}: ${m.content}`).join('\n') || 'No prior conversation.';
-            await base44.integrations.Core.SendEmail({
-                to: 'contact@suttain.com',
-                subject: `Live Agent Request from ${liveAgentName}`,
-                body: `A user has requested to speak with a live agent on Suttain.\n\nName: ${liveAgentName}\nEmail: ${liveAgentEmail}\n\n--- Conversation Transcript ---\n${transcript}\n\nPlease follow up with the user as soon as possible.`
-            });
+            await Promise.all([
+                base44.integrations.Core.SendEmail({
+                    to: 'contact@suttain.com',
+                    subject: `Live Agent Request from ${liveAgentName}`,
+                    body: `A user has requested to speak with a live agent on Suttain.\n\nName: ${liveAgentName}\nEmail: ${liveAgentEmail}\n\n--- Conversation Transcript ---\n${transcript}\n\nPlease follow up with the user as soon as possible.`
+                }),
+                sendSlackNotification({
+                    channel: '#general',
+                    type: 'live_agent',
+                    data: { userName: liveAgentName, userEmail: liveAgentEmail, transcript }
+                })
+            ]);
             setLiveAgentSent(true);
             setMessages(prev => [...prev, {
                 role: 'assistant',

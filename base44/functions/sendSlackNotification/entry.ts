@@ -74,6 +74,30 @@ Deno.serve(async (req) => {
                     text: { type: "mrkdwn", text: `*${userName}* completed *${courseName}*` }
                 }
             ];
+        } else if (type === 'live_agent') {
+            const { userName, userEmail, transcript } = data;
+            text = `🆘 Live Agent Request from ${userName} (${userEmail})`;
+            blocks = [
+                {
+                    type: "header",
+                    text: { type: "plain_text", text: "🆘 Live Agent Requested", emoji: true }
+                },
+                {
+                    type: "section",
+                    fields: [
+                        { type: "mrkdwn", text: `*Name:*\n${userName}` },
+                        { type: "mrkdwn", text: `*Email:*\n${userEmail}` }
+                    ]
+                },
+                {
+                    type: "section",
+                    text: { type: "mrkdwn", text: `*Conversation Transcript:*\n\`\`\`${(transcript || 'No prior conversation.').slice(0, 2000)}\`\`\`` }
+                },
+                {
+                    type: "context",
+                    elements: [{ type: "mrkdwn", text: `Requested at ${new Date().toLocaleString()}` }]
+                }
+            ];
         } else if (type === 'update_announcement') {
             const { updateTitle, updateDescription, features, attachmentUrl } = data;
             text = `🚀 Platform Update: ${updateTitle}`;
