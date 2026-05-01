@@ -1,9 +1,9 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
-        const accessToken = await base44.asServiceRole.connectors.getAccessToken("slack");
+        const { accessToken } = await base44.asServiceRole.connectors.getConnection("slack");
         
         const { channel, message, type, data } = await req.json();
 

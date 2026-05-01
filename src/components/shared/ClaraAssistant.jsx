@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, X, Send, MessageSquare, Loader2 } from 'lucide-react';
+import { Sparkles, X, Send, MessageSquare, Loader2, Home } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { sendSlackNotification } from '@/functions/sendSlackNotification';
 
@@ -302,9 +302,26 @@ export default function ClaraAssistant() {
                                 <p className="text-xs text-white/80">Suttain Platform Guide</p>
                             </div>
                         </div>
-                        <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors">
-                            <X className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                            {messages.length > 0 && (
+                                <button
+                                    onClick={() => {
+                                        setMessages([]);
+                                        setLiveAgentRequested(false);
+                                        setLiveAgentSent(false);
+                                        setLiveAgentName('');
+                                        setLiveAgentEmail('');
+                                    }}
+                                    className="text-white/80 hover:text-white transition-colors"
+                                    title="Back to home"
+                                >
+                                    <Home className="w-4 h-4" />
+                                </button>
+                            )}
+                            <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors">
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Messages Area */}
