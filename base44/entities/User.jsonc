@@ -83,13 +83,5 @@
       "description": "User's industry"
     }
   },
-  "required": [
-    "role",
-    "display_name",
-    "profile_image_url",
-    "trial_start_date",
-    "subscription_billing",
-    "stripe_customer_id",
-    "stripe_subscription_id"
-  ]
+  "required": []
 }

@@ -52,13 +52,7 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
   const handleFinish = async () => {
     setIsSaving(true);
     try {
-      const currentUser = await base44.auth.me();
-
-      base44.analytics.track({
-        eventName: 'signup_completed',
-        properties: { goals: selectedGoals.join(','), role, industry }
-      });
-
+      // Save the core onboarding data — this is the critical step
       await base44.auth.updateMe({
         first_login: false,
         onboarding_goals: selectedGoals,
@@ -67,22 +61,28 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
         industry,
       });
 
-      await base44.entities.Notification.create({
-        title: 'New User Signup',
-        message: `${currentUser.full_name || currentUser.email} just signed up. Role: ${role}, Industry: ${industry}`,
-        type: 'user_signup',
-        severity: 'info',
-        target_user: 'admin',
-        metadata: { user_email: currentUser.email, user_name: currentUser.full_name, role, industry, goals: selectedGoals }
-      });
+      // Fire-and-forget side effects — never block the user if these fail
+      base44.auth.me().then(currentUser => {
+        base44.analytics.track({
+          eventName: 'signup_completed',
+          properties: { goals: selectedGoals.join(','), role, industry }
+        });
 
-      try {
-        await base44.functions.invoke('sendSlackNotification', {
+        base44.entities.Notification.create({
+          title: 'New User Signup',
+          message: `${currentUser.full_name || currentUser.email} just signed up. Role: ${role}, Industry: ${industry}`,
+          type: 'user_signup',
+          severity: 'info',
+          target_user: 'admin',
+          metadata: { user_email: currentUser.email, user_name: currentUser.full_name, role, industry, goals: selectedGoals }
+        }).catch(() => {});
+
+        base44.functions.invoke('sendSlackNotification', {
           channel: '#all-suttain',
           type: 'new_user',
           data: { userName: currentUser.full_name, userEmail: currentUser.email, role, industry, goals: selectedGoals.join(', ') }
-        });
-      } catch {}
+        }).catch(() => {});
+      }).catch(() => {});
 
       if (onAccept) onAccept(); else onClose();
     } catch (error) {
