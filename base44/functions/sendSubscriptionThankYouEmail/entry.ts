@@ -10,32 +10,35 @@ Deno.serve(async (req) => {
     }
 
     const emailContent = `
-Hello ${full_name},
+Dear ${full_name},
 
-Thank you for subscribing to Suttain Pro. We are excited to welcome you to our community.
+Thank you for subscribing to Suttain Pro. We are delighted to welcome you to our platform and look forward to supporting your success.
 
-You now have access to the following features:
+YOUR PREMIUM FEATURES
 
-- Unlimited Chemical Simulations
-- Unlimited Formula Generation
-- AI Compliance Co-Pilot (50+ regions)
-- Sustainability and Carbon Footprint Scoring
-- Computational Simulations (DFT, Molecular Dynamics, Quantum Mechanics)
-- Advanced Analytics and Reporting
-- Personalized Safety Alerts
-- Priority Email Support
+Your subscription now includes access to the following capabilities:
 
-Getting Started
+• Unlimited Chemical Simulations
+• Unlimited Formula Generation
+• AI Compliance Co-Pilot (50+ regions)
+• Sustainability and Carbon Footprint Scoring
+• Computational Simulations (DFT, Molecular Dynamics, Quantum Mechanics)
+• Advanced Analytics and Reporting
+• Personalized Safety Alerts
+• Priority Email Support
 
-To begin using your new Pro features, navigate to the Tools section within your account and run your first simulation. Our learning center provides comprehensive tutorials and guides to help you maximize your investment.
+GETTING STARTED
 
-Support and Assistance
+To begin using your new Pro features, please navigate to the Tools section within your account and run your first simulation. Our comprehensive Learning Center provides detailed tutorials and guides to help you maximize your investment in Suttain Pro.
 
-If you have any questions or require assistance, please reach out to our support team at contact@suttain.com or use the live chat feature available in the application.
+SUPPORT AND ASSISTANCE
 
-We are committed to helping you succeed with Suttain Pro.
+Should you have any questions or require technical assistance, our dedicated support team is available to help. You may reach us at contact@suttain.com or utilize the live chat feature available within the application.
 
-Best regards,
+We are committed to ensuring your success and would be pleased to address any inquiries you may have.
+
+Sincerely,
+
 The Suttain Team
 https://suttain.com
     `.trim();
