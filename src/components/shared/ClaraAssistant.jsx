@@ -250,18 +250,17 @@ export default function ClaraAssistant() {
         setLiveAgentLoading(true);
         try {
             const transcript = messages.map(m => `${m.role === 'user' ? 'User' : 'Clara'}: ${m.content}`).join('\n') || 'No prior conversation.';
-            await Promise.all([
-                base44.integrations.Core.SendEmail({
-                    to: 'contact@suttain.com',
-                    subject: `Live Agent Request from ${liveAgentName}`,
-                    body: `A user has requested to speak with a live agent on Suttain.\n\nName: ${liveAgentName}\nEmail: ${liveAgentEmail}\n\n--- Conversation Transcript ---\n${transcript}\n\nPlease follow up with the user as soon as possible.`
-                }),
-                sendSlackNotification({
-                    channel: '#general',
-                    type: 'live_agent',
-                    data: { userName: liveAgentName, userEmail: liveAgentEmail, transcript }
-                })
-            ]);
+            await base44.integrations.Core.SendEmail({
+                to: 'contact@suttain.com',
+                subject: `Live Agent Request from ${liveAgentName}`,
+                body: `A user has requested to speak with a live agent on Suttain.\n\nName: ${liveAgentName}\nEmail: ${liveAgentEmail}\n\n--- Conversation Transcript ---\n${transcript}\n\nPlease follow up with the user as soon as possible.`
+            });
+            // Slack notification is non-critical — don't let it fail the whole flow
+            sendSlackNotification({
+                channel: '#general',
+                type: 'live_agent',
+                data: { userName: liveAgentName, userEmail: liveAgentEmail, transcript }
+            }).catch(() => {});
             setLiveAgentSent(true);
             setMessages(prev => [...prev, {
                 role: 'assistant',
