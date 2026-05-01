@@ -129,17 +129,36 @@ export default function FormulaEditor({
     // This handles cases where LLM output might omit these keys.
     const initialProperties = safeRecipe.properties || {};
     
-    // FIXED: Properly parse instructions whether they're a string or array
+    // Robustly parse instructions whether they're an array, JSON string, or double-encoded string
     let initialInstructions = [];
-    if (Array.isArray(safeRecipe.instructions)) {
-      initialInstructions = safeRecipe.instructions;
-    } else if (typeof safeRecipe.instructions === 'string' && safeRecipe.instructions.trim()) {
+    const rawInstructions = safeRecipe.instructions;
+    if (Array.isArray(rawInstructions)) {
+      initialInstructions = rawInstructions;
+    } else if (typeof rawInstructions === 'string' && rawInstructions.trim()) {
       try {
-        const parsed = JSON.parse(safeRecipe.instructions);
+        let parsed = JSON.parse(rawInstructions);
+        // Handle double-stringified JSON
+        if (typeof parsed === 'string') {
+          parsed = JSON.parse(parsed);
+        }
         initialInstructions = Array.isArray(parsed) ? parsed : [];
       } catch (e) {
-        console.error("Failed to parse instructions:", e);
+        console.error("Failed to parse instructions:", e, rawInstructions);
         initialInstructions = [];
+      }
+    }
+    // Also check full_recipe_data as a fallback source for instructions
+    if (initialInstructions.length === 0 && safeRecipe.full_recipe_data?.instructions) {
+      const fallback = safeRecipe.full_recipe_data.instructions;
+      if (Array.isArray(fallback)) {
+        initialInstructions = fallback;
+      } else if (typeof fallback === 'string' && fallback.trim()) {
+        try {
+          const parsed = JSON.parse(fallback);
+          initialInstructions = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          initialInstructions = [];
+        }
       }
     }
 
