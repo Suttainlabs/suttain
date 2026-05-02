@@ -1,56 +1,33 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldQuestion, Database, Cog, Users, Mail, Apple, HeartPulse, Lock, RefreshCw } from 'lucide-react';
+import { ShieldCheck, Database, Cog, Users, Mail } from 'lucide-react';
 
 export default function PrivacyPolicy() {
   const sections = [
     {
-      icon: ShieldQuestion,
-      title: "Introduction",
-      content: "Suttain (\"we,\" \"our,\" or \"us\") is operated by Suttain LLC. This Privacy Policy explains how we collect, use, disclose, and protect your information when you use the Suttain application (the \"App\").<br /><br />By using Suttain, you agree to the collection and use of information in accordance with this policy. If you do not agree, please do not use the App."
+      icon: ShieldCheck,
+      title: "1. Our Commitment to Your Privacy",
+      content: "Welcome to Suttain. We are committed to protecting your personal information and your right to privacy. This policy explains what information we collect, how we use it, and what rights you have in relation to it. If you have any questions, please reach out."
     },
     {
       icon: Database,
-      title: "Information We Collect",
-      content: "<strong>Account Information</strong><br />When you create an account, we collect your name and email address. You may sign up using Apple Sign-In, Google Sign-In, or email and password. Authentication is handled by Base44.<br /><br /><strong>Subscription Data</strong><br />Subscription status and purchase history are managed by Stripe. We receive subscription status information to determine feature access but do not process or store payment details directly.<br /><br /><strong>Usage Data</strong><br />We use Base44 AI tools on our website, which collect anonymous usage data without cookies and without collecting personal information."
-    },
-
-
-
-    {
-      icon: Users,
-      title: "Third-Party Services",
-      content: "We use the following third-party services:<ul><li><strong>Supabase</strong> — backend database and authentication. Stores your account and app data.</li><li><strong>Anthropic (Claude API)</strong> — AI meal plan generation. Receives dietary profile data only, no personally identifiable information.</li><li><strong>RevenueCat</strong> — subscription management. Receives an anonymous app user identifier.</li><li><strong>USDA FoodData Central</strong> — food nutrition data lookups. No personal data is sent.</li><li><strong>Open Food Facts</strong> — barcode product lookups. No personal data is sent.</li><li><strong>Apple</strong> — Sign in with Apple authentication and App Store subscription billing.</li><li><strong>Google</strong> — Google Sign-In authentication.</li><li><strong>Vercel</strong> — website hosting and anonymous analytics.</li></ul>Each third-party service is required to protect your data in accordance with their own privacy policies and applicable law."
+      title: "2. Information We Collect",
+      content: "We collect information you voluntarily provide, such as your name and email when you create an account. We also collect data generated from your use of our tools, like the chemicals you simulate or formulas you create, to improve our services and ensure safety."
     },
     {
-      icon: Lock,
-      title: "Data Storage & Security",
-      content: "Your data is stored on Supabase, a cloud-hosted PostgreSQL database. All data is transmitted over HTTPS/TLS encryption. We use JWT-based authentication to protect access to your account."
-    },
-    {
-      icon: ShieldQuestion,
-      title: "Your Rights",
-      content: "You have the right to:<ul><li>Access the personal data we hold about you</li><li>Request deletion of your account and all associated data</li><li>Revoke HealthKit permissions at any time through iOS Settings</li><li>Opt out of anonymous website analytics</li></ul>If you are located in the European Economic Area (EEA), you have additional rights under the GDPR, including the right to data portability and the right to restrict processing. If you are a California resident, you have additional rights under the CCPA, including the right to know what personal information is collected and the right to opt out of the sale of personal information. We do not sell personal information.<br /><br />To exercise any of these rights, please contact us at <a href='mailto:paul@suttonautomation.com' class='text-[var(--suttain-violet)] hover:underline'>paul@suttonautomation.com</a>."
-    },
-    {
-      icon: Database,
-      title: "Data Retention",
-      content: "We retain your account data for as long as your account is active. When you request account deletion, all associated data is permanently removed from our systems. HealthKit data is accessed in read-only mode during your session and is not persisted in our backend."
+      icon: Cog,
+      title: "3. How We Use Your Information",
+      content: "We use your information to operate and improve the Suttain platform, personalize your experience, provide you with safety alerts, and communicate with you. We process this data based on our legitimate business interests and to fulfill our contractual service to you."
     },
     {
       icon: Users,
-      title: "Children's Privacy",
-      content: "Suttain is not directed at children under the age of 13. We do not knowingly collect personal information from children under 13. If you believe a child under 13 has provided us with personal information, please contact us and we will delete it."
-    },
-    {
-      icon: RefreshCw,
-      title: "Changes to This Policy",
-      content: "We may update this Privacy Policy from time to time. Changes will be reflected on this page with an updated effective date. Your continued use of the App after changes are posted constitutes acceptance of the revised policy."
+      title: "4. When We Share Your Information",
+      content: "We do not sell your personal data. We only share information with your consent, to comply with laws, to provide our services (e.g., with our secure cloud provider), to protect your rights, or to fulfill essential business obligations. Your trust is paramount."
     },
     {
       icon: Mail,
-      title: "Contact",
-      content: "If you have questions about this Privacy Policy or your data, please contact us at <a href='mailto:paul@suttonautomation.com' class='text-[var(--suttain-violet)] hover:underline'>paul@suttonautomation.com</a> or visit our Support page."
+      title: "5. How to Contact Us",
+      content: "If you have questions or comments about this policy, you may contact us through the form on our Help & FAQ page or by emailing us directly at <a href='mailto:contact@suttain.com' class='text-[var(--suttain-violet)] hover:underline'>contact@suttain.com</a>."
     }
   ];
 
@@ -60,7 +37,7 @@ export default function PrivacyPolicy() {
         <Card className="shadow-lg border-slate-200">
           <CardHeader className="text-center bg-slate-50 p-8 rounded-t-xl">
             <CardTitle className="text-3xl font-bold text-slate-800">Privacy Policy</CardTitle>
-            <p className="text-slate-500 mt-2">Effective April 12, 2026</p>
+            <p className="text-slate-500 mt-2">Effective May 2, 2026</p>
           </CardHeader>
           <CardContent className="p-6 md:p-8 space-y-10">
             {sections.map((section, index) => {
