@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench, Plus, Camera } from "lucide-react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench, Plus, Camera, ScanSearch } from "lucide-react";
 import VisualizationController from './VisualizationController';
 import { Button } from "@/components/ui/button";
 import InteractiveMolecularEditor from "./InteractiveMolecularEditor";
+import AtomInspectorPanel from "./AtomInspectorPanel";
 
 const VIEWER_STYLES = [
   { label: "Stick", value: "stick" },
@@ -79,6 +80,10 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
   const [style, setStyle] = useState("stick");
   const [colorScheme, setColorScheme] = useState("element");
   const [loaded, setLoaded] = useState(false);
+  const [inspectorMode, setInspectorMode] = useState(false);
+  const [selectedAtom, setSelectedAtom] = useState(null);
+  const [selectedBond, setSelectedBond] = useState(null);
+  const prevHighlightRef = useRef(null);
 
   const accent = accentColor === "cyan" ? {
     ring: "focus:ring-cyan-400",
@@ -149,6 +154,36 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
         setSource(molData.source);
         setLoaded(true);
         if (onLoadedChange) onLoadedChange(true);
+
+        // Set up atom click handler
+        internalViewerRef.current.setClickable({}, true, (atom) => {
+          // Reset previous highlight
+          if (prevHighlightRef.current) {
+            internalViewerRef.current.setStyle(
+              { serial: prevHighlightRef.current },
+              {}
+            );
+            applyStyle(internalViewerRef.current);
+          }
+          // Highlight clicked atom
+          internalViewerRef.current.setStyle(
+            { serial: atom.serial },
+            { sphere: { color: '#f0abfc', radius: 0.5, opacity: 0.9 } }
+          );
+          internalViewerRef.current.render();
+          prevHighlightRef.current = atom.serial;
+          setSelectedAtom({
+            elem: atom.elem,
+            serial: atom.serial,
+            resn: atom.resn,
+            chain: atom.chain,
+            x: atom.x,
+            y: atom.y,
+            z: atom.z,
+            index: atom.index,
+          });
+          setSelectedBond(null);
+        });
       } catch (e) {
         setError("Failed to load molecule: " + e.message);
       } finally {
@@ -228,6 +263,20 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
         <Button size="sm" variant="ghost" onClick={handleScreenshot} disabled={!loaded} className="h-7 px-2 text-slate-300 hover:text-white hover:bg-slate-700">
           <Download className="w-3.5 h-3.5" />
         </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => {
+            setInspectorMode(v => !v);
+            setSelectedAtom(null);
+            setSelectedBond(null);
+          }}
+          disabled={!loaded}
+          title="Toggle Atom Inspector"
+          className={`h-7 px-2 transition-colors ${inspectorMode ? 'bg-fuchsia-700 text-white' : 'text-slate-300 hover:text-white hover:bg-slate-700'}`}
+        >
+          <ScanSearch className="w-3.5 h-3.5" />
+        </Button>
       </div>
 
       {/* 3D canvas */}
@@ -264,7 +313,30 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
             {source}
           </div>
         )}
+
+        {/* Inspector mode overlay hint */}
+        {inspectorMode && loaded && !selectedAtom && !selectedBond && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-fuchsia-900/80 text-fuchsia-200 text-[10px] px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+            Click an atom to inspect
+          </div>
+        )}
       </div>
+
+      {/* Atom Inspector Panel */}
+      {inspectorMode && (
+        <AtomInspectorPanel
+          atomData={selectedAtom}
+          bondData={selectedBond}
+          onClear={() => {
+            setSelectedAtom(null);
+            setSelectedBond(null);
+            if (prevHighlightRef.current && internalViewerRef.current) {
+              applyStyle(internalViewerRef.current);
+              prevHighlightRef.current = null;
+            }
+          }}
+        />
+      )}
     </div>
   );
 });
@@ -382,7 +454,7 @@ export default function MolViewer({ simType, inputs }) {
 
       <div className="px-4 py-2 bg-slate-800 border-t border-slate-700">
         <p className="text-xs text-slate-500">
-          🖱️ Rotate: left-click drag · Zoom: scroll · Pan: right-click drag · Powered by <span className="text-fuchsia-400">3Dmol.js</span>
+          🖱️ Rotate: left-click drag · Zoom: scroll · Pan: right-click drag · <span className="text-fuchsia-400">🔬 Inspector:</span> enable via <ScanSearch className="w-3 h-3 inline text-fuchsia-400 mx-0.5" /> then click any atom · Powered by <span className="text-fuchsia-400">3Dmol.js</span>
         </p>
       </div>
     </div>
