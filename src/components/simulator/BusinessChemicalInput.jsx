@@ -511,25 +511,32 @@ export default function BusinessChemicalInput({
                           <Label className="text-xs text-slate-600">Concentration (%)</Label>
                           <div className="relative">
                             <Input
-                              type="number"
+                              type="text"
+                              inputMode="decimal"
                               value={chemical.concentration}
-                              onChange={(e) => updateChemical(chemical.id, 'concentration', Number(e.target.value))}
-                              min="0"
-                              max="100"
-                              step="0.1"
-                              className="h-8 text-xs [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none pr-8"
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === '' || val === '.' || /^\d*\.?\d*$/.test(val)) {
+                                  updateChemical(chemical.id, 'concentration', val === '' ? 0 : val);
+                                }
+                              }}
+                              onBlur={(e) => {
+                                const num = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0));
+                                updateChemical(chemical.id, 'concentration', num);
+                              }}
+                              className="h-8 text-xs pr-8"
                             />
                             <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col">
                               <button
                                 type="button"
-                                onClick={() => updateChemical(chemical.id, 'concentration', Math.min(100, (chemical.concentration || 0) + 0.1))}
+                                onClick={() => updateChemical(chemical.id, 'concentration', parseFloat(Math.min(100, (parseFloat(chemical.concentration) || 0) + 0.1).toFixed(2)))}
                                 className="h-3 px-1 text-slate-600 hover:bg-slate-100 rounded-t flex items-center justify-center"
                               >
                                 <span className="text-[10px]">▲</span>
                               </button>
                               <button
                                 type="button"
-                                onClick={() => updateChemical(chemical.id, 'concentration', Math.max(0, (chemical.concentration || 0) - 0.1))}
+                                onClick={() => updateChemical(chemical.id, 'concentration', parseFloat(Math.max(0, (parseFloat(chemical.concentration) || 0) - 0.1).toFixed(2)))}
                                 className="h-3 px-1 text-slate-600 hover:bg-slate-100 rounded-b flex items-center justify-center"
                               >
                                 <span className="text-[10px]">▼</span>
@@ -543,24 +550,32 @@ export default function BusinessChemicalInput({
                           <Label className="text-xs text-slate-600">Cost per kg ($)</Label>
                           <div className="relative">
                             <Input
-                              type="number"
+                              type="text"
+                              inputMode="decimal"
                               value={chemical.costPerKg || 0}
-                              onChange={(e) => updateChemical(chemical.id, 'costPerKg', Number(e.target.value))}
-                              min="0"
-                              step="0.01"
-                              className="h-8 text-xs [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none pr-8"
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === '' || val === '.' || /^\d*\.?\d*$/.test(val)) {
+                                  updateChemical(chemical.id, 'costPerKg', val === '' ? 0 : val);
+                                }
+                              }}
+                              onBlur={(e) => {
+                                const num = Math.max(0, parseFloat(e.target.value) || 0);
+                                updateChemical(chemical.id, 'costPerKg', parseFloat(num.toFixed(2)));
+                              }}
+                              className="h-8 text-xs pr-8"
                             />
                             <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col">
                               <button
                                 type="button"
-                                onClick={() => updateChemical(chemical.id, 'costPerKg', parseFloat(((chemical.costPerKg || 0) + 0.1).toFixed(2)))}
+                                onClick={() => updateChemical(chemical.id, 'costPerKg', parseFloat(((parseFloat(chemical.costPerKg) || 0) + 0.1).toFixed(2)))}
                                 className="h-3 px-1 text-slate-600 hover:bg-slate-100 rounded-t flex items-center justify-center"
                               >
                                 <span className="text-[10px]">▲</span>
                               </button>
                               <button
                                 type="button"
-                                onClick={() => updateChemical(chemical.id, 'costPerKg', Math.max(0, parseFloat(((chemical.costPerKg || 0) - 0.1).toFixed(2))))}
+                                onClick={() => updateChemical(chemical.id, 'costPerKg', Math.max(0, parseFloat(((parseFloat(chemical.costPerKg) || 0) - 0.1).toFixed(2))))}
                                 className="h-3 px-1 text-slate-600 hover:bg-slate-100 rounded-b flex items-center justify-center"
                               >
                                 <span className="text-[10px]">▼</span>
