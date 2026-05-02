@@ -85,40 +85,42 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
   };
 
   const separateResidueByChain = (chainId) => {
-    setSelectedChain(selectedChain === chainId ? null : chainId);
+    const isDeselecting = selectedChain === chainId;
+    setSelectedChain(isDeselecting ? null : chainId);
     
     if (onSeparateResidue) {
-      onSeparateResidue({ type: 'chain', value: chainId });
+      onSeparateResidue({ type: 'chain', value: isDeselecting ? null : chainId });
     }
 
     if (viewer) {
-      if (selectedChain === chainId) {
+      if (isDeselecting) {
         // Deselect - reset all styles
         viewer.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'element' } });
       } else {
-        // Select - highlight only this chain
-        viewer.setStyle({}, { cartoon: { color: 'gray' }, stick: { colorscheme: 'gray' } });
-        viewer.setStyle({ chain: chainId }, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'spectrum' } });
+        // Hide all, then show only selected chain
+        viewer.setStyle({}, { cartoon: { color: 'gray', opacity: 0.15 }, stick: { hidden: true } });
+        viewer.setStyle({ chain: chainId }, { cartoon: { color: 'spectrum', opacity: 1 }, stick: { colorscheme: 'element' } });
       }
       viewer.render();
     }
   };
 
   const separateByResidueType = (residueType) => {
-    setSelectedResidue(selectedResidue === residueType ? null : residueType);
+    const isDeselecting = selectedResidue === residueType;
+    setSelectedResidue(isDeselecting ? null : residueType);
     
     if (onSeparateResidue) {
-      onSeparateResidue({ type: 'residue', value: residueType });
+      onSeparateResidue({ type: 'residue', value: isDeselecting ? null : residueType });
     }
 
     if (viewer) {
-      if (selectedResidue === residueType) {
+      if (isDeselecting) {
         // Deselect - reset all styles
         viewer.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'element' } });
       } else {
-        // Select - highlight only this residue type
-        viewer.setStyle({}, { cartoon: { color: 'gray' }, stick: { colorscheme: 'gray' } });
-        viewer.setStyle({ resn: residueType }, { stick: { colorscheme: 'whiteCarbon' }, cartoon: { color: 'orange' } });
+        // Dim everything, highlight selected residue type
+        viewer.setStyle({}, { cartoon: { color: 'gray', opacity: 0.15 }, stick: { hidden: true } });
+        viewer.setStyle({ resn: residueType }, { stick: { colorscheme: 'whiteCarbon' }, cartoon: { color: 'orange', opacity: 1 } });
       }
       viewer.render();
     }
