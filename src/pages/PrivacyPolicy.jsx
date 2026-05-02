@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
     {
       icon: Mail,
       title: "5. How to Contact Us",
-      content: "If you have questions or comments about this policy, you may contact us through the form on our Help & FAQ page or by emailing us directly at <a href='mailto:contact@suttain.com' class='text-[var(--suttain-violet)] hover:underline'>contact@suttain.com</a>."
+      content: "If you have questions or comments about this policy, you may contact us through the form on our <a href='/FAQ' class='text-[var(--suttain-violet)] hover:underline'>Help &amp; FAQ page</a> or by emailing us directly at <a href='mailto:contact@suttain.com' class='text-[var(--suttain-violet)] hover:underline'>contact@suttain.com</a>."
     }
   ];
 
