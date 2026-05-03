@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench, Plus, Camera, ScanSearch } from "lucide-react";
+import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench, Plus, Camera, ScanSearch, Layers } from "lucide-react";
 import VisualizationController from './VisualizationController';
 import { Button } from "@/components/ui/button";
 import InteractiveMolecularEditor from "./InteractiveMolecularEditor";
 import AtomInspectorPanel from "./AtomInspectorPanel";
+import PDBLayerPanel from "./PDBLayerPanel";
 
 const VIEWER_STYLES = [
   { label: "Stick", value: "stick" },
@@ -69,7 +70,7 @@ async function fetchMoleculeData(identifier) {
 }
 
 // ── Single panel viewer ──────────────────────────────────────────────────────
-const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia", onLoadedChange }, ref) {
+const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia", onLoadedChange, onPdbLoaded, externalQuery }, ref) {
   const containerRef = useRef(null);
   const internalViewerRef = useRef(null);
   const viewerRefFinal = ref || internalViewerRef;
@@ -154,6 +155,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
         setSource(molData.source);
         setLoaded(true);
         if (onLoadedChange) onLoadedChange(true);
+        if (onPdbLoaded) onPdbLoaded(/^[A-Za-z0-9]{4}$/.test(identifier) ? identifier.toUpperCase() : null);
 
         // Set up atom click handler
         internalViewerRef.current.setClickable({}, true, (atom) => {
@@ -200,6 +202,19 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
     if (initialIdentifier) loadMolecule();
     return () => { internalViewerRef.current = null; };
   }, []);
+
+  useEffect(() => {
+    if (externalQuery && externalQuery !== query) {
+      setQuery(externalQuery);
+    }
+  }, [externalQuery]);
+
+  // Trigger load when query changes via externalQuery
+  useEffect(() => {
+    if (externalQuery && query === externalQuery) {
+      loadMolecule();
+    }
+  }, [query]);
 
   const handleReset = () => {
     if (internalViewerRef.current) { internalViewerRef.current.zoomTo(); internalViewerRef.current.zoom(0.8); internalViewerRef.current.render(); }
@@ -347,7 +362,11 @@ export default function MolViewer({ simType, inputs }) {
   const [showEditor, setShowEditor] = useState(false);
   const [moleculeLoaded, setMoleculeLoaded] = useState(false);
   const [showController, setShowController] = useState(false);
+  const [showLayerPanel, setShowLayerPanel] = useState(false);
+  const [loadedPdbId, setLoadedPdbId] = useState(null);
+  const [externalLoadQuery, setExternalLoadQuery] = useState(null);
   const viewerRef = useRef(null);
+  const singlePanelRef = useRef(null);
 
   const getMoleculeIdentifier = () => {
     if (!inputs) return null;
@@ -390,6 +409,12 @@ export default function MolViewer({ simType, inputs }) {
             title="Add/remove items"
             className={`p-1.5 rounded-lg transition-colors ${showController ? "bg-emerald-600 text-white" : "text-slate-400 hover:text-white hover:bg-slate-700"}`}>
             <Plus className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setShowLayerPanel(v => !v)}
+            title="Layer panel & PDB search"
+            className={`p-1.5 rounded-lg transition-colors ${showLayerPanel ? "bg-teal-600 text-white" : "text-slate-400 hover:text-white hover:bg-slate-700"}`}>
+            <Layers className="w-4 h-4" />
           </button>
           <button
             onClick={() => {
@@ -440,15 +465,31 @@ export default function MolViewer({ simType, inputs }) {
       ) : compareMode ? (
         <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-slate-700" style={{ height: "520px" }}>
           <div className="flex-1 flex flex-col overflow-hidden">
-            <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} label="Molecule A" accentColor="fuchsia" onLoadedChange={setMoleculeLoaded} />
+            <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} label="Molecule A" accentColor="fuchsia" onLoadedChange={setMoleculeLoaded} onPdbLoaded={setLoadedPdbId} />
           </div>
           <div className="flex-1 flex flex-col overflow-hidden">
             <SinglePanel initialIdentifier={null} label="Molecule B" accentColor="cyan" />
           </div>
         </div>
       ) : (
-        <div style={{ height: "480px" }} className="flex flex-col">
-          <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} accentColor="fuchsia" onLoadedChange={setMoleculeLoaded} />
+        <div className="flex" style={{ height: "480px" }}>
+          <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+            <SinglePanel
+              ref={viewerRef}
+              initialIdentifier={initialIdentifier}
+              externalQuery={externalLoadQuery}
+              accentColor="fuchsia"
+              onLoadedChange={setMoleculeLoaded}
+              onPdbLoaded={setLoadedPdbId}
+            />
+          </div>
+          {showLayerPanel && (
+            <PDBLayerPanel
+              viewer={viewerRef.current}
+              loadedPdbId={loadedPdbId}
+              onLoadPdb={(pdbId) => setExternalLoadQuery(pdbId)}
+            />
+          )}
         </div>
       )}
 
