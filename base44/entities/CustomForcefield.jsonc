@@ -1,0 +1,127 @@
+{
+  "name": "CustomForcefield",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "User-defined name for this forcefield parameter set"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of the forcefield and its intended use"
+    },
+    "base_forcefield": {
+      "type": "string",
+      "description": "Base forcefield this customization extends (e.g. AMBER99SB-ILDN)"
+    },
+    "lj_parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "atom_type": {
+            "type": "string"
+          },
+          "epsilon": {
+            "type": "number"
+          },
+          "sigma": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Custom Lennard-Jones parameters per atom type"
+    },
+    "bond_parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "atom1": {
+            "type": "string"
+          },
+          "atom2": {
+            "type": "string"
+          },
+          "k_bond": {
+            "type": "number"
+          },
+          "r0": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Custom bond force constants and equilibrium lengths"
+    },
+    "angle_parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "atom1": {
+            "type": "string"
+          },
+          "atom2": {
+            "type": "string"
+          },
+          "atom3": {
+            "type": "string"
+          },
+          "k_angle": {
+            "type": "number"
+          },
+          "theta0": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Custom angle force constants and equilibrium angles"
+    },
+    "dihedral_parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "atom1": {
+            "type": "string"
+          },
+          "atom2": {
+            "type": "string"
+          },
+          "atom3": {
+            "type": "string"
+          },
+          "atom4": {
+            "type": "string"
+          },
+          "k_dihedral": {
+            "type": "number"
+          },
+          "n": {
+            "type": "number"
+          },
+          "delta": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Custom dihedral (torsion) parameters"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or references"
+    }
+  },
+  "required": [
+    "name",
+    "base_forcefield"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

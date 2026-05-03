@@ -16,8 +16,9 @@ import { Badge } from "../components/ui/badge";
 import {
   Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom, ChevronRight,
   Download, Copy, CheckCircle2, Loader2, RotateCcw, BookOpen,
-  Microscope, Globe, Beaker, Activity, AlertTriangle, Eye
+  Microscope, Globe, Beaker, Activity, AlertTriangle, Eye, SlidersHorizontal
 } from "lucide-react";
+import CustomForcefieldManager from "../components/simulation/CustomForcefieldManager";
 
 const DFT_FUNCTIONALS = [
   "B3LYP", "PBE", "PBE0", "M06-2X", "M06-L", "ωB97X-D", "CAM-B3LYP",
@@ -258,6 +259,8 @@ export default function ComputationalSimulation() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTargetKey, setDrawerTargetKey] = useState(null);
+  const [ffManagerOpen, setFfManagerOpen] = useState(false);
+  const [customForcefield, setCustomForcefield] = useState(null);
 
   const DRAWABLE_KEYS = ['molecule', 'ligand', 'compound', 'system', 'surface', 'reactants'];
 
@@ -278,6 +281,7 @@ export default function ComputationalSimulation() {
     setResults(null);
     const sim = SIM_TYPES.find(s => s.id === typeId);
     setSelectedEngine(sim?.engines[0] || null);
+    setCustomForcefield(null);
     // Pre-fill defaults
     const defaults = {};
     sim?.fields.forEach(f => { if (f.default) defaults[f.key] = f.default; });
@@ -292,10 +296,20 @@ export default function ComputationalSimulation() {
     setIsRunning(true);
     setResults(null);
 
+    const customFFNote = customForcefield && selectedType === "molecular_dynamics"
+      ? `\n\nCustom Forcefield: "${customForcefield.name}" (extends ${customForcefield.base_forcefield})
+${customForcefield.description ? `Description: ${customForcefield.description}` : ""}
+${customForcefield.lj_parameters?.length ? `LJ params: ${customForcefield.lj_parameters.map(p => `${p.atom_type}: ε=${p.epsilon} kJ/mol, σ=${p.sigma} nm`).join("; ")}` : ""}
+${customForcefield.bond_parameters?.length ? `Bond params: ${customForcefield.bond_parameters.map(p => `${p.atom1}-${p.atom2}: k=${p.k_bond}, r0=${p.r0}`).join("; ")}` : ""}
+${customForcefield.angle_parameters?.length ? `Angle params: ${customForcefield.angle_parameters.map(p => `${p.atom1}-${p.atom2}-${p.atom3}: k=${p.k_angle}, θ0=${p.theta0}`).join("; ")}` : ""}
+${customForcefield.dihedral_parameters?.length ? `Dihedral params: ${customForcefield.dihedral_parameters.map(p => `${p.atom1}-${p.atom2}-${p.atom3}-${p.atom4}: k=${p.k_dihedral}, n=${p.n}, δ=${p.delta}`).join("; ")}` : ""}
+Incorporate these custom parameters into the simulation script and adapt the approach to override or extend the base forcefield accordingly.`
+      : "";
+
     const prompt = `You are a computational chemistry expert. A researcher wants to run a ${sim.label} simulation using ${selectedEngine} for ${domain}.
 
 Parameters:
-${inputSummary}
+${inputSummary}${customFFNote}
 
 Provide a focused, technical analysis. Return JSON with:
 1. system_overview: Brief 2-3 sentence description
@@ -869,6 +883,52 @@ Provide a focused, technical analysis. Return JSON with:
                           </div>
                         </div>
 
+                        {/* Custom Forcefield picker — MD only */}
+                        {selectedType === "molecular_dynamics" && (
+                          <div className="mb-5 p-4 bg-teal-50 border border-teal-200 rounded-xl">
+                            <div className="flex items-center justify-between flex-wrap gap-2">
+                              <div>
+                                <p className="text-sm font-semibold text-teal-800">Custom Forcefield Parameters</p>
+                                {customForcefield ? (
+                                  <p className="text-xs text-teal-600 mt-0.5">
+                                    Using: <span className="font-bold">{customForcefield.name}</span>
+                                    <span className="ml-1 text-teal-500">({customForcefield.base_forcefield})</span>
+                                  </p>
+                                ) : (
+                                  <p className="text-xs text-teal-600 mt-0.5">Optionally load saved LJ, bond, angle & dihedral overrides</p>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                {customForcefield && (
+                                  <button onClick={() => setCustomForcefield(null)}
+                                    className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors">
+                                    Remove
+                                  </button>
+                                )}
+                                <Button size="sm" variant="outline" onClick={() => setFfManagerOpen(true)}
+                                  className="gap-1.5 border-teal-300 text-teal-700 hover:bg-teal-100 text-xs">
+                                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                                  {customForcefield ? "Change / Edit" : "Load Custom FF"}
+                                </Button>
+                              </div>
+                            </div>
+                            {customForcefield && (
+                              <div className="flex flex-wrap gap-2 mt-2">
+                                {[
+                                  { label: "LJ", count: customForcefield.lj_parameters?.length },
+                                  { label: "Bonds", count: customForcefield.bond_parameters?.length },
+                                  { label: "Angles", count: customForcefield.angle_parameters?.length },
+                                  { label: "Dihedrals", count: customForcefield.dihedral_parameters?.length },
+                                ].map(p => p.count > 0 && (
+                                  <span key={p.label} className="inline-flex items-center gap-1 bg-teal-100 text-teal-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                                    {p.count} {p.label}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                           {sim.fields.map(field => (
                             field.type === "select" ? (
@@ -935,6 +995,12 @@ Provide a focused, technical analysis. Return JSON with:
                 onClose={() => setDrawerOpen(false)}
                 onConfirm={handleDrawerConfirm}
                 initialSmiles={drawerTargetKey ? (inputs[drawerTargetKey] || '') : ''}
+              />
+
+              <CustomForcefieldManager
+                isOpen={ffManagerOpen}
+                onClose={() => setFfManagerOpen(false)}
+                onSelect={(ff) => { setCustomForcefield(ff); setFfManagerOpen(false); }}
               />
 
               {!selectedType && (
