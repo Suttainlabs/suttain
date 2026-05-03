@@ -1,0 +1,48 @@
+{
+  "name": "SimulationQueue",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "User-defined name for the batch queue"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description of the batch run"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "running",
+        "completed",
+        "paused"
+      ],
+      "default": "draft",
+      "description": "Overall queue status"
+    },
+    "total_jobs": {
+      "type": "number",
+      "default": 0
+    },
+    "completed_jobs": {
+      "type": "number",
+      "default": 0
+    },
+    "failed_jobs": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

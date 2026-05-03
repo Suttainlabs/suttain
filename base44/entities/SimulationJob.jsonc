@@ -1,0 +1,69 @@
+{
+  "name": "SimulationJob",
+  "type": "object",
+  "properties": {
+    "queue_id": {
+      "type": "string",
+      "description": "ID of the parent SimulationQueue this job belongs to"
+    },
+    "job_name": {
+      "type": "string",
+      "description": "User-defined name for this job"
+    },
+    "sim_type": {
+      "type": "string",
+      "description": "Simulation type ID (e.g. dft, molecular_dynamics)"
+    },
+    "sim_type_label": {
+      "type": "string",
+      "description": "Human-readable simulation type label"
+    },
+    "engine": {
+      "type": "string",
+      "description": "Software engine (e.g. GROMACS, ORCA)"
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Key-value input parameters for this job"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "running",
+        "completed",
+        "failed"
+      ],
+      "default": "pending",
+      "description": "Current execution status"
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "AI-generated result data after execution"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if job failed"
+    },
+    "order": {
+      "type": "number",
+      "description": "Position in the queue"
+    }
+  },
+  "required": [
+    "queue_id",
+    "job_name",
+    "sim_type",
+    "engine"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
