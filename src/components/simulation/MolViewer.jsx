@@ -448,7 +448,7 @@ export default function MolViewer({ simType, inputs }) {
         <div style={{ height: '300px' }} className="overflow-y-auto border-t border-slate-700">
           <div className="p-4">
             <VisualizationController
-              viewer={viewerRef.current}
+              viewerRef={viewerRef}
               onAddMolecule={(mol) => console.log('Added:', mol)}
               onRemoveItem={(id) => console.log('Removed:', id)}
               onSeparateResidue={(sep) => console.log('Separated:', sep)}

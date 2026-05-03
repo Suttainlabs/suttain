@@ -10,7 +10,9 @@ const PRESET_MOLECULES = [
   { name: 'Methane (CH4)', smiles: 'C', label: 'CH4', color: '#8b5cf6' },
 ];
 
-export default function VisualizationController({ viewer, onAddMolecule, onRemoveItem, onSeparateResidue }) {
+export default function VisualizationController({ viewerRef, viewer: viewerProp, onAddMolecule, onRemoveItem, onSeparateResidue }) {
+  // Support both a ref (preferred) and a direct viewer instance
+  const getViewer = () => viewerRef?.current || viewerProp || null;
   const [addedItems, setAddedItems] = useState([]);
   const [visibleLayers, setVisibleLayers] = useState(new Set(['protein']));
   const [selectedItem, setSelectedItem] = useState(null);
@@ -39,16 +41,18 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
     }
 
     // Load molecule into viewer
-    if (viewer && molecule.smiles) {
+    const v = getViewer();
+    if (v && molecule.smiles) {
       try {
         const smilesUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(molecule.smiles)}/SDF`;
         const res = await fetch(smilesUrl);
         if (res.ok) {
           const molData = await res.text();
-          viewer.addModel(molData, 'sdf');
-          viewer.setStyle({ model: -1 }, { stick: { colorscheme: 'element' } });
-          viewer.zoom(0.8);
-          viewer.render();
+          v.addModel(molData, 'sdf');
+          v.setStyle({ model: -1 }, { stick: { colorscheme: 'element' } });
+          v.zoomTo();
+          v.zoom(0.8);
+          v.render();
         } else {
           console.warn(`PubChem fetch failed for ${molecule.smiles}`);
         }
@@ -66,7 +70,8 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
       onRemoveItem(itemId);
     }
 
-    if (viewer) viewer.render();
+    const v = getViewer();
+    if (v) v.render();
   };
 
   const toggleVisibility = (itemId) => {
@@ -76,12 +81,8 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
       )
     );
 
-    if (viewer) {
-      const item = addedItems.find(i => i.id === itemId);
-      if (item) {
-        viewer.render();
-      }
-    }
+    const v = getViewer();
+    if (v) v.render();
   };
 
   const separateResidueByChain = (chainId) => {
@@ -92,16 +93,15 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
       onSeparateResidue({ type: 'chain', value: isDeselecting ? null : chainId });
     }
 
-    if (viewer) {
+    const v = getViewer();
+    if (v) {
       if (isDeselecting) {
-        // Deselect - reset all styles
-        viewer.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'element' } });
+        v.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'element' } });
       } else {
-        // Hide all, then show only selected chain
-        viewer.setStyle({}, { cartoon: { color: 'gray', opacity: 0.15 }, stick: { hidden: true } });
-        viewer.setStyle({ chain: chainId }, { cartoon: { color: 'spectrum', opacity: 1 }, stick: { colorscheme: 'element' } });
+        v.setStyle({}, { cartoon: { color: 'gray', opacity: 0.15 }, stick: { hidden: true } });
+        v.setStyle({ chain: chainId }, { cartoon: { color: 'spectrum', opacity: 1 }, stick: { colorscheme: 'element' } });
       }
-      viewer.render();
+      v.render();
     }
   };
 
@@ -113,16 +113,15 @@ export default function VisualizationController({ viewer, onAddMolecule, onRemov
       onSeparateResidue({ type: 'residue', value: isDeselecting ? null : residueType });
     }
 
-    if (viewer) {
+    const v = getViewer();
+    if (v) {
       if (isDeselecting) {
-        // Deselect - reset all styles
-        viewer.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'element' } });
+        v.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { colorscheme: 'element' } });
       } else {
-        // Dim everything, highlight selected residue type
-        viewer.setStyle({}, { cartoon: { color: 'gray', opacity: 0.15 }, stick: { hidden: true } });
-        viewer.setStyle({ resn: residueType }, { stick: { colorscheme: 'whiteCarbon' }, cartoon: { color: 'orange', opacity: 1 } });
+        v.setStyle({}, { cartoon: { color: 'gray', opacity: 0.15 }, stick: { hidden: true } });
+        v.setStyle({ resn: residueType }, { stick: { colorscheme: 'whiteCarbon' }, cartoon: { color: 'orange', opacity: 1 } });
       }
-      viewer.render();
+      v.render();
     }
   };
 
