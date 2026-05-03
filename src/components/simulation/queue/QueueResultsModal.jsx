@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { X, Copy, CheckCircle2, Download, Activity, Cpu, BookOpen } from "lucide-react";
+import { X, Copy, CheckCircle2, Download, Activity, Cpu, BookOpen, Film } from "lucide-react";
+import TrajectoryViewer from "../TrajectoryViewer";
 
 export default function QueueResultsModal({ job, onClose }) {
   const [copied, setCopied] = useState(false);
@@ -58,10 +59,13 @@ export default function QueueResultsModal({ job, onClose }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 p-4 pb-0">
+        <div className="flex gap-1 p-4 pb-0 flex-wrap">
           {[
             { id: "analysis", label: "Analysis", icon: Activity },
             { id: "script", label: "Script", icon: Cpu },
+            ...(job.sim_type === "molecular_dynamics" || job.sim_type === "protein_modeling" || job.sim_type === "biomolecular_dynamics"
+              ? [{ id: "trajectory", label: "Trajectory", icon: Film }]
+              : []),
           ].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === t.id ? "bg-violet-600 text-white" : "text-slate-600 hover:bg-slate-100"}`}>
@@ -136,6 +140,12 @@ export default function QueueResultsModal({ job, onClose }) {
                 </div>
               )}
             </>
+          )}
+
+          {tab === "trajectory" && (
+            <div className="rounded-xl overflow-hidden" style={{ minHeight: "420px" }}>
+              <TrajectoryViewer compact={true} />
+            </div>
           )}
 
           {tab === "script" && (

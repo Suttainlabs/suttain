@@ -16,9 +16,10 @@ import { Badge } from "../components/ui/badge";
 import {
   Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom, ChevronRight,
   Download, Copy, CheckCircle2, Loader2, RotateCcw, BookOpen,
-  Microscope, Globe, Beaker, Activity, AlertTriangle, Eye, SlidersHorizontal
+  Microscope, Globe, Beaker, Activity, AlertTriangle, Eye, SlidersHorizontal, Film
 } from "lucide-react";
 import CustomForcefieldManager from "../components/simulation/CustomForcefieldManager";
+import TrajectoryViewer from "../components/simulation/TrajectoryViewer";
 
 const DFT_FUNCTIONALS = [
   "B3LYP", "PBE", "PBE0", "M06-2X", "M06-L", "ωB97X-D", "CAM-B3LYP",
@@ -672,6 +673,9 @@ Provide a focused, technical analysis. Return JSON with:
                   { id: "analysis", label: "Analysis", icon: Microscope },
                   { id: "script", label: `${results.engine} Script`, icon: Cpu },
                   { id: "viz", label: "Visualization", icon: Eye },
+              ...(results.simType?.id === "molecular_dynamics" || results.simType?.id === "protein_modeling" || results.simType?.id === "biomolecular_dynamics"
+                ? [{ id: "trajectory", label: "Trajectory", icon: Film }]
+                : []),
                 ].map(tab => (
                   <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.id ? "bg-violet-600 text-white shadow" : "text-slate-600 hover:bg-slate-100"}`}>
@@ -794,6 +798,13 @@ Provide a focused, technical analysis. Return JSON with:
                     <p className="text-xs text-slate-500 mt-3">⚠️ Review paths, resource allocations, and parameters before running on your HPC cluster.</p>
                   </CardContent>
                 </Card>
+              )}
+
+              {activeTab === "trajectory" && (
+                <TrajectoryViewer initialPdbId={
+                  results.inputs?.system?.match(/^[A-Za-z0-9]{4}$/) ? results.inputs.system :
+                  results.inputs?.sequence?.match(/^[A-Za-z0-9]{4}$/) ? results.inputs.sequence : null
+                } />
               )}
 
               {activeTab === "viz" && (
