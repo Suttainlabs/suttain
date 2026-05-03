@@ -16,7 +16,7 @@ import { Badge } from "../components/ui/badge";
 import {
   Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom, ChevronRight,
   Download, Copy, CheckCircle2, Loader2, RotateCcw, BookOpen,
-  Microscope, Globe, Beaker, Activity, AlertTriangle, Eye, SlidersHorizontal, Film
+  Microscope, Globe, Beaker, Activity, AlertTriangle, Eye, SlidersHorizontal, Film, ExternalLink
 } from "lucide-react";
 import CustomForcefieldManager from "../components/simulation/CustomForcefieldManager";
 import TrajectoryViewer from "../components/simulation/TrajectoryViewer";
@@ -145,6 +145,16 @@ const SIM_TYPES = [
       { key: "process", label: "Process to Model", type: "select", options: ["Photodegradation", "Biodegradation", "Sorption", "Hydrolysis", "Atmospheric OH oxidation", "Volatilization", "Bioaccumulation"], default: "Photodegradation" },
       { key: "metrics", label: "Metrics / Outputs", type: "select", options: ["Half-life", "Degradation products", "Ecotoxicity LC50", "LogKow / LogKoc", "Henry's law constant", "BCF (bioconcentration)"], default: "Half-life" },
     ]
+  },
+  {
+    id: "sandbox",
+    label: "3D Simulation Sandbox",
+    icon: Eye,
+    color: "from-violet-500 to-fuchsia-600",
+    engines: ["Three.js", "Custom"],
+    description: "Interactive sandbox: place atoms on a 3D grid and simulate real-time physics interactions",
+    fields: [],
+    isSandbox: true,
   },
   {
     id: "visualization",
@@ -845,6 +855,23 @@ Provide a focused, technical analysis. Return JSON with:
                 {SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id)).map(s => {
                   const Icon = s.icon;
                   const isSelected = selectedType === s.id;
+                  if (s.isSandbox) {
+                    return (
+                      <motion.div key={s.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <Link to="/SimulationSandbox"
+                          className="block text-left p-5 rounded-2xl border-2 border-dashed border-violet-300 bg-violet-50 hover:bg-violet-100 hover:border-violet-500 hover:shadow transition-all">
+                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mb-3`}>
+                            <s.icon className="w-5 h-5 text-white" />
+                          </div>
+                          <h3 className="font-bold text-slate-900 text-sm mb-1 flex items-center gap-1.5">
+                            {s.label} <ExternalLink className="w-3.5 h-3.5 text-violet-500" />
+                          </h3>
+                          <p className="text-xs text-slate-500 leading-relaxed">{s.description}</p>
+                        </Link>
+                      </motion.div>
+                    );
+                  }
+
                   return (
                     <motion.button key={s.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                       onClick={() => handleSelectType(s.id)}

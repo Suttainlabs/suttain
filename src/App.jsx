@@ -28,6 +28,7 @@ const ImpactDashboard = lazy(() => import('./pages/ImpactDashboard'));
 const MolecularVisualization = lazy(() => import('./pages/MolecularVisualization'));
 const SimulationQueueManager = lazy(() => import('./pages/SimulationQueueManager'));
 const SimulationProductivity = lazy(() => import('./pages/SimulationProductivity'));
+const SimulationSandbox = lazy(() => import('./pages/SimulationSandbox'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -112,6 +113,7 @@ const AuthenticatedApp = () => {
       <Route path="/MolecularVisualization" element={<LayoutWrapper currentPageName="MolecularVisualization"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MolecularVisualization /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationQueueManager" element={<LayoutWrapper currentPageName="SimulationQueueManager"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationQueueManager /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationProductivity" element={<LayoutWrapper currentPageName="SimulationProductivity"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-fuchsia-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationProductivity /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/SimulationSandbox" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-950 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><SimulationSandbox /></Suspense>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
