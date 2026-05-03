@@ -6,7 +6,8 @@ import SimulationMetricsChart from '../components/simulation/SimulationMetricsCh
 import JobQueueCard from '../components/job-queue/JobQueueCard';
 import LogsViewer from '../components/job-queue/LogsViewer';
 import { motion } from 'framer-motion';
-import { BarChart3, Activity, RotateCcw } from 'lucide-react';
+import { BarChart3, Activity, RotateCcw, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 export default function SimulationDashboard() {
@@ -61,6 +62,11 @@ export default function SimulationDashboard() {
                 <p className="text-slate-600 text-sm mt-1">Real-time energy, stability, and convergence metrics</p>
               </div>
             </div>
+            <Link to="/SimulationProductivity">
+              <Button variant="outline" size="sm" className="gap-2 border-violet-200 text-violet-700 hover:bg-violet-50">
+                <TrendingUp className="w-4 h-4" /> Productivity
+              </Button>
+            </Link>
             <Button
               onClick={() => refetch()}
               disabled={isLoading}
