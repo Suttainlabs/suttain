@@ -28,7 +28,8 @@ function applyLayerStyle(viewer, selector, styleName) {
 }
 
 // ── Single layer row ─────────────────────────────────────────────────────────
-function LayerRow({ layer, viewer, onRemove }) {
+function LayerRow({ layer, viewerRef, onRemove }) {
+  const viewer = viewerRef?.current ?? null;
   const [visible, setVisible] = useState(layer.visible);
   const [style, setStyle] = useState(layer.style);
   const [hovered, setHovered] = useState(false);
@@ -233,7 +234,7 @@ function PDBSearchPanel({ onLoad }) {
 }
 
 // ── Main exported component ──────────────────────────────────────────────────
-export default function PDBLayerPanel({ viewer, loadedPdbId, onLoadPdb }) {
+export default function PDBLayerPanel({ viewerRef, loadedPdbId, onLoadPdb }) {
   const [layers, setLayers] = useState([
     { id: "polymer",   name: "Polymer",   style: "Cartoon",     visible: true,  selector: { hetflag: false }, extra: null },
     { id: "ligand",    name: "Ligand",    style: "Ball & Stick", visible: true,  selector: { hetflag: true }, extra: null },
@@ -278,7 +279,7 @@ export default function PDBLayerPanel({ viewer, loadedPdbId, onLoadPdb }) {
             <p className="text-xs text-slate-400 text-center py-6">Load a structure to see layers.</p>
           )}
           {layers.map(layer => (
-            <LayerRow key={layer.id} layer={layer} viewer={viewer} onRemove={removeLayer} />
+            <LayerRow key={layer.id} layer={layer} viewerRef={viewerRef} onRemove={removeLayer} />
           ))}
           <div className="px-3 py-2 mt-1">
             <p className="text-[10px] text-slate-400">Click a layer name to focus · Eye icon toggles visibility</p>

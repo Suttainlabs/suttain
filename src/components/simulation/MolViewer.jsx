@@ -485,7 +485,7 @@ export default function MolViewer({ simType, inputs }) {
           </div>
           {showLayerPanel && (
             <PDBLayerPanel
-              viewer={viewerRef.current}
+              viewerRef={viewerRef}
               loadedPdbId={loadedPdbId}
               onLoadPdb={(pdbId) => setExternalLoadQuery(pdbId)}
             />
