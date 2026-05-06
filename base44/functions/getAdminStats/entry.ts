@@ -71,11 +71,16 @@ Deno.serve(async (req) => {
       barcode_scan: barcodeHistory.length,
       compliance_check: complianceChecks.length,
       safety_profile: safetyProfiles.length,
+      subscribers: subscribers.length,
     };
 
     // Recent activity (last 30 days)
     const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
     const sevenDaysAgo = subDays(new Date(), 7).toISOString();
+
+    // Count subscribers (users with active pro/enterprise subscription)
+    const subscribers = users.filter(u => u.subscription_plan && u.subscription_status === 'active');
+    const weekSubscribers = subscribers.filter(u => u.updated_date && new Date(u.updated_date) >= new Date(sevenDaysAgo));
 
     const recentUsers = users.filter(u => u.created_date && new Date(u.created_date) >= new Date(thirtyDaysAgo));
     const recentFormulas = formulas.filter(f => f.created_date && new Date(f.created_date) >= new Date(thirtyDaysAgo));
@@ -141,7 +146,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({
       totals,
       activityData,
-      weeklyGrowth: { weekUsers, weekFormulas, weekSimulations, weekScans },
+      weeklyGrowth: { weekUsers, weekFormulas, weekSimulations, weekScans, weekSubscribers: weekSubscribers.length },
       formulaStatuses,
       ratingDistribution,
       avgRating,

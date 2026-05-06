@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Beaker, TestTube, Star, List, FileText, Loader2, Download, QrCode, ShieldCheck, HeartPulse, TrendingUp, ArrowUpRight, ArrowDownRight, Minus, CreditCard } from 'lucide-react';
+import { Users, Beaker, TestTube, Star, List, FileText, Loader2, Download, QrCode, ShieldCheck, HeartPulse, TrendingUp, ArrowUpRight, ArrowDownRight, Minus, CreditCard, Cpu, FlaskConical, BarChart2, Leaf, Sparkles, Atom, Shield } from 'lucide-react';
 import { getAdminStats } from '@/functions/getAdminStats';
 import { exportAdminData } from '@/functions/exportAdminData';
 import { exportSubscriptionReport } from '@/functions/exportSubscriptionReport';
@@ -110,9 +110,21 @@ export default function DashboardOverview() {
 
   const primaryStats = [
     { title: 'Total Users', value: stats?.totals?.user, weekCount: growth.weekUsers, icon: Users, color: 'text-blue-600', bgColor: 'bg-blue-50' },
+    { title: 'Pro Subscribers', value: stats?.totals?.subscribers, weekCount: growth.weekSubscribers, icon: CreditCard, color: 'text-violet-600', bgColor: 'bg-violet-50' },
     { title: 'Formulas Created', value: stats?.totals?.formula, weekCount: growth.weekFormulas, icon: Beaker, color: 'text-emerald-600', bgColor: 'bg-emerald-50' },
-    { title: 'Simulations Run', value: stats?.totals?.simulation, weekCount: growth.weekSimulations, icon: TestTube, color: 'text-violet-600', bgColor: 'bg-violet-50' },
+    { title: 'Simulations Run', value: stats?.totals?.simulation, weekCount: growth.weekSimulations, icon: TestTube, color: 'text-purple-600', bgColor: 'bg-purple-50' },
     { title: 'Products Scanned', value: stats?.totals?.barcode_scan, weekCount: growth.weekScans, icon: QrCode, color: 'text-cyan-600', bgColor: 'bg-cyan-50' },
+  ];
+
+  const toolsOverview = [
+    { label: 'Chemical Simulator', icon: Shield, color: 'text-emerald-600', bg: 'bg-emerald-50', desc: 'Safety, hazard & risk analysis' },
+    { label: 'Formula Generator', icon: Atom, color: 'text-teal-600', bg: 'bg-teal-50', desc: 'AI-powered formulation builder' },
+    { label: 'Quick Scan', icon: QrCode, color: 'text-cyan-600', bg: 'bg-cyan-50', desc: 'Barcode & ingredient scanner' },
+    { label: 'Ingredient Database', icon: FlaskConical, color: 'text-blue-600', bg: 'bg-blue-50', desc: '250k+ chemicals with eco data' },
+    { label: 'Compliance Co-Pilot', icon: ShieldCheck, color: 'text-violet-600', bg: 'bg-violet-50', desc: '50+ regulatory regions' },
+    { label: 'Sustainability Scoring', icon: Leaf, color: 'text-green-600', bg: 'bg-green-50', desc: 'Eco & carbon footprint scoring' },
+    { label: 'Computational Sims', icon: Cpu, color: 'text-purple-600', bg: 'bg-purple-50', desc: 'DFT, MD, protein modeling' },
+    { label: 'Impact Reports', icon: BarChart2, color: 'text-orange-600', bg: 'bg-orange-50', desc: 'Analytics & comparative reports' },
   ];
 
   const secondaryStats = [
@@ -145,10 +157,28 @@ export default function DashboardOverview() {
       </div>
 
       {/* Primary Stats */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-5">
         {primaryStats.map((card) => (
           <StatCard key={card.title} {...card} loading={loading} />
         ))}
+      </div>
+
+      {/* Tools Overview */}
+      <div>
+        <h2 className="text-base font-semibold text-slate-800 mb-3">Platform Tools ({toolsOverview.length} Active)</h2>
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-8">
+          {toolsOverview.map((tool) => (
+            <div key={tool.label} className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col items-center text-center gap-2 hover:shadow-sm transition-shadow">
+              <div className={`w-9 h-9 rounded-lg ${tool.bg} flex items-center justify-center`}>
+                <tool.icon className={`w-4 h-4 ${tool.color}`} />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-slate-800 leading-tight">{tool.label}</p>
+                <p className="text-[10px] text-slate-400 leading-tight mt-0.5 hidden sm:block">{tool.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Chart */}
