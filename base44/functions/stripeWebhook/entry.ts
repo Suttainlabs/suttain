@@ -1,8 +1,23 @@
-import Stripe from 'npm:stripe@17.7.0';
-import StripeLib from 'npm:stripe@15.0.0';
+import StripeLib from 'npm:stripe@17.7.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { Resend } from 'npm:resend@4.0.0';
 
 const stripe = new StripeLib(Deno.env.get('STRIPE_SECRET_KEY'));
+const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+
+async function sendEmailViaResend(to, subject, html) {
+  try {
+    await resend.emails.send({
+      from: 'Suttain <contact@suttain.com>',
+      to,
+      subject,
+      html,
+    });
+    console.log('Email sent via Resend to:', to);
+  } catch (e) {
+    console.error('Resend email failed:', e);
+  }
+}
 
 const PLAN_DETAILS = {
   pro_monthly: {
@@ -116,17 +131,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
     </div>
   `;
 
-  try {
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: email,
-      subject: `Welcome to ${planInfo.name} - Account Activation Confirmation`,
-      body,
-      from_name: 'Suttain'
-    });
-    console.log('Subscription welcome email sent to:', email);
-  } catch (e) {
-    console.error('Failed to send subscription welcome email:', e);
-  }
+  await sendEmailViaResend(email, `Welcome to ${planInfo.name} - Your Subscription is Active`, body);
 }
 
 Deno.serve(async (req) => {
@@ -197,14 +202,11 @@ Deno.serve(async (req) => {
           await sendPaymentConfirmationEmail(base44, customerEmail, customerName, planKey);
 
           // Notify admin via email
-          try {
-            await base44.asServiceRole.integrations.Core.SendEmail({
-              to: Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
-              subject: `💰 New Suttain Pro Purchase: ${customerName || customerEmail}`,
-              body: `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${customerName || '—'}</li><li><b>Email:</b> ${customerEmail}</li><li><b>Plan:</b> ${priceKey}</li><li><b>Billing:</b> ${billing}</li><li><b>Session ID:</b> ${session.id}</li></ul>`,
-              from_name: 'Suttain Webhook'
-            });
-          } catch (_) {}
+          await sendEmailViaResend(
+            Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
+            `💰 New Suttain Pro Purchase: ${customerName || customerEmail}`,
+            `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${customerName || '—'}</li><li><b>Email:</b> ${customerEmail}</li><li><b>Plan:</b> ${priceKey}</li><li><b>Billing:</b> ${billing}</li><li><b>Session ID:</b> ${session.id}</li></ul>`
+          );
 
           // Create in-app admin notification
           try {
@@ -325,15 +327,12 @@ Deno.serve(async (req) => {
             console.log(`invoice.paid: confirmed pro/active for user ${targetUserId} (${billing})`);
 
             // Notify admin via email
-            try {
-              const userName = invoice.customer_name || invoiceEmail || targetUserId;
-              await base44.asServiceRole.integrations.Core.SendEmail({
-                to: Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
-                subject: `💰 New Suttain Pro Subscriber: ${userName}`,
-                body: `<p>New subscription confirmed via invoice.paid.</p><ul><li><b>Email:</b> ${invoiceEmail}</li><li><b>Billing:</b> ${billing}</li><li><b>Subscription ID:</b> ${invoiceSubId}</li><li><b>Invoice:</b> ${invoice.id}</li></ul>`,
-                from_name: 'Suttain Webhook'
-              });
-            } catch (_) {}
+            const userName = invoice.customer_name || invoiceEmail || targetUserId;
+            await sendEmailViaResend(
+              Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
+              `💰 Subscription Renewal/New: ${userName}`,
+              `<p>New subscription confirmed via invoice.paid.</p><ul><li><b>Email:</b> ${invoiceEmail}</li><li><b>Billing:</b> ${billing}</li><li><b>Subscription ID:</b> ${invoiceSubId}</li><li><b>Invoice:</b> ${invoice.id}</li></ul>`
+            );
 
             // Create in-app admin notification
             try {

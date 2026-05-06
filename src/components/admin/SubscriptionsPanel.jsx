@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const PLAN_CONFIG = {
   pro: { label: 'Pro', color: 'bg-teal-600 text-white', icon: Crown },
   enterprise: { label: 'Enterprise', color: 'bg-violet-600 text-white', icon: Crown },
+  lifetime: { label: 'Lifetime', color: 'bg-amber-500 text-white', icon: Crown },
   trial: { label: 'Trial', color: 'bg-slate-200 text-slate-700', icon: Clock },
   free: { label: 'Free', color: 'bg-slate-200 text-slate-700', icon: User },
 };
@@ -66,17 +67,20 @@ export default function SubscriptionsPanel() {
     const matchSearch = !search ||
       u.full_name?.toLowerCase().includes(search.toLowerCase()) ||
       u.email?.toLowerCase().includes(search.toLowerCase());
-    const plan = u.subscription_plan || 'free';
-    const isPro = plan === 'pro' || plan === 'enterprise';
+    const plan = u.data?.subscription_plan || u.subscription_plan || 'free';
+    const isPro = plan === 'pro' || plan === 'enterprise' || plan === 'lifetime';
     const matchFilter =
-      filter === 'all' ? true :
-      filter === 'pro' ? isPro :
-      filter === 'free' ? !isPro : true;
+    filter === 'all' ? true :
+    filter === 'pro' ? isPro :
+    filter === 'free' ? !isPro : true;
     return matchSearch && matchFilter;
-  });
+    });
 
-  const proCount = users.filter(u => u.subscription_plan === 'pro' || u.subscription_plan === 'enterprise').length;
-  const freeCount = users.length - proCount;
+    const proCount = users.filter(u => {
+    const plan = u.data?.subscription_plan || u.subscription_plan;
+    return plan === 'pro' || plan === 'enterprise' || plan === 'lifetime';
+    }).length;
+    const freeCount = users.length - proCount;
 
   return (
     <div className="space-y-6">
@@ -170,12 +174,14 @@ export default function SubscriptionsPanel() {
               ) : filtered.length === 0 ? (
                 <tr><td colSpan={5} className="text-center py-12 text-slate-400">No users found</td></tr>
               ) : filtered.map(u => {
-                const plan = u.subscription_plan || 'free';
+                const plan = u.data?.subscription_plan || u.subscription_plan || 'free';
                 const planCfg = PLAN_CONFIG[plan] || PLAN_CONFIG.free;
-                const statusCfg = STATUS_CONFIG[u.subscription_status || 'trialing'] || STATUS_CONFIG.trialing;
+                const subStatus = u.data?.subscription_status || u.subscription_status;
+                const subBilling = u.data?.subscription_billing || u.subscription_billing;
+                const statusCfg = STATUS_CONFIG[subStatus || 'trialing'] || STATUS_CONFIG.trialing;
                 const StatusIcon = statusCfg.icon;
                 const PlanIcon = planCfg.icon;
-                const isPro = plan === 'pro' || plan === 'enterprise';
+                const isPro = plan === 'pro' || plan === 'enterprise' || plan === 'lifetime';
                 return (
                   <tr key={u.id} className={`border-b border-slate-100 hover:bg-slate-50 transition-colors ${isPro ? 'bg-teal-50/30' : ''}`}>
                     <td className="px-4 py-3">
@@ -203,7 +209,7 @@ export default function SubscriptionsPanel() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-slate-600 capitalize">
-                      {u.subscription_billing || '—'}
+                      {subBilling || '—'}
                     </td>
                     <td className="px-4 py-3 text-slate-500 text-xs">
                       {u.created_date ? new Date(u.created_date).toLocaleDateString() : '—'}
