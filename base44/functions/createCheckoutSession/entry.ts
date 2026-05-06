@@ -6,7 +6,7 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 const PRICE_MAP = {
   pro_monthly: 'price_1TOUN1I9tsZ7WvXe30IECjgi',   // $4.99/month
   pro_yearly: 'price_1TOUN1I9tsZ7WvXemErMam6J',    // $49.99/year
-  lifetime: 'price_1TRCQ8I9tsZ7WvXeBoAnMI8m',      // $4.99 one-time
+  lifetime: 'price_1TTutoI9tsZ7WvXerSAlKmYE',      // $99.99 one-time lifetime
 };
 
 Deno.serve(async (req) => {
