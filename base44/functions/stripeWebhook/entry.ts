@@ -199,7 +199,7 @@ Deno.serve(async (req) => {
           // Notify admin
           try {
             await base44.asServiceRole.integrations.Core.SendEmail({
-              to: 'abel@suttain.com',
+              to: Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
               subject: `💰 New Suttain Pro Purchase: ${customerName || customerEmail}`,
               body: `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${customerName || '—'}</li><li><b>Email:</b> ${customerEmail}</li><li><b>Plan:</b> ${priceKey}</li><li><b>Billing:</b> ${billing}</li><li><b>Session ID:</b> ${session.id}</li></ul>`,
               from_name: 'Suttain Webhook'
@@ -313,7 +313,7 @@ Deno.serve(async (req) => {
             try {
               const userName = invoice.customer_name || invoiceEmail || targetUserId;
               await base44.asServiceRole.integrations.Core.SendEmail({
-                to: 'abel@suttain.com',
+                to: Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
                 subject: `💰 New Suttain Pro Subscriber: ${userName}`,
                 body: `<p>New subscription confirmed via invoice.paid.</p><ul><li><b>Email:</b> ${invoiceEmail}</li><li><b>Billing:</b> ${billing}</li><li><b>Subscription ID:</b> ${invoiceSubId}</li><li><b>Invoice:</b> ${invoice.id}</li></ul>`,
                 from_name: 'Suttain Webhook'
