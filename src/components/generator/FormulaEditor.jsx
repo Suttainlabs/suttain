@@ -155,11 +155,24 @@ export default function FormulaEditor({
         initialInstructions = fallback;
       } else if (typeof fallback === 'string' && fallback.trim()) {
         try {
-          const parsed = JSON.parse(fallback);
+          let parsed = JSON.parse(fallback);
+          if (typeof parsed === 'string') parsed = JSON.parse(parsed);
           initialInstructions = Array.isArray(parsed) ? parsed : [];
         } catch (e) {
           initialInstructions = [];
         }
+      }
+    }
+
+    // Last resort: check full_recipe_data itself if it's a stringified object
+    if (initialInstructions.length === 0 && typeof safeRecipe.full_recipe_data === 'string') {
+      try {
+        const parsed = JSON.parse(safeRecipe.full_recipe_data);
+        if (Array.isArray(parsed?.instructions)) {
+          initialInstructions = parsed.instructions;
+        }
+      } catch (e) {
+        // ignore
       }
     }
 
@@ -1064,20 +1077,26 @@ export default function FormulaEditor({
                           <strong>Note:</strong> Instructions automatically update based on your batch size ({batchSize} {batchUnit}).
                         </p>
                       </div>
-                      {dynamicInstructions && dynamicInstructions.map ? (
+                      {dynamicInstructions && dynamicInstructions.length > 0 ? (
                         dynamicInstructions.map((phase, i) => (
                           <div key={i} className="mb-6 p-3 sm:p-4 bg-slate-50 rounded-lg">
                             <h4 className="font-bold text-slate-900 mb-3 flex items-center gap-2 text-sm sm:text-base">
                               <span className={`w-6 h-6 ${modeColors.primaryBgClasses} text-white rounded-full flex items-center justify-center text-sm`}>{i + 1}</span>
-                              {phase.phase}
+                              {phase.phase || `Phase ${i + 1}`}
                             </h4>
                             <ul className="list-disc pl-6 sm:pl-8 space-y-2">
-                              {phase.steps && phase.steps.map ? phase.steps.map((step, j) => (
+                              {Array.isArray(phase.steps) ? phase.steps.map((step, j) => (
                                 <li key={j} className="text-slate-700 text-sm sm:text-base">{step}</li>
-                              )) : null}
+                              )) : typeof phase.steps === 'string' ? (
+                                <li className="text-slate-700 text-sm sm:text-base">{phase.steps}</li>
+                              ) : null}
                             </ul>
                           </div>
                         ))
+                      ) : formula.instructions && typeof formula.instructions === 'string' && formula.instructions.trim() ? (
+                        <div className="p-4 bg-slate-50 rounded-lg">
+                          <p className="text-slate-700 text-sm whitespace-pre-wrap">{formula.instructions}</p>
+                        </div>
                       ) : (
                         <p className="text-slate-500 italic text-sm sm:text-base">No mixing instructions available for this formula.</p>
                       )}
