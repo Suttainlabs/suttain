@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { X, Shield, Atom, Sparkles, Leaf, Zap, CheckCircle } from 'lucide-react';
+import { X, Shield, Atom, Sparkles, Leaf, Zap, CheckCircle, QrCode, Cpu, FlaskConical, BarChart2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -15,10 +15,14 @@ const GoogleIcon = () => (
 );
 
 const features = [
-    { icon: Shield, text: 'Chemical safety analysis', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { icon: Shield, text: 'Chemical safety analysis & simulation', color: 'text-emerald-500', bg: 'bg-emerald-50' },
     { icon: Atom, text: 'AI-powered formula generation', color: 'text-teal-500', bg: 'bg-teal-50' },
+    { icon: QrCode, text: 'Product barcode scanner & ingredient scan', color: 'text-cyan-500', bg: 'bg-cyan-50' },
     { icon: Leaf, text: 'Sustainability & eco scoring', color: 'text-green-500', bg: 'bg-green-50' },
     { icon: Sparkles, text: 'Compliance co-pilot (50+ regions)', color: 'text-violet-500', bg: 'bg-violet-50' },
+    { icon: Cpu, text: 'Computational simulations (DFT, MD & more)', color: 'text-purple-500', bg: 'bg-purple-50' },
+    { icon: FlaskConical, text: 'Ingredient database (250k+ chemicals)', color: 'text-blue-500', bg: 'bg-blue-50' },
+    { icon: BarChart2, text: 'Analytics, reports & impact dashboard', color: 'text-orange-500', bg: 'bg-orange-50' },
 ];
 
 export default function AuthModal({ isOpen, onClose, initialMode = "signup", onSuccess }) {
@@ -48,7 +52,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
                         exit={{ opacity: 0, scale: 0.92, y: 24 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden"
+                        className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden max-h-[90vh] overflow-y-auto"
                     >
                         {/* Top gradient banner */}
                         <div className="bg-gradient-to-br from-[#02988C] via-[#05b8aa] to-[#09D2FF] px-6 pt-8 pb-10 relative">
