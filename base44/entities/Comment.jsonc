@@ -1,0 +1,105 @@
+{
+  "name": "Comment",
+  "type": "object",
+  "properties": {
+    "target_type": {
+      "type": "string",
+      "enum": [
+        "simulation",
+        "formula",
+        "library"
+      ],
+      "description": "Type of item being commented on"
+    },
+    "target_id": {
+      "type": "string",
+      "description": "ID of the item being commented on"
+    },
+    "content": {
+      "type": "string",
+      "description": "Comment text content"
+    },
+    "parent_id": {
+      "type": "string",
+      "description": "Parent comment ID for replies"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Display name of commenter"
+    },
+    "author_avatar": {
+      "type": "string",
+      "description": "Avatar URL of commenter"
+    },
+    "annotation": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string"
+        },
+        "highlight_text": {
+          "type": "string"
+        },
+        "position": {
+          "type": "object"
+        }
+      },
+      "description": "Optional annotation data for specific sections"
+    },
+    "reactions": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Emoji reactions with user lists"
+    },
+    "is_resolved": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "target_type",
+    "target_id",
+    "content"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
