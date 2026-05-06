@@ -36,11 +36,21 @@
     "company_name"
   ],
   "rls": {
+    "create": {},
     "read": {
       "user_condition": {
         "role": "admin"
       }
     },
-    "write": {}
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
   }
 }
