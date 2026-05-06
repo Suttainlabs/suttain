@@ -204,15 +204,15 @@ Deno.serve(async (req) => {
           // Notify admin via email
           await sendEmailViaResend(
             Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
-            `💰 New Suttain Pro Purchase: ${customerName || customerEmail}`,
+            `New Suttain Pro Purchase: ${customerName || customerEmail}`,
             `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${customerName || '—'}</li><li><b>Email:</b> ${customerEmail}</li><li><b>Plan:</b> ${priceKey}</li><li><b>Billing:</b> ${billing}</li><li><b>Session ID:</b> ${session.id}</li></ul>`
           );
 
           // Create in-app admin notification
           try {
             await base44.asServiceRole.entities.Notification.create({
-              title: `💰 New Pro Subscriber`,
-              message: `${customerName || customerEmail} subscribed to ${priceKey} (${billing}).`,
+              title: `New Pro Subscriber`,
+                  message: `${customerName || customerEmail} subscribed to ${priceKey} (${billing}).`,
               type: 'subscription',
               severity: 'info',
               is_read: false,
@@ -330,14 +330,14 @@ Deno.serve(async (req) => {
             const userName = invoice.customer_name || invoiceEmail || targetUserId;
             await sendEmailViaResend(
               Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
-              `💰 Subscription Renewal/New: ${userName}`,
+              `Subscription Renewal/New: ${userName}`,
               `<p>New subscription confirmed via invoice.paid.</p><ul><li><b>Email:</b> ${invoiceEmail}</li><li><b>Billing:</b> ${billing}</li><li><b>Subscription ID:</b> ${invoiceSubId}</li><li><b>Invoice:</b> ${invoice.id}</li></ul>`
             );
 
             // Create in-app admin notification
             try {
               await base44.asServiceRole.entities.Notification.create({
-                title: `💰 New Pro Subscriber`,
+                title: `New Pro Subscriber`,
                 message: `${invoiceEmail} subscribed to Pro (${billing}).`,
                 type: 'subscription',
                 severity: 'info',
