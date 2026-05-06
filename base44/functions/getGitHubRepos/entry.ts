@@ -1,37 +1,21 @@
-import { createClient } from 'npm:@base44/sdk@0.1.0';
-
-const base44 = createClient({
-    appId: Deno.env.get('BASE44_APP_ID'),
-});
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 Deno.serve(async (req) => {
     try {
-        const authHeader = req.headers.get('Authorization');
-        if (!authHeader) {
-            return new Response('Unauthorized', { status: 401 });
-        }
-        
-        const token = authHeader.split(' ')[1];
-        base44.auth.setToken(token);
-        
+        const base44 = createClientFromRequest(req);
+
         const user = await base44.auth.me();
         if (!user) {
-            return new Response('Unauthorized', { status: 401 });
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const githubUsername = Deno.env.get('GITHUB_USERNAME');
         const githubToken = Deno.env.get('GITHUB_TOKEN');
 
         if (!githubUsername || !githubToken) {
-            return new Response(JSON.stringify({ 
-                error: 'GitHub credentials not configured' 
-            }), {
-                status: 500,
-                headers: { 'Content-Type': 'application/json' }
-            });
+            return Response.json({ error: 'GitHub credentials not configured' }, { status: 500 });
         }
 
-        // Fetch user's repositories from GitHub
         const reposResponse = await fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=10`, {
             headers: {
                 'Authorization': `token ${githubToken}`,
@@ -46,9 +30,8 @@ Deno.serve(async (req) => {
 
         const repos = await reposResponse.json();
 
-        // Filter and format the repositories
         const formattedRepos = repos
-            .filter(repo => !repo.fork) // Exclude forked repositories
+            .filter(repo => !repo.fork)
             .map(repo => ({
                 id: repo.id,
                 name: repo.name,
@@ -61,23 +44,12 @@ Deno.serve(async (req) => {
                 topics: repo.topics || [],
                 private: repo.private
             }))
-            .slice(0, 8); // Limit to 8 repositories
+            .slice(0, 8);
 
-        return new Response(JSON.stringify({
-            username: githubUsername,
-            repositories: formattedRepos
-        }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        return Response.json({ username: githubUsername, repositories: formattedRepos });
 
     } catch (error) {
         console.error('GitHub integration error:', error);
-        return new Response(JSON.stringify({ 
-            error: 'Failed to fetch GitHub data' 
-        }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        return Response.json({ error: 'Failed to fetch GitHub data' }, { status: 500 });
     }
 });

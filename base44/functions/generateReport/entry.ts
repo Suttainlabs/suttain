@@ -4,12 +4,20 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
-    
+
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { reportId, sourceData, reportConfig } = await req.json();
+
+    // Verify the report belongs to the requesting user before proceeding
+    if (reportId) {
+      const existing = await base44.entities.Report.filter({ id: reportId });
+      if (!existing || existing.length === 0) {
+        return Response.json({ error: 'Report not found' }, { status: 404 });
+      }
+    }
 
     // Update report status to generating
     if (reportId) {
