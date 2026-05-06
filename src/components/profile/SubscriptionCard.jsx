@@ -24,7 +24,7 @@ const PLAN_DISPLAY = {
   pro: {
     monthly: { label: 'Pro Monthly', color: 'from-teal-500 to-cyan-500', badge: 'bg-teal-600 text-white', icon: Crown, price: '$4.99/mo' },
     yearly: { label: 'Pro Yearly', color: 'from-teal-600 to-emerald-600', badge: 'bg-teal-700 text-white', icon: Crown, price: '$49.99/yr' },
-    lifetime: { label: 'Pro Lifetime', color: 'from-violet-600 to-purple-700', badge: 'bg-violet-700 text-white', icon: Infinity, price: 'Lifetime' },
+    lifetime: { label: 'Pro Lifetime', color: 'from-violet-600 to-purple-700', badge: 'bg-violet-700 text-white', icon: Infinity, price: '$4.99 one-time' },
   },
   enterprise: {
     monthly: { label: 'Enterprise', color: 'from-violet-600 to-purple-700', badge: 'bg-violet-700 text-white', icon: Star, price: 'Enterprise' },
@@ -50,6 +50,16 @@ export default function SubscriptionCard() {
   const { user, refreshUser } = useContext(AuthContext);
   const [canceling, setCanceling] = useState(false);
   const [cancelResult, setCancelResult] = useState(null);
+
+  // If user just came back from a Stripe checkout (success=true in URL),
+  // poll refreshUser to pick up webhook-updated subscription data.
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true' && refreshUser) {
+      const timers = [2000, 5000, 10000].map(d => setTimeout(() => refreshUser(), d));
+      return () => timers.forEach(clearTimeout);
+    }
+  }, []);
 
   const isAdmin = user?.role === 'admin';
   const plan = isAdmin ? 'admin' : (user?.subscription_plan || 'free');

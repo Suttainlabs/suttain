@@ -196,7 +196,7 @@ Deno.serve(async (req) => {
           if (planKey === 'lifetime') planKey = 'pro_lifetime';
           await sendPaymentConfirmationEmail(base44, customerEmail, customerName, planKey);
 
-          // Notify admin
+          // Notify admin via email
           try {
             await base44.asServiceRole.integrations.Core.SendEmail({
               to: Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
@@ -205,6 +205,21 @@ Deno.serve(async (req) => {
               from_name: 'Suttain Webhook'
             });
           } catch (_) {}
+
+          // Create in-app admin notification
+          try {
+            await base44.asServiceRole.entities.Notification.create({
+              title: `💰 New Pro Subscriber`,
+              message: `${customerName || customerEmail} subscribed to ${priceKey} (${billing}).`,
+              type: 'subscription',
+              severity: 'info',
+              is_read: false,
+              target_user: Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
+              metadata: { email: customerEmail, name: customerName, plan: priceKey, billing, session_id: session.id }
+            });
+          } catch (e) {
+            console.error('Failed to create admin notification:', e);
+          }
         }
 
         break;
@@ -309,7 +324,7 @@ Deno.serve(async (req) => {
             });
             console.log(`invoice.paid: confirmed pro/active for user ${targetUserId} (${billing})`);
 
-            // Notify via Slack
+            // Notify admin via email
             try {
               const userName = invoice.customer_name || invoiceEmail || targetUserId;
               await base44.asServiceRole.integrations.Core.SendEmail({
@@ -319,6 +334,21 @@ Deno.serve(async (req) => {
                 from_name: 'Suttain Webhook'
               });
             } catch (_) {}
+
+            // Create in-app admin notification
+            try {
+              await base44.asServiceRole.entities.Notification.create({
+                title: `💰 New Pro Subscriber`,
+                message: `${invoiceEmail} subscribed to Pro (${billing}).`,
+                type: 'subscription',
+                severity: 'info',
+                is_read: false,
+                target_user: Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
+                metadata: { email: invoiceEmail, billing, subscription_id: invoiceSubId }
+              });
+            } catch (e) {
+              console.error('Failed to create admin notification (invoice.paid):', e);
+            }
           } catch (e) {
             console.error('Failed to update user on invoice.paid:', e);
           }

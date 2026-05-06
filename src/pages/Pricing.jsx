@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Sparkles, Building2, Zap, Shield, Leaf, HeartPulse, MessageSquare, Clock, AlertTriangle, Loader2, Cpu, BarChart3, QrCode, Atom, FlaskConical, FileText, Globe, Database, FolderOpen, Layers } from 'lucide-react';
 import { createCheckoutSession } from '@/functions/createCheckoutSession';
@@ -171,11 +171,24 @@ const featureDetails = [
 ];
 
 export default function Pricing() {
-  const { user } = useContext(AuthContext);
+  const { user, refreshUser } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
   const [isYearly, setIsYearly] = useState(false); // kept for future use
 
   const [checkoutLoading, setCheckoutLoading] = useState(null);
+
+  // When Stripe redirects back with ?success=true, re-fetch the user so their
+  // subscription plan is reflected immediately without a manual page refresh.
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true' && refreshUser) {
+      // Poll a few times to account for webhook processing delay
+      const delays = [1500, 4000, 8000];
+      delays.forEach(delay => {
+        setTimeout(() => refreshUser(), delay);
+      });
+    }
+  }, []);
 
   const handleUpgrade = async (planId) => {
     if (planId === 'free') return;
