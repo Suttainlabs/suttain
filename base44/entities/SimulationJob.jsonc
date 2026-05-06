@@ -10,6 +10,11 @@
       "type": "string",
       "description": "User-defined name for this job"
     },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "sim_type": {
       "type": "string",
       "description": "Simulation type ID (e.g. dft, molecular_dynamics)"
