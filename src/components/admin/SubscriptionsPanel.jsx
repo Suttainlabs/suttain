@@ -42,9 +42,24 @@ export default function SubscriptionsPanel() {
 
   useEffect(() => {
     fetchUsers();
-    // Auto-refresh every 60 seconds
-    const interval = setInterval(fetchUsers, 60000);
-    return () => clearInterval(interval);
+    // Auto-refresh every 15 seconds for near-real-time updates
+    const interval = setInterval(fetchUsers, 15000);
+
+    // Real-time subscription to user changes
+    const unsubscribe = base44.entities.User.subscribe((event) => {
+      if (event.type === 'update' || event.type === 'create') {
+        setUsers(prev => {
+          if (event.type === 'create') return [event.data, ...prev];
+          return prev.map(u => u.id === event.id ? event.data : u);
+        });
+        setLastRefreshed(new Date());
+      }
+    });
+
+    return () => {
+      clearInterval(interval);
+      unsubscribe();
+    };
   }, []);
 
   const filtered = users.filter(u => {
@@ -133,7 +148,7 @@ export default function SubscriptionsPanel() {
         </div>
       </div>
       {lastRefreshed && (
-        <p className="text-xs text-slate-400">Last refreshed: {lastRefreshed.toLocaleTimeString()} · Auto-refreshes every 60s</p>
+        <p className="text-xs text-slate-400">Last refreshed: {lastRefreshed.toLocaleTimeString()} · Auto-refreshes every 15s · Real-time updates active</p>
       )}
 
       {/* User Table */}

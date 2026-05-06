@@ -190,12 +190,21 @@ Deno.serve(async (req) => {
           }
         }
 
-        // Send payment confirmation email
+        // Send payment confirmation email to customer
         if (customerEmail) {
-          // Map the price_key directly to PLAN_DETAILS keys, with fallback
-          let planKey = priceKey; // e.g. 'pro_monthly', 'pro_yearly', 'lifetime'
+          let planKey = priceKey;
           if (planKey === 'lifetime') planKey = 'pro_lifetime';
           await sendPaymentConfirmationEmail(base44, customerEmail, customerName, planKey);
+
+          // Notify admin
+          try {
+            await base44.asServiceRole.integrations.Core.SendEmail({
+              to: 'abel@suttain.com',
+              subject: `💰 New Suttain Pro Purchase: ${customerName || customerEmail}`,
+              body: `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${customerName || '—'}</li><li><b>Email:</b> ${customerEmail}</li><li><b>Plan:</b> ${priceKey}</li><li><b>Billing:</b> ${billing}</li><li><b>Session ID:</b> ${session.id}</li></ul>`,
+              from_name: 'Suttain Webhook'
+            });
+          } catch (_) {}
         }
 
         break;
@@ -252,7 +261,70 @@ Deno.serve(async (req) => {
       }
 
       case 'invoice.paid': {
-        console.log('Invoice paid:', event.data.object.id);
+        const invoice = event.data.object;
+        console.log('Invoice paid:', invoice.id, 'customer:', invoice.customer, 'email:', invoice.customer_email);
+
+        // On invoice.paid, ensure the user is marked as active pro (covers renewals + new subs)
+        const invoiceEmail = invoice.customer_email;
+        const invoiceSubId = invoice.subscription;
+
+        if (!invoiceSubId) {
+          // One-time payment — already handled by checkout.session.completed
+          break;
+        }
+
+        // Determine billing interval from invoice line items
+        let billing = 'monthly';
+        const lineItem = invoice.lines?.data?.[0];
+        if (lineItem?.plan?.interval === 'year') billing = 'yearly';
+
+        let targetUserId = null;
+
+        // First try to find by existing stripe_subscription_id
+        try {
+          const bySubId = await base44.asServiceRole.entities.User.filter({ stripe_subscription_id: invoiceSubId });
+          if (bySubId.length > 0) targetUserId = bySubId[0].id;
+        } catch (e) {
+          console.error('Error finding user by subscription id:', e);
+        }
+
+        // Fallback: find by email
+        if (!targetUserId && invoiceEmail) {
+          try {
+            const byEmail = await base44.asServiceRole.entities.User.filter({ email: invoiceEmail });
+            if (byEmail.length > 0) targetUserId = byEmail[0].id;
+          } catch (e) {
+            console.error('Error finding user by email:', e);
+          }
+        }
+
+        if (targetUserId) {
+          try {
+            await base44.asServiceRole.entities.User.update(targetUserId, {
+              subscription_plan: 'pro',
+              subscription_status: 'active',
+              subscription_billing: billing,
+              stripe_subscription_id: invoiceSubId,
+              stripe_customer_id: invoice.customer,
+            });
+            console.log(`invoice.paid: confirmed pro/active for user ${targetUserId} (${billing})`);
+
+            // Notify via Slack
+            try {
+              const userName = invoice.customer_name || invoiceEmail || targetUserId;
+              await base44.asServiceRole.integrations.Core.SendEmail({
+                to: 'abel@suttain.com',
+                subject: `💰 New Suttain Pro Subscriber: ${userName}`,
+                body: `<p>New subscription confirmed via invoice.paid.</p><ul><li><b>Email:</b> ${invoiceEmail}</li><li><b>Billing:</b> ${billing}</li><li><b>Subscription ID:</b> ${invoiceSubId}</li><li><b>Invoice:</b> ${invoice.id}</li></ul>`,
+                from_name: 'Suttain Webhook'
+              });
+            } catch (_) {}
+          } catch (e) {
+            console.error('Failed to update user on invoice.paid:', e);
+          }
+        } else {
+          console.warn('invoice.paid: could not find user for email:', invoiceEmail, 'sub:', invoiceSubId);
+        }
         break;
       }
 
