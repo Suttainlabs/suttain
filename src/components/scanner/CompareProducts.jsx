@@ -1,15 +1,17 @@
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  Search, Loader2, CheckCircle, AlertTriangle, HelpCircle, Leaf,
-  Shield, HeartPulse, ChevronRight, Trophy, Minus, X, RefreshCw
+  Search, Loader2, CheckCircle, AlertTriangle, Leaf,
+  Shield, HeartPulse, ChevronRight, Trophy, Minus, X, RefreshCw,
+  Cloud, Clock, Trash2, History
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import AuthContext from '../auth/AuthContext';
+import { formatDistanceToNow } from 'date-fns';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -356,6 +358,57 @@ function ComparisonTable({ productA, productB }) {
   );
 }
 
+// ── Past comparisons panel ────────────────────────────────────────────────────
+function PastComparisons({ comparisons, onReload, onDelete }) {
+  if (!comparisons.length) return null;
+  return (
+    <Card className="bg-white shadow-sm mt-6">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-bold text-slate-700 flex items-center gap-2">
+          <History className="w-4 h-4 text-violet-500" /> Recent Comparisons
+          <span className="ml-auto flex items-center gap-1 text-xs font-normal text-teal-600">
+            <Cloud className="w-3 h-3" /> Cloud-synced
+          </span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {comparisons.map((c, i) => (
+          <div key={c.id} className="flex items-center gap-3 p-2.5 rounded-lg border border-slate-100 hover:bg-slate-50 group">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs font-semibold text-slate-700 truncate max-w-[120px]">{c.product_a_name}</span>
+                <span className="text-[10px] text-slate-400">vs</span>
+                <span className="text-xs font-semibold text-slate-700 truncate max-w-[120px]">{c.product_b_name}</span>
+              </div>
+              <div className="flex items-center gap-2 mt-0.5">
+                {c.winner_name && c.winner_name !== 'Tie' && (
+                  <span className="text-[10px] text-teal-600 font-medium flex items-center gap-0.5">
+                    <Trophy className="w-2.5 h-2.5" /> {c.winner_name}
+                  </span>
+                )}
+                {c.created_date && (
+                  <span className="text-[10px] text-slate-400 flex items-center gap-0.5">
+                    <Clock className="w-2.5 h-2.5" />
+                    {formatDistanceToNow(new Date(c.created_date), { addSuffix: true })}
+                  </span>
+                )}
+              </div>
+            </div>
+            <Button size="sm" variant="outline" className="h-7 text-xs px-2 flex-shrink-0"
+              onClick={() => onReload(c)}>
+              Reload
+            </Button>
+            <button onClick={() => onDelete(c.id)}
+              className="p-1 rounded text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all">
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 export default function CompareProducts({ user }) {
   const { openAuthModal } = useContext(AuthContext);
@@ -365,6 +418,49 @@ export default function CompareProducts({ user }) {
   const [loadingB, setLoadingB] = useState(false);
   const [errorA, setErrorA] = useState('');
   const [errorB, setErrorB] = useState('');
+  const [pastComparisons, setPastComparisons] = useState([]);
+
+  // Load past comparisons from cloud on mount
+  useEffect(() => {
+    if (!user) return;
+    base44.entities.ComparisonHistory.list('-created_date', 10)
+      .then(setPastComparisons)
+      .catch(() => {});
+  }, [user]);
+
+  // Save comparison to cloud when both products are loaded
+  useEffect(() => {
+    if (!user || !productA || !productB) return;
+    const scoresA = computeScores(productA);
+    const scoresB = computeScores(productB);
+    const wins = [
+      scoresA.overall > scoresB.overall,
+      scoresA.safety > scoresB.safety,
+      scoresA.sustainability > scoresB.sustainability,
+      (productA.hazards?.length || 0) < (productB.hazards?.length || 0),
+    ].filter(Boolean).length;
+    const winnerName = wins > 2 ? productA.name : wins < 2 ? productB.name : 'Tie';
+
+    base44.entities.ComparisonHistory.create({
+      product_a_barcode: productA.barcode,
+      product_a_name: productA.name,
+      product_a_brand: productA.brand,
+      product_a_overall_score: scoresA.overall,
+      product_a_safety_score: scoresA.safety,
+      product_a_eco_score: scoresA.sustainability,
+      product_a_hazard_count: productA.hazards?.length || 0,
+      product_b_barcode: productB.barcode,
+      product_b_name: productB.name,
+      product_b_brand: productB.brand,
+      product_b_overall_score: scoresB.overall,
+      product_b_safety_score: scoresB.safety,
+      product_b_eco_score: scoresB.sustainability,
+      product_b_hazard_count: productB.hazards?.length || 0,
+      winner_name: winnerName,
+    }).then(saved => {
+      setPastComparisons(prev => [saved, ...prev].slice(0, 10));
+    }).catch(() => {});
+  }, [productA, productB, user]);
 
   const lookup = useCallback(async (barcode, slot) => {
     if (!user) { openAuthModal('login'); return; }
@@ -390,11 +486,30 @@ export default function CompareProducts({ user }) {
     setErrorA(''); setErrorB('');
   };
 
+  // Re-lookup both barcodes from a past comparison
+  const handleReloadComparison = (c) => {
+    reset();
+    lookup(c.product_a_barcode, 'A');
+    lookup(c.product_b_barcode, 'B');
+  };
+
+  const handleDeleteComparison = async (id) => {
+    try {
+      await base44.entities.ComparisonHistory.delete(id);
+      setPastComparisons(prev => prev.filter(c => c.id !== id));
+    } catch {}
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-extrabold text-slate-800">Compare Products</h2>
         <p className="text-slate-500 mt-2 text-sm">Scan two products to see a side-by-side safety, ingredient, and sustainability comparison.</p>
+        {user && (
+          <span className="inline-flex items-center gap-1 text-xs text-teal-600 mt-2">
+            <Cloud className="w-3 h-3" /> Comparisons synced across your devices
+          </span>
+        )}
       </div>
 
       {/* Product slots */}
@@ -439,6 +554,13 @@ export default function CompareProducts({ user }) {
           <p className="text-sm">Enter barcodes for both products to start comparing</p>
         </div>
       )}
+
+      {/* Past comparisons (cloud-synced) */}
+      <PastComparisons
+        comparisons={pastComparisons}
+        onReload={handleReloadComparison}
+        onDelete={handleDeleteComparison}
+      />
     </div>
   );
 }

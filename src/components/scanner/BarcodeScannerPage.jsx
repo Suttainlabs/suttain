@@ -58,10 +58,19 @@ export default function BarcodeScannerPage() {
 
     const loadHistory = useCallback(async () => {
         try {
-            const historyItems = await BarcodeHistoryEntity.list('-created_date', 5); // Show 5 for better history view
+            const historyItems = await BarcodeHistoryEntity.list('-created_date', 50);
             setHistory(historyItems);
         } catch (error) {
             console.error('Failed to load scan history:', error);
+        }
+    }, []);
+
+    const handleDeleteHistory = useCallback(async (id) => {
+        try {
+            await BarcodeHistoryEntity.delete(id);
+            setHistory(prev => prev.filter(h => h.id !== id));
+        } catch (error) {
+            console.error('Failed to delete history item:', error);
         }
     }, []);
 
@@ -381,7 +390,7 @@ export default function BarcodeScannerPage() {
                                                 <CardTitle className="text-center text-2xl pt-8">Scan History</CardTitle>
                                             </CardHeader>
                                             <CardContent>
-                                                 <BarcodeHistory history={history} onSelect={handleHistorySelect} />
+                                                 <BarcodeHistory history={history} onSelect={handleHistorySelect} onDelete={handleDeleteHistory} />
                                             </CardContent>
                                         </motion.div>
                                     )}

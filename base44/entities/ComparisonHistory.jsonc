@@ -1,0 +1,66 @@
+{
+  "name": "ComparisonHistory",
+  "type": "object",
+  "properties": {
+    "product_a_barcode": {
+      "type": "string"
+    },
+    "product_a_name": {
+      "type": "string"
+    },
+    "product_a_brand": {
+      "type": "string"
+    },
+    "product_a_overall_score": {
+      "type": "number"
+    },
+    "product_a_safety_score": {
+      "type": "number"
+    },
+    "product_a_eco_score": {
+      "type": "number"
+    },
+    "product_a_hazard_count": {
+      "type": "number"
+    },
+    "product_b_barcode": {
+      "type": "string"
+    },
+    "product_b_name": {
+      "type": "string"
+    },
+    "product_b_brand": {
+      "type": "string"
+    },
+    "product_b_overall_score": {
+      "type": "number"
+    },
+    "product_b_safety_score": {
+      "type": "number"
+    },
+    "product_b_eco_score": {
+      "type": "number"
+    },
+    "product_b_hazard_count": {
+      "type": "number"
+    },
+    "winner_name": {
+      "type": "string",
+      "description": "Name of the overall winning product, or 'Tie'"
+    }
+  },
+  "required": [
+    "product_a_barcode",
+    "product_b_barcode",
+    "product_a_name",
+    "product_b_name"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
