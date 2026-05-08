@@ -10,9 +10,10 @@ import BarcodeAnalysis from './ProductAnalysis';
 import BarcodeHistory from './BarcodeHistory';
 import RegulatoryScanner from '../compliance/RegulatoryScanner';
 import { base44 } from '@/api/base44Client';
-import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, ShoppingCart, QrCode, Globe, Smartphone } from 'lucide-react';
+import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, ShoppingCart, QrCode, Globe, Smartphone, GitCompareArrows } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import BulkScanDashboard from './BulkScanDashboard';
+import CompareProducts from './CompareProducts';
 import ToolFeedbackToast from '../shared/ToolFeedbackToast';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
 import { incrementUsage } from '../../utils/usageTracker';
@@ -39,7 +40,7 @@ const BarcodeHint = ({ barcode }) => {
 };
 
 export default function BarcodeScannerPage() {
-    const [mode, setMode] = useState('quick'); // quick, bulk
+    const [mode, setMode] = useState('quick'); // quick, bulk, compare
     const [view, setView] = useState('main'); // main, history
     const [productInfo, setProductInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -246,10 +247,22 @@ export default function BarcodeScannerPage() {
                         <ShoppingCart className="w-4 h-4" />
                         Bulk Scan
                     </button>
+                    <button
+                        onClick={() => setMode('compare')}
+                        className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                            mode === 'compare'
+                                ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow'
+                                : 'text-slate-600 hover:text-slate-800'
+                        }`}
+                    >
+                        <GitCompareArrows className="w-4 h-4" />
+                        Compare
+                    </button>
                 </div>
             </div>
 
             {mode === 'bulk' && <BulkScanDashboard user={user} />}
+            {mode === 'compare' && <CompareProducts user={user} />}
 
             {/* Mobile Scanner CTA */}
             {mode === 'quick' && (
