@@ -7,8 +7,8 @@ import {
   Shield, Leaf, Beaker, CheckCircle, AlertTriangle, HelpCircle,
   ImageOff, ChevronLeft, ExternalLink, ChevronDown, TestTube, FlaskConical,
   ListChecks, ShieldCheck, ThumbsUp, MessageSquareWarning, Loader2, Sparkles,
-  HeartPulse, Apple, Wheat, Salad, Star, Users, Baby, Home, Droplets,
-  Lock, Info, TrendingUp, Award, Search, Bell
+  HeartPulse, Apple, Salad, Star, Users, Baby, Home, Droplets,
+  Lock, Info, Award, Search, Bell, Pill
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -216,8 +216,19 @@ const ProductCategoryBadges = ({ category }) => {
   if (/baby|infant|child|kid|toddler|newborn|diaper/.test(cat)) {
     tags.push({ icon: Baby, label: 'Baby Product', color: 'bg-purple-100 text-purple-700' });
   }
-  if (/food|nutrition|drink|beverage|snack|supplement/.test(cat)) {
+  if (/food|nutrition|drink|beverage|snack/.test(cat)) {
     tags.push({ icon: Apple, label: 'Food & Nutrition', color: 'bg-amber-100 text-amber-700' });
+  }
+  if (/prescription drug/.test(cat)) {
+    tags.push({ icon: Pill, label: 'Rx Drug', color: 'bg-red-100 text-red-700' });
+  } else if (/medicine|drug|otc|pharmaceutical|tablet|capsule|syrup/.test(cat)) {
+    tags.push({ icon: Pill, label: 'Medicine / Drug', color: 'bg-rose-100 text-rose-700' });
+  }
+  if (/supplement|vitamin|mineral|herbal/.test(cat)) {
+    tags.push({ icon: Leaf, label: 'Supplement', color: 'bg-green-100 text-green-700' });
+  }
+  if (/medical device|diagnostic|first aid/.test(cat)) {
+    tags.push({ icon: HeartPulse, label: 'Medical Device', color: 'bg-blue-100 text-blue-700' });
   }
   if (tags.length === 0) {
     tags.push({ icon: Beaker, label: 'General Product', color: 'bg-slate-100 text-slate-700' });
@@ -594,7 +605,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
             if (v === 'health') handleLoadHealth();
           }}>
             <TabsList className="flex w-full overflow-x-auto bg-slate-100/80 rounded-xl scrollbar-hide gap-0.5 p-1">
-              {['overview', 'ingredients', 'safety', 'compliance', 'sustainability', 'health', 'diy'].map(tab => (
+              {['overview', 'ingredients', 'safety', 'compliance', 'sustainability', 'health', ...(product.isMedicine ? [] : ['diy'])].map(tab => (
                 <TabsTrigger key={tab} value={tab} className="text-xs capitalize flex-shrink-0 data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">
                   {tab === 'sustainability' ? 'Eco' : tab}
                 </TabsTrigger>
@@ -612,6 +623,23 @@ export default function ProductAnalysis({ product, onClear, user }) {
                       <h4 className={`font-bold mb-1 ${safetyAlert.severity === 'critical' ? 'text-red-900' : 'text-amber-900'}`}>Personalized Safety Alert</h4>
                       <p className={`text-sm mb-2 ${safetyAlert.severity === 'critical' ? 'text-red-800' : 'text-amber-800'}`}>{safetyAlert.alert_message}</p>
                       <Badge className={`${safetyAlert.severity === 'critical' ? 'bg-red-600' : 'bg-amber-600'} text-white`}>Email sent to {user?.email}</Badge>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Medicine / Drug disclaimer */}
+              {product.isMedicine && (
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-rose-50 border-2 border-rose-300 rounded-xl">
+                  <div className="flex items-start gap-3">
+                    <Pill className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-bold text-rose-900 mb-1">Medicine / Drug Product</h4>
+                      <p className="text-sm text-rose-800">
+                        This is a pharmaceutical or medical product. This analysis is <strong>for informational purposes only</strong> and does not constitute medical advice.
+                        Always consult a licensed healthcare professional or pharmacist before use.
+                      </p>
                     </div>
                   </div>
                 </motion.div>

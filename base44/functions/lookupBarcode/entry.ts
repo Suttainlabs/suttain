@@ -79,7 +79,22 @@ Deno.serve(async (req) => {
             } catch (e) { console.error('OpenBeautyFacts failed:', e.message); }
         }
 
-        // 3. Open Pet Food Facts / Open Products Facts — broader coverage
+        // 3. Open Medicine Facts — medicines, drugs, supplements
+        if (!productData) {
+            try {
+                const res = await fetch(`https://world.openmedicinefacts.org/api/v2/product/${barcode}`, {
+                    headers: { 'User-Agent': 'Suttain/1.0 (contact@suttain.com)' }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.status === 1 && data.product) {
+                        productData = transformMedicineFactsData(data.product, barcode);
+                    }
+                }
+            } catch (e) { console.error('OpenMedicineFacts failed:', e.message); }
+        }
+
+        // 3b. Open Products Facts — broader coverage
         if (!productData) {
             try {
                 const res = await fetch(`https://world.openproductsfacts.org/api/v2/product/${barcode}`, {
@@ -93,6 +108,41 @@ Deno.serve(async (req) => {
                     }
                 }
             } catch (e) { console.error('OpenProductsFacts failed:', e.message); }
+        }
+
+        // 3c. NIH RxNorm / NLM DailyMed — US prescription & OTC drugs
+        if (!productData) {
+            try {
+                // Try RxNorm NDC lookup (National Drug Code encoded in some barcodes)
+                const ndcFormatted = barcode.replace(/^0+/, ''); // strip leading zeros
+                const rxRes = await fetch(`https://rxnav.nlm.nih.gov/REST/ndcstatus.json?ndc=${barcode}`);
+                if (rxRes.ok) {
+                    const rxData = await rxRes.json();
+                    const rxcui = rxData?.ndcStatus?.rxcui;
+                    if (rxcui) {
+                        const drugRes = await fetch(`https://rxnav.nlm.nih.gov/REST/rxcui/${rxcui}/properties.json`);
+                        const drugData = drugRes.ok ? await drugRes.json() : null;
+                        const propRes = await fetch(`https://rxnav.nlm.nih.gov/REST/rxcui/${rxcui}/allrelated.json`);
+                        const propData = propRes.ok ? await propRes.json() : null;
+                        if (drugData?.properties) {
+                            productData = transformRxNormData(drugData.properties, propData, barcode, rxcui);
+                        }
+                    }
+                }
+            } catch (e) { console.error('RxNorm lookup failed:', e.message); }
+        }
+
+        // 3d. OpenFDA drug label lookup
+        if (!productData) {
+            try {
+                const fdaRes = await fetch(`https://api.fda.gov/drug/label.json?search=openfda.upc:"${barcode}"&limit=1`);
+                if (fdaRes.ok) {
+                    const fdaData = await fdaRes.json();
+                    if (fdaData.results?.length > 0) {
+                        productData = transformFDADrugData(fdaData.results[0], barcode);
+                    }
+                }
+            } catch (e) { console.error('FDA drug lookup failed:', e.message); }
         }
 
         // 4. UPC Item DB
@@ -114,17 +164,22 @@ Deno.serve(async (req) => {
                 const barcodePrefix = barcode.substring(0, 3);
                 const countryHint = getBarcodeCountryHint(barcodePrefix);
                 const llmResult = await base44.integrations.Core.InvokeLLM({
-                    prompt: `You are a global product data analyst. Find information for EAN/UPC barcode: "${barcode}".
+                    prompt: `You are a global product data analyst with expertise in consumer goods, pharmaceuticals, supplements, and medical devices. Find information for EAN/UPC/NDC barcode: "${barcode}".
 
-The barcode prefix "${barcodePrefix}" suggests: ${countryHint}. Search regional databases, manufacturer websites, retailer listings, and consumer goods databases for this region.
+The barcode prefix "${barcodePrefix}" suggests: ${countryHint}. Search ALL relevant databases including:
+- Consumer goods: manufacturer websites, retailer listings, GS1 databases
+- Pharmaceuticals & OTC drugs: FDA NDC database, DailyMed, RxNorm, EMA, WHO essential medicines, national drug registries
+- Supplements & vitamins: NIH Dietary Supplement Label Database, natural product databases
+- Medical devices: FDA 510k, CE mark databases
+- African products (Nigeria, Ghana, etc.): NAFDAC, KEBS, NACC, local manufacturers
+- European products: EMA, national food/drug safety databases
+- Asian products: PMDA (Japan), NMPA (China), local regulatory databases
 
-For African products (Nigeria, Ghana, etc.) check NAFDAC, NBS, local manufacturers and distributors.
-For European products check national food safety databases.
-For Asian products check local regulatory databases.
+This barcode could be for: food, beverage, cosmetic, personal care, medicine, prescription drug, OTC drug, supplement, vitamin, medical device, or household product.
 
 IMPORTANT: Return your best estimate even if confidence is low. Only use name "Product Not Found" if you truly have zero information.
-
-Return ingredients as a comma-separated list in INCI format if cosmetic, otherwise common names.`,
+For medicines/drugs: list active ingredients, inactive excipients, dosage form, strength if known.
+For food/cosmetics: list ingredients in INCI format if cosmetic, otherwise common names.`,
                     add_context_from_internet: true,
                     response_json_schema: {
                         type: 'object',
@@ -133,6 +188,12 @@ Return ingredients as a comma-separated list in INCI format if cosmetic, otherwi
                             brand: { type: 'string' },
                             category: { type: 'string' },
                             ingredients_text: { type: 'string' },
+                            active_ingredients: { type: 'string' },
+                            dosage_form: { type: 'string' },
+                            strength: { type: 'string' },
+                            indications: { type: 'string' },
+                            warnings: { type: 'string' },
+                            is_prescription: { type: 'boolean' },
                             source_url_citation: { type: 'string' },
                             source_confidence: { type: 'string', enum: ['high', 'medium', 'low'] }
                         },
@@ -376,10 +437,159 @@ function parseIngredients(ingredientsText) {
 
 function determineCategory(categories) {
     const s = (categories || '').toLowerCase();
+    if (s.includes('prescription') || s.includes('rx only') || s.includes('prescription drug')) return 'Prescription Drug';
+    if (s.includes('otc') || s.includes('over-the-counter') || s.includes('drug') || s.includes('medicine') || s.includes('tablet') || s.includes('capsule') || s.includes('syrup') || s.includes('injection') || s.includes('pharmaceutical')) return 'Medicine / Drug';
+    if (s.includes('supplement') || s.includes('vitamin') || s.includes('mineral') || s.includes('herbal') || s.includes('probiotic')) return 'Supplement / Vitamin';
+    if (s.includes('medical device') || s.includes('diagnostic') || s.includes('first aid')) return 'Medical Device';
     if (s.includes('cleaning') || s.includes('detergent')) return 'Household Cleaner';
     if (s.includes('cosmetic') || s.includes('beauty') || s.includes('skincare')) return 'Skincare';
     if (s.includes('food') || s.includes('beverage')) return 'Food & Beverage';
+    if (s.includes('pet') || s.includes('animal')) return 'Pet Product';
     return 'General Product';
+}
+
+function transformMedicineFactsData(product, barcode) {
+    const ingredientsText = product.ingredients_text || product.ingredients_text_en || '';
+    let ingredients = parseIngredients(ingredientsText);
+    ingredients = normalizeIngredients(ingredients);
+    const name = product.product_name || product.product_name_en || 'Unknown Medicine';
+    return {
+        name,
+        brand: product.brands || 'Unknown Brand',
+        barcode,
+        category: 'Medicine / Drug',
+        source: 'Open Medicine Facts',
+        imageUrl: product.image_url || getFallbackImageUrl(),
+        ingredientsText,
+        ingredients,
+        hazards: analyzeMedicineHazards(ingredients, name),
+        allergens: product.allergens_tags || [],
+        interactionRisks: checkDrugInteractionRisks(ingredients),
+        diyFormulas: [],
+        analysisNotes: [
+            'Medicine/drug product found in Open Medicine Facts database.',
+            `Contains ${ingredients.length} identified ingredients/excipients.`,
+            '⚠️ Always consult a healthcare professional before use.',
+            'This analysis is for informational purposes only and does not constitute medical advice.'
+        ],
+        riskAssessment: { overallRisk: 'medium', hasKnownHazards: analyzeMedicineHazards(ingredients, name).length > 0 },
+        source_url: `https://world.openmedicinefacts.org/product/${barcode}`,
+        isMedicine: true
+    };
+}
+
+function transformRxNormData(properties, relatedData, barcode, rxcui) {
+    const name = properties.name || 'Unknown Drug';
+    const synonyms = relatedData?.allRelatedGroup?.conceptGroup
+        ?.filter(g => g.tty === 'IN')
+        ?.flatMap(g => g.conceptProperties || [])
+        ?.map(p => p.name) || [];
+
+    const ingredients = synonyms.slice(0, 10).map(s => ({
+        name: s,
+        purpose: 'Active Ingredient',
+        safety: 70,
+        sustainability: 60,
+        notes: 'Active pharmaceutical ingredient identified via RxNorm.'
+    }));
+
+    return {
+        name,
+        brand: properties.synonym || name,
+        barcode,
+        category: 'Medicine / Drug',
+        source: 'RxNorm (NIH)',
+        imageUrl: getFallbackImageUrl(),
+        ingredientsText: synonyms.join(', ') || name,
+        ingredients: ingredients.length > 0 ? ingredients : [{ name, purpose: 'Active Ingredient', safety: 70, sustainability: 60, notes: 'Drug identified via RxNorm.' }],
+        hazards: [],
+        allergens: [],
+        interactionRisks: checkDrugInteractionRisks(ingredients),
+        diyFormulas: [],
+        analysisNotes: [
+            `Drug identified via NIH RxNorm database (RXCUI: ${rxcui}).`,
+            '⚠️ Always consult a healthcare professional or pharmacist before use.',
+            'This analysis is for informational purposes only and does not constitute medical advice.'
+        ],
+        riskAssessment: { overallRisk: 'medium', hasKnownHazards: false },
+        source_url: `https://www.drugs.com/search.php?searchterm=${encodeURIComponent(name)}`,
+        isMedicine: true
+    };
+}
+
+function transformFDADrugData(label, barcode) {
+    const name = label.openfda?.brand_name?.[0] || label.openfda?.generic_name?.[0] || 'Unknown Drug';
+    const brand = label.openfda?.manufacturer_name?.[0] || 'Unknown';
+    const activeIngredientsText = label.active_ingredient?.[0] || '';
+    const inactiveIngredientsText = label.inactive_ingredient?.[0] || '';
+    const allIngredientsText = [activeIngredientsText, inactiveIngredientsText].filter(Boolean).join(', ');
+
+    const activeIngredients = parseIngredients(activeIngredientsText).map(i => ({ ...i, purpose: 'Active Ingredient', safety: 70 }));
+    const inactiveIngredients = parseIngredients(inactiveIngredientsText).map(i => ({ ...i, purpose: 'Inactive Excipient', safety: 85 }));
+    const ingredients = [...activeIngredients, ...inactiveIngredients];
+
+    const warnings = label.warnings?.[0] || label.boxed_warning?.[0] || '';
+    const dosage = label.dosage_and_administration?.[0] || '';
+    const indications = label.indications_and_usage?.[0] || '';
+
+    const notes = [];
+    if (indications) notes.push(`Indication: ${indications.substring(0, 200)}...`);
+    notes.push('⚠️ Always consult a healthcare professional before use.');
+    notes.push('Drug data sourced from FDA Drug Label database (DailyMed).');
+    if (warnings) notes.push(`Warning: ${warnings.substring(0, 150)}...`);
+
+    return {
+        name,
+        brand,
+        barcode,
+        category: label.openfda?.product_type?.[0] === 'PRESCRIPTION' ? 'Prescription Drug' : 'Medicine / Drug',
+        source: 'FDA Drug Labels (DailyMed)',
+        imageUrl: getFallbackImageUrl(),
+        ingredientsText: allIngredientsText,
+        ingredients,
+        hazards: warnings ? [{ description: warnings.substring(0, 200), type: 'warning' }] : [],
+        allergens: [],
+        interactionRisks: checkDrugInteractionRisks(ingredients),
+        diyFormulas: [],
+        analysisNotes: notes,
+        riskAssessment: { overallRisk: label.boxed_warning ? 'high' : 'medium', hasKnownHazards: !!label.boxed_warning },
+        source_url: label.openfda?.application_number?.[0] ? `https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=${encodeURIComponent(name)}` : null,
+        isMedicine: true
+    };
+}
+
+function analyzeMedicineHazards(ingredients, productName) {
+    const hazards = [];
+    const name = (productName || '').toLowerCase();
+    const commonHazards = [
+        { pattern: 'opioid', hazard: 'Opioid — high addiction potential, controlled substance', type: 'controlled' },
+        { pattern: 'morphine', hazard: 'Opioid analgesic — risk of dependence and respiratory depression', type: 'controlled' },
+        { pattern: 'codeine', hazard: 'Opioid — risk of dependence, restricted in many countries', type: 'controlled' },
+        { pattern: 'benzodiazepine', hazard: 'Benzodiazepine — risk of dependence and CNS depression', type: 'controlled' },
+        { pattern: 'diazepam', hazard: 'Benzodiazepine — controlled substance, dependence risk', type: 'controlled' },
+        { pattern: 'warfarin', hazard: 'Anticoagulant — risk of serious bleeding, many drug interactions', type: 'interaction' },
+        { pattern: 'nsaid', hazard: 'NSAID — risk of GI bleeding and cardiovascular events', type: 'warning' },
+        { pattern: 'aspirin', hazard: 'Salicylate — not for children under 16 (Reye syndrome risk)', type: 'warning' },
+        { pattern: 'alcohol', hazard: 'Contains alcohol — avoid with certain medications', type: 'interaction' }
+    ];
+    for (const { pattern, hazard, type } of commonHazards) {
+        if (name.includes(pattern) || ingredients.some(i => (i.name || '').toLowerCase().includes(pattern))) {
+            hazards.push({ description: hazard, type });
+        }
+    }
+    return hazards;
+}
+
+function checkDrugInteractionRisks(ingredients) {
+    const names = ingredients.map(i => (i.name || '').toLowerCase());
+    const risks = [];
+    if (names.some(n => n.includes('warfarin')) && names.some(n => n.includes('aspirin'))) {
+        risks.push('CAUTION: Warfarin + Aspirin — increased bleeding risk');
+    }
+    if (names.some(n => n.includes('maoi')) && names.some(n => n.includes('ssri'))) {
+        risks.push('DANGER: MAOI + SSRI combination — risk of serotonin syndrome');
+    }
+    return risks;
 }
 
 function analyzeHazards(ingredients) {
@@ -463,7 +673,17 @@ function generateDIYFormulas(category) {
 async function transformAIData(aiData, barcode, base44) {
     if (aiData.name === 'Product Not Found') return null;
 
-    let ingredients = parseIngredients(aiData.ingredients_text || '');
+    const category = determineCategory(aiData.category || '');
+    const isMedicine = ['Medicine / Drug', 'Prescription Drug', 'Supplement / Vitamin'].includes(category);
+
+    // For medicines, combine active + inactive ingredients
+    const allIngredientsText = [aiData.active_ingredients, aiData.ingredients_text].filter(Boolean).join(', ');
+    let ingredients = parseIngredients(allIngredientsText || aiData.ingredients_text || '');
+    // Tag active ingredients
+    if (aiData.active_ingredients) {
+        const activeNames = new Set(parseIngredients(aiData.active_ingredients).map(i => i.name.toLowerCase()));
+        ingredients = ingredients.map(i => activeNames.has(i.name.toLowerCase()) ? { ...i, purpose: 'Active Ingredient', safety: 70 } : i);
+    }
     ingredients = normalizeIngredients(ingredients);
 
     let sourceString = 'AI Estimation';
@@ -479,24 +699,40 @@ async function transformAIData(aiData, barcode, base44) {
         analysisNotes.push('Product not found in standard databases. Information estimated by AI and may be incomplete.');
         sourceString = 'AI Estimation (Medium Confidence)';
     }
-    analysisNotes.push('Always verify details with the physical product packaging.');
+
+    if (isMedicine) {
+        analysisNotes.push('⚠️ This is a medicine or drug product. Always consult a healthcare professional before use.');
+        analysisNotes.push('This analysis is for informational purposes only and does not constitute medical advice.');
+        if (aiData.indications) analysisNotes.push(`Indicated for: ${aiData.indications.substring(0, 200)}`);
+        if (aiData.dosage_form) analysisNotes.push(`Dosage form: ${aiData.dosage_form}${aiData.strength ? ' — ' + aiData.strength : ''}`);
+        if (aiData.warnings) analysisNotes.push(`Warning: ${aiData.warnings.substring(0, 200)}`);
+    } else {
+        analysisNotes.push('Always verify details with the physical product packaging.');
+    }
+
+    const hazards = isMedicine ? analyzeMedicineHazards(ingredients, aiData.name) : analyzeHazards(ingredients);
+    const interactionRisks = isMedicine ? checkDrugInteractionRisks(ingredients) : checkInteractionRisks(ingredients);
 
     return {
         name: aiData.name || 'Unknown Product',
         brand: aiData.brand || 'Unknown Brand',
         barcode,
-        category: determineCategory(aiData.category || ''),
+        category,
         source: sourceString,
         imageUrl: getFallbackImageUrl(),
-        ingredientsText: aiData.ingredients_text || 'Information estimated by AI. Please verify with product packaging.',
+        ingredientsText: allIngredientsText || 'Information estimated by AI. Please verify with product packaging.',
         ingredients,
-        hazards: analyzeHazards(ingredients),
+        hazards,
         allergens: [],
-        interactionRisks: checkInteractionRisks(ingredients),
-        diyFormulas: generateDIYFormulas(determineCategory(aiData.category || '')),
+        interactionRisks,
+        diyFormulas: isMedicine ? [] : generateDIYFormulas(category),
         analysisNotes,
-        riskAssessment: { overallRisk: calculateRiskScore(ingredients, determineCategory(aiData.category || ''), aiData.name), hasKnownHazards: analyzeHazards(ingredients).length > 0 },
-        source_url: aiData.source_url_citation || null
+        riskAssessment: {
+            overallRisk: isMedicine ? (aiData.is_prescription ? 'high' : 'medium') : calculateRiskScore(ingredients, category, aiData.name),
+            hasKnownHazards: hazards.length > 0
+        },
+        source_url: aiData.source_url_citation || null,
+        isMedicine
     };
 }
 
