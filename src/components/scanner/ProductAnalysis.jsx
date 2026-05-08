@@ -171,7 +171,7 @@ const CommunityScore = ({ product }) => {
   const handleVote = async (vote) => {
     setWouldBuy(vote);
     setVoted(true);
-    toast({ title: "Thanks for your vote!", description: "Your community feedback has been recorded." });
+    toast({ title: "Thanks for your vote!", description: "Your community feedback has been recorded.", duration: 3000 });
   };
 
   return (
@@ -304,15 +304,12 @@ const FeedbackSection = ({ product, user }) => {
         message: `User confirmed that product info for "${product.name}" is accurate.`
       });
     } catch {}
-    toast({ title: "Thank You!", description: "Your confirmation helps improve our data accuracy." });
+    toast({ title: "Thank You!", description: "Your confirmation helps improve our data accuracy.", duration: 3000 });
+    setTimeout(() => setFeedbackGiven(false), 3000);
   };
 
   if (feedbackGiven) {
-    return (
-      <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-800 rounded-lg border border-emerald-200">
-        <CheckCircle className="w-5 h-5" /><p className="text-sm font-medium">Thanks for your feedback!</p>
-      </div>
-    );
+    return null;
   }
 
   return (
