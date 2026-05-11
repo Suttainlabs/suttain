@@ -309,12 +309,11 @@ export default function BarcodeScannerPage() {
                                             {/* Feature hints */}
                                             <div className="grid grid-cols-3 gap-3 mt-5">
                                                 {[
-                                                    { icon: '🛡️', label: 'Safety Score' },
-                                                    { icon: '🌿', label: 'Eco Rating' },
-                                                    { icon: '⚗️', label: 'Ingredient Breakdown' },
-                                                ].map(({ icon, label }) => (
+                                                    { label: 'Safety Score' },
+                                                    { label: 'Eco Rating' },
+                                                    { label: 'Ingredient Breakdown' },
+                                                ].map(({ label }) => (
                                                     <div key={label} className="bg-white/80 rounded-2xl p-3 text-center border border-slate-100 shadow-sm">
-                                                        <span className="text-2xl block mb-1">{icon}</span>
                                                         <span className="text-xs font-semibold text-slate-600">{label}</span>
                                                     </div>
                                                 ))}
