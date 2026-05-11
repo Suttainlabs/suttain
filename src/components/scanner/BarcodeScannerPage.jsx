@@ -145,16 +145,15 @@ export default function BarcodeScannerPage() {
         <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-50 via-teal-50/30 to-cyan-50/20 pb-24">
 
             {/* Hero header */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-500 text-white pt-12 pb-20 px-4 text-center">
-                {/* Subtle background pattern */}
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            <div className="relative overflow-hidden bg-white text-slate-800 pt-12 pb-20 px-4 text-center border-b border-slate-100">
+
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="relative z-10">
-                    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+                    <div className="inline-flex items-center gap-2 bg-teal-50 text-teal-700 border border-teal-200 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
                         <Zap className="w-3.5 h-3.5" />
                         Instant Ingredient Analysis
                     </div>
-                    <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 tracking-tight">SuttainScan</h1>
-                    <p className="text-teal-100 text-lg max-w-xl mx-auto">
+                    <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 tracking-tight gradient-text">SuttainScan</h1>
+                    <p className="text-slate-500 text-lg max-w-xl mx-auto">
                         Scan any product barcode to instantly reveal its safety, sustainability, and ingredient profile.
                     </p>
                 </motion.div>
