@@ -207,7 +207,7 @@ export default function Layout({ children, currentPageName }) {
     { type: 'header', label: 'Safety & Formulation', icon: TestTube },
     { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", type: 'product', tier: 'free' },
     { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", type: 'product', tier: 'free' },
-    { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Scan products for full safety & eco analysis", type: 'product', tier: 'free' },
+    { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive", type: 'product', tier: 'free' },
 
     { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf, description: "Explore chemicals by toxicity, origin & eco-impact", type: 'product', tier: 'free' },
 
@@ -413,7 +413,7 @@ export default function Layout({ children, currentPageName }) {
                      {[
                        { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety, compliance, ingredient DB & impact reports" },
                        { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with sim engine & eco scoring" },
-                       { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Full safety & eco analysis" },
+                       { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive" },
 
                      ].map(item => (
                        <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
