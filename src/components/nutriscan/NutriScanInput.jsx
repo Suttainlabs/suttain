@@ -267,7 +267,7 @@ For informational purposes only — not medical advice.`;
 
             {/* What you get */}
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-4 text-white">
-                <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-3">What NutriScan reveals</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-3">What Scan Reveals</p>
                 <div className="grid grid-cols-2 gap-2">
                     {[
                         'Molecular Food Fingerprint™',
