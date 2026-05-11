@@ -290,7 +290,7 @@ export default function BarcodeScannerPage() {
             <header className="text-center mb-12 max-w-4xl mx-auto">
               <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
                   <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 gradient-text">
-                      Product SuttainScan
+                      SuttainScan
                   </h1>
                   <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
                       Instantly analyze product ingredients, safety, and sustainability by scanning a barcode.
