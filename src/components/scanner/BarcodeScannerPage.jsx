@@ -32,7 +32,7 @@ const BarcodeHint = ({ barcode }) => {
 
 const MODES = [
     { id: 'quick',    label: 'SuttainScan', icon: QrCode },
-    { id: 'nutriscan', label: 'NutriScan 2.0', icon: Leaf },
+    { id: 'nutriscan', label: 'FoodAnalysis', icon: Leaf },
     { id: 'bulk',     label: 'Bulk Scan',   icon: ShoppingCart },
     { id: 'compare',  label: 'Compare',     icon: GitCompareArrows },
 ];
