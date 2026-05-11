@@ -9,8 +9,10 @@ import BarcodeAnalysis from './ProductAnalysis';
 import BarcodeHistory from './BarcodeHistory';
 import RegulatoryScanner from '../compliance/RegulatoryScanner';
 import { base44 } from '@/api/base44Client';
-import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, QrCode, Globe, Smartphone, ArrowRight, Scan, Zap, Leaf, ShieldCheck, Recycle, FlaskConical } from 'lucide-react';
+import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, QrCode, Globe, Smartphone, ArrowRight, Scan, Zap, Leaf, ShieldCheck, Recycle, FlaskConical, ScanLine, BarChart2 } from 'lucide-react';
 import NutriScanApp from '../nutriscan/NutriScanApp';
+import BulkScanDashboard from './BulkScanDashboard';
+import CompareProducts from './CompareProducts';
 import { Link } from 'react-router-dom';
 import ToolFeedbackToast from '../shared/ToolFeedbackToast';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
@@ -31,6 +33,8 @@ const BarcodeHint = ({ barcode }) => {
 const MODES = [
     { id: 'quick',    label: 'QuickScan', icon: QrCode },
     { id: 'nutriscan', label: 'FoodAnalysis', icon: Leaf },
+    { id: 'bulk',     label: 'Bulk Scan', icon: ScanLine },
+    { id: 'compare',  label: 'Compare', icon: BarChart2 },
 ];
 
 export default function BarcodeScannerPage() {
@@ -179,6 +183,12 @@ export default function BarcodeScannerPage() {
 
             {/* Non-quick modes */}
             {mode === 'nutriscan' && <NutriScanApp user={user} embedded />}
+            {mode === 'bulk' && <BulkScanDashboard user={user} />}
+            {mode === 'compare' && (
+                <div className="max-w-2xl mx-auto px-4 pb-12">
+                    <CompareProducts user={user} />
+                </div>
+            )}
 
             {/* Quick / SuttainScan mode */}
             {mode === 'quick' && (
