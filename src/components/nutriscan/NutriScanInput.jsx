@@ -283,7 +283,7 @@ For informational purposes only — not medical advice.`;
                         </div>
                     ))}
                 </div>
-                <p className="text-[10px] text-slate-500 mt-3">For informational purposes only. Not medical or dietary advice.</p>
+                <p className="text-[10px] text-slate-500 mt-3">Scan data is for informational purposes only. Not medical advice.</p>
             </div>
         </div>
     );
