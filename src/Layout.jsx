@@ -414,7 +414,7 @@ export default function Layout({ children, currentPageName }) {
                        { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety, compliance, ingredient DB & impact reports" },
                        { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with sim engine & eco scoring" },
                        { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Full safety & eco analysis" },
-                       { href: "NutriScan", label: "NutriScan 2.0", icon: HeartPulse, description: "Molecular food intelligence & chemical threat engine" },
+                       { href: "BarcodeScanner", label: "NutriScan 2.0", icon: HeartPulse, description: "Molecular food intelligence & chemical threat engine" },
                      ].map(item => (
                        <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
                          <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
@@ -756,7 +756,7 @@ export default function Layout({ children, currentPageName }) {
                             { href: "Simulator", label: "Chemical Simulator", icon: TestTube },
                             { href: "generator", label: "Formula Generator", icon: Atom },
                             { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode },
-                            { href: "NutriScan", label: "NutriScan 2.0", icon: HeartPulse },
+                            { href: "BarcodeScanner", label: "NutriScan 2.0", icon: HeartPulse },
                           ].map(item => (
                             <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
                               className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${

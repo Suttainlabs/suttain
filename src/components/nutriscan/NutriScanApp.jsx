@@ -7,7 +7,7 @@ import NutriScanInput from './NutriScanInput';
 import NutriScanResults from './NutriScanResults';
 import NutriScanDashboard from './NutriScanDashboard';
 
-export default function NutriScanApp({ user }) {
+export default function NutriScanApp({ user, embedded = false }) {
     const [activeTab, setActiveTab] = useState('scan');
     const [result, setResult] = useState(null);
     const [dailyLog, setDailyLog] = useState([]);
@@ -27,38 +27,23 @@ export default function NutriScanApp({ user }) {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-slate-50">
-            {/* Hero Header */}
-            <div className="bg-gradient-to-r from-[#02988C] via-[#017a70] to-[#09D2FF] text-white py-6 px-4">
-                <div className="max-w-3xl mx-auto">
-                    <div className="flex items-center gap-3 mb-1">
-                        <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                            <span className="text-xl">🧬</span>
+        <div className={embedded ? "bg-gradient-to-br from-slate-50 via-teal-50/30 to-slate-50" : "min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-slate-50"}>
+            {/* Hero Header — hidden when embedded in SuttainScan */}
+            {!embedded && (
+                <div className="bg-gradient-to-r from-[#02988C] via-[#017a70] to-[#09D2FF] text-white py-6 px-4">
+                    <div className="max-w-3xl mx-auto">
+                        <div className="flex items-center gap-3 mb-1">
+                            <div>
+                                <h1 className="text-2xl font-bold leading-tight">NutriScan 2.0</h1>
+                                <p className="text-teal-100 text-xs">Chemical-Aware Food Intelligence Engine</p>
+                            </div>
                         </div>
-                        <div>
-                            <h1 className="text-2xl font-bold leading-tight">NutriScan 2.0</h1>
-                            <p className="text-teal-100 text-xs">Chemical-Aware Food Intelligence Engine</p>
-                        </div>
-                    </div>
-                    <p className="text-teal-100 text-sm mt-2 leading-relaxed">
-                        Not just calories — your food's full molecular profile, chemical threats, and body system impact.
-                    </p>
-
-                    {/* Quick stat pills */}
-                    <div className="flex gap-2 mt-3 flex-wrap">
-                        {[
-                            { icon: '🔬', label: '200+ data points' },
-                            { icon: '⚗️', label: '250K+ chemicals' },
-                            { icon: '🫀', label: 'Body system map' },
-                            { icon: '🌍', label: 'Planetary impact' },
-                        ].map(s => (
-                            <span key={s.label} className="inline-flex items-center gap-1 bg-white/15 rounded-full px-2.5 py-1 text-xs font-medium">
-                                {s.icon} {s.label}
-                            </span>
-                        ))}
+                        <p className="text-teal-100 text-sm mt-2 leading-relaxed">
+                            Not just calories — your food's full molecular profile, chemical threats, and body system impact.
+                        </p>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* Main Content */}
             <div className="max-w-3xl mx-auto px-4 py-6">
