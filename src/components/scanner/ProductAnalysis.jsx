@@ -304,8 +304,7 @@ const FeedbackSection = ({ product, user }) => {
         message: `User confirmed that product info for "${product.name}" is accurate.`
       });
     } catch {}
-    toast({ title: "Thank You!", description: "Your confirmation helps improve our data accuracy.", duration: 3000 });
-    setTimeout(() => setFeedbackGiven(false), 3000);
+    // feedbackGiven=true already hides the section immediately
   };
 
   if (feedbackGiven) {
