@@ -33,8 +33,12 @@ const BarcodeHint = ({ barcode }) => {
 const MODES = [
     { id: 'quick',    label: 'QuickScan', icon: QrCode },
     { id: 'nutriscan', label: 'FoodAnalysis', icon: Leaf },
-    { id: 'bulk',     label: 'Bulk Scan', icon: ScanLine },
-    { id: 'compare',  label: 'Compare', icon: BarChart2 },
+];
+
+const QUICK_SUB_MODES = [
+    { id: 'scan',    label: 'Scan',       icon: Scan },
+    { id: 'bulk',    label: 'Bulk Scan',  icon: ScanLine },
+    { id: 'compare', label: 'Compare',    icon: BarChart2 },
 ];
 
 export default function BarcodeScannerPage() {
@@ -49,6 +53,7 @@ export default function BarcodeScannerPage() {
     const [history, setHistory] = useState([]);
     const [showFeedback, setShowFeedback] = useState(false);
     const [showRegulatoryCheck, setShowRegulatoryCheck] = useState(false);
+    const [quickSubMode, setQuickSubMode] = useState('scan');
     const fileInputRef = useRef(null);
 
     const { user, openAuthModal } = useContext(AuthContext);
@@ -183,18 +188,42 @@ export default function BarcodeScannerPage() {
 
             {/* Non-quick modes */}
             {mode === 'nutriscan' && <NutriScanApp user={user} embedded />}
-            {mode === 'bulk' && <BulkScanDashboard user={user} />}
-            {mode === 'compare' && (
-                <div className="max-w-2xl mx-auto px-4 pb-12">
-                    <CompareProducts user={user} />
-                </div>
-            )}
 
             {/* Quick / SuttainScan mode */}
             {mode === 'quick' && (
                 <div className="max-w-lg mx-auto px-4">
-                    <AnimatePresence mode="wait">
+                    {/* Sub-mode tabs */}
+                    <div className="flex bg-white border border-slate-200 rounded-2xl p-1 shadow-sm gap-1 mb-5">
+                        {QUICK_SUB_MODES.map(({ id, label, icon: Icon }) => (
+                            <button
+                                key={id}
+                                onClick={() => { setQuickSubMode(id); if (id === 'scan') { setProductInfo(null); setError(''); } }}
+                                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                                    quickSubMode === id
+                                        ? 'bg-slate-800 text-white shadow'
+                                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                                }`}
+                            >
+                                <Icon className="w-3.5 h-3.5" />
+                                {label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Bulk Scan sub-mode */}
+                    {quickSubMode === 'bulk' && <BulkScanDashboard user={user} />}
+
+                    {/* Compare sub-mode */}
+                    {quickSubMode === 'compare' && (
+                        <div className="pb-12">
+                            <CompareProducts user={user} />
+                        </div>
+                    )}
+
+                    {/* Scan sub-mode */}
+                    {quickSubMode === 'scan' && <AnimatePresence mode="wait">
                         {productInfo ? (
+
                             <motion.div key="analysis" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                                 <BarcodeAnalysis product={productInfo} onClear={clearSearch} user={user} />
                                 {showRegulatoryCheck && (
@@ -345,7 +374,7 @@ export default function BarcodeScannerPage() {
                                 </AnimatePresence>
                             </motion.div>
                         )}
-                    </AnimatePresence>
+                    </AnimatePresence>}
                 </div>
             )}
         </div>
