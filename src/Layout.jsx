@@ -407,49 +407,46 @@ export default function Layout({ children, currentPageName }) {
                 {/* Mega menu panel */}
                 <div className="absolute right-0 top-full mt-1 w-[560px] bg-white border border-slate-200 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-4">
                   <div className="grid grid-cols-2 gap-x-4">
-                    {/* Column 1: Safety & Formulation */}
+                    {/* Column 1: Core Tools */}
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Safety &amp; Formulation</p>
-                      {[
-                        { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety, compliance & sustainability" },
-                        { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with eco scoring" },
-                        { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode, description: "Full safety & eco analysis" },
-                        { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf, description: "250k+ chemicals with eco data" },
-                      ].map(item => (
-                        <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                          <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
-                            <item.icon className="w-4 h-4 text-white" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-slate-800 text-sm leading-tight">{item.label}</p>
-                            <p className="text-xs text-slate-500 leading-tight">{item.description}</p>
-                          </div>
-                        </Link>
-                      ))}
+                     <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Core Tools</p>
+                     {[
+                       { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety, compliance, ingredient DB & impact reports" },
+                       { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with sim engine & eco scoring" },
+                       { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Full safety & eco analysis" },
+                     ].map(item => (
+                       <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
+                         <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
+                           <item.icon className="w-4 h-4 text-white" />
+                         </div>
+                         <div className="min-w-0">
+                           <p className="font-semibold text-slate-800 text-sm leading-tight">{item.label}</p>
+                           <p className="text-xs text-slate-500 leading-tight">{item.description}</p>
+                         </div>
+                       </Link>
+                     ))}
                     </div>
                     {/* Column 2: Advanced Tools */}
                     <div className="border-l border-slate-100 pl-4">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Advanced Tools</p>
-                      {[
-                        { href: "SimulationEngine", label: "Formula Sim Engine", icon: Cpu, description: "Live cost & sustainability shifts" },
-                        { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, description: "DFT, MD, protein modeling", tier: 'pro' },
-                        { href: "ComparativeImpactReport", label: "Impact Report", icon: BarChart2, description: "Eco-score vs. industry averages" },
-                        { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, description: "Integrate into your systems", status: 'coming_soon' },
-                      ].map(item => (
-                        <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${item.tier === 'pro' || item.status === 'coming_soon' ? 'bg-[var(--suttain-violet)]' : 'bg-[var(--suttain-teal)]'}`}>
-                            <item.icon className="w-4 h-4 text-white" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5">
-                              <p className="font-semibold text-slate-800 text-sm leading-tight">{item.label}</p>
-                              {item.tier === 'pro' && <span className="px-1 py-0.5 text-[9px] bg-violet-100 text-violet-700 rounded font-bold shrink-0">PRO</span>}
-                              {item.status === 'coming_soon' && <span className="px-1 py-0.5 text-[9px] bg-slate-100 text-slate-500 rounded font-medium shrink-0">Soon</span>}
-                            </div>
-                            <p className="text-xs text-slate-500 leading-tight">{item.description}</p>
-                          </div>
-                        </Link>
-                      ))}
+                     <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Advanced</p>
+                     {[
+                       { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, description: "DFT, MD, protein modeling", tier: 'pro' },
+                       { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, description: "Integrate into your systems", status: 'coming_soon' },
+                     ].map(item => (
+                       <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
+                         <div className="w-8 h-8 bg-[var(--suttain-violet)] rounded-lg flex items-center justify-center flex-shrink-0">
+                           <item.icon className="w-4 h-4 text-white" />
+                         </div>
+                         <div className="min-w-0 flex-1">
+                           <div className="flex items-center gap-1.5">
+                             <p className="font-semibold text-slate-800 text-sm leading-tight">{item.label}</p>
+                             {item.tier === 'pro' && <span className="px-1 py-0.5 text-[9px] bg-violet-100 text-violet-700 rounded font-bold shrink-0">PRO</span>}
+                             {item.status === 'coming_soon' && <span className="px-1 py-0.5 text-[9px] bg-slate-100 text-slate-500 rounded font-medium shrink-0">Soon</span>}
+                           </div>
+                           <p className="text-xs text-slate-500 leading-tight">{item.description}</p>
+                         </div>
+                       </Link>
+                     ))}
                     </div>
                   </div>
                 </div>
@@ -753,12 +750,11 @@ export default function Layout({ children, currentPageName }) {
                           transition={{ type: "spring", stiffness: 300, damping: 30 }}
                           className="pl-4 pt-1 pb-1 overflow-hidden"
                         >
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-2 pb-1">Safety &amp; Formulation</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-2 pb-1">Core Tools</p>
                           {[
                             { href: "Simulator", label: "Chemical Simulator", icon: TestTube },
                             { href: "generator", label: "Formula Generator", icon: Atom },
-                            { href: "BarcodeScanner", label: "Quick Scan", icon: QrCode },
-                            { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf },
+                            { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode },
                           ].map(item => (
                             <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
                               className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
@@ -768,11 +764,9 @@ export default function Layout({ children, currentPageName }) {
                               <span>{item.label}</span>
                             </Link>
                           ))}
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-3 pb-1">Advanced Tools</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-3 pb-1">Advanced</p>
                           {[
-                            { href: "SimulationEngine", label: "Formula Sim Engine", icon: Cpu },
                             { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, tier: 'pro' },
-                            { href: "ComparativeImpactReport", label: "Impact Report", icon: BarChart2 },
                             { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, status: 'coming_soon' },
                           ].map(item => (
                             <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
