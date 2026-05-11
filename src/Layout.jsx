@@ -892,7 +892,7 @@ export default function Layout({ children, currentPageName }) {
                   className="h-7 w-auto"
                 />
               </Link>
-              <p className="text-slate-400 text-xs leading-relaxed">
+              <p className="text-slate-400 text-sm leading-relaxed">
                 Supporting chemical sustainability through robust analysis, safety evaluation, and formulation tools.
               </p>
               <div className="flex space-x-3">
@@ -913,7 +913,7 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Column 2: Platform */}
             <div>
-              <ul className="space-y-1.5 text-xs">
+              <ul className="space-y-1.5 text-sm">
                 <li><Link to={createPageUrl('Simulator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
                 <li><Link to={createPageUrl('generator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
                 <li><Link to={createPageUrl('AboutUs')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
@@ -925,7 +925,7 @@ export default function Layout({ children, currentPageName }) {
 
                 {/* Column 3: Legal */}
             <div>
-              <ul className="space-y-1.5 text-xs">
+              <ul className="space-y-1.5 text-sm">
                 <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Privacy Policy</Link></li>
                 <li><Link to={createPageUrl('TermsOfService')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Terms of Service</Link></li>
                 <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Compliance Guide</Link></li>
@@ -963,7 +963,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
             </div>
 
-          <div className="mt-4 pt-4 border-t border-slate-700 text-center text-slate-400 text-xs">
+          <div className="mt-4 pt-4 border-t border-slate-700 text-center text-slate-400 text-sm">
             © {new Date().getFullYear()} Suttain. All rights reserved.
           </div>
         </div>
