@@ -260,10 +260,8 @@ For informational purposes only — not medical advice.`;
                         Analyzing molecular profile...
                     </>
                 ) : (
-                    <>
-                        <span className="mr-2">🧬</span>
-                        Run NutriScan Analysis
-                    </>
+                    <>Run NutriScan Analysis</>
+
                 )}
             </Button>
 
@@ -272,16 +270,16 @@ For informational purposes only — not medical advice.`;
                 <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-3">What NutriScan reveals</p>
                 <div className="grid grid-cols-2 gap-2">
                     {[
-                        { icon: '🔬', text: 'Molecular Food Fingerprint™' },
-                        { icon: '⚗️', text: 'Chemical Threat Score' },
-                        { icon: '🫀', text: 'Body System Impact Map' },
-                        { icon: '🤖', text: 'Molecular Meal Coach™' },
-                        { icon: '🌍', text: 'Planetary Impact Score™' },
-                        { icon: '⚡', text: 'NOVA Processing Level' },
-                    ].map(item => (
-                        <div key={item.text} className="flex items-center gap-2">
-                            <span className="text-base">{item.icon}</span>
-                            <span className="text-xs text-slate-300">{item.text}</span>
+                        'Molecular Food Fingerprint™',
+                        'Chemical Threat Score',
+                        'Body System Impact Map',
+                        'Molecular Meal Coach™',
+                        'Planetary Impact Score™',
+                        'NOVA Processing Level',
+                    ].map(text => (
+                        <div key={text} className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-teal-400 flex-shrink-0" />
+                            <span className="text-xs text-slate-300">{text}</span>
                         </div>
                     ))}
                 </div>
