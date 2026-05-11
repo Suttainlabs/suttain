@@ -9,7 +9,7 @@ import BarcodeAnalysis from './ProductAnalysis';
 import BarcodeHistory from './BarcodeHistory';
 import RegulatoryScanner from '../compliance/RegulatoryScanner';
 import { base44 } from '@/api/base44Client';
-import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, QrCode, Globe, Smartphone, ArrowRight, Scan, Zap, Leaf } from 'lucide-react';
+import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, QrCode, Globe, Smartphone, ArrowRight, Scan, Zap, Leaf, ShieldCheck, Recycle, FlaskConical } from 'lucide-react';
 import NutriScanApp from '../nutriscan/NutriScanApp';
 import { Link } from 'react-router-dom';
 import ToolFeedbackToast from '../shared/ToolFeedbackToast';
@@ -305,12 +305,13 @@ export default function BarcodeScannerPage() {
                                             {/* Feature hints */}
                                             <div className="grid grid-cols-3 gap-3 mt-5">
                                                 {[
-                                                    { label: 'Safety Score' },
-                                                    { label: 'Eco Rating' },
-                                                    { label: 'Ingredient Breakdown' },
-                                                ].map(({ label }) => (
-                                                    <div key={label} className="bg-white/80 rounded-2xl p-3 text-center border border-slate-100 shadow-sm">
-                                                        <span className="text-xs font-semibold text-slate-600">{label}</span>
+                                                    { label: 'Safety Score', icon: ShieldCheck, color: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-100' },
+                                                    { label: 'Eco Rating', icon: Recycle, color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-100' },
+                                                    { label: 'Ingredient Breakdown', icon: FlaskConical, color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-100' },
+                                                ].map(({ label, icon: Icon, color, bg, border }) => (
+                                                    <div key={label} className={`${bg} rounded-2xl p-3 text-center border ${border} shadow-sm flex flex-col items-center gap-1.5`}>
+                                                        <Icon className={`w-5 h-5 ${color}`} />
+                                                        <span className={`text-xs font-semibold ${color}`}>{label}</span>
                                                     </div>
                                                 ))}
                                             </div>
