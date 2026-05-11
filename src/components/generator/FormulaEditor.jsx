@@ -195,9 +195,55 @@ export default function FormulaEditor({
     };
   });
 
-  // NEW state for batch calculations
+  // Batch / container scaling state
   const [batchSize, setBatchSize] = useState(100);
   const [batchUnit, setBatchUnit] = useState('g');
+
+  // Container scaling state
+  const [containerVolume, setContainerVolume] = useState('');
+  const [containerUnit, setContainerUnit] = useState('ml');
+  const [containerScaled, setContainerScaled] = useState(false);
+
+  // Common container presets (volume in ml)
+  const CONTAINER_PRESETS = [
+    { label: '30 ml', ml: 30 },
+    { label: '50 ml', ml: 50 },
+    { label: '100 ml', ml: 100 },
+    { label: '250 ml', ml: 250 },
+    { label: '500 ml', ml: 500 },
+    { label: '1 L', ml: 1000 },
+  ];
+
+  const applyContainerScale = () => {
+    const vol = parseFloat(containerVolume);
+    if (!vol || vol <= 0) return;
+    // Convert container volume to grams (assume density ~1 g/ml for water-based formulas)
+    let batchGrams = vol;
+    if (containerUnit === 'L') batchGrams = vol * 1000;
+    else if (containerUnit === 'oz') batchGrams = vol * 29.5735;
+
+    // Normalise percentages to exactly 100 if they're close, then set batch
+    const total = formula.ingredients.reduce((s, i) => s + (parseFloat(i.percentage) || 0), 0);
+    if (total > 0 && Math.abs(total - 100) > 0.1) {
+      // Auto-normalise percentages
+      setFormula(prev => ({
+        ...prev,
+        ingredients: prev.ingredients.map(ing => ({
+          ...ing,
+          percentage: parseFloat(((parseFloat(ing.percentage) || 0) / total * 100).toFixed(4))
+        }))
+      }));
+    }
+
+    setBatchSize(batchGrams);
+    setBatchUnit('g');
+    setContainerScaled(true);
+  };
+
+  const resetContainerScale = () => {
+    setContainerVolume('');
+    setContainerScaled(false);
+  };
 
   const [updatingOption, setUpdatingOption] = useState(null); // Track which option is loading
   const [showPDFModal, setShowPDFModal] = useState(false);
@@ -708,50 +754,107 @@ export default function FormulaEditor({
 
               <CardContent className="p-4 sm:p-6">
                 <TabsContent value="formulation" className="mt-0 space-y-6">
-                  {/* Batch Calculator - Simplified */}
-                  <Card className="bg-gradient-to-br from-slate-50 to-white border border-slate-200">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2">
-                        <Calculator className={`w-4 h-4 ${modeColors.primaryIconClasses}`}/>
-                        <CardTitle className="text-base">Batch Size</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-3">
-                        <Input
-                          type="number"
-                          placeholder="100"
-                          value={batchSize}
-                          onChange={(e) => setBatchSize(parseFloat(e.target.value) || 0)}
-                          className="flex-1 text-base"
-                        />
-                        <Select value={batchUnit} onValueChange={setBatchUnit}>
-                          <SelectTrigger className="w-24">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="g">g</SelectItem>
-                            <SelectItem value="kg">kg</SelectItem>
-                            <SelectItem value="lb">lb</SelectItem>
-                            <SelectItem value="ml">mL</SelectItem>
-                            <SelectItem value="L">L</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="text-slate-500">
-                                        <Info className="w-4 h-4"/>
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent className="max-w-xs text-sm">
-                                    <p>Changing the unit will automatically update ingredient amounts and mixing instructions.</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  {/* Smart Container & Batch Scaler */}
+                   <Card className="bg-gradient-to-br from-teal-50 to-white border border-teal-200">
+                     <CardHeader className="pb-3">
+                       <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-2">
+                           <Calculator className={`w-4 h-4 ${modeColors.primaryIconClasses}`}/>
+                           <CardTitle className="text-base">Container & Batch Scaler</CardTitle>
+                         </div>
+                         {containerScaled && (
+                           <span className="text-xs bg-teal-100 text-teal-700 font-semibold px-2 py-0.5 rounded-full">Scaled ✓</span>
+                         )}
+                       </div>
+                     </CardHeader>
+                     <CardContent className="space-y-4">
+                       {/* Container target */}
+                       <div>
+                         <p className="text-xs text-slate-500 mb-2 font-medium">Target container volume — auto-scales all ingredient quantities</p>
+                         <div className="flex gap-2">
+                           <Input
+                             type="number"
+                             placeholder="e.g. 500"
+                             value={containerVolume}
+                             onChange={(e) => { setContainerVolume(e.target.value); setContainerScaled(false); }}
+                             className="flex-1"
+                           />
+                           <Select value={containerUnit} onValueChange={(v) => { setContainerUnit(v); setContainerScaled(false); }}>
+                             <SelectTrigger className="w-20">
+                               <SelectValue />
+                             </SelectTrigger>
+                             <SelectContent>
+                               <SelectItem value="ml">mL</SelectItem>
+                               <SelectItem value="L">L</SelectItem>
+                               <SelectItem value="oz">fl oz</SelectItem>
+                             </SelectContent>
+                           </Select>
+                           <Button
+                             onClick={applyContainerScale}
+                             disabled={!containerVolume || parseFloat(containerVolume) <= 0}
+                             className="bg-[#02988C] hover:bg-teal-700 text-white px-4"
+                             size="sm"
+                           >
+                             Scale
+                           </Button>
+                           {containerScaled && (
+                             <Button variant="ghost" size="sm" onClick={resetContainerScale} className="text-slate-400 hover:text-slate-600 px-2">
+                               <X className="w-4 h-4" />
+                             </Button>
+                           )}
+                         </div>
+                         {/* Quick presets */}
+                         <div className="flex flex-wrap gap-1.5 mt-2">
+                           {CONTAINER_PRESETS.map(p => (
+                             <button
+                               key={p.label}
+                               onClick={() => {
+                                 const isL = p.ml >= 1000;
+                                 setContainerVolume(isL ? p.ml / 1000 : p.ml);
+                                 setContainerUnit(isL ? 'L' : 'ml');
+                                 setContainerScaled(false);
+                               }}
+                               className="text-[10px] font-semibold px-2 py-1 rounded-full border border-teal-200 text-teal-700 hover:bg-teal-100 transition-colors"
+                             >
+                               {p.label}
+                             </button>
+                           ))}
+                         </div>
+                       </div>
+
+                       {/* Manual batch override */}
+                       <div className="border-t border-slate-100 pt-3">
+                         <p className="text-xs text-slate-400 mb-2">Or set batch size manually</p>
+                         <div className="flex items-center gap-2">
+                           <Input
+                             type="number"
+                             placeholder="100"
+                             value={batchSize}
+                             onChange={(e) => { setBatchSize(parseFloat(e.target.value) || 0); setContainerScaled(false); }}
+                             className="flex-1 text-sm"
+                           />
+                           <Select value={batchUnit} onValueChange={(v) => { setBatchUnit(v); setContainerScaled(false); }}>
+                             <SelectTrigger className="w-20">
+                               <SelectValue />
+                             </SelectTrigger>
+                             <SelectContent>
+                               <SelectItem value="g">g</SelectItem>
+                               <SelectItem value="kg">kg</SelectItem>
+                               <SelectItem value="lb">lb</SelectItem>
+                               <SelectItem value="ml">mL</SelectItem>
+                               <SelectItem value="L">L</SelectItem>
+                             </SelectContent>
+                           </Select>
+                         </div>
+                       </div>
+
+                       {containerScaled && (
+                         <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 text-xs text-teal-800">
+                           All ingredient quantities below have been scaled to fill a <strong>{containerVolume} {containerUnit}</strong> container. Percentages are preserved.
+                         </div>
+                       )}
+                     </CardContent>
+                   </Card>
 
                   {/* Total Percentage - Prominent Display */}
                   <div className={`flex items-center justify-between p-4 rounded-lg border-2 ${
