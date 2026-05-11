@@ -260,7 +260,7 @@ For informational purposes only — not medical advice.`;
                         Analyzing molecular profile...
                     </>
                 ) : (
-                    <>Run NutriScan Analysis</>
+                    <>Run FoodAnalysis</>
 
                 )}
             </Button>
