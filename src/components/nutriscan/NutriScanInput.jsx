@@ -244,7 +244,7 @@ For informational purposes only — not medical advice.`;
                             <p className="text-xs text-slate-400">Works with meals, labels, packages</p>
                         </button>
                     )}
-                    <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                    <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageUpload} />
                 </div>
             )}
 
