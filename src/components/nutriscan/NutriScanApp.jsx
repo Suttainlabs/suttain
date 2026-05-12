@@ -1,19 +1,45 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Search, Utensils, Zap, Shield, Brain, Leaf, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Camera, Zap, History } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import NutriScanInput from './NutriScanInput';
 import NutriScanResults from './NutriScanResults';
 import NutriScanDashboard from './NutriScanDashboard';
+import NutriScanHistory from './NutriScanHistory';
+import { base44 } from '@/api/base44Client';
 
 export default function NutriScanApp({ user, embedded = false }) {
     const [activeTab, setActiveTab] = useState('scan');
     const [result, setResult] = useState(null);
     const [dailyLog, setDailyLog] = useState([]);
 
+    const saveToHistory = async (data) => {
+        if (!user) return;
+        try {
+            await base44.entities.FoodScanHistory.create({
+                food_name: data.food_name,
+                food_input: data.food_input,
+                calories: data.calories,
+                protein_g: data.protein_g,
+                carbs_g: data.carbs_g,
+                fat_g: data.fat_g,
+                fiber_g: data.fiber_g,
+                nova_score: data.nova_score,
+                nova_label: data.nova_label,
+                chemical_threat_level: data.chemical_threat_level,
+                chemical_threat_score: data.chemical_threat_score,
+                overall_summary: data.overall_summary,
+                portion_estimate: data.portion_estimate,
+                scanned_at: new Date().toISOString(),
+            });
+        } catch (e) {
+            console.error('Failed to save food history:', e);
+        }
+    };
+
     const handleResult = (data) => {
         setResult(data);
+        saveToHistory(data);
     };
 
     const handleAddToDay = (data) => {
@@ -58,6 +84,9 @@ export default function NutriScanApp({ user, embedded = false }) {
                                 <span className="ml-1.5 bg-white/30 text-white text-[10px] rounded-full px-1.5 py-0.5 font-bold">{dailyLog.length}</span>
                             )}
                         </TabsTrigger>
+                        <TabsTrigger value="history" className="flex-1 data-[state=active]:bg-[#02988C] data-[state=active]:text-white rounded-lg text-sm">
+                            <History className="w-4 h-4 mr-1.5" /> History
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="scan">
@@ -76,6 +105,10 @@ export default function NutriScanApp({ user, embedded = false }) {
 
                     <TabsContent value="dashboard">
                         <NutriScanDashboard dailyLog={dailyLog} user={user} onGoScan={() => setActiveTab('scan')} />
+                    </TabsContent>
+
+                    <TabsContent value="history">
+                        <NutriScanHistory user={user} />
                     </TabsContent>
                 </Tabs>
             </div>
