@@ -83,9 +83,14 @@ const LiveScanner = ({ isOpen, onClose, onScanSuccess }) => {
         detectedRef.current = false;
         setUseQuagga(false);
 
-        const barcodeDetector = new window.BarcodeDetector({ formats: ['ean_13', 'upc_a', 'upc_e', 'qr_code', 'ean_8', 'code_128', 'code_39'] });
-
         const startScan = async () => {
+            // Get all formats the device supports, fall back to a broad hardcoded list
+            let formats = ['ean_13', 'upc_a', 'upc_e', 'qr_code', 'ean_8', 'code_128', 'code_39', 'code_93', 'codabar', 'itf', 'pdf417', 'aztec', 'data_matrix'];
+            try {
+                const supported = await window.BarcodeDetector.getSupportedFormats();
+                if (supported.length > 0) formats = supported;
+            } catch (_) {}
+            const barcodeDetector = new window.BarcodeDetector({ formats });
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
                 streamRef.current = stream;
@@ -131,7 +136,18 @@ const LiveScanner = ({ isOpen, onClose, onScanSuccess }) => {
                         constraints: { facingMode: 'environment' },
                     },
                     decoder: {
-                        readers: ['ean_reader', 'upc_reader', 'upc_e_reader', 'ean_8_reader', 'code_128_reader', 'code_39_reader'],
+                        readers: [
+                            'ean_reader',
+                            'ean_8_reader',
+                            'upc_reader',
+                            'upc_e_reader',
+                            'code_128_reader',
+                            'code_39_reader',
+                            'code_93_reader',
+                            'codabar_reader',
+                            'i2of5_reader',
+                        ],
+                        multiple: false,
                     },
                     locate: true,
                 }, (err) => {
