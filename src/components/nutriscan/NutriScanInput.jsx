@@ -27,17 +27,25 @@ export default function NutriScanInput({ onResult }) {
     const analyzeFood = async (foodDescription, imageUrl = null) => {
         setIsAnalyzing(true);
         try {
-            const prompt = `You are a world-class food intelligence engine built by Suttain, a professional chemistry company.
+            const prompt = imageUrl
+                ? `You are a world-class food intelligence engine built by Suttain.
 
-Analyze this food: "${foodDescription}"
-${imageUrl ? `(User uploaded a food image — analyze based on the food described)` : ''}
+Look at the image provided and identify EXACTLY what food items are visible. Do NOT guess or add foods that are not clearly visible.
+Only analyze what you can actually see in the image.
+
+Return a comprehensive molecular food analysis as JSON for only the food(s) visible in the image.
+For informational purposes only — not medical advice.`
+                : `You are a world-class food intelligence engine built by Suttain, a professional chemistry company.
+
+Analyze ONLY this specific food: "${foodDescription}"
+Do not substitute, guess, or generalize. Analyze exactly what was described.
 
 Return a comprehensive molecular food analysis as JSON. Be accurate and specific based on real nutritional science.
-
 For informational purposes only — not medical advice.`;
 
             const result = await base44.integrations.Core.InvokeLLM({
                 prompt,
+                ...(imageUrl ? { file_urls: [imageUrl] } : {}),
                 response_json_schema: {
                     type: 'object',
                     properties: {
@@ -163,8 +171,7 @@ For informational purposes only — not medical advice.`;
             try {
                 setIsAnalyzing(true);
                 const { file_url } = await base44.integrations.Core.UploadFile({ file: imageFile });
-                const desc = `Food shown in this uploaded image`;
-                await analyzeFood(desc, file_url);
+                await analyzeFood('food from uploaded image', file_url);
             } catch (err) {
                 console.error('Image upload failed:', err);
                 setIsAnalyzing(false);
