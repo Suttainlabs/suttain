@@ -23,10 +23,12 @@ const BarcodeHint = ({ barcode }) => {
     if (!barcode) return null;
     let hint = '';
     const len = barcode.length;
-    if (len === 12) hint = '✓ Looks like a UPC-A barcode';
+    if (len >= 4 && len <= 5) hint = '✓ Looks like a PLU code (fresh produce)';
+    else if (len === 12) hint = '✓ Looks like a UPC-A barcode';
     else if (len === 13) hint = '✓ Looks like an EAN-13 barcode';
-    else if (len > 8 && len < 12) hint = 'Keep typing... most barcodes are 12–13 digits';
-    else if (len < 8 || len > 14) hint = 'Invalid length — most barcodes are 12–14 digits';
+    else if (len === 8) hint = '✓ Looks like a UPC-E / EAN-8 barcode';
+    else if (len > 5 && len < 12) hint = 'Keep typing... most barcodes are 12–13 digits';
+    else if (len > 14) hint = 'Too many digits — check the barcode';
     return <p className="text-xs text-slate-500 text-center mt-1">{hint}</p>;
 };
 
@@ -247,7 +249,7 @@ export default function BarcodeScannerPage() {
                                                 {/* Card header */}
                                                 <div className="px-6 pt-6 pb-4 border-b border-slate-100">
                                                     <h2 className="text-xl font-bold text-slate-800 text-center">Scan or Enter a Barcode</h2>
-                                                    <p className="text-sm text-slate-500 text-center mt-1">Type, upload an image, or use your camera</p>
+                                                    <p className="text-sm text-slate-500 text-center mt-1">UPC, EAN, or PLU code (fresh produce)</p>
                                                 </div>
 
                                                 <div className="p-6 space-y-5">
@@ -257,7 +259,7 @@ export default function BarcodeScannerPage() {
                                                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                                             <Input
                                                                 type="text"
-                                                                placeholder="Enter product barcode..."
+                                                                placeholder="UPC, EAN, or PLU code (e.g. 4011)..."
                                                                 value={barcodeInput}
                                                                 onChange={(e) => setBarcode(e.target.value.replace(/[^0-9]/g, ''))}
                                                                 className="h-13 pl-11 pr-4 text-base rounded-xl border-slate-200 focus:border-teal-400 focus:ring-teal-400"
@@ -266,6 +268,28 @@ export default function BarcodeScannerPage() {
                                                             />
                                                         </div>
                                                         <BarcodeHint barcode={barcodeInput} />
+                                                        {/* PLU quick picks */}
+                                                        <div>
+                                                            <p className="text-xs text-slate-400 mb-1.5">Common PLU codes (fresh produce):</p>
+                                                            <div className="flex flex-wrap gap-1.5">
+                                                                {[
+                                                                    { code: '4011', label: '🍌 Banana' },
+                                                                    { code: '4065', label: '🍎 Apple' },
+                                                                    { code: '3107', label: '🍓 Strawberry' },
+                                                                    { code: '4053', label: '🥦 Broccoli' },
+                                                                    { code: '4062', label: '🥕 Carrot' },
+                                                                ].map(({ code, label }) => (
+                                                                    <button
+                                                                        key={code}
+                                                                        type="button"
+                                                                        onClick={() => setBarcode(code)}
+                                                                        className="text-xs px-2.5 py-1 bg-slate-100 hover:bg-teal-100 hover:text-teal-700 rounded-full transition-colors text-slate-600"
+                                                                    >
+                                                                        {label} <span className="text-slate-400">#{code}</span>
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        </div>
                                                         <Button
                                                             type="submit"
                                                             className="w-full h-12 text-base rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-semibold gap-2"
