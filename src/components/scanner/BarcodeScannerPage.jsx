@@ -82,7 +82,9 @@ export default function BarcodeScannerPage() {
 
     const handleLookup = useCallback(async (scannedBarcode, scanMethod = 'manual') => {
         if (!user) { openAuthModal('login'); return; }
-        if (!scannedBarcode) { setError('Please enter a valid barcode.'); return; }
+        if (!scannedBarcode) { setError('Please enter a barcode or PLU code.'); return; }
+        const len = scannedBarcode.length;
+        if (len < 4 || len > 14) { setError('Please enter a valid barcode (4–5 digits for PLU, 8–14 digits for UPC/EAN).'); return; }
         setIsLoading(true);
         setError('');
         setProductInfo(null);
@@ -268,28 +270,6 @@ export default function BarcodeScannerPage() {
                                                             />
                                                         </div>
                                                         <BarcodeHint barcode={barcodeInput} />
-                                                        {/* PLU quick picks */}
-                                                        <div>
-                                                            <p className="text-xs text-slate-400 mb-1.5">Common PLU codes (fresh produce):</p>
-                                                            <div className="flex flex-wrap gap-1.5">
-                                                                {[
-                                                                    { code: '4011', label: '🍌 Banana' },
-                                                                    { code: '4065', label: '🍎 Apple' },
-                                                                    { code: '3107', label: '🍓 Strawberry' },
-                                                                    { code: '4053', label: '🥦 Broccoli' },
-                                                                    { code: '4062', label: '🥕 Carrot' },
-                                                                ].map(({ code, label }) => (
-                                                                    <button
-                                                                        key={code}
-                                                                        type="button"
-                                                                        onClick={() => setBarcode(code)}
-                                                                        className="text-xs px-2.5 py-1 bg-slate-100 hover:bg-teal-100 hover:text-teal-700 rounded-full transition-colors text-slate-600"
-                                                                    >
-                                                                        {label} <span className="text-slate-400">#{code}</span>
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        </div>
                                                         <Button
                                                             type="submit"
                                                             className="w-full h-12 text-base rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-semibold gap-2"
