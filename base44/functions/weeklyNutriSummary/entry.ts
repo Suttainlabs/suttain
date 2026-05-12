@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
 
       // Create in-app notification
       await base44.asServiceRole.entities.Notification.create({
-        title: '📊 Your Weekly Food Summary',
+        title: '📊 Your Weekly Food Analysis Summary',
         message: `This week you logged ${totals.scans} meals with an avg of ${avgCalories} kcal/day. Total: ${Math.round(totals.calories)} kcal, ${Math.round(totals.protein)}g protein, ${Math.round(totals.carbs)}g carbs, ${Math.round(totals.fat)}g fat.`,
         type: 'feature',
         severity: 'info',
@@ -51,8 +51,8 @@ Deno.serve(async (req) => {
       const emailBody = `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; border-radius: 16px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #02988C, #09D2FF); padding: 32px 24px; color: white;">
-            <h1 style="margin: 0; font-size: 24px;">Your Weekly Food Report 🥗</h1>
-            <p style="margin: 8px 0 0; opacity: 0.85;">Hi ${firstName}! Here's your NutriScan summary for the past 7 days.</p>
+            <h1 style="margin: 0; font-size: 24px;">Your Weekly Food Analysis Report 🥗</h1>
+            <p style="margin: 8px 0 0; opacity: 0.85;">Hi ${firstName}! Here's your Food Analysis summary for the past 7 days.</p>
           </div>
           <div style="padding: 24px;">
             <h2 style="color: #1e293b; font-size: 18px;">Weekly Totals</h2>
@@ -80,13 +80,13 @@ Deno.serve(async (req) => {
             </div>` : `<div style="background: #ecfdf5; border: 1px solid #6ee7b7; border-radius: 12px; padding: 16px; margin-top: 16px;">
               <p style="margin: 0; color: #065f46; font-weight: bold;">✅ No high chemical risk foods this week. Great choices!</p>
             </div>`}
-            <p style="font-size: 11px; color: #94a3b8; margin-top: 24px;">For informational purposes only. Not medical or dietary advice. — Suttain NutriScan</p>
+            <p style="font-size: 11px; color: #94a3b8; margin-top: 24px;">For informational purposes only. Not medical or dietary advice. — Suttain Food Analysis</p>
           </div>
         </div>
       `;
 
       await resend.emails.send({
-        from: 'NutriScan by Suttain <noreply@suttain.com>',
+        from: 'Food Analysis by Suttain <noreply@suttain.com>',
         to: user.email,
         subject: `Your Weekly Food Report — ${totals.scans} meals, ${Math.round(totals.calories)} kcal`,
         html: emailBody,

@@ -22,12 +22,12 @@ export default function NutriScanDashboard({ dailyLog, user, onGoScan }) {
                     <span className="text-3xl">🧬</span>
                 </div>
                 <h3 className="text-lg font-bold text-slate-800">No scans yet today</h3>
-                <p className="text-slate-500 text-sm max-w-xs mx-auto">Scan your meals to build your Living Biological Dashboard™ — a real-time view of what's happening in your body today.</p>
+                <p className="text-slate-500 text-sm max-w-xs mx-auto">Analyze your meals to build your Living Biological Dashboard™ — a real-time view of what's happening in your body today.</p>
                 <Button
                     onClick={onGoScan}
                     className="bg-gradient-to-r from-[#02988C] to-[#09D2FF] text-white font-bold px-6 py-2 rounded-xl"
                 >
-                    <Camera className="w-4 h-4 mr-2" /> Scan Your First Meal
+                    <Camera className="w-4 h-4 mr-2" /> Analyze Your First Meal
                 </Button>
             </div>
         );
@@ -42,7 +42,7 @@ export default function NutriScanDashboard({ dailyLog, user, onGoScan }) {
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-4 text-white">
                 <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-1">Living Biological Dashboard™</p>
                 <p className="text-sm text-slate-400">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-                <p className="text-sm text-slate-300 mt-1">{dailyLog.length} meal{dailyLog.length !== 1 ? 's' : ''} scanned today</p>
+                <p className="text-sm text-slate-300 mt-1">{dailyLog.length} meal{dailyLog.length !== 1 ? 's' : ''} analyzed today</p>
             </div>
 
             {/* Daily Totals */}
@@ -117,7 +117,7 @@ export default function NutriScanDashboard({ dailyLog, user, onGoScan }) {
                 </CardContent>
             </Card>
 
-            <p className="text-center text-[10px] text-slate-400 pb-4">NutriScan data is for informational purposes only. Not medical advice.</p>
+            <p className="text-center text-[10px] text-slate-400 pb-4">Food Analysis data is for informational purposes only. Not medical advice.</p>
         </div>
     );
 }

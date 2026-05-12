@@ -10,7 +10,7 @@ export default function NutriScan() {
         return (
             <div className="min-h-[calc(100vh-80px)] flex items-center justify-center py-12 px-4 bg-slate-50">
                 <AuthGate
-                    featureName="NutriScan 2.0"
+                    featureName="Food Analysis"
                     featureDescription="Sign up free to analyze any food's molecular profile, chemical safety, and body system impact."
                 />
             </div>

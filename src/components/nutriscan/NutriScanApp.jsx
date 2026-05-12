@@ -60,7 +60,7 @@ export default function NutriScanApp({ user, embedded = false }) {
                     <div className="max-w-3xl mx-auto">
                         <div className="flex items-center gap-3 mb-1">
                             <div>
-                                <h1 className="text-2xl font-bold leading-tight">NutriScan 2.0</h1>
+                                <h1 className="text-2xl font-bold leading-tight">Food Analysis</h1>
                                 <p className="text-teal-100 text-xs">Chemical-Aware Food Intelligence Engine</p>
                             </div>
                         </div>
@@ -76,7 +76,7 @@ export default function NutriScanApp({ user, embedded = false }) {
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
                     <TabsList className="w-full bg-white border border-slate-200 rounded-xl mb-6 p-1">
                         <TabsTrigger value="scan" className="flex-1 data-[state=active]:bg-[#02988C] data-[state=active]:text-white rounded-lg text-sm">
-                            <Camera className="w-4 h-4 mr-1.5" /> Scan Food
+                            <Camera className="w-4 h-4 mr-1.5" /> Analyze Food
                         </TabsTrigger>
                         <TabsTrigger value="dashboard" className="flex-1 data-[state=active]:bg-[#02988C] data-[state=active]:text-white rounded-lg text-sm">
                             <Zap className="w-4 h-4 mr-1.5" /> Today's Report

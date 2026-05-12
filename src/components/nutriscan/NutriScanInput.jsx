@@ -27,7 +27,7 @@ export default function NutriScanInput({ onResult }) {
     const analyzeFood = async (foodDescription, imageUrl = null) => {
         setIsAnalyzing(true);
         try {
-            const prompt = `You are NutriScan 2.0 — the world's most advanced food intelligence engine built by Suttain, a professional chemistry company.
+            const prompt = `You are a world-class food intelligence engine built by Suttain, a professional chemistry company.
 
 Analyze this food: "${foodDescription}"
 ${imageUrl ? `(User uploaded a food image — analyze based on the food described)` : ''}
@@ -140,7 +140,7 @@ For informational purposes only — not medical advice.`;
 
             onResult({ ...result, food_input: foodDescription });
         } catch (err) {
-            console.error('NutriScan analysis failed:', err);
+            console.error('Food analysis failed:', err);
         } finally {
             setIsAnalyzing(false);
         }
@@ -267,7 +267,7 @@ For informational purposes only — not medical advice.`;
 
             {/* What you get */}
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-4 text-white">
-                <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-3">What Scan Reveals</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-3">What Analysis Reveals</p>
                 <div className="grid grid-cols-2 gap-2">
                     {[
                         'Molecular Food Fingerprint™',
@@ -283,7 +283,7 @@ For informational purposes only — not medical advice.`;
                         </div>
                     ))}
                 </div>
-                <p className="text-[10px] text-slate-500 mt-3">Scan data is for informational purposes only. Not medical advice.</p>
+                <p className="text-[10px] text-slate-500 mt-3">Analysis data is for informational purposes only. Not medical advice.</p>
             </div>
         </div>
     );
