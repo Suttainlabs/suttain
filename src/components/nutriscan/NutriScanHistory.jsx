@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Trash2, TrendingUp, Flame, Utensils } from 'lucide-react';
+import { Loader2, Trash2, TrendingUp, Flame, Utensils, ShoppingCart } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import GroceryListExport from './GroceryListExport';
 
 const threatColors = {
   safe: 'bg-emerald-100 text-emerald-700',
@@ -17,6 +18,7 @@ const novaColors = { 1: 'bg-emerald-500', 2: 'bg-lime-500', 3: 'bg-amber-500', 4
 export default function NutriScanHistory({ user }) {
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showGrocery, setShowGrocery] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -54,6 +56,10 @@ export default function NutriScanHistory({ user }) {
 
   return (
     <div className="space-y-4">
+      {showGrocery && (
+        <GroceryListExport scans={weekScans.length > 0 ? weekScans : scans} onClose={() => setShowGrocery(false)} />
+      )}
+
       {/* Weekly Summary Card */}
       {weekScans.length > 0 && (
         <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-4 text-white">
@@ -75,6 +81,16 @@ export default function NutriScanHistory({ user }) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Grocery List Export Button */}
+      {scans.length > 0 && (
+        <Button
+          onClick={() => setShowGrocery(true)}
+          className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:opacity-90 text-white font-bold rounded-xl"
+        >
+          <ShoppingCart className="w-4 h-4 mr-2" /> Generate Weekly Grocery List
+        </Button>
       )}
 
       {scans.length === 0 ? (
