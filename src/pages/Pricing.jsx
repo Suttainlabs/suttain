@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Check, Sparkles, Building2, Zap, Shield, Leaf, HeartPulse, MessageSquare, Clock, AlertTriangle, Loader2, Cpu, BarChart3, QrCode, Atom, FlaskConical, FileText, Globe, Database, FolderOpen, Layers } from 'lucide-react';
 import { createCheckoutSession } from '@/functions/createCheckoutSession';
 import useTrialStatus from '../hooks/useTrialStatus';
+import useLocalPricing from '../hooks/useLocalPricing';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -173,9 +174,9 @@ const featureDetails = [
 export default function Pricing() {
   const { user, refreshUser } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
-  const [isYearly, setIsYearly] = useState(false); // kept for future use
-
+  const [isYearly, setIsYearly] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(null);
+  const { pricing, countryCode, loading: pricingLoading, formatPrice } = useLocalPricing();
 
   // When Stripe redirects back with ?success=true, re-fetch the user so their
   // subscription plan is reflected immediately without a manual page refresh.
@@ -212,6 +213,7 @@ export default function Pricing() {
         priceKey,
         successUrl: window.location.origin + '/Pricing?success=true',
         cancelUrl: window.location.origin + '/Pricing?canceled=true',
+        countryCode: countryCode || undefined,
       });
       if (res.data?.url) {
         window.location.href = res.data.url;
@@ -260,7 +262,7 @@ export default function Pricing() {
           </p>
 
           {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex items-center justify-center gap-3 flex-wrap">
             <span className={`text-sm font-semibold ${!isYearly ? 'text-slate-900' : 'text-slate-400'}`}>Monthly</span>
             <button
               onClick={() => setIsYearly(!isYearly)}
@@ -279,6 +281,12 @@ export default function Pricing() {
               <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">Save 16%</span>
             )}
           </div>
+          {/* Local currency notice */}
+          {!pricingLoading && pricing.country && (
+            <p className="text-xs text-slate-500 mt-3">
+              🌍 Prices shown in <strong>{pricing.currency.toUpperCase()}</strong> for {pricing.country}
+            </p>
+          )}
         </motion.div>
 
         {/* Pricing Cards */}
@@ -331,27 +339,42 @@ export default function Pricing() {
                     ) : plan.id === 'lifetime' ? (
                       <div>
                         <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-4xl font-bold text-slate-900">${plan.lifetimePrice}</span>
+                          <span className="text-4xl font-bold text-slate-900">
+                            {pricingLoading ? '...' : formatPrice(pricing.lifetime)}
+                          </span>
                         </div>
                         <p className="text-sm text-slate-500 mt-1">One-time payment, access forever</p>
+                        {pricing.currency !== 'usd' && (
+                          <p className="text-xs text-slate-400 mt-0.5">≈ $99.99 USD</p>
+                        )}
                       </div>
                     ) : (
                       <div>
                         {isYearly ? (
                           <>
                             <div className="flex items-baseline justify-center gap-1">
-                              <span className="text-4xl font-bold text-slate-900">$49.99</span>
+                              <span className="text-4xl font-bold text-slate-900">
+                                {pricingLoading ? '...' : formatPrice(pricing.yearly)}
+                              </span>
                               <span className="text-slate-500">/year</span>
                             </div>
-                            <p className="text-sm text-green-600 font-semibold mt-1">~$4.17/mo · Save $9.89/year</p>
+                            <p className="text-sm text-green-600 font-semibold mt-1">Save ~16% vs monthly</p>
+                            {pricing.currency !== 'usd' && (
+                              <p className="text-xs text-slate-400 mt-0.5">≈ $49.99 USD/year</p>
+                            )}
                           </>
                         ) : (
                           <>
                             <div className="flex items-baseline justify-center gap-1">
-                              <span className="text-4xl font-bold text-slate-900">$4.99</span>
+                              <span className="text-4xl font-bold text-slate-900">
+                                {pricingLoading ? '...' : formatPrice(pricing.monthly)}
+                              </span>
                               <span className="text-slate-500">/month</span>
                             </div>
                             <p className="text-sm text-slate-500 mt-1">Cancel anytime</p>
+                            {pricing.currency !== 'usd' && (
+                              <p className="text-xs text-slate-400 mt-0.5">≈ $4.99 USD/month</p>
+                            )}
                           </>
                         )}
                       </div>
