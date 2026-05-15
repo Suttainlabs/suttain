@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { base44 } from '@/api/base44Client';
 import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';
+import { triggerSafetyAlertIfNeeded } from '@/utils/twilioAlertTrigger';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -454,7 +455,18 @@ export default function ProductAnalysis({ product, onClear, user }) {
         userEmail: user.email,
         additionalContext: { barcode: product.barcode, brand: product.brand, category: product.category }
       });
-      if (result.shouldWarn) setSafetyAlert(result.alert);
+      if (result.shouldWarn) {
+        setSafetyAlert(result.alert);
+        // Trigger Twilio SMS/WhatsApp alert if user has it enabled
+        triggerSafetyAlertIfNeeded({
+          user,
+          productName: product.name,
+          riskLevel: result.alert?.severity || 'high',
+          regulatoryAlert: result.alert?.alert_message,
+          flaggedIngredients: result.alert?.flagged_ingredients?.map(f => f.ingredient) || [],
+          reportUrl: `${window.location.origin}/BarcodeScanner`
+        });
+      }
     } catch {}
   };
 

@@ -10,6 +10,7 @@ import ProfileCard from './ProfileCard';
 import AlertsHistory from './AlertsHistory';
 import SafetyInsights from './SafetyInsights';
 import SafetyAlertDemo from './SafetyAlertDemo';
+import TwilioAlertSettings from '@/components/twilio/TwilioAlertSettings';
 
 const StatCard = ({ icon: Icon, label, value, iconBg, iconColor }) => (
   <Card className="border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
@@ -231,6 +232,20 @@ export default function PersonalizedSafetyDashboard() {
                 transition={{ delay: 0.25 }}
               >
                 <SafetyAlertDemo profile={defaultProfile} />
+              </motion.div>
+            )}
+
+            {/* Twilio SMS/WhatsApp Alert Settings */}
+            {user && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">
+                  SMS / WhatsApp Alerts
+                </h2>
+                <TwilioAlertSettings user={user} />
               </motion.div>
             )}
           </div>
