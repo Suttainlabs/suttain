@@ -13,6 +13,88 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { base44 } from "@/api/base44Client";
 import { useDebounce } from "@/components/shared/useDebounce";
 
+// ── Curated quick-pick chemicals per persona ──────────────────────────────────
+const PERSONA_QUICK_CHEMICALS = {
+  // Education
+  student:      ["Vinegar (Acetic Acid)", "Baking Soda", "Hydrogen Peroxide", "Bleach", "Salt (NaCl)", "Lemon Juice"],
+  teacher:      ["Hydrochloric Acid (HCl)", "Sodium Hydroxide", "Copper Sulfate", "Potassium Permanganate", "Ethanol", "Magnesium Ribbon"],
+  professor:    ["Benzene", "Toluene", "Diethyl Ether", "Acetonitrile", "Chloroform", "Dimethyl Sulfoxide (DMSO)"],
+  researcher:   ["Sodium Borohydride", "Lithium Aluminum Hydride", "Palladium on Carbon", "Triethylamine", "Trifluoroacetic Acid", "Grignard Reagent"],
+  // Industry
+  manufacturer: ["Sulfuric Acid", "Nitric Acid", "Caustic Soda", "Chlorine Gas", "Ammonia", "Phosphoric Acid"],
+  engineer:     ["Ethylene Oxide", "Propylene Oxide", "Methanol", "Acetone", "Dichloromethane", "Hydrogen Fluoride"],
+  petroleum:    ["Crude Oil", "Gasoline", "Benzene", "Toluene", "Xylene", "Hydrogen Sulfide"],
+  textile:      ["Formaldehyde", "Reactive Dye", "Sodium Carbonate", "Hydrogen Peroxide", "Acetic Acid", "Sodium Silicate"],
+  automotive:   ["Engine Oil", "Coolant (Ethylene Glycol)", "Brake Fluid", "Battery Acid (H₂SO₄)", "Transmission Fluid", "Antifreeze"],
+  logistics:    ["Hazmat Class 3 Flammable", "Corrosive Liquid", "Compressed Gas (O₂)", "Oxidizer (KNO₃)", "Toxic Substance", "Radioactive Material"],
+  mining:       ["Ammonium Nitrate", "Cyanide Solution", "Sulfuric Acid", "Mercury", "Sodium Cyanide", "Lime (CaO)"],
+  // Health
+  pharma:       ["Aspirin (ASA)", "Paracetamol", "Ethanol USP", "Propylene Glycol", "Sodium Chloride IV", "Calcium Carbonate"],
+  doctor:       ["Lidocaine", "Epinephrine", "Metformin", "Warfarin", "Digoxin", "Potassium Chloride IV"],
+  nutrition:    ["Vitamin C (Ascorbic Acid)", "Iron Sulfate", "Calcium Carbonate", "Citric Acid", "Sodium Benzoate", "Tartrazine (E102)"],
+  fitness:      ["Creatine", "Caffeine", "Whey Protein", "Beta-Alanine", "Magnesium Citrate", "Nitric Oxide Precursor"],
+  nurse:        ["Isopropyl Alcohol 70%", "Povidone-Iodine", "Chlorhexidine", "Sodium Hypochlorite 0.5%", "Hydrogen Peroxide 3%", "Saline"],
+  vet:          ["Ivermectin", "Amoxicillin", "Xylazine", "Ketamine", "Fipronil", "Enrofloxacin"],
+  // Environment
+  eco:          ["CO₂ (Carbon Dioxide)", "Methane", "Nitrous Oxide", "Ozone", "PM2.5 Particulates", "Perfluorocarbon"],
+  water:        ["Chlorine", "Fluoride", "Alum (KAl(SO₄)₂)", "Sodium Hypochlorite", "Ozone (O₃)", "Activated Carbon"],
+  forestry:     ["Glyphosate", "Atrazine", "2,4-D Herbicide", "Malathion", "Copper Sulfate", "Urea Fertilizer"],
+  marine:       ["Mercury (Hg)", "PCB (Polychlorinated Biphenyl)", "Crude Oil", "Microplastics", "Tributyltin (TBT)", "Cadmium"],
+  air:          ["Nitrogen Dioxide (NO₂)", "Sulfur Dioxide (SO₂)", "Carbon Monoxide", "Ozone", "VOC (Benzene)", "Particulate Matter"],
+  recycling:    ["Sulfuric Acid (battery)", "Lithium", "Lead", "Polyvinyl Chloride (PVC)", "Mercury (lamp)", "Cadmium (NiCd)"],
+  // Consumer
+  household:    ["Bleach", "Ammonia Cleaner", "Vinegar", "Rubbing Alcohol", "Drain Cleaner (NaOH)", "Baking Soda"],
+  parent:       ["Baby Wipes Ingredients", "Talcum Powder", "Diaper Cream (Zinc Oxide)", "Baby Shampoo Surfactant", "Sunscreen (Oxybenzone)", "Fluoride Toothpaste"],
+  diy:          ["Epoxy Resin", "Acetone", "Paint Thinner", "Wood Stain (Linseed Oil)", "Polyurethane Varnish", "Spray Paint (Isocyanate)"],
+  chef:         ["Sodium Nitrite (Curing Salt)", "Tartaric Acid", "Sodium Alginate", "Lecithin", "Citric Acid", "Xanthan Gum"],
+  traveler:     ["DEET Insect Repellent", "Sunscreen SPF50", "Hand Sanitizer (Ethanol)", "Water Purification Tablet", "Melatonin", "Antimalarial Drug"],
+  // Professional
+  business:     ["Retinol", "Hyaluronic Acid", "Niacinamide", "Glycolic Acid", "Salicylic Acid", "Phenoxyethanol"],
+  cosmetic:     ["Titanium Dioxide", "Dimethicone", "Carbomer", "Cetyl Alcohol", "Benzyl Alcohol", "Sodium Lauryl Sulfate"],
+  safety:       ["Hydrogen Cyanide", "Phosgene", "Chlorine Gas", "Hydrogen Sulfide", "Carbon Monoxide", "Ammonia"],
+  regulatory:   ["Parabens (Methylparaben)", "Phthalates (DEHP)", "Bisphenol A (BPA)", "Formaldehyde-Releaser", "Lead Acetate", "Mercury Compound"],
+  consultant:   ["REACH SVHC Chemicals", "GHS Category 1 Toxic", "CMR Substances", "Endocrine Disruptors", "PBT Substances", "Nano-Silver"],
+  lab:          ["Ethidium Bromide", "Acrylamide", "Beta-Mercaptoethanol", "Phenol", "Bromophenol Blue", "Trypan Blue"],
+};
+
+// Default placeholder text per persona
+const PERSONA_PLACEHOLDER = {
+  student:      "e.g., bleach, baking soda, vinegar...",
+  teacher:      "e.g., HCl, NaOH, copper sulfate...",
+  professor:    "e.g., benzene, DMSO, acetonitrile...",
+  researcher:   "e.g., LiAlH4, Pd/C, triethylamine...",
+  manufacturer: "e.g., sulfuric acid, chlorine, ammonia...",
+  engineer:     "e.g., ethylene oxide, methanol, acetone...",
+  petroleum:    "e.g., benzene, toluene, H₂S...",
+  textile:      "e.g., formaldehyde, reactive dye, NaOH...",
+  automotive:   "e.g., coolant, brake fluid, battery acid...",
+  logistics:    "e.g., flammable liquid, oxidizer, toxic...",
+  mining:       "e.g., ammonium nitrate, cyanide, H₂SO₄...",
+  pharma:       "e.g., aspirin, ethanol, propylene glycol...",
+  doctor:       "e.g., lidocaine, epinephrine, warfarin...",
+  nutrition:    "e.g., vitamin C, citric acid, iron sulfate...",
+  fitness:      "e.g., creatine, caffeine, beta-alanine...",
+  nurse:        "e.g., isopropyl alcohol, chlorhexidine...",
+  vet:          "e.g., ivermectin, ketamine, fipronil...",
+  eco:          "e.g., CO₂, methane, perfluorocarbon...",
+  water:        "e.g., chlorine, alum, sodium hypochlorite...",
+  forestry:     "e.g., glyphosate, atrazine, malathion...",
+  marine:       "e.g., mercury, PCBs, crude oil...",
+  air:          "e.g., NO₂, SO₂, benzene VOC...",
+  recycling:    "e.g., sulfuric acid, lithium, lead...",
+  household:    "e.g., bleach, vinegar, ammonia cleaner...",
+  parent:       "e.g., zinc oxide, oxybenzone, fluoride...",
+  diy:          "e.g., epoxy resin, acetone, polyurethane...",
+  chef:         "e.g., sodium nitrite, citric acid, lecithin...",
+  traveler:     "e.g., DEET, sunscreen, hand sanitizer...",
+  business:     "e.g., retinol, hyaluronic acid, niacinamide...",
+  cosmetic:     "e.g., TiO₂, dimethicone, carbomer...",
+  safety:       "e.g., HCN, phosgene, chlorine gas...",
+  regulatory:   "e.g., parabens, phthalates, BPA...",
+  consultant:   "e.g., SVHC, CMR substance, nano-silver...",
+  lab:          "e.g., ethidium bromide, acrylamide, phenol...",
+};
+
 // Chemicals known to be hazardous — warn users when added
 const HAZARDOUS_CHEMICALS = new Set([
   'sodium hypochlorite', 'bleach', 'ammonia', 'hydrogen peroxide',
@@ -361,7 +443,7 @@ export default function ChemicalInput({
                     }
                   }
                 }}
-                placeholder="e.g., bleach, baking soda, vinegar..."
+                placeholder={PERSONA_PLACEHOLDER[persona] || "e.g., bleach, baking soda, vinegar..."}
                 className="pr-10"
               />
               {isSearching && (
@@ -452,6 +534,48 @@ export default function ChemicalInput({
             )}
           </AnimatePresence>
         </div>
+
+        {/* Quick-pick chips — persona-specific */}
+        {PERSONA_QUICK_CHEMICALS[persona] && (
+          <div>
+            <p className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wide">Quick add for your profile</p>
+            <div className="flex flex-wrap gap-2">
+              {PERSONA_QUICK_CHEMICALS[persona].map(chem => {
+                const alreadyAdded = chemicals.some(c =>
+                  (c.display_name || c.name || '').toLowerCase() === chem.toLowerCase() ||
+                  (c.name || '').toLowerCase() === chem.toLowerCase()
+                );
+                return (
+                  <button
+                    key={chem}
+                    disabled={alreadyAdded}
+                    onClick={() => {
+                      if (alreadyAdded) return;
+                      const newChem = {
+                        id: Date.now(),
+                        name: chem,
+                        scientific_name: chem,
+                        display_name: chem,
+                        concentration: 0,
+                        concentrationUnit: 'M',
+                        purity: 99.9
+                      };
+                      checkHazardWarning(newChem, chemicals);
+                      onAddChemical(newChem);
+                    }}
+                    className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
+                      alreadyAdded
+                        ? 'bg-teal-50 text-teal-700 border-teal-300 cursor-default opacity-60'
+                        : 'bg-white text-slate-600 border-slate-200 hover:border-[var(--suttain-teal)] hover:text-[var(--suttain-teal)] hover:bg-teal-50 cursor-pointer'
+                    }`}
+                  >
+                    {alreadyAdded ? '✓ ' : '+ '}{chem}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Hazard Warnings */}
         <AnimatePresence>
