@@ -13,9 +13,10 @@ import SaferAlternatives from "../components/simulator/SaferAlternatives";
 import PersonaSelector from "../components/simulator/PersonaSelector";
 import SupplierManager from "../components/suppliers/SupplierManager";
 import SupplierLinkModal from "../components/suppliers/SupplierLinkModal";
+import HazardInteractionMatrix from "../components/simulator/HazardInteractionMatrix";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { MessageSquare, Star, X, DollarSign } from "lucide-react";
+import { MessageSquare, Star, X, DollarSign, Grid3X3, FlaskConical } from "lucide-react";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
 import SEOHead, { pageSEO } from "../components/shared/SEOHead";
 
@@ -507,6 +508,7 @@ const ADVANCED_PERSONAS = new Set(['business', 'teacher', 'researcher']);
 export default function Simulator() {
   const { user, refreshUser } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
+  const [activeMode, setActiveMode] = useState("simulator"); // "simulator" | "matrix"
   const [persona, setPersona] = useState(null);
   const [step, setStep] = useState(1);
   const [chemicals, setChemicals] = useState([]);
@@ -931,9 +933,46 @@ export default function Simulator() {
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
-          {!persona ? (
+          {/* Mode Toggle */}
+          <div className="flex justify-center mb-6">
+            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+              <button
+                onClick={() => setActiveMode("simulator")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  activeMode === "simulator"
+                    ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <FlaskConical className="w-4 h-4" /> Chemical Simulator
+              </button>
+              <button
+                onClick={() => setActiveMode("matrix")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  activeMode === "matrix"
+                    ? "bg-gradient-to-r from-red-600 to-orange-600 text-white shadow"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <Grid3X3 className="w-4 h-4" /> Hazard Matrix
+              </button>
+            </div>
+          </div>
+
+          {/* Hazard Interaction Matrix mode */}
+          {activeMode === "matrix" && (
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+              <Card className="border-2 border-red-100">
+                <CardContent className="p-6">
+                  <HazardInteractionMatrix />
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {activeMode === "simulator" && !persona ? (
             <PersonaSelector onSelectPersona={(selectedPersona) => setPersona(selectedPersona)} />
-          ) : (
+          ) : activeMode === "simulator" ? (
             <>
               {/* Header Section */}
               <motion.div
@@ -1130,7 +1169,7 @@ export default function Simulator() {
                 )}
               </AnimatePresence>
             </>
-          )}
+          ) : null}
         </div>
 
         {/* Subtle Feedback Notification - Bottom Right */}
