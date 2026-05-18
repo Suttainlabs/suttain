@@ -8,10 +8,21 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { TestTube, Plus, Trash2, AlertTriangle, ChevronLeft, Home, Hammer, GraduationCap, Atom, Play, Thermometer, Droplets, Settings2, ChevronDown, ChevronUp, Scale, Info } from "lucide-react";
+import { TestTube, Plus, Trash2, AlertTriangle, ChevronLeft, Home, Hammer, GraduationCap, Atom, Play, Thermometer, Droplets, Settings2, ChevronDown, ChevronUp, Scale, Info, ShieldAlert, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { base44 } from "@/api/base44Client";
 import { useDebounce } from "@/components/shared/useDebounce";
+
+// Chemicals known to be hazardous — warn users when added
+const HAZARDOUS_CHEMICALS = new Set([
+  'sodium hypochlorite', 'bleach', 'ammonia', 'hydrogen peroxide',
+  'hydrochloric acid', 'muriatic acid', 'hydrogen chloride', 'sulfuric acid',
+  'nitric acid', 'hydrofluoric acid', 'sodium hydroxide', 'lye', 'potassium hydroxide',
+  'formaldehyde', 'acetone', 'methanol', 'methyl alcohol', 'benzene', 'toluene',
+  'chlorine', 'chlorine gas', 'phosphoric acid', 'acetic acid', 'glacial acetic acid',
+  'calcium hypochlorite', 'pool chlorine', 'isocyanate', 'mercury', 'lead', 'arsenic',
+  'carbon tetrachloride', 'chloroform', 'ethylene oxide', 'propylene oxide'
+]);
 
 // Common name mappings for household/DIY users
 const COMMON_NAME_MAP = {
@@ -60,6 +71,7 @@ export default function ChemicalInput({
   const [isSearching, setIsSearching] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showAdvancedParams, setShowAdvancedParams] = useState(false);
+  const [hazardWarnings, setHazardWarnings] = useState([]); // Active warnings to show
   
   // Advanced reaction parameters
   const [reactionParams, setReactionParams] = useState({
@@ -133,6 +145,35 @@ export default function ChemicalInput({
     }
   };
 
+  const checkHazardWarning = (chemical, allChemicals) => {
+    const sciName = (chemical.scientific_name || chemical.name || '').toLowerCase();
+    const displayName = (chemical.display_name || chemical.name || '').toLowerCase();
+    const isHazardous = HAZARDOUS_CHEMICALS.has(sciName) || HAZARDOUS_CHEMICALS.has(displayName) || chemical.safety_level === 'hazardous' || chemical.safety_level === 'dangerous';
+    
+    if (!isHazardous) return;
+
+    // Count how many hazardous chemicals are already in the list
+    const hazardousCount = allChemicals.filter(c => {
+      const sn = (c.scientific_name || c.name || '').toLowerCase();
+      const dn = (c.display_name || c.name || '').toLowerCase();
+      return HAZARDOUS_CHEMICALS.has(sn) || HAZARDOUS_CHEMICALS.has(dn);
+    }).length;
+
+    const warningId = Date.now();
+    let message = `⚠️ "${chemical.display_name || chemical.name}" is a hazardous chemical. Handle with care and use proper PPE.`;
+    
+    if (hazardousCount >= 1) {
+      message = `🚨 You now have ${hazardousCount + 1} hazardous chemicals in your simulation. Certain combinations (e.g. bleach + ammonia) can produce toxic gases. Please review safety guidelines before proceeding.`;
+    }
+
+    setHazardWarnings(prev => [...prev, { id: warningId, message, level: hazardousCount >= 1 ? 'critical' : 'warning' }]);
+    
+    // Auto-dismiss after 8 seconds
+    setTimeout(() => {
+      setHazardWarnings(prev => prev.filter(w => w.id !== warningId));
+    }, 8000);
+  };
+
   const handleSelectChemical = (chemical) => {
     const scientificName = (chemical.scientific_name || chemical.name).toLowerCase();
     
@@ -142,16 +183,19 @@ export default function ChemicalInput({
       ? COMMON_NAME_MAP[scientificName]
       : chemical.name;
 
-    onAddChemical({
+    const newChemical = {
       ...chemical,
       id: Date.now(),
-      name: displayName, // Display name (common name for household/DIY)
-      scientific_name: chemical.scientific_name || chemical.name, // Keep scientific name for processing
-      display_name: displayName, // Explicitly store display name
+      name: displayName,
+      scientific_name: chemical.scientific_name || chemical.name,
+      display_name: displayName,
       concentration: 0,
       concentrationUnit: 'M',
       purity: 99.9
-    });
+    };
+
+    checkHazardWarning(newChemical, chemicals);
+    onAddChemical(newChemical);
 
     setSearchTerm("");
     setSuggestions([]);
@@ -164,13 +208,12 @@ export default function ChemicalInput({
     const searchLower = searchTerm.toLowerCase().trim();
     const shouldUseCommonName = ['household', 'diy', 'student'].includes(persona);
     
-    // Check if it's a common name that maps to a scientific name
     const scientificName = SCIENTIFIC_NAME_MAP[searchLower] || searchLower;
     const displayName = shouldUseCommonName && COMMON_NAME_MAP[scientificName]
       ? COMMON_NAME_MAP[scientificName]
       : searchTerm.trim();
 
-    onAddChemical({
+    const newChemical = {
       id: Date.now(),
       name: displayName,
       scientific_name: scientificName,
@@ -178,7 +221,10 @@ export default function ChemicalInput({
       concentration: 0,
       concentrationUnit: 'M',
       purity: 99.9
-    });
+    };
+
+    checkHazardWarning(newChemical, chemicals);
+    onAddChemical(newChemical);
 
     setSearchTerm("");
     setSuggestions([]);
@@ -406,6 +452,36 @@ export default function ChemicalInput({
             )}
           </AnimatePresence>
         </div>
+
+        {/* Hazard Warnings */}
+        <AnimatePresence>
+          {hazardWarnings.map(warning => (
+            <motion.div
+              key={warning.id}
+              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              className={`flex items-start gap-3 p-4 rounded-xl border-2 ${
+                warning.level === 'critical'
+                  ? 'bg-red-50 border-red-300'
+                  : 'bg-amber-50 border-amber-300'
+              }`}
+            >
+              <ShieldAlert className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                warning.level === 'critical' ? 'text-red-600' : 'text-amber-600'
+              }`} />
+              <p className={`text-sm flex-1 font-medium ${
+                warning.level === 'critical' ? 'text-red-900' : 'text-amber-900'
+              }`}>{warning.message}</p>
+              <button
+                onClick={() => setHazardWarnings(prev => prev.filter(w => w.id !== warning.id))}
+                className={`flex-shrink-0 ${warning.level === 'critical' ? 'text-red-400 hover:text-red-600' : 'text-amber-400 hover:text-amber-600'}`}
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          ))}
+        </AnimatePresence>
 
         {/* Added Chemicals List - Simple Square Blocks */}
         <div>

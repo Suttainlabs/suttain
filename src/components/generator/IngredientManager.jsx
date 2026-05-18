@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowLeft, ChevronRight, Plus, X, AlertTriangle, 
-  Leaf, ShieldAlert, Beaker, Search 
+  Leaf, ShieldAlert, Beaker, Search, Bell
 } from "lucide-react";
 import { Chemical } from "@/entities/Chemical";
 
@@ -19,6 +19,7 @@ export default function IngredientManager({
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [availableChemicals, setAvailableChemicals] = useState([]);
+  const [ingredientWarnings, setIngredientWarnings] = useState([]);
 
   React.useEffect(() => {
     loadChemicals();
@@ -50,6 +51,34 @@ export default function IngredientManager({
     }];
     onUpdateIngredients(newIngredients);
     setSearchTerm("");
+
+    // Warn about allergens or low safety ratings
+    const warningId = Date.now();
+    let warningMsg = null;
+    let warningLevel = 'warning';
+
+    const allergenCount = newIngredients.filter(i => i.allergen).length;
+    const lowSafetyCount = newIngredients.filter(i => i.safety_rating < 50).length;
+
+    if (chemical.allergen && allergenCount >= 2) {
+      warningMsg = `⚠️ You now have ${allergenCount} allergen-containing ingredients. High allergen load may cause skin sensitization or regulatory issues.`;
+      warningLevel = 'critical';
+    } else if (chemical.allergen) {
+      warningMsg = `⚠️ "${chemical.name}" contains known allergens. Ensure proper labeling and consider your target audience.`;
+    } else if (chemical.safety_rating < 50) {
+      warningMsg = `🚨 "${chemical.name}" has a low safety rating (${chemical.safety_rating}%). Consider safer alternatives before proceeding.`;
+      warningLevel = 'critical';
+    } else if (lowSafetyCount >= 2) {
+      warningMsg = `🚨 ${lowSafetyCount} ingredients have low safety ratings. Review your formula for compliance risks.`;
+      warningLevel = 'critical';
+    }
+
+    if (warningMsg) {
+      setIngredientWarnings(prev => [...prev, { id: warningId, message: warningMsg, level: warningLevel }]);
+      setTimeout(() => {
+        setIngredientWarnings(prev => prev.filter(w => w.id !== warningId));
+      }, 8000);
+    }
   };
 
   const removeIngredient = (index) => {
@@ -140,6 +169,36 @@ export default function IngredientManager({
                 ))}
               </div>
             )}
+
+            {/* Ingredient Warnings */}
+            <AnimatePresence>
+              {ingredientWarnings.map(warning => (
+                <motion.div
+                  key={warning.id}
+                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                  className={`flex items-start gap-3 p-4 rounded-xl border-2 ${
+                    warning.level === 'critical'
+                      ? 'bg-red-50 border-red-300'
+                      : 'bg-amber-50 border-amber-300'
+                  }`}
+                >
+                  <Bell className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                    warning.level === 'critical' ? 'text-red-600' : 'text-amber-600'
+                  }`} />
+                  <p className={`text-sm flex-1 font-medium ${
+                    warning.level === 'critical' ? 'text-red-900' : 'text-amber-900'
+                  }`}>{warning.message}</p>
+                  <button
+                    onClick={() => setIngredientWarnings(prev => prev.filter(w => w.id !== warning.id))}
+                    className={`flex-shrink-0 ${warning.level === 'critical' ? 'text-red-400 hover:text-red-600' : 'text-amber-400 hover:text-amber-600'}`}
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </motion.div>
+              ))}
+            </AnimatePresence>
 
             {/* Added Ingredients */}
             {ingredients.length > 0 && (

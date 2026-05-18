@@ -1,10 +1,11 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, RotateCcw, AlertTriangle, ArrowRight, ShieldCheck, TrendingUp, Leaf, BookOpen, FlaskConical } from "lucide-react";
+import { ArrowLeft, RotateCcw, AlertTriangle, ArrowRight, ShieldCheck, TrendingUp, Leaf, BookOpen, FlaskConical, TestTube, Atom, ChevronRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 const RatingBar = ({ score, color }) => (
     <div className="w-full bg-slate-200 rounded-full h-2.5">
@@ -27,14 +28,28 @@ export default function SaferAlternatives({
   onStartNew,
   onBackToAnalysis
 }) {
+  const navigate = useNavigate();
   const overallRiskScore = riskAssessment.overall_risk_score || 0;
   const isHighOrModerateRisk = overallRiskScore >= 40;
+  const [actionPopup, setActionPopup] = useState(null);
 
   const validAlternatives = (alternatives || []).filter(alt =>
     alt && alt.original_chemical && alt.alternative_chemical
   );
   
   const hasValidAlternatives = validAlternatives.length > 0;
+
+  const handleSimulateAlternative = (alt) => {
+    // Navigate to Simulator with the alternative pre-filled via URL param
+    const params = new URLSearchParams({ prefill: alt.alternative_chemical });
+    navigate(`/Simulator?${params.toString()}`);
+  };
+
+  const handleGenerateFormula = (alt) => {
+    // Navigate to generator with the alternative as a suggested ingredient
+    const params = new URLSearchParams({ ingredient: alt.alternative_chemical });
+    navigate(`/generator?${params.toString()}`);
+  };
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -51,6 +66,7 @@ export default function SaferAlternatives({
                         `Your combination has a low risk score of ${overallRiskScore}, but here are some alternatives for enhanced safety and performance.`
                     }
                 </p>
+                <p className="text-sm text-teal-600 mt-2 font-medium">Click any alternative card to simulate or generate a formula with it</p>
             </div>
 
             {hasValidAlternatives ? (
@@ -62,7 +78,9 @@ export default function SaferAlternatives({
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
                         >
-                            <Card className="bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
+                            <Card className="bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col cursor-pointer group border-2 hover:border-teal-300"
+                                onClick={() => setActionPopup(actionPopup === index ? null : index)}
+                            >
                                 <CardHeader className="bg-slate-50/50 p-4">
                                     <div className="flex items-start justify-between">
                                         <div className="flex-1">
@@ -110,6 +128,43 @@ export default function SaferAlternatives({
                                     <div className="mt-4 pt-3 border-t border-slate-200">
                                        <p className="text-xs text-slate-500">Commercial names: {alt.commercial_names?.join(', ') || 'Various'}</p>
                                     </div>
+
+                                    {/* Action buttons — shown when card is clicked */}
+                                    {actionPopup === index && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="mt-4 pt-3 border-t-2 border-teal-200 space-y-2"
+                                            onClick={e => e.stopPropagation()}
+                                        >
+                                            <p className="text-xs font-semibold text-teal-700 mb-2">Use <span className="text-teal-900">{alt.alternative_chemical}</span> in:</p>
+                                            <Button
+                                                size="sm"
+                                                className="w-full bg-gradient-to-r from-[var(--suttain-teal)] to-[var(--suttain-blue)] text-white"
+                                                onClick={() => handleSimulateAlternative(alt)}
+                                            >
+                                                <TestTube className="w-3.5 h-3.5 mr-2" />
+                                                Simulate This Chemical
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="w-full border-teal-300 text-teal-700 hover:bg-teal-50"
+                                                onClick={() => handleGenerateFormula(alt)}
+                                            >
+                                                <Sparkles className="w-3.5 h-3.5 mr-2" />
+                                                Generate Formula
+                                            </Button>
+                                        </motion.div>
+                                    )}
+
+                                    {/* Hint when not expanded */}
+                                    {actionPopup !== index && (
+                                        <div className="mt-3 flex items-center justify-center gap-1 text-xs text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <ChevronRight className="w-3.5 h-3.5" />
+                                            Click to use this alternative
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
                         </motion.div>
