@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Crown, User, RefreshCw, Search, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Crown, User, RefreshCw, Search, CheckCircle2, XCircle, Clock, CalendarClock, Mail, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const PLAN_CONFIG = {
   pro: { label: 'Pro', color: 'bg-teal-600 text-white', icon: Crown },
@@ -21,12 +22,37 @@ const STATUS_CONFIG = {
   past_due: { label: 'Past Due', color: 'bg-orange-100 text-orange-700', icon: XCircle },
 };
 
+function getDaysLeft(user) {
+  const endRaw = user.subscription_period_end || user.subscription_end_date ||
+                 user.data?.subscription_period_end || user.data?.subscription_end_date;
+  if (!endRaw) return null;
+  const end = new Date(endRaw);
+  const now = new Date();
+  const days = Math.ceil((end - now) / (24 * 60 * 60 * 1000));
+  return days;
+}
+
 export default function SubscriptionsPanel() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [lastRefreshed, setLastRefreshed] = useState(null);
+  const [sendingReminder, setSendingReminder] = useState(null); // userId being emailed
+  const [reminderSent, setReminderSent] = useState({}); // {userId: true}
+
+  const sendManualReminder = async (userId) => {
+    setSendingReminder(userId);
+    try {
+      await base44.functions.invoke('sendProExpirationEmail', { manual: true, targetUserId: userId });
+      setReminderSent(prev => ({ ...prev, [userId]: true }));
+      setTimeout(() => setReminderSent(prev => { const n = { ...prev }; delete n[userId]; return n; }), 5000);
+    } catch (e) {
+      console.error('Failed to send reminder:', e);
+    } finally {
+      setSendingReminder(null);
+    }
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -119,6 +145,37 @@ export default function SubscriptionsPanel() {
             </div>
           </CardContent>
         </Card>
+        <Card className="border-0 shadow-sm bg-gradient-to-br from-orange-50 to-amber-50 sm:col-span-3">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+              <CalendarClock className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-orange-700">Pro Subscriptions Expiring Soon (≤10 days)</p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {users.filter(u => {
+                  const plan = u.data?.subscription_plan || u.subscription_plan;
+                  const isPro = plan === 'pro' || plan === 'enterprise';
+                  const days = getDaysLeft(u);
+                  return isPro && days !== null && days <= 10 && days >= 0;
+                }).length === 0 ? (
+                  <span className="text-xs text-orange-500">No subscriptions expiring in the next 10 days</span>
+                ) : (
+                  users.filter(u => {
+                    const plan = u.data?.subscription_plan || u.subscription_plan;
+                    const isPro = plan === 'pro' || plan === 'enterprise';
+                    const days = getDaysLeft(u);
+                    return isPro && days !== null && days <= 10 && days >= 0;
+                  }).map(u => (
+                    <span key={u.id} className="text-xs bg-orange-100 text-orange-800 border border-orange-200 rounded-full px-2 py-0.5 font-semibold">
+                      {u.full_name || u.email} — {getDaysLeft(u)}d left
+                    </span>
+                  ))
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters & Search */}
@@ -165,14 +222,16 @@ export default function SubscriptionsPanel() {
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Plan</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Status</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Billing</th>
+                <th className="text-left px-4 py-3 font-semibold text-slate-600">Days Left</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Joined</th>
+                <th className="text-left px-4 py-3 font-semibold text-slate-600">Action</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={5} className="text-center py-12 text-slate-400">Loading...</td></tr>
+                <tr><td colSpan={7} className="text-center py-12 text-slate-400">Loading...</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-12 text-slate-400">No users found</td></tr>
+                <tr><td colSpan={7} className="text-center py-12 text-slate-400">No users found</td></tr>
               ) : filtered.map(u => {
                 const plan = u.data?.subscription_plan || u.subscription_plan || 'free';
                 const planCfg = PLAN_CONFIG[plan] || PLAN_CONFIG.free;
@@ -182,8 +241,11 @@ export default function SubscriptionsPanel() {
                 const StatusIcon = statusCfg.icon;
                 const PlanIcon = planCfg.icon;
                 const isPro = plan === 'pro' || plan === 'enterprise' || plan === 'lifetime';
+                const daysLeft = isPro ? getDaysLeft(u) : null;
+                const isExpiringSoon = daysLeft !== null && daysLeft <= 10 && daysLeft >= 0;
+                const isExpired = daysLeft !== null && daysLeft < 0;
                 return (
-                  <tr key={u.id} className={`border-b border-slate-100 hover:bg-slate-50 transition-colors ${isPro ? 'bg-teal-50/30' : ''}`}>
+                  <tr key={u.id} className={`border-b border-slate-100 hover:bg-slate-50 transition-colors ${isExpiringSoon ? 'bg-orange-50/40' : isPro ? 'bg-teal-50/30' : ''}`}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${isPro ? 'bg-teal-600' : 'bg-slate-400'}`}>
@@ -211,8 +273,55 @@ export default function SubscriptionsPanel() {
                     <td className="px-4 py-3 text-slate-600 capitalize">
                       {subBilling || '—'}
                     </td>
+                    <td className="px-4 py-3">
+                      {daysLeft === null ? (
+                        <span className="text-slate-400 text-xs">—</span>
+                      ) : isExpired ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
+                          <XCircle className="w-3 h-3" /> Expired
+                        </span>
+                      ) : isExpiringSoon ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full border border-orange-300">
+                          <AlertTriangle className="w-3 h-3" /> {daysLeft}d left
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
+                          <CheckCircle2 className="w-3 h-3" /> {daysLeft}d left
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-slate-500 text-xs">
                       {u.created_date ? new Date(u.created_date).toLocaleDateString() : '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      {isPro && daysLeft !== null ? (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={sendingReminder === u.id}
+                                onClick={() => sendManualReminder(u.id)}
+                                className={`h-7 text-xs px-2 ${reminderSent[u.id] ? 'border-green-400 text-green-700' : 'border-orange-300 text-orange-700 hover:bg-orange-50'}`}
+                              >
+                                {reminderSent[u.id] ? (
+                                  <><CheckCircle2 className="w-3 h-3 mr-1" />Sent</>
+                                ) : sendingReminder === u.id ? (
+                                  <><RefreshCw className="w-3 h-3 mr-1 animate-spin" />Sending...</>
+                                ) : (
+                                  <><Mail className="w-3 h-3 mr-1" />Send Reminder</>
+                                )}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">Send renewal reminder email to {u.email}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        <span className="text-slate-300 text-xs">—</span>
+                      )}
                     </td>
                   </tr>
                 );
