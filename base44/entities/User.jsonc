@@ -49,6 +49,11 @@
         "yearly"
       ]
     },
+    "subscription_end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current subscription period ends (from Stripe)"
+    },
     "stripe_customer_id": {
       "type": "string"
     },

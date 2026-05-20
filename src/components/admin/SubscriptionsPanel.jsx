@@ -23,10 +23,14 @@ const STATUS_CONFIG = {
 };
 
 function getDaysLeft(user) {
-  const endRaw = user.subscription_period_end || user.subscription_end_date ||
-                 user.data?.subscription_period_end || user.data?.subscription_end_date;
+  // user records from admin list come with fields at top-level AND sometimes nested in .data
+  const endRaw = user.subscription_end_date
+    || user.data?.subscription_end_date
+    || user.subscription_cancel_at
+    || user.data?.subscription_cancel_at;
   if (!endRaw) return null;
   const end = new Date(endRaw);
+  if (isNaN(end.getTime())) return null;
   const now = new Date();
   const days = Math.ceil((end - now) / (24 * 60 * 60 * 1000));
   return days;
@@ -38,8 +42,25 @@ export default function SubscriptionsPanel() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [lastRefreshed, setLastRefreshed] = useState(null);
-  const [sendingReminder, setSendingReminder] = useState(null); // userId being emailed
-  const [reminderSent, setReminderSent] = useState({}); // {userId: true}
+  const [sendingReminder, setSendingReminder] = useState(null);
+  const [reminderSent, setReminderSent] = useState({});
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState(null);
+
+  const syncFromStripe = async () => {
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await base44.functions.invoke('syncSubscriptionDates', {});
+      setSyncResult(res);
+      await fetchUsers();
+    } catch (e) {
+      console.error('Sync failed:', e);
+      setSyncResult({ error: e.message });
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const sendManualReminder = async (userId) => {
     setSendingReminder(userId);
@@ -206,6 +227,22 @@ export default function SubscriptionsPanel() {
           <Button variant="outline" size="icon" onClick={fetchUsers} disabled={loading}>
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" onClick={syncFromStripe} disabled={syncing} className="text-xs px-3 gap-1.5 text-violet-700 border-violet-300 hover:bg-violet-50">
+                  <CalendarClock className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} />
+                  {syncing ? 'Syncing...' : 'Sync Dates'}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent><p className="text-xs">Pull subscription end dates from Stripe for all Pro users</p></TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {syncResult && !syncResult.error && (
+            <span className="text-xs text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded-lg">
+              ✓ Synced {syncResult.updated}/{syncResult.total} users
+            </span>
+          )}
         </div>
       </div>
       {lastRefreshed && (

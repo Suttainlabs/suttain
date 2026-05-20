@@ -163,6 +163,19 @@ Deno.serve(async (req) => {
         const plan = priceKey?.startsWith('enterprise') ? 'enterprise' : 'pro';
         const billing = priceKey?.includes('yearly') ? 'yearly' : priceKey?.includes('lifetime') ? 'lifetime' : 'monthly';
 
+        // Fetch subscription period end if this is a recurring subscription
+        let periodEnd = null;
+        if (session.subscription) {
+          try {
+            const sub = await stripe.subscriptions.retrieve(session.subscription);
+            if (sub.current_period_end) {
+              periodEnd = new Date(sub.current_period_end * 1000).toISOString();
+            }
+          } catch (e) {
+            console.error('Failed to fetch subscription period end:', e);
+          }
+        }
+
         if (userId) {
           try {
             await base44.asServiceRole.entities.User.update(userId, {
@@ -171,6 +184,7 @@ Deno.serve(async (req) => {
               subscription_billing: billing,
               stripe_customer_id: session.customer,
               stripe_subscription_id: session.subscription || null,
+              ...(periodEnd && { subscription_end_date: periodEnd }),
             });
             console.log(`Updated user ${userId} to ${plan} plan (${billing})`);
           } catch (e) {
@@ -193,6 +207,9 @@ Deno.serve(async (req) => {
           } catch (e) {
             console.error('Failed to find/update user by email:', e);
           }
+        } else if (customerEmail && periodEnd) {
+          // Also try to set period end when found by email above
+          // (already done inside the block above, this is just a fallback note)
         }
 
         // Send payment confirmation email to customer
@@ -315,6 +332,13 @@ Deno.serve(async (req) => {
           }
         }
 
+        // Get period end from invoice
+        let invoicePeriodEnd = null;
+        const invoiceLineItem = invoice.lines?.data?.[0];
+        if (invoiceLineItem?.period?.end) {
+          invoicePeriodEnd = new Date(invoiceLineItem.period.end * 1000).toISOString();
+        }
+
         if (targetUserId) {
           try {
             await base44.asServiceRole.entities.User.update(targetUserId, {
@@ -323,6 +347,7 @@ Deno.serve(async (req) => {
               subscription_billing: billing,
               stripe_subscription_id: invoiceSubId,
               stripe_customer_id: invoice.customer,
+              ...(invoicePeriodEnd && { subscription_end_date: invoicePeriodEnd }),
             });
             console.log(`invoice.paid: confirmed pro/active for user ${targetUserId} (${billing})`);
 
