@@ -14,6 +14,7 @@ import PersonaSelector from "../components/simulator/PersonaSelector";
 import SupplierManager from "../components/suppliers/SupplierManager";
 import SupplierLinkModal from "../components/suppliers/SupplierLinkModal";
 import HazardInteractionMatrix from "../components/simulator/HazardInteractionMatrix";
+import ComplianceAuditPanel from "../components/simulator/ComplianceAuditPanel";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { MessageSquare, Star, X, DollarSign, Grid3X3, FlaskConical } from "lucide-react";
@@ -1146,6 +1147,11 @@ export default function Simulator() {
                          </div>
                        </CardContent>
                      </Card>
+                     <ComplianceAuditPanel
+                       chemicals={chemicals}
+                       persona={persona}
+                       simulationData={simulationData}
+                     />
                      <SupplierManager />
                    </motion.div>
                  )}
