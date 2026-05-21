@@ -17,16 +17,18 @@ import HazardInteractionMatrix from "../components/simulator/HazardInteractionMa
 import ComplianceAuditPanel from "../components/simulator/ComplianceAuditPanel";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { MessageSquare, Star, X, DollarSign, Grid3X3, FlaskConical } from "lucide-react";
+import { MessageSquare, Star, X, DollarSign, Grid3X3, FlaskConical, FileText } from "lucide-react";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
 import SEOHead, { pageSEO } from "../components/shared/SEOHead";
 
 // Lazy load RatingModal
-const RatingModal = lazy(() => import("../components/shared/RatingModal")); // Assuming this path for the RatingModal component
+const RatingModal = lazy(() => import("../components/shared/RatingModal"));
 // Lazy load ResearchChemicalInput
 const ResearchChemicalInput = lazy(() => import("../components/simulator/ResearchChemicalInput"));
 // Lazy load BusinessChemicalInput
 const BusinessChemicalInput = lazy(() => import("../components/simulator/BusinessChemicalInput"));
+// Lazy load SDSAnalyzer inline panel
+const SDSAnalyzerPanel = lazy(() => import("../pages/SDSAnalyzer"));
 
 // SCIENTIFICALLY VERIFIED REACTIONS DATABASE WITH ACCURATE PRODUCT FORMATION
 const VERIFIED_CHEMICAL_REACTIONS = {
@@ -509,7 +511,7 @@ const ADVANCED_PERSONAS = new Set(['business', 'teacher', 'researcher']);
 export default function Simulator() {
   const { user, refreshUser } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
-  const [activeMode, setActiveMode] = useState("simulator"); // "simulator" | "matrix"
+  const [activeMode, setActiveMode] = useState("simulator"); // "simulator" | "matrix" | "sds"
   const [persona, setPersona] = useState(null);
   const [step, setStep] = useState(1);
   const [chemicals, setChemicals] = useState([]);
@@ -979,6 +981,16 @@ export default function Simulator() {
               >
                 <Grid3X3 className="w-4 h-4" /> Hazard Matrix
               </button>
+              <button
+                onClick={() => setActiveMode("sds")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  activeMode === "sds"
+                    ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <FileText className="w-4 h-4" /> SDS Analyzer
+              </button>
             </div>
           </div>
 
@@ -990,6 +1002,15 @@ export default function Simulator() {
                   <HazardInteractionMatrix />
                 </CardContent>
               </Card>
+            </motion.div>
+          )}
+
+          {/* SDS Analyzer mode */}
+          {activeMode === "sds" && (
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+              <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}>
+                <SDSAnalyzerPanel />
+              </Suspense>
             </motion.div>
           )}
 
