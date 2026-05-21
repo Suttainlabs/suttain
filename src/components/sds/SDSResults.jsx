@@ -12,23 +12,44 @@ const HAZARD_COLORS = {
   low: "bg-green-100 text-green-700 border-green-200",
 };
 
-const RiskGauge = ({ score }) => {
-  const color = score >= 75 ? "#ef4444" : score >= 50 ? "#f97316" : score >= 25 ? "#eab308" : "#22c55e";
+const RiskGaugeArc = ({ score }) => {
   const label = score >= 75 ? "High Risk" : score >= 50 ? "Moderate Risk" : score >= 25 ? "Low-Moderate" : "Low Risk";
+  // Semi-circle gauge: arc goes from 180deg to 0deg (left to right)
+  // We draw on a 120x70 viewBox with a half-circle arc
+  const r = 50;
+  const cx = 60;
+  const cy = 62;
+  const circumference = Math.PI * r; // half circle
+  const progress = (score / 100) * circumference;
+  // Gradient stops: green (left) -> yellow -> orange -> red (right)
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative w-28 h-28">
-        <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="#e2e8f0" strokeWidth="10" />
-          <circle cx="50" cy="50" r="40" fill="none" stroke={color} strokeWidth="10"
-            strokeDasharray={`${2.513 * score} ${251.3 - 2.513 * score}`} strokeLinecap="round" />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-bold" style={{ color }}>{score}</span>
-          <span className="text-xs text-slate-500">/100</span>
-        </div>
+    <div className="flex flex-col items-center">
+      <svg width="130" height="80" viewBox="0 0 120 75">
+        <defs>
+          <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22c55e" />
+            <stop offset="40%" stopColor="#eab308" />
+            <stop offset="70%" stopColor="#f97316" />
+            <stop offset="100%" stopColor="#ef4444" />
+          </linearGradient>
+        </defs>
+        {/* Track */}
+        <path
+          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+          fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="8" strokeLinecap="round"
+        />
+        {/* Progress */}
+        <path
+          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+          fill="none" stroke="url(#gaugeGrad)" strokeWidth="8" strokeLinecap="round"
+          strokeDasharray={`${progress} ${circumference}`}
+        />
+      </svg>
+      <div className="-mt-6 flex items-baseline gap-1">
+        <span className="text-5xl font-bold text-white">{score}</span>
+        <span className="text-lg text-white/60 font-medium">/ 100</span>
       </div>
-      <span className="text-sm font-semibold" style={{ color }}>{label}</span>
+      <span className="text-sm font-semibold text-white/80 mt-1">{label}</span>
     </div>
   );
 };
@@ -63,27 +84,52 @@ export default function SDSResults({ data, fileName, onReset }) {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-teal-600 to-cyan-600 rounded-2xl p-6 text-white">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <p className="text-teal-100 text-sm mb-1">SDS Analysis Complete</p>
-            <h2 className="text-2xl font-bold">{data.product_name || "Unknown Product"}</h2>
-            {data.manufacturer && <p className="text-teal-100 mt-1">{data.manufacturer}</p>}
-            {data.cas_number && <p className="text-teal-200 text-sm mt-0.5">CAS: {data.cas_number}</p>}
+      {/* Header — Glassmorphism */}
+      <div
+        className="rounded-2xl p-7 text-white relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #133a37 0%, #0d4a46 45%, #0a5c52 100%)" }}
+      >
+        <div className="relative z-10 flex items-start gap-6 flex-wrap">
+          {/* Left: info + summary + buttons */}
+          <div className="flex-1 min-w-0">
+            <p className="text-white/55 text-sm font-medium tracking-wide mb-3">SDS Analysis Complete</p>
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <h2 className="text-3xl font-bold text-white">{data.product_name || "Unknown Product"}</h2>
+              {data.manufacturer && (
+                <span className="px-3 py-1 rounded-md text-sm font-medium text-white/75" style={{ background: "rgba(255,255,255,0.1)" }}>
+                  {data.manufacturer.split(",")[0]}
+                </span>
+              )}
+              {data.cas_number && (
+                <span className="px-3 py-1 rounded-md text-sm font-medium text-white/75" style={{ background: "rgba(255,255,255,0.1)" }}>
+                  CAS: {data.cas_number}
+                </span>
+              )}
+            </div>
+            {data.summary && (
+              <p className="text-white/80 text-base leading-relaxed mb-6">{data.summary}</p>
+            )}
+            <div className="flex gap-3 flex-wrap">
+              <Button
+                onClick={handleSimulate}
+                className="font-semibold rounded-xl px-6 py-2.5 text-sm border"
+                style={{ background: "rgba(2,152,140,0.85)", color: "white", borderColor: "rgba(2,200,180,0.5)" }}
+              >
+                <FlaskConical className="w-4 h-4 mr-2" /> Simulate in Suttain
+              </Button>
+              <Button
+                onClick={handleGenerateFormula}
+                className="font-semibold rounded-xl px-6 py-2.5 text-sm border-0"
+                style={{ background: "rgba(255,255,255,0.95)", color: "#1e293b" }}
+              >
+                <Zap className="w-4 h-4 mr-2" /> Generate Safer Formula
+              </Button>
+            </div>
           </div>
-          <RiskGauge score={data.overall_risk_score ?? 0} />
-        </div>
-        {data.summary && (
-          <p className="mt-4 text-teal-50 text-sm leading-relaxed bg-white/10 rounded-xl px-4 py-3">{data.summary}</p>
-        )}
-        <div className="flex gap-3 mt-4 flex-wrap">
-          <Button onClick={handleSimulate} className="bg-white text-teal-700 hover:bg-teal-50 font-semibold rounded-full px-5">
-            <FlaskConical className="w-4 h-4 mr-2" /> Simulate in Suttain
-          </Button>
-          <Button onClick={handleGenerateFormula} variant="outline" className="border-white/40 text-white hover:bg-white/10 rounded-full px-5">
-            <Zap className="w-4 h-4 mr-2" /> Generate Safer Formula
-          </Button>
+          {/* Right: gauge */}
+          <div className="shrink-0">
+            <RiskGaugeArc score={data.overall_risk_score ?? 0} />
+          </div>
         </div>
       </div>
 
