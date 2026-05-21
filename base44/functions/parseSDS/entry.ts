@@ -9,48 +9,33 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'file_url is required' }, { status: 400 });
     }
 
-    // Step 1: Extract raw text from the PDF
-    const extraction = await base44.asServiceRole.integrations.Core.ExtractDataFromUploadedFile({
-      file_url,
-      json_schema: {
-        type: "object",
-        properties: {
-          raw_text: { type: "string" }
-        }
-      }
-    });
+    const prompt = `You are an expert chemical safety analyst. Carefully read this Safety Data Sheet document and extract ALL information visible in it.
 
-    const pdfText = extraction?.output?.raw_text || '';
+CRITICAL: You MUST read the actual document content. The product name is in Section 1 (Identification) or at the top of the document. Never return "Unknown Product" — always extract the real product name.
 
-    if (!pdfText || pdfText.trim().length < 30) {
-      return Response.json({ error: 'Could not extract text from PDF.' }, { status: 400 });
-    }
-
-    // Step 2: Analyze text with fast default LLM model
-    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `You are a chemical safety analyst. Extract data from this Safety Data Sheet text.
-
-${pdfText.slice(0, 12000)}
-
-Return JSON with:
-- product_name: exact chemical/product name from Section 1 or document title (REQUIRED - never null)
-- cas_number: CAS number string
-- manufacturer: supplier company name
-- hazard_classifications: array of GHS hazard class strings
-- hazard_statements: array of "H### - description" strings
-- precautionary_statements: array of "P### - description" strings
-- ingredients: array of {name, cas, concentration_percent, hazard_level: "low"|"medium"|"high"|"critical"}
-- physical_properties: {flash_point, boiling_point, ph, vapor_pressure, appearance, odor}
-- health_hazards: array of strings
-- environmental_hazards: array of strings
-- first_aid_measures: {skin, eyes, inhalation, ingestion}
-- storage_requirements: array of strings
+Return a JSON object with these fields:
+- product_name: the exact chemical or product name from the SDS (e.g. "Sodium Hydroxide", "Acetone", "Benzene") — REQUIRED
+- cas_number: CAS registry number (e.g. "67-64-1")
+- manufacturer: supplier/company name from Section 1
+- hazard_classifications: array of GHS hazard class strings (e.g. ["Flammable liquid, category 2", "Acute toxicity, category 4"])
+- hazard_statements: array of H-statement strings (e.g. ["H225 - Highly flammable liquid and vapour"])
+- precautionary_statements: array of P-statement strings
+- ingredients: array of objects {name, cas, concentration_percent, hazard_level} where hazard_level is "low", "medium", "high", or "critical"
+- physical_properties: object with {flash_point, boiling_point, ph, vapor_pressure, appearance, odor}
+- health_hazards: array of health effect strings
+- environmental_hazards: array of environmental concern strings
+- first_aid_measures: object with {skin, eyes, inhalation, ingestion}
+- storage_requirements: array of storage guideline strings
 - disposal_requirements: string
-- overall_risk_score: 0-100 integer (carcinogens like benzene=90, corrosives=70, mild irritants=20, safe=5)
+- overall_risk_score: integer 0-100 (100 = most dangerous; e.g. benzene=90, strong acids=75, acetone=45, vitamin C=5)
 - safer_alternatives: array of {ingredient_name, alternative, reason, estimated_risk_reduction_percent}
-- formula_recommendations: array of actionable strings
-- regulatory_compliance: {reach_compliant: boolean, sds_version, revision_date}
-- summary: 2-3 sentence plain-language safety summary`,
+- formula_recommendations: array of actionable safety recommendation strings
+- regulatory_compliance: object with {reach_compliant: boolean, sds_version, revision_date}
+- summary: 2-3 sentence plain-language safety summary of the product and its main risks`;
+
+    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt,
+      file_urls: [file_url],
       response_json_schema: {
         type: "object",
         properties: {
@@ -120,7 +105,8 @@ Return JSON with:
           },
           summary: { type: "string" }
         }
-      }
+      },
+      model: "claude_sonnet_4_6"
     });
 
     return Response.json({ success: true, data: result });
