@@ -137,9 +137,18 @@ export default function SDSResults({ data, fileName, onReset }) {
       {data.hazard_classifications?.length > 0 && (
         <Section title="Hazard Classifications" icon={AlertTriangle}>
           <div className="flex flex-wrap gap-2">
-            {data.hazard_classifications.map((h, i) => (
-              <Badge key={i} variant="outline" className="bg-red-50 text-red-700 border-red-200">{h}</Badge>
-            ))}
+            {data.hazard_classifications.map((h, i) => {
+              const label = typeof h === "string" ? h : h.category || h.statement || JSON.stringify(h);
+              const severity = typeof h === "object" ? h.severity : null;
+              return (
+                <div key={i} className={`rounded-lg border px-3 py-2 text-sm ${HAZARD_COLORS[severity] || "bg-red-50 text-red-700 border-red-200"}`}>
+                  {typeof h === "object" && h.category && (
+                    <span className="font-semibold block text-xs uppercase tracking-wide opacity-70">{h.category}</span>
+                  )}
+                  <span>{typeof h === "object" ? (h.statement || h.category) : h}</span>
+                </div>
+              );
+            })}
           </div>
         </Section>
       )}
@@ -174,23 +183,30 @@ export default function SDSResults({ data, fileName, onReset }) {
       {data.safer_alternatives?.length > 0 && (
         <Section title="Safer Alternatives" icon={Leaf}>
           <div className="space-y-3">
-            {data.safer_alternatives.map((alt, i) => (
-              <div key={i} className="bg-green-50 border border-green-200 rounded-xl p-4">
-                <div className="flex items-start justify-between gap-2 flex-wrap">
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-semibold text-slate-700">{alt.ingredient_name}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-green-600 shrink-0" />
-                    <span className="font-bold text-green-700">{alt.alternative}</span>
+            {data.safer_alternatives.map((alt, i) => {
+              // Support both field naming conventions
+              const fromName = alt.ingredient_name || alt.original_chemical || "";
+              const toName = alt.alternative || alt.alternative_chemical || alt.name || "";
+              const reason = alt.reason || alt.safety_improvement || alt.risk_reduction || "";
+              const riskReduction = alt.estimated_risk_reduction_percent ?? null;
+              return (
+                <div key={i} className="bg-green-50 border border-green-200 rounded-xl p-4">
+                  <div className="flex items-start justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 text-sm flex-wrap">
+                      {fromName && <span className="font-semibold text-slate-700">{fromName}</span>}
+                      {fromName && toName && <ArrowRight className="w-3.5 h-3.5 text-green-600 shrink-0" />}
+                      {toName && <span className="font-bold text-green-700">{toName}</span>}
+                    </div>
+                    {riskReduction != null && (
+                      <Badge className="bg-green-100 text-green-800 border-green-300 shrink-0">
+                        -{riskReduction}% risk
+                      </Badge>
+                    )}
                   </div>
-                  {alt.estimated_risk_reduction_percent != null && (
-                    <Badge className="bg-green-100 text-green-800 border-green-300 shrink-0">
-                      -{alt.estimated_risk_reduction_percent}% risk
-                    </Badge>
-                  )}
+                  {reason && <p className="text-xs text-slate-600 mt-1.5">{reason}</p>}
                 </div>
-                {alt.reason && <p className="text-xs text-slate-600 mt-1.5">{alt.reason}</p>}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Section>
       )}
