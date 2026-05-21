@@ -56,46 +56,47 @@ const fadeIn = (delay = 0) => ({
   transition: { duration: 0.5, delay, ease: "easeOut" },
 });
 
-function AnimatedStat({ target, suffix = "", prefix = "", label, color, duration = 1800 }) {
+function useAbbreviatedCount(target, duration = 1800) {
   const { count, ref } = useCountUp(target, duration);
+  let display;
+  if (target >= 1000000) {
+    const val = (count / 1000000).toFixed(count >= 1000000 ? 0 : 1);
+    display = `${val}M+`;
+  } else if (target >= 1000) {
+    const val = (count / 1000).toFixed(count >= 1000 ? 0 : 1);
+    display = `${val}k+`;
+  } else {
+    display = `${count}+`;
+  }
+  return { display, ref };
+}
+
+function AnimatedStat({ target, label, color, duration = 1800 }) {
+  const { display, ref } = useAbbreviatedCount(target, duration);
   return (
-    <div ref={ref} className="flex flex-col items-center px-6 py-5 relative group">
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
-        style={{ background: `radial-gradient(ellipse at center, ${color}08 0%, transparent 70%)` }}
-      />
-      <p
-        className="text-3xl sm:text-4xl font-black leading-none tabular-nums tracking-tight"
-        style={{ color }}
-      >
-        {prefix}{count.toLocaleString()}{suffix}
-      </p>
-      <p className="text-xs text-slate-500 mt-2 font-semibold uppercase tracking-widest">{label}</p>
+    <div ref={ref} className="flex flex-col items-center px-5 py-4">
+      <p className="text-2xl font-bold leading-none tabular-nums" style={{ color }}>{display}</p>
+      <p className="text-xs text-slate-500 mt-1.5 font-medium">{label}</p>
     </div>
   );
 }
 
 function StaticStat({ value, label, color }) {
   return (
-    <div className="flex flex-col items-center px-6 py-5 relative group">
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
-        style={{ background: `radial-gradient(ellipse at center, ${color}08 0%, transparent 70%)` }}
-      />
-      <p className="text-3xl sm:text-4xl font-black leading-none tracking-tight" style={{ color }}>{value}</p>
-      <p className="text-xs text-slate-500 mt-2 font-semibold uppercase tracking-widest">{label}</p>
+    <div className="flex flex-col items-center px-5 py-4">
+      <p className="text-2xl font-bold leading-none" style={{ color }}>{value}</p>
+      <p className="text-xs text-slate-500 mt-1.5 font-medium">{label}</p>
     </div>
   );
 }
 
 function StatStrip() {
   return (
-    <div className="relative inline-flex flex-wrap justify-center rounded-2xl border border-slate-200 bg-white shadow-md shadow-slate-100 overflow-hidden divide-x divide-slate-100">
-      {/* Subtle top gradient line */}
+    <div className="relative inline-flex flex-wrap justify-center rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden divide-x divide-slate-100">
       <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #02988C60, #9531F560, transparent)" }} />
-      <AnimatedStat target={1000000} suffix="+" label="Chemicals" color="#02988C" duration={2000} />
+      <AnimatedStat target={1000000} label="Chemicals" color="#02988C" duration={2000} />
       <StaticStat value="&lt;1s" label="Analysis" color="#9531F5" />
-      <AnimatedStat target={1500} suffix="+" label="Daily Visitors" color="#02988C" duration={1600} />
+      <AnimatedStat target={1500} label="Daily Visitors" color="#02988C" duration={1600} />
       <StaticStat value="24/7" label="Available" color="#9531F5" />
       <StaticStat value="Free" label="To Start" color="#02988C" />
     </div>
