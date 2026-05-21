@@ -23,7 +23,7 @@ import useTrialStatus from './hooks/useTrialStatus';
 import useInactivityTimeout from './hooks/useInactivityTimeout';
 import TrialBadge from './components/trial/TrialBadge';
 
-// Import components with error boundaries
+// Lazy-loaded components with error boundaries
 const ClaraAssistant = React.lazy(() => import("./components/shared/ClaraAssistant").catch(() => ({ default: () => null })));
 const AuthModal = React.lazy(() => import("./components/auth/AuthModal").catch(() => ({ default: () => null })));
 const UserAcknowledgementModal = React.lazy(() => import("./components/auth/UserAcknowledgementModal").catch(() => ({ default: () => null })));
