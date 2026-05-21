@@ -23,7 +23,8 @@ export default function SDSUploader({ onResult }) {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       const res = await base44.functions.invoke("parseSDS", { file_url });
-      onResult(res.data, file.name);
+      const data = res.data?.response || res.data;
+      onResult(data, file.name);
     } catch (e) {
       setError("Failed to parse SDS: " + e.message);
     } finally {
