@@ -109,7 +109,9 @@ Return a JSON object with these fields:
       model: "claude_sonnet_4_6"
     });
 
-    return Response.json({ success: true, data: result });
+    // InvokeLLM with response_json_schema returns { response: {...} }, unwrap it
+    const parsed = result?.response ?? result;
+    return Response.json({ success: true, data: parsed });
   } catch (error) {
     console.error('parseSDS error:', error);
     return Response.json({ error: error.message }, { status: 500 });
