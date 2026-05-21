@@ -9,51 +9,31 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'file_url is required' }, { status: 400 });
     }
 
-    // Use ExtractDataFromUploadedFile to get raw text from the PDF first
-    const extraction = await base44.asServiceRole.integrations.Core.ExtractDataFromUploadedFile({
-      file_url,
-      json_schema: {
-        type: "object",
-        properties: {
-          raw_text: { type: "string", description: "All text content from the document" }
-        }
-      }
-    });
-
-    const pdfText = extraction?.output?.raw_text || '';
-    
-    if (!pdfText || pdfText.trim().length < 50) {
-      return Response.json({ error: 'Could not extract text from PDF. Please ensure it is a text-based PDF.' }, { status: 400 });
-    }
-
-    // Now analyze the extracted text with InvokeLLM
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `You are an expert chemical safety analyst. Analyze the following Safety Data Sheet (SDS) text and extract all relevant information.
+      prompt: `You are an expert chemical safety analyst. Analyze this Safety Data Sheet (SDS) PDF and extract all information.
 
-SDS TEXT:
-${pdfText}
+IMPORTANT: Always extract the product_name from the document title or Section 1 (Identification). Never return "Unknown Product".
 
-Extract and return a structured JSON with:
-1. product_name: The name of the chemical/product (e.g. "Benzene", "Acetone", etc.)
-2. cas_number: CAS registry number if present
-3. manufacturer: Company name
-4. hazard_classifications: Array of GHS hazard classes (e.g. "Flammable Liquid", "Acute Toxicity", "Skin Irritant")
-5. hazard_statements: Array of H-statements (e.g. "H225 - Highly flammable liquid and vapour")
+Extract and return structured JSON:
+1. product_name: Chemical/product name from the SDS (e.g. "Benzene", "Acetone")
+2. cas_number: CAS registry number
+3. manufacturer: Supplier/company name
+4. hazard_classifications: Array of GHS hazard classes
+5. hazard_statements: Array of H-statements with codes
 6. precautionary_statements: Array of P-statements
-7. ingredients: Array of objects with {name, cas, concentration_percent, hazard_level (low/medium/high/critical)}
-8. physical_properties: Object with {flash_point, boiling_point, ph, vapor_pressure, appearance, odor}
-9. health_hazards: Array of health effects (skin, eye, inhalation, ingestion)
+7. ingredients: Array of {name, cas, concentration_percent, hazard_level (low/medium/high/critical)}
+8. physical_properties: {flash_point, boiling_point, ph, vapor_pressure, appearance, odor}
+9. health_hazards: Array of health effects
 10. environmental_hazards: Array of environmental concerns
-11. first_aid_measures: Object with {skin, eyes, inhalation, ingestion}
+11. first_aid_measures: {skin, eyes, inhalation, ingestion}
 12. storage_requirements: Array of storage guidelines
 13. disposal_requirements: String
-14. overall_risk_score: Number 0-100 (100 = most dangerous). For highly toxic carcinogenic chemicals like benzene score 80-95.
-15. safer_alternatives: Array of objects with {ingredient_name, alternative, reason, estimated_risk_reduction_percent}
-16. formula_recommendations: Array of actionable recommendations to make formulas cleaner/safer
-17. regulatory_compliance: Object with {reach_compliant: bool, sds_version, revision_date}
-18. summary: A 2-3 sentence plain-language summary of the key safety concerns and recommended actions
-
-Be thorough and accurate. ALWAYS fill in product_name from the SDS data.`,
+14. overall_risk_score: 0-100 (100=most dangerous). Benzene=90, strong acids=75, mild irritants=20
+15. safer_alternatives: Array of {ingredient_name, alternative, reason, estimated_risk_reduction_percent}
+16. formula_recommendations: Array of actionable safety recommendations
+17. regulatory_compliance: {reach_compliant: bool, sds_version, revision_date}
+18. summary: 2-3 sentence plain-language safety summary`,
+      file_urls: [file_url],
       response_json_schema: {
         type: "object",
         properties: {
@@ -123,7 +103,8 @@ Be thorough and accurate. ALWAYS fill in product_name from the SDS data.`,
           },
           summary: { type: "string" }
         }
-      }
+      },
+      model: "gemini_3_1_pro"
     });
 
     return Response.json({ success: true, data: result });
