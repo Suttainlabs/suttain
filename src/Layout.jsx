@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, ChevronLeft, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShoppingCart, FileText } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
