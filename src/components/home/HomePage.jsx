@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, FlaskConical, Sparkles, ShieldCheck,
@@ -9,6 +9,39 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import AuthContext from "../auth/AuthContext";
 import SEOHead, { pageSEO } from "../shared/SEOHead";
+
+function useCountUp(target, duration = 1800, startOnView = true) {
+  const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!startOnView) { setStarted(true); return; }
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setStarted(true); observer.disconnect(); } },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [startOnView]);
+
+  useEffect(() => {
+    if (!started || target === null) return;
+    let start = null;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [started, target, duration]);
+
+  return { count, ref };
+}
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -22,6 +55,52 @@ const fadeIn = (delay = 0) => ({
   viewport: { once: true },
   transition: { duration: 0.5, delay, ease: "easeOut" },
 });
+
+function AnimatedStat({ target, suffix = "", prefix = "", label, color, duration = 1800 }) {
+  const { count, ref } = useCountUp(target, duration);
+  return (
+    <div ref={ref} className="flex flex-col items-center px-6 py-5 relative group">
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
+        style={{ background: `radial-gradient(ellipse at center, ${color}08 0%, transparent 70%)` }}
+      />
+      <p
+        className="text-3xl sm:text-4xl font-black leading-none tabular-nums tracking-tight"
+        style={{ color }}
+      >
+        {prefix}{count.toLocaleString()}{suffix}
+      </p>
+      <p className="text-xs text-slate-500 mt-2 font-semibold uppercase tracking-widest">{label}</p>
+    </div>
+  );
+}
+
+function StaticStat({ value, label, color }) {
+  return (
+    <div className="flex flex-col items-center px-6 py-5 relative group">
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
+        style={{ background: `radial-gradient(ellipse at center, ${color}08 0%, transparent 70%)` }}
+      />
+      <p className="text-3xl sm:text-4xl font-black leading-none tracking-tight" style={{ color }}>{value}</p>
+      <p className="text-xs text-slate-500 mt-2 font-semibold uppercase tracking-widest">{label}</p>
+    </div>
+  );
+}
+
+function StatStrip() {
+  return (
+    <div className="relative inline-flex flex-wrap justify-center rounded-2xl border border-slate-200 bg-white shadow-md shadow-slate-100 overflow-hidden divide-x divide-slate-100">
+      {/* Subtle top gradient line */}
+      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #02988C60, #9531F560, transparent)" }} />
+      <AnimatedStat target={1000000} suffix="+" label="Chemicals" color="#02988C" duration={2000} />
+      <StaticStat value="&lt;1s" label="Analysis" color="#9531F5" />
+      <AnimatedStat target={1500} suffix="+" label="Daily Visitors" color="#02988C" duration={1600} />
+      <StaticStat value="24/7" label="Available" color="#9531F5" />
+      <StaticStat value="Free" label="To Start" color="#02988C" />
+    </div>
+  );
+}
 
 export default function HomePage() {
   const { user } = useContext(AuthContext);
@@ -125,21 +204,8 @@ export default function HomePage() {
           </motion.div>
 
           {/* Stat strip */}
-          <motion.div
-            {...fade(0.32)}
-            className="mt-16 inline-flex flex-wrap justify-center gap-px bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 shadow-sm"
-          >
-            {[
-              { value: "1M+", label: "Chemicals" },
-              { value: "<1s", label: "Analysis" },
-              { value: "24/7", label: "Available" },
-              { value: "Free", label: "To Start" },
-            ].map((s, i) => (
-              <div key={i} className="bg-white px-7 py-4 text-center min-w-[100px]">
-                <p className="text-2xl font-extrabold text-slate-900 leading-none">{s.value}</p>
-                <p className="text-xs text-slate-500 mt-1 font-medium">{s.label}</p>
-              </div>
-            ))}
+          <motion.div {...fade(0.32)} className="mt-16">
+            <StatStrip />
           </motion.div>
         </div>
       </section>
