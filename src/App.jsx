@@ -30,6 +30,7 @@ const SimulationQueueManager = lazy(() => import('./pages/SimulationQueueManager
 const SimulationProductivity = lazy(() => import('./pages/SimulationProductivity'));
 const SimulationSandbox = lazy(() => import('./pages/SimulationSandbox'));
 const NutriScan = lazy(() => import('./pages/NutriScan'));
+const SDSAnalyzer = lazy(() => import('./pages/SDSAnalyzer'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -116,6 +117,7 @@ const AuthenticatedApp = () => {
       <Route path="/SimulationProductivity" element={<LayoutWrapper currentPageName="SimulationProductivity"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-fuchsia-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationProductivity /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationSandbox" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-950 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><SimulationSandbox /></Suspense>} />
       <Route path="/NutriScan" element={<LayoutWrapper currentPageName="NutriScan"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><NutriScan /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/SDSAnalyzer" element={<LayoutWrapper currentPageName="SDSAnalyzer"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><SDSAnalyzer /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, ChevronLeft, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShoppingCart } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, UserPlus, ChevronDown, ChevronLeft, LogOut, Sparkles, MessageSquare, User as UserIcon, QrCode, Gem, ShieldCheck, HeartPulse, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShoppingCart, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -414,6 +414,7 @@ export default function Layout({ children, currentPageName }) {
                        { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety, compliance, ingredient DB & impact reports" },
                        { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with sim engine & eco scoring" },
                        { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive" },
+                       { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Upload Safety Data Sheets → AI hazard analysis & safer formula recommendations" },
 
                      ].map(item => (
                        <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
