@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
           summary: { type: "string" }
         }
       },
-      model: "claude_sonnet_4_6"
+      model: "gemini_3_1_pro"
     });
 
     return Response.json({ success: true, data: result });
