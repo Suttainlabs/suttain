@@ -1,376 +1,274 @@
-import React, { useContext, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import {
-  Layers, Sparkles, ArrowRight, Lightbulb,
-  CheckCircle2, Home, Building2,
-  ChevronRight, Zap, Cpu,
-  Database, ShieldCheck, BarChart3, Award, Clock, Leaf
+  ArrowRight, FlaskConical, Sparkles, ShieldCheck,
+  Leaf, BarChart3, Zap, TestTube, QrCode, FileText
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import AuthContext from "../auth/AuthContext";
-import FreeTrialBanner from "./FreeTrialBanner";
 import SEOHead, { pageSEO } from "../shared/SEOHead";
+
+const fade = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.55, delay, ease: "easeOut" },
+});
+
+const fadeIn = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.5, delay, ease: "easeOut" },
+});
 
 export default function HomePage() {
   const { user } = useContext(AuthContext);
-  const [showTrialBanner, setShowTrialBanner] = useState(true);
 
-  const features = [
+  const tools = [
     {
-      id: 'simulator',
-      icon: Layers,
-      title: 'Chemical Simulator',
-      description: 'Test chemical interactions safely before mixing. Get instant hazard analysis and reaction predictions.',
-      link: 'Simulator',
-      color: 'bg-suttain-teal'
+      icon: TestTube,
+      label: "Chemical Simulator",
+      desc: "Test interactions and predict hazards before mixing.",
+      href: "Simulator",
     },
     {
-      id: 'generator',
       icon: Sparkles,
-      title: 'Formula Generator',
-      description: 'Create custom skincare, cleaning, and specialty formulas with AI guidance and safety validation.',
-      link: 'generator',
-      color: 'bg-suttain-purple'
+      label: "Formula Generator",
+      desc: "AI-built formulas validated for safety and compliance.",
+      href: "generator",
     },
     {
-      id: 'computational',
-      icon: Cpu,
-      title: 'Computational Simulations',
-      description: 'Run DFT, Molecular Dynamics, drug discovery, and quantum chemistry—advanced research tools.',
-      link: 'ComputationalSimulation',
-      color: 'bg-violet-600'
-    }
+      icon: QrCode,
+      label: "SuttainScan",
+      desc: "Scan any product for toxicity and ingredient breakdown.",
+      href: "BarcodeScanner",
+    },
+    {
+      icon: FileText,
+      label: "SDS Analyzer",
+      desc: "Upload or search safety sheets for instant hazard reports.",
+      href: "SDSAnalyzer",
+    },
   ];
 
-  const benefits = [
-    { icon: ShieldCheck, title: 'Safety First', description: 'Get instant alerts about dangerous chemical combinations' },
-    { icon: Zap, title: 'Lightning Fast', description: 'Professional formulas generated in seconds' },
-    { icon: Lightbulb, title: 'Smart Analysis', description: 'Deep insights into every ingredient interaction' },
-    { icon: Leaf, title: 'Eco-Friendly', description: 'Sustainability scoring for greener products' },
-    { icon: BarChart3, title: 'Compliance Ready', description: 'Meet global regulatory standards automatically' },
-    { icon: Award, title: 'Pro Results', description: 'Lab-quality analysis without lab costs' }
-  ];
-
-  const audiences = [
-    { icon: Home, title: 'DIY Creators', description: 'Create safe skincare, soaps, and cleaning products at home' },
-    { icon: Cpu, title: 'Researchers', description: 'Run computational chemistry without expensive lab infrastructure' },
-    { icon: Building2, title: 'Enterprises', description: 'Integrate Suttain API for chemical analysis at scale' }
+  const pillars = [
+    { icon: ShieldCheck, label: "Safety Analysis" },
+    { icon: Leaf, label: "Sustainability" },
+    { icon: BarChart3, label: "Compliance" },
+    { icon: Zap, label: "AI-Powered" },
   ];
 
   return (
-    <div className="min-h-screen font-gilroy">
+    <div className="min-h-screen bg-white font-gilroy">
       <SEOHead {...pageSEO.home} />
 
-      {/* Free Trial Banner */}
-      {!user && showTrialBanner && (
-        <AnimatePresence>
-          <FreeTrialBanner onDismiss={() => setShowTrialBanner(false)} />
-        </AnimatePresence>
-      )}
+      {/* ── Hero ── */}
+      <section className="relative overflow-hidden bg-white pt-20 pb-28 sm:pt-28 sm:pb-36">
+        {/* Soft background blobs — teal + purple only */}
+        <div
+          className="pointer-events-none absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full opacity-[0.07]"
+          style={{ background: "radial-gradient(circle, #02988C 0%, transparent 70%)" }}
+        />
+        <div
+          className="pointer-events-none absolute -bottom-24 -right-24 w-[400px] h-[400px] rounded-full opacity-[0.06]"
+          style={{ background: "radial-gradient(circle, #9531F5 0%, transparent 70%)" }}
+        />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-20 sm:pb-24">
-          <div className="text-center max-w-4xl mx-auto">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-slate-900"
-            >
-              Create{" "}
-              <span className="text-suttain-teal">Safe Products</span>
-              <br />
-              Without the Lab
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-lg sm:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed"
-            >
-              Simulate chemical reactions, generate ready-to-make formulas, and ensure product safety. No lab required.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
-              {!user && (
-                <Link to={createPageUrl("Simulator")}>
-                  <Button size="lg" className="w-full sm:w-auto relative overflow-hidden bg-gradient-to-r from-suttain-teal to-suttain-blue text-white px-10 py-5 text-base rounded-full font-bold shadow-lg shadow-suttain-teal/25 hover:shadow-xl hover:shadow-suttain-teal/30 hover:scale-105 transition-all duration-300">
-                    <Zap className="w-5 h-5 mr-2" />
-                    Start Free Trial
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-              )}
-              <Link to={createPageUrl("Simulator")}>
-                <Button size="lg" variant={user ? "default" : "outline"} className={user
-                  ? "w-full sm:w-auto bg-suttain-teal hover:bg-suttain-teal/90 text-white px-8 py-4 text-base rounded-full font-semibold shadow-md"
-                  : "w-full sm:w-auto border-2 border-slate-300 text-slate-700 hover:bg-slate-50 px-8 py-4 text-base rounded-full font-semibold"
-                }>
-                  <Layers className="w-5 h-5 mr-2" />
-                  {user ? 'Go to Simulator' : 'Try Simulator'}
-                </Button>
-              </Link>
-              <Link to={createPageUrl("generator")}>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-suttain-purple/30 text-suttain-purple hover:bg-suttain-purple/5 px-8 py-4 text-base rounded-full font-semibold">
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Create Formula
-                </Button>
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-16 flex justify-center"
-            >
-              <div className="inline-flex flex-wrap items-center gap-0 bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden w-full sm:w-auto">
-                {[
-                  { icon: Database, value: '250k+', label: 'Chemicals', color: 'text-suttain-teal' },
-                  { icon: Zap, value: '<1s', label: 'Analysis Speed', color: 'text-amber-500' },
-                  { icon: Clock, value: '24/7', label: 'Always On', color: 'text-suttain-purple' },
-                ].map((stat, i) => (
-                  <React.Fragment key={i}>
-                    {i > 0 && <div className="w-px h-12 bg-slate-200 hidden sm:block" />}
-                    <div className="flex items-center gap-3 px-6 py-4 group hover:bg-slate-50 transition-colors flex-1 sm:flex-none justify-center sm:justify-start">
-                      <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
-                        <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-xl font-extrabold text-slate-900 leading-none">{stat.value}</p>
-                        <p className="text-xs text-slate-500 mt-0.5 font-medium">{stat.label}</p>
-                      </div>
-                    </div>
-                  </React.Fragment>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-20 sm:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-              Powerful Tools, Simple Interface
-            </h2>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-              Everything you need to create, test, and launch safe products
-            </p>
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Label pill */}
+          <motion.div {...fade(0)} className="inline-flex items-center gap-2 border border-[#02988C]/25 bg-[#02988C]/6 text-[#02988C] text-sm font-semibold px-4 py-1.5 rounded-full mb-8">
+            <FlaskConical className="w-3.5 h-3.5" />
+            Chemical Safety Platform
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+          <motion.h1
+            {...fade(0.08)}
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 leading-[1.1] tracking-tight mb-6"
+            style={{ textWrap: "balance" }}
+          >
+            Safe Products,{" "}
+            <span style={{ color: "#02988C" }}>No Lab</span>{" "}
+            Required
+          </motion.h1>
+
+          <motion.p
+            {...fade(0.16)}
+            className="text-lg sm:text-xl text-slate-500 max-w-xl mx-auto mb-10 leading-relaxed"
+          >
+            Simulate, formulate, and validate — powered by AI and backed by chemistry.
+          </motion.p>
+
+          <motion.div {...fade(0.22)} className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            <Link to={createPageUrl("Simulator")}>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white shadow-lg shadow-[#02988C]/20 hover:shadow-xl hover:shadow-[#02988C]/30"
+                style={{ background: "#02988C" }}
               >
-                <Link to={createPageUrl(feature.link)}>
-                  <Card className="group h-full border border-slate-200 hover:border-suttain-teal/30 hover:shadow-xl transition-all duration-300 cursor-pointer bg-white">
-                    <CardContent className="p-8">
-                      <div className={`w-14 h-14 rounded-2xl ${feature.color}/10 flex items-center justify-center mb-6`}>
-                        <feature.icon className={`w-7 h-7 ${feature.color === 'bg-suttain-teal' ? 'text-suttain-teal' : feature.color === 'bg-suttain-purple' ? 'text-suttain-purple' : 'text-violet-600'}`} />
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
-                      <p className="text-slate-500 mb-4 leading-relaxed">{feature.description}</p>
-                      <div className="flex items-center text-suttain-teal font-semibold text-sm group-hover:translate-x-1 transition-transform">
-                        Explore <ChevronRight className="w-4 h-4 ml-1" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-20 sm:py-28 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <span className="inline-flex items-center gap-2 bg-suttain-purple/10 text-suttain-purple px-4 py-2 rounded-full text-sm font-semibold mb-6">
-              <Zap className="w-4 h-4" />
-              How It Works
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-              From Idea to Safe Product in Minutes
-            </h2>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-              Skip the guesswork. Our platform guides you through every step of product creation.
-            </p>
+                {user ? "Open Simulator" : "Start Free"}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+            <Link to={createPageUrl("generator")}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base border-2"
+                style={{ borderColor: "#9531F5", color: "#9531F5" }}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Generate Formula
+              </Button>
+            </Link>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          {/* Stat strip */}
+          <motion.div
+            {...fade(0.32)}
+            className="mt-16 inline-flex flex-wrap justify-center gap-px bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 shadow-sm"
+          >
             {[
-              { step: '01', title: 'Choose Your Product', description: 'Select from skincare, cleaning, hair care, and more or describe your own custom idea.', color: 'bg-suttain-teal' },
-              { step: '02', title: 'Generate Formulas', description: 'Get multiple professional-grade formula options tailored to your needs in seconds.', color: 'bg-suttain-purple' },
-              { step: '03', title: 'Test & Refine', description: 'Run safety simulations, check compliance, and fine-tune your formula before production.', color: 'bg-suttain-blue' },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.15 }}
-                className="relative"
-              >
-                <div className="bg-white rounded-2xl p-8 border border-slate-200 h-full shadow-sm">
-                  <div className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center mb-6`}>
-                    <span className="text-white font-bold text-lg">{item.step}</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
-                  <p className="text-slate-500 leading-relaxed">{item.description}</p>
-                </div>
-                {index < 2 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-slate-300"></div>
-                )}
-              </motion.div>
+              { value: "1M+", label: "Chemicals" },
+              { value: "<1s", label: "Analysis" },
+              { value: "24/7", label: "Available" },
+              { value: "Free", label: "To Start" },
+            ].map((s, i) => (
+              <div key={i} className="bg-white px-7 py-4 text-center min-w-[100px]">
+                <p className="text-2xl font-extrabold text-slate-900 leading-none">{s.value}</p>
+                <p className="text-xs text-slate-500 mt-1 font-medium">{s.label}</p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Pillar strip ── */}
+      <section className="bg-slate-50 border-y border-slate-100 py-6">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="flex flex-wrap justify-center gap-8">
+            {pillars.map(({ icon: Icon, label }, i) => (
+              <div key={i} className="flex items-center gap-2 text-slate-600 font-semibold text-sm">
+                <Icon className="w-4 h-4" style={{ color: i % 2 === 0 ? "#02988C" : "#9531F5" }} />
+                {label}
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Who It's For */}
-      <section className="py-20 sm:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-              Built for Creators Like You
+      {/* ── Tools Grid ── */}
+      <section className="py-24 sm:py-32 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div {...fadeIn()} className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
+              One Platform, Every Tool
             </h2>
-            <p className="text-lg text-slate-500">
-              From hobbyists to entrepreneurs
-            </p>
+            <p className="text-slate-500 text-lg">Everything you need to go from idea to safe product.</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-10">
-            {audiences.map((audience, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className={`w-16 h-16 rounded-2xl ${index === 0 ? 'bg-suttain-teal/10' : index === 1 ? 'bg-suttain-purple/10' : 'bg-suttain-blue/10'} flex items-center justify-center mx-auto mb-6`}>
-                  <audience.icon className={`w-8 h-8 ${index === 0 ? 'text-suttain-teal' : index === 1 ? 'text-suttain-purple' : 'text-suttain-blue'}`} />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">{audience.title}</h3>
-                <p className="text-slate-500">{audience.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits */}
-      <section className="py-20 sm:py-28 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-              Why Choose Suttain
-            </h2>
-            <p className="text-lg text-slate-500">
-              Professional-grade tools without the complexity
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {benefits.map((benefit, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Card className="h-full border border-slate-200 hover:shadow-md transition-all bg-white">
-                  <CardContent className="p-6">
-                    <div className={`w-11 h-11 rounded-xl ${index % 3 === 0 ? 'bg-suttain-teal/10' : index % 3 === 1 ? 'bg-suttain-purple/10' : 'bg-suttain-blue/10'} flex items-center justify-center mb-4`}>
-                      <benefit.icon className={`w-5 h-5 ${index % 3 === 0 ? 'text-suttain-teal' : index % 3 === 1 ? 'text-suttain-purple' : 'text-suttain-blue'}`} />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {tools.map(({ icon: Icon, label, desc, href }, i) => (
+              <motion.div key={i} {...fadeIn(i * 0.07)}>
+                <Link to={createPageUrl(href)} className="group block h-full">
+                  <div className="h-full border border-slate-200 rounded-2xl p-6 bg-white hover:border-[#02988C]/40 hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col">
+                    <div
+                      className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 flex-shrink-0"
+                      style={{ background: i % 2 === 0 ? "rgba(2,152,140,0.08)" : "rgba(149,49,245,0.08)" }}
+                    >
+                      <Icon className="w-5 h-5" style={{ color: i % 2 === 0 ? "#02988C" : "#9531F5" }} />
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">{benefit.title}</h3>
-                    <p className="text-slate-500 text-sm">{benefit.description}</p>
-                  </CardContent>
-                </Card>
+                    <h3 className="font-bold text-slate-900 mb-2 text-base">{label}</h3>
+                    <p className="text-slate-500 text-sm leading-relaxed flex-1">{desc}</p>
+                    <div className="mt-4 flex items-center text-sm font-semibold" style={{ color: "#02988C" }}>
+                      Explore
+                      <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
+                    </div>
+                  </div>
+                </Link>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-white">
+      {/* ── How It Works ── */}
+      <section className="py-24 sm:py-32 bg-slate-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div {...fadeIn()} className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
+              Three Steps to Safer Products
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { n: "01", title: "Pick a Product Type", body: "Choose from skincare, cleaning agents, specialty formulas, or describe your own.", color: "#02988C" },
+              { n: "02", title: "Generate & Analyze", body: "Get AI-generated formula options with full safety scoring and compliance checks.", color: "#9531F5" },
+              { n: "03", title: "Refine & Launch", body: "Simulate edge cases, adjust ingredients, and export production-ready documentation.", color: "#02988C" },
+            ].map((step, i) => (
+              <motion.div key={i} {...fadeIn(i * 0.12)}>
+                <div className="bg-white rounded-2xl p-7 border border-slate-200 h-full relative overflow-hidden">
+                  <div
+                    className="absolute top-0 right-0 text-[96px] font-black leading-none opacity-[0.04] select-none"
+                    style={{ color: step.color }}
+                  >
+                    {step.n}
+                  </div>
+                  <span
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-xl text-white text-sm font-bold mb-5"
+                    style={{ background: step.color }}
+                  >
+                    {step.n}
+                  </span>
+                  <h3 className="font-bold text-slate-900 text-lg mb-2">{step.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{step.body}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="py-24 sm:py-32 bg-white px-4">
         <div className="max-w-3xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-[#3a8c6e] via-[#02988C] to-[#09D2FF] rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden"
+            {...fadeIn()}
+            className="relative rounded-3xl overflow-hidden text-center px-8 py-16 sm:px-16 sm:py-20"
+            style={{ background: "linear-gradient(135deg, #02988C 0%, #0cbcb0 50%, #9531F5 100%)" }}
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-suttain-purple/20 rounded-full blur-3xl" />
+            {/* Subtle overlay texture */}
+            <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, white 1px, transparent 1px), radial-gradient(circle at 70% 80%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+
             <div className="relative z-10">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-                Ready to Create Safer Products?
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4" style={{ textWrap: "balance" }}>
+                Start Formulating Today
               </h2>
-              <p className="text-base text-white/70 mb-8 max-w-lg mx-auto">
-                Join thousands of creators who trust Suttain for chemical safety and formulation.
+              <p className="text-white/70 text-base mb-10 max-w-md mx-auto">
+                No credit card. No lab. Just results.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to={createPageUrl("Simulator")}>
-                  <Button size="lg" className="w-full sm:w-auto bg-white text-suttain-teal hover:bg-white/90 px-8 py-4 text-base rounded-full font-semibold">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base bg-white hover:bg-white/90 transition-colors"
+                    style={{ color: "#02988C" }}
+                  >
                     Get Started Free
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
                 <Link to={createPageUrl("BookADemo")}>
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-8 py-4 text-base rounded-full font-semibold">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white border-2 border-white/40 bg-transparent hover:bg-white/10 transition-colors"
+                  >
                     Book a Demo
                   </Button>
                 </Link>
-              </div>
-              <div className="mt-6 flex justify-center">
-                <div className="inline-flex items-center gap-2 bg-suttain-purple px-6 py-2.5 rounded-full shadow-lg shadow-suttain-purple/50 ring-2 ring-white/30">
-                  <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
-                  <span className="text-sm font-bold text-white tracking-wide">No credit card required</span>
-                </div>
               </div>
             </div>
           </motion.div>
