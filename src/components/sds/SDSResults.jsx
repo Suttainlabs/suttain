@@ -74,7 +74,7 @@ export default function SDSResults({ data, fileName, onReset }) {
   const navigate = useNavigate();
 
   const handleSimulate = () => {
-    const chemicals = (data.ingredients || []).map(i => i.name).filter(Boolean).join(",");
+    const chemicals = (data.ingredients || []).map(i => i.name || i.ingredient_name).filter(Boolean).join(",");
     navigate(`${createPageUrl("Simulator")}?chemicals=${encodeURIComponent(chemicals)}`);
   };
 

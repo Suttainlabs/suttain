@@ -513,6 +513,28 @@ export default function Simulator() {
   const [persona, setPersona] = useState(null);
   const [step, setStep] = useState(1);
   const [chemicals, setChemicals] = useState([]);
+
+  // Pre-populate chemicals from URL params (e.g. from SDS Analyzer)
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const chemParam = urlParams.get("chemicals");
+    if (chemParam) {
+      const names = chemParam.split(",").map(n => n.trim()).filter(Boolean);
+      if (names.length > 0) {
+        const preloaded = names.map((name, i) => ({
+          id: Date.now() + i,
+          name,
+          scientific_name: name,
+          concentration: 0,
+          concentrationUnit: 'M',
+          purity: 99.9,
+        }));
+        setChemicals(preloaded);
+        // Default to researcher persona so they can run immediately
+        setPersona("researcher");
+      }
+    }
+  }, []);
   const [simulationData, setSimulationData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
