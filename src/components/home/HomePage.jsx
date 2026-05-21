@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, FlaskConical, Sparkles, ShieldCheck,
-  Leaf, BarChart3, Zap, TestTube, QrCode, FileText
+  Leaf, BarChart3, Zap, TestTube, QrCode, Cpu
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -30,7 +30,7 @@ export default function HomePage() {
     {
       icon: TestTube,
       label: "Chemical Simulator",
-      desc: "Test interactions and predict hazards before mixing.",
+      desc: "Test interactions, predict hazards, and analyze safety data sheets — all in one place.",
       href: "Simulator",
     },
     {
@@ -46,10 +46,10 @@ export default function HomePage() {
       href: "BarcodeScanner",
     },
     {
-      icon: FileText,
-      label: "SDS Analyzer",
-      desc: "Upload or search safety sheets for instant hazard reports.",
-      href: "SDSAnalyzer",
+      icon: Cpu,
+      label: "Computational Simulations",
+      desc: "Run DFT, molecular dynamics, drug discovery, and quantum chemistry.",
+      href: "ComputationalSimulation",
     },
   ];
 
