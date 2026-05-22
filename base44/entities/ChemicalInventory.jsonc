@@ -1,0 +1,92 @@
+{
+  "name": "ChemicalInventory",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Common name of the chemical"
+    },
+    "scientific_name": {
+      "type": "string",
+      "description": "IUPAC or scientific name"
+    },
+    "cas_number": {
+      "type": "string",
+      "description": "CAS registry number"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Current quantity in stock"
+    },
+    "unit": {
+      "type": "string",
+      "enum": [
+        "g",
+        "kg",
+        "mL",
+        "L",
+        "mol",
+        "mmol",
+        "units"
+      ],
+      "default": "g",
+      "description": "Unit of measurement"
+    },
+    "concentration": {
+      "type": "number",
+      "description": "Concentration value for solutions"
+    },
+    "concentration_unit": {
+      "type": "string",
+      "enum": [
+        "M",
+        "mM",
+        "% w/v",
+        "% w/w",
+        "ppm",
+        "ppb"
+      ],
+      "default": "M",
+      "description": "Concentration unit for solutions"
+    },
+    "purity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 99.9,
+      "description": "Purity percentage"
+    },
+    "location": {
+      "type": "string",
+      "description": "Storage location (e.g. Cabinet A, Fridge 2)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Any additional notes"
+    },
+    "low_stock_threshold": {
+      "type": "number",
+      "description": "Alert when quantity falls below this value"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Custom tags (e.g. acid, solvent, reagent)"
+    }
+  },
+  "required": [
+    "name",
+    "quantity",
+    "unit"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

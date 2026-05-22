@@ -17,7 +17,8 @@ import HazardInteractionMatrix from "../components/simulator/HazardInteractionMa
 import ComplianceAuditPanel from "../components/simulator/ComplianceAuditPanel";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { MessageSquare, Star, X, DollarSign, Grid3X3, FlaskConical, FileText } from "lucide-react";
+import { MessageSquare, Star, X, DollarSign, Grid3X3, FlaskConical, FileText, Package } from "lucide-react";
+import ChemicalInventoryManager from "../components/simulator/ChemicalInventoryManager";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
 import SEOHead, { pageSEO } from "../components/shared/SEOHead";
 
@@ -991,6 +992,16 @@ export default function Simulator() {
               >
                 <FileText className="w-4 h-4" /> SDS Analyzer
               </button>
+              <button
+                onClick={() => setActiveMode("inventory")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  activeMode === "inventory"
+                    ? "bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <Package className="w-4 h-4" /> Inventory
+              </button>
             </div>
           </div>
 
@@ -1000,6 +1011,30 @@ export default function Simulator() {
               <Card className="border-2 border-red-100">
                 <CardContent className="p-6">
                   <HazardInteractionMatrix />
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Chemical Inventory mode */}
+          {activeMode === "inventory" && (
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+              <Card className="border-2 border-teal-100">
+                <CardContent className="p-6">
+                  <ChemicalInventoryManager
+                    onAddToSimulation={(item) => {
+                      addChemical({
+                        id: Date.now(),
+                        name: item.name,
+                        scientific_name: item.scientific_name || item.name,
+                        concentration: item.concentration || 0,
+                        concentrationUnit: item.concentration_unit || "M",
+                        purity: item.purity || 99.9,
+                      });
+                      setActiveMode("simulator");
+                      if (!persona) setPersona("researcher");
+                    }}
+                  />
                 </CardContent>
               </Card>
             </motion.div>
