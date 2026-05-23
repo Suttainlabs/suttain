@@ -395,6 +395,11 @@
       },
       "description": "Alternative names and trade names"
     },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "function_description": {
       "type": "string",
       "description": "Detailed description of what this chemical does"

@@ -47,6 +47,11 @@
     "winner_name": {
       "type": "string",
       "description": "Name of the overall winning product, or 'Tie'"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
     }
   },
   "required": [
