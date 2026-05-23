@@ -6,28 +6,40 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 async function decodeWithZxing(imageBuffer) {
     try {
-        const { createReader } = await import('npm:zxing-wasm@1.3.4/reader');
-        const reader = await createReader();
+        // Use the default export which exposes readBarcodes directly
+        const zxing = await import('npm:zxing-wasm@1.3.4');
+        
+        // zxing-wasm expects an ImageData-like object or Uint8Array with width/height
+        // We pass raw bytes and let the library handle it
+        const uint8 = new Uint8Array(imageBuffer);
+        
+        let readFn = null;
+        if (typeof zxing.readBarcodes === 'function') {
+            readFn = zxing.readBarcodes;
+        } else if (typeof zxing.default?.readBarcodes === 'function') {
+            readFn = zxing.default.readBarcodes;
+        }
 
-        const results = await reader.readBarcodesFromImageData(
-            new Uint8Array(imageBuffer),
-            {
-                formats: [
-                    'EAN-13', 'EAN-8', 'UPC-A', 'UPC-E',
-                    'Code128', 'Code39', 'Code93',
-                    'Codabar', 'ITF', 'DataMatrix', 'QRCode', 'PDF417'
-                ],
-                tryHarder: true,
-                tryRotate: true,
-                tryInvert: true,
-                tryDownscale: true
-            }
-        );
+        if (!readFn) {
+            console.log('zxing-wasm: readBarcodes not found, skipping');
+            return null;
+        }
+
+        const results = await readFn(uint8, {
+            formats: [
+                'EAN-13', 'EAN-8', 'UPC-A', 'UPC-E',
+                'Code128', 'Code39', 'Code93',
+                'Codabar', 'ITF', 'DataMatrix', 'QRCode', 'PDF417'
+            ],
+            tryHarder: true,
+            tryRotate: true,
+            tryInvert: true,
+            tryDownscale: true
+        });
 
         if (results && results.length > 0) {
-            // Return the result with the highest confidence
-            const best = results.reduce((a, b) => (b.position ? b : a), results[0]);
-            const code = best.text || best.rawBytes;
+            const best = results[0];
+            const code = best.text;
             console.log(`zxing decoded: ${code} (format: ${best.format})`);
             return code ? String(code).replace(/\D/g, '') : null;
         }
@@ -51,7 +63,7 @@ Rules:
 - UPC-A barcodes have exactly 12 digits  
 - EAN-8 barcodes have exactly 8 digits
 - Return ONLY the digits, no spaces or dashes
-- If you cannot read the barcode digits clearly and with certainty, return null
+- If you cannot read the barcode digits clearly and with certainty, set barcode to null
 - Do NOT invent or estimate digits — accuracy is critical
 
 Return a JSON with key "barcode" containing the digit string, or null if not clearly readable.`,
@@ -76,7 +88,6 @@ Return a JSON with key "barcode" containing the digit string, or null if not cle
 
         if (result?.barcode && result.confidence !== 'low') {
             const digits = String(result.barcode).replace(/\D/g, '');
-            // Validate length — must be a realistic barcode length
             if (digits.length >= 8 && digits.length <= 14) {
                 console.log(`LLM decoded: ${digits} (confidence: ${result.confidence})`);
                 return digits;
@@ -111,6 +122,8 @@ Deno.serve(async (req) => {
             const imgRes = await fetch(file_url);
             if (imgRes.ok) {
                 imageBuffer = await imgRes.arrayBuffer();
+            } else {
+                console.error('Failed to fetch image, status:', imgRes.status);
             }
         } catch (fetchErr) {
             console.error('Failed to fetch image:', fetchErr.message);
@@ -133,7 +146,10 @@ Deno.serve(async (req) => {
             return Response.json({ barcode });
         }
 
-        return Response.json({ error: 'No barcode detected in the image. Ensure the barcode is clearly visible, well-lit, and in focus.' }, { status: 404 });
+        return Response.json(
+            { error: 'No barcode detected in the image. Ensure the barcode is clearly visible, well-lit, and in focus.' },
+            { status: 404 }
+        );
 
     } catch (error) {
         console.error('Unexpected error in scanBarcodeFromImage:', error);
