@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { base44 } from '@/api/base44Client';
 import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';
+import ShareButton from '../shared/ShareButton';
 import { triggerSafetyAlertIfNeeded } from '@/utils/twilioAlertTrigger';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -555,13 +556,20 @@ export default function ProductAnalysis({ product, onClear, user }) {
             <Button variant="ghost" onClick={() => onClear(null)} className="text-slate-600 hover:bg-slate-100">
               <ChevronLeft className="w-5 h-5 mr-1" /> New Scan
             </Button>
-            {product.source_url && (
-              <Button asChild variant="link" size="sm">
-                <a href={product.source_url} target="_blank" rel="noopener noreferrer">
-                  Data Source <ExternalLink className="w-3 h-3 ml-1.5" />
-                </a>
-              </Button>
-            )}
+            <div className="flex items-center gap-2">
+              <ShareButton
+                text={`I scanned "${product.name}" by ${product.brand} on Suttain.\n\nOverall Score: ${overallScore}/100 | Safety: ${averageScores.safety}% | Eco: ${averageScores.sustainability}% | Hazards: ${product.hazards?.length || 0}\n\nAnalyze your own products at suttain.com`}
+                url="https://suttain.com/BarcodeScanner"
+                label="Share"
+              />
+              {product.source_url && (
+                <Button asChild variant="link" size="sm">
+                  <a href={product.source_url} target="_blank" rel="noopener noreferrer">
+                    Data Source <ExternalLink className="w-3 h-3 ml-1.5" />
+                  </a>
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Product hero */}

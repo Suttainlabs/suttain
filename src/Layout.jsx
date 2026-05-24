@@ -87,6 +87,17 @@ export default function Layout({ children, currentPageName }) {
           console.error('Failed to send welcome email:', welcomeErr);
         }
       }
+
+      // Track last active date for re-engagement emails (update silently, max once per day)
+      if (currentUser) {
+        const today = new Date().toISOString().split('T')[0];
+        const lastActive = currentUser.last_active_date ? currentUser.last_active_date.split('T')[0] : null;
+        if (lastActive !== today) {
+          try {
+            await base44.auth.updateMe({ last_active_date: new Date().toISOString() });
+          } catch {}
+        }
+      }
     } catch (error) {
       setUser(null);
       setCurrentGreeting('');

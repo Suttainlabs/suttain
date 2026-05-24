@@ -30,6 +30,7 @@ import ReportCustomizationModal from './ReportCustomizationModal';
 import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';
 import AdvancedAnalysisPanel from './AdvancedAnalysisPanel';
 import SafetyAdvisor from './SafetyAdvisor';
+import ShareButton from '../shared/ShareButton';
 
 // Lazy load visualization component
 const ChemicalVisualization = lazy(() => import('./ChemicalVisualization'));
@@ -371,36 +372,7 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
         }
     };
 
-    const handleShare = async () => {
-        const shareText = `Chemical Simulation Results\n\nChemicals: ${chemicals?.map(c => c.name).join(' + ')}\nRisk Score: ${risk_assessment.overall_risk_score}/100\nSafety Level: ${safety_status.level}\n\nRecommendation: ${risk_assessment.recommendation || 'No specific recommendation.'}`;
-
-        try {
-            // First, try the Web Share API (only works with user interaction)
-            if (navigator.share && navigator.canShare && navigator.canShare({ text: shareText })) {
-                await navigator.share({
-                    title: 'Chemical Simulation Results',
-                    text: shareText,
-                    url: window.location.href
-                });
-                toast.success('Shared successfully!');
-            } else {
-                // Fallback to clipboard
-                await navigator.clipboard.writeText(`${shareText}\n\nView full report: ${window.location.href}`);
-                toast.success('Results copied to clipboard!');
-            }
-        } catch (error) {
-            // If sharing fails or is aborted, try clipboard as fallback
-            if (error.name !== 'AbortError') {
-                try {
-                    await navigator.clipboard.writeText(`${shareText}\n\nView full report: ${window.location.href}`);
-                    toast.success('Results copied to clipboard!');
-                } catch (clipboardError) {
-                    console.error('Share and clipboard both failed:', error, clipboardError);
-                    toast.error('Unable to share. Please copy the URL manually.');
-                }
-            }
-        }
-    };
+    const shareText = `Chemical Simulation on Suttain\n\nChemicals: ${chemicals?.map(c => c.name).join(' + ')}\nRisk Score: ${risk_assessment.overall_risk_score || 0}/100\nSafety Level: ${safety_status.level}\n${risk_assessment.recommendation ? `\nKey Finding: ${risk_assessment.recommendation}` : ''}\n\nRun your own simulations free at suttain.com`;
 
     const calculateMolarMass = (formula) => {
         const atomicMasses = {
@@ -1165,15 +1137,13 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
                                                 </>
                                             )}
                                         </Button>
-                                        <Button
-                                            onClick={handleShare}
-                                            variant="outline"
+                                        <ShareButton
+                                            text={shareText}
+                                            url="https://suttain.com/Simulator"
+                                            label="Share Results"
                                             size="sm"
-                                            className="w-full"
-                                        >
-                                            <Share2 className="w-3.5 h-3.5 mr-2" />
-                                            Share
-                                        </Button>
+                                            variant="outline"
+                                        />
                                     </>
                                 )}
                             </CardContent>

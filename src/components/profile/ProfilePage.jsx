@@ -17,6 +17,7 @@ import NotificationsSummary from '../dashboard/NotificationsSummary';
 import RewardsSummary from '../dashboard/RewardsSummary';
 import NotificationCenter from '../notifications/NotificationCenter';
 import ProjectsOverview from '../dashboard/ProjectsOverview';
+import ReferralPanel from '../referral/ReferralPanel';
 import SustainabilityScores from '../dashboard/SustainabilityScores';
 import HistoricalDataChart from '../dashboard/HistoricalDataChart';
 
@@ -158,7 +159,8 @@ export default function ProfilePage() {
 
                         {/* Right Column - Insights & Notifications */}
                         <div className="space-y-6">
-                            <RewardsSummary user={user} />
+                            <ReferralPanel user={user} onPointsUpdated={handleRefresh} />
+                             <RewardsSummary user={user} />
                             <SustainabilityScores formulas={formulas} isLoading={isLoading} />
                             <NotificationsSummary 
                                 notifications={notifications} 

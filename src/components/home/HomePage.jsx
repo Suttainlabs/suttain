@@ -167,16 +167,16 @@ export default function HomePage() {
             className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 leading-[1.1] tracking-tight mb-6"
             style={{ textWrap: "balance" }}
           >
-            Safe Products,{" "}
-            <span style={{ color: "#02988C" }}>No Lab</span>{" "}
-            Required
+            Know What's In{" "}
+            <span style={{ color: "#02988C" }}>Every Product</span>{" "}
+            Before It Ships
           </motion.h1>
 
           <motion.p
             {...fade(0.16)}
             className="text-lg sm:text-xl text-slate-500 max-w-xl mx-auto mb-10 leading-relaxed"
           >
-            Simulate, formulate, and validate — powered by AI and backed by chemistry.
+            Suttain gives formulators, brands, and researchers instant chemical safety analysis, compliance checks, and AI-powered formula generation — no lab required.
           </motion.p>
 
           <motion.div {...fade(0.22)} className="flex flex-col sm:flex-row gap-3 justify-center items-center">
@@ -186,7 +186,7 @@ export default function HomePage() {
                 className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white shadow-lg shadow-[#02988C]/20 hover:shadow-xl hover:shadow-[#02988C]/30"
                 style={{ background: "#02988C" }}
               >
-                {user ? "Open Simulator" : "Start Free"}
+                {user ? "Open Simulator" : "Analyze for Free"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -198,7 +198,7 @@ export default function HomePage() {
                 style={{ borderColor: "#9531F5", color: "#9531F5" }}
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                Generate Formula
+                Build a Formula
               </Button>
             </Link>
           </motion.div>
@@ -231,7 +231,7 @@ export default function HomePage() {
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
               One Platform, Every Tool
             </h2>
-            <p className="text-slate-500 text-lg">Everything you need to go from idea to safe product.</p>
+            <p className="text-slate-500 text-lg">From raw ingredients to market-ready formula — covered end to end.</p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -264,15 +264,16 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div {...fadeIn()} className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
-              Three Steps to Safer Products
+              From Idea to Safe Product in Three Steps
             </h2>
+            <p className="text-slate-500 text-lg max-w-xl mx-auto">No chemistry degree needed. No expensive lab tests. Just results.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { n: "01", title: "Pick a Product Type", body: "Choose from skincare, cleaning agents, specialty formulas, or describe your own.", color: "#02988C" },
-              { n: "02", title: "Generate & Analyze", body: "Get AI-generated formula options with full safety scoring and compliance checks.", color: "#9531F5" },
-              { n: "03", title: "Refine & Launch", body: "Simulate edge cases, adjust ingredients, and export production-ready documentation.", color: "#02988C" },
+              { n: "01", title: "Describe Your Product", body: "Choose a category — skincare, cleaning, food-safe, or industrial — or describe it in plain language.", color: "#02988C" },
+              { n: "02", title: "Get Instant Analysis", body: "Receive AI-generated formula options with safety scores, compliance flags, and hazard summaries.", color: "#9531F5" },
+              { n: "03", title: "Refine and Export", body: "Adjust ingredient percentages, run edge-case simulations, and export production-ready documentation.", color: "#02988C" },
             ].map((step, i) => (
               <motion.div key={i} {...fadeIn(i * 0.12)}>
                 <div className="bg-white rounded-2xl p-7 border border-slate-200 h-full relative overflow-hidden">
@@ -310,10 +311,10 @@ export default function HomePage() {
 
             <div className="relative z-10">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4" style={{ textWrap: "balance" }}>
-                Start Formulating Today
+                Stop Guessing. Start Knowing.
               </h2>
               <p className="text-white/70 text-base mb-10 max-w-md mx-auto">
-                No credit card. No lab. Just results.
+                Join thousands of formulators who use Suttain to build safer products, faster. Free to start — no credit card required.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to={createPageUrl("Simulator")}>

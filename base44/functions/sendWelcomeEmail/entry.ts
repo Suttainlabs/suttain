@@ -279,6 +279,74 @@ Deno.serve(async (req) => {
       body: `A new user has signed up on Suttain!\n\nName: ${fullName || 'N/A'}\nEmail: ${email}\nDate: ${new Date().toLocaleString()}\n\nLog in to your admin dashboard to view more details.`
     });
 
+    // ------------------------------------------------------------------
+    // Day 3 drip: show the most useful features, drive first simulation
+    // ------------------------------------------------------------------
+    setTimeout(async () => {
+      try {
+        await base44.asServiceRole.integrations.Core.SendEmail({
+          to: email,
+          from_name: 'Suttain',
+          subject: `${firstName}, have you run your first simulation yet?`,
+          body: `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f1f5f9;padding:40px 0;">
+<table width="600" style="max-width:600px;margin:auto;background:white;border-radius:12px;overflow:hidden;">
+  <tr><td style="background:linear-gradient(135deg,#02988C,#09D2FF);padding:32px;text-align:center;">
+    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:40px;margin-bottom:12px;"/><br/>
+    <h1 style="color:white;margin:0;font-size:22px;">Your 3 most-used Suttain tools</h1>
+  </td></tr>
+  <tr><td style="padding:32px;">
+    <p style="color:#334155;font-size:15px;line-height:1.7;">Hi ${firstName}, here are the three tools Suttain users rely on most:</p>
+    <table width="100%" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:20px;">
+      <tr><td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;"><strong style="color:#02988C;">1. Chemical Simulator</strong><br/><span style="color:#475569;font-size:13px;">Test any chemical combination for hazards, reactions, and compliance before you touch a single ingredient.</span></td></tr>
+      <tr><td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;"><strong style="color:#9531F5;">2. Formula Generator</strong><br/><span style="color:#475569;font-size:13px;">Get a complete, production-ready formula with percentages, instructions, and safety validation in under 30 seconds.</span></td></tr>
+      <tr><td style="padding:14px 16px;"><strong style="color:#0891b2;">3. SuttainScan</strong><br/><span style="color:#475569;font-size:13px;">Scan any product barcode to see a full ingredient safety breakdown — great for checking what you already use.</span></td></tr>
+    </table>
+    <table width="100%"><tr><td align="center"><a href="https://suttain.com/Simulator" style="display:inline-block;background:#02988C;color:white;padding:14px 32px;border-radius:50px;font-weight:bold;text-decoration:none;">Run Your First Simulation</a></td></tr></table>
+    <p style="color:#94a3b8;font-size:12px;text-align:center;margin-top:24px;">Suttain · contact@suttain.com</p>
+  </td></tr>
+</table></body></html>`
+        });
+        console.log(`Day-3 drip sent to ${email}`);
+      } catch (e) { console.error('Day-3 drip failed:', e.message); }
+    }, 3 * 24 * 60 * 60 * 1000);
+
+    // ------------------------------------------------------------------
+    // Day 7 drip: upgrade nudge with referral reminder
+    // ------------------------------------------------------------------
+    setTimeout(async () => {
+      try {
+        await base44.asServiceRole.integrations.Core.SendEmail({
+          to: email,
+          from_name: 'Suttain',
+          subject: `One week in — here's what Pro unlocks for you`,
+          body: `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f1f5f9;padding:40px 0;">
+<table width="600" style="max-width:600px;margin:auto;background:white;border-radius:12px;overflow:hidden;">
+  <tr><td style="background:linear-gradient(135deg,#7c3aed,#9531F5);padding:32px;text-align:center;">
+    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:40px;margin-bottom:12px;"/><br/>
+    <h1 style="color:white;margin:0;font-size:22px;">Unlock unlimited access</h1>
+    <p style="color:rgba(255,255,255,0.85);margin:8px 0 0;font-size:14px;">Starting at $4.99/month</p>
+  </td></tr>
+  <tr><td style="padding:32px;">
+    <p style="color:#334155;font-size:15px;line-height:1.7;">Hi ${firstName}, you've been using Suttain for a week. Here's what you get when you upgrade to Pro:</p>
+    <ul style="color:#334155;font-size:14px;line-height:2;padding-left:20px;">
+      <li>Unlimited simulations and formula generations</li>
+      <li>Global compliance checks across 50+ regions</li>
+      <li>Personalized safety alerts based on your health profile</li>
+      <li>Full sustainability scoring and PDF export</li>
+      <li>Computational simulations: DFT, MD, protein docking</li>
+    </ul>
+    <table width="100%"><tr><td align="center">
+      <a href="https://suttain.com/Pricing" style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#9531F5);color:white;padding:14px 32px;border-radius:50px;font-weight:bold;text-decoration:none;">View Pro Plans</a>
+    </td></tr></table>
+    <p style="color:#475569;font-size:13px;text-align:center;margin-top:20px;">Or share Suttain with a colleague — you both earn rewards points. Find your referral link in your profile.</p>
+    <p style="color:#94a3b8;font-size:12px;text-align:center;margin-top:24px;">Suttain · contact@suttain.com</p>
+  </td></tr>
+</table></body></html>`
+        });
+        console.log(`Day-7 drip sent to ${email}`);
+      } catch (e) { console.error('Day-7 drip failed:', e.message); }
+    }, 7 * 24 * 60 * 60 * 1000);
+
     return Response.json({ success: true, email });
   } catch (error) {
     console.error('Failed to send welcome email:', error.message, error.stack);

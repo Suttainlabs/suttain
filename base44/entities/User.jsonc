@@ -86,6 +86,19 @@
     "industry": {
       "type": "string",
       "description": "User's industry"
+    },
+    "referral_code": {
+      "type": "string",
+      "description": "Unique referral code for this user"
+    },
+    "referred_by": {
+      "type": "string",
+      "description": "Referral code of the user who referred this user"
+    },
+    "last_active_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last date user was active, used for re-engagement emails"
     }
   },
   "required": []
