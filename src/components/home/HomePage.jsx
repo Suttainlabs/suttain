@@ -96,7 +96,6 @@ function StatStrip() {
       <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #02988C60, #9531F560, transparent)" }} />
       <AnimatedStat target={1000000} label="Chemicals" color="#02988C" duration={2000} />
       <StaticStat value="&lt;1s" label="Analysis" color="#9531F5" />
-      <AnimatedStat target={1500} label="Daily Visitors" color="#02988C" duration={1600} />
       <StaticStat value="24/7" label="Available" color="#9531F5" />
       <StaticStat value="Free" label="To Start" color="#02988C" />
     </div>
