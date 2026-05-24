@@ -71,6 +71,22 @@
       },
       "description": "User's selected onboarding goals"
     },
+    "formulation_goals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specific product types the user wants to formulate (e.g. skincare, cleaning, haircare)"
+    },
+    "experience_level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "expert"
+      ],
+      "description": "User's self-reported experience level"
+    },
     "generator_category": {
       "type": "string",
       "enum": [

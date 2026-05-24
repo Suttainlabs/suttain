@@ -8,6 +8,7 @@ import { base44 } from '@/api/base44Client';
 
 // Import Dashboard Components
 import DashboardHeader from '../dashboard/DashboardHeader';
+import PersonalizedRecommendations from '../dashboard/PersonalizedRecommendations';
 import QuickAccess from '../dashboard/QuickAccess';
 import UserStats from '../dashboard/UserStats';
 import RecentFormulas from '../dashboard/RecentFormulas';
@@ -126,6 +127,9 @@ export default function ProfilePage() {
                 >
                     {/* Profile Header */}
                     <DashboardHeader user={user} greeting={getGreeting()} />
+
+                    {/* Personalized Recommendations based on onboarding role */}
+                    <PersonalizedRecommendations user={user} />
 
                     {/* Quick Access Tools */}
                     <QuickAccess />

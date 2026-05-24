@@ -101,7 +101,12 @@ export default function DashboardHeader({ greeting }) {
               </Popover>
             </h1>
             <p className="text-sm sm:text-base text-gray-500 mt-0.5 font-medium">
-              {user.role === 'admin' ? 'Administrator' : (user.subscription_plan === 'pro' || user.subscription_plan === 'enterprise') ? 'Pro Member' : 'User Dashboard'}
+              {user.role === 'admin'
+                ? 'Administrator'
+                : user.simulator_category
+                  ? `${user.simulator_category.charAt(0).toUpperCase() + user.simulator_category.slice(1)}${user.formulation_goals?.length ? ` · ${user.formulation_goals.slice(0, 2).map(g => g.charAt(0).toUpperCase() + g.slice(1)).join(', ')}` : ''}`
+                  : (user.subscription_plan === 'pro' || user.subscription_plan === 'enterprise') ? 'Pro Member' : 'User Dashboard'
+              }
             </p>
           </div>
         </div>
