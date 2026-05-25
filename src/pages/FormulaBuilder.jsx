@@ -97,6 +97,10 @@ export default function FormulaBuilder() {
 
   const handleAnalyse = async () => {
     if (ingredients.length === 0) return;
+    if (!formulaName.trim()) {
+      document.getElementById('formula-name-input')?.focus();
+      return;
+    }
     setAnalysing(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
@@ -162,10 +166,11 @@ export default function FormulaBuilder() {
           {/* Input panel */}
           <div className="lg:col-span-3 space-y-4">
             <input
+              id="formula-name-input"
               value={formulaName}
               onChange={e => setFormulaName(e.target.value)}
-              placeholder="Formula name (e.g. Daily Cleanser v2)"
-              className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white focus:border-[#02988C] outline-none text-slate-800 font-semibold"
+              placeholder="Formula name (e.g. Daily Cleanser v2) — required"
+              className={cn("w-full px-4 py-3 rounded-xl border-2 bg-white focus:border-[#02988C] outline-none text-slate-800 font-semibold", !formulaName.trim() && ingredients.length > 0 ? "border-amber-400" : "border-slate-200")}
             />
 
             {/* Method tabs */}
