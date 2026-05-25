@@ -82,7 +82,13 @@ export default function Dashboard() {
   const firstName = user.full_name?.split(' ')[0] || 'there';
 
   const safetyScore = user.latest_safety_score ?? null;
-  const complianceStatus = user.target_markets?.length ? 'Active' : 'Not configured';
+  const hasFormulas = formulas.length > 0;
+  const complianceStatus = user.target_markets?.length ? user.target_markets.join(', ') : hasFormulas ? 'Review ready' : 'Go to dashboard';
+  const complianceContext = user.target_markets?.length
+    ? `Monitoring ${user.target_markets.length} market${user.target_markets.length > 1 ? 's' : ''}`
+    : hasFormulas
+    ? 'Open Compliance Dashboard to check your formulas'
+    : 'Analyse a formula to activate compliance checks';
   const carbonExposure = user.estimated_carbon_exposure ?? null;
   const sourcingAlerts = user.sourcing_alerts_count ?? 0;
 
@@ -136,7 +142,7 @@ export default function Dashboard() {
         {/* Metric cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard title="Safety Score" value={safetyScore !== null ? safetyScore : '—'} context={safetyScore ? `${safetyScore >= 75 ? 'Looking good' : safetyScore >= 50 ? 'Needs review' : 'Action required'}` : 'Run your first scan to see your score'} icon={Shield} borderColor="border-l-green-500" onClick={() => navigate('/FormulaBuilder')} />
-          <MetricCard title="Compliance" value={complianceStatus} context={user.target_markets?.length ? `Monitoring ${user.target_markets.join(', ')}` : 'Configure your target markets'} icon={CheckCircle2} borderColor="border-l-blue-500" onClick={() => navigate('/ComplianceDashboard')} />
+          <MetricCard title="Compliance" value={complianceStatus} context={complianceContext} icon={CheckCircle2} borderColor="border-l-blue-500" onClick={() => navigate('/ComplianceDashboard')} />
           <MetricCard title="Carbon Exposure" value={carbonExposure ? `$${carbonExposure.toLocaleString()}` : '—'} context="Estimated annual carbon tax exposure" icon={Leaf} borderColor="border-l-emerald-500" onClick={() => navigate('/CarbonTaxSimulator')} />
           <MetricCard title="Sourcing Alerts" value={sourcingAlerts} context={sourcingAlerts > 0 ? `${sourcingAlerts} ingredient${sourcingAlerts > 1 ? 's' : ''} with greener alternatives available` : 'No active sourcing alerts'} icon={AlertTriangle} borderColor="border-l-amber-500" onClick={() => navigate('/Marketplace')} />
         </div>
