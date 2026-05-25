@@ -6,7 +6,7 @@ import { Sparkles, X, Send, MessageSquare, Loader2, Home, Mic, MicOff, Crown, XC
 import { base44 } from '@/api/base44Client';
 import { sendSlackNotification } from '@/functions/sendSlackNotification';
 import { cancelSubscription } from '@/functions/cancelSubscription';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
 const SYSTEM_PROMPT = `You are Clara, Suttain's intelligent AI assistant for the Suttain platform (suttain.com) — a chemical safety, sustainability, and formulation platform for individuals, researchers, and businesses.
@@ -144,8 +144,6 @@ const UpgradeActionCard = ({ onDismiss }) => (
 );
 
 export default function ClaraAssistant() {
-    const location = useLocation();
-    const isOnDashboard = location.pathname === '/Dashboard' || location.pathname === '/dashboard';
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [userMessage, setUserMessage] = useState('');
@@ -500,8 +498,8 @@ export default function ClaraAssistant() {
                 </motion.div>
             )}
 
-            {/* Floating Button — hidden on Dashboard (Clara is embedded there) */}
-            {!isOpen && !isOnDashboard && (
+            {/* Floating Button */}
+            {!isOpen && (
                 <motion.button
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
