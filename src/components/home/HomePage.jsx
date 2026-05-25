@@ -167,9 +167,9 @@ export default function HomePage() {
             className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 leading-[1.1] tracking-tight mb-6"
             style={{ textWrap: "balance" }}
           >
-            Know What's In{" "}
-            <span style={{ color: "#02988C" }}>Every Product</span>{" "}
-            Before It Ships
+            Safe Products,{" "}
+            <span style={{ color: "#02988C" }}>No Lab</span>{" "}
+            Required
           </motion.h1>
 
           <motion.p
