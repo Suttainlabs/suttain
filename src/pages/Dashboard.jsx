@@ -184,23 +184,28 @@ export default function Dashboard() {
 
           {/* AI Co-Pilot shortcut */}
           <div className="space-y-4">
-            <div className="bg-gradient-to-br from-[#00281E] to-slate-800 rounded-xl p-6 text-white">
+            <div className="bg-gradient-to-br from-[#1a0533] to-slate-900 rounded-xl p-6 text-white">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-[#02988C] rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-[#6B3FA0] rounded-lg flex items-center justify-center">
                   <Zap className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-bold text-sm">AI Co-Pilot</span>
+                <span className="font-bold text-sm">Clara — AI Assistant</span>
               </div>
-              <p className="text-sm text-white/70 mb-4 leading-relaxed">Ask anything about your formulas, compliance, carbon exposure, or sourcing.</p>
+              <p className="text-sm text-white/70 mb-4 leading-relaxed">Ask Clara anything about your formulas, compliance checks, carbon exposure, ingredient substitutions, or marketplace sourcing.</p>
               <div className="space-y-2">
-                {['Is my formula REACH compliant?', 'What is my carbon exposure for EU?', 'Find alternatives to SLS'].map(prompt => (
+                {[
+                  'Check my formula against EU REACH',
+                  'Find greener alternatives to SLS',
+                  'What is my estimated carbon tax for the US market?',
+                  'Scan an ingredient for safety and sustainability',
+                ].map(prompt => (
                   <button key={prompt} onClick={() => navigate('/Simulator')} className="w-full text-left text-xs bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg transition-colors text-white/80">
                     {prompt}
                   </button>
                 ))}
               </div>
-              <Link to="/Simulator" className="mt-4 flex items-center justify-center gap-2 w-full py-2.5 bg-[#02988C] rounded-xl text-sm font-semibold hover:bg-[#027d72] transition-colors">
-                Open Co-Pilot <ChevronRight className="w-4 h-4" />
+              <Link to="/Simulator" className="mt-4 flex items-center justify-center gap-2 w-full py-2.5 bg-[#6B3FA0] hover:bg-[#5a3488] rounded-xl text-sm font-semibold transition-colors">
+                Open Clara <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
 
