@@ -180,7 +180,7 @@ export default function FormulaBuilder() {
             {tab === 'manual' && (
               <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
                 <div className="relative">
-                  <input value={search} onChange={e => handleSearch(e.target.value)} placeholder="Search ingredient (e.g. Sodium Lauryl Sulfate)" className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[#02988C] outline-none text-sm" />
+                  <input value={search} onChange={e => handleSearch(e.target.value)} placeholder="Search 1M+ ingredients (e.g. Sodium Lauryl Sulfate)" className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[#02988C] outline-none text-sm" />
                   {searching && <Loader2 className="absolute right-3 top-3.5 w-4 h-4 text-slate-400 animate-spin" />}
                   {suggestions.length > 0 && (
                     <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-10 max-h-52 overflow-y-auto">
