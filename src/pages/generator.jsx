@@ -459,31 +459,7 @@ export default function Generator() {
   }
 
   return (
-    <div className="relative min-h-screen bg-slate-50 overflow-hidden">
-      {/* Watermark */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-        <img
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6b075fc5a_undraw_creative-experiment_bzae.png"
-          alt="Formula Generator Watermark"
-          className="w-1/2 max-w-xl h-auto opacity-5 select-none"
-        />
-      </div>
-      {/* Serum bottles watermark */}
-      <div className="absolute top-20 left-0 w-64 h-64 opacity-5 pointer-events-none hidden lg:block">
-        <img
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/71d10cfe3_bottles-with-serum-or-oil-2026-01-07-01-31-15-utc.jpg"
-          alt=""
-          className="w-full h-full object-cover select-none rounded-full"
-        />
-      </div>
-      {/* Cosmetics on wooden background watermark */}
-      <div className="absolute bottom-20 right-0 w-72 h-72 opacity-5 pointer-events-none hidden lg:block">
-        <img
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/7e24c77e6_beautiful-composition-with-cosmetics-on-wooden-bac-2026-02-05-20-53-27-utc.jpg"
-          alt=""
-          className="w-full h-full object-cover select-none"
-        />
-      </div>
+    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
 
       {/* Mode Indicator Badge - Top Right - Fixed Position */}
       {currentStep > 1 && (
@@ -512,10 +488,8 @@ export default function Generator() {
         </div>
       )}
       
-      {/* Main content */}
-      <div className="relative z-10">
-        <div className="min-h-screen py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto relative z-10">
+      <div className="py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
             {/* Show points notification */}
             <AnimatePresence>
               {showPointsNotification && (
@@ -644,7 +618,6 @@ export default function Generator() {
                 onResetGenerator={resetGenerator}
               />
             )}
-          </div>
         </div>
       </div>
     </div>

@@ -929,34 +929,7 @@ export default function Simulator() {
       {user && !trialStatus.isPro && !trialStatus.canSimulate ? (
         <TrialExpiredBanner featureName="Chemical Simulator" />
       ) : (
-      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ backgroundColor: '#EDF7F2' }}>
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(2,152,140,0.05)_50%,transparent_75%)] bg-[length:60px_60px)]"></div>
-        </div>
-        {/* Lab glassware watermark */}
-        <div className="absolute bottom-0 right-0 w-96 h-96 opacity-5 pointer-events-none">
-          <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/025e8ec13_laboratory-glassware-and-molecular-structure-sitti-2026-01-09-09-41-04-utc.jpg"
-            alt=""
-            className="w-full h-full object-cover select-none"
-          />
-        </div>
-        {/* Molecule structure watermark */}
-        <div className="absolute top-20 left-0 w-64 h-64 opacity-5 pointer-events-none hidden lg:block">
-          <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/dc994d8c7_closeup-shot-of-a-molecule-structure-on-a-lab-tabl-2026-01-07-23-07-24-utc.jpg"
-            alt=""
-            className="w-full h-full object-cover select-none rounded-full"
-          />
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/2ae9f2071_undraw_science_kut5.png"
-            alt=""
-            className="w-96 h-96 opacity-5 select-none"
-          />
-        </div>
+      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#EDF7F2' }}>
 
         <div className="max-w-7xl mx-auto relative z-10">
           {/* Mode Toggle */}
