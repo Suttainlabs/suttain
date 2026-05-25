@@ -6,11 +6,11 @@ import { Globe, Loader2, Download, TrendingUp, TrendingDown } from 'lucide-react
 import { cn } from '@/lib/utils';
 
 const MARKETS = [
-  { id: 'eu', name: 'European Union', flag: '🇪🇺', ets: true, cbam: true },
-  { id: 'uk', name: 'United Kingdom', flag: '🇬🇧', ets: true, cbam: false },
-  { id: 'canada', name: 'Canada', flag: '🇨🇦', ets: false, cbam: false },
-  { id: 'usa_california', name: 'USA (California)', flag: '🇺🇸', ets: true, cbam: false },
-  { id: 'australia', name: 'Australia', flag: '🇦🇺', ets: false, cbam: false },
+  { id: 'eu', name: 'European Union', ets: true, cbam: true },
+  { id: 'uk', name: 'United Kingdom', ets: true, cbam: false },
+  { id: 'canada', name: 'Canada', ets: false, cbam: false },
+  { id: 'usa_california', name: 'USA (California)', ets: true, cbam: false },
+  { id: 'australia', name: 'Australia', ets: false, cbam: false },
 ];
 
 export default function CarbonTaxSimulator() {
@@ -86,7 +86,7 @@ Return realistic ranges based on current carbon pricing.`,
             <div className="flex flex-wrap gap-2">
               {MARKETS.map(m => (
                 <button key={m.id} onClick={() => toggleMarket(m.id)} className={cn('flex items-center gap-2 px-3 py-2 rounded-xl border-2 text-sm font-semibold transition-all', selectedMarkets.includes(m.id) ? 'border-[#02988C] bg-[#F0FAF5] text-[#02988C]' : 'border-slate-200 text-slate-600 hover:border-[#02988C]/40')}>
-                  {m.flag} {m.name}
+                  {m.name}
                   {m.ets && <span className="text-xs bg-blue-100 text-blue-700 px-1 rounded">ETS</span>}
                   {m.cbam && <span className="text-xs bg-amber-100 text-amber-700 px-1 rounded">CBAM</span>}
                 </button>
