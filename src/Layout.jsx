@@ -263,7 +263,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
       <style>{`
         :root {
           --suttain-teal: #007850;
