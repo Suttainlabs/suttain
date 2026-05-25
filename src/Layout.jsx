@@ -425,10 +425,7 @@ export default function Layout({ children, currentPageName }) {
                        { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety, SDS analysis, compliance, ingredient DB & impact reports" },
                        { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with sim engine & eco scoring" },
                        { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive" },
-                       { href: "Dashboard", label: "My Dashboard", icon: LayoutDashboard, description: "Command centre for your formulas & compliance" },
-                       { href: "FormulaPortfolio", label: "Formula Portfolio", icon: FolderOpen, description: "View and manage your saved formulas" },
-                       { href: "ComplianceDashboard", label: "Compliance", icon: ShieldCheck, description: "Real-time regulatory compliance monitoring" },
-                       { href: "Marketplace", label: "Marketplace", icon: ShoppingBag, description: "Browse sustainable ingredient suppliers" },
+                       { href: "Dashboard", label: "My Dashboard", icon: LayoutDashboard, description: "Formulas, compliance, marketplace & portfolio in one place" },
 
                      ].map(item => (
                        <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
@@ -775,9 +772,6 @@ export default function Layout({ children, currentPageName }) {
                             { href: "generator", label: "Formula Generator", icon: Atom },
                             { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode },
                             { href: "Dashboard", label: "My Dashboard", icon: LayoutDashboard },
-                            { href: "FormulaPortfolio", label: "Formula Portfolio", icon: FolderOpen },
-                            { href: "ComplianceDashboard", label: "Compliance", icon: ShieldCheck },
-                            { href: "Marketplace", label: "Marketplace", icon: ShoppingBag },
                           ].map(item => (
                             <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
                               className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
