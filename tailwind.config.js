@@ -5,7 +5,7 @@ module.exports = {
   theme: {
   	extend: {
   		fontFamily: {
-  			gilroy: ['Source Sans 3', 'ui-sans-serif', 'sans-serif'],
+  			gilroy: ['Inter', 'ui-sans-serif', 'sans-serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -15,9 +15,15 @@ module.exports = {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
-  			'suttain-teal': '#02988C',
-  			'suttain-purple': '#9531F5',
-  			'suttain-blue': '#09D2FF',
+  			/* Brand */
+  			'brand-dark':  '#00281E',
+  			'brand-mid':   '#007850',
+  			'brand-light': '#00B478',
+  			'brand-mint':  '#00C896',
+  			/* Legacy aliases kept for backward compat */
+  			'suttain-teal':   '#007850',
+  			'suttain-purple': '#6B3FA0',
+  			'suttain-blue':   '#00A8C8',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

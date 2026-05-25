@@ -266,28 +266,28 @@ export default function Layout({ children, currentPageName }) {
     <div className="min-h-screen bg-slate-50">
       <style>{`
         :root {
-          --suttain-teal: #02988C;
-          --suttain-blue: #09D2FF;
-          --suttain-violet: #9531F5;
-          --suttain-dark: #1e293b;
-          --suttain-text: #475569;
-          --light-background: #f8fafc;
-          --warning-orange: #f97316;
-          --success-green: #22c55e;
+          --suttain-teal: #007850;
+          --suttain-blue: #00A8C8;
+          --suttain-violet: #6B3FA0;
+          --suttain-dark: #00281E;
+          --suttain-text: #464646;
+          --light-background: #EDF7F2;
+          --warning-orange: #D4900A;
+          --success-green: #00B478;
         }
 
         body {
-          font-family: var(--font-gilroy, 'Gilroy', sans-serif);
-          background-color: var(--light-background);
-          color: var(--suttain-text);
+          font-family: var(--font-gilroy, 'Inter', sans-serif);
+          background-color: var(--color-bg-page, #EDF7F2);
+          color: var(--color-text-secondary, #464646);
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
         
         h1, h2, h3, h4, h5, h6, .font-heading {
-          font-family: var(--font-gilroy, 'Gilroy', sans-serif);
+          font-family: var(--font-gilroy, 'Inter', sans-serif);
           font-weight: 700;
-          color: var(--suttain-dark);
+          color: var(--color-brand-dark, #00281E);
         }
 
         .gradient-text {
