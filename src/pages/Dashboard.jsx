@@ -1,11 +1,113 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import AuthContext from '@/components/auth/AuthContext';
 import AuthGate from '@/components/auth/AuthGate';
-import { Shield, CheckCircle2, Leaf, AlertTriangle, ChevronRight, Bell, Zap, FlaskConical, Atom, QrCode, ShoppingBag, Clock, TrendingUp, Sparkles } from 'lucide-react';
+import { Shield, CheckCircle2, Leaf, AlertTriangle, ChevronRight, Zap, FlaskConical, Atom, QrCode, ShoppingBag, TrendingUp, Sparkles, Send, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+
+const CLARA_SYSTEM = `You are Clara, Suttain's AI assistant. Keep responses SHORT (2-4 sentences max), plain text only, no markdown. Help with formulas, compliance, ingredients, carbon exposure, sustainability, and platform navigation.`;
+
+function ClaraInlineChat() {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const endRef = useRef(null);
+
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+
+  const send = async (text) => {
+    const content = (text || input).trim();
+    if (!content || loading) return;
+    setMessages(prev => [...prev, { role: 'user', content }]);
+    setInput('');
+    setLoading(true);
+    try {
+      const history = [...messages, { role: 'user', content }]
+        .map(m => `${m.role === 'user' ? 'User' : 'Clara'}: ${m.content}`).join('\n');
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `${CLARA_SYSTEM}\n\nConversation:\n${history}\n\nRespond as Clara:`,
+        model: 'gpt_5_mini'
+      });
+      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+    } catch {
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Having trouble connecting. Please try again.' }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const suggestions = ['Check my formula against EU REACH', 'Find greener alternatives to SLS', 'Estimated carbon tax for US market?'];
+
+  return (
+    <div className="bg-gradient-to-br from-[#1a0533] to-slate-900 rounded-xl overflow-hidden flex flex-col" style={{ height: '420px' }}>
+      {/* Header */}
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 flex-shrink-0">
+        <div className="w-8 h-8 bg-gradient-to-r from-[#02988C] to-[#09D2FF] rounded-full flex items-center justify-center">
+          <Sparkles className="w-4 h-4 text-white" />
+        </div>
+        <div>
+          <p className="text-white font-bold text-sm leading-tight">Clara — AI Assistant</p>
+          <p className="text-white/50 text-xs">Suttain Platform Guide</p>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+        {messages.length === 0 && (
+          <div className="pt-2 space-y-1.5">
+            <p className="text-white/60 text-xs mb-3 leading-relaxed">Ask about formulas, compliance, carbon exposure, or ingredient safety.</p>
+            {suggestions.map(s => (
+              <button key={s} onClick={() => send(s)} className="w-full text-left text-xs bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg transition-colors text-white/80">
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${
+              m.role === 'user' ? 'bg-gradient-to-r from-[#02988C] to-[#09D2FF] text-white' : 'bg-white/10 text-white/90'
+            }`}>
+              {m.content}
+            </div>
+          </div>
+        ))}
+        {loading && (
+          <div className="flex justify-start">
+            <div className="bg-white/10 rounded-xl px-3 py-2 flex items-center gap-2">
+              <Loader2 className="w-3 h-3 animate-spin text-teal-400" />
+              <span className="text-xs text-white/60">Clara is typing...</span>
+            </div>
+          </div>
+        )}
+        <div ref={endRef} />
+      </div>
+
+      {/* Input */}
+      <div className="p-3 border-t border-white/10 flex-shrink-0">
+        <div className="flex gap-2">
+          <input
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
+            placeholder="Ask Clara anything..."
+            disabled={loading}
+            className="flex-1 text-xs bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:border-teal-400"
+          />
+          <button
+            onClick={() => send()}
+            disabled={!input.trim() || loading}
+            className="w-8 h-8 bg-gradient-to-r from-[#02988C] to-[#09D2FF] rounded-lg flex items-center justify-center disabled:opacity-40 flex-shrink-0"
+          >
+            <Send className="w-3.5 h-3.5 text-white" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function ScoreBadge({ score, size = 'md' }) {
   const color = score >= 75 ? 'bg-green-500' : score >= 50 ? 'bg-amber-500' : 'bg-red-500';
@@ -182,32 +284,9 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* AI Co-Pilot shortcut */}
+          {/* Clara inline chatbot */}
           <div className="space-y-4">
-            <div className="bg-gradient-to-br from-[#1a0533] to-slate-900 rounded-xl p-6 text-white">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#02988C] to-[#09D2FF] rounded-full flex items-center justify-center shadow-md">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-                <span className="font-bold text-sm">Clara — AI Assistant</span>
-              </div>
-              <p className="text-sm text-white/70 mb-4 leading-relaxed">Ask Clara anything about your formulas, compliance checks, carbon exposure, ingredient substitutions, or marketplace sourcing.</p>
-              <div className="space-y-2">
-                {[
-                  'Check my formula against EU REACH',
-                  'Find greener alternatives to SLS',
-                  'What is my estimated carbon tax for the US market?',
-                  'Scan an ingredient for safety and sustainability',
-                ].map(prompt => (
-                  <button key={prompt} onClick={() => navigate('/Simulator')} className="w-full text-left text-xs bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg transition-colors text-white/80">
-                    {prompt}
-                  </button>
-                ))}
-              </div>
-              <Link to="/Simulator" className="mt-4 flex items-center justify-center gap-2 w-full py-2.5 bg-[#6B3FA0] hover:bg-[#5a3488] rounded-xl text-sm font-semibold transition-colors">
-                Open Clara <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
+            <ClaraInlineChat />
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
               <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#02988C]" /> Quick Tips</h3>

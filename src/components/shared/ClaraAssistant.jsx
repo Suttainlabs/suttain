@@ -6,7 +6,7 @@ import { Sparkles, X, Send, MessageSquare, Loader2, Home, Mic, MicOff, Crown, XC
 import { base44 } from '@/api/base44Client';
 import { sendSlackNotification } from '@/functions/sendSlackNotification';
 import { cancelSubscription } from '@/functions/cancelSubscription';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
 const SYSTEM_PROMPT = `You are Clara, Suttain's intelligent AI assistant for the Suttain platform (suttain.com) — a chemical safety, sustainability, and formulation platform for individuals, researchers, and businesses.
@@ -144,6 +144,8 @@ const UpgradeActionCard = ({ onDismiss }) => (
 );
 
 export default function ClaraAssistant() {
+    const location = useLocation();
+    const isOnDashboard = location.pathname === '/Dashboard' || location.pathname === '/dashboard';
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [userMessage, setUserMessage] = useState('');
@@ -498,7 +500,19 @@ export default function ClaraAssistant() {
                 </motion.div>
             )}
 
-            {/* Floating button removed — Clara is accessed via the Dashboard card */}
+            {/* Floating Button — hidden on Dashboard (Clara is embedded there) */}
+            {!isOpen && !isOnDashboard && (
+                <motion.button
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setIsOpen(true)}
+                    className="fixed bottom-20 lg:bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-[#02988C] to-[#09D2FF] rounded-full shadow-lg flex items-center justify-center text-white z-50 hover:shadow-xl transition-shadow"
+                >
+                    <Sparkles className="w-6 h-6" />
+                </motion.button>
+            )}
         </AnimatePresence>
     );
 }
