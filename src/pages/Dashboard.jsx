@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import AuthContext from '@/components/auth/AuthContext';
 import AuthGate from '@/components/auth/AuthGate';
-import { Shield, CheckCircle2, Leaf, AlertTriangle, ChevronRight, Bell, Zap, FlaskConical, Atom, QrCode, ShoppingBag, Clock, TrendingUp } from 'lucide-react';
+import { Shield, CheckCircle2, Leaf, AlertTriangle, ChevronRight, Bell, Zap, FlaskConical, Atom, QrCode, ShoppingBag, Clock, TrendingUp, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -186,8 +186,8 @@ export default function Dashboard() {
           <div className="space-y-4">
             <div className="bg-gradient-to-br from-[#1a0533] to-slate-900 rounded-xl p-6 text-white">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-[#6B3FA0] rounded-lg flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-r from-[#02988C] to-[#09D2FF] rounded-full flex items-center justify-center shadow-md">
+                  <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <span className="font-bold text-sm">Clara — AI Assistant</span>
               </div>

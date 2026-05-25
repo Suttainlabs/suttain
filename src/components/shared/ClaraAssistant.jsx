@@ -498,19 +498,7 @@ export default function ClaraAssistant() {
                 </motion.div>
             )}
 
-            {/* Floating Button */}
-            {!isOpen && (
-                <motion.button
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setIsOpen(true)}
-                    className="fixed bottom-20 lg:bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-[#02988C] to-[#09D2FF] rounded-full shadow-lg flex items-center justify-center text-white z-50 hover:shadow-xl transition-shadow"
-                >
-                    <Sparkles className="w-6 h-6" />
-                </motion.button>
-            )}
+            {/* Floating button removed — Clara is accessed via the Dashboard card */}
         </AnimatePresence>
     );
 }
