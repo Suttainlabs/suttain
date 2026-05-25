@@ -7,7 +7,7 @@ export default function ComparativeImpactReportPage() {
   const { user } = useContext(AuthContext);
   return (
     <AuthGate featureName="Comparative Impact Report" featureDescription="Benchmark your formula's sustainability against industry standards and get AI-powered improvement advice.">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/20 to-green-50/20 py-8 pb-24">
+      <div className="min-h-screen py-8 pb-24" style={{ backgroundColor: '#EDF7F2' }}>
         <ComparativeImpactReport />
       </div>
     </AuthGate>

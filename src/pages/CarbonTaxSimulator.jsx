@@ -21,7 +21,7 @@ export default function CarbonTaxSimulator() {
   const [loading, setLoading] = useState(false);
 
   if (!user) return (
-    <div className="min-h-screen bg-[#F0FAF5] flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: '#EDF7F2' }}>
       <AuthGate featureName="Carbon Tax Simulator" featureDescription="Sign in to forecast carbon tax exposure." />
     </div>
   );
@@ -69,7 +69,7 @@ Return realistic ranges based on current carbon pricing.`,
   };
 
   return (
-    <div className="min-h-screen bg-[#F0FAF5]">
+    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-slate-900">Carbon Tax Simulator</h1>

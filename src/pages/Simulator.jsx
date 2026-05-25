@@ -929,7 +929,7 @@ export default function Simulator() {
       {user && !trialStatus.isPro && !trialStatus.canSimulate ? (
         <TrialExpiredBanner featureName="Chemical Simulator" />
       ) : (
-      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-slate-50 relative overflow-hidden">
+      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ backgroundColor: '#EDF7F2' }}>
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(2,152,140,0.05)_50%,transparent_75%)] bg-[length:60px_60px)]"></div>

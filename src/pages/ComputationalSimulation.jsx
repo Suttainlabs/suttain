@@ -625,7 +625,7 @@ Provide a focused, technical analysis. Return JSON with:
 
   if (user && !canAccess) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#EDF7F2' }}>
         <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border border-violet-100 p-8 text-center">
           <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
             <Cpu className="w-8 h-8 text-white" />

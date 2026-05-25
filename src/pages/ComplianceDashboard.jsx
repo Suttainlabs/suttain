@@ -64,7 +64,7 @@ Return JSON with market names as keys.`,
   };
 
   if (!user) return (
-    <div className="min-h-screen bg-[#F0FAF5] flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: '#EDF7F2' }}>
       <AuthGate featureName="Compliance Dashboard" featureDescription="Sign in to monitor compliance across your target markets." />
     </div>
   );
@@ -72,7 +72,7 @@ Return JSON with market names as keys.`,
   const allClear = activeMarkets.every(m => complianceData[m]?.status === 'pass');
 
   return (
-    <div className="min-h-screen bg-[#F0FAF5]">
+    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>

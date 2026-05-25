@@ -141,7 +141,7 @@ export default function FormulaBuilder() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0FAF5]">
+    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
       {analysing && (
         <div className="fixed inset-0 z-50 bg-white/90 flex flex-col items-center justify-center gap-4">
           <div className="flex gap-4">

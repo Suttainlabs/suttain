@@ -452,7 +452,7 @@ export default function IngredientDatabase() {
   const filtered = [...filteredLocal, ...filteredPubchem];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
       {/* Hero */}
       <section className="bg-white border-b border-slate-200 py-10 px-4">
         <div className="max-w-5xl mx-auto text-center">

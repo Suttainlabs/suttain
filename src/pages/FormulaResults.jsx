@@ -64,7 +64,7 @@ export default function FormulaResults() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F0FAF5]">
+    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-6">
