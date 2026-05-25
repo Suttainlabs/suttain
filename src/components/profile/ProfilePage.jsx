@@ -101,7 +101,7 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="bg-slate-50 relative">
+        <div className="min-h-screen relative" style={{ backgroundColor: '#EDF7F2' }}>
             {/* Pull-to-refresh indicator */}
             <AnimatePresence>
                 {(pullDistance > 10 || isRefreshing) && (
