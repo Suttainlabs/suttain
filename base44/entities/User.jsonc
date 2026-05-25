@@ -51,8 +51,7 @@
     },
     "subscription_end_date": {
       "type": "string",
-      "format": "date-time",
-      "description": "When the current subscription period ends (from Stripe)"
+      "format": "date-time"
     },
     "stripe_customer_id": {
       "type": "string"
@@ -68,15 +67,13 @@
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "User's selected onboarding goals"
+      }
     },
     "formulation_goals": {
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "Specific product types the user wants to formulate (e.g. skincare, cleaning, haircare)"
+      }
     },
     "experience_level": {
       "type": "string",
@@ -84,37 +81,37 @@
         "beginner",
         "intermediate",
         "expert"
-      ],
-      "description": "User's self-reported experience level"
+      ]
     },
     "generator_category": {
       "type": "string",
       "enum": [
         "individual",
         "business"
-      ],
-      "description": "User's formula generator preference"
+      ]
     },
     "simulator_category": {
-      "type": "string",
-      "description": "User's simulator category (role)"
+      "type": "string"
     },
     "industry": {
-      "type": "string",
-      "description": "User's industry"
+      "type": "string"
+    },
+    "target_markets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Markets the user sells in (e.g. usa, eu, africa)"
     },
     "referral_code": {
-      "type": "string",
-      "description": "Unique referral code for this user"
+      "type": "string"
     },
     "referred_by": {
-      "type": "string",
-      "description": "Referral code of the user who referred this user"
+      "type": "string"
     },
     "last_active_date": {
       "type": "string",
-      "format": "date-time",
-      "description": "Last date user was active, used for re-engagement emails"
+      "format": "date-time"
     }
   },
   "required": []

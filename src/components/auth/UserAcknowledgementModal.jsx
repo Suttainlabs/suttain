@@ -1,112 +1,207 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
 import {
-  CheckCircle2, Beaker, Atom, QrCode, Leaf, ChevronRight, ChevronLeft,
-  FlaskConical, Sparkles, Shield, BarChart3, Droplets, Home, Apple,
-  Pill, Microscope, GraduationCap, Building2, User as UserIcon, Briefcase
+  CheckCircle2, ChevronRight, ChevronLeft,
+  Shirt, Beaker, Droplets, Heart, Package,
+  Building2, FlaskConical, Factory, Wrench, User as UserIcon,
+  Shield, Leaf, BarChart3, DollarSign,
+  Globe, MapPin, Plane, Map
 } from 'lucide-react';
 
+// ── Q1: What do you make? ─────────────────────────────────────────────────────
+const WHAT_YOU_MAKE = [
+  { id: 'cleaning',     label: 'Cleaning products',  icon: Beaker },
+  { id: 'cosmetics',    label: 'Cosmetics',           icon: Shirt },
+  { id: 'soap',         label: 'Soap',                icon: Droplets },
+  { id: 'personal_care',label: 'Personal care',       icon: Heart },
+  { id: 'other',        label: 'Other',               icon: Package },
+];
+
+// ── Q2: What is your role? ────────────────────────────────────────────────────
 const ROLES = [
-  { value: 'formulator', label: 'Professional Formulator', icon: FlaskConical, desc: 'I create products for brands or clients' },
-  { value: 'researcher', label: 'Researcher / Scientist', icon: Microscope, desc: 'I conduct scientific research' },
-  { value: 'business', label: 'Brand Manager', icon: Building2, desc: 'I manage or own a product brand' },
-  { value: 'teacher', label: 'Educator / Teacher', icon: GraduationCap, desc: 'I teach chemistry or formulation' },
-  { value: 'individual', label: 'DIY Enthusiast', icon: UserIcon, desc: 'I make products for personal use' },
-  { value: 'student', label: 'Student', icon: Briefcase, desc: 'I am studying chemistry or related fields' },
+  { id: 'founder',      label: 'Founder',             icon: Building2 },
+  { id: 'formulator',   label: 'Formulator',          icon: FlaskConical },
+  { id: 'manufacturer', label: 'Manufacturer',        icon: Factory },
+  { id: 'diy',          label: 'DIY Maker',           icon: Wrench },
+  { id: 'consultant',   label: 'Consultant',          icon: UserIcon },
 ];
 
-const FORMULATION_GOALS = [
-  { id: 'skincare', label: 'Skincare', icon: Droplets },
-  { id: 'haircare', label: 'Haircare', icon: Sparkles },
-  { id: 'cleaning', label: 'Cleaning Products', icon: Home },
-  { id: 'supplements', label: 'Supplements', icon: Pill },
-  { id: 'food', label: 'Food & Nutrition', icon: Apple },
-  { id: 'industrial', label: 'Industrial Chemicals', icon: FlaskConical },
-  { id: 'pharmaceutical', label: 'Pharmaceutical', icon: Shield },
-  { id: 'cosmetics', label: 'Cosmetics & Makeup', icon: Leaf },
+// ── Q3: What matters most? ────────────────────────────────────────────────────
+const PRIORITIES = [
+  { id: 'safety',         label: 'Safety',            icon: Shield },
+  { id: 'compliance',     label: 'Compliance',        icon: CheckCircle2 },
+  { id: 'sustainability', label: 'Sustainability',    icon: Leaf },
+  { id: 'carbon_costs',   label: 'Carbon costs',      icon: DollarSign },
 ];
 
-const EXPERIENCE_LEVELS = [
-  { value: 'beginner', label: 'Beginner', desc: 'I am just getting started' },
-  { value: 'intermediate', label: 'Intermediate', desc: 'I have some experience' },
-  { value: 'expert', label: 'Expert', desc: 'I work professionally in this field' },
+// ── Q4: Where do you sell? ────────────────────────────────────────────────────
+const MARKETS = [
+  { id: 'usa',          label: 'USA',                 icon: MapPin },
+  { id: 'eu',           label: 'EU',                  icon: Globe },
+  { id: 'africa',       label: 'Africa',              icon: Map },
+  { id: 'asia_pacific', label: 'Asia-Pacific',        icon: Plane },
+  { id: 'global',       label: 'Global',              icon: Globe },
 ];
 
-const PLATFORM_GOALS = [
-  { id: 'formulate', label: 'Create formulas', icon: Beaker },
-  { id: 'simulate', label: 'Simulate chemistry', icon: Atom },
-  { id: 'scan', label: 'Scan products', icon: QrCode },
-  { id: 'sustainability', label: 'Track eco impact', icon: BarChart3 },
+const QUESTIONS = [
+  {
+    key: 'what_you_make',
+    question: 'What do you make?',
+    subtitle: 'We will tailor your dashboard to your product category.',
+    options: WHAT_YOU_MAKE,
+    multi: false,
+  },
+  {
+    key: 'role',
+    question: 'What is your role?',
+    subtitle: 'This helps us show the right level of detail for your work.',
+    options: ROLES,
+    multi: false,
+  },
+  {
+    key: 'priority',
+    question: 'What matters most to you?',
+    subtitle: 'We will surface the insights most relevant to your goals.',
+    options: PRIORITIES,
+    multi: false,
+  },
+  {
+    key: 'markets',
+    question: 'Where do you sell?',
+    subtitle: 'We will pre-load compliance rules for your target markets.',
+    options: MARKETS,
+    multi: true,
+  },
 ];
 
-const TOTAL_STEPS = 4;
+const DEFAULTS = {
+  what_you_make: 'other',
+  role: 'founder',
+  priority: 'safety',
+  markets: ['global'],
+};
+
+const slideVariants = {
+  enter: (dir) => ({ x: dir > 0 ? '60%' : '-60%', opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir) => ({ x: dir > 0 ? '-60%' : '60%', opacity: 0 }),
+};
 
 export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) {
-  const [step, setStep] = useState(1);
-  const [selectedRole, setSelectedRole] = useState('');
-  const [formulationGoals, setFormulationGoals] = useState([]);
-  const [experienceLevel, setExperienceLevel] = useState('');
-  const [platformGoals, setPlatformGoals] = useState([]);
+  const [step, setStep] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [answers, setAnswers] = useState({ what_you_make: '', role: '', priority: '', markets: [] });
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const toggleFormulationGoal = (id) => {
-    setFormulationGoals(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]);
+  // Persist progress in case user closes mid-quiz
+  useEffect(() => {
+    const saved = localStorage.getItem('suttain_onboarding_progress');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.step !== undefined) setStep(parsed.step);
+        if (parsed.answers) setAnswers(parsed.answers);
+      } catch {}
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('suttain_onboarding_progress', JSON.stringify({ step, answers }));
+  }, [step, answers]);
+
+  if (!isOpen) return null;
+
+  const q = QUESTIONS[step];
+
+  const select = (id) => {
+    if (q.multi) {
+      setAnswers(prev => {
+        const cur = prev[q.key] || [];
+        return { ...prev, [q.key]: cur.includes(id) ? cur.filter(x => x !== id) : [...cur, id] };
+      });
+    } else {
+      setAnswers(prev => ({ ...prev, [q.key]: id }));
+    }
   };
 
-  const togglePlatformGoal = (id) => {
-    setPlatformGoals(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]);
+  const isSelected = (id) => {
+    const val = answers[q.key];
+    return q.multi ? (val || []).includes(id) : val === id;
   };
 
-  const canProceed = {
-    1: !!selectedRole,
-    2: formulationGoals.length > 0,
-    3: !!experienceLevel,
-    4: platformGoals.length > 0,
+  const canAdvance = q.multi
+    ? (answers[q.key] || []).length > 0
+    : !!answers[q.key];
+
+  const advance = () => {
+    if (!canAdvance) return;
+    if (step < QUESTIONS.length - 1) {
+      setDirection(1);
+      setStep(s => s + 1);
+    } else {
+      save(answers);
+    }
   };
 
-  const handleFinish = async () => {
+  const back = () => {
+    setDirection(-1);
+    setStep(s => s - 1);
+  };
+
+  const applySkip = () => {
+    const filled = { ...DEFAULTS };
+    Object.keys(answers).forEach(k => {
+      const v = answers[k];
+      if (v && (!Array.isArray(v) || v.length > 0)) filled[k] = v;
+    });
+    save(filled);
+    setShowSkipConfirm(false);
+  };
+
+  const save = async (data) => {
     setIsSaving(true);
     try {
       await base44.auth.updateMe({
         first_login: false,
-        onboarding_goals: platformGoals,
-        formulation_goals: formulationGoals,
-        experience_level: experienceLevel,
-        generator_category: selectedRole === 'business' || selectedRole === 'formulator' ? 'business' : 'individual',
-        simulator_category: selectedRole,
-        industry: formulationGoals[0] || 'other',
+        onboarding_goals: [data.priority],
+        formulation_goals: [data.what_you_make],
+        generator_category: ['founder', 'formulator', 'manufacturer'].includes(data.role) ? 'business' : 'individual',
+        simulator_category: data.role,
+        industry: data.what_you_make,
+        target_markets: Array.isArray(data.markets) ? data.markets : [data.markets],
+      });
+
+      base44.analytics.track({
+        eventName: 'onboarding_completed',
+        properties: {
+          what_you_make: data.what_you_make,
+          role: data.role,
+          priority: data.priority,
+          markets: Array.isArray(data.markets) ? data.markets.join(',') : data.markets,
+        }
       });
 
       base44.auth.me().then(currentUser => {
-        base44.analytics.track({
-          eventName: 'onboarding_completed',
-          properties: {
-            role: selectedRole,
-            experience: experienceLevel,
-            formulation_goals: formulationGoals.join(','),
-            platform_goals: platformGoals.join(',')
-          }
-        });
-
         base44.entities.Notification.create({
           title: 'New User Signup',
-          message: `${currentUser.full_name || currentUser.email} signed up. Role: ${selectedRole}, Experience: ${experienceLevel}, Goals: ${formulationGoals.join(', ')}`,
+          message: `${currentUser.full_name || currentUser.email} signed up. Role: ${data.role}, Makes: ${data.what_you_make}, Priority: ${data.priority}`,
           type: 'user_signup',
           severity: 'info',
           target_user: 'admin',
-          metadata: { user_email: currentUser.email, role: selectedRole, experience: experienceLevel, formulation_goals: formulationGoals }
+          metadata: { user_email: currentUser.email, role: data.role, industry: data.what_you_make, priority: data.priority }
         }).catch(() => {});
 
         base44.functions.invoke('sendSlackNotification', {
           channel: '#all-suttain',
           type: 'new_user',
-          data: { userName: currentUser.full_name, userEmail: currentUser.email, role: selectedRole, experience: experienceLevel, goals: formulationGoals.join(', ') }
+          data: { userName: currentUser.full_name, userEmail: currentUser.email, role: data.role, industry: data.what_you_make }
         }).catch(() => {});
       }).catch(() => {});
 
+      localStorage.removeItem('suttain_onboarding_progress');
       if (onAccept) onAccept(); else onClose();
     } catch (error) {
       console.error("Failed to save onboarding data:", error);
@@ -117,187 +212,175 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
   };
 
   return (
-    <Dialog open={isOpen}>
-      <DialogContent className="sm:max-w-[560px] p-0 overflow-hidden">
-        {/* Header bar */}
-        <div className="bg-gradient-to-r from-[#02988C] to-[#09D2FF] px-6 pt-6 pb-5">
-          <div className="flex gap-1.5 mb-4">
-            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-              <div key={i} className={cn(
-                "h-1 flex-1 rounded-full transition-all duration-300",
-                i < step ? "bg-white" : "bg-white/30"
-              )} />
-            ))}
-          </div>
-          <p className="text-white/70 text-xs font-semibold uppercase tracking-widest mb-1">
-            Step {step} of {TOTAL_STEPS}
-          </p>
-          <h2 className="text-white text-xl font-bold leading-tight">
-            {step === 1 && "What is your role?"}
-            {step === 2 && "What do you want to formulate?"}
-            {step === 3 && "What is your experience level?"}
-            {step === 4 && "What will you use Suttain for?"}
-          </h2>
-          <p className="text-white/75 text-sm mt-1">
-            {step === 1 && "We'll tailor your dashboard and safety alerts to your role."}
-            {step === 2 && "Select all product types you plan to work with."}
-            {step === 3 && "This helps us set the right complexity for your results."}
-            {step === 4 && "Select everything that applies — you can change this later."}
-          </p>
-        </div>
-
-        <div className="px-6 py-5">
-          {/* Step 1: Role */}
-          {step === 1 && (
-            <div className="grid grid-cols-2 gap-2.5">
-              {ROLES.map(({ value, label, icon: Icon, desc }) => (
+    <div className="fixed inset-0 z-[9999] bg-white flex flex-col">
+      {/* Skip confirm overlay */}
+      <AnimatePresence>
+        {showSkipConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-10 bg-black/40 flex items-center justify-center p-6"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+            >
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Skip personalisation?</h3>
+              <p className="text-slate-500 text-sm mb-6">We will use default settings. You can update your preferences anytime in your profile.</p>
+              <div className="flex gap-3">
                 <button
-                  key={value}
-                  onClick={() => setSelectedRole(value)}
-                  className={cn(
-                    "flex items-start gap-3 p-3.5 rounded-xl border-2 text-left transition-all",
-                    selectedRole === value
-                      ? "border-[#02988C] bg-teal-50"
-                      : "border-slate-200 hover:border-slate-300"
-                  )}
+                  onClick={() => setShowSkipConfirm(false)}
+                  className="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-700 font-semibold text-sm hover:border-slate-300 transition-colors"
                 >
-                  <div className={cn(
-                    "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5",
-                    selectedRole === value ? "bg-teal-100" : "bg-slate-100"
-                  )}>
-                    <Icon className={cn("w-4 h-4", selectedRole === value ? "text-[#02988C]" : "text-slate-500")} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className={cn("text-sm font-semibold leading-tight", selectedRole === value ? "text-[#02988C]" : "text-slate-700")}>
-                      {label}
-                    </p>
-                    <p className="text-xs text-slate-400 mt-0.5 leading-snug">{desc}</p>
-                  </div>
+                  Continue Quiz
                 </button>
-              ))}
-            </div>
-          )}
-
-          {/* Step 2: Formulation goals */}
-          {step === 2 && (
-            <div className="grid grid-cols-2 gap-2.5">
-              {FORMULATION_GOALS.map(({ id, label, icon: Icon }) => (
                 <button
-                  key={id}
-                  onClick={() => toggleFormulationGoal(id)}
-                  className={cn(
-                    "flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all",
-                    formulationGoals.includes(id)
-                      ? "border-[#9531F5] bg-violet-50"
-                      : "border-slate-200 hover:border-slate-300"
-                  )}
+                  onClick={applySkip}
+                  className="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-semibold text-sm hover:bg-slate-200 transition-colors"
                 >
-                  <div className={cn(
-                    "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
-                    formulationGoals.includes(id) ? "bg-violet-100" : "bg-slate-100"
-                  )}>
-                    <Icon className={cn("w-4 h-4", formulationGoals.includes(id) ? "text-[#9531F5]" : "text-slate-500")} />
-                  </div>
-                  <p className={cn("text-sm font-semibold", formulationGoals.includes(id) ? "text-[#9531F5]" : "text-slate-700")}>
-                    {label}
-                  </p>
-                  {formulationGoals.includes(id) && (
-                    <CheckCircle2 className="w-4 h-4 text-[#9531F5] ml-auto flex-shrink-0" />
-                  )}
+                  Yes, Skip
                 </button>
-              ))}
-            </div>
-          )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Step 3: Experience level */}
-          {step === 3 && (
-            <div className="flex flex-col gap-3">
-              {EXPERIENCE_LEVELS.map(({ value, label, desc }) => (
-                <button
-                  key={value}
-                  onClick={() => setExperienceLevel(value)}
-                  className={cn(
-                    "flex items-center justify-between p-4 rounded-xl border-2 text-left transition-all",
-                    experienceLevel === value
-                      ? "border-[#02988C] bg-teal-50"
-                      : "border-slate-200 hover:border-slate-300"
-                  )}
-                >
-                  <div>
-                    <p className={cn("text-base font-semibold", experienceLevel === value ? "text-[#02988C]" : "text-slate-700")}>
-                      {label}
-                    </p>
-                    <p className="text-sm text-slate-400 mt-0.5">{desc}</p>
-                  </div>
-                  {experienceLevel === value && <CheckCircle2 className="w-5 h-5 text-[#02988C] flex-shrink-0" />}
-                </button>
-              ))}
-            </div>
-          )}
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-6 pt-5 pb-3 flex-shrink-0">
+        <img
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
+          alt="Suttain"
+          className="h-8 w-auto"
+        />
+        <button
+          onClick={() => setShowSkipConfirm(true)}
+          className="text-sm text-slate-400 hover:text-slate-600 font-medium transition-colors"
+        >
+          Skip for now
+        </button>
+      </div>
 
-          {/* Step 4: Platform goals + Terms */}
-          {step === 4 && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-2.5">
-                {PLATFORM_GOALS.map(({ id, label, icon: Icon }) => (
+      {/* Progress dots */}
+      <div className="flex items-center justify-center gap-2 py-3 flex-shrink-0">
+        {QUESTIONS.map((_, i) => (
+          <div
+            key={i}
+            className={cn(
+              "rounded-full transition-all duration-300",
+              i === step
+                ? "w-6 h-2.5 bg-[#02988C]"
+                : i < step
+                  ? "w-2.5 h-2.5 bg-[#02988C]/50"
+                  : "w-2.5 h-2.5 bg-slate-200"
+            )}
+          />
+        ))}
+      </div>
+
+      {/* Question card — animated */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 overflow-hidden">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={step}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.28, ease: "easeInOut" }}
+            className="w-full max-w-lg"
+          >
+            {/* Question heading */}
+            <div className="text-center mb-8">
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#02988C] mb-2">
+                Question {step + 1} of {QUESTIONS.length}
+              </p>
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-3">
+                {q.question}
+              </h1>
+              <p className="text-slate-500 text-base">{q.subtitle}</p>
+            </div>
+
+            {/* Answer cards */}
+            <div className={cn(
+              "grid gap-3",
+              q.options.length <= 4 ? "grid-cols-1 max-w-sm mx-auto" : "grid-cols-2"
+            )}>
+              {q.options.map(({ id, label, icon: Icon }) => {
+                const selected = isSelected(id);
+                return (
                   <button
                     key={id}
-                    onClick={() => togglePlatformGoal(id)}
+                    onClick={() => select(id)}
                     className={cn(
-                      "flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all",
-                      platformGoals.includes(id)
-                        ? "border-[#02988C] bg-teal-50"
-                        : "border-slate-200 hover:border-slate-300"
+                      "relative flex items-center gap-3 p-4 rounded-2xl border-2 text-left transition-all duration-150 focus:outline-none",
+                      selected
+                        ? "border-[#02988C] bg-[#02988C]/5 shadow-sm"
+                        : "border-slate-200 bg-white hover:border-[#02988C]/40 hover:bg-slate-50"
                     )}
                   >
                     <div className={cn(
-                      "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
-                      platformGoals.includes(id) ? "bg-teal-100" : "bg-slate-100"
+                      "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0",
+                      selected ? "bg-[#02988C]/15" : "bg-slate-100"
                     )}>
-                      <Icon className={cn("w-4 h-4", platformGoals.includes(id) ? "text-[#02988C]" : "text-slate-500")} />
+                      <Icon className={cn("w-5 h-5", selected ? "text-[#02988C]" : "text-slate-500")} />
                     </div>
-                    <p className={cn("text-sm font-semibold", platformGoals.includes(id) ? "text-[#02988C]" : "text-slate-700")}>
+                    <span className={cn(
+                      "text-sm font-semibold flex-1",
+                      selected ? "text-[#02988C]" : "text-slate-700"
+                    )}>
                       {label}
-                    </p>
+                    </span>
+                    {selected && (
+                      <CheckCircle2 className="w-4 h-4 text-[#02988C] flex-shrink-0" />
+                    )}
                   </button>
-                ))}
-              </div>
-
-              <div className="text-xs p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 space-y-1.5 leading-relaxed">
-                <p className="font-semibold text-slate-600">Before you start, please note:</p>
-                <p>Suttain's tools are for informational purposes. All real-world product decisions remain your responsibility and must comply with applicable regulations.</p>
-              </div>
+                );
+              })}
             </div>
-          )}
 
-          {/* Navigation */}
-          <div className={cn("flex gap-3 mt-5", step === 1 ? "justify-end" : "justify-between")}>
-            {step > 1 && (
-              <Button variant="outline" onClick={() => setStep(s => s - 1)} className="gap-1">
-                <ChevronLeft className="w-4 h-4" /> Back
-              </Button>
+            {q.multi && (
+              <p className="text-center text-xs text-slate-400 mt-3">Select all that apply</p>
             )}
-            {step < TOTAL_STEPS ? (
-              <Button
-                onClick={() => setStep(s => s + 1)}
-                disabled={!canProceed[step]}
-                className="gap-1 bg-gradient-to-r from-[#02988C] to-[#09D2FF] text-white border-0 hover:opacity-90"
-              >
-                Continue <ChevronRight className="w-4 h-4" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleFinish}
-                disabled={isSaving || !canProceed[step]}
-                className="gap-1 bg-gradient-to-r from-[#02988C] to-[#09D2FF] text-white border-0 hover:opacity-90"
-              >
-                {isSaving ? "Saving..." : "I Agree and Get Started"}
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Bottom navigation */}
+      <div className="px-6 pb-8 pt-4 flex-shrink-0">
+        <div className="max-w-lg mx-auto flex items-center gap-3">
+          {step > 0 && (
+            <button
+              onClick={back}
+              className="flex items-center gap-1.5 px-5 py-3 rounded-xl border-2 border-slate-200 text-slate-700 font-semibold text-sm hover:border-slate-300 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back
+            </button>
+          )}
+          <button
+            onClick={advance}
+            disabled={!canAdvance || isSaving}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-base transition-all",
+              canAdvance && !isSaving
+                ? "bg-[#02988C] text-white hover:bg-[#027d72] shadow-lg shadow-[#02988C]/25"
+                : "bg-slate-100 text-slate-400 cursor-not-allowed"
             )}
-          </div>
+          >
+            {isSaving
+              ? "Building your dashboard..."
+              : step === QUESTIONS.length - 1
+                ? "Build My Dashboard"
+                : "Next"}
+            {!isSaving && <ChevronRight className="w-4 h-4" />}
+          </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
