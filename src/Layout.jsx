@@ -523,10 +523,10 @@ export default function Layout({ children, currentPageName }) {
                         <p className="text-xs text-slate-500">{user.email}</p>
                       </div>
                       <DropdownMenuItem asChild>
-                        <Link to={createPageUrl("Profile")} className="cursor-pointer">
-                          <LayoutDashboard className="w-4 h-4 mr-2" />
-                          My Dashboard
-                        </Link>
+                        <Link to="/Dashboard" className="cursor-pointer">
+                            <LayoutDashboard className="w-4 h-4 mr-2" />
+                            My Dashboard
+                           </Link>
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild>

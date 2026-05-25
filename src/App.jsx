@@ -31,6 +31,16 @@ const SimulationProductivity = lazy(() => import('./pages/SimulationProductivity
 const SimulationSandbox = lazy(() => import('./pages/SimulationSandbox'));
 const NutriScan = lazy(() => import('./pages/NutriScan'));
 const SDSAnalyzer = lazy(() => import('./pages/SDSAnalyzer'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const FormulaBuilder = lazy(() => import('./pages/FormulaBuilder'));
+const FormulaResults = lazy(() => import('./pages/FormulaResults'));
+const IngredientSubstitution = lazy(() => import('./pages/IngredientSubstitution'));
+const ComplianceDashboard = lazy(() => import('./pages/ComplianceDashboard'));
+const ReportGenerator = lazy(() => import('./pages/ReportGenerator'));
+const Marketplace = lazy(() => import('./pages/Marketplace'));
+const CarbonTaxSimulator = lazy(() => import('./pages/CarbonTaxSimulator'));
+const CarbonOpportunitySimulator = lazy(() => import('./pages/CarbonOpportunitySimulator'));
+const FormulaPortfolio = lazy(() => import('./pages/FormulaPortfolio'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -118,6 +128,16 @@ const AuthenticatedApp = () => {
       <Route path="/SimulationSandbox" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-950 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><SimulationSandbox /></Suspense>} />
       <Route path="/NutriScan" element={<LayoutWrapper currentPageName="NutriScan"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><NutriScan /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SDSAnalyzer" element={<LayoutWrapper currentPageName="SDSAnalyzer"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><SDSAnalyzer /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/Dashboard" element={<LayoutWrapper currentPageName="Dashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><Dashboard /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/FormulaBuilder" element={<LayoutWrapper currentPageName="FormulaBuilder"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaBuilder /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/FormulaResults" element={<LayoutWrapper currentPageName="FormulaResults"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaResults /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/IngredientSubstitution" element={<LayoutWrapper currentPageName="IngredientSubstitution"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><IngredientSubstitution /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/ComplianceDashboard" element={<LayoutWrapper currentPageName="ComplianceDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ComplianceDashboard /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/ReportGenerator" element={<LayoutWrapper currentPageName="ReportGenerator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ReportGenerator /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/Marketplace" element={<LayoutWrapper currentPageName="Marketplace"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><Marketplace /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/CarbonTaxSimulator" element={<LayoutWrapper currentPageName="CarbonTaxSimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonTaxSimulator /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/CarbonOpportunitySimulator" element={<LayoutWrapper currentPageName="CarbonOpportunitySimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonOpportunitySimulator /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/FormulaPortfolio" element={<LayoutWrapper currentPageName="FormulaPortfolio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaPortfolio /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>

@@ -1,0 +1,119 @@
+{
+  "name": "Formula",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the formula"
+    },
+    "product_type": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of ingredient names"
+    },
+    "instructions": {
+      "type": "string"
+    },
+    "difficulty_level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "professional"
+      ]
+    },
+    "ph_level": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 14
+    },
+    "shelf_life": {
+      "type": "string"
+    },
+    "is_business_mode": {
+      "type": "boolean",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "completed"
+      ],
+      "default": "draft"
+    },
+    "last_step": {
+      "type": "number"
+    },
+    "full_recipe_data": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "safety_score": {
+      "type": "number",
+      "description": "Safety score 0-100"
+    },
+    "compliance_score": {
+      "type": "number",
+      "description": "Compliance score 0-100"
+    },
+    "sustainability_score": {
+      "type": "number",
+      "description": "Sustainability score 0-100"
+    },
+    "carbon_score": {
+      "type": "number",
+      "description": "Carbon score 0-100"
+    },
+    "analysis_result": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Full AI analysis result"
+    },
+    "target_markets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Markets this formula targets"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
