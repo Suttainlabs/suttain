@@ -444,9 +444,7 @@ export default function Layout({ children, currentPageName }) {
                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Advanced</p>
                      {[
                        { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, description: "DFT, MD, protein modeling", tier: 'pro' },
-                       { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: Leaf, description: "Model carbon tax exposure across markets" },
-                       { href: "CarbonOpportunitySimulator", label: "Carbon Opportunity", icon: TrendingUp, description: "Decarbonization ROI & reduction roadmap" },
-                       { href: "ReportGenerator", label: "Report Generator", icon: FileText, description: "Generate compliance & sustainability reports" },
+                       { href: "CarbonTaxSimulator", label: "Carbon & Reporting", icon: Leaf, description: "Carbon tax, decarbonization ROI & sustainability reports" },
                        { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, description: "Integrate into your systems", status: 'coming_soon' },
                      ].map(item => (
                        <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
@@ -784,9 +782,7 @@ export default function Layout({ children, currentPageName }) {
                           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-3 pb-1">Advanced</p>
                           {[
                             { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, tier: 'pro' },
-                            { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: Leaf },
-                            { href: "CarbonOpportunitySimulator", label: "Carbon Opportunity", icon: TrendingUp },
-                            { href: "ReportGenerator", label: "Report Generator", icon: FileText },
+                            { href: "CarbonTaxSimulator", label: "Carbon & Reporting", icon: Leaf },
                             { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, status: 'coming_soon' },
                           ].map(item => (
                             <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
