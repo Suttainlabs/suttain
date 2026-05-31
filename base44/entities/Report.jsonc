@@ -1,0 +1,317 @@
+{
+  "name": "Report",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Report title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the report"
+    },
+    "report_type": {
+      "type": "string",
+      "enum": [
+        "simulation",
+        "formula",
+        "compliance",
+        "safety",
+        "sustainability",
+        "custom"
+      ],
+      "description": "Type of report"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "generating",
+        "completed",
+        "failed",
+        "scheduled"
+      ],
+      "default": "draft"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "ID of the source entity (simulation, formula, etc.)"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "simulation",
+        "formula",
+        "compliance_check",
+        "safety_profile"
+      ]
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "summary",
+              "visualization_2d",
+              "visualization_3d",
+              "chart",
+              "table",
+              "ai_insights",
+              "raw_data",
+              "custom_text"
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "order": {
+            "type": "number"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "description": "Configurable report sections"
+    },
+    "ai_insights": {
+      "type": "object",
+      "properties": {
+        "executive_summary": {
+          "type": "string"
+        },
+        "key_findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "risk_assessment": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "visualization_data": {
+      "type": "object",
+      "properties": {
+        "charts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "embedded_3d_models": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reaction_diagrams": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "frequency": {
+          "type": "string",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly",
+            "quarterly"
+          ]
+        },
+        "day_of_week": {
+          "type": "number",
+          "description": "0-6 for weekly"
+        },
+        "day_of_month": {
+          "type": "number",
+          "description": "1-31 for monthly"
+        },
+        "time": {
+          "type": "string",
+          "description": "HH:MM format"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "next_run": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_run": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "delivery": {
+      "type": "object",
+      "properties": {
+        "email_recipients": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "slack_channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "webhook_urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "include_pdf": {
+          "type": "boolean",
+          "default": true
+        },
+        "include_interactive_link": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "generated_files": {
+      "type": "object",
+      "properties": {
+        "pdf_url": {
+          "type": "string"
+        },
+        "html_url": {
+          "type": "string"
+        },
+        "interactive_url": {
+          "type": "string"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "generation_time_ms": {
+          "type": "number"
+        },
+        "version": {
+          "type": "number",
+          "default": 1
+        }
+      }
+    },
+    "shared_with": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of user emails with access"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "report_type"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.shared_with": {
+            "$in": [
+              "{{user.email}}"
+            ]
+          }
+        },
+        {
+          "data.is_public": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
