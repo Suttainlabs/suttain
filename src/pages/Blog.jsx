@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ExternalLink, BookOpen, Calendar, Clock, ArrowRight, 
-  X, Mail, Bell, Sparkles, ChevronRight, Loader2, RefreshCw
-} from 'lucide-react';
+import { ExternalLink, BookOpen, Mail, Bell, Sparkles } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -16,7 +12,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import SEOHead from '@/components/shared/SEOHead';
-import { fetchMediumArticles } from '@/functions/fetchMediumArticles';
 
 const MEDIUM_URL = "https://medium.com/@suttain";
 
@@ -25,88 +20,22 @@ const BLOG_IMAGES = {
   amberBottles: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/f86502577_amber-glass-dropper-bottles-and-cream-jar-on-white-2026-01-07-06-29-24-utc.jpg"
 };
 
-// Fallback articles if Medium feed is empty
-const FALLBACK_ARTICLES = [
-  {
-    id: 1,
-    title: "The Future of Sustainable Chemical Formulation",
-    excerpt: "Exploring how modern technology is revolutionizing the way we create safer, eco-friendly products for everyday use.",
-    category: "Sustainability",
-    readTime: "5 min read",
-    date: "Feb 10, 2026",
-    image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&h=400&fit=crop",
-    link: MEDIUM_URL
-  },
-  {
-    id: 2,
-    title: "Understanding Chemical Safety in Household Products",
-    excerpt: "A comprehensive guide to identifying harmful ingredients and making informed choices for your family's health.",
-    category: "Safety",
-    readTime: "7 min read",
-    date: "Feb 5, 2026",
-    image: "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&h=400&fit=crop",
-    link: MEDIUM_URL
-  },
-  {
-    id: 3,
-    title: "DIY Skincare: Science-Backed Formulation Tips",
-    excerpt: "Learn the fundamentals of creating effective, safe skincare products at home with expert guidance.",
-    category: "DIY",
-    readTime: "6 min read",
-    date: "Jan 28, 2026",
-    image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&h=400&fit=crop",
-    link: MEDIUM_URL
-  }
-];
-
 export default function Blog() {
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
   const [email, setEmail] = useState('');
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [articles, setArticles] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [categories, setCategories] = useState(["All"]);
 
-  // Fetch articles from Medium
+  // Inject Soro embed script once on mount
   useEffect(() => {
-    const loadArticles = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetchMediumArticles({});
-        if (response.data?.articles && response.data.articles.length > 0) {
-          const normalized = response.data.articles.map(a => ({ ...a, category: formatCategory(a.category) }));
-          setArticles(normalized);
-          // Extract unique categories
-          const uniqueCategories = ["All", ...new Set(response.data.articles.map(a => formatCategory(a.category)).filter(Boolean))];
-          setCategories(uniqueCategories);
-        } else {
-          setArticles(FALLBACK_ARTICLES);
-          setCategories(["All", "Sustainability", "Safety", "DIY"]);
-        }
-      } catch (error) {
-        console.error("Error loading articles:", error);
-        setArticles(FALLBACK_ARTICLES);
-        setCategories(["All", "Sustainability", "Safety", "DIY"]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadArticles();
+    if (document.querySelector('script[src*="trysoro.com"]')) return;
+    const script = document.createElement('script');
+    script.src = 'https://app.trysoro.com/api/embed/39f34335-ade3-4339-96ec-dd251a44a8dc';
+    script.defer = true;
+    document.body.appendChild(script);
   }, []);
 
-  // Show popup after 5 seconds
-  useEffect(() => {
-    const hasSeenPopup = sessionStorage.getItem('suttain_blog_popup_seen');
-    if (!hasSeenPopup) {
-      const timer = setTimeout(() => {
-        setShowSubscribeModal(true);
-        sessionStorage.setItem('suttain_blog_popup_seen', 'true');
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
+
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
@@ -123,28 +52,6 @@ export default function Blog() {
       setSubscribed(false);
       setEmail('');
     }, 2000);
-  };
-
-  const filteredArticles = selectedCategory === "All" 
-    ? articles 
-    : articles.filter(a => a.category === selectedCategory);
-
-  const formatCategory = (cat) => {
-    if (!cat) return 'General';
-    return cat
-      .split(/[-_]/)  
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
-
-  const categoryColors = {
-    Sustainability: "bg-green-600 text-white",
-    Safety: "bg-blue-600 text-white",
-    DIY: "bg-purple-600 text-white",
-    Compliance: "bg-orange-500 text-white",
-    Ingredients: "bg-cyan-600 text-white",
-    Business: "bg-slate-800 text-white",
-    General: "bg-slate-600 text-white"
   };
 
   return (
@@ -200,126 +107,10 @@ export default function Blog() {
         </div>
       </section>
 
-      {/* Category Filter */}
-      <section className="py-6 px-4 border-b border-slate-200 sticky top-16 bg-white/80 backdrop-blur-md z-40">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                  selectedCategory === category
-                    ? 'bg-[var(--suttain-teal)] text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Articles Grid */}
+      {/* Soro Blog Embed */}
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
-          {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 className="w-10 h-10 text-[var(--suttain-teal)] animate-spin mb-4" />
-              <p className="text-slate-500">Loading articles...</p>
-            </div>
-          ) : filteredArticles.length === 0 ? (
-            <div className="text-center py-20">
-              <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-slate-700 mb-2">No articles yet</h3>
-              <p className="text-slate-500 mb-4">Check back soon for new content!</p>
-              <a 
-                href={MEDIUM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[var(--suttain-teal)] font-medium hover:underline"
-              >
-                Follow us on Medium
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </div>
-          ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredArticles.map((article, index) => (
-              <motion.div
-                key={article.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <a 
-                  href={article.link || MEDIUM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block group"
-                >
-                  <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-slate-200 h-full">
-                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
-                      {article.image ? (
-                        <img 
-                          src={article.image} 
-                          alt={article.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <BookOpen className="w-12 h-12 text-slate-300" />
-                        </div>
-                      )}
-                      <div className="absolute top-3 left-3">
-                        <Badge className={categoryColors[formatCategory(article.category)] || "bg-slate-700 text-white"}>
-                          {formatCategory(article.category)}
-                        </Badge>
-                      </div>
-                    </div>
-                    <CardContent className="p-5">
-                      <div className="flex items-center gap-3 text-xs text-slate-500 mb-3">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {article.date}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {article.readTime}
-                        </span>
-                      </div>
-                      <h3 className="font-bold text-slate-900 mb-2 group-hover:text-[var(--suttain-teal)] transition-colors line-clamp-2">
-                        {article.title}
-                      </h3>
-                      <p className="text-sm text-slate-600 line-clamp-2 mb-3">
-                        {article.excerpt}
-                      </p>
-                      <span className="inline-flex items-center text-sm font-medium text-[var(--suttain-teal)] group-hover:gap-2 transition-all">
-                        Read on Medium
-                        <ChevronRight className="w-4 h-4" />
-                      </span>
-                    </CardContent>
-                  </Card>
-                </a>
-              </motion.div>
-            ))}
-          </div>
-          )}
-
-          {/* View More on Medium */}
-          <div className="text-center mt-12">
-            <a 
-              href={MEDIUM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[var(--suttain-teal)] to-[var(--suttain-blue)] text-white rounded-xl hover:shadow-lg transition-all font-semibold"
-            >
-              View All Articles on Medium
-              <ArrowRight className="w-5 h-5" />
-            </a>
-          </div>
+          <div id="soro-blog"></div>
         </div>
       </section>
 
