@@ -1,0 +1,122 @@
+{
+  "name": "ComplianceCheck",
+  "type": "object",
+  "properties": {
+    "product_name": {
+      "type": "string",
+      "description": "Name of the product checked"
+    },
+    "product_brand": {
+      "type": "string",
+      "description": "Brand of the product"
+    },
+    "product_category": {
+      "type": "string",
+      "description": "Product category"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of ingredients analyzed"
+    },
+    "selected_regions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Target market regions checked"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Overall compliance summary"
+    },
+    "checked_regions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Regions that were checked"
+    },
+    "compliance_details": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ingredient": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Detailed compliance analysis per ingredient"
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": [
+        "Compliant",
+        "Issues Found",
+        "Restricted",
+        "Requires Review"
+      ],
+      "description": "Overall compliance status"
+    },
+    "predictive_insights": {
+      "type": "object",
+      "properties": {
+        "emerging_trends": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "potential_restrictions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "proactive_recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "AI-generated predictive analysis of future regulatory changes"
+    },
+    "uploaded_documents": {
+      "type": "string",
+      "description": "Names of uploaded documentation files"
+    }
+  },
+  "required": [
+    "product_name",
+    "ingredients",
+    "selected_regions",
+    "compliance_details"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
