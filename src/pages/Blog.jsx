@@ -94,15 +94,7 @@ export default function Blog() {
             <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
               Stay informed with the latest in chemical safety, sustainable formulation, and industry best practices.
             </p>
-            <a 
-              href={MEDIUM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-full hover:bg-slate-800 transition-colors font-medium"
-            >
-              Follow us on Medium
-              <ExternalLink className="w-4 h-4" />
-            </a>
+
           </motion.div>
         </div>
       </section>
