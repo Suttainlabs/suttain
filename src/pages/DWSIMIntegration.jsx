@@ -15,7 +15,7 @@ export default function DWSIMIntegration() {
   return (
     <div className="min-h-screen bg-[#EDF7F2]">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-[#00281E] via-[#004d35] to-[#007850] text-white py-14 px-4">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white py-14 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
