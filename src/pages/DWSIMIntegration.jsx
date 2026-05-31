@@ -23,8 +23,8 @@ export default function DWSIMIntegration() {
             </div>
             <Badge className="bg-white/20 text-white border-0 text-xs font-semibold">Open Source</Badge>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">DWSIM Process Simulator</h1>
-          <p className="text-white/75 text-base md:text-lg max-w-2xl mb-8 leading-relaxed">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[#00C896]">DWSIM Process Simulator</h1>
+          <p className="text-slate-300 text-base md:text-lg max-w-2xl mb-8 leading-relaxed">
             Industry-grade steady-state and dynamic chemical process simulation. Model distillation columns, reactors, heat exchangers, and complete flowsheets — free and open source.
           </p>
           <div className="flex flex-wrap gap-3">
