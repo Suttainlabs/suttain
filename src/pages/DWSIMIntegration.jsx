@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import DWSIMScriptBuilder from '@/components/dwsim/DWSIMScriptBuilder';
 import DWSIMTutorials from '@/components/dwsim/DWSIMTutorials';
+import DWSIMSimulationAI from '@/components/dwsim/DWSIMSimulationAI';
 
-const tabs = ['Overview', 'Script Builder', 'Tutorials'];
+const tabs = ['Overview', 'AI Script Generator', 'Script Builder', 'Tutorials'];
 
 export default function DWSIMIntegration() {
   const [activeTab, setActiveTab] = useState('Overview');
@@ -72,7 +73,8 @@ export default function DWSIMIntegration() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-8">
-        {activeTab === 'Overview' && <DWSIMOverview onGoToBuilder={() => setActiveTab('Script Builder')} />}
+        {activeTab === 'Overview' && <DWSIMOverview onGoToBuilder={() => setActiveTab('AI Script Generator')} />}
+        {activeTab === 'AI Script Generator' && <DWSIMSimulationAI />}
         {activeTab === 'Script Builder' && <DWSIMScriptBuilder />}
         {activeTab === 'Tutorials' && <DWSIMTutorials />}
       </div>
