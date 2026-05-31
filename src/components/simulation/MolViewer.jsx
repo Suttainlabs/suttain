@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Loader2, RotateCcw, Eye, Download, SplitSquareHorizontal, Square, Wrench, Plus, Camera, ScanSearch, Layers } from "lucide-react";
 import VisualizationController from './VisualizationController';
 import { Button } from "@/components/ui/button";
-import InteractiveMolecularEditor from "./InteractiveMolecularEditor";
+import MolecularEditor3D from "./MolecularEditor3D";
 import AtomInspectorPanel from "./AtomInspectorPanel";
 import PDBLayerPanel from "./PDBLayerPanel";
 
@@ -459,8 +459,8 @@ export default function MolViewer({ simType, inputs }) {
 
       {/* Panels */}
       {showEditor ? (
-        <div style={{ height: "480px" }} className="flex flex-col overflow-y-auto px-4 py-4">
-          <InteractiveMolecularEditor viewer={viewerRef.current} loaded={moleculeLoaded} />
+        <div style={{ height: "600px" }} className="flex flex-col overflow-hidden">
+          <MolecularEditor3D />
         </div>
       ) : compareMode ? (
         <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-slate-700" style={{ height: "520px" }}>
