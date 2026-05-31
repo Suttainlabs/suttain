@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   LayoutDashboard, Users, FileText, Power,
-  Menu, X, Briefcase, Megaphone, Crown, Headphones, Mail
+  Menu, X, Briefcase, Megaphone, Crown, Headphones, Mail, BarChart2, Rss
 } from 'lucide-react';
 import DashboardOverview from './DashboardOverview';
 import UserManagement from './UserManagement';
@@ -13,13 +13,17 @@ import SendUpdateAnnouncement from './SendUpdateAnnouncement';
 import SubscriptionsPanel from './SubscriptionsPanel';
 import CustomerSupportCRM from './CustomerSupportCRM';
 import SubscriptionEmailPanel from './SubscriptionEmailPanel';
+import UserAnalytics from './UserAnalytics';
+import BlogBroadcast from './BlogBroadcast';
 
 const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { id: 'analytics', label: 'User Analytics', icon: BarChart2 },
   { id: 'support', label: 'Support CRM', icon: Headphones },
   { id: 'subscriptions', label: 'Subscriptions', icon: Crown },
   { id: 'subscription-emails', label: 'Subscription Emails', icon: Mail },
   { id: 'users', label: 'User Management', icon: Users },
+  { id: 'blog-broadcast', label: 'Blog Broadcast', icon: Rss },
   { id: 'submissions', label: 'Submissions', icon: FileText },
   { id: 'jobs', label: 'Job Postings', icon: Briefcase },
   { id: 'announcements', label: 'Announcements', icon: Megaphone },
@@ -33,6 +37,10 @@ export default function AdminLayout() {
     switch (activeTab) {
       case 'overview':
         return <DashboardOverview />;
+      case 'analytics':
+        return <UserAnalytics />;
+      case 'blog-broadcast':
+        return <BlogBroadcast />;
       case 'support':
         return <CustomerSupportCRM />;
       case 'subscriptions':
