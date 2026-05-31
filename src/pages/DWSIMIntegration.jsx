@@ -43,7 +43,7 @@ export default function DWSIMIntegration() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button variant="outline" className="border-white/40 text-white hover:bg-white/10 gap-2">
+              <Button variant="outline" className="border-[#00C896] text-[#00C896] hover:bg-[#00C896]/10 gap-2">
                 <BookOpen className="w-4 h-4" />
                 Official Tutorials
                 <ExternalLink className="w-3 h-3" />
