@@ -1,44 +1,123 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import AuthContext from '@/components/auth/AuthContext';
 import AuthGate from '@/components/auth/AuthGate';
 import { base44 } from '@/api/base44Client';
-import { Globe, Loader2, Download, TrendingUp, TrendingDown } from 'lucide-react';
+import { Leaf, Loader2, Plus, Globe, TrendingDown, Download, RefreshCw, ChevronRight, FlaskConical } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import IngredientCarbonRow from '@/components/carbon/IngredientCarbonRow';
+import CarbonSummaryPanel from '@/components/carbon/CarbonSummaryPanel';
+import AlternativeCard from '@/components/carbon/AlternativeCard';
+import TaxScenarioPanel from '@/components/carbon/TaxScenarioPanel';
+
+// Default carbon intensity library (kg CO2e per kg ingredient)
+const CARBON_LIBRARY = {
+  'palm oil': 3.5, 'sodium lauryl sulfate': 2.8, 'mineral oil': 1.1,
+  'glycerin': 1.6, 'ethanol': 1.3, 'water': 0.001, 'fragrance': 4.2,
+  'parabens': 3.1, 'titanium dioxide': 5.7, 'dimethicone': 3.9,
+  'petroleum jelly': 1.4, 'propylene glycol': 2.6, 'citric acid': 1.9,
+  'sodium hydroxide': 0.9, 'hydrogen peroxide': 1.2,
+};
 
 const MARKETS = [
-  { id: 'eu', name: 'European Union', ets: true, cbam: true },
-  { id: 'uk', name: 'United Kingdom', ets: true, cbam: false },
+  { id: 'eu', name: 'EU', ets: true, cbam: true },
+  { id: 'uk', name: 'UK', ets: true, cbam: false },
   { id: 'canada', name: 'Canada', ets: false, cbam: false },
-  { id: 'usa_california', name: 'USA (California)', ets: true, cbam: false },
+  { id: 'usa_california', name: 'USA (CA)', ets: true, cbam: false },
   { id: 'australia', name: 'Australia', ets: false, cbam: false },
 ];
 
+const TABS = ['Footprint', 'Tax Impact', 'Alternatives'];
+
+let idCounter = 0;
+const newIngredient = (name = '', quantity_kg = 1, carbon_intensity = 1) => ({
+  id: ++idCounter,
+  name,
+  quantity_kg,
+  carbon_intensity,
+  category: '',
+});
+
 export default function CarbonTaxSimulator() {
   const { user } = useContext(AuthContext);
+  const [activeTab, setActiveTab] = useState('Footprint');
+  const [ingredients, setIngredients] = useState([
+    newIngredient('Palm Oil', 5, 3.5),
+    newIngredient('Sodium Lauryl Sulfate', 2, 2.8),
+    newIngredient('Fragrance', 0.5, 4.2),
+    newIngredient('Glycerin', 1, 1.6),
+  ]);
+  const [newName, setNewName] = useState('');
+  const [unitsPerMonth, setUnitsPerMonth] = useState(10000);
   const [selectedMarkets, setSelectedMarkets] = useState(['eu']);
-  const [volume, setVolume] = useState('10000');
-  const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [carbonPrice, setCarbonPrice] = useState(65); // USD per tonne
+
+  const [loadingAlts, setLoadingAlts] = useState(false);
+  const [loadingTax, setLoadingTax] = useState(false);
+  const [alternatives, setAlternatives] = useState(null);
+  const [taxResults, setTaxResults] = useState(null);
+
+  const [addLoading, setAddLoading] = useState(false);
 
   if (!user) return (
     <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: '#EDF7F2' }}>
-      <AuthGate featureName="Carbon Tax Simulator" featureDescription="Sign in to forecast carbon tax exposure." />
+      <AuthGate featureName="Carbon Tax & Opportunity Simulator" featureDescription="Sign in to calculate real-time carbon footprints, forecast tax exposure, and find greener alternatives with ROI." />
     </div>
   );
 
-  const toggleMarket = (id) => setSelectedMarkets(prev => prev.includes(id) ? prev.filter(m => m !== id) : prev.length < 5 ? [...prev, id] : prev);
+  // Real-time calculations
+  const totalCO2e = ingredients.reduce((sum, ing) => sum + (ing.quantity_kg * ing.carbon_intensity), 0);
+  const annualCO2e = totalCO2e * 12 * (unitsPerMonth / 1000); // scaled
+  const taxExposure = Math.round((annualCO2e / 1000) * carbonPrice);
 
-  const simulate = async () => {
-    setLoading(true);
+  const addIngredient = async () => {
+    if (!newName.trim()) return;
+    const lower = newName.toLowerCase().trim();
+    const knownIntensity = CARBON_LIBRARY[lower];
+
+    if (knownIntensity) {
+      setIngredients(prev => [...prev, newIngredient(newName.trim(), 1, knownIntensity)]);
+      setNewName('');
+      return;
+    }
+
+    // Use AI to estimate carbon intensity for unknown ingredients
+    setAddLoading(true);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `Estimate carbon tax exposure for a cleaning/cosmetic product manufacturer.
-Production volume: ${volume} units/month.
-Target markets: ${selectedMarkets.join(', ')}.
+        prompt: `Estimate the carbon intensity (kg CO2e per kg of ingredient) for "${newName}" used in cosmetic/cleaning product formulation. Consider production, transport, and processing. Provide a realistic single number based on life cycle assessment data.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            carbon_intensity: { type: 'number' },
+            category: { type: 'string' },
+            confidence: { type: 'string' },
+          }
+        }
+      });
+      setIngredients(prev => [...prev, newIngredient(newName.trim(), 1, res.carbon_intensity || 1)]);
+    } catch {
+      setIngredients(prev => [...prev, newIngredient(newName.trim(), 1, 1)]);
+    }
+    setAddLoading(false);
+    setNewName('');
+  };
 
-For each market provide 3 scenarios (low/base/high) as annual EUR/USD cost estimates.
-Also provide CBAM exposure if applicable (EU market).
-Return realistic ranges based on current carbon pricing.`,
+  const removeIngredient = (id) => setIngredients(prev => prev.filter(i => i.id !== id));
+  const updateQuantity = (id, qty) => setIngredients(prev => prev.map(i => i.id === id ? { ...i, quantity_kg: qty } : i));
+  const toggleMarket = (id) => setSelectedMarkets(prev => prev.includes(id) ? prev.filter(m => m !== id) : prev.length < 5 ? [...prev, id] : prev);
+
+  const runTaxSimulation = async () => {
+    setLoadingTax(true);
+    try {
+      const ingredientList = ingredients.map(i => `${i.name} (${i.quantity_kg}kg, ${i.carbon_intensity} kg CO2e/kg)`).join(', ');
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: `Carbon tax exposure analysis for a product manufacturer.
+Monthly production: ${unitsPerMonth} units. Batch CO2e: ${totalCO2e.toFixed(1)} kg. Annual CO2e: ${(annualCO2e / 1000).toFixed(1)} tonnes.
+Ingredients: ${ingredientList}.
+Target markets: ${selectedMarkets.join(', ')}.
+Carbon price assumption: $${carbonPrice}/tonne.
+
+For each selected market, provide 3 annual cost scenarios (low/base/high carbon price) and CBAM exposure if EU is selected.`,
         response_json_schema: {
           type: 'object',
           properties: {
@@ -63,95 +142,353 @@ Return realistic ranges based on current carbon pricing.`,
           }
         }
       });
-      setResults(res);
-    } catch { alert('Simulation failed. Please try again.'); }
-    setLoading(false);
+      setTaxResults(res);
+      setActiveTab('Tax Impact');
+    } catch { alert('Tax simulation failed. Please try again.'); }
+    setLoadingTax(false);
   };
+
+  const runAlternatives = async () => {
+    setLoadingAlts(true);
+    try {
+      const highCarbonIngs = [...ingredients].sort((a, b) => (b.quantity_kg * b.carbon_intensity) - (a.quantity_kg * a.carbon_intensity)).slice(0, 5);
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are a green chemistry expert. Suggest greener ingredient alternatives that improve eco-score and carbon footprint.
+
+Current high-impact ingredients:
+${highCarbonIngs.map(i => `- ${i.name}: ${i.carbon_intensity} kg CO2e/kg, quantity ${i.quantity_kg}kg`).join('\n')}
+
+For each, suggest the best greener alternative with:
+- Specific alternative ingredient name
+- Reason (why greener, what it replaces)
+- Carbon reduction percentage
+- Estimated annual cost saving at ${unitsPerMonth} units/month production
+- Eco score gain (1-10 scale)
+- Implementation difficulty (Easy/Medium/Hard)
+- Any compliance or performance tradeoffs
+
+Prioritise by ROI. Return top 5 alternatives.`,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            alternatives: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  replace_ingredient: { type: 'string' },
+                  alternative_ingredient: { type: 'string' },
+                  reason: { type: 'string' },
+                  carbon_reduction_pct: { type: 'number' },
+                  cost_saving_1yr: { type: 'number' },
+                  cost_saving_5yr: { type: 'number' },
+                  eco_score_gain: { type: 'number' },
+                  difficulty: { type: 'string' },
+                  tradeoffs: { type: 'string' },
+                }
+              }
+            },
+            total_potential_reduction_pct: { type: 'number' },
+            summary: { type: 'string' },
+          }
+        }
+      });
+      setAlternatives(res);
+      setActiveTab('Alternatives');
+    } catch { alert('Alternatives analysis failed. Please try again.'); }
+    setLoadingAlts(false);
+  };
+
+  const exportReport = () => {
+    const lines = [
+      'SUTTAIN — CARBON TAX & OPPORTUNITY REPORT',
+      `Generated: ${new Date().toLocaleDateString()}`,
+      '',
+      '--- INGREDIENT FOOTPRINT ---',
+      ...ingredients.map(i => `${i.name}: ${i.quantity_kg}kg × ${i.carbon_intensity} = ${(i.quantity_kg * i.carbon_intensity).toFixed(2)} kg CO2e`),
+      `Total batch CO2e: ${totalCO2e.toFixed(2)} kg`,
+      `Annual CO2e: ${(annualCO2e / 1000).toFixed(1)} tonnes`,
+      `Estimated tax exposure: $${taxExposure}/yr at $${carbonPrice}/tonne`,
+      '',
+    ];
+    if (taxResults) {
+      lines.push('--- TAX SCENARIO ANALYSIS ---');
+      taxResults.results?.forEach(r => {
+        lines.push(`${r.market}: Low $${r.low} / Base $${r.base} / High $${r.high}`);
+      });
+      lines.push('');
+    }
+    if (alternatives) {
+      lines.push('--- GREEN ALTERNATIVES ---');
+      alternatives.alternatives?.forEach((a, i) => {
+        lines.push(`${i + 1}. Replace ${a.replace_ingredient} with ${a.alternative_ingredient} — ${a.carbon_reduction_pct}% less CO2e, $${a.cost_saving_1yr}/yr savings`);
+      });
+      lines.push('');
+      if (alternatives.summary) lines.push(alternatives.summary);
+    }
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'suttain_carbon_report.txt'; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const anyLoading = loadingAlts || loadingTax || addLoading;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-slate-900">Carbon Tax Simulator</h1>
-          <p className="text-slate-500 mt-1">Forecast carbon pricing exposure across global markets before you expand.</p>
-        </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6 space-y-5">
+        {/* Header */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <label className="text-sm font-bold text-slate-700 block mb-2">Monthly Production Volume (units)</label>
-            <input type="number" value={volume} onChange={e => setVolume(e.target.value)} className="w-full max-w-xs px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[#02988C] outline-none font-semibold text-slate-800" placeholder="10000" />
+            <h1 className="text-3xl font-bold text-slate-900">Carbon Tax & Opportunity Simulator</h1>
+            <p className="text-slate-500 mt-1">Build your ingredient list, calculate live carbon footprint, simulate tax exposure, and find greener alternatives with ROI.</p>
           </div>
-          <div>
-            <label className="text-sm font-bold text-slate-700 block mb-2">Target Markets (max 5)</label>
-            <div className="flex flex-wrap gap-2">
-              {MARKETS.map(m => (
-                <button key={m.id} onClick={() => toggleMarket(m.id)} className={cn('flex items-center gap-2 px-3 py-2 rounded-xl border-2 text-sm font-semibold transition-all', selectedMarkets.includes(m.id) ? 'border-[#02988C] bg-[#F0FAF5] text-[#02988C]' : 'border-slate-200 text-slate-600 hover:border-[#02988C]/40')}>
-                  {m.name}
-                  {m.ets && <span className="text-xs bg-blue-100 text-blue-700 px-1 rounded">ETS</span>}
-                  {m.cbam && <span className="text-xs bg-amber-100 text-amber-700 px-1 rounded">CBAM</span>}
-                </button>
-              ))}
-            </div>
-          </div>
-          <button onClick={simulate} disabled={loading || selectedMarkets.length === 0} className={cn('flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all', selectedMarkets.length > 0 && !loading ? 'bg-[#02988C] text-white hover:bg-[#027d72]' : 'bg-slate-100 text-slate-400 cursor-not-allowed')}>
-            {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Calculating...</> : <><Globe className="w-4 h-4" /> Run Simulation</>}
+          <button
+            onClick={exportReport}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors flex-shrink-0"
+          >
+            <Download className="w-4 h-4" /> Export Report
           </button>
         </div>
 
-        {results && (
-          <div className="space-y-4">
-            {/* Summary */}
-            <div className="bg-gradient-to-br from-[#00281E] to-slate-800 rounded-xl p-6 text-white">
-              <p className="text-sm text-white/60 mb-1">Total Annual Carbon Exposure Estimate</p>
-              <p className="text-xs text-white/40 mb-3">3-scenario range — low / base / high carbon price projections</p>
-              <div className="grid grid-cols-3 gap-4">
-                {[{ label: 'Low', val: results.total_low, icon: TrendingDown }, { label: 'Base', val: results.total_base, icon: null }, { label: 'High', val: results.total_high, icon: TrendingUp }].map(s => (
-                  <div key={s.label} className="text-center">
-                    <p className="text-xs text-white/50 mb-1">{s.label}</p>
-                    <p className="text-xl font-bold">${(s.val || 0).toLocaleString()}</p>
-                  </div>
+        <div className="grid lg:grid-cols-3 gap-6">
+
+          {/* LEFT — Ingredient Builder */}
+          <div className="lg:col-span-1 space-y-4">
+            <div className="bg-white rounded-xl border border-slate-200 p-5">
+              <h2 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                <FlaskConical className="w-4 h-4 text-[#02988C]" /> Ingredients
+              </h2>
+
+              <div className="divide-y divide-slate-50">
+                {ingredients.map(ing => (
+                  <IngredientCarbonRow
+                    key={ing.id}
+                    ingredient={ing}
+                    onRemove={removeIngredient}
+                    onQuantityChange={updateQuantity}
+                  />
                 ))}
+              </div>
+
+              {/* Add ingredient */}
+              <div className="mt-4 flex gap-2">
+                <input
+                  value={newName}
+                  onChange={e => setNewName(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && addIngredient()}
+                  placeholder="Add ingredient..."
+                  className="flex-1 text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]"
+                  disabled={addLoading}
+                />
+                <button
+                  onClick={addIngredient}
+                  disabled={addLoading || !newName.trim()}
+                  className={cn('px-3 py-2 rounded-lg text-white flex items-center gap-1 text-sm font-semibold transition-all', newName.trim() && !addLoading ? 'bg-[#02988C] hover:bg-[#027d72]' : 'bg-slate-200 text-slate-400 cursor-not-allowed')}
+                >
+                  {addLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                </button>
+              </div>
+              <p className="text-xs text-slate-400 mt-2">Unknown ingredients are estimated via AI automatically.</p>
+            </div>
+
+            {/* Config */}
+            <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
+              <h2 className="font-bold text-slate-800 mb-1">Configuration</h2>
+              <div>
+                <label className="text-xs font-semibold text-slate-600 block mb-1">Units per Month</label>
+                <input
+                  type="number" min="1"
+                  value={unitsPerMonth}
+                  onChange={e => setUnitsPerMonth(parseInt(e.target.value) || 1)}
+                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-slate-600 block mb-1">Carbon Price ($/tonne)</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range" min="10" max="200" step="5"
+                    value={carbonPrice}
+                    onChange={e => setCarbonPrice(parseInt(e.target.value))}
+                    className="flex-1 accent-[#02988C]"
+                  />
+                  <span className="text-sm font-bold text-slate-700 w-12 text-right">${carbonPrice}</span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">EU ETS ~$65 | UK ETS ~$55 | CA ~$45</p>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-slate-600 block mb-2">Target Markets</label>
+                <div className="flex flex-wrap gap-1.5">
+                  {MARKETS.map(m => (
+                    <button
+                      key={m.id}
+                      onClick={() => toggleMarket(m.id)}
+                      className={cn('px-2.5 py-1 rounded-lg border text-xs font-semibold transition-all', selectedMarkets.includes(m.id) ? 'border-[#02988C] bg-[#F0FAF5] text-[#02988C]' : 'border-slate-200 text-slate-500 hover:border-[#02988C]/40')}
+                    >
+                      {m.name}
+                      {m.cbam && <span className="ml-1 text-amber-500 text-[9px]">CBAM</span>}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Per-market breakdown */}
-            <div className="space-y-3">
-              {results.results?.map((r, i) => (
-                <div key={i} className="bg-white rounded-xl border border-slate-200 p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="font-bold text-slate-800">{r.market}</p>
-                    <span className="text-xs text-slate-400 font-medium">{r.currency || 'USD'}</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-3 mb-3">
-                    {[{ l: 'Low', v: r.low }, { l: 'Base', v: r.base }, { l: 'High', v: r.high }].map(s => (
-                      <div key={s.l} className="bg-[#F0FAF5] rounded-lg p-3 text-center">
-                        <p className="text-xs text-slate-400">{s.l}</p>
-                        <p className="text-base font-bold text-slate-800">${(s.v || 0).toLocaleString()}/yr</p>
-                      </div>
-                    ))}
-                  </div>
-                  {r.cbam_exposure > 0 && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-xs text-amber-800">
-                      CBAM Exposure: ~${r.cbam_exposure.toLocaleString()}/yr
-                    </div>
-                  )}
-                  {r.note && <p className="text-xs text-slate-400 mt-2">{r.note}</p>}
-                </div>
-              ))}
+            {/* Action buttons */}
+            <div className="space-y-2">
+              <button
+                onClick={runTaxSimulation}
+                disabled={anyLoading || !ingredients.length || !selectedMarkets.length}
+                className={cn('w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all', !anyLoading && ingredients.length && selectedMarkets.length ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-slate-100 text-slate-400 cursor-not-allowed')}
+              >
+                {loadingTax ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
+                Simulate Tax Impact
+              </button>
+              <button
+                onClick={runAlternatives}
+                disabled={anyLoading || !ingredients.length}
+                className={cn('w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all', !anyLoading && ingredients.length ? 'bg-[#02988C] text-white hover:bg-[#027d72]' : 'bg-slate-100 text-slate-400 cursor-not-allowed')}
+              >
+                {loadingAlts ? <Loader2 className="w-4 h-4 animate-spin" /> : <Leaf className="w-4 h-4" />}
+                Find Greener Alternatives
+              </button>
             </div>
-
-            <p className="text-xs text-slate-400 text-center">Estimates shown as ranges. Actual exposure depends on precise product classification, production mix, and real-time carbon prices.</p>
-
-            <button onClick={() => {
-              const text = JSON.stringify(results, null, 2);
-              const blob = new Blob([text], { type: 'text/plain' });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a'); a.href = url; a.download = 'carbon_exposure_brief.txt'; a.click();
-            }} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-              <Download className="w-4 h-4" /> Export Brief
-            </button>
           </div>
-        )}
+
+          {/* RIGHT — Results Panel */}
+          <div className="lg:col-span-2 space-y-4">
+
+            {/* Live Summary */}
+            <CarbonSummaryPanel
+              totalCO2e={totalCO2e}
+              annualCO2e={annualCO2e}
+              taxExposure={taxExposure}
+              unitsPerMonth={unitsPerMonth}
+            />
+
+            {/* Tabs */}
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <div className="flex border-b border-slate-100">
+                {TABS.map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={cn('flex-1 py-3 text-sm font-semibold transition-colors', activeTab === tab ? 'text-[#02988C] border-b-2 border-[#02988C] bg-[#F0FAF5]' : 'text-slate-500 hover:text-slate-700')}
+                  >
+                    {tab}
+                    {tab === 'Tax Impact' && taxResults && <span className="ml-1.5 w-2 h-2 bg-amber-400 rounded-full inline-block" />}
+                    {tab === 'Alternatives' && alternatives && <span className="ml-1.5 w-2 h-2 bg-green-400 rounded-full inline-block" />}
+                  </button>
+                ))}
+              </div>
+
+              <div className="p-5">
+
+                {activeTab === 'Footprint' && (
+                  <div>
+                    <h3 className="font-bold text-slate-800 mb-3 text-sm">Ingredient Carbon Breakdown</h3>
+                    {ingredients.length === 0 ? (
+                      <p className="text-sm text-slate-400 text-center py-8">Add ingredients on the left to see their carbon footprint.</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {[...ingredients]
+                          .sort((a, b) => (b.quantity_kg * b.carbon_intensity) - (a.quantity_kg * a.carbon_intensity))
+                          .map(ing => {
+                            const contribution = totalCO2e > 0 ? ((ing.quantity_kg * ing.carbon_intensity) / totalCO2e * 100) : 0;
+                            return (
+                              <div key={ing.id} className="flex items-center gap-3">
+                                <span className="text-xs text-slate-600 w-32 truncate">{ing.name}</span>
+                                <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+                                  <div
+                                    className="h-full rounded-full transition-all duration-500"
+                                    style={{
+                                      width: `${contribution}%`,
+                                      background: contribution > 30 ? '#ef4444' : contribution > 15 ? '#f59e0b' : '#02988C'
+                                    }}
+                                  />
+                                </div>
+                                <span className="text-xs font-semibold text-slate-600 w-12 text-right">{contribution.toFixed(1)}%</span>
+                                <span className="text-xs text-slate-400 w-20 text-right">{(ing.quantity_kg * ing.carbon_intensity).toFixed(2)} kg CO2e</span>
+                              </div>
+                            );
+                          })}
+                        <div className="pt-3 border-t border-slate-100 flex justify-between text-sm font-bold text-slate-800">
+                          <span>Total</span>
+                          <span>{totalCO2e.toFixed(2)} kg CO2e per batch</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {ingredients.length > 0 && (
+                      <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                        <p className="text-xs text-blue-700 leading-relaxed">
+                          At {unitsPerMonth.toLocaleString()} units/month, your estimated annual carbon exposure is <strong>{(annualCO2e / 1000).toFixed(1)} tonnes CO2e</strong> — equivalent to a carbon tax liability of <strong>${taxExposure.toLocaleString()}/yr</strong> at ${carbonPrice}/tonne. Run the Tax Impact simulation to see market-by-market breakdown.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'Tax Impact' && (
+                  <div>
+                    {taxResults ? (
+                      <TaxScenarioPanel taxResults={taxResults} />
+                    ) : (
+                      <div className="text-center py-10">
+                        <Globe className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                        <p className="text-sm text-slate-400 mb-3">Select your target markets and click "Simulate Tax Impact" to see your carbon tax exposure across low, base, and high price scenarios.</p>
+                        <button onClick={runTaxSimulation} disabled={anyLoading || !selectedMarkets.length} className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-700 transition-colors disabled:opacity-50">
+                          {loadingTax ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
+                          Run Now
+                        </button>
+                      </div>
+                    )}
+                    <p className="text-xs text-slate-400 mt-4">Estimates are ranges based on current carbon pricing data. Actual exposure depends on product classification and real-time prices.</p>
+                  </div>
+                )}
+
+                {activeTab === 'Alternatives' && (
+                  <div>
+                    {alternatives ? (
+                      <div className="space-y-4">
+                        {alternatives.total_potential_reduction_pct > 0 && (
+                          <div className="bg-[#F0FAF5] border border-[#02988C]/20 rounded-xl p-4 flex items-center gap-3">
+                            <TrendingDown className="w-6 h-6 text-[#02988C] flex-shrink-0" />
+                            <div>
+                              <p className="font-bold text-[#02988C] text-sm">Up to {alternatives.total_potential_reduction_pct}% CO2e reduction possible</p>
+                              <p className="text-xs text-slate-500 mt-0.5">{alternatives.summary}</p>
+                            </div>
+                          </div>
+                        )}
+                        {alternatives.alternatives?.map((alt, i) => (
+                          <AlternativeCard key={i} alt={alt} index={i} />
+                        ))}
+                        <button
+                          onClick={runAlternatives}
+                          disabled={loadingAlts}
+                          className="flex items-center gap-2 text-xs text-[#02988C] font-semibold hover:underline"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5" /> Refresh Suggestions
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-center py-10">
+                        <Leaf className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                        <p className="text-sm text-slate-400 mb-3">Click "Find Greener Alternatives" to get AI-ranked ingredient substitutions that reduce CO2e and maximise ROI.</p>
+                        <button onClick={runAlternatives} disabled={anyLoading || !ingredients.length} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#02988C] text-white rounded-xl text-sm font-semibold hover:bg-[#027d72] transition-colors disabled:opacity-50">
+                          {loadingAlts ? <Loader2 className="w-4 h-4 animate-spin" /> : <Leaf className="w-4 h-4" />}
+                          Find Alternatives
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
