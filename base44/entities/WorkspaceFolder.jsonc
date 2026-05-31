@@ -23,11 +23,17 @@
     "name"
   ],
   "rls": {
-    "read": {
-      "created_by": "{{user.email}}"
+    "create": {
+      "created_by_id": "{{user.id}}"
     },
-    "write": {
-      "created_by": "{{user.email}}"
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
     }
   }
 }
