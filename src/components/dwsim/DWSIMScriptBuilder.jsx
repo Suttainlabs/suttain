@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Copy, Check, Download, Plus, Trash2, ChevronDown } from 'lucide-react';
+import { Copy, Check, Download, Plus, Trash2, ChevronDown, Save, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { base44 } from '@/api/base44Client';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 const PROPERTY_PACKAGES = [
   'Peng-Robinson', 'Peng-Robinson (Stryjek-Vera 2)', 'Soave-Redlich-Kwong',
@@ -128,6 +131,24 @@ export default function DWSIMScriptBuilder() {
   const [selectedOps, setSelectedOps] = useState([]);
   const [copied, setCopied] = useState(false);
   const [showScript, setShowScript] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState(false);
+
+  const saveToHistory = async () => {
+    setSaving(true);
+    try {
+      await base44.entities.DWSIMSimulationHistory.create({
+        title: simName || `Script Builder — ${compounds.slice(0, 3).join(', ') || 'New Simulation'}`,
+        sim_source: 'script_builder',
+        script,
+        config: { simName, propPackage, compounds, streams, selectedOps },
+      });
+      setSavedMsg(true);
+      setTimeout(() => setSavedMsg(false), 3000);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const script = generateScript({ simName, propPackage, compounds, streams, unitOps: selectedOps });
 
@@ -336,18 +357,27 @@ export default function DWSIMScriptBuilder() {
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <h3 className="font-bold text-[#00281E] text-sm">Generated Python Script</h3>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Button size="sm" variant="outline" onClick={() => setShowScript(!showScript)} className="text-xs gap-1">
-              {showScript ? <ChevronDown className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              <ChevronDown className="w-3 h-3" />
               {showScript ? 'Hide' : 'Preview'}
             </Button>
             <Button size="sm" variant="outline" onClick={copyScript} className="text-xs gap-1">
               {copied ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3" />}
               {copied ? 'Copied' : 'Copy'}
             </Button>
+            <Button size="sm" variant="outline" onClick={saveToHistory} disabled={saving} className="text-xs gap-1 border-[#007850] text-[#007850] hover:bg-[#007850]/10">
+              {savedMsg ? <Check className="w-3 h-3 text-green-600" /> : <Save className="w-3 h-3" />}
+              {savedMsg ? 'Saved' : saving ? 'Saving...' : 'Save'}
+            </Button>
             <Button size="sm" onClick={downloadScript} className="text-xs gap-1 bg-[#007850] text-white hover:bg-[#005f3e]">
               <Download className="w-3 h-3" /> Download .py
             </Button>
+            <Link to={createPageUrl('SimulationHistory')}>
+              <Button size="sm" variant="ghost" className="text-xs gap-1 text-slate-500 hover:text-[#007850]">
+                <History className="w-3 h-3" /> History
+              </Button>
+            </Link>
           </div>
         </div>
         {showScript && (

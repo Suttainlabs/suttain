@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Copy, Check, Download, Sparkles, AlertCircle } from 'lucide-react';
+import { Send, Bot, User, Copy, Check, Download, Sparkles, AlertCircle, Save, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 const EXAMPLE_PROMPTS = [
   'Simulate a distillation column separating ethanol and water at atmospheric pressure',
@@ -112,8 +114,40 @@ export default function DWSIMSimulationAI() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState(false);
   const bottomRef = useRef(null);
   const textareaRef = useRef(null);
+
+  // Extract latest script from messages
+  const getLatestScript = () => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const msg = messages[i];
+      if (msg.role === 'assistant') {
+        const match = /```(?:python)?\n([\s\S]*?)```/.exec(msg.content);
+        if (match) return { script: match[1], prompt: messages[i - 1]?.content || '' };
+      }
+    }
+    return null;
+  };
+
+  const saveToHistory = async () => {
+    const found = getLatestScript();
+    if (!found) return;
+    setSaving(true);
+    try {
+      await base44.entities.DWSIMSimulationHistory.create({
+        title: found.prompt.slice(0, 80) || 'AI Simulation',
+        sim_source: 'ai_generator',
+        prompt: found.prompt,
+        script: found.script,
+      });
+      setSavedMsg(true);
+      setTimeout(() => setSavedMsg(false), 3000);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -164,9 +198,27 @@ export default function DWSIMSimulationAI() {
         <div className="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center">
           <Sparkles className="w-4 h-4 text-white" />
         </div>
-        <div>
+        <div className="flex-1">
           <p className="font-bold text-white text-sm">DWSIM AI Simulation Assistant</p>
           <p className="text-white/60 text-xs">Describe your process — get a complete FluentAPI script</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {getLatestScript() && (
+            <Button
+              size="sm"
+              onClick={saveToHistory}
+              disabled={saving}
+              className="text-xs h-7 gap-1.5 bg-white/10 hover:bg-white/20 text-white border-0"
+            >
+              {savedMsg ? <Check className="w-3 h-3 text-green-300" /> : <Save className="w-3 h-3" />}
+              {savedMsg ? 'Saved' : saving ? 'Saving...' : 'Save'}
+            </Button>
+          )}
+          <Link to={createPageUrl('SimulationHistory')}>
+            <Button size="sm" variant="ghost" className="text-xs h-7 gap-1.5 text-white/70 hover:text-white hover:bg-white/10">
+              <History className="w-3 h-3" /> History
+            </Button>
+          </Link>
         </div>
       </div>
 

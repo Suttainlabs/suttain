@@ -1,0 +1,54 @@
+{
+  "name": "DWSIMSimulationHistory",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "User-defined or auto-generated title for this simulation run"
+    },
+    "sim_source": {
+      "type": "string",
+      "enum": [
+        "ai_generator",
+        "script_builder"
+      ],
+      "description": "Which tool generated this script"
+    },
+    "prompt": {
+      "type": "string",
+      "description": "The original prompt or configuration used"
+    },
+    "script": {
+      "type": "string",
+      "description": "The generated Python DWSIM FluentAPI script"
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Script builder configuration (compounds, streams, unit ops, etc.)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User-defined tags for searching and filtering"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional user notes about this simulation"
+    }
+  },
+  "required": [
+    "title",
+    "sim_source"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
