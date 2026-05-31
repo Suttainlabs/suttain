@@ -94,7 +94,7 @@ function StatStrip() {
   return (
     <div className="relative inline-flex flex-wrap justify-center rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden divide-x divide-slate-100">
       <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #02988C60, #9531F560, transparent)" }} />
-      <AnimatedStat target={1000000} label="Chemicals" color="#02988C" duration={2000} />
+      <StaticStat value="130M+" label="Chemicals" color="#02988C" />
       <StaticStat value="&lt;1s" label="Analysis" color="#9531F5" />
       <StaticStat value="24/7" label="Available" color="#9531F5" />
       <StaticStat value="Free" label="To Start" color="#02988C" />
