@@ -27,13 +27,21 @@ export default function Blog() {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
 
-  // Inject Soro embed script once on mount
+  // Inject Soro embed script after the #soro-blog div is in the DOM
   useEffect(() => {
-    if (document.querySelector('script[src*="trysoro.com"]')) return;
+    // Remove any stale script so it re-runs on navigation back to this page
+    const existing = document.querySelector('script[src*="trysoro.com"]');
+    if (existing) existing.remove();
+
     const script = document.createElement('script');
     script.src = 'https://app.trysoro.com/api/embed/39f34335-ade3-4339-96ec-dd251a44a8dc';
-    script.defer = true;
+    script.async = true;
     document.body.appendChild(script);
+
+    return () => {
+      const s = document.querySelector('script[src*="trysoro.com"]');
+      if (s) s.remove();
+    };
   }, []);
 
 
