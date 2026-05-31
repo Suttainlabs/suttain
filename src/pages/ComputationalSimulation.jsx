@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom,
-  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight
+  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight, Layers
 } from "lucide-react";
 
 export const SIM_TYPES = [
@@ -219,15 +219,26 @@ export const SIM_TYPES = [
       { key: "scale", label: "System Size", type: "select", options: ["100s - 1000s atoms","1000s - 100k atoms","100k - 1M atoms","Custom (specify)"], default: "1000s - 100k atoms" },
     ]
   },
+  {
+    id: "process_simulation",
+    label: "Process Simulation (DWSIM)",
+    icon: Layers,
+    color: "from-teal-600 to-emerald-700",
+    bgColor: "bg-teal-50",
+    borderColor: "border-teal-200",
+    engines: ["DWSIM", "FluentAPI", "Python", "Open Source"],
+    description: "Steady-state and dynamic process flowsheet simulation. Distillation columns, reactors, heat exchangers, and full plant models.",
+    fields: [],
+  },
 ];
 
 export const DOMAIN_SIM_MAP = {
-  "Chemistry":         ["dft", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization"],
+  "Chemistry":         ["dft", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
   "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
   "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Engineering":       ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization"],
+  "Engineering":       ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
   "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization"],
+  "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation"],
   "Materials Science": ["materials", "dft", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
   "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
 };
@@ -289,6 +300,10 @@ export default function ComputationalSimulation() {
       navigate("/SimulationSandbox");
       return;
     }
+    if (simId === "process_simulation") {
+      navigate("/DWSIMIntegration");
+      return;
+    }
     navigate(`/SimulationRunner?type=${simId}&domain=${encodeURIComponent(domain)}`);
   };
 
@@ -340,7 +355,7 @@ export default function ComputationalSimulation() {
 
           {/* Simulation Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredSims.map(s => {
+            {filteredSims.filter(s => s.id !== 'process_simulation').map(s => {
               const Icon = s.icon;
               return (
                 <button
@@ -373,6 +388,34 @@ export default function ComputationalSimulation() {
                 </button>
               );
             })}
+
+            {/* DWSIM Process Simulation card */}
+            {filteredSims.some(s => s.id === 'process_simulation') &&  (
+              <button
+                onClick={() => handleSelectSim('process_simulation')}
+                className="group text-left bg-white rounded-2xl border border-slate-200 p-5 hover:border-teal-300 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-700 flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <Layers className="w-5 h-5 text-white" />
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-0.5 transition-all mt-1" />
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight group-hover:text-teal-700 transition-colors">
+                  Process Simulation (DWSIM)
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                  Steady-state and dynamic process flowsheet simulation. Distillation columns, reactors, heat exchangers, and full plant models.
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {['DWSIM', 'FluentAPI', 'Python', 'Open Source'].map(e => (
+                    <span key={e} className="inline-block bg-teal-50 text-teal-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                      {e}
+                    </span>
+                  ))}
+                </div>
+              </button>
+            )}
 
             {/* Sandbox card */}
             <button
