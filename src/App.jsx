@@ -42,6 +42,7 @@ const CarbonTaxSimulator = lazy(() => import('./pages/CarbonTaxSimulator'));
 const CarbonOpportunitySimulator = lazy(() => import('./pages/CarbonOpportunitySimulator'));
 const FormulaPortfolio = lazy(() => import('./pages/FormulaPortfolio'));
 const SimulationRunner = lazy(() => import('./pages/SimulationRunner'));
+const DWSIMIntegration = lazy(() => import('./pages/DWSIMIntegration'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -140,6 +141,7 @@ const AuthenticatedApp = () => {
       <Route path="/CarbonOpportunitySimulator" element={<LayoutWrapper currentPageName="CarbonOpportunitySimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonOpportunitySimulator /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaPortfolio" element={<LayoutWrapper currentPageName="FormulaPortfolio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaPortfolio /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationRunner" element={<LayoutWrapper currentPageName="SimulationRunner"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationRunner /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/DWSIMIntegration" element={<LayoutWrapper currentPageName="DWSIMIntegration"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><DWSIMIntegration /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
