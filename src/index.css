@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,7 +8,7 @@
 
 @layer base {
   :root {
-    --font-gilroy: 'Inter', sans-serif;
+    --font-gilroy: 'Lexend', sans-serif;
 
     /* Brand */
     --color-brand-dark:     #00281E;
