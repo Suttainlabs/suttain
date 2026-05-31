@@ -1,50 +1,29 @@
 import React, { useState, useContext } from "react";
-import MoleculeDrawer from "../components/simulation/MoleculeDrawer";
-import { jsPDF } from "jspdf";
-import MolViewer from "../components/simulation/MolViewer";
-import ToolFeedbackToast from "../components/shared/ToolFeedbackToast";
+import { useNavigate } from "react-router-dom";
+import AuthGate from "../components/auth/AuthGate";
+import AuthContext from "../components/auth/AuthContext";
 import useTrialStatus from "../hooks/useTrialStatus";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { motion, AnimatePresence } from "framer-motion";
-import { base44 } from "@/api/base44Client";
-import AuthGate from "../components/auth/AuthGate";
-import AuthContext from "../components/auth/AuthContext";
-import { Card, CardContent } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
 import {
-  Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom, ChevronRight,
-  Download, Copy, CheckCircle2, Loader2, RotateCcw, BookOpen,
-  Microscope, Globe, Beaker, Activity, AlertTriangle, Eye, SlidersHorizontal, Film, ExternalLink
+  Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom,
+  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight
 } from "lucide-react";
-import CustomForcefieldManager from "../components/simulation/CustomForcefieldManager";
-import TrajectoryViewer from "../components/simulation/TrajectoryViewer";
 
-const DFT_FUNCTIONALS = [
-  "B3LYP", "PBE", "PBE0", "M06-2X", "M06-L", "ωB97X-D", "CAM-B3LYP",
-  "BP86", "BLYP", "B97-D3", "HSE06", "TPSSh", "B2-PLYP", "DLPNO-CCSD(T)", "HF"
-];
-
-const BASIS_SETS = [
-  "STO-3G", "3-21G", "6-31G", "6-31G*", "6-31G**", "6-311G*", "6-311G**",
-  "6-311+G**", "6-311++G**", "cc-pVDZ", "cc-pVTZ", "cc-pVQZ",
-  "aug-cc-pVDZ", "aug-cc-pVTZ", "def2-SVP", "def2-TZVP", "def2-QZVP",
-  "def2-TZVPP", "LANL2DZ", "SDD"
-];
-
-const SIM_TYPES = [
+export const SIM_TYPES = [
   {
     id: "dft",
     label: "DFT / Quantum Chemistry",
     icon: Atom,
     color: "from-violet-500 to-purple-600",
+    bgColor: "bg-violet-50",
+    borderColor: "border-violet-200",
     engines: ["ORCA", "Gaussian", "Psi4", "NWChem", "CP2K"],
     description: "Electronic structure, energies, molecular orbitals, geometry optimization",
     fields: [
       { key: "molecule", label: "Molecule / SMILES / Formula", placeholder: "e.g. H2O, C6H6, caffeine" },
-      { key: "functional", label: "DFT Functional", type: "select", options: DFT_FUNCTIONALS, default: "B3LYP" },
-      { key: "basis_set", label: "Basis Set", type: "select", options: BASIS_SETS, default: "6-31G*" },
+      { key: "functional", label: "DFT Functional", type: "select", options: ["B3LYP","PBE","PBE0","M06-2X","M06-L","ωB97X-D","CAM-B3LYP","BP86","BLYP","B97-D3","HSE06","TPSSh","B2-PLYP","DLPNO-CCSD(T)","HF"], default: "B3LYP" },
+      { key: "basis_set", label: "Basis Set", type: "select", options: ["STO-3G","3-21G","6-31G","6-31G*","6-31G**","6-311G*","6-311G**","6-311+G**","6-311++G**","cc-pVDZ","cc-pVTZ","cc-pVQZ","aug-cc-pVDZ","aug-cc-pVTZ","def2-SVP","def2-TZVP","def2-QZVP","def2-TZVPP","LANL2DZ","SDD"], default: "6-31G*" },
       { key: "task", label: "Calculation Task", placeholder: "e.g. geometry optimization, frequency, NMR, single point" },
     ]
   },
@@ -53,13 +32,15 @@ const SIM_TYPES = [
     label: "Molecular Dynamics (MD)",
     icon: Activity,
     color: "from-teal-500 to-cyan-600",
+    bgColor: "bg-teal-50",
+    borderColor: "border-teal-200",
     engines: ["GROMACS", "AMBER", "NAMD", "OpenMM", "LAMMPS"],
     description: "Protein folding, membrane dynamics, ligand binding, trajectory analysis",
     fields: [
       { key: "system", label: "System Description", placeholder: "e.g. Lysozyme in water box, 50ns NPT simulation" },
-      { key: "force_field", label: "Force Field", type: "select", options: ["AMBER99SB-ILDN", "CHARMM36", "OPLS-AA", "GROMOS54A7", "ff14SB", "CHARMM36m", "AMBER14SB", "TraPPE"], default: "AMBER99SB-ILDN" },
-      { key: "temperature", label: "Temperature (K)", type: "select", options: ["298", "300", "310", "273", "320", "350", "400"], default: "300" },
-      { key: "simulation_time", label: "Simulation Time", type: "select", options: ["1 ns", "10 ns", "50 ns", "100 ns", "500 ns", "1 µs", "Custom"], default: "100 ns" },
+      { key: "force_field", label: "Force Field", type: "select", options: ["AMBER99SB-ILDN","CHARMM36","OPLS-AA","GROMOS54A7","ff14SB","CHARMM36m","AMBER14SB","TraPPE"], default: "AMBER99SB-ILDN" },
+      { key: "temperature", label: "Temperature (K)", type: "select", options: ["298","300","310","273","320","350","400"], default: "300" },
+      { key: "simulation_time", label: "Simulation Time", type: "select", options: ["1 ns","10 ns","50 ns","100 ns","500 ns","1 µs","Custom"], default: "100 ns" },
     ]
   },
   {
@@ -67,6 +48,8 @@ const SIM_TYPES = [
     label: "Drug Discovery / Docking",
     icon: Pill,
     color: "from-pink-500 to-rose-600",
+    bgColor: "bg-pink-50",
+    borderColor: "border-pink-200",
     engines: ["AutoDock Vina", "Glide", "DOCK6", "RDKit", "OpenBabel"],
     description: "Ligand-receptor docking, ADMET prediction, binding affinity, pharmacophore",
     fields: [
@@ -81,6 +64,8 @@ const SIM_TYPES = [
     label: "Protein / Biomolecular",
     icon: Dna,
     color: "from-blue-500 to-indigo-600",
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-200",
     engines: ["GROMACS", "AMBER", "Modeller", "AlphaFold", "Rosetta"],
     description: "Protein structure prediction, homology modeling, folding, MD refinement",
     fields: [
@@ -95,13 +80,15 @@ const SIM_TYPES = [
     label: "QM / Excited States",
     icon: Zap,
     color: "from-amber-500 to-orange-600",
+    bgColor: "bg-amber-50",
+    borderColor: "border-amber-200",
     engines: ["ORCA", "Gaussian", "Q-Chem", "Turbomole", "Molpro"],
     description: "Excited states, TDDFT, reaction pathways, transition states, photochemistry",
     fields: [
       { key: "system", label: "Chemical System", placeholder: "e.g. photocatalytic water splitting, A→B→C reaction" },
-      { key: "method", label: "QM Method", type: "select", options: ["TDDFT/B3LYP", "TDDFT/CAM-B3LYP", "EOM-CCSD", "CASPT2", "CASSCF", "ADC(2)", "CC2", "MP2", "DLPNO-CCSD(T)"], default: "TDDFT/B3LYP" },
-      { key: "properties", label: "Properties of Interest", type: "select", options: ["Excitation energies", "Oscillator strengths", "Reaction barrier", "Dipole moment", "Transition state", "IRC path", "Natural transition orbitals", "Spin-orbit coupling"], default: "Excitation energies" },
-      { key: "environment", label: "Environment", type: "select", options: ["Gas phase", "Water (PCM)", "Solvent (COSMO)", "DMSO (PCM)", "Benzene (PCM)", "Ethanol (PCM)"], default: "Gas phase" },
+      { key: "method", label: "QM Method", type: "select", options: ["TDDFT/B3LYP","TDDFT/CAM-B3LYP","EOM-CCSD","CASPT2","CASSCF","ADC(2)","CC2","MP2","DLPNO-CCSD(T)"], default: "TDDFT/B3LYP" },
+      { key: "properties", label: "Properties of Interest", type: "select", options: ["Excitation energies","Oscillator strengths","Reaction barrier","Dipole moment","Transition state","IRC path","Natural transition orbitals","Spin-orbit coupling"], default: "Excitation energies" },
+      { key: "environment", label: "Environment", type: "select", options: ["Gas phase","Water (PCM)","Solvent (COSMO)","DMSO (PCM)","Benzene (PCM)","Ethanol (PCM)"], default: "Gas phase" },
     ]
   },
   {
@@ -109,13 +96,15 @@ const SIM_TYPES = [
     label: "Materials Science / DFT",
     icon: Beaker,
     color: "from-slate-500 to-gray-700",
+    bgColor: "bg-slate-50",
+    borderColor: "border-slate-200",
     engines: ["VASP", "Quantum ESPRESSO", "CP2K", "FHI-aims", "Wien2k"],
     description: "Solid-state DFT, band structure, density of states, surface reactions",
     fields: [
       { key: "material", label: "Material / Crystal", placeholder: "e.g. TiO2 rutile, graphene, perovskite BaTiO3" },
-      { key: "property", label: "Property to Calculate", type: "select", options: ["Band gap", "Density of States (DOS)", "Band structure", "Phonons", "Adsorption energy", "Formation energy", "Magnetic moment", "Dielectric constant"], default: "Band gap" },
-      { key: "kpoints", label: "k-point Sampling", type: "select", options: ["2x2x2", "4x4x4", "6x6x6", "8x8x8", "10x10x10", "Gamma only", "Custom"], default: "4x4x4" },
-      { key: "functional", label: "Functional / Method", type: "select", options: ["PBE", "PBE+U", "HSE06", "vdW-DF", "SCAN", "r2SCAN", "PBEsol", "LDA"], default: "PBE" },
+      { key: "property", label: "Property to Calculate", type: "select", options: ["Band gap","Density of States (DOS)","Band structure","Phonons","Adsorption energy","Formation energy","Magnetic moment","Dielectric constant"], default: "Band gap" },
+      { key: "kpoints", label: "k-point Sampling", type: "select", options: ["2x2x2","4x4x4","6x6x6","8x8x8","10x10x10","Gamma only","Custom"], default: "4x4x4" },
+      { key: "functional", label: "Functional / Method", type: "select", options: ["PBE","PBE+U","HSE06","vdW-DF","SCAN","r2SCAN","PBEsol","LDA"], default: "PBE" },
     ]
   },
   {
@@ -123,13 +112,15 @@ const SIM_TYPES = [
     label: "Monte Carlo / Statistical",
     icon: FlaskConical,
     color: "from-green-500 to-emerald-600",
+    bgColor: "bg-green-50",
+    borderColor: "border-green-200",
     engines: ["RASPA", "CASSANDRA", "Faunus", "GOMC", "BOSS"],
     description: "Phase equilibria, adsorption isotherms, grand canonical MC, free energy",
     fields: [
       { key: "system", label: "System Description", placeholder: "e.g. CO2 adsorption in MOF-5 at 298K" },
-      { key: "ensemble", label: "Ensemble", type: "select", options: ["GCMC", "NPT", "NVT", "Gibbs", "NPT-GEMC", "µVT"], default: "GCMC" },
-      { key: "temperature", label: "Temperature (K)", type: "select", options: ["273", "298", "300", "310", "350", "400", "500"], default: "298" },
-      { key: "property", label: "Property to Calculate", type: "select", options: ["Adsorption isotherm", "Henry constant", "Selectivity", "Heat of adsorption", "Radial distribution function", "Free energy", "Phase diagram"], default: "Adsorption isotherm" },
+      { key: "ensemble", label: "Ensemble", type: "select", options: ["GCMC","NPT","NVT","Gibbs","NPT-GEMC","µVT"], default: "GCMC" },
+      { key: "temperature", label: "Temperature (K)", type: "select", options: ["273","298","300","310","350","400","500"], default: "298" },
+      { key: "property", label: "Property to Calculate", type: "select", options: ["Adsorption isotherm","Henry constant","Selectivity","Heat of adsorption","Radial distribution function","Free energy","Phase diagram"], default: "Adsorption isotherm" },
     ]
   },
   {
@@ -137,37 +128,31 @@ const SIM_TYPES = [
     label: "Environmental / Green Chem",
     icon: Globe,
     color: "from-lime-500 to-green-600",
+    bgColor: "bg-lime-50",
+    borderColor: "border-lime-200",
     engines: ["ORCA", "RDKit", "OpenBabel", "EPI Suite", "ECOSAR"],
     description: "Pollutant degradation, atmospheric chemistry, ecotoxicology, fate & transport",
     fields: [
       { key: "compound", label: "Compound / Pollutant", placeholder: "e.g. atrazine herbicide, PFAS, CO2" },
-      { key: "environment", label: "Environmental Matrix", type: "select", options: ["Aquatic (freshwater)", "Aquatic (marine)", "Atmospheric", "Soil / sediment", "Groundwater", "Air-water interface"], default: "Aquatic (freshwater)" },
-      { key: "process", label: "Process to Model", type: "select", options: ["Photodegradation", "Biodegradation", "Sorption", "Hydrolysis", "Atmospheric OH oxidation", "Volatilization", "Bioaccumulation"], default: "Photodegradation" },
-      { key: "metrics", label: "Metrics / Outputs", type: "select", options: ["Half-life", "Degradation products", "Ecotoxicity LC50", "LogKow / LogKoc", "Henry's law constant", "BCF (bioconcentration)"], default: "Half-life" },
+      { key: "environment", label: "Environmental Matrix", type: "select", options: ["Aquatic (freshwater)","Aquatic (marine)","Atmospheric","Soil / sediment","Groundwater","Air-water interface"], default: "Aquatic (freshwater)" },
+      { key: "process", label: "Process to Model", type: "select", options: ["Photodegradation","Biodegradation","Sorption","Hydrolysis","Atmospheric OH oxidation","Volatilization","Bioaccumulation"], default: "Photodegradation" },
+      { key: "metrics", label: "Metrics / Outputs", type: "select", options: ["Half-life","Degradation products","Ecotoxicity LC50","LogKow / LogKoc","Henry's law constant","BCF (bioconcentration)"], default: "Half-life" },
     ]
-  },
-  {
-    id: "sandbox",
-    label: "3D Simulation Sandbox",
-    icon: Eye,
-    color: "from-violet-500 to-fuchsia-600",
-    engines: ["Three.js", "Custom"],
-    description: "Interactive sandbox: place atoms on a 3D grid and simulate real-time physics interactions",
-    fields: [],
-    isSandbox: true,
   },
   {
     id: "visualization",
     label: "Visualization & Analysis",
     icon: Eye,
     color: "from-fuchsia-500 to-pink-600",
+    bgColor: "bg-fuchsia-50",
+    borderColor: "border-fuchsia-200",
     engines: ["VMD", "PyMOL", "Avogadro", "VESTA", "ChimeraX"],
     description: "Molecular visualization, trajectory analysis, electrostatic potential maps, 3D rendering",
     fields: [
       { key: "molecule_or_trajectory", label: "Molecule / Trajectory / PDB", placeholder: "e.g. protein.pdb, trajectory.xtc, C6H6 benzene" },
-      { key: "viz_type", label: "Visualization Type", type: "select", options: ["Electrostatic potential map", "Orbital density", "RMSD plot", "Ramachandran plot", "Surface representation", "Cartoon/ribbon", "Space-filling model", "Electron density map"], default: "Electrostatic potential map" },
-      { key: "tool_preference", label: "Preferred Tool", type: "select", options: ["VMD", "PyMOL", "Avogadro", "VESTA", "ChimeraX"], default: "VMD" },
-      { key: "output_format", label: "Output Format", type: "select", options: ["PNG image", "High-res TIFF", "Movie (MP4)", "Interactive session", "Script only", "PDF report"], default: "PNG image" },
+      { key: "viz_type", label: "Visualization Type", type: "select", options: ["Electrostatic potential map","Orbital density","RMSD plot","Ramachandran plot","Surface representation","Cartoon/ribbon","Space-filling model","Electron density map"], default: "Electrostatic potential map" },
+      { key: "tool_preference", label: "Preferred Tool", type: "select", options: ["VMD","PyMOL","Avogadro","VESTA","ChimeraX"], default: "VMD" },
+      { key: "output_format", label: "Output Format", type: "select", options: ["PNG image","High-res TIFF","Movie (MP4)","Interactive session","Script only","PDF report"], default: "PNG image" },
     ]
   },
   {
@@ -175,13 +160,15 @@ const SIM_TYPES = [
     label: "Surface Chemistry & Catalysis",
     icon: Beaker,
     color: "from-red-500 to-orange-600",
+    bgColor: "bg-red-50",
+    borderColor: "border-red-200",
     engines: ["VASP", "CP2K", "ORCA", "Quantum ESPRESSO", "FHI-aims"],
     description: "Surface reactions, catalyst design, heterogeneous catalysis, adsorption dynamics, reaction mechanisms",
     fields: [
       { key: "surface", label: "Surface / Catalyst Material", placeholder: "e.g. Pt(111), TiO2 rutile (110), Au nanoparticle, graphene" },
       { key: "reactants", label: "Reactants / Adsorbates", placeholder: "e.g. CO + O2, NH3, N2, CO2" },
-      { key: "analysis_type", label: "Analysis Type", type: "select", options: ["Adsorption energy", "Activation barrier", "Reaction pathway (NEB)", "Reaction intermediate", "Transition state", "Surface structure optimization", "Thermodynamic stability", "Electron transfer"], default: "Adsorption energy" },
-      { key: "functional", label: "DFT Functional", type: "select", options: ["PBE", "PBE+U", "BEEF-vdW", "RPBE", "vdW-DF2", "HSE06", "SCAN"], default: "PBE" },
+      { key: "analysis_type", label: "Analysis Type", type: "select", options: ["Adsorption energy","Activation barrier","Reaction pathway (NEB)","Reaction intermediate","Transition state","Surface structure optimization","Thermodynamic stability","Electron transfer"], default: "Adsorption energy" },
+      { key: "functional", label: "DFT Functional", type: "select", options: ["PBE","PBE+U","BEEF-vdW","RPBE","vdW-DF2","HSE06","SCAN"], default: "PBE" },
     ]
   },
   {
@@ -189,13 +176,15 @@ const SIM_TYPES = [
     label: "Advanced Biomolecular Dynamics",
     icon: Dna,
     color: "from-cyan-500 to-blue-600",
+    bgColor: "bg-cyan-50",
+    borderColor: "border-cyan-200",
     engines: ["AMBER", "GROMACS", "NAMD", "OpenMM", "DESMOND"],
-    description: "Enhanced sampling (US, REUS), all-atom & coarse-grain, protein-protein/RNA/lipid interactions, free energy calculations",
+    description: "Enhanced sampling, all-atom & coarse-grain, protein-protein/RNA/lipid interactions, free energy calculations",
     fields: [
       { key: "system", label: "Biomolecular System", placeholder: "e.g. SARS-CoV-2 spike protein in membrane, RNA hairpin folding" },
-      { key: "method", label: "Advanced Sampling Method", type: "select", options: ["Umbrella Sampling (US)", "Replica Exchange MD (REMD)", "Metadynamics", "Steered MD (SMD)", "Accelerated MD (aMD)", "REST2"], default: "Umbrella Sampling (US)" },
-      { key: "property", label: "Property to Calculate", type: "select", options: ["Binding free energy (PMF)", "Protein-protein interface", "RNA secondary structure", "Lipid diffusion", "Ion permeation", "Protein folding pathway", "Allosteric pathway"], default: "Binding free energy (PMF)" },
-      { key: "force_field", label: "Force Field", type: "select", options: ["AMBER14SB", "AMBER99SB-ILDN", "CHARMM36m", "OPLS-AA/M", "ff14SB", "Slipids"], default: "AMBER14SB" },
+      { key: "method", label: "Advanced Sampling Method", type: "select", options: ["Umbrella Sampling (US)","Replica Exchange MD (REMD)","Metadynamics","Steered MD (SMD)","Accelerated MD (aMD)","REST2"], default: "Umbrella Sampling (US)" },
+      { key: "property", label: "Property to Calculate", type: "select", options: ["Binding free energy (PMF)","Protein-protein interface","RNA secondary structure","Lipid diffusion","Ion permeation","Protein folding pathway","Allosteric pathway"], default: "Binding free energy (PMF)" },
+      { key: "force_field", label: "Force Field", type: "select", options: ["AMBER14SB","AMBER99SB-ILDN","CHARMM36m","OPLS-AA/M","ff14SB","Slipids"], default: "AMBER14SB" },
     ]
   },
   {
@@ -203,424 +192,76 @@ const SIM_TYPES = [
     label: "Electron Spectroscopy & Photochemistry",
     icon: Zap,
     color: "from-indigo-500 to-purple-600",
+    bgColor: "bg-indigo-50",
+    borderColor: "border-indigo-200",
     engines: ["ORCA", "Gaussian", "Q-Chem", "Molpro", "ADF"],
     description: "X-ray/UV photoelectron spectroscopy, X-ray absorption, TDDFT excited states, nonlinear optics, spin-orbit coupling",
     fields: [
       { key: "system", label: "Molecular System / Complex", placeholder: "e.g. transition metal complex, organic dye, lanthanide complex" },
-      { key: "spectroscopy_type", label: "Spectroscopy Type", type: "select", options: ["XPS (X-ray photoelectron)", "UPS (Ultraviolet photoelectron)", "XANES (X-ray absorption)", "NEXAFS", "ECD (Electronic circular dichroism)", "ORD (Optical rotatory dispersion)"], default: "XPS (X-ray photoelectron)" },
-      { key: "theory_level", label: "Theory Level", type: "select", options: ["TDDFT/PBE", "TDDFT/CAM-B3LYP", "EOM-CCSD", "ADC(2/3)", "Bethe-Salpeter", "GW-BSE"], default: "TDDFT/CAM-B3LYP" },
-      { key: "spin_orbit", label: "Include Spin-Orbit Coupling?", type: "select", options: ["No", "Yes (2c-DKH)", "Yes (4c-DKH)"], default: "No" },
+      { key: "spectroscopy_type", label: "Spectroscopy Type", type: "select", options: ["XPS (X-ray photoelectron)","UPS (Ultraviolet photoelectron)","XANES (X-ray absorption)","NEXAFS","ECD (Electronic circular dichroism)","ORD (Optical rotatory dispersion)"], default: "XPS (X-ray photoelectron)" },
+      { key: "theory_level", label: "Theory Level", type: "select", options: ["TDDFT/PBE","TDDFT/CAM-B3LYP","EOM-CCSD","ADC(2/3)","Bethe-Salpeter","GW-BSE"], default: "TDDFT/CAM-B3LYP" },
+      { key: "spin_orbit", label: "Include Spin-Orbit Coupling?", type: "select", options: ["No","Yes (2c-DKH)","Yes (4c-DKH)"], default: "No" },
     ]
   },
   {
     id: "machine_learning_pot",
-    label: "Machine Learning Potentials & Neural Networks",
+    label: "Machine Learning Potentials",
     icon: Cpu,
     color: "from-emerald-500 to-teal-600",
+    bgColor: "bg-emerald-50",
+    borderColor: "border-emerald-200",
     engines: ["SchNet", "DimeNet", "MACE", "CHARMNET", "PaiNN"],
-    description: "Fast MD with NN potentials, scalable simulations, transferable ML models, large-scale dynamics (millions of atoms)",
+    description: "Fast MD with NN potentials, scalable simulations, transferable ML models, large-scale dynamics",
     fields: [
       { key: "system", label: "System Description", placeholder: "e.g. Large protein complex, nanoparticle, extended defect in crystal" },
-      { key: "model_type", label: "ML Potential Model", type: "select", options: ["SchNet", "DimeNet", "MACE", "Graph Neural Network", "EquivariantNet", "Transformer-based", "Pre-trained Universal Model"], default: "SchNet" },
-      { key: "task", label: "Task", type: "select", options: ["Molecular dynamics (10 ns to µs scale)", "Structure optimization", "Properties prediction (E, F, Stress)", "Dataset generation for fine-tuning", "Transfer learning to new systems"], default: "Molecular dynamics (10 ns to µs scale)" },
-      { key: "scale", label: "System Size", type: "select", options: ["100s - 1000s atoms", "1000s - 100k atoms", "100k - 1M atoms", "Custom (specify)"], default: "1000s - 100k atoms" },
+      { key: "model_type", label: "ML Potential Model", type: "select", options: ["SchNet","DimeNet","MACE","Graph Neural Network","EquivariantNet","Transformer-based","Pre-trained Universal Model"], default: "SchNet" },
+      { key: "task", label: "Task", type: "select", options: ["Molecular dynamics (10 ns to µs scale)","Structure optimization","Properties prediction (E, F, Stress)","Dataset generation for fine-tuning","Transfer learning to new systems"], default: "Molecular dynamics (10 ns to µs scale)" },
+      { key: "scale", label: "System Size", type: "select", options: ["100s - 1000s atoms","1000s - 100k atoms","100k - 1M atoms","Custom (specify)"], default: "1000s - 100k atoms" },
     ]
   },
 ];
 
-const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
-
-const DOMAIN_SIM_MAP = {
-  "Chemistry":        ["dft", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization"],
-  "Biochemistry":     ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
-  "Drug Discovery":   ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Engineering":      ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization"],
-  "Biology":          ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Environmental":    ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization"],
-  "Materials Science":["materials", "dft", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
-  "Biophysics":       ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+export const DOMAIN_SIM_MAP = {
+  "Chemistry":         ["dft", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization"],
+  "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
+  "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
+  "Engineering":       ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization"],
+  "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
+  "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization"],
+  "Materials Science": ["materials", "dft", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
 };
 
-function SelectField({ label, options, value, onChange }) {
-  return (
-    <div>
-      <label className="block text-sm font-semibold text-slate-700 mb-1">{label}</label>
-      <select
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white"
-      >
-        {options.map(o => <option key={o} value={o}>{o}</option>)}
-      </select>
-    </div>
-  );
-}
+const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
+
+const DOMAIN_COLORS = {
+  "Chemistry": "bg-violet-600 text-white border-violet-600",
+  "Biochemistry": "bg-teal-600 text-white border-teal-600",
+  "Drug Discovery": "bg-pink-600 text-white border-pink-600",
+  "Engineering": "bg-slate-600 text-white border-slate-600",
+  "Biology": "bg-blue-600 text-white border-blue-600",
+  "Environmental": "bg-green-600 text-white border-green-600",
+  "Materials Science": "bg-amber-600 text-white border-amber-600",
+  "Biophysics": "bg-cyan-600 text-white border-cyan-600",
+};
+
+const DOMAIN_DESCRIPTIONS = {
+  "Chemistry": "Quantum chemistry, DFT, reaction mechanisms, spectroscopy and statistical simulations.",
+  "Biochemistry": "Protein dynamics, biomolecular interactions, excited states and visualization.",
+  "Drug Discovery": "Docking, ADMET, binding affinity, protein modeling and ML-based drug design.",
+  "Engineering": "Materials DFT, band structure, Monte Carlo and ML potentials for engineering systems.",
+  "Biology": "Protein folding, membrane dynamics, coarse-grain and advanced biomolecular sampling.",
+  "Environmental": "Pollutant fate, photodegradation, ecotoxicology and atmospheric chemistry.",
+  "Materials Science": "Solid-state DFT, surface catalysis, spectroscopy and neural network potentials.",
+  "Biophysics": "Enhanced sampling, free energy, protein-RNA interactions and photophysics.",
+};
 
 export default function ComputationalSimulation() {
-  const { user, refreshUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
-  const [selectedType, setSelectedType] = useState(null);
-  const [selectedEngine, setSelectedEngine] = useState(null);
-  const [inputs, setInputs] = useState({});
+  const navigate = useNavigate();
   const [domain, setDomain] = useState("Chemistry");
-  const [isRunning, setIsRunning] = useState(false);
-  const [results, setResults] = useState(null);
-  const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState("analysis");
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerTargetKey, setDrawerTargetKey] = useState(null);
-  const [ffManagerOpen, setFfManagerOpen] = useState(false);
-  const [customForcefield, setCustomForcefield] = useState(null);
 
-  const DRAWABLE_KEYS = ['molecule', 'ligand', 'compound', 'system', 'surface', 'reactants'];
-
-  const openDrawer = (fieldKey) => {
-    setDrawerTargetKey(fieldKey);
-    setDrawerOpen(true);
-  };
-
-  const handleDrawerConfirm = (smiles) => {
-    if (drawerTargetKey) handleInputChange(drawerTargetKey, smiles);
-  };
-
-  const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
-
-  const handleSelectType = (typeId) => {
-    setSelectedType(typeId);
-    setInputs({});
-    setResults(null);
-    const sim = SIM_TYPES.find(s => s.id === typeId);
-    setSelectedEngine(sim?.engines[0] || null);
-    setCustomForcefield(null);
-    // Pre-fill defaults
-    const defaults = {};
-    sim?.fields.forEach(f => { if (f.default) defaults[f.key] = f.default; });
-    setInputs(defaults);
-  };
-
-  const handleRun = async () => {
-    if (!selectedType) return;
-    const sim = SIM_TYPES.find(s => s.id === selectedType);
-    const inputSummary = sim.fields.map(f => `${f.label}: ${inputs[f.key] || 'not specified'}`).join('\n');
-
-    setIsRunning(true);
-    setResults(null);
-
-    const customFFNote = customForcefield && selectedType === "molecular_dynamics"
-      ? `\n\nCustom Forcefield: "${customForcefield.name}" (extends ${customForcefield.base_forcefield})
-${customForcefield.description ? `Description: ${customForcefield.description}` : ""}
-${customForcefield.lj_parameters?.length ? `LJ params: ${customForcefield.lj_parameters.map(p => `${p.atom_type}: ε=${p.epsilon} kJ/mol, σ=${p.sigma} nm`).join("; ")}` : ""}
-${customForcefield.bond_parameters?.length ? `Bond params: ${customForcefield.bond_parameters.map(p => `${p.atom1}-${p.atom2}: k=${p.k_bond}, r0=${p.r0}`).join("; ")}` : ""}
-${customForcefield.angle_parameters?.length ? `Angle params: ${customForcefield.angle_parameters.map(p => `${p.atom1}-${p.atom2}-${p.atom3}: k=${p.k_angle}, θ0=${p.theta0}`).join("; ")}` : ""}
-${customForcefield.dihedral_parameters?.length ? `Dihedral params: ${customForcefield.dihedral_parameters.map(p => `${p.atom1}-${p.atom2}-${p.atom3}-${p.atom4}: k=${p.k_dihedral}, n=${p.n}, δ=${p.delta}`).join("; ")}` : ""}
-Incorporate these custom parameters into the simulation script and adapt the approach to override or extend the base forcefield accordingly.`
-      : "";
-
-    const prompt = `You are a computational chemistry expert. A researcher wants to run a ${sim.label} simulation using ${selectedEngine} for ${domain}.
-
-Parameters:
-${inputSummary}${customFFNote}
-
-Provide a focused, technical analysis. Return JSON with:
-1. system_overview: Brief 2-3 sentence description
-2. computational_approach: Method justification (3-4 sentences)  
-3. predicted_results: { summary: string, key_values: [{property, value, unit, interpretation}] } — include 4-6 realistic numerical results
-4. scientific_interpretation: What results mean (3-4 sentences)
-5. bash_script: Complete, ready-to-run ${selectedEngine} input file or bash script with comments
-6. visualization_commands: ${selectedEngine === 'VMD' || selectedEngine === 'PyMOL' || selectedEngine === 'Avogadro' ? 'Specific visualization commands/scripts' : 'VMD/PyMOL/Avogadro commands to visualize output'}
-7. limitations: 2-3 sentence limitation note
-8. next_steps: array of 3 concise next steps
-9. references: array of 2-3 real paper citations`;
-
-    try {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            system_overview: { type: "string" },
-            computational_approach: { type: "string" },
-            predicted_results: {
-              type: "object",
-              properties: {
-                summary: { type: "string" },
-                key_values: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      property: { type: "string" },
-                      value: { type: "string" },
-                      unit: { type: "string" },
-                      interpretation: { type: "string" }
-                    }
-                  }
-                }
-              }
-            },
-            scientific_interpretation: { type: "string" },
-            bash_script: { type: "string" },
-            visualization_commands: { type: "string" },
-            limitations: { type: "string" },
-            next_steps: { type: "array", items: { type: "string" } },
-            references: { type: "array", items: { type: "string" } }
-          }
-        }
-      });
-
-      setResults({ ...response, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs } });
-      setActiveTab("analysis");
-      // Award 50 points for running a computational simulation
-      if (user) {
-        try {
-          await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
-          // Refresh user context to reflect updated points
-          if (refreshUser) {
-            await refreshUser();
-          }
-        } catch (pointError) {
-          console.error("Failed to update points:", pointError);
-        }
-      }
-      setShowFeedback(true);
-      setTimeout(() => setShowFeedback(false), 15000);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsRunning(false);
-    }
-  };
-
-  const generatePDFReport = () => {
-    if (!results) return;
-    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const pageH = doc.internal.pageSize.getHeight();
-    const margin = 18;
-    const contentW = pageW - margin * 2;
-    let y = 0;
-
-    const addPage = () => { doc.addPage(); y = margin; };
-    const checkY = (needed = 10) => { if (y + needed > pageH - 15) addPage(); };
-
-    // ── Header bar ──
-    doc.setFillColor(109, 40, 217); // violet-700
-    doc.rect(0, 0, pageW, 28, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(18);
-    doc.setFont("helvetica", "bold");
-    doc.text("Computational Simulation Report", margin, 12);
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Generated by Suttain  ·  ${new Date().toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" })}`, margin, 21);
-    doc.text(`Engine: ${results.engine}  ·  Domain: ${results.domain}`, pageW - margin, 21, { align: "right" });
-    y = 38;
-
-    // ── Simulation type badge ──
-    doc.setFillColor(237, 233, 254); // violet-100
-    doc.roundedRect(margin, y - 5, contentW, 12, 2, 2, "F");
-    doc.setTextColor(109, 40, 217);
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "bold");
-    doc.text(`${results.simType?.label || "Simulation"}  ·  ${results.engine}`, margin + 3, y + 2);
-    y += 14;
-
-    const sectionTitle = (title) => {
-      checkY(14);
-      doc.setDrawColor(109, 40, 217);
-      doc.setLineWidth(0.5);
-      doc.line(margin, y, margin + contentW, y);
-      y += 3;
-      doc.setFontSize(11);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(30, 30, 50);
-      doc.text(title, margin, y + 4);
-      y += 10;
-    };
-
-    const bodyText = (text, indent = 0) => {
-      doc.setFontSize(9);
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(60, 60, 80);
-      const lines = doc.splitTextToSize(text, contentW - indent);
-      lines.forEach(line => {
-        checkY(6);
-        doc.text(line, margin + indent, y);
-        y += 5;
-      });
-    };
-
-    // ── Input Parameters ──
-    sectionTitle("Input Parameters");
-    const fields = results.simType?.fields || [];
-    fields.forEach(f => {
-      checkY(7);
-      doc.setFontSize(9);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(60, 60, 80);
-      doc.text(`${f.label}:`, margin + 2, y);
-      doc.setFont("helvetica", "normal");
-      doc.text(String(results.inputs?.[f.key] || "—"), margin + 60, y);
-      y += 5.5;
-    });
-    if (results.inputs?.notes) {
-      checkY(7);
-      doc.setFont("helvetica", "bold"); doc.text("Notes:", margin + 2, y);
-      doc.setFont("helvetica", "normal"); doc.text(results.inputs.notes, margin + 60, y);
-      y += 5.5;
-    }
-    y += 3;
-
-    // ── System Overview ──
-    if (results.system_overview) {
-      sectionTitle("System Overview");
-      bodyText(results.system_overview);
-      y += 3;
-    }
-
-    // ── Predicted Results Table ──
-    if (results.predicted_results?.key_values?.length > 0) {
-      sectionTitle("Predicted Results");
-      if (results.predicted_results.summary) { bodyText(results.predicted_results.summary); y += 2; }
-      const headers = ["Property", "Value", "Unit", "Interpretation"];
-      const colW = [40, 22, 22, contentW - 84];
-      const rowH = 7;
-      // header row
-      checkY(rowH + 2);
-      doc.setFillColor(109, 40, 217);
-      doc.rect(margin, y, contentW, rowH, "F");
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(8.5);
-      doc.setFont("helvetica", "bold");
-      let cx = margin + 2;
-      headers.forEach((h, i) => { doc.text(h, cx, y + 5); cx += colW[i]; });
-      y += rowH;
-      results.predicted_results.key_values.forEach((row, ri) => {
-        checkY(rowH + 1);
-        doc.setFillColor(ri % 2 === 0 ? 248 : 240, ri % 2 === 0 ? 247 : 240, ri % 2 === 0 ? 255 : 252);
-        doc.rect(margin, y, contentW, rowH, "F");
-        doc.setTextColor(30, 30, 50);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(8);
-        cx = margin + 2;
-        const cells = [row.property, row.value, row.unit, row.interpretation];
-        cells.forEach((cell, i) => {
-          const txt = doc.splitTextToSize(String(cell || "—"), colW[i] - 2);
-          doc.text(txt[0], cx, y + 5);
-          cx += colW[i];
-        });
-        y += rowH;
-      });
-      y += 5;
-    }
-
-    // ── Computational Approach ──
-    if (results.computational_approach) {
-      sectionTitle("Computational Approach");
-      bodyText(results.computational_approach);
-      y += 3;
-    }
-
-    // ── Scientific Interpretation ──
-    if (results.scientific_interpretation) {
-      sectionTitle("Scientific Interpretation");
-      bodyText(results.scientific_interpretation);
-      y += 3;
-    }
-
-    // ── Next Steps ──
-    if (results.next_steps?.length > 0) {
-      sectionTitle("Recommended Next Steps");
-      results.next_steps.forEach((step, i) => {
-        checkY(7);
-        doc.setFillColor(237, 233, 254);
-        doc.circle(margin + 4, y - 0.5, 3, "F");
-        doc.setTextColor(109, 40, 217);
-        doc.setFontSize(8.5);
-        doc.setFont("helvetica", "bold");
-        doc.text(String(i + 1), margin + 4, y + 0.8, { align: "center" });
-        doc.setTextColor(60, 60, 80);
-        doc.setFont("helvetica", "normal");
-        const lines = doc.splitTextToSize(step, contentW - 12);
-        doc.text(lines[0], margin + 10, y + 0.8);
-        y += 6;
-      });
-      y += 3;
-    }
-
-    // ── Limitations ──
-    if (results.limitations) {
-      checkY(18);
-      doc.setFillColor(255, 251, 235);
-      const limLines = doc.splitTextToSize(results.limitations, contentW - 12);
-      const limH = limLines.length * 5 + 10;
-      doc.roundedRect(margin, y, contentW, limH, 2, 2, "F");
-      doc.setDrawColor(217, 119, 6);
-      doc.roundedRect(margin, y, contentW, limH, 2, 2, "S");
-      doc.setTextColor(120, 60, 0);
-      doc.setFontSize(9);
-      doc.setFont("helvetica", "bold");
-      doc.text("⚠ Limitations", margin + 4, y + 6);
-      doc.setFont("helvetica", "normal");
-      limLines.forEach((l, li) => { doc.text(l, margin + 4, y + 12 + li * 5); });
-      y += limH + 5;
-    }
-
-    // ── References ──
-    if (results.references?.length > 0) {
-      sectionTitle("References");
-      results.references.forEach((ref, i) => {
-        checkY(6);
-        doc.setFontSize(8);
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(80, 80, 100);
-        const refLines = doc.splitTextToSize(`[${i+1}] ${ref}`, contentW - 4);
-        refLines.forEach(l => { checkY(5); doc.text(l, margin + 2, y); y += 4.5; });
-      });
-    }
-
-    // ── Footer on all pages ──
-    const totalPages = doc.internal.getNumberOfPages();
-    for (let p = 1; p <= totalPages; p++) {
-      doc.setPage(p);
-      doc.setFillColor(245, 243, 255);
-      doc.rect(0, pageH - 10, pageW, 10, "F");
-      doc.setFontSize(7.5);
-      doc.setTextColor(120, 80, 200);
-      doc.setFont("helvetica", "normal");
-      doc.text("Generated by Suttain Computational Science Lab — suttain.com", margin, pageH - 3.5);
-      doc.text(`Page ${p} of ${totalPages}`, pageW - margin, pageH - 3.5, { align: "right" });
-    }
-
-    const fname = `suttain-${results.simType?.id || "sim"}-${results.engine}-report.pdf`;
-    doc.save(fname);
-  };
-
-  const handleCopyScript = () => {
-    if (results?.bash_script) {
-      navigator.clipboard.writeText(results.bash_script);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  const handleDownloadScript = () => {
-    if (!results?.bash_script) return;
-    const ext = results.engine === "VASP" ? "INCAR" : results.engine === "Quantum ESPRESSO" ? "in" : "sh";
-    const blob = new Blob([results.bash_script], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `suttain_${results.simType.id}_${results.engine}.${ext}`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const reset = () => { setSelectedType(null); setInputs({}); setResults(null); setSelectedEngine(null); };
-  const sim = selectedType ? SIM_TYPES.find(s => s.id === selectedType) : null;
-
-  // Pro gate — allow if Pro OR still in trial
   const canAccess = !user || trialStatus.isPro || trialStatus.trialDaysLeft > 0;
 
   if (user && !canAccess) {
@@ -632,424 +273,136 @@ Provide a focused, technical analysis. Return JSON with:
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Pro Feature</h2>
           <p className="text-slate-600 mb-1">Computational Simulations require a <span className="font-semibold text-violet-700">Pro subscription</span>.</p>
-          <p className="text-slate-500 text-sm mb-6">Run DFT, MD, drug discovery, protein modeling, materials science and more — with ready-to-run scripts for ORCA, GROMACS, VASP, and 20+ tools.</p>
-          <div className="space-y-3">
-            <Link to={createPageUrl('Pricing')} className="block w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all">
-              Upgrade to Pro
-            </Link>
-            <Link to="/" className="block w-full text-slate-500 hover:text-slate-700 text-sm py-2">← Back to Home</Link>
-          </div>
+          <p className="text-slate-500 text-sm mb-6">Run DFT, MD, drug discovery, protein modeling, materials science and more.</p>
+          <Link to={createPageUrl('Pricing')} className="block w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all text-center">
+            Upgrade to Pro
+          </Link>
         </div>
       </div>
     );
   }
 
+  const filteredSims = SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id));
+
+  const handleSelectSim = (simId) => {
+    if (simId === "sandbox") {
+      navigate("/SimulationSandbox");
+      return;
+    }
+    navigate(`/SimulationRunner?type=${simId}&domain=${encodeURIComponent(domain)}`);
+  };
+
   return (
     <AuthGate featureName="Computational Simulation" featureDescription="AI-powered computational chemistry simulations — Pro feature.">
-      <ToolFeedbackToast
-        isOpen={showFeedback}
-        onClose={() => setShowFeedback(false)}
-        feature="computational"
-        featureLabel="Computational Simulation"
-        user={user}
-        pointsToAward={50}
-      />
-      <div className="max-w-6xl mx-auto">
+      <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
+        <div className="max-w-6xl mx-auto px-4 py-10">
 
           {/* Header */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+          <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
               <Cpu className="w-4 h-4" /> Computational Science Lab
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">Computational Simulations</h1>
-            <p className="text-slate-600 max-w-2xl mx-auto text-base">
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-3 tracking-tight">
+              Computational Simulations
+            </h1>
+            <p className="text-slate-500 max-w-2xl mx-auto text-base leading-relaxed">
               AI-powered molecular modeling — DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.
             </p>
-            <div className="flex flex-wrap justify-center gap-2 mt-5">
+
+            {/* Domain tabs */}
+            <div className="flex flex-wrap justify-center gap-2 mt-6">
               {DOMAIN_TAGS.map(d => (
-                <button key={d} onClick={() => setDomain(d)}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${domain === d ? "bg-violet-600 text-white border-violet-600" : "bg-white text-slate-600 border-slate-200 hover:border-violet-300"}`}>
+                <button
+                  key={d}
+                  onClick={() => setDomain(d)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all ${
+                    domain === d
+                      ? DOMAIN_COLORS[d] || "bg-violet-600 text-white border-violet-600"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-violet-300 hover:text-violet-600"
+                  }`}
+                >
                   {d}
                 </button>
               ))}
             </div>
-          </motion.div>
+          </div>
 
-          {/* Results View */}
-          {results && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
-              <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 mb-6 w-fit mx-auto">
-                {[
-                  { id: "analysis", label: "Analysis", icon: Microscope },
-                  { id: "script", label: `${results.engine} Script`, icon: Cpu },
-                  { id: "viz", label: "Visualization", icon: Eye },
-              ...(results.simType?.id === "molecular_dynamics" || results.simType?.id === "protein_modeling" || results.simType?.id === "biomolecular_dynamics"
-                ? [{ id: "trajectory", label: "Trajectory", icon: Film }]
-                : []),
-                ].map(tab => (
-                  <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.id ? "bg-violet-600 text-white shadow" : "text-slate-600 hover:bg-slate-100"}`}>
-                    <tab.icon className="w-4 h-4" />{tab.label}
-                  </button>
-                ))}
-              </div>
+          {/* Domain description banner */}
+          <div className="bg-white border border-slate-200 rounded-2xl px-6 py-4 mb-8 flex items-center gap-4 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+              <Microscope className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="font-semibold text-slate-900 text-sm">{domain}</p>
+              <p className="text-slate-500 text-xs">{DOMAIN_DESCRIPTIONS[domain]}</p>
+            </div>
+            <div className="ml-auto text-xs text-slate-400 font-medium hidden sm:block">
+              {filteredSims.length} simulation types available
+            </div>
+          </div>
 
-              {activeTab === "analysis" && (
-                <div className="space-y-5">
-                  <Card>
-                    <CardContent className="p-5">
-                      <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-violet-600" /> System Overview</h3>
-                      <p className="text-slate-700 text-sm leading-relaxed">{results.system_overview}</p>
-                    </CardContent>
-                  </Card>
-
-                  {results.predicted_results?.key_values?.length > 0 && (
-                    <Card>
-                      <CardContent className="p-5">
-                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Activity className="w-4 h-4 text-teal-600" /> Predicted Results</h3>
-                        <p className="text-slate-600 text-sm mb-4">{results.predicted_results.summary}</p>
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr className="bg-slate-50 border-b border-slate-200">
-                                {["Property","Value","Unit","Interpretation"].map(h => (
-                                  <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-slate-600 uppercase">{h}</th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {results.predicted_results.key_values.map((row, i) => (
-                                <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
-                                  <td className="px-3 py-2 font-medium text-slate-800">{row.property}</td>
-                                  <td className="px-3 py-2 font-mono text-violet-700 font-bold">{row.value}</td>
-                                  <td className="px-3 py-2 text-slate-500">{row.unit}</td>
-                                  <td className="px-3 py-2 text-slate-600 text-xs">{row.interpretation}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <Card>
-                      <CardContent className="p-5">
-                        <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><Beaker className="w-4 h-4 text-blue-600" /> Computational Approach</h3>
-                        <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{results.computational_approach}</p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="p-5">
-                        <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><Dna className="w-4 h-4 text-pink-600" /> Scientific Interpretation</h3>
-                        <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{results.scientific_interpretation}</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {results.limitations && (
-                    <Card className="border-amber-200 bg-amber-50">
-                      <CardContent className="p-5">
-                        <h3 className="font-bold text-amber-800 mb-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> Limitations</h3>
-                        <p className="text-amber-700 text-sm">{results.limitations}</p>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {results.next_steps?.length > 0 && (
-                    <Card>
-                      <CardContent className="p-5">
-                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><ChevronRight className="w-4 h-4 text-green-600" /> Next Steps</h3>
-                        <ul className="space-y-2">
-                          {results.next_steps.map((step, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                              <span className="w-5 h-5 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">{i+1}</span>
-                              {step}
-                            </li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {results.references?.length > 0 && (
-                    <Card>
-                      <CardContent className="p-5">
-                        <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-slate-600" /> References</h3>
-                        <ul className="space-y-1">{results.references.map((ref,i) => <li key={i} className="text-xs text-slate-600 font-mono">{ref}</li>)}</ul>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              )}
-
-              {activeTab === "script" && (
-                <Card>
-                  <CardContent className="p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                        <Cpu className="w-4 h-4 text-violet-600" /> {results.engine} Script
-                        <Badge className="bg-green-100 text-green-700 text-xs">Ready to Run</Badge>
-                      </h3>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline" onClick={handleCopyScript} className="gap-2">
-                          {copied ? <CheckCircle2 className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
-                          {copied ? "Copied!" : "Copy"}
-                        </Button>
-                        <Button size="sm" onClick={handleDownloadScript} className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
-                          <Download className="w-4 h-4" /> Download
-                        </Button>
-                      </div>
+          {/* Simulation Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredSims.map(s => {
+              const Icon = s.icon;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => handleSelectSim(s.id)}
+                  className="group text-left bg-white rounded-2xl border border-slate-200 p-5 hover:border-violet-300 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-400"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                      <Icon className="w-5 h-5 text-white" />
                     </div>
-                    <pre className="bg-slate-900 text-green-300 rounded-xl p-5 overflow-x-auto text-xs leading-relaxed font-mono whitespace-pre-wrap">
-                      {results.bash_script}
-                    </pre>
-                    <p className="text-xs text-slate-500 mt-3">⚠️ Review paths, resource allocations, and parameters before running on your HPC cluster.</p>
-                  </CardContent>
-                </Card>
-              )}
+                    <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-violet-500 group-hover:translate-x-0.5 transition-all mt-1" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight group-hover:text-violet-700 transition-colors">
+                    {s.label}
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed mb-3">{s.description}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {s.engines.slice(0, 3).map(e => (
+                      <span key={e} className="inline-block bg-slate-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                        {e}
+                      </span>
+                    ))}
+                    {s.engines.length > 3 && (
+                      <span className="inline-block bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full">
+                        +{s.engines.length - 3}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
 
-              {activeTab === "trajectory" && (
-                <TrajectoryViewer initialPdbId={
-                  results.inputs?.system?.match(/^[A-Za-z0-9]{4}$/) ? results.inputs.system :
-                  results.inputs?.sequence?.match(/^[A-Za-z0-9]{4}$/) ? results.inputs.sequence : null
-                } />
-              )}
-
-              {activeTab === "viz" && (
-                <div className="space-y-5">
-                  {/* 3D Interactive Viewer */}
-                  <MolViewer simType={results.simType?.id} inputs={results.inputs} />
-                  {/* CLI Visualization Commands */}
-                  {results.visualization_commands && (
-                    <Card>
-                      <CardContent className="p-5">
-                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Eye className="w-4 h-4 text-fuchsia-600" /> CLI Visualization Commands (VMD / PyMOL / Avogadro)</h3>
-                        <pre className="bg-slate-900 text-cyan-300 rounded-xl p-5 overflow-x-auto text-xs leading-relaxed font-mono whitespace-pre-wrap">
-                          {results.visualization_commands}
-                        </pre>
-                      </CardContent>
-                    </Card>
-                  )}
+            {/* Sandbox card */}
+            <button
+              onClick={() => navigate("/SimulationSandbox")}
+              className="group text-left bg-violet-50 rounded-2xl border-2 border-dashed border-violet-300 p-5 hover:bg-violet-100 hover:border-violet-500 hover:shadow-md transition-all duration-200 focus:outline-none"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <Eye className="w-5 h-5 text-white" />
                 </div>
-              )}
-
-              <div className="flex justify-center mt-6 gap-3 flex-wrap">
-                <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />New Simulation</Button>
-                <Button onClick={generatePDFReport} variant="outline" className="gap-2 border-violet-300 text-violet-700 hover:bg-violet-50">
-                  <Download className="w-4 h-4" /> Generate Report
-                </Button>
-                <Button onClick={handleRun} disabled={isRunning} className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
-                  {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Cpu className="w-4 h-4" />}
-                  Re-run Analysis
-                </Button>
+                <ExternalLink className="w-4 h-4 text-violet-400 group-hover:text-violet-600 transition-colors mt-1" />
               </div>
-            </motion.div>
-          )}
-
-          {/* Sim Type Cards */}
-          {!results && (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                {SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id)).map(s => {
-                  const Icon = s.icon;
-                  const isSelected = selectedType === s.id;
-                  if (s.isSandbox) {
-                    return (
-                      <motion.div key={s.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Link to="/SimulationSandbox"
-                          className="block text-left p-5 rounded-2xl border-2 border-dashed border-violet-300 bg-violet-50 hover:bg-violet-100 hover:border-violet-500 hover:shadow transition-all">
-                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mb-3`}>
-                            <s.icon className="w-5 h-5 text-white" />
-                          </div>
-                          <h3 className="font-bold text-slate-900 text-sm mb-1 flex items-center gap-1.5">
-                            {s.label} <ExternalLink className="w-3.5 h-3.5 text-violet-500" />
-                          </h3>
-                          <p className="text-xs text-slate-500 leading-relaxed">{s.description}</p>
-                        </Link>
-                      </motion.div>
-                    );
-                  }
-
-                  return (
-                    <motion.button key={s.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                      onClick={() => handleSelectType(s.id)}
-                      className={`text-left p-5 rounded-2xl border-2 transition-all ${isSelected ? "border-violet-500 bg-violet-50 shadow-lg" : "border-slate-200 bg-white hover:border-violet-300 hover:shadow"}`}>
-                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mb-3`}>
-                        <Icon className="w-5 h-5 text-white" />
-                      </div>
-                      <h3 className="font-bold text-slate-900 text-sm mb-1">{s.label}</h3>
-                      <p className="text-xs text-slate-500 leading-relaxed mb-2">{s.description}</p>
-                      <div className="flex flex-wrap gap-1">
-                        {s.engines.slice(0, 3).map(e => (
-                          <span key={e} className="inline-block bg-slate-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">{e}</span>
-                        ))}
-                        {s.engines.length > 3 && <span className="inline-block bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full">+{s.engines.length - 3}</span>}
-                      </div>
-                    </motion.button>
-                  );
-                })}
+              <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight flex items-center gap-1.5">
+                3D Simulation Sandbox
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                Interactive sandbox: place atoms on a 3D grid and simulate real-time physics interactions
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                <span className="inline-block bg-violet-100 text-violet-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">Three.js</span>
+                <span className="inline-block bg-violet-100 text-violet-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">Interactive</span>
               </div>
+            </button>
+          </div>
 
-              {/* Config Form */}
-              <AnimatePresence>
-                {selectedType && (
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                    <Card className="border-2 border-violet-200">
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-3 mb-5">
-                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${sim.color} flex items-center justify-center`}>
-                            <sim.icon className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <h2 className="font-bold text-slate-900">{sim.label}</h2>
-                            <p className="text-xs text-slate-500">{domain}</p>
-                          </div>
-                        </div>
-
-                        {/* Engine selector */}
-                        <div className="mb-5">
-                          <label className="block text-sm font-semibold text-slate-700 mb-2">Software / Engine</label>
-                          <div className="flex flex-wrap gap-2">
-                            {sim.engines.map(e => (
-                              <button key={e} onClick={() => setSelectedEngine(e)}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${selectedEngine === e ? "bg-violet-600 text-white border-violet-600" : "bg-white text-slate-600 border-slate-200 hover:border-violet-300"}`}>
-                                {e}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Custom Forcefield picker — MD only */}
-                        {selectedType === "molecular_dynamics" && (
-                          <div className="mb-5 p-4 bg-teal-50 border border-teal-200 rounded-xl">
-                            <div className="flex items-center justify-between flex-wrap gap-2">
-                              <div>
-                                <p className="text-sm font-semibold text-teal-800">Custom Forcefield Parameters</p>
-                                {customForcefield ? (
-                                  <p className="text-xs text-teal-600 mt-0.5">
-                                    Using: <span className="font-bold">{customForcefield.name}</span>
-                                    <span className="ml-1 text-teal-500">({customForcefield.base_forcefield})</span>
-                                  </p>
-                                ) : (
-                                  <p className="text-xs text-teal-600 mt-0.5">Optionally load saved LJ, bond, angle & dihedral overrides</p>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                {customForcefield && (
-                                  <button onClick={() => setCustomForcefield(null)}
-                                    className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors">
-                                    Remove
-                                  </button>
-                                )}
-                                <Button size="sm" variant="outline" onClick={() => setFfManagerOpen(true)}
-                                  className="gap-1.5 border-teal-300 text-teal-700 hover:bg-teal-100 text-xs">
-                                  <SlidersHorizontal className="w-3.5 h-3.5" />
-                                  {customForcefield ? "Change / Edit" : "Load Custom FF"}
-                                </Button>
-                              </div>
-                            </div>
-                            {customForcefield && (
-                              <div className="flex flex-wrap gap-2 mt-2">
-                                {[
-                                  { label: "LJ", count: customForcefield.lj_parameters?.length },
-                                  { label: "Bonds", count: customForcefield.bond_parameters?.length },
-                                  { label: "Angles", count: customForcefield.angle_parameters?.length },
-                                  { label: "Dihedrals", count: customForcefield.dihedral_parameters?.length },
-                                ].map(p => p.count > 0 && (
-                                  <span key={p.label} className="inline-flex items-center gap-1 bg-teal-100 text-teal-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                                    {p.count} {p.label}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                          {sim.fields.map(field => (
-                            field.type === "select" ? (
-                              <SelectField key={field.key} label={field.label} options={field.options}
-                                value={inputs[field.key] || field.default || field.options[0]}
-                                onChange={v => handleInputChange(field.key, v)} />
-                            ) : (
-                               <div key={field.key}>
-                                 <label className="block text-sm font-semibold text-slate-700 mb-1">{field.label}</label>
-                                 <div className="flex gap-2">
-                                   <input type="text" value={inputs[field.key] ?? ""}
-                                     onChange={e => handleInputChange(field.key, e.target.value)}
-                                     placeholder={field.placeholder}
-                                     className="flex-1 px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 bg-white font-medium" />
-                                   {DRAWABLE_KEYS.includes(field.key) && (
-                                     <button
-                                       type="button"
-                                       onClick={() => openDrawer(field.key)}
-                                       title="Draw structure"
-                                       className="flex-shrink-0 flex items-center gap-1 px-2.5 py-2 rounded-lg border-2 border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-semibold transition-colors">
-                                       ✏️ Draw
-                                     </button>
-                                   )}
-                                 </div>
-                               </div>
-                            )
-                          ))}
-                          <div>
-                            <label className="block text-sm font-semibold text-slate-700 mb-1">Additional Notes (optional)</label>
-                            <input type="text" value={inputs.notes ?? ""}
-                              onChange={e => handleInputChange("notes", e.target.value)}
-                              placeholder="Any special requirements or context..."
-                              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white" />
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <Button onClick={handleRun} disabled={isRunning}
-                            className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2 rounded-xl gap-2">
-                            {isRunning
-                              ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
-                              : <><Cpu className="w-4 h-4" /> Run Simulation</>}
-                          </Button>
-                          <p className="text-xs text-slate-500">AI analysis + {selectedEngine} script · ~5-10 seconds</p>
-                        </div>
-
-                        {isRunning && (
-                          <div className="mt-4 bg-violet-50 border border-violet-200 rounded-xl p-4 flex items-center gap-3">
-                            <Loader2 className="w-5 h-5 text-violet-600 animate-spin flex-shrink-0" />
-                            <div>
-                              <p className="text-sm font-semibold text-violet-800">Computing {sim.label}…</p>
-                              <p className="text-xs text-violet-600">Generating {selectedEngine} script, predicted results & analysis…</p>
-                            </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <MoleculeDrawer
-                isOpen={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
-                onConfirm={handleDrawerConfirm}
-                initialSmiles={drawerTargetKey ? (inputs[drawerTargetKey] || '') : ''}
-              />
-
-              <CustomForcefieldManager
-                isOpen={ffManagerOpen}
-                onClose={() => setFfManagerOpen(false)}
-                onSelect={(ff) => { setCustomForcefield(ff); setFfManagerOpen(false); }}
-              />
-
-              {!selectedType && (
-                <div className="text-center py-12 text-slate-400">
-                  <Cpu className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                  <p className="text-sm">Select a simulation type above to get started</p>
-                </div>
-              )}
-            </>
-          )}
         </div>
+      </div>
     </AuthGate>
   );
 }
