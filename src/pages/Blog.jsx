@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, BookOpen, Mail, Bell, Sparkles } from 'lucide-react';
+import { BookOpen, Mail, Bell, Sparkles } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -81,6 +80,8 @@ export default function Blog() {
             src={BLOG_IMAGES.waffleTowels} 
             alt="" 
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
         </div>
         <div className="absolute bottom-0 left-0 w-40 h-40 opacity-10 pointer-events-none hidden lg:block">
@@ -88,14 +89,13 @@ export default function Blog() {
             src={BLOG_IMAGES.amberBottles} 
             alt="" 
             className="w-full h-full object-cover rounded-full"
+            loading="lazy"
+            decoding="async"
           />
         </div>
         
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <div>
             <Badge className="mb-4 bg-[var(--suttain-teal)]/10 text-[var(--suttain-teal)] border-[var(--suttain-teal)]/20">
               <BookOpen className="w-3 h-3 mr-1" />
               Suttain Blog
@@ -106,8 +106,7 @@ export default function Blog() {
             <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
               Stay informed with the latest in chemical safety, sustainable formulation, and industry best practices.
             </p>
-
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -153,74 +152,40 @@ export default function Blog() {
             </DialogDescription>
           </DialogHeader>
           
-          <AnimatePresence mode="wait">
-            {!subscribed ? (
-              <motion.form 
-                key="form"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onSubmit={handleSubscribe} 
-                className="space-y-4 mt-4"
+          {!subscribed ? (
+            <form onSubmit={handleSubscribe} className="space-y-4 mt-4">
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Input
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10 py-6"
+                  required
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-[var(--suttain-teal)] to-[var(--suttain-blue)] py-6"
+                disabled={isSubscribing}
               >
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <Input
-                    type="email"
-                    placeholder="Enter your email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 py-6"
-                    required
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-[var(--suttain-teal)] to-[var(--suttain-blue)] py-6"
-                  disabled={isSubscribing}
-                >
-                  {isSubscribing ? (
-                    <span className="flex items-center gap-2">
-                      <motion.div 
-                        animate={{ rotate: 360 }} 
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      >
-                        <Bell className="w-5 h-5" />
-                      </motion.div>
-                      Subscribing...
-                    </span>
-                  ) : (
-                    <>
-                      <Bell className="w-5 h-5 mr-2" />
-                      Subscribe Now
-                    </>
-                  )}
-                </Button>
-                <p className="text-xs text-slate-500 text-center">
-                  We respect your privacy. Unsubscribe at any time.
-                </p>
-              </motion.form>
-            ) : (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-6"
-              >
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 200 }}
-                  >
-                    <Sparkles className="w-8 h-8 text-green-600" />
-                  </motion.div>
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">You're Subscribed!</h3>
-                <p className="text-slate-600">Welcome to the Suttain community.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <Bell className="w-5 h-5 mr-2" />
+                {isSubscribing ? 'Subscribing...' : 'Subscribe Now'}
+              </Button>
+              <p className="text-xs text-slate-500 text-center">
+                We respect your privacy. Unsubscribe at any time.
+              </p>
+            </form>
+          ) : (
+            <div className="text-center py-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">You're Subscribed!</h3>
+              <p className="text-slate-600">Welcome to the Suttain community.</p>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
