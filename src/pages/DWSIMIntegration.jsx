@@ -18,10 +18,10 @@ export default function DWSIMIntegration() {
       <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white py-14 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
-              <FlaskConical className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-[#00C896]/20 rounded-xl flex items-center justify-center">
+              <FlaskConical className="w-5 h-5 text-[#00C896]" />
             </div>
-            <Badge className="bg-white/20 text-white border-0 text-xs font-semibold">Open Source</Badge>
+            <Badge className="bg-[#00C896]/20 text-[#00C896] border-0 text-xs font-semibold">Open Source</Badge>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[#00C896]">DWSIM Process Simulator</h1>
           <p className="text-slate-300 text-base md:text-lg max-w-2xl mb-8 leading-relaxed">
