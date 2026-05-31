@@ -299,9 +299,6 @@ export default function ComputationalSimulation() {
 
           {/* Header */}
           <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
-              <Cpu className="w-4 h-4" /> Computational Science Lab
-            </div>
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-3 tracking-tight">
               Computational Simulations
             </h1>
