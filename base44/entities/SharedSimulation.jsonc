@@ -1,0 +1,111 @@
+{
+  "name": "SharedSimulation",
+  "type": "object",
+  "properties": {
+    "simulation_id": {
+      "type": "string",
+      "description": "Reference to the original simulation"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title for the shared simulation"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description or notes about the simulation"
+    },
+    "share_type": {
+      "type": "string",
+      "enum": [
+        "public",
+        "team",
+        "private_link"
+      ],
+      "default": "private_link"
+    },
+    "team_id": {
+      "type": "string",
+      "description": "Team ID if shared with a team"
+    },
+    "shared_with": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of user emails with access"
+    },
+    "share_link": {
+      "type": "string",
+      "description": "Unique share link identifier"
+    },
+    "simulation_data": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Snapshot of simulation results"
+    },
+    "view_count": {
+      "type": "number",
+      "default": 0
+    },
+    "allow_comments": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "simulation_id",
+    "title",
+    "share_type"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.share_type": "public"
+        },
+        {
+          "data.shared_with": {
+            "$in": [
+              "{{user.email}}"
+            ]
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
