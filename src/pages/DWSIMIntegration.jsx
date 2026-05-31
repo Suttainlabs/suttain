@@ -15,7 +15,7 @@ export default function DWSIMIntegration() {
   return (
     <div className="min-h-screen bg-[#EDF7F2]">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white py-14 px-4">
+      <div className="bg-gradient-to-r from-[#e0faf3] via-[#edfaf5] to-[#e0faf3] py-14 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-[#00C896]/20 rounded-xl flex items-center justify-center">
@@ -24,7 +24,7 @@ export default function DWSIMIntegration() {
             <Badge className="bg-[#00C896]/20 text-[#00C896] border-0 text-xs font-semibold">Open Source</Badge>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[#00C896]">DWSIM Process Simulator</h1>
-          <p className="text-slate-300 text-base md:text-lg max-w-2xl mb-8 leading-relaxed">
+          <p className="text-slate-600 text-base md:text-lg max-w-2xl mb-8 leading-relaxed">
             Industry-grade steady-state and dynamic chemical process simulation. Model distillation columns, reactors, heat exchangers, and complete flowsheets — free and open source.
           </p>
           <div className="flex flex-wrap gap-3">
@@ -33,7 +33,7 @@ export default function DWSIMIntegration() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button className="bg-white text-[#007850] hover:bg-white/90 font-bold gap-2">
+              <Button className="bg-[#007850] text-white hover:bg-[#005f3e] font-bold gap-2">
                 <Download className="w-4 h-4" />
                 Download DWSIM Free
               </Button>
