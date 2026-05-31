@@ -206,6 +206,75 @@ async function searchChEBI(query) {
   }
 }
 
+async function searchChemSpider(query) {
+  const apiKey = Deno.env.get('CHEMSPIDER_API_KEY');
+  if (!apiKey) return [];
+  try {
+    // Step 1: Get CSIDs by name
+    const searchRes = await fetch('https://api.rsc.org/compounds/v1/filter/name', {
+      method: 'POST',
+      headers: {
+        'apikey': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: query, orderBy: 'relevance', orderDirection: 'descending' }),
+    });
+    if (!searchRes.ok) return [];
+    const searchData = await searchRes.json();
+    const queryId = searchData.queryId;
+    if (!queryId) return [];
+
+    // Step 2: Poll for results
+    let results = null;
+    for (let i = 0; i < 5; i++) {
+      await new Promise(r => setTimeout(r, 500));
+      const statusRes = await fetch(`https://api.rsc.org/compounds/v1/filter/${queryId}/results`, {
+        headers: { 'apikey': apiKey },
+      });
+      if (statusRes.ok) {
+        const statusData = await statusRes.json();
+        if (statusData.results && statusData.results.length > 0) {
+          results = statusData.results.slice(0, 5);
+          break;
+        }
+      }
+    }
+    if (!results || results.length === 0) return [];
+
+    // Step 3: Fetch details for each CSID
+    const details = await Promise.allSettled(results.map(async (csid) => {
+      const detailRes = await fetch(`https://api.rsc.org/compounds/v1/records/${csid}/details?fields=CommonName,Formula,MolecularWeight,SMILES,InChI,InChIKey,NominalMass`, {
+        headers: { 'apikey': apiKey },
+      });
+      if (!detailRes.ok) return null;
+      const d = await detailRes.json();
+      return {
+        name: d.commonName || query,
+        scientific_name: d.commonName || query,
+        molecular_formula: d.formula || '',
+        molecular_weight: d.molecularWeight || null,
+        smiles: d.smiles || '',
+        inchi: d.inchi || '',
+        inchi_key: d.inchiKey || '',
+        chemical_type: 'compound',
+        category: 'other',
+        safety_level: 'unknown',
+        source: 'chemspider',
+        source_db: 'ChemSpider',
+        pubchem_sid: String(csid),
+        who_essential: isWHOEssential(d.commonName || query),
+      };
+    }));
+
+    return details
+      .filter(d => d.status === 'fulfilled' && d.value)
+      .map(d => d.value);
+  } catch (e) {
+    console.error('ChemSpider search failed:', e.message);
+    return [];
+  }
+}
+
 async function searchPubChemAutocomplete(query) {
   try {
     const autoUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${encodeURIComponent(query)}/json?limit=8`;
@@ -286,10 +355,11 @@ Deno.serve(async (req) => {
 
     // 4. Always enrich with external databases in parallel
     const resolvedName = COMMON_NAME_MAP[searchTerm] || searchTerm;
-    const [pubchemResults, chemblResults, chebiResults, autocompleteResults] = await Promise.allSettled([
+    const [pubchemResults, chemblResults, chebiResults, chemspiderResults, autocompleteResults] = await Promise.allSettled([
       searchPubChem(resolvedName, query),
       searchChEMBL(query),
       searchChEBI(query),
+      searchChemSpider(query),
       finalResults.length === 0 ? searchPubChemAutocomplete(query) : Promise.resolve([]),
     ]);
 
@@ -297,6 +367,7 @@ Deno.serve(async (req) => {
       ...(pubchemResults.status === 'fulfilled' ? pubchemResults.value : []),
       ...(chemblResults.status === 'fulfilled' ? chemblResults.value : []),
       ...(chebiResults.status === 'fulfilled' ? chebiResults.value : []),
+      ...(chemspiderResults.status === 'fulfilled' ? chemspiderResults.value : []),
       ...(autocompleteResults.status === 'fulfilled' ? autocompleteResults.value : []),
     ];
 
@@ -313,7 +384,7 @@ Deno.serve(async (req) => {
       who_essential: c.who_essential || isWHOEssential(c.name) || isWHOEssential(c.scientific_name),
     }));
 
-    finalResults = finalResults.slice(0, 20);
+    finalResults = finalResults.slice(0, 25);
 
     const sources = [...new Set(finalResults.map(r => r.source_db).filter(Boolean))];
     console.log(`Found ${finalResults.length} results from: ${sources.join(', ')}`);
