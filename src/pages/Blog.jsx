@@ -12,6 +12,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import SEOHead from '@/components/shared/SEOHead';
+import { broadcastBlogPost } from '@/functions/broadcastBlogPost';
 
 const MEDIUM_URL = "https://medium.com/@suttain";
 
@@ -40,18 +41,21 @@ export default function Blog() {
   const handleSubscribe = async (e) => {
     e.preventDefault();
     if (!email) return;
-    
+
     setIsSubscribing(true);
-    // Simulate subscription
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      await broadcastBlogPost({ action: 'subscribe', email });
+    } catch (err) {
+      console.error('Subscription error:', err);
+    }
     setSubscribed(true);
     setIsSubscribing(false);
-    
+
     setTimeout(() => {
       setShowSubscribeModal(false);
       setSubscribed(false);
       setEmail('');
-    }, 2000);
+    }, 2500);
   };
 
   return (
