@@ -66,54 +66,43 @@ export default function Blog() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-white">
+      <style>{`
+        #soro-blog > * + * { margin-top: 1.5rem; }
+        #soro-blog article, #soro-blog [class*="card"], #soro-blog [class*="post"] {
+          padding: 1.5rem !important;
+          border-radius: 12px !important;
+          border: 1px solid #e2e8f0 !important;
+          box-shadow: none !important;
+          background: #fff !important;
+        }
+        #soro-blog img { border-radius: 8px !important; }
+      `}</style>
       <SEOHead 
         title="Blog | Suttain"
         description="Stay updated with the latest insights on chemical safety, sustainable formulation, and industry trends."
       />
 
       {/* Hero Section */}
-      <section className="relative py-16 px-4 bg-gradient-to-br from-[var(--suttain-teal)]/10 via-white to-[var(--suttain-violet)]/10 overflow-hidden">
-        {/* Decorative background */}
-        <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
-          <img 
-            src={BLOG_IMAGES.waffleTowels} 
-            alt="" 
-            className="w-full h-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div className="absolute bottom-0 left-0 w-40 h-40 opacity-10 pointer-events-none hidden lg:block">
-          <img 
-            src={BLOG_IMAGES.amberBottles} 
-            alt="" 
-            className="w-full h-full object-cover rounded-full"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div>
-            <Badge className="mb-4 bg-[var(--suttain-teal)]/10 text-[var(--suttain-teal)] border-[var(--suttain-teal)]/20">
-              <BookOpen className="w-3 h-3 mr-1" />
-              Suttain Blog
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              Insights & <span className="gradient-text">Knowledge</span>
-            </h1>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
-              Stay informed with the latest in chemical safety, sustainable formulation, and industry best practices.
-            </p>
-          </div>
+      <section className="py-20 px-4 text-center border-b border-slate-100">
+        <div className="max-w-2xl mx-auto">
+          <Badge className="mb-5 bg-[var(--suttain-teal)]/10 text-[var(--suttain-teal)] border-[var(--suttain-teal)]/20 px-3 py-1">
+            <BookOpen className="w-3 h-3 mr-1.5" />
+            Suttain Blog
+          </Badge>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-5 leading-tight">
+            Insights & <span className="gradient-text">Knowledge</span>
+          </h1>
+          <p className="text-lg text-slate-500 leading-relaxed">
+            Stay informed with the latest in chemical safety, sustainable formulation, and industry best practices.
+          </p>
         </div>
       </section>
 
       {/* Soro Blog Embed */}
-      <section className="py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div id="soro-blog"></div>
+      <section className="py-16 px-4">
+        <div className="max-w-3xl mx-auto">
+          <div id="soro-blog" className="space-y-6"></div>
         </div>
       </section>
 
