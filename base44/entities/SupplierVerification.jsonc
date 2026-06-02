@@ -84,7 +84,7 @@
   ],
   "rls": {
     "create": {
-      "created_by_id": "{{user.id}}"
+      "created_by": "{{user.email}}"
     },
     "read": {
       "$or": [
@@ -92,7 +92,7 @@
           "data.supplier_email": "{{user.email}}"
         },
         {
-          "created_by_id": "{{user.id}}"
+          "created_by": "{{user.email}}"
         },
         {
           "user_condition": {
@@ -107,9 +107,6 @@
           "data.supplier_email": "{{user.email}}"
         },
         {
-          "created_by_id": "{{user.id}}"
-        },
-        {
           "user_condition": {
             "role": "admin"
           }
@@ -119,7 +116,7 @@
     "delete": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "created_by": "{{user.email}}"
         },
         {
           "user_condition": {

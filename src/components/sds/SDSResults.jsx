@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import SDSSaveToDatabase from "./SDSSaveToDatabase";
 
 const HAZARD_COLORS = {
   critical: "bg-red-100 text-red-700 border-red-200",
@@ -288,6 +289,9 @@ export default function SDSResults({ data, fileName, onReset }) {
           </div>
         </Section>
       )}
+
+      {/* Save to Chemical Database */}
+      <SDSSaveToDatabase data={data} />
 
       <div className="flex justify-center pt-2">
         <Button variant="outline" onClick={onReset} className="rounded-full px-6">

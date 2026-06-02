@@ -1,0 +1,192 @@
+{
+  "name": "FormulaTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template name"
+    },
+    "product_type": {
+      "type": "string",
+      "enum": [
+        "all_purpose_cleaner",
+        "facial_moisturizer",
+        "hand_soap",
+        "household_cleaner",
+        "skincare_product",
+        "hair_care",
+        "body_wash",
+        "deodorant",
+        "sunscreen",
+        "custom"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Template description"
+    },
+    "difficulty_level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "professional"
+      ]
+    },
+    "target_user": {
+      "type": "string",
+      "enum": [
+        "individual",
+        "business",
+        "both"
+      ]
+    },
+    "base_ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "chemical_name": {
+            "type": "string"
+          },
+          "percentage_min": {
+            "type": "number"
+          },
+          "percentage_max": {
+            "type": "number"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "essential": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "optional_ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "chemical_name": {
+            "type": "string"
+          },
+          "percentage_max": {
+            "type": "number"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "benefit": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sustainability_features": {
+      "type": "object",
+      "properties": {
+        "biodegradable": {
+          "type": "boolean"
+        },
+        "renewable_sources": {
+          "type": "boolean"
+        },
+        "minimal_packaging": {
+          "type": "boolean"
+        },
+        "low_carbon_footprint": {
+          "type": "boolean"
+        },
+        "zero_waste": {
+          "type": "boolean"
+        }
+      }
+    },
+    "compliance_notes": {
+      "type": "object",
+      "properties": {
+        "individual_safe": {
+          "type": "boolean"
+        },
+        "business_requirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "certifications_possible": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regulatory_considerations": {
+          "type": "string"
+        }
+      }
+    },
+    "estimated_cost": {
+      "type": "object",
+      "properties": {
+        "individual": {
+          "type": "string"
+        },
+        "business": {
+          "type": "string"
+        }
+      }
+    },
+    "yield_amount": {
+      "type": "string"
+    },
+    "shelf_life": {
+      "type": "string"
+    },
+    "ph_target": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 14
+    },
+    "instructions": {
+      "type": "string"
+    },
+    "equipment_needed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "safety_precautions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sustainability_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "business_viability": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "required": [
+    "name",
+    "product_type",
+    "target_user"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

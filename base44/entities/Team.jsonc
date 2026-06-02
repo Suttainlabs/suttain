@@ -1,0 +1,92 @@
+{
+  "name": "Team",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Team name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Team description"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Team avatar image URL"
+    },
+    "members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "member",
+              "viewer"
+            ]
+          },
+          "joined_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "description": "Team members with roles"
+    },
+    "invite_code": {
+      "type": "string",
+      "description": "Unique code for joining the team"
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "allow_member_invite": {
+          "type": "boolean",
+          "default": false
+        },
+        "default_share_with_team": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "members.email": "{{user.email}}"
+    },
+    "read": {
+      "members.email": "{{user.email}}"
+    },
+    "update": {
+      "members": {
+        "$elemMatch": {
+          "email": "{{user.email}}",
+          "role": {
+            "$in": [
+              "owner",
+              "admin"
+            ]
+          }
+        }
+      }
+    },
+    "delete": {
+      "members": {
+        "$elemMatch": {
+          "email": "{{user.email}}",
+          "role": "owner"
+        }
+      }
+    }
+  }
+}

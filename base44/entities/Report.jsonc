@@ -255,32 +255,20 @@
     "report_type"
   ],
   "rls": {
-    "create": {
-      "$or": [
-        {
-          "created_by_id": "{{user.id}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
     "read": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "created_by": "{{user.email}}"
         },
         {
-          "data.shared_with": {
+          "shared_with": {
             "$in": [
               "{{user.email}}"
             ]
           }
         },
         {
-          "data.is_public": true
+          "is_public": true
         },
         {
           "user_condition": {
@@ -289,22 +277,10 @@
         }
       ]
     },
-    "update": {
+    "write": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
-    "delete": {
-      "$or": [
-        {
-          "created_by_id": "{{user.id}}"
+          "created_by": "{{user.email}}"
         },
         {
           "user_condition": {

@@ -1,0 +1,68 @@
+{
+  "name": "JobPosting",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The job title (e.g., 'AI Research Scientist')."
+    },
+    "description": {
+      "type": "string",
+      "description": "A detailed description of the role."
+    },
+    "requirements": {
+      "type": "string",
+      "description": "Key qualifications, skills, and experience."
+    },
+    "location": {
+      "type": "string",
+      "description": "Job location (e.g., 'Remote', 'New York, NY', 'Hybrid')."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Full-time",
+        "Part-time",
+        "Contract",
+        "Internship",
+        "Volunteer"
+      ],
+      "description": "Job type."
+    },
+    "department": {
+      "type": "string",
+      "description": "The department the job belongs to."
+    },
+    "application_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "A URL where candidates can apply."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "closed",
+        "draft"
+      ],
+      "default": "draft",
+      "description": "To manage visibility of the posting."
+    }
+  },
+  "required": [
+    "title",
+    "description",
+    "requirements",
+    "location",
+    "type",
+    "status"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
