@@ -52,6 +52,7 @@ export default function CarbonTaxSimulator() {
   const [taxResults, setTaxResults] = useState(null);
 
   const [addLoading, setAddLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
 
   if (!user) return (
     <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: '#EDF7F2' }}>
@@ -269,16 +270,48 @@ Prioritise by ROI. Return top 5 alternatives.`,
 
               {/* Add ingredient */}
               <div className="mt-4 flex gap-2">
-                <input
-                  value={newName}
-                  onChange={e => setNewName(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && addIngredient()}
-                  placeholder="Add ingredient..."
-                  className="flex-1 text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]"
-                  disabled={addLoading}
-                />
+                <div className="flex-1 relative">
+                  <input
+                    value={newName}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setNewName(val);
+                      if (val.trim().length >= 2) {
+                        const lower = val.toLowerCase();
+                        setSuggestions(Object.keys(CARBON_LIBRARY).filter(k => k.includes(lower)).slice(0, 6));
+                      } else {
+                        setSuggestions([]);
+                      }
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') { setSuggestions([]); addIngredient(); }
+                      if (e.key === 'Escape') setSuggestions([]);
+                    }}
+                    onBlur={() => setTimeout(() => setSuggestions([]), 150)}
+                    placeholder="Add ingredient..."
+                    className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]"
+                    disabled={addLoading}
+                  />
+                  {suggestions.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-20 overflow-hidden">
+                      {suggestions.map(s => (
+                        <button
+                          key={s}
+                          onMouseDown={() => {
+                            setNewName(s.replace(/\b\w/g, c => c.toUpperCase()));
+                            setSuggestions([]);
+                          }}
+                          className="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-[#F0FAF5] hover:text-[#02988C] flex items-center justify-between group transition-colors"
+                        >
+                          <span className="capitalize">{s}</span>
+                          <span className="text-xs text-slate-400 group-hover:text-[#02988C]">{CARBON_LIBRARY[s]} kg CO2e/kg</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <button
-                  onClick={addIngredient}
+                  onClick={() => { setSuggestions([]); addIngredient(); }}
                   disabled={addLoading || !newName.trim()}
                   className={cn('px-3 py-2 rounded-lg text-white flex items-center gap-1 text-sm font-semibold transition-all', newName.trim() && !addLoading ? 'bg-[#02988C] hover:bg-[#027d72]' : 'bg-slate-200 text-slate-400 cursor-not-allowed')}
                 >
