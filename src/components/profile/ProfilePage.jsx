@@ -305,7 +305,11 @@ export default function ProfilePage() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-100">
+                <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-1.5">
+                  <Link to={createPageUrl('Pricing')}
+                    className="text-xs text-violet-600 hover:text-violet-700 font-semibold flex items-center gap-1 transition-colors">
+                    View plans &amp; pricing <ChevronRight className="w-3 h-3" />
+                  </Link>
                   <Link to={createPageUrl('Settings')}
                     className="text-xs text-slate-500 hover:text-teal-600 font-medium flex items-center gap-1 transition-colors">
                     Manage subscription <ChevronRight className="w-3 h-3" />

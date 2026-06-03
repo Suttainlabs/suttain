@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, FlaskConical, Sparkles, ShieldCheck,
-  Leaf, BarChart3, Zap, TestTube, QrCode, Cpu
+  Leaf, BarChart3, Zap, TestTube, QrCode, Cpu, Check, Crown
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -295,6 +295,98 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Pricing Strip ── */}
+      <section className="py-24 sm:py-32 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div {...fadeIn()} className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">Simple, Transparent Pricing</h2>
+            <p className="text-slate-500 text-lg">Start free. Upgrade when you're ready.</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                name: 'Free',
+                price: '$0',
+                sub: 'No credit card needed',
+                color: '#64748b',
+                features: ['3 Simulations/month', '5 Formula Generations/month', 'Unlimited Scans', 'Learning Center'],
+                cta: 'Get Started',
+                href: 'Simulator',
+                outline: true,
+              },
+              {
+                name: 'Pro',
+                price: '$4.99',
+                sub: '/month — cancel anytime',
+                color: '#9531F5',
+                badge: 'Most Popular',
+                features: ['Unlimited Simulations', 'Unlimited Formula Generation', 'AI Compliance Co-Pilot', 'Sustainability Scoring', 'PDF & Lab Report Export', 'Priority Support'],
+                cta: 'Upgrade to Pro',
+                href: 'Pricing',
+                outline: false,
+              },
+              {
+                name: 'Lifetime',
+                price: '$99.99',
+                sub: 'One-time — yours forever',
+                color: '#f59e0b',
+                badge: 'Best Value',
+                features: ['Everything in Pro', 'All future updates included', 'Priority Support for Life'],
+                cta: 'Get Lifetime Access',
+                href: 'Pricing',
+                outline: false,
+                amber: true,
+              },
+            ].map((plan, i) => (
+              <motion.div key={plan.name} {...fadeIn(i * 0.1)} className="relative">
+                {plan.badge && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                    <span className="text-xs font-bold text-white px-3 py-1 rounded-full"
+                      style={{ background: plan.amber ? '#f59e0b' : '#9531F5' }}>
+                      {plan.badge}
+                    </span>
+                  </div>
+                )}
+                <div className={`h-full rounded-2xl border-2 bg-white p-7 flex flex-col ${plan.badge && !plan.amber ? 'border-[#9531F5] shadow-xl' : plan.amber ? 'border-amber-400 shadow-lg' : 'border-slate-200'}`}>
+                  <div className="mb-5">
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">{plan.name}</p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-4xl font-black text-slate-900">{plan.price}</span>
+                    </div>
+                    <p className="text-sm text-slate-400 mt-0.5">{plan.sub}</p>
+                  </div>
+                  <div className="space-y-2.5 flex-1 mb-7">
+                    {plan.features.map(f => (
+                      <div key={f} className="flex items-center gap-2 text-sm text-slate-600">
+                        <Check className="w-4 h-4 flex-shrink-0" style={{ color: plan.color }} />
+                        {f}
+                      </div>
+                    ))}
+                  </div>
+                  <Link to={createPageUrl(plan.href)}>
+                    <Button
+                      className={`w-full rounded-xl font-semibold ${plan.outline ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'text-white hover:opacity-90'}`}
+                      style={!plan.outline ? { background: plan.amber ? 'linear-gradient(135deg,#f59e0b,#f97316)' : 'linear-gradient(135deg,#9531F5,#7c3aed)' } : {}}
+                    >
+                      {!plan.outline && <Crown className="w-4 h-4 mr-2" />}
+                      {plan.cta}
+                    </Button>
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div {...fadeIn(0.4)} className="text-center mt-8">
+            <Link to={createPageUrl('Pricing')} className="text-sm font-semibold hover:underline" style={{ color: '#9531F5' }}>
+              View full pricing details and feature comparison
+              <ArrowRight className="w-3.5 h-3.5 inline ml-1" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 
