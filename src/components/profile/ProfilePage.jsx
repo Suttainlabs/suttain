@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AuthContext from '../auth/AuthContext';
@@ -9,20 +9,12 @@ import EditProfileModal from './EditProfileModal';
 import NotificationCenter from '../notifications/NotificationCenter';
 import {
   User as UserIcon, Edit2, Settings, Star, Crown, Gem,
-  FlaskConical, TestTube, QrCode, Cpu, BarChart2, Leaf,
-  ChevronRight, Loader2, Clock, FileText, Zap, Check, Lock,
-  Bell, ArrowUpRight, Sparkles
+  FlaskConical, TestTube, QrCode, Cpu,
+  Loader2, Clock, FileText, Zap, Check, Lock,
+  Bell, ArrowUpRight, Sparkles, TrendingUp, Activity,
+  ChevronRight, BarChart2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-const QUICK_TOOLS = [
-  { label: "Simulator", icon: TestTube, color: "bg-teal-500", href: "Simulator" },
-  { label: "Formula Generator", icon: FlaskConical, color: "bg-violet-500", href: "generator" },
-  { label: "SuttainScan", icon: QrCode, color: "bg-cyan-500", href: "BarcodeScanner" },
-  { label: "Sim Engine", icon: Cpu, color: "bg-indigo-500", href: "SimulationEngine" },
-  { label: "Impact Report", icon: BarChart2, color: "bg-amber-500", href: "ComparativeImpactReport" },
-  { label: "Sustainability", icon: Leaf, color: "bg-green-500", href: "SustainabilityImpact" },
-];
 
 function timeAgo(dateStr) {
   if (!dateStr) return '';
@@ -31,8 +23,8 @@ function timeAgo(dateStr) {
   if (days === 0) return 'Today';
   if (days === 1) return '1 day ago';
   if (days < 7) return `${days} days ago`;
-  if (days < 30) return `${Math.floor(days / 7)} week${Math.floor(days / 7) > 1 ? 's' : ''} ago`;
-  return `${Math.floor(days / 30)} month${Math.floor(days / 30) > 1 ? 's' : ''} ago`;
+  if (days < 30) return `${Math.floor(days / 7)}w ago`;
+  return `${Math.floor(days / 30)}mo ago`;
 }
 
 export default function ProfilePage() {
@@ -54,15 +46,14 @@ export default function ProfilePage() {
       try {
         const [statsData, formulas, simulations] = await Promise.all([
           getUserStats(),
-          base44.entities.Formula.list('-updated_date', 5),
-          base44.entities.Simulation.list('-created_date', 5),
+          base44.entities.Formula.list('-updated_date', 6),
+          base44.entities.Simulation.list('-created_date', 6),
         ]);
         if (statsData?.data) setStats(statsData.data);
-        // Merge and sort recent items
         const merged = [
           ...(formulas || []).map(f => ({ ...f, _type: 'Formula', _icon: FlaskConical, _color: 'bg-violet-100 text-violet-600' })),
           ...(simulations || []).map(s => ({ ...s, _type: 'Simulation', _icon: TestTube, _color: 'bg-teal-100 text-teal-600' })),
-        ].sort((a, b) => new Date(b.updated_date || b.created_date) - new Date(a.updated_date || a.created_date)).slice(0, 6);
+        ].sort((a, b) => new Date(b.updated_date || b.created_date) - new Date(a.updated_date || a.created_date)).slice(0, 4);
         setRecentItems(merged);
       } catch (e) {
         console.error(e);
@@ -86,73 +77,77 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
-      <div className="max-w-5xl mx-auto px-4 py-8 space-y-7">
+      <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
 
-        {/* ── Header ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 px-6 py-5">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+        {/* ── Hero Header ── */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#00281E] via-[#007850] to-[#00B478] rounded-3xl px-8 py-8 shadow-xl">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-4 right-8 w-40 h-40 rounded-full bg-white/30 blur-2xl" />
+            <div className="absolute bottom-0 left-16 w-32 h-32 rounded-full bg-white/20 blur-xl" />
+          </div>
+          <div className="relative flex items-center justify-between flex-wrap gap-6">
             {/* Avatar + Name */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-5">
               <div className="relative flex-shrink-0">
-                <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-md">
+                <div className="w-20 h-20 rounded-2xl overflow-hidden border-4 border-white/30 shadow-lg">
                   {user.profile_image_url ? (
                     <img src={user.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-400 to-cyan-500">
-                      <UserIcon className="w-8 h-8 text-white" />
+                    <div className="w-full h-full flex items-center justify-center bg-white/20 backdrop-blur-sm">
+                      <UserIcon className="w-10 h-10 text-white" />
                     </div>
                   )}
                 </div>
                 <button
                   onClick={() => setIsEditModalOpen(true)}
-                  className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white shadow border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors"
+                  className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-slate-50 transition-colors"
                 >
-                  <Edit2 className="w-3 h-3 text-slate-600" />
+                  <Edit2 className="w-3 h-3 text-slate-700" />
                 </button>
               </div>
               <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-xl font-bold text-slate-900">
+                <div className="flex items-center gap-2.5 flex-wrap mb-1">
+                  <h1 className="text-2xl font-bold text-white">
                     {getGreeting()}, {firstName}
                   </h1>
                   {isPro ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-400 text-amber-900">
                       <Crown className="w-3 h-3" /> Premium
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200">
-                      <Gem className="w-3 h-3" /> Free
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/20 text-white border border-white/30">
+                      Free Plan
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-slate-400 mt-0.5">
-                  {user.role === 'admin' ? 'Administrator' : user.simulator_category ? user.simulator_category.charAt(0).toUpperCase() + user.simulator_category.slice(1) : 'User Dashboard'}
+                <p className="text-white/70 text-sm">
+                  {user.role === 'admin' ? 'Administrator' : user.email}
                 </p>
               </div>
             </div>
 
-            {/* Right: Points + Settings */}
+            {/* Right: Points + Actions */}
             <div className="flex items-center gap-3">
               <Link to={createPageUrl('ReviewRewards')}>
-                <div className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl px-4 py-2 shadow hover:shadow-md transition-all">
-                  <Star className="w-4 h-4 text-white" />
+                <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-2.5 hover:bg-white/25 transition-all">
+                  <Star className="w-4 h-4 text-amber-300" />
                   <div>
-                    <p className="text-[10px] font-bold text-amber-100 uppercase tracking-widest leading-none">Points</p>
-                    <p className="text-lg font-bold text-white leading-tight">{user.reward_points || 0}</p>
+                    <p className="text-[9px] font-bold text-white/60 uppercase tracking-widest leading-none">Points</p>
+                    <p className="text-xl font-bold text-white leading-tight">{user.reward_points || 0}</p>
                   </div>
                 </div>
               </Link>
               <button
                 onClick={() => setShowNotifications(true)}
-                className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                className="w-11 h-11 rounded-xl bg-white/15 border border-white/20 hover:bg-white/25 flex items-center justify-center transition-all"
               >
-                <Bell className="w-4 h-4 text-slate-600" />
+                <Bell className="w-5 h-5 text-white" />
               </button>
               <button
                 onClick={() => navigate(createPageUrl('Settings'))}
-                className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                className="w-11 h-11 rounded-xl bg-white/15 border border-white/20 hover:bg-white/25 flex items-center justify-center transition-all"
               >
-                <Settings className="w-4 h-4 text-slate-600" />
+                <Settings className="w-5 h-5 text-white" />
               </button>
             </div>
           </div>
@@ -161,10 +156,7 @@ export default function ProfilePage() {
         {/* ── Upgrade Banner (Free users only) ── */}
         {!isPro && (
           <div className="relative overflow-hidden bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl px-6 py-5 shadow-md">
-            <div className="absolute right-0 top-0 w-48 h-full opacity-10">
-              <Sparkles className="w-full h-full text-white" />
-            </div>
-            <div className="flex items-center justify-between gap-4 flex-wrap relative z-10">
+            <div className="flex items-center justify-between gap-4 flex-wrap">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Crown className="w-5 h-5 text-amber-300" />
@@ -173,13 +165,6 @@ export default function ProfilePage() {
                 <p className="text-violet-200 text-sm max-w-sm">
                   Unlock unlimited simulations, AI compliance tools, sustainability scoring and more.
                 </p>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2.5">
-                  {['Unlimited simulations', 'AI compliance co-pilot', 'Priority support'].map(f => (
-                    <span key={f} className="flex items-center gap-1 text-xs text-violet-100">
-                      <Check className="w-3.5 h-3.5 text-green-300 flex-shrink-0" /> {f}
-                    </span>
-                  ))}
-                </div>
               </div>
               <Link
                 to={createPageUrl('Pricing')}
@@ -194,87 +179,71 @@ export default function ProfilePage() {
         {/* ── Stats Row ── */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: 'Formulas', value: isLoading ? '—' : (stats.totalFormulas ?? 0), icon: FlaskConical, color: 'bg-violet-50 text-violet-600', border: 'border-violet-100' },
-            { label: 'Simulations', value: isLoading ? '—' : (stats.totalSimulations ?? 0), icon: TestTube, color: 'bg-teal-50 text-teal-600', border: 'border-teal-100' },
-            { label: 'Scans', value: isLoading ? '—' : (stats.totalScans ?? 0), icon: QrCode, color: 'bg-cyan-50 text-cyan-600', border: 'border-cyan-100' },
+            { label: 'Formulas', value: isLoading ? '—' : (stats.totalFormulas ?? 0), icon: FlaskConical, gradient: 'from-violet-500 to-purple-600', light: 'bg-violet-50', text: 'text-violet-600' },
+            { label: 'Simulations', value: isLoading ? '—' : (stats.totalSimulations ?? 0), icon: TestTube, gradient: 'from-teal-500 to-emerald-600', light: 'bg-teal-50', text: 'text-teal-600' },
+            { label: 'Scans', value: isLoading ? '—' : (stats.totalScans ?? 0), icon: QrCode, gradient: 'from-cyan-500 to-blue-600', light: 'bg-cyan-50', text: 'text-cyan-600' },
           ].map(s => {
             const Icon = s.icon;
             return (
-              <div key={s.label} className={`bg-white rounded-2xl border ${s.border} px-5 py-4 flex items-center gap-3 shadow-sm`}>
-                <div className={`w-10 h-10 rounded-xl ${s.color} flex items-center justify-center flex-shrink-0`}>
-                  <Icon className="w-5 h-5" />
+              <div key={s.label} className="bg-white rounded-2xl border border-slate-100 px-6 py-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${s.gradient} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                  <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-900">{s.value}</p>
-                  <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">{s.label}</p>
+                  <p className="text-3xl font-bold text-slate-900">{s.value}</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-0.5">{s.label}</p>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* ── Quick Access ── */}
-        <div className="bg-white rounded-2xl border border-slate-100 px-6 py-5 shadow-sm">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Quick Access</p>
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-            {QUICK_TOOLS.map(t => {
-              const Icon = t.icon;
-              return (
-                <Link key={t.label} to={createPageUrl(t.href)}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-slate-50 transition-colors group">
-                  <div className={`w-11 h-11 rounded-xl ${t.color} flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform`}>
-                    <Icon className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-[11px] font-medium text-slate-600 text-center leading-tight">{t.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ── Recent Activity + Plan Details side by side ── */}
+        {/* ── Activity Highlights + Plan ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* Recent Activity */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 px-6 py-5 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Recent Activity</p>
+          {/* Recent Activity as Highlights */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Activity className="w-4 h-4 text-slate-400" />
+                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Recent Activity</h2>
+              </div>
               <Link to={createPageUrl('Workspace')} className="text-xs text-teal-600 font-semibold hover:underline flex items-center gap-1">
                 View all <ArrowUpRight className="w-3 h-3" />
               </Link>
             </div>
+
             {isLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+              <div className="flex justify-center py-12 bg-white rounded-2xl border border-slate-100">
+                <Loader2 className="w-5 h-5 animate-spin text-slate-300" />
               </div>
             ) : recentItems.length === 0 ? (
-              <div className="text-center py-10 text-slate-400">
-                <FileText className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                <p className="text-sm">No activity yet. Start by creating a formula or running a simulation.</p>
+              <div className="text-center py-14 bg-white rounded-2xl border border-slate-100">
+                <FileText className="w-8 h-8 mx-auto mb-3 text-slate-200" />
+                <p className="text-sm text-slate-400">No activity yet. Start by creating a formula or running a simulation.</p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {recentItems.map((item, i) => {
                   const Icon = item._icon;
+                  const isFormula = item._type === 'Formula';
                   return (
-                    <div key={i} className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group">
-                      <div className={`w-9 h-9 rounded-lg ${item._color} flex items-center justify-center flex-shrink-0`}>
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-slate-800 truncate">{item.name || 'Untitled'}</p>
-                        <p className="text-xs text-slate-400">{item._type}</p>
-                      </div>
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
-                        {item.status && (
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${item.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
-                            {item.status}
-                          </span>
-                        )}
-                        <span className="text-xs text-slate-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {timeAgo(item.updated_date || item.created_date)}
+                    <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all group cursor-pointer">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className={`w-10 h-10 rounded-xl ${item._color} flex items-center justify-center flex-shrink-0`}>
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                          item.status === 'completed' ? 'bg-green-100 text-green-700' :
+                          isFormula ? 'bg-violet-100 text-violet-600' : 'bg-teal-100 text-teal-600'
+                        }`}>
+                          {item.status || item._type}
                         </span>
+                      </div>
+                      <p className="text-sm font-bold text-slate-800 truncate mb-1">{item.name || 'Untitled'}</p>
+                      <div className="flex items-center gap-1 text-xs text-slate-400">
+                        <Clock className="w-3 h-3" />
+                        {timeAgo(item.updated_date || item.created_date)}
                       </div>
                     </div>
                   );
@@ -284,67 +253,76 @@ export default function ProfilePage() {
           </div>
 
           {/* Plan Card */}
-          <div className="bg-white rounded-2xl border border-slate-100 px-6 py-5 shadow-sm flex flex-col">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Your Plan</p>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-slate-400" />
+              <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Your Plan</h2>
+            </div>
 
-            {isPro ? (
-              <>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-                    <Crown className="w-5 h-5 text-white" />
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+              {/* Plan Header */}
+              <div className={`px-5 py-4 ${isPro ? 'bg-gradient-to-br from-amber-400 to-orange-500' : 'bg-gradient-to-br from-slate-100 to-slate-200'}`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isPro ? 'bg-white/25' : 'bg-white'}`}>
+                    {isPro ? <Crown className="w-5 h-5 text-white" /> : <Gem className="w-5 h-5 text-slate-400" />}
                   </div>
                   <div>
-                    <p className="font-bold text-slate-900 text-sm">Premium Plan</p>
-                    <p className="text-xs text-amber-600 font-medium">Full access</p>
+                    <p className={`font-bold text-base ${isPro ? 'text-white' : 'text-slate-700'}`}>{isPro ? 'Premium Plan' : 'Free Plan'}</p>
+                    <p className={`text-xs ${isPro ? 'text-white/75' : 'text-slate-400'}`}>{isPro ? 'Full access' : 'Limited access'}</p>
                   </div>
                 </div>
-                <div className="space-y-2 mt-1 flex-1">
-                  {['Unlimited simulations', 'AI compliance tools', 'Sustainability scoring', 'Priority support', 'Advanced analytics'].map(f => (
+              </div>
+
+              {/* Features */}
+              <div className="px-5 py-4 space-y-2.5">
+                {isPro ? (
+                  ['Unlimited simulations', 'AI compliance tools', 'Sustainability scoring', 'Priority support', 'Advanced analytics'].map(f => (
                     <div key={f} className="flex items-center gap-2 text-sm text-slate-600">
                       <Check className="w-4 h-4 text-green-500 flex-shrink-0" /> {f}
                     </div>
-                  ))}
-                </div>
-                <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-1.5">
-                  <Link to={createPageUrl('Pricing')}
-                    className="text-xs text-violet-600 hover:text-violet-700 font-semibold flex items-center gap-1 transition-colors">
-                    View plans &amp; pricing <ChevronRight className="w-3 h-3" />
-                  </Link>
-                  <Link to={createPageUrl('Settings')}
-                    className="text-xs text-slate-500 hover:text-teal-600 font-medium flex items-center gap-1 transition-colors">
-                    Manage subscription <ChevronRight className="w-3 h-3" />
-                  </Link>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
-                    <Gem className="w-5 h-5 text-slate-500" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-900 text-sm">Free Plan</p>
-                    <p className="text-xs text-slate-400">Limited access</p>
-                  </div>
-                </div>
-                <div className="space-y-2 mt-1 flex-1">
-                  {[
-                    { label: 'Unlimited simulations', locked: true },
-                    { label: 'AI compliance tools', locked: true },
-                    { label: 'Sustainability scoring', locked: true },
-                    { label: 'Priority support', locked: true },
-                  ].map(f => (
-                    <div key={f.label} className="flex items-center gap-2 text-sm text-slate-400">
-                      <Lock className="w-4 h-4 flex-shrink-0" /> {f.label}
+                  ))
+                ) : (
+                  ['Unlimited simulations', 'AI compliance tools', 'Sustainability scoring', 'Priority support'].map(f => (
+                    <div key={f} className="flex items-center gap-2 text-sm text-slate-400">
+                      <Lock className="w-4 h-4 flex-shrink-0" /> {f}
                     </div>
-                  ))}
-                </div>
-                <Link to={createPageUrl('Pricing')}
-                  className="mt-5 w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm py-2.5 rounded-xl hover:opacity-90 transition-opacity shadow">
-                  <Crown className="w-4 h-4" /> Upgrade to Pro
-                </Link>
-              </>
-            )}
+                  ))
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="px-5 pb-5 pt-1 space-y-2 border-t border-slate-100">
+                {isPro ? (
+                  <>
+                    <Link to={createPageUrl('Settings')}
+                      className="flex items-center justify-between text-sm font-semibold text-teal-700 hover:text-teal-800 py-2 transition-colors">
+                      Manage Billing <ChevronRight className="w-4 h-4" />
+                    </Link>
+                    <Link to={createPageUrl('Pricing')}
+                      className="flex items-center justify-between text-sm text-slate-400 hover:text-slate-600 py-1 transition-colors">
+                      View all plans <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </>
+                ) : (
+                  <Link to={createPageUrl('Pricing')}
+                    className="mt-2 w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm py-2.5 rounded-xl hover:opacity-90 transition-opacity shadow">
+                    <Crown className="w-4 h-4" /> Upgrade to Pro
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {/* Quick nav to settings */}
+            <Link to={createPageUrl('Settings')} className="flex items-center gap-3 bg-white rounded-2xl border border-slate-100 px-5 py-4 shadow-sm hover:shadow-md transition-all group">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-teal-50 transition-colors">
+                <Settings className="w-4 h-4 text-slate-500 group-hover:text-teal-600 transition-colors" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-slate-700">Account Settings</p>
+                <p className="text-xs text-slate-400">Profile, billing, safety profiles</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 transition-colors" />
+            </Link>
           </div>
         </div>
 
