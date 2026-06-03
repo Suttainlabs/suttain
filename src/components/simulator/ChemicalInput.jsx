@@ -511,17 +511,21 @@ export default function ChemicalInput({
                                   </p>
                                 )}
                               </div>
-                              {chemical.safety_level && (
+                              {chemical.safety_level && chemical.safety_level !== 'unknown' && (
                                 <Badge
                                   variant="outline"
                                   className={`text-xs flex-shrink-0 ${
                                     chemical.safety_level === 'safe' ? 'bg-green-50 text-green-700 border-green-200' :
                                     chemical.safety_level === 'moderate' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                                    chemical.safety_level === 'highly_hazardous' ? 'bg-red-100 text-red-800 border-red-300' :
                                     'bg-red-50 text-red-700 border-red-200'
                                   }`}
                                 >
-                                  {chemical.safety_level}
+                                  {chemical.safety_level.replace(/_/g, ' ')}
                                 </Badge>
+                              )}
+                              {chemical.source_db && (
+                                <span className="text-[10px] text-slate-400 mt-0.5 block truncate">{chemical.source_db}</span>
                               )}
                             </div>
                           </button>
