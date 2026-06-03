@@ -207,7 +207,6 @@ export default function Layout({ children, currentPageName }) {
   const companyMenuItems = [
     { href: "AboutUs", label: "About Us", icon: Building2, description: "Learn about our mission and team" },
     { href: "Careers", label: "Careers", icon: Briefcase, description: "View open positions and join us" },
-    { href: "Blog", label: "Blog", icon: BookOpen, description: "Read our latest articles and insights" }
   ];
 
   const helpMenuItems = [];
