@@ -201,6 +201,7 @@ export default function Layout({ children, currentPageName }) {
 
   const navLinks = [
     { href: "Home", label: "Home", icon: Home },
+    { href: "Pricing", label: "Pricing", icon: Star },
   ];
 
   const companyMenuItems = [
