@@ -490,7 +490,7 @@ export default function ChemicalInput({
                           <button
                             key={index}
                             onClick={() => handleSelectChemical(chemical)}
-                            className="flex-shrink-0 w-56 p-3 hover:bg-slate-50 rounded-lg border border-slate-200 hover:border-[var(--suttain-teal)] transition-all"
+                            className="flex-shrink-0 w-56 p-3 hover:bg-slate-50 rounded-lg border border-slate-200 hover:border-[var(--suttain-teal)] transition-all flex flex-col gap-2"
                           >
                             <div className="flex items-start gap-2">
                               <div className="w-8 h-8 bg-gradient-to-br from-teal-100 to-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -506,7 +506,7 @@ export default function ChemicalInput({
                                   </p>
                                 )}
                                 {chemical.molecular_formula && (
-                                  <p className="text-xs text-slate-600 mt-0.5">
+                                  <p className="text-xs text-slate-600 font-mono mt-0.5">
                                     {formatSubscripts(chemical.molecular_formula)}
                                   </p>
                                 )}
@@ -524,10 +524,14 @@ export default function ChemicalInput({
                                   {chemical.safety_level.replace(/_/g, ' ')}
                                 </Badge>
                               )}
-                              {chemical.source_db && (
-                                <span className="text-[10px] text-slate-400 mt-0.5 block truncate">{chemical.source_db}</span>
-                              )}
                             </div>
+                            {chemical.source_db && (
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-bold text-white bg-slate-600 rounded px-1.5 py-0.5 leading-tight">
+                                  {chemical.source_db}
+                                </span>
+                              </div>
+                            )}
                           </button>
                         );
                       })}
