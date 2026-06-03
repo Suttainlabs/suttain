@@ -209,10 +209,7 @@ export default function Layout({ children, currentPageName }) {
     { href: "Blog", label: "Blog", icon: BookOpen, description: "Read our latest articles and insights" }
   ];
 
-  const helpMenuItems = [
-    { href: "LearningSuite", label: "Learning Center", icon: GraduationCap, description: "Tutorials, guides, and knowledge base" },
-    { href: "FAQ", label: "FAQs, Reviews & Contact", icon: HelpCircle, description: "Get answers, read reviews, and reach out to us" },
-  ];
+  const helpMenuItems = [];
 
   const productSuiteItems = [
     { type: 'header', label: 'Safety & Formulation', icon: TestTube },
@@ -376,34 +373,7 @@ export default function Layout({ children, currentPageName }) {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Help & Support Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
-                    isHelpToolActive
-                      ? "bg-purple-100 text-purple-600"
-                      : "text-slate-700 hover:bg-purple-50 hover:text-purple-600"
-                  }`}>
-                    <span>Help</span>
-                    <ChevronDown className="w-3 h-3" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64">
-                  {helpMenuItems.map((item) => (
-                    <DropdownMenuItem key={item.href} asChild>
-                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 p-3">
-                        <div className="w-8 h-8 bg-[var(--suttain-violet)] rounded-lg flex items-center justify-center flex-shrink-0">
-                          <item.icon className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-suttain-dark text-sm">{item.label}</p>
-                          <p className="text-xs text-suttain-text/80">{item.description}</p>
-                        </div>
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+
 
               {/* Combined Product Suite Dropdown — 2-column mega menu */}
               <div className="relative group">
@@ -699,48 +669,7 @@ export default function Layout({ children, currentPageName }) {
                   </motion.div>
 
 
-                  {/* Help & Support Mobile Collapsible */}
-                  <motion.div variants={mobileNavItemVariants}>
-                    <button
-                      onClick={() => setIsHelpMenuConsistency(!isHelpMenuOpen)}
-                      className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-purple-50 ${
-                        isHelpToolActive ? 'bg-purple-100' : ''
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <HelpCircle className="w-5 h-5" />
-                        Help & Support
-                      </div>
-                      <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isHelpMenuOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    <AnimatePresence>
-                      {isHelpMenuOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          className="pl-6 pt-2 flex flex-col gap-2"
-                        >
-                          {helpMenuItems.map(({ href, label, icon: Icon }) => (
-                             <Link
-                              key={href}
-                              to={createPageUrl(href)}
-                              onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                                location.pathname === createPageUrl(href)
-                                  ? "bg-purple-100 text-purple-600"
-                                  : "text-suttain-dark hover:bg-purple-50"
-                              }`}
-                            >
-                              <Icon className="w-5 h-5" />
-                              {label}
-                            </Link>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
+
 
                   {/* Combined Product Suite Collapsible */}
                   <motion.div variants={mobileNavItemVariants}>
@@ -937,7 +866,8 @@ export default function Layout({ children, currentPageName }) {
                 <li><Link to={createPageUrl('Simulator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
                 <li><Link to={createPageUrl('generator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
                 <li><Link to={createPageUrl('AboutUs')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
-                <li><Link to={createPageUrl('FAQ')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Help & FAQ</Link></li>
+                <li><Link to={createPageUrl('FAQ')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">FAQs, Reviews & Contact</Link></li>
+                <li><Link to={createPageUrl('LearningSuite')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Learning Center</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
                 <li><Link to={createPageUrl('Blog')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
                 </ul>
