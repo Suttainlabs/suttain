@@ -40,12 +40,7 @@ const newIngredient = (name = '', quantity_kg = 1, carbon_intensity = 1) => ({
 export default function CarbonTaxSimulator() {
   const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('Footprint');
-  const [ingredients, setIngredients] = useState([
-    newIngredient('Palm Oil', 5, 3.5),
-    newIngredient('Sodium Lauryl Sulfate', 2, 2.8),
-    newIngredient('Fragrance', 0.5, 4.2),
-    newIngredient('Glycerin', 1, 1.6),
-  ]);
+  const [ingredients, setIngredients] = useState([]);
   const [newName, setNewName] = useState('');
   const [unitsPerMonth, setUnitsPerMonth] = useState(10000);
   const [selectedMarkets, setSelectedMarkets] = useState(['eu']);
