@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   LayoutDashboard, Users, FileText, Power,
-  Menu, X, Briefcase, Megaphone, Crown, Headphones, Mail, BarChart2, Rss
+  Menu, X, Briefcase, Megaphone, Crown, Headphones, Mail, BarChart2, Rss, Wifi
 } from 'lucide-react';
+import RealTimeTrafficPanel from './RealTimeTrafficPanel';
 import DashboardOverview from './DashboardOverview';
 import UserManagement from './UserManagement';
 import SubmissionsManagement from './SubmissionsManagement';
@@ -18,6 +19,7 @@ import BlogBroadcast from './BlogBroadcast';
 
 const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { id: 'traffic', label: 'Live Traffic', icon: Wifi },
   { id: 'analytics', label: 'User Analytics', icon: BarChart2 },
   { id: 'support', label: 'Support CRM', icon: Headphones },
   { id: 'subscriptions', label: 'Subscriptions', icon: Crown },
@@ -37,6 +39,16 @@ export default function AdminLayout() {
     switch (activeTab) {
       case 'overview':
         return <DashboardOverview />;
+      case 'traffic':
+        return (
+          <div className="space-y-2">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">Live Traffic</h1>
+              <p className="text-sm text-slate-500 mt-1">Real-time visitor analytics — auto-refreshes every 15 seconds</p>
+            </div>
+            <RealTimeTrafficPanel />
+          </div>
+        );
       case 'analytics':
         return <UserAnalytics />;
       case 'blog-broadcast':

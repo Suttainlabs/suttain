@@ -30,6 +30,15 @@
     "session_id": {
       "type": "string",
       "description": "Random session ID to deduplicate per-session"
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last heartbeat timestamp \u2014 updated every 30s while visitor is active"
+    },
+    "current_page": {
+      "type": "string",
+      "description": "The page the visitor is currently viewing"
     }
   },
   "required": [

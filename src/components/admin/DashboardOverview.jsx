@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AdminActivityChart from './charts/AdminActivityChart';
 import VisitorGeoChart from './VisitorGeoChart';
 import AdminAnalyticsCards from './AdminAnalyticsCards';
+import RealTimeTrafficPanel from './RealTimeTrafficPanel';
 
 const StatCard = ({ title, value, icon: Icon, color, bgColor, weekCount, loading }) => {
   const trend = weekCount > 0 ? 'up' : weekCount === 0 ? 'flat' : 'flat';
@@ -199,6 +200,9 @@ export default function DashboardOverview() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Real-Time Traffic */}
+      <RealTimeTrafficPanel />
 
       {/* Visitor Geo Analytics */}
       <VisitorGeoChart />
