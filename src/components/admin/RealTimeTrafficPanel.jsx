@@ -122,9 +122,10 @@ export default function RealTimeTrafficPanel() {
           <span className="text-xs text-slate-400 font-medium">— live, updates every 15s</span>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-400">
-          {lastUpdated && <span>Updated {formatTime(lastUpdated)}</span>}
-          <button onClick={fetchLogs} className="p-1 hover:bg-slate-100 rounded-lg transition-colors">
+          {lastUpdated && <span className="cursor-default select-none">Updated {formatTime(lastUpdated)}</span>}
+          <button onClick={fetchLogs} className="flex items-center gap-1.5 px-2 py-1 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer">
             <RefreshCw className="w-3.5 h-3.5" />
+            <span className="text-xs text-slate-400">Refresh</span>
           </button>
         </div>
       </div>
