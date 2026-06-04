@@ -18,6 +18,8 @@ import ComplianceAuditPanel from "../components/simulator/ComplianceAuditPanel";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { MessageSquare, Star, X, DollarSign, Grid3X3, FlaskConical, FileText, Package } from "lucide-react";
+import FormulaVersionTracker from "../components/simulator/FormulaVersionTracker";
+import FormulaComparisonChart from "../components/simulator/FormulaComparisonChart";
 import ChemicalInventoryManager from "../components/simulator/ChemicalInventoryManager";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
 import SEOHead, { pageSEO } from "../components/shared/SEOHead";
@@ -1203,6 +1205,28 @@ export default function Simulator() {
                        persona={persona}
                        simulationData={simulationData}
                      />
+
+                     {/* Version Tracker */}
+                     <FormulaVersionTracker
+                       chemicals={chemicals}
+                       simulationData={simulationData}
+                       onRevert={(revertedChemicals) => {
+                         setChemicals(revertedChemicals);
+                         setStep(1);
+                         setSimulationData(null);
+                       }}
+                     />
+
+                     {/* Comparison Chart */}
+                     <FormulaComparisonChart
+                       currentChemicals={chemicals}
+                       currentMetrics={{
+                         environmental_impact: simulationData?.risk_assessment?.environmental_impact_score ?? null,
+                         health_impact: simulationData?.risk_assessment?.health_impact_score ?? null,
+                         overall_risk: simulationData?.risk_assessment?.overall_risk_score ?? null,
+                       }}
+                     />
+
                      <SupplierManager />
                    </motion.div>
                  )}
