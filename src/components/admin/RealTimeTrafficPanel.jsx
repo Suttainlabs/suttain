@@ -5,65 +5,112 @@ import { Activity, Globe, Monitor, RefreshCw, Users, Wifi } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const ACTIVE_WINDOW_MS = 5 * 60 * 1000; // 5 minutes = "active right now"
-const POLL_INTERVAL_MS = 15000; // poll every 15 seconds
+const POLL_INTERVAL_MS = 15000;
+
+const TIME_RANGES = [
+  { label: '30 min', value: '30min' },
+  { label: '24 hours', value: '24h' },
+  { label: '7 days', value: '7d' },
+];
 
 function formatTime(date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
-function buildHourlyBuckets(logs) {
-  // Build a 30-minute window bucketed by minute for the sparkline
+function buildBuckets(logs, range) {
   const now = Date.now();
-  const buckets = {};
-  for (let i = 29; i >= 0; i--) {
-    const t = new Date(now - i * 60000);
-    const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    buckets[key] = 0;
+
+  if (range === '30min') {
+    // 30 buckets of 1 minute each
+    const buckets = {};
+    for (let i = 29; i >= 0; i--) {
+      const t = new Date(now - i * 60000);
+      const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      buckets[key] = 0;
+    }
+    logs.forEach(log => {
+      const ts = new Date(log.last_seen || log.created_date).getTime();
+      const diffMin = Math.floor((now - ts) / 60000);
+      if (diffMin < 0 || diffMin > 29) return;
+      const t = new Date(now - diffMin * 60000);
+      const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      if (key in buckets) buckets[key]++;
+    });
+    return Object.entries(buckets).map(([time, visitors]) => ({ time, visitors }));
   }
 
+  if (range === '24h') {
+    // 24 buckets of 1 hour each
+    const buckets = {};
+    for (let i = 23; i >= 0; i--) {
+      const t = new Date(now - i * 3600000);
+      const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      buckets[key] = 0;
+    }
+    const cutoff = now - 24 * 3600000;
+    logs.forEach(log => {
+      const ts = new Date(log.last_seen || log.created_date).getTime();
+      if (ts < cutoff || ts > now) return;
+      const diffHr = Math.floor((now - ts) / 3600000);
+      if (diffHr < 0 || diffHr > 23) return;
+      const t = new Date(now - diffHr * 3600000);
+      const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      if (key in buckets) buckets[key]++;
+    });
+    return Object.entries(buckets).map(([time, visitors]) => ({ time, visitors }));
+  }
+
+  // 7 days — 7 buckets of 1 day each
+  const buckets = {};
+  for (let i = 6; i >= 0; i--) {
+    const t = new Date(now - i * 86400000);
+    const key = t.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    buckets[key] = 0;
+  }
+  const cutoff7 = now - 7 * 86400000;
   logs.forEach(log => {
-    if (!log.last_seen && !log.created_date) return;
     const ts = new Date(log.last_seen || log.created_date).getTime();
-    const diffMin = Math.floor((now - ts) / 60000);
-    if (diffMin < 0 || diffMin > 29) return;
-    const t = new Date(now - diffMin * 60000);
-    const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (ts < cutoff7 || ts > now) return;
+    const diffDay = Math.floor((now - ts) / 86400000);
+    if (diffDay < 0 || diffDay > 6) return;
+    const t = new Date(now - diffDay * 86400000);
+    const key = t.toLocaleDateString([], { month: 'short', day: 'numeric' });
     if (key in buckets) buckets[key]++;
   });
-
   return Object.entries(buckets).map(([time, visitors]) => ({ time, visitors }));
 }
 
-function getActiveLogs(logs) {
-  const cutoff = Date.now() - ACTIVE_WINDOW_MS;
+function getLogsInRange(logs, range) {
+  const now = Date.now();
+  const cutoffs = { '30min': ACTIVE_WINDOW_MS, '24h': 86400000, '7d': 7 * 86400000 };
+  const cutoff = now - cutoffs[range];
   return logs.filter(log => {
     const ts = new Date(log.last_seen || log.created_date).getTime();
     return ts >= cutoff;
   });
 }
 
-function topPages(activeLogs) {
+function getActiveLogs(logs) {
+  const cutoff = Date.now() - ACTIVE_WINDOW_MS;
+  return logs.filter(log => new Date(log.last_seen || log.created_date).getTime() >= cutoff);
+}
+
+function topPages(filteredLogs) {
   const counts = {};
-  activeLogs.forEach(log => {
+  filteredLogs.forEach(log => {
     const p = log.current_page || log.page || '/';
     counts[p] = (counts[p] || 0) + 1;
   });
-  return Object.entries(counts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 6)
-    .map(([page, count]) => ({ page, count }));
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([page, count]) => ({ page, count }));
 }
 
-function topCountries(activeLogs) {
+function topCountries(filteredLogs) {
   const counts = {};
-  activeLogs.forEach(log => {
+  filteredLogs.forEach(log => {
     const c = log.country || 'Unknown';
     counts[c] = (counts[c] || 0) + 1;
   });
-  return Object.entries(counts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([country, count]) => ({ country, count }));
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([country, count]) => ({ country, count }));
 }
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -71,24 +118,25 @@ const CustomTooltip = ({ active, payload, label }) => {
   return (
     <div className="bg-white border border-slate-200 rounded-lg shadow-md px-3 py-2 text-xs">
       <p className="font-semibold text-slate-700">{label}</p>
-      <p className="text-teal-600 font-bold">{payload[0].value} active</p>
+      <p className="text-teal-600 font-bold">{payload[0].value} visitors</p>
     </div>
   );
 };
+
+const rangeLabels = { '30min': '30 Minutes', '24h': '24 Hours', '7d': '7 Days' };
+const sessionLabels = { '30min': 'last 30 min', '24h': 'last 24 hours', '7d': 'last 7 days' };
 
 export default function RealTimeTrafficPanel() {
   const [allLogs, setAllLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
-  const [sparkline, setSparkline] = useState([]);
+  const [range, setRange] = useState('30min');
   const intervalRef = useRef(null);
 
   const fetchLogs = async () => {
     try {
-      // Fetch logs updated in last 30 minutes (using sort by updated_date desc, limit 500)
-      const logs = await base44.entities.VisitorLog.list('-updated_date', 500);
+      const logs = await base44.entities.VisitorLog.list('-updated_date', 2000);
       setAllLogs(logs || []);
-      setSparkline(buildHourlyBuckets(logs || []));
       setLastUpdated(new Date());
     } catch (e) {
       console.error('RealTimeTrafficPanel fetch error:', e);
@@ -104,33 +152,54 @@ export default function RealTimeTrafficPanel() {
   }, []);
 
   const activeLogs = getActiveLogs(allLogs);
-  const activeCount = activeLogs.length;
-  const pages = topPages(activeLogs);
-  const countries = topCountries(activeLogs);
+  const filteredLogs = getLogsInRange(allLogs, range);
+  const sparkline = buildBuckets(allLogs, range);
+  const pages = topPages(filteredLogs);
+  const countries = topCountries(filteredLogs);
   const maxPageCount = pages[0]?.count || 1;
+  const activeCount = activeLogs.length;
+  const totalSessions = sparkline.reduce((a, b) => a + b.visitors, 0);
 
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <div className="relative">
             <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
             <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
           </div>
-          <h2 className="text-base font-bold text-slate-800">Real-Time Traffic</h2>
-          <span className="text-xs text-slate-400 font-medium">— live, updates every 15s</span>
+          <h2 className="text-base font-bold text-slate-800">Traffic Analytics</h2>
+          <span className="text-xs text-slate-400 font-medium">— updates every 15s</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          {lastUpdated && <span className="cursor-default select-none">Updated {formatTime(lastUpdated)}</span>}
-          <button onClick={fetchLogs} className="flex items-center gap-1.5 px-2 py-1 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer">
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span className="text-xs text-slate-400">Refresh</span>
-          </button>
+        <div className="flex items-center gap-3">
+          {/* Time range selector */}
+          <div className="flex items-center bg-slate-100 rounded-lg p-0.5 gap-0.5">
+            {TIME_RANGES.map(r => (
+              <button
+                key={r.value}
+                onClick={() => setRange(r.value)}
+                className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+                  range === r.value
+                    ? 'bg-white text-slate-800 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2 text-xs text-slate-400">
+            {lastUpdated && <span className="cursor-default select-none">Updated {formatTime(lastUpdated)}</span>}
+            <button onClick={fetchLogs} className="flex items-center gap-1.5 px-2 py-1 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer">
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span className="text-xs text-slate-400">Refresh</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Active Visitors Big Number */}
+      {/* Stats cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="border border-slate-200 shadow-sm bg-gradient-to-br from-teal-500 to-emerald-600 text-white">
           <CardContent className="p-5">
@@ -150,22 +219,22 @@ export default function RealTimeTrafficPanel() {
         <Card className="border border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-slate-500 text-sm font-medium">Sessions (30 min)</p>
+              <p className="text-slate-500 text-sm font-medium">Sessions ({rangeLabels[range]})</p>
               <Users className="w-5 h-5 text-blue-400" />
             </div>
             {loading ? (
               <div className="h-10 w-16 bg-slate-100 rounded-lg animate-pulse" />
             ) : (
-              <p className="text-4xl font-bold text-slate-900">{sparkline.reduce((a, b) => a + b.visitors, 0)}</p>
+              <p className="text-4xl font-bold text-slate-900">{totalSessions}</p>
             )}
-            <p className="text-slate-400 text-xs mt-1">total sessions tracked</p>
+            <p className="text-slate-400 text-xs mt-1">{sessionLabels[range]}</p>
           </CardContent>
         </Card>
 
         <Card className="border border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-slate-500 text-sm font-medium">Countries Active</p>
+              <p className="text-slate-500 text-sm font-medium">Countries ({rangeLabels[range]})</p>
               <Globe className="w-5 h-5 text-violet-400" />
             </div>
             {loading ? (
@@ -173,17 +242,17 @@ export default function RealTimeTrafficPanel() {
             ) : (
               <p className="text-4xl font-bold text-slate-900">{countries.length}</p>
             )}
-            <p className="text-slate-400 text-xs mt-1">unique countries right now</p>
+            <p className="text-slate-400 text-xs mt-1">unique countries</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Sparkline — visitors over last 30 minutes */}
+      {/* Chart */}
       <Card className="border border-slate-200 shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <Activity className="w-4 h-4 text-teal-500" />
-            Visitor Activity — Last 30 Minutes
+            Visitor Activity — Last {rangeLabels[range]}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -200,7 +269,7 @@ export default function RealTimeTrafficPanel() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis dataKey="time" tick={{ fontSize: 9, fill: '#94a3b8' }} interval={4} />
+                  <XAxis dataKey="time" tick={{ fontSize: 9, fill: '#94a3b8' }} interval={range === '7d' ? 0 : range === '24h' ? 3 : 4} />
                   <YAxis tick={{ fontSize: 9, fill: '#94a3b8' }} allowDecimals={false} />
                   <Tooltip content={<CustomTooltip />} />
                   <Area
@@ -209,7 +278,7 @@ export default function RealTimeTrafficPanel() {
                     stroke="#10b981"
                     strokeWidth={2}
                     fill="url(#trafficGradient)"
-                    dot={false}
+                    dot={range === '7d'}
                     activeDot={{ r: 4, strokeWidth: 0 }}
                   />
                 </AreaChart>
@@ -221,12 +290,11 @@ export default function RealTimeTrafficPanel() {
 
       {/* Pages + Countries breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Active Pages */}
         <Card className="border border-slate-200 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
               <Monitor className="w-4 h-4 text-indigo-400" />
-              Active Pages Right Now
+              Top Pages — Last {rangeLabels[range]}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -235,7 +303,7 @@ export default function RealTimeTrafficPanel() {
                 {[...Array(4)].map((_, i) => <div key={i} className="h-7 bg-slate-100 rounded animate-pulse" />)}
               </div>
             ) : pages.length === 0 ? (
-              <p className="text-sm text-slate-400 py-4 text-center">No active visitors</p>
+              <p className="text-sm text-slate-400 py-4 text-center">No data for this period</p>
             ) : (
               <div className="space-y-2.5">
                 {pages.map(({ page, count }) => (
@@ -257,12 +325,11 @@ export default function RealTimeTrafficPanel() {
           </CardContent>
         </Card>
 
-        {/* Active Countries */}
         <Card className="border border-slate-200 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
               <Globe className="w-4 h-4 text-violet-400" />
-              Countries Active Right Now
+              Top Countries — Last {rangeLabels[range]}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -271,7 +338,7 @@ export default function RealTimeTrafficPanel() {
                 {[...Array(4)].map((_, i) => <div key={i} className="h-7 bg-slate-100 rounded animate-pulse" />)}
               </div>
             ) : countries.length === 0 ? (
-              <p className="text-sm text-slate-400 py-4 text-center">No active visitors</p>
+              <p className="text-sm text-slate-400 py-4 text-center">No data for this period</p>
             ) : (
               <div className="space-y-3">
                 {countries.map(({ country, count }, i) => (
