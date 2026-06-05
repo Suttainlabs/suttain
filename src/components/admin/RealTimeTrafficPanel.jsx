@@ -17,67 +17,70 @@ function formatTime(date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
+function getTimestamp(log) {
+  // Prefer last_seen (active heartbeat), fall back to created_date
+  const ts = log.last_seen || log.created_date;
+  return ts ? new Date(ts).getTime() : null;
+}
+
 function buildBuckets(logs, range) {
   const now = Date.now();
 
   if (range === '30min') {
-    // 30 buckets of 1 minute each
-    const buckets = {};
+    const keys = [];
     for (let i = 29; i >= 0; i--) {
       const t = new Date(now - i * 60000);
-      const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      buckets[key] = 0;
+      keys.push(t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     }
+    const buckets = Object.fromEntries(keys.map(k => [k, 0]));
     logs.forEach(log => {
-      const ts = new Date(log.last_seen || log.created_date).getTime();
+      const ts = getTimestamp(log);
+      if (!ts) return;
       const diffMin = Math.floor((now - ts) / 60000);
       if (diffMin < 0 || diffMin > 29) return;
-      const t = new Date(now - diffMin * 60000);
-      const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const key = new Date(now - diffMin * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       if (key in buckets) buckets[key]++;
     });
-    return Object.entries(buckets).map(([time, visitors]) => ({ time, visitors }));
+    return keys.map(time => ({ time, visitors: buckets[time] }));
   }
 
   if (range === '24h') {
-    // 24 buckets of 1 hour each
-    const buckets = {};
+    const keys = [];
     for (let i = 23; i >= 0; i--) {
       const t = new Date(now - i * 3600000);
-      const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      buckets[key] = 0;
+      keys.push(t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     }
+    const buckets = Object.fromEntries(keys.map(k => [k, 0]));
     const cutoff = now - 24 * 3600000;
     logs.forEach(log => {
-      const ts = new Date(log.last_seen || log.created_date).getTime();
-      if (ts < cutoff || ts > now) return;
+      const ts = getTimestamp(log);
+      if (!ts || ts < cutoff) return;
       const diffHr = Math.floor((now - ts) / 3600000);
       if (diffHr < 0 || diffHr > 23) return;
-      const t = new Date(now - diffHr * 3600000);
-      const key = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const key = new Date(now - diffHr * 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       if (key in buckets) buckets[key]++;
     });
-    return Object.entries(buckets).map(([time, visitors]) => ({ time, visitors }));
+    return keys.map(time => ({ time, visitors: buckets[time] }));
   }
 
-  // 7 days — 7 buckets of 1 day each
-  const buckets = {};
+  // 7 days — key by ISO date string (YYYY-MM-DD) for reliable matching
+  const cutoff7 = now - 7 * 86400000;
+  const keys = [];
+  const keyLabels = {};
   for (let i = 6; i >= 0; i--) {
     const t = new Date(now - i * 86400000);
-    const key = t.toLocaleDateString([], { month: 'short', day: 'numeric' });
-    buckets[key] = 0;
+    const isoKey = t.toISOString().slice(0, 10);
+    const label = t.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    keys.push({ isoKey, label });
+    keyLabels[isoKey] = 0;
   }
-  const cutoff7 = now - 7 * 86400000;
   logs.forEach(log => {
-    const ts = new Date(log.last_seen || log.created_date).getTime();
-    if (ts < cutoff7 || ts > now) return;
-    const diffDay = Math.floor((now - ts) / 86400000);
-    if (diffDay < 0 || diffDay > 6) return;
-    const t = new Date(now - diffDay * 86400000);
-    const key = t.toLocaleDateString([], { month: 'short', day: 'numeric' });
-    if (key in buckets) buckets[key]++;
+    const ts = getTimestamp(log);
+    if (!ts || ts < cutoff7) return;
+    const isoKey = new Date(ts).toISOString().slice(0, 10);
+    if (isoKey in keyLabels) keyLabels[isoKey]++;
   });
-  return Object.entries(buckets).map(([time, visitors]) => ({ time, visitors }));
+  return keys.map(({ isoKey, label }) => ({ time: label, visitors: keyLabels[isoKey] }));
 }
 
 function getLogsInRange(logs, range) {
@@ -85,14 +88,17 @@ function getLogsInRange(logs, range) {
   const cutoffs = { '30min': ACTIVE_WINDOW_MS, '24h': 86400000, '7d': 7 * 86400000 };
   const cutoff = now - cutoffs[range];
   return logs.filter(log => {
-    const ts = new Date(log.last_seen || log.created_date).getTime();
-    return ts >= cutoff;
+    const ts = getTimestamp(log);
+    return ts && ts >= cutoff;
   });
 }
 
 function getActiveLogs(logs) {
   const cutoff = Date.now() - ACTIVE_WINDOW_MS;
-  return logs.filter(log => new Date(log.last_seen || log.created_date).getTime() >= cutoff);
+  return logs.filter(log => {
+    const ts = getTimestamp(log);
+    return ts && ts >= cutoff;
+  });
 }
 
 function topPages(filteredLogs) {
