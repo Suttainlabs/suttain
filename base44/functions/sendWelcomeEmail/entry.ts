@@ -272,11 +272,32 @@ Deno.serve(async (req) => {
 
     console.log(`Subscription plan email sent to: ${email}`);
 
-    // Also notify admin
+    // Notify admin of new signup
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: 'contact@suttain.com',
-      subject: 'New User Signup on Suttain',
-      body: `A new user has signed up on Suttain!\n\nName: ${fullName || 'N/A'}\nEmail: ${email}\nDate: ${new Date().toLocaleString()}\n\nLog in to your admin dashboard to view more details.`
+      from_name: 'Suttain Alerts',
+      subject: `New User Signup: ${fullName || email}`,
+      body: `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f1f5f9;padding:32px 0;">
+<table width="560" style="max-width:560px;margin:auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">
+  <tr><td style="background:linear-gradient(135deg,#007850,#00A8C8);padding:24px 32px;">
+    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:32px;display:block;margin-bottom:12px;"/>
+    <h2 style="color:#fff;margin:0;font-size:20px;">New User Signed Up</h2>
+  </td></tr>
+  <tr><td style="padding:28px 32px;">
+    <table width="100%" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+      <tr><td style="padding:12px 16px;border-bottom:1px solid #f1f5f9;background:#f8fafc;width:120px;font-size:13px;font-weight:700;color:#475569;">Name</td><td style="padding:12px 16px;font-size:14px;color:#1e293b;">${fullName || 'N/A'}</td></tr>
+      <tr><td style="padding:12px 16px;border-bottom:1px solid #f1f5f9;background:#f8fafc;font-size:13px;font-weight:700;color:#475569;">Email</td><td style="padding:12px 16px;font-size:14px;color:#1e293b;">${email}</td></tr>
+      <tr><td style="padding:12px 16px;background:#f8fafc;font-size:13px;font-weight:700;color:#475569;">Date</td><td style="padding:12px 16px;font-size:14px;color:#1e293b;">${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} (CT)</td></tr>
+    </table>
+    <div style="text-align:center;margin-top:24px;">
+      <a href="https://suttain.com/AdminDashboard" style="display:inline-block;background:#007850;color:#fff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:50px;text-decoration:none;">View in Admin Dashboard</a>
+    </div>
+  </td></tr>
+  <tr><td style="background:#f8fafc;padding:16px 32px;text-align:center;border-top:1px solid #e2e8f0;">
+    <p style="margin:0;color:#94a3b8;font-size:12px;">Suttain Admin Alert &bull; contact@suttain.com</p>
+  </td></tr>
+</table>
+</body></html>`
     });
 
     // ------------------------------------------------------------------

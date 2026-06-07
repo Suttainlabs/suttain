@@ -4,11 +4,11 @@ import { Resend } from 'npm:resend@2.0.0';
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
 const WEEKLY_UPDATES = [
-  'Improved chemical simulation accuracy with updated reaction databases',
-  'New sustainability scoring for carbon footprint calculations',
-  'Enhanced formula generator with AI-powered ingredient suggestions',
-  'Expanded ingredient database to 250k+ chemicals with new eco-impact data',
-  'Faster barcode scanning with improved product recognition',
+  'Ingredient database now covers 130 million+ chemicals — the most comprehensive chemical library on Suttain to date',
+  'Launched a new tool: Carbon Tax & Decarbonization Simulator — model regulatory carbon costs and green ROI for your formulas',
+  'Computational Simulation Suite upgraded with improved DFT, Molecular Dynamics, and protein docking workflows',
+  'Users can now request a custom-built platform at Suttain — enterprise teams can contact us to discuss bespoke solutions',
+  'Barcode scanner upgraded with faster recognition and expanded product database coverage',
 ];
 
 const BLOG_URL = 'https://suttain.com/Blog';
@@ -77,6 +77,29 @@ function getWeeklyNewsletterHtml(firstName, updates) {
                     <h3 style="color:#00281E;font-size:16px;font-weight:700;margin:0 0 8px;">Read the Latest on Our Blog</h3>
                     <p style="color:#464646;font-size:14px;line-height:1.6;margin:0 0 20px;">Dive deeper into chemical sustainability, formulation tips, and industry insights from the Suttain team.</p>
                     <a href="${BLOG_URL}" style="display:inline-block;background:linear-gradient(135deg,#007850,#00A8C8);color:#ffffff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:8px;text-decoration:none;letter-spacing:0.2px;">Read the Blog</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Follow Us -->
+          <tr>
+            <td style="padding:16px 32px 24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FAF5;border-radius:12px;border:1px solid #D9EDE5;">
+                <tr>
+                  <td style="padding:20px 24px;text-align:center;">
+                    <h3 style="color:#00281E;font-size:15px;font-weight:700;margin:0 0 6px;">Follow Suttain</h3>
+                    <p style="color:#464646;font-size:13px;margin:0 0 16px;">Stay up to date with the latest news, tips, and updates.</p>
+                    <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                      <tr>
+                        <td style="padding:0 6px;"><a href="https://www.linkedin.com/company/suttainlabs/" style="display:inline-block;background:#0077B5;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">LinkedIn</a></td>
+                        <td style="padding:0 6px;"><a href="https://www.instagram.com/suttainlabs/" style="display:inline-block;background:#E1306C;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">Instagram</a></td>
+                        <td style="padding:0 6px;"><a href="https://www.youtube.com/channel/UCOgVoog8K35lkY9VCsNWqAg" style="display:inline-block;background:#FF0000;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">YouTube</a></td>
+                        <td style="padding:0 6px;"><a href="https://x.com/suttain" style="display:inline-block;background:#000000;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">X (Twitter)</a></td>
+                        <td style="padding:0 6px;"><a href="https://www.tiktok.com/@suttainlabs" style="display:inline-block;background:#010101;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">TikTok</a></td>
+                      </tr>
+                    </table>
                   </td>
                 </tr>
               </table>
