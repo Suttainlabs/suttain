@@ -31,7 +31,7 @@ function getWeeklyNewsletterHtml(firstName, updates) {
           <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#007850 0%,#00A8C8 100%);padding:36px 32px;text-align:center;">
-              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" height="40" style="margin-bottom:16px;display:block;margin-left:auto;margin-right:auto;" />
+              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" height="48" style="margin-bottom:16px;display:block;margin-left:auto;margin-right:auto;background:#ffffff;padding:8px 16px;border-radius:10px;" />
               <h1 style="color:#ffffff;margin:0;font-size:26px;font-weight:700;letter-spacing:-0.5px;">Weekly Update</h1>
               <p style="color:rgba(255,255,255,0.80);margin:8px 0 0;font-size:14px;">${week}</p>
             </td>
