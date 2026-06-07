@@ -106,12 +106,23 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Fetch all users (service role)
-    const users = await base44.asServiceRole.entities.User.list();
+    // Fetch ALL users via pagination (default list() only returns 50)
+    let users = [];
+    let page = 0;
+    const pageSize = 100;
+    while (true) {
+      const batch = await base44.asServiceRole.entities.User.list('created_date', pageSize, page * pageSize);
+      if (!batch || batch.length === 0) break;
+      users = users.concat(batch);
+      if (batch.length < pageSize) break;
+      page++;
+    }
 
-    if (!users || users.length === 0) {
+    if (users.length === 0) {
       return Response.json({ success: true, message: 'No users found', sent: 0 });
     }
+
+    console.log(`Total users fetched: ${users.length}`);
 
     const updates = WEEKLY_UPDATES;
     let sent = 0;
