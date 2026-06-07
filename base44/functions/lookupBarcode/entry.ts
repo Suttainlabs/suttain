@@ -45,8 +45,14 @@ Deno.serve(async (req) => {
             if (converted.length === 12) barcode = converted;
         }
 
+        // PLU codes are 4-5 digits (fresh produce) — handle separately
+        if (barcode.length >= 4 && barcode.length <= 5) {
+            const pluResult = await lookupPLU(barcode, base44);
+            return new Response(JSON.stringify(pluResult), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        }
+
         if (barcode.length < 8 || barcode.length > 14) {
-            return new Response(JSON.stringify({ error: 'Please enter a valid barcode (8-14 digits)' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+            return new Response(JSON.stringify({ error: 'Please enter a valid barcode (4-5 digits for PLU or 8-14 digits for UPC/EAN)' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
         }
 
         let productData = null;
@@ -733,6 +739,84 @@ async function transformAIData(aiData, barcode, base44) {
         },
         source_url: aiData.source_url_citation || null,
         isMedicine
+    };
+}
+
+async function lookupPLU(plu, base44) {
+    // Known common PLU codes
+    const PLU_DB = {
+        '4011': { name: 'Banana (Yellow)', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4012': { name: 'Plantain', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4065': { name: 'Apple (Fuji)', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4016': { name: 'Apple (Granny Smith)', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4053': { name: 'Apple (Gala)', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4020': { name: 'Avocado (Hass)', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '3045': { name: 'Avocado (Large)', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4771': { name: 'Mango', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4959': { name: 'Papaya', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4060': { name: 'Lemon', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4053': { name: 'Lime', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '4046': { name: 'Orange (Navel)', brand: 'Fresh Produce', category: 'Fresh Fruit' },
+        '3107': { name: 'Broccoli', brand: 'Fresh Produce', category: 'Fresh Vegetable' },
+        '4548': { name: 'Carrot (Loose)', brand: 'Fresh Produce', category: 'Fresh Vegetable' },
+        '3082': { name: 'Potato (Russet)', brand: 'Fresh Produce', category: 'Fresh Vegetable' },
+        '4065': { name: 'Tomato (Beefsteak)', brand: 'Fresh Produce', category: 'Fresh Vegetable' },
+        '4664': { name: 'Tomato (Cherry)', brand: 'Fresh Produce', category: 'Fresh Vegetable' },
+    };
+
+    const known = PLU_DB[plu];
+    const productName = known?.name || `PLU ${plu} Produce Item`;
+    const category = known?.category || 'Fresh Produce';
+
+    // Use AI to look up unknown PLU codes
+    let aiInfo = null;
+    if (!known) {
+        try {
+            aiInfo = await base44.integrations.Core.InvokeLLM({
+                prompt: `Identify the fresh produce or grocery item with PLU code ${plu}. PLU codes are 4-5 digit codes used on fresh fruits, vegetables, and bulk items in grocery stores. Return the product name, any relevant details, and typical characteristics.`,
+                add_context_from_internet: true,
+                response_json_schema: {
+                    type: 'object',
+                    properties: {
+                        name: { type: 'string' },
+                        category: { type: 'string' },
+                        description: { type: 'string' },
+                        organic: { type: 'boolean' }
+                    },
+                    required: ['name', 'category']
+                }
+            });
+        } catch {}
+    }
+
+    const finalName = aiInfo?.name || productName;
+    const finalCategory = aiInfo?.category || category;
+    const isOrganic = plu.startsWith('9') || aiInfo?.organic === true;
+
+    return {
+        name: finalName,
+        brand: 'Fresh Produce',
+        barcode: plu,
+        category: finalCategory,
+        source: known ? 'PLU Database' : 'AI Lookup',
+        imageUrl: getFallbackImageUrl(),
+        ingredientsText: `${finalName}${isOrganic ? ' (Organic)' : ''}. PLU code: ${plu}. Fresh produce item — no processed ingredients.`,
+        ingredients: [
+            { name: finalName, purpose: 'Whole food', safety: 98, sustainability: 90, notes: isOrganic ? 'Certified organic' : 'Conventionally grown fresh produce' }
+        ],
+        hazards: [],
+        allergens: [],
+        interactionRisks: [],
+        diyFormulas: [],
+        analysisNotes: [
+            `PLU code ${plu} identifies this as: ${finalName}.`,
+            isOrganic ? 'PLU starting with 9 indicates organic produce.' : 'Conventionally grown produce.',
+            'Fresh produce contains no artificial preservatives or additives.',
+            aiInfo?.description || ''
+        ].filter(Boolean),
+        riskAssessment: { overallRisk: 'low', hasKnownHazards: false },
+        source_url: `https://www.ifps.org/plu-codes/`,
+        isProduce: true
     };
 }
 

@@ -84,7 +84,8 @@ export default function BarcodeScannerPage() {
         if (!user) { openAuthModal('login'); return; }
         if (!scannedBarcode) { setError('Please enter a barcode or PLU code.'); return; }
         const len = scannedBarcode.length;
-        if (len < 4 || len > 14) { setError('Please enter a valid barcode (4–5 digits for PLU, 8–14 digits for UPC/EAN).'); return; }
+        if (len < 4 || len > 14) { setError('Please enter a valid barcode (4–5 digits for PLU, or 8–14 digits for UPC/EAN).'); return; }
+        // PLU codes are 4-5 digits — always valid, skip further checks
         setIsLoading(true);
         setError('');
         setProductInfo(null);
