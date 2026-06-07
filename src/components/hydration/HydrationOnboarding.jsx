@@ -26,17 +26,22 @@ function calcGoal(weight, activity, climate) {
 export default function HydrationOnboarding({ onComplete }) {
     const [step, setStep] = useState(1);
     const [weight, setWeight] = useState('');
+    const [unit, setUnit] = useState('kg');
     const [activity, setActivity] = useState('');
     const [climate, setClimate] = useState('');
     const [biologicalMode, setBiologicalMode] = useState(true);
     const [saving, setSaving] = useState(false);
 
-    const goal = weight && activity && climate ? calcGoal(parseFloat(weight), activity, climate) : null;
+    const weightKg = weight
+        ? unit === 'lb' ? parseFloat(weight) / 2.20462 : parseFloat(weight)
+        : null;
+
+    const goal = weightKg && activity && climate ? calcGoal(weightKg, activity, climate) : null;
 
     const handleFinish = async () => {
         setSaving(true);
-        const base_goal_ml = calcGoal(parseFloat(weight), activity, climate);
-        await onComplete({ weight_kg: parseFloat(weight), activity_level: activity, climate, biological_mode: biologicalMode, base_goal_ml, onboarding_complete: true, current_streak: 0, longest_streak: 0 });
+        const base_goal_ml = calcGoal(weightKg, activity, climate);
+        await onComplete({ weight_kg: weightKg, activity_level: activity, climate, biological_mode: biologicalMode, base_goal_ml, onboarding_complete: true, current_streak: 0, longest_streak: 0 });
         setSaving(false);
     };
 
@@ -64,19 +69,31 @@ export default function HydrationOnboarding({ onComplete }) {
                                 <h2 className="text-lg font-bold text-slate-800">Your Weight</h2>
                             </div>
                             <p className="text-slate-500 text-sm mb-4">We use this to calculate your base hydration requirement (35ml per kg).</p>
+                            {/* Unit toggle */}
+                            <div className="flex bg-slate-100 rounded-xl p-1 mb-3 gap-1">
+                                {['kg', 'lb'].map(u => (
+                                    <button
+                                        key={u}
+                                        onClick={() => { setUnit(u); setWeight(''); }}
+                                        className={`flex-1 py-1.5 rounded-lg text-sm font-bold transition-all ${unit === u ? 'bg-white text-teal-600 shadow' : 'text-slate-400'}`}
+                                    >
+                                        {u}
+                                    </button>
+                                ))}
+                            </div>
                             <div className="relative">
                                 <input
                                     type="number"
                                     value={weight}
                                     onChange={e => setWeight(e.target.value)}
-                                    placeholder="e.g. 70"
+                                    placeholder={unit === 'kg' ? 'e.g. 70' : 'e.g. 154'}
                                     className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 text-2xl font-bold text-center text-slate-800 focus:border-teal-400 focus:outline-none"
                                 />
-                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">kg</span>
+                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">{unit}</span>
                             </div>
                             <button
                                 onClick={() => setStep(2)}
-                                disabled={!weight || parseFloat(weight) < 20 || parseFloat(weight) > 300}
+                                disabled={!weight || (unit === 'kg' ? parseFloat(weight) < 20 || parseFloat(weight) > 300 : parseFloat(weight) < 44 || parseFloat(weight) > 660)}
                                 className="w-full mt-5 bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
                             >
                                 Continue <ChevronRight className="w-4 h-4" />
@@ -175,7 +192,7 @@ export default function HydrationOnboarding({ onComplete }) {
                                 <div className="bg-teal-50 border border-teal-200 rounded-2xl p-4 mb-4 text-center">
                                     <p className="text-xs text-teal-600 font-semibold uppercase tracking-wider mb-1">Your Daily Goal</p>
                                     <p className="text-3xl font-extrabold text-teal-700">{goal}ml</p>
-                                    <p className="text-xs text-teal-600 mt-1">{weight}kg x 35ml + activity & climate</p>
+                                    <p className="text-xs text-teal-600 mt-1">{weightKg ? weightKg.toFixed(1) : ''}kg x 35ml + activity & climate</p>
                                 </div>
                             )}
                             <button
