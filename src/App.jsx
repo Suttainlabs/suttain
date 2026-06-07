@@ -45,6 +45,10 @@ const SimulationRunner = lazy(() => import('./pages/SimulationRunner'));
 const DWSIMIntegration = lazy(() => import('./pages/DWSIMIntegration'));
 const SimulationHistory = lazy(() => import('./pages/SimulationHistory'));
 const SharedSimulationView = lazy(() => import('./pages/SharedSimulationView'));
+const HydrationHome = lazy(() => import('./pages/HydrationHome'));
+const HydrationIntelligence = lazy(() => import('./pages/HydrationIntelligence'));
+const HydrationReminders = lazy(() => import('./pages/HydrationReminders'));
+const HydrationProgress = lazy(() => import('./pages/HydrationProgress'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -146,6 +150,10 @@ const AuthenticatedApp = () => {
       <Route path="/DWSIMIntegration" element={<LayoutWrapper currentPageName="DWSIMIntegration"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><DWSIMIntegration /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationHistory" element={<LayoutWrapper currentPageName="SimulationHistory"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationHistory /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SharedSimulationView" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><SharedSimulationView /></Suspense>} />
+      <Route path="/HydrationHome" element={<LayoutWrapper currentPageName="HydrationHome"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationHome /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/HydrationIntelligence" element={<LayoutWrapper currentPageName="HydrationIntelligence"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationIntelligence /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/HydrationReminders" element={<LayoutWrapper currentPageName="HydrationReminders"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationReminders /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/HydrationProgress" element={<LayoutWrapper currentPageName="HydrationProgress"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationProgress /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
