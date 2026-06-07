@@ -31,6 +31,7 @@ import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';
 import AdvancedAnalysisPanel from './AdvancedAnalysisPanel';
 import SafetyAdvisor from './SafetyAdvisor';
 import ShareButton from '../shared/ShareButton';
+import ShareSimulationModal from './ShareSimulationModal';
 
 // Lazy load visualization component
 const ChemicalVisualization = lazy(() => import('./ChemicalVisualization'));
@@ -134,6 +135,7 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
     const [showRightArrow, setShowRightArrow] = useState(false);
     const [showReportCustomization, setShowReportCustomization] = useState(false);
     const [reportOptions, setReportOptions] = useState(null);
+    const [showShareModal, setShowShareModal] = useState(false);
     const [safetyAlert, setSafetyAlert] = useState(null);
     const [user, setUser] = useState(null);
 
@@ -1115,11 +1117,20 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
                                     <CornerUpLeft className="w-3.5 h-3.5 mr-2" />
                                     New Simulation
                                 </Button>
+                                <Button
+                                    onClick={() => setShowShareModal(true)}
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full"
+                                >
+                                    <Share2 className="w-3.5 h-3.5 mr-2" />
+                                    Share with Team
+                                </Button>
                                 {isAdvanced && (
                                     <>
                                         <Separator className="my-2" />
                                         <Button
-                                            onClick={() => setShowReportCustomization(true)} // Open customization modal
+                                            onClick={() => setShowReportCustomization(true)}
                                             disabled={isGeneratingReport}
                                             variant="outline"
                                             size="sm"
@@ -1137,13 +1148,6 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
                                                 </>
                                             )}
                                         </Button>
-                                        <ShareButton
-                                            text={shareText}
-                                            url="https://suttain.com/Simulator"
-                                            label="Share Results"
-                                            size="sm"
-                                            variant="outline"
-                                        />
                                     </>
                                 )}
                             </CardContent>
@@ -1217,6 +1221,15 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
                 onClose={() => setShowReportCustomization(false)}
                 onGenerate={handleReportCustomizationComplete}
                 isGenerating={isGeneratingReport}
+                persona={persona}
+            />
+
+            {/* Share Simulation Modal */}
+            <ShareSimulationModal
+                isOpen={showShareModal}
+                onClose={() => setShowShareModal(false)}
+                simulationData={data}
+                chemicals={chemicals}
                 persona={persona}
             />
         </TooltipProvider>
