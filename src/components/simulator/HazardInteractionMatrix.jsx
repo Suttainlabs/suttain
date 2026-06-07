@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -107,6 +107,8 @@ export default function HazardInteractionMatrix() {
     "Propan-2-ol (Isopropanol)",
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputRef = useRef(null);
   const [matrixData, setMatrixData] = useState({});   // key → { level, summary, score }
   const [loadingPairs, setLoadingPairs] = useState(new Set());
   const [selectedCell, setSelectedCell] = useState(null);
@@ -184,12 +186,29 @@ Return JSON with:
   }, [chemicals, matrixData, resolvePair]);
 
   // ── Add/remove chemical ────────────────────────────────────────────────────
-  const addChemical = () => {
-    const val = inputValue.trim();
-    if (!val || chemicals.includes(val)) { setInputValue(""); return; }
-    setChemicals(prev => [...prev, val]);
+  const filteredSuggestions = COMMON_CHEMICALS.filter(c =>
+    !chemicals.includes(c) &&
+    (inputValue === "" || c.toLowerCase().includes(inputValue.toLowerCase()))
+  );
+
+  const addChemical = (val) => {
+    const v = (val || inputValue).trim();
+    if (!v || chemicals.includes(v)) { setInputValue(""); setShowSuggestions(false); return; }
+    setChemicals(prev => [...prev, v]);
     setInputValue("");
+    setShowSuggestions(false);
   };
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (inputRef.current && !inputRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const removeChemical = (name) => {
     setChemicals(prev => prev.filter(c => c !== name));
@@ -415,21 +434,36 @@ Return JSON with:
             ))}
           </div>
           {/* Add chemical */}
-          <div className="flex gap-2">
-            <input
-              list="common-chemicals"
-              value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && addChemical()}
-              placeholder="Type or pick a chemical…"
-              className="flex-1 px-3 py-2 border-2 border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
-            />
-            <datalist id="common-chemicals">
-              {COMMON_CHEMICALS.filter(c => !chemicals.includes(c)).map(c => <option key={c} value={c} />)}
-            </datalist>
-            <Button size="sm" onClick={addChemical} className="gap-1 bg-teal-600 hover:bg-teal-700 text-white">
-              <Plus className="w-4 h-4" /> Add
-            </Button>
+          <div className="relative" ref={inputRef}>
+            <div className="flex gap-2">
+              <input
+                value={inputValue}
+                onChange={e => { setInputValue(e.target.value); setShowSuggestions(true); }}
+                onFocus={() => setShowSuggestions(true)}
+                onKeyDown={e => {
+                  if (e.key === "Enter") addChemical();
+                  if (e.key === "Escape") setShowSuggestions(false);
+                }}
+                placeholder="Type or pick a chemical…"
+                className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white"
+              />
+              <Button size="sm" onClick={() => addChemical()} className="gap-1 bg-teal-600 hover:bg-teal-700 text-white shrink-0">
+                <Plus className="w-4 h-4" /> Add
+              </Button>
+            </div>
+            {showSuggestions && filteredSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                {filteredSuggestions.map(c => (
+                  <button
+                    key={c}
+                    onMouseDown={e => { e.preventDefault(); addChemical(c); }}
+                    className="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-teal-50 hover:text-teal-800 transition-colors"
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
