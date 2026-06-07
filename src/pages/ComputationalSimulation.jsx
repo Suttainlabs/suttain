@@ -312,6 +312,17 @@ export default function ComputationalSimulation() {
       <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
         <div className="max-w-6xl mx-auto px-4 py-10">
 
+          {/* Top Banner */}
+          <div className="mb-8 bg-gradient-to-r from-violet-600 via-purple-600 to-teal-600 rounded-2xl px-6 py-4 text-white flex items-center justify-between flex-wrap gap-3 shadow-lg">
+            <div>
+              <p className="text-lg font-bold leading-tight">From Simulation to Safe Product in One Platform</p>
+              <p className="text-violet-200 text-xs mt-0.5">Run a simulation, analyze results, then send directly to the Formula Generator.</p>
+            </div>
+            <Link to={createPageUrl("generator")} className="flex-shrink-0 bg-white/20 hover:bg-white/30 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-all flex items-center gap-1.5">
+              <ArrowRight className="w-4 h-4" /> Open Formula Generator
+            </Link>
+          </div>
+
           {/* Header */}
           <div className="text-center mb-10">
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-3 tracking-tight">

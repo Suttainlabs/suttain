@@ -9,7 +9,7 @@ import {
   FlaskConical, FileText, BarChart2, Clock
 } from 'lucide-react';
 import LoadFormulaModal from './LoadFormulaModal';
-import { Wand2 } from 'lucide-react';
+import { Wand2, Cpu } from 'lucide-react';
 
 const ModeCard = ({ icon: Icon, title, description, features, isActive, onSelect, colorClass }) => (
     <motion.div
@@ -125,6 +125,13 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
     const [showLoadModal, setShowLoadModal] = useState(false);
     const [recentFormulas, setRecentFormulas] = useState([]);
 
+    // Detect if opened from Computational Simulation pipeline
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromSimulation = urlParams.get('from_simulation') === '1';
+    const simMolecule = urlParams.get('molecule') || '';
+    const simType = urlParams.get('sim_type') || '';
+    const simStability = urlParams.get('stability') || '';
+
     useEffect(() => {
         const fetchRecent = async () => {
             try {
@@ -170,6 +177,35 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
             </div>
             
             <div className="max-w-6xl mx-auto space-y-12 relative z-10">
+
+                {/* Simulation Pipeline Banner */}
+                {fromSimulation && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-gradient-to-r from-teal-50 to-cyan-50 border-2 border-teal-300 rounded-2xl p-5 flex items-start gap-4"
+                    >
+                        <div className="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <Cpu className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="font-bold text-teal-900 text-sm mb-0.5">
+                                This formula was initialized from a Computational Simulation result
+                            </p>
+                            <p className="text-xs text-teal-700">
+                                {simMolecule && <>Molecule: <span className="font-semibold">{simMolecule}</span> — </>}
+                                {simType && <>Simulation type: <span className="font-semibold">{simType}</span>{simStability && ` — Stability: ${simStability}`}</>}
+                            </p>
+                            <a
+                                href="/ComputationalSimulation"
+                                className="text-xs text-teal-600 hover:text-teal-800 font-semibold underline mt-1 inline-block"
+                            >
+                                Back to Computational Simulations
+                            </a>
+                        </div>
+                    </motion.div>
+                )}
+
                 {/* Header */}
                 <div className="text-center space-y-3">
                     <motion.h1 

@@ -1,11 +1,17 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { SIM_TYPES } from "./ComputationalSimulation";
 import MoleculeDrawer from "../components/simulation/MoleculeDrawer";
 import MolViewer from "../components/simulation/MolViewer";
 import TrajectoryViewer from "../components/simulation/TrajectoryViewer";
 import CustomForcefieldManager from "../components/simulation/CustomForcefieldManager";
 import ToolFeedbackToast from "../components/shared/ToolFeedbackToast";
+import PlainLanguageSummary from "../components/computational/PlainLanguageSummary";
+import SustainabilityProfileCard from "../components/computational/SustainabilityProfileCard";
+import RelatedResearch from "../components/computational/RelatedResearch";
+import SimulationHistoryPanel from "../components/computational/SimulationHistoryPanel";
+import SimulationPresets from "../components/computational/SimulationPresets";
+import PubChemSearch from "../components/computational/PubChemSearch";
 import { jsPDF } from "jspdf";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
@@ -13,10 +19,11 @@ import AuthContext from "../components/auth/AuthContext";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip";
 import {
   Cpu, ChevronLeft, Beaker, Dna, Download, Copy, CheckCircle2,
   Loader2, RotateCcw, BookOpen, Microscope, Activity, AlertTriangle,
-  Eye, SlidersHorizontal, Film, ChevronRight
+  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info
 } from "lucide-react";
 
 function SelectField({ label, options, value, onChange }) {
@@ -62,6 +69,39 @@ export default function SimulationRunner() {
 
   const DRAWABLE_KEYS = ['molecule', 'ligand', 'compound', 'system', 'surface', 'reactants'];
 
+  const ENGINE_TOOLTIPS = {
+    "ORCA": "Best for accurate electronic structure calculations on medium-sized molecules.",
+    "Gaussian": "Industry-standard for a wide range of quantum chemistry calculations.",
+    "Psi4": "Open-source, highly accurate quantum chemistry for small to medium molecules.",
+    "NWChem": "Scalable high-performance chemistry for large molecular systems.",
+    "CP2K": "Efficient for large periodic systems and ab initio molecular dynamics.",
+    "GROMACS": "Best for high-speed MD simulations of proteins and biomolecular systems.",
+    "AMBER": "Optimized for biomolecular simulations with well-validated force fields.",
+    "NAMD": "Scales well on large HPC clusters for very large biomolecular systems.",
+    "OpenMM": "GPU-accelerated MD with flexible Python scripting support.",
+    "LAMMPS": "Versatile MD engine for materials science and engineering applications.",
+    "AutoDock Vina": "Fast and accurate rigid/flexible receptor docking for drug discovery.",
+    "Glide": "High-throughput virtual screening with extra precision docking modes.",
+    "DOCK6": "Flexible docking with energy scoring for structure-based drug design.",
+    "RDKit": "Open-source cheminformatics for ADMET prediction and ligand preparation.",
+    "OpenBabel": "Chemical file format interconversion and property prediction toolkit.",
+    "VASP": "Industry standard for periodic DFT in materials and surface science.",
+    "Quantum ESPRESSO": "Open-source plane-wave DFT for solids, surfaces, and nanostructures.",
+    "AlphaFold": "State-of-the-art AI protein structure prediction from sequence.",
+    "Rosetta": "Versatile platform for protein design, docking, and loop modeling.",
+    "Modeller": "Comparative homology modeling from known template structures.",
+    "RASPA": "Monte Carlo and MD for adsorption, diffusion, and phase equilibria in porous materials.",
+    "VASP": "Plane-wave DFT for periodic systems, surfaces, and bulk materials.",
+    "EPI Suite": "EPA tool for estimating environmental fate and ecotoxicity of chemicals.",
+    "ECOSAR": "Estimates aquatic toxicity from chemical structure using SAR relationships.",
+    "VMD": "Powerful molecular visualization for trajectories and electrostatic maps.",
+    "PyMOL": "Publication-quality 3D protein and small molecule visualization.",
+    "VESTA": "Crystal structure visualization and electron density analysis.",
+    "SchNet": "Graph neural network potential for fast, accurate molecular dynamics.",
+    "MACE": "State-of-the-art equivariant ML potential for large and complex systems.",
+    "DWSIM": "Open-source process simulator for chemical and petrochemical flowsheets.",
+  };
+
   useEffect(() => {
     if (!sim) navigate("/ComputationalSimulation");
   }, [sim, navigate]);
@@ -72,6 +112,36 @@ export default function SimulationRunner() {
 
   const openDrawer = (fieldKey) => { setDrawerTargetKey(fieldKey); setDrawerOpen(true); };
   const handleDrawerConfirm = (smiles) => { if (drawerTargetKey) handleInputChange(drawerTargetKey, smiles); };
+
+  const handlePresetSelect = (preset) => {
+    if (preset.engine) setSelectedEngine(preset.engine);
+    if (preset.fields) setInputs(prev => ({ ...prev, ...preset.fields }));
+  };
+
+  const handlePubChemSelect = (compound) => {
+    const moleculeField = sim.fields.find(f => ['molecule', 'ligand', 'compound', 'system'].includes(f.key));
+    if (moleculeField) {
+      const value = compound.smiles ? `${compound.name} ${compound.smiles}` : compound.name;
+      handleInputChange(moleculeField.key, value);
+    }
+  };
+
+  const handleSendToFormula = () => {
+    const molecule = inputs.molecule || inputs.ligand || inputs.compound || inputs.system || "";
+    const smiles = molecule.includes(" ") ? molecule.split(" ").slice(1).join(" ") : "";
+    const stability = results?.predicted_results?.key_values?.find(k =>
+      k.property?.toLowerCase().includes("stab") || k.property?.toLowerCase().includes("energy")
+    );
+    const params = new URLSearchParams({
+      from_simulation: "1",
+      molecule: molecule.split(" ")[0] || molecule,
+      smiles: smiles,
+      sim_type: sim?.label || "",
+      stability: stability?.value || "",
+      safety_level: results?.predicted_results?.summary?.slice(0, 120) || "",
+    });
+    window.location.href = `/generator?${params.toString()}`;
+  };
 
   const handleRun = async () => {
     const inputSummary = sim.fields.map(f => `${f.label}: ${inputs[f.key] || 'not specified'}`).join('\n');
@@ -457,6 +527,49 @@ Provide a focused, technical analysis. Return JSON with:
                 </div>
               )}
 
+              {/* Plain Language Summary */}
+              <div className="mt-5">
+                <PlainLanguageSummary
+                  results={results}
+                  simLabel={sim?.label}
+                  domain={domain}
+                />
+              </div>
+
+              {/* Sustainability Profile */}
+              <div className="mt-5">
+                <SustainabilityProfileCard
+                  results={results}
+                  molecule={results?.inputs?.molecule || results?.inputs?.compound || results?.inputs?.ligand || results?.inputs?.system}
+                />
+              </div>
+
+              {/* Send to Formula Generator */}
+              <div className="mt-5">
+                <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border-2 border-teal-200 rounded-2xl p-5 flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <p className="font-bold text-teal-900 text-sm">Send to Formula Generator</p>
+                    <p className="text-xs text-teal-700 mt-0.5">Pass this molecule's validated data directly into the formulation workflow.</p>
+                  </div>
+                  <Button
+                    onClick={handleSendToFormula}
+                    className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white gap-2 flex-shrink-0"
+                  >
+                    <FlaskConical className="w-4 h-4" />
+                    Send to Formula Generator
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Related Research */}
+              <div className="mt-5">
+                <RelatedResearch
+                  molecule={results?.inputs?.molecule || results?.inputs?.compound || results?.inputs?.ligand || results?.inputs?.system}
+                  simType={sim?.label}
+                />
+              </div>
+
               <div className="flex justify-center mt-8 gap-3 flex-wrap">
                 <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />New Simulation</Button>
                 <Button onClick={generatePDFReport} variant="outline" className="gap-2 border-violet-300 text-violet-700 hover:bg-violet-50">
@@ -471,27 +584,55 @@ Provide a focused, technical analysis. Return JSON with:
           )}
         </AnimatePresence>
 
+        {/* History & Comparison — always visible */}
+        <div className="mt-8">
+          <SimulationHistoryPanel
+            currentResults={results}
+            currentInputs={inputs}
+            simTypeId={typeId}
+            engine={selectedEngine}
+          />
+        </div>
+
         {/* Config Form */}
         {!results && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+            {/* Simulation Presets */}
+            <SimulationPresets onSelectPreset={handlePresetSelect} />
+
             <Card className="border-0 shadow-md">
               <CardContent className="p-6 md:p-8">
+
+                {/* PubChem Auto-fill */}
+                <PubChemSearch onSelect={handlePubChemSelect} />
 
                 {/* Engine selector */}
                 <div className="mb-7">
                   <label className="block text-xs font-semibold text-slate-500 mb-2.5 uppercase tracking-widest">Software / Engine</label>
-                  <div className="flex flex-wrap gap-2">
-                    {sim.engines.map(e => (
-                      <button key={e} onClick={() => setSelectedEngine(e)}
-                        className={`px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${
-                          selectedEngine === e
-                            ? "bg-violet-600 text-white border-violet-600 shadow"
-                            : "bg-white text-slate-600 border-slate-200 hover:border-violet-300"
-                        }`}>
-                        {e}
-                      </button>
-                    ))}
-                  </div>
+                  <TooltipProvider>
+                    <div className="flex flex-wrap gap-2">
+                      {sim.engines.map(e => (
+                        <Tooltip key={e}>
+                          <TooltipTrigger asChild>
+                            <button onClick={() => setSelectedEngine(e)}
+                              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${
+                                selectedEngine === e
+                                  ? "bg-violet-600 text-white border-violet-600 shadow"
+                                  : "bg-white text-slate-600 border-slate-200 hover:border-violet-300"
+                              }`}>
+                              {e}
+                              {ENGINE_TOOLTIPS[e] && <Info className="w-3 h-3 opacity-60" />}
+                            </button>
+                          </TooltipTrigger>
+                          {ENGINE_TOOLTIPS[e] && (
+                            <TooltipContent side="bottom" className="max-w-xs text-xs">
+                              {ENGINE_TOOLTIPS[e]}
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
+                      ))}
+                    </div>
+                  </TooltipProvider>
                 </div>
 
                 {/* Custom Forcefield picker — MD only */}
@@ -574,7 +715,7 @@ Provide a focused, technical analysis. Return JSON with:
                   >
                     {isRunning
                       ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
-                      : <><Cpu className="w-4 h-4" /> Run Simulation</>}
+                      : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
                   </Button>
                   <p className="text-xs text-slate-400">AI analysis + {selectedEngine} script · 5-10 seconds</p>
                 </div>
