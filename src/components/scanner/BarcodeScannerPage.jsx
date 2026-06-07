@@ -229,15 +229,15 @@ export default function BarcodeScannerPage() {
                     {quickSubMode === 'scan' && <AnimatePresence mode="wait">
                         {productInfo ? (
 
-                            <motion.div key="analysis" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            <motion.div key="analysis" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="pb-6">
                                 <BarcodeAnalysis product={productInfo} onClear={clearSearch} user={user} />
                                 {showRegulatoryCheck && (
-                                    <div className="mt-6">
+                                    <div className="mt-4">
                                         <RegulatoryScanner ingredients={productInfo.ingredients?.map(ing => ({ chemical_name: ing }))} onClose={() => setShowRegulatoryCheck(false)} />
                                     </div>
                                 )}
                                 {!showRegulatoryCheck && productInfo.ingredients?.length > 0 && (
-                                    <Button onClick={() => setShowRegulatoryCheck(true)} variant="outline" className="w-full mt-4 gap-2">
+                                    <Button onClick={() => setShowRegulatoryCheck(true)} variant="outline" className="w-full mt-3 gap-2">
                                         <Globe className="w-4 h-4" /> Check Regional Regulations
                                     </Button>
                                 )}

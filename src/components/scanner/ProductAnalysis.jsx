@@ -554,32 +554,33 @@ export default function ProductAnalysis({ product, onClear, user }) {
       transition={{ duration: 0.4, ease: "easeInOut" }}
       className="w-full"
     >
-      <Card className="w-full shadow-2xl border-0 bg-transparent">
-        <CardContent className="p-4 sm:p-6">
+      <Card className="w-full border-0 bg-transparent shadow-none">
+        <CardContent className="p-0">
           {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <Button variant="ghost" onClick={() => onClear(null)} className="text-slate-600 hover:bg-slate-100">
-              <ChevronLeft className="w-5 h-5 mr-1" /> New Scan
+          <div className="flex justify-between items-center mb-4 px-1">
+            <Button variant="ghost" size="sm" onClick={() => onClear(null)} className="text-slate-600 hover:bg-slate-100 -ml-2">
+              <ChevronLeft className="w-4 h-4 mr-1" /> New Scan
             </Button>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <ShareButton
                 text={`I scanned "${product.name}" by ${product.brand} on Suttain.\n\nOverall Score: ${overallScore}/100 | Safety: ${averageScores.safety}% | Eco: ${averageScores.sustainability}% | Hazards: ${product.hazards?.length || 0}\n\nAnalyze your own products at suttain.com`}
                 url="https://suttain.com/BarcodeScanner"
                 label="Share"
               />
               {product.source_url && (
-                <Button asChild variant="link" size="sm">
+                <Button asChild variant="link" size="sm" className="text-xs px-2">
                   <a href={product.source_url} target="_blank" rel="noopener noreferrer">
-                    Data Source <ExternalLink className="w-3 h-3 ml-1.5" />
+                    Data Source <ExternalLink className="w-3 h-3 ml-1" />
                   </a>
                 </Button>
               )}
             </div>
           </div>
 
-          {/* Product hero */}
-          <div className="flex flex-col sm:flex-row items-center gap-6 mb-6">
-            <div className="relative flex-shrink-0 w-28 h-28 sm:w-36 sm:h-36 bg-white rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center p-2">
+          {/* Product hero — single row on mobile */}
+          <div className="flex items-start gap-3 mb-4">
+            {/* Image */}
+            <div className="flex-shrink-0 w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-xl shadow border border-slate-200/80 flex items-center justify-center p-1.5">
               {imageSrc && !imageError ? (
                 <img
                   src={imageSrc} alt={product.name}
@@ -587,30 +588,25 @@ export default function ProductAnalysis({ product, onClear, user }) {
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 rounded-xl">
-                  <ImageOff className="w-10 h-10 text-slate-400" />
+                <div className="w-full h-full flex items-center justify-center bg-slate-50 rounded-lg">
+                  <ImageOff className="w-8 h-8 text-slate-400" />
                 </div>
               )}
             </div>
 
-            <div className="text-center sm:text-left flex-1">
+            {/* Info */}
+            <div className="flex-1 min-w-0">
               <ProductCategoryBadges category={product.category} />
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mt-1">{product.name}</h2>
-              <p className="text-slate-500 mb-2">{product.brand} &bull; {product.category}</p>
+              <h2 className="text-lg sm:text-2xl font-bold text-slate-800 mt-0.5 leading-tight">{product.name}</h2>
+              <p className="text-xs text-slate-500 mb-1.5 truncate">{product.brand} {product.category ? `\u2022 ${product.category}` : ''}</p>
               {getRiskBadge(product.riskAssessment?.overallRisk)}
-              
-              {/* Science-backed note */}
-              <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-500">
-                <Award className="w-3.5 h-3.5 text-teal-500" />
-                <span>Beauty-specific methodology &bull; Peer-reviewed scientific sources</span>
-              </div>
             </div>
 
-            {/* Overall score ring */}
-            <div className="flex-shrink-0 flex flex-col items-center gap-1 p-3 bg-white rounded-2xl shadow border border-slate-100">
-              <ScoreRing score={overallScore} size={80} />
-              <span className="text-[11px] font-semibold text-slate-600">Overall Score</span>
-              <Badge className={`text-[10px] px-2 py-0 ${getRatingLabel(overallScore).bg} ${getRatingLabel(overallScore).color} border-0`}>
+            {/* Score ring */}
+            <div className="flex-shrink-0 flex flex-col items-center gap-0.5 p-2 bg-white rounded-xl shadow border border-slate-100">
+              <ScoreRing score={overallScore} size={64} />
+              <span className="text-[10px] font-semibold text-slate-500 leading-tight">Overall</span>
+              <Badge className={`text-[9px] px-1.5 py-0 ${getRatingLabel(overallScore).bg} ${getRatingLabel(overallScore).color} border-0`}>
                 {getRatingLabel(overallScore).label}
               </Badge>
             </div>
@@ -622,18 +618,18 @@ export default function ProductAnalysis({ product, onClear, user }) {
             if (v === 'sustainability') handleLoadSustainability();
             if (v === 'health') handleLoadHealth();
           }}>
-            <div className="sticky top-16 z-10 bg-[#EDF7F2] py-2 -mx-4 sm:-mx-6 px-4 sm:px-6">
-            <TabsList className="flex w-full overflow-x-auto bg-slate-100/80 rounded-xl scrollbar-hide gap-0.5 p-1 no-scrollbar">
-              {['overview', 'ingredients', 'safety', 'compliance', 'sustainability', 'health', ...(product.isMedicine ? [] : ['diy'])].map(tab => (
-                <TabsTrigger key={tab} value={tab} className="text-xs capitalize flex-shrink-0 data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">
-                  {tab === 'sustainability' ? 'Eco' : tab}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            <div className="sticky top-16 z-10 bg-[#EDF7F2] py-1.5 -mx-4 sm:-mx-6 px-4 sm:px-6">
+              <TabsList className="flex w-full overflow-x-auto bg-slate-100/80 rounded-xl no-scrollbar gap-0 p-1" style={{ scrollbarWidth: 'none' }}>
+                {['overview', 'ingredients', 'safety', 'compliance', 'sustainability', 'health', ...(product.isMedicine ? [] : ['diy'])].map(tab => (
+                  <TabsTrigger key={tab} value={tab} className="text-[11px] capitalize flex-shrink-0 px-2.5 py-1.5 data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">
+                    {tab === 'sustainability' ? 'Eco' : tab}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
             </div>
 
             {/* OVERVIEW TAB */}
-            <TabsContent value="overview" className="pt-6 space-y-5">
+            <TabsContent value="overview" className="pt-4 space-y-4">
               {safetyAlert && (
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
                   className={`p-4 border-2 rounded-xl ${safetyAlert.severity === 'critical' ? 'bg-red-50 border-red-300' : 'bg-amber-50 border-amber-300'}`}>
@@ -767,7 +763,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
             </TabsContent>
 
             {/* INGREDIENTS TAB */}
-            <TabsContent value="ingredients" className="pt-6 space-y-4">
+            <TabsContent value="ingredients" className="pt-4 space-y-3">
               {/* Ingredient preference alert (Pro) */}
               {!isPro && (
                 <Card className="bg-violet-50 border border-violet-200">
@@ -843,7 +839,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
             </TabsContent>
 
             {/* SAFETY TAB */}
-            <TabsContent value="safety" className="pt-6 space-y-6">
+            <TabsContent value="safety" className="pt-4 space-y-4">
               <Card className="bg-white/60">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-xl"><Shield className="w-6 h-6 text-red-500" /> Safety Profile</CardTitle>
@@ -897,7 +893,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
             </TabsContent>
 
             {/* COMPLIANCE TAB */}
-            <TabsContent value="compliance" className="pt-6 space-y-4">
+            <TabsContent value="compliance" className="pt-4 space-y-4">
               {isLoadingCompliance && (
                 <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -949,7 +945,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
             </TabsContent>
 
             {/* SUSTAINABILITY TAB */}
-            <TabsContent value="sustainability" className="pt-6 space-y-4">
+            <TabsContent value="sustainability" className="pt-4 space-y-4">
               {isLoadingSustainability && (
                 <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
                   <Loader2 className="w-5 h-5 animate-spin" /><span>Analyzing environmental impact...</span>
@@ -1013,7 +1009,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
             </TabsContent>
 
             {/* HEALTH TAB */}
-            <TabsContent value="health" className="pt-6 space-y-4">
+            <TabsContent value="health" className="pt-4 space-y-4">
               {isLoadingHealth && (
                 <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
                   <Loader2 className="w-5 h-5 animate-spin" /><span>Analyzing nutritional & health insights...</span>
@@ -1112,7 +1108,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
             </TabsContent>
 
             {/* DIY TAB */}
-            <TabsContent value="diy" className="pt-6 space-y-6">
+            <TabsContent value="diy" className="pt-4 space-y-4">
               {product.diyFormulas?.length > 0 ? (
                 product.diyFormulas.map((formula, i) => (
                   <Card key={i} className="bg-white/60">
