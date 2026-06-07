@@ -350,11 +350,16 @@ export default function ProductAnalysis({ product, onClear, user }) {
   const [isLoadingHealth, setIsLoadingHealth] = useState(false);
   const navigate = useNavigate();
 
-  const isPro = user?.subscription_plan === 'pro' || user?.subscription_plan === 'enterprise';
+  const isPro = user?.subscription_plan === 'pro' || user?.subscription_plan === 'enterprise'
+    || user?.subscription_plan === 'lifetime' || user?.is_lifetime === true
+    || user?.trial_active === true || user?.subscription_status === 'trialing';
 
   useEffect(() => {
     setImageError(false);
-    setImageSrc(product.imageUrl || null);
+    // Try product image first, then fall back to Open Food Facts by barcode
+    const src = product.imageUrl
+      || (product.barcode ? `https://images.openfoodfacts.org/images/products/${product.barcode}/front_en.jpg` : null);
+    setImageSrc(src);
     setSimilarProducts(null);
     setSafetyAlert(null);
     setComplianceData(null);
@@ -579,10 +584,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                 <img
                   src={imageSrc} alt={product.name}
                   className="max-w-full max-h-full object-contain"
-                  onError={() => {
-                    const offUrl = product.barcode ? `https://images.openfoodfacts.org/images/products/${product.barcode}/front_en.jpg` : null;
-                    if (offUrl && imageSrc !== offUrl) setImageSrc(offUrl); else setImageError(true);
-                  }}
+                  onError={() => setImageError(true)}
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 rounded-xl">
@@ -620,13 +622,15 @@ export default function ProductAnalysis({ product, onClear, user }) {
             if (v === 'sustainability') handleLoadSustainability();
             if (v === 'health') handleLoadHealth();
           }}>
-            <TabsList className="flex w-full overflow-x-auto bg-slate-100/80 rounded-xl scrollbar-hide gap-0.5 p-1">
+            <div className="sticky top-16 z-10 bg-[#EDF7F2] py-2 -mx-4 sm:-mx-6 px-4 sm:px-6">
+            <TabsList className="flex w-full overflow-x-auto bg-slate-100/80 rounded-xl scrollbar-hide gap-0.5 p-1 no-scrollbar">
               {['overview', 'ingredients', 'safety', 'compliance', 'sustainability', 'health', ...(product.isMedicine ? [] : ['diy'])].map(tab => (
                 <TabsTrigger key={tab} value={tab} className="text-xs capitalize flex-shrink-0 data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">
                   {tab === 'sustainability' ? 'Eco' : tab}
                 </TabsTrigger>
               ))}
             </TabsList>
+            </div>
 
             {/* OVERVIEW TAB */}
             <TabsContent value="overview" className="pt-6 space-y-5">
