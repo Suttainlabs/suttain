@@ -41,7 +41,7 @@ export default function SaferAlternatives({
 
   const handleSimulateAlternative = (alt) => {
     // Navigate to Simulator with the alternative pre-filled via URL param
-    const params = new URLSearchParams({ prefill: alt.alternative_chemical });
+    const params = new URLSearchParams({ chemicals: alt.alternative_chemical });
     navigate(`/Simulator?${params.toString()}`);
   };
 
