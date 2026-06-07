@@ -868,7 +868,7 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
                                         <h2 className="text-lg font-bold text-slate-900">{safety_status.level}</h2>
                                         {isAdvanced && (
                                             <Badge variant="outline" className="text-xs">
-                                                {persona === 'researcher' ? 'Research' : 'Teaching'}
+                                                {persona === 'researcher' ? 'Research' : persona === 'business' ? 'Business' : 'Teaching'}
                                             </Badge>
                                         )}
                                     </div>
