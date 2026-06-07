@@ -1,5 +1,6 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import { Plus, Flame } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import AuthContext from '../components/auth/AuthContext';
 import AuthGate from '../components/auth/AuthGate';
 import { useHydration } from '../components/hydration/useHydration';
@@ -16,6 +17,20 @@ export default function HydrationHome() {
     const { user } = useContext(AuthContext);
     const { profile, todayLogs, totalIntake, trueGoal, loading, logDrink, deleteLog, saveProfile } = useHydration(user);
     const [showCustom, setShowCustom] = useState(false);
+    const [goalCelebrated, setGoalCelebrated] = useState(false);
+    const prevIntakeRef = useRef(null);
+
+    const goalReached = trueGoal > 0 && totalIntake >= trueGoal;
+
+    useEffect(() => {
+        if (!trueGoal || loading) return;
+        const prev = prevIntakeRef.current;
+        // Fire celebration only when crossing the threshold, not on every render
+        if (prev !== null && prev < trueGoal && totalIntake >= trueGoal) {
+            setGoalCelebrated(true);
+        }
+        prevIntakeRef.current = totalIntake;
+    }, [totalIntake, trueGoal, loading]);
 
     if (!user) {
         return (
@@ -66,6 +81,48 @@ export default function HydrationHome() {
                 <div className="flex justify-center">
                     <ProgressRing intake={totalIntake} goal={trueGoal} size={220} />
                 </div>
+
+                {/* Goal reached celebration */}
+                <AnimatePresence>
+                    {goalCelebrated && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: -8 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: -8 }}
+                            className="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-4 text-white shadow-lg"
+                        >
+                            <div className="flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-3xl">🎉</span>
+                                    <div>
+                                        <p className="font-extrabold text-sm">Goal reached!</p>
+                                        <p className="text-white/80 text-xs mt-0.5">You hit {trueGoal}ml today. Great work.</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setGoalCelebrated(false)}
+                                    className="text-white/60 hover:text-white text-lg leading-none px-1"
+                                    aria-label="Dismiss"
+                                >
+                                    x
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Over-goal nudge (static, shown when no celebration banner) */}
+                {goalReached && !goalCelebrated && (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+                        <span className="text-xl">✅</span>
+                        <div>
+                            <p className="text-sm font-bold text-emerald-700">Daily goal complete</p>
+                            <p className="text-xs text-emerald-600 mt-0.5">
+                                {totalIntake - trueGoal > 0 ? `+${totalIntake - trueGoal}ml above your goal.` : 'You hit your target for today.'} Keep it up.
+                            </p>
+                        </div>
+                    </div>
+                )}
 
                 {/* Quick Add */}
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-4">
