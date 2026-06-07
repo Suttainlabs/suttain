@@ -1,14 +1,14 @@
 import React, { useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Home, TestTube, Atom, QrCode, User } from 'lucide-react';
+import { Home, TestTube, Atom, QrCode, User, Droplets } from 'lucide-react';
 
 const TABS = [
-  { key: 'Home',          label: 'Home',     icon: Home,     root: '/' },
-  { key: 'Simulator',     label: 'Simulate', icon: TestTube, root: createPageUrl('Simulator') },
-  { key: 'generator',     label: 'Create',   icon: Atom,     root: createPageUrl('generator') },
-  { key: 'BarcodeScanner',label: 'Scan',     icon: QrCode,   root: createPageUrl('BarcodeScanner') },
-  { key: 'Profile',       label: 'Profile',  icon: User,     root: createPageUrl('Profile') },
+  { key: 'Home',               label: 'Home',     icon: Home,     root: '/' },
+  { key: 'Simulator',          label: 'Simulate', icon: TestTube, root: createPageUrl('Simulator') },
+  { key: 'BarcodeScanner',     label: 'Scan',     icon: QrCode,   root: createPageUrl('BarcodeScanner') },
+  { key: 'HydrationHome',      label: 'Hydrate',  icon: Droplets, root: createPageUrl('HydrationHome') },
+  { key: 'Profile',            label: 'Profile',  icon: User,     root: createPageUrl('Profile') },
 ];
 
 // Remember the last visited path per tab across renders (persists for the session)

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { TestTube, Atom, QrCode, ArrowRight, Cpu, BarChart3, Leaf } from 'lucide-react';
+import { TestTube, Atom, QrCode, Cpu, BarChart3, Leaf, Droplets } from 'lucide-react';
 
 const tools = [
     {
@@ -51,6 +51,14 @@ const tools = [
         gradient: 'from-lime-500 to-emerald-500',
         glow: 'hover:shadow-lime-200',
         link: 'SustainabilityImpact'
+    },
+    {
+        title: 'Hydration',
+        description: 'Track daily water intake',
+        icon: Droplets,
+        gradient: 'from-blue-500 to-teal-400',
+        glow: 'hover:shadow-blue-200',
+        link: 'HydrationHome'
     },
 ];
 
