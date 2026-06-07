@@ -414,6 +414,52 @@ export default function Pricing() {
           ))}
         </div>
 
+        {/* Enterprise / Custom Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="mb-16"
+        >
+          <div className="relative rounded-2xl border-2 border-slate-800 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl overflow-hidden">
+            {/* Background accent */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 50%, #6B3FA0 0%, transparent 60%)' }} />
+            <div className="flex items-start gap-5 relative z-10">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 border border-slate-600 flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-xl font-bold text-white">Custom Built</h3>
+                  <span className="text-[11px] px-2 py-0.5 bg-violet-600 text-white font-bold rounded-full">Enterprise</span>
+                </div>
+                <p className="text-slate-300 text-sm max-w-lg leading-relaxed">
+                  Need white-labeling, custom integrations, dedicated infrastructure, team seats, or a tailored compliance workflow? We build it for you.
+                </p>
+                <div className="flex flex-wrap gap-4 mt-3">
+                  {['White-label & branding', 'Custom API integrations', 'Dedicated support SLA', 'Team & SSO management'].map(f => (
+                    <div key={f} className="flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                      <span className="text-xs text-slate-300">{f}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-3 relative z-10 flex-shrink-0">
+              <p className="text-slate-400 text-sm font-medium">Starts at</p>
+              <p className="text-3xl font-bold text-white">Custom Pricing</p>
+              <a
+                href="mailto:contact@suttain.com?subject=Enterprise%20%2F%20Custom%20Plan%20Inquiry"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-slate-900 font-bold text-sm hover:bg-slate-100 transition-colors shadow-md"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Contact Sales
+              </a>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Feature Highlights */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
