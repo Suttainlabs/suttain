@@ -2,13 +2,15 @@ import { useState, useEffect, useContext } from 'react';
 import { ChevronLeft, TrendingUp, Target, Flame, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Cell, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { format, subDays, startOfDay } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import AuthContext from '../components/auth/AuthContext';
 import { useHydration } from '../components/hydration/useHydration';
 import HydrationBottomNav from '../components/hydration/HydrationBottomNav';
 import ProUpgradeCard from '../components/hydration/ProUpgradeCard';
 import useTrialStatus from '../hooks/useTrialStatus';
 import { base44 } from '@/api/base44Client';
+import { useHydrationUnit } from '../components/hydration/useHydrationUnit';
+import { mlToOz } from '../components/hydration/useHydrationUnit';
 
 function buildWeekData(allLogs, trueGoal) {
     return Array.from({ length: 7 }, (_, i) => {
@@ -49,17 +51,34 @@ export default function HydrationProgress() {
     const [allLogs, setAllLogs] = useState([]);
     const [insights, setInsights] = useState([]);
     const [logsLoaded, setLogsLoaded] = useState(false);
+    const { unit } = useHydrationUnit();
+
+    const fetchLogs = async () => {
+        const [logs, ins] = await Promise.all([
+            base44.entities.HydrationLog.list('-log_date', 500),
+            base44.entities.HydrationInsight.list('-insight_date', 20)
+        ]);
+        setAllLogs(logs);
+        setInsights(ins);
+        setLogsLoaded(true);
+    };
 
     useEffect(() => {
         if (!user) return;
-        Promise.all([
-            base44.entities.HydrationLog.list('-log_date', 500),
-            base44.entities.HydrationInsight.list('-insight_date', 20)
-        ]).then(([logs, ins]) => {
-            setAllLogs(logs);
-            setInsights(ins);
-            setLogsLoaded(true);
-        }).catch(() => setLogsLoaded(true));
+        fetchLogs().catch(() => setLogsLoaded(true));
+
+        // Real-time subscription — update whenever a log is added/deleted/updated
+        const unsubscribe = base44.entities.HydrationLog.subscribe((event) => {
+            if (event.type === 'create') {
+                setAllLogs(prev => [event.data, ...prev]);
+            } else if (event.type === 'update') {
+                setAllLogs(prev => prev.map(l => l.id === event.id ? event.data : l));
+            } else if (event.type === 'delete') {
+                setAllLogs(prev => prev.filter(l => l.id !== event.id));
+            }
+        });
+
+        return () => unsubscribe();
     }, [user]);
 
     if (loading || !logsLoaded) {
@@ -122,7 +141,7 @@ export default function HydrationProgress() {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-3">
                     {[
-                        { label: 'Weekly Avg', value: `${weekAvg}ml`, icon: TrendingUp, color: 'text-teal-600', bg: 'bg-teal-50' },
+                        { label: 'Weekly Avg', value: unit === 'oz' ? `${mlToOz(weekAvg)} oz` : `${weekAvg} ml`, icon: TrendingUp, color: 'text-teal-600', bg: 'bg-teal-50' },
                         { label: 'Goal Hit Rate', value: `${goalHitRate}/7 days`, icon: Target, color: 'text-blue-600', bg: 'bg-blue-50' },
                         { label: 'Current Streak', value: `${streak} days`, icon: Flame, color: 'text-orange-600', bg: 'bg-orange-50' },
                         { label: 'Longest Streak', value: `${longestStreak} days`, icon: Trophy, color: 'text-violet-600', bg: 'bg-violet-50' },
