@@ -935,47 +935,47 @@ export default function Simulator() {
 
         <div className="max-w-7xl mx-auto relative z-10">
           {/* Mode Toggle */}
-          <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+          <div className="flex justify-center mb-6 px-2">
+            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm overflow-x-auto max-w-full no-scrollbar">
               <button
                 onClick={() => setActiveMode("simulator")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
                   activeMode === "simulator"
                     ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow"
                     : "text-slate-600 hover:bg-slate-100"
                 }`}
               >
-                <FlaskConical className="w-4 h-4" /> Chemical Simulator
+                <FlaskConical className="w-4 h-4 flex-shrink-0" /> <span>Simulator</span>
               </button>
               <button
                 onClick={() => setActiveMode("matrix")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
                   activeMode === "matrix"
                     ? "bg-gradient-to-r from-red-600 to-orange-600 text-white shadow"
                     : "text-slate-600 hover:bg-slate-100"
                 }`}
               >
-                <Grid3X3 className="w-4 h-4" /> Hazard Matrix
+                <Grid3X3 className="w-4 h-4 flex-shrink-0" /> <span>Hazard Matrix</span>
               </button>
               <button
                 onClick={() => setActiveMode("sds")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
                   activeMode === "sds"
                     ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow"
                     : "text-slate-600 hover:bg-slate-100"
                 }`}
               >
-                <FileText className="w-4 h-4" /> SDS Analyzer
+                <FileText className="w-4 h-4 flex-shrink-0" /> <span>SDS Analyzer</span>
               </button>
               <button
                 onClick={() => setActiveMode("inventory")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
                   activeMode === "inventory"
                     ? "bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow"
                     : "text-slate-600 hover:bg-slate-100"
                 }`}
               >
-                <Package className="w-4 h-4" /> Inventory
+                <Package className="w-4 h-4 flex-shrink-0" /> <span>Inventory</span>
               </button>
             </div>
           </div>
