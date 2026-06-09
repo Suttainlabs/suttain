@@ -3,7 +3,8 @@ import { Droplets } from 'lucide-react';
 import { DRINK_LABELS, DRINK_COLORS } from './DrinkTypeIcon';
 import { mlToOz } from './useHydrationUnit';
 
-const AMOUNTS = [150, 250, 350, 500];
+// 8oz, 16oz, 24oz, 32oz, 64oz converted to ml
+const AMOUNTS = [237, 473, 710, 946, 1893];
 const DRINK_TYPES = Object.keys(DRINK_LABELS);
 
 export default function QuickAddButtons({ onLog, disabled, unit = 'ml' }) {
@@ -24,7 +25,7 @@ export default function QuickAddButtons({ onLog, disabled, unit = 'ml' }) {
 
     return (
         <div>
-            <div className="grid grid-cols-4 gap-2 mb-3">
+            <div className="grid grid-cols-5 gap-2 mb-3">
                 {AMOUNTS.map(ml => (
                     <button
                         key={ml}
