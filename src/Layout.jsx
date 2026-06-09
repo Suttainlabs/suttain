@@ -602,12 +602,12 @@ export default function Layout({ children, currentPageName }) {
               </div>
               
               <motion.div 
-                className="flex-1 flex flex-col justify-between p-4"
+                className="flex-1 flex flex-col min-h-0"
                 variants={mobileMenuVariants}
                 initial="closed"
                 animate="open"
               >
-                <nav className="flex flex-col gap-2">
+                <nav className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
                   {navLinks.map(({ href, label, icon: Icon }) => (
                     <motion.div key={href} variants={mobileNavItemVariants}>
                       <Link
@@ -733,7 +733,7 @@ export default function Layout({ children, currentPageName }) {
                 </nav>
 
                 {/* Mobile Auth Section */}
-                <div className="border-t border-slate-200 pt-4">
+                <div className="border-t border-slate-200 p-4 flex-shrink-0">
                   {!isAuthLoading ? ( // Conditionally render mobile auth section only when not loading
                     user ? (
                       <motion.div variants={mobileNavItemVariants} className="space-y-3">
