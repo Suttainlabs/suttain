@@ -1,5 +1,8 @@
 import { AlertTriangle, Zap, FlaskConical, Wind, CheckCircle2 } from 'lucide-react';
 import ProUpgradeCard from './ProUpgradeCard';
+import { mlToOz } from './useHydrationUnit';
+
+const adjToOz = (ml) => `${(ml / 29.5735).toFixed(1)} oz`;
 
 function BioCard({ icon: Icon, color, bg, title, body, adj }) {
     return (
@@ -13,7 +16,7 @@ function BioCard({ icon: Icon, color, bg, title, body, adj }) {
                     <p className="text-slate-600 text-sm leading-relaxed">{body}</p>
                     {adj > 0 && (
                         <div className={`inline-flex items-center gap-1 mt-2 px-2 py-1 rounded-lg text-xs font-bold ${color} ${color.replace('text-', 'bg-').replace('-700', '-100')}`}>
-                            +{adj}ml added to your goal
+                            +{adjToOz(adj)} added to your goal
                         </div>
                     )}
                 </div>
@@ -98,7 +101,7 @@ export default function BiologicalPanel({ bioAdj, profile, trueGoal, isPro }) {
 
             <div className="bg-gradient-to-r from-teal-500 to-blue-500 rounded-2xl p-4 text-white">
                 <p className="text-sm font-semibold text-white/80 mb-1">Your True Hydration Goal Today</p>
-                <p className="text-3xl font-extrabold">{trueGoal}ml</p>
+                <p className="text-3xl font-extrabold">{mlToOz(trueGoal)} oz</p>
                 <p className="text-sm text-white/70 mt-1">
                     Based on what you ate and scanned today, your biological adjustments have been applied automatically.
                 </p>
