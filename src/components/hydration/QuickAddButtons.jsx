@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Droplets, Plus } from 'lucide-react';
+import { Droplets } from 'lucide-react';
 import { DRINK_LABELS, DRINK_COLORS } from './DrinkTypeIcon';
+import { mlToOz } from './useHydrationUnit';
 
 const AMOUNTS = [150, 250, 350, 500];
 const DRINK_TYPES = Object.keys(DRINK_LABELS);
 
-export default function QuickAddButtons({ onLog, disabled }) {
+export default function QuickAddButtons({ onLog, disabled, unit = 'ml' }) {
     const [pendingAmount, setPendingAmount] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -36,7 +37,7 @@ export default function QuickAddButtons({ onLog, disabled }) {
                             }`}
                     >
                         <Droplets className={`w-5 h-5 ${pendingAmount === ml ? 'text-teal-500' : 'text-blue-400'}`} />
-                        <span>{ml}ml</span>
+                        <span>{unit === 'oz' ? `${mlToOz(ml)} oz` : `${ml} ml`}</span>
                     </button>
                 ))}
             </div>
@@ -44,7 +45,7 @@ export default function QuickAddButtons({ onLog, disabled }) {
             {pendingAmount && (
                 <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-200">
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                        What are you drinking? ({pendingAmount}ml)
+                        What are you drinking? ({unit === 'oz' ? `${mlToOz(pendingAmount)} oz` : `${pendingAmount} ml`})
                     </p>
                     <div className="grid grid-cols-2 gap-2">
                         {DRINK_TYPES.map(type => (

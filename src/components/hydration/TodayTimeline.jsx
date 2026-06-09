@@ -1,8 +1,9 @@
 import { format } from 'date-fns';
 import { Trash2 } from 'lucide-react';
 import DrinkTypeIcon, { DRINK_LABELS } from './DrinkTypeIcon';
+import { mlToOz } from './useHydrationUnit';
 
-export default function TodayTimeline({ logs, onDelete }) {
+export default function TodayTimeline({ logs, onDelete, unit = 'ml' }) {
     if (!logs.length) {
         return (
             <div className="text-center py-8 text-slate-400">
@@ -20,7 +21,9 @@ export default function TodayTimeline({ logs, onDelete }) {
                         <DrinkTypeIcon type={log.drink_type} size={18} />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-slate-800 text-sm">{log.amount_ml}ml</p>
+                        <p className="font-semibold text-slate-800 text-sm">
+                            {unit === 'oz' ? `${mlToOz(log.amount_ml)} oz` : `${log.amount_ml} ml`}
+                        </p>
                         <p className="text-xs text-slate-400">
                             {DRINK_LABELS[log.drink_type] || 'Water'} &middot; {log.logged_at ? format(new Date(log.logged_at), 'h:mm a') : ''}
                         </p>

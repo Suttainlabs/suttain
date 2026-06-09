@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import { Droplets, X } from 'lucide-react';
 import { DRINK_LABELS, DRINK_COLORS } from './DrinkTypeIcon';
+import { ozToMl } from './useHydrationUnit';
 
 const DRINK_TYPES = Object.keys(DRINK_LABELS);
 
-export default function CustomAmountModal({ onLog, onClose }) {
+export default function CustomAmountModal({ onLog, onClose, unit = 'ml' }) {
     const [amount, setAmount] = useState('');
     const [drinkType, setDrinkType] = useState('water');
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const ml = parseInt(amount);
-        if (!ml || ml < 10 || ml > 2000) return;
+        const val = parseFloat(amount);
+        if (!val || val <= 0) return;
+        const ml = unit === 'oz' ? ozToMl(val) : Math.round(val);
+        if (ml < 10 || ml > 2000) return;
         setLoading(true);
         await onLog(ml, drinkType);
         setLoading(false);
@@ -30,13 +33,17 @@ export default function CustomAmountModal({ onLog, onClose }) {
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Amount (ml)</label>
+                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">
+                            Amount ({unit})
+                        </label>
                         <input
                             type="number"
                             value={amount}
                             onChange={e => setAmount(e.target.value)}
-                            placeholder="e.g. 400"
-                            min="10" max="2000"
+                            placeholder={unit === 'oz' ? 'e.g. 12' : 'e.g. 400'}
+                            min={unit === 'oz' ? '0.5' : '10'}
+                            max={unit === 'oz' ? '68' : '2000'}
+                            step={unit === 'oz' ? '0.5' : '10'}
                             autoFocus
                             className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 text-xl font-bold text-slate-800 focus:border-teal-400 focus:outline-none"
                         />

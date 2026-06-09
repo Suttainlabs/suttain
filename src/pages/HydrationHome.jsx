@@ -10,6 +10,7 @@ import TodayTimeline from '../components/hydration/TodayTimeline';
 import CustomAmountModal from '../components/hydration/CustomAmountModal';
 import HydrationOnboarding from '../components/hydration/HydrationOnboarding';
 import HydrationBottomNav from '../components/hydration/HydrationBottomNav';
+import { useHydrationUnit } from '../components/hydration/useHydrationUnit';
 import { Link } from 'react-router-dom';
 import { Brain } from 'lucide-react';
 
@@ -19,6 +20,7 @@ export default function HydrationHome() {
     const [showCustom, setShowCustom] = useState(false);
     const [goalCelebrated, setGoalCelebrated] = useState(false);
     const prevIntakeRef = useRef(null);
+    const { unit, toggleUnit } = useHydrationUnit();
 
     const goalReached = trueGoal > 0 && totalIntake >= trueGoal;
 
@@ -67,19 +69,27 @@ export default function HydrationHome() {
                         <span className="text-xs text-slate-400 font-medium">day streak</span>
                     </div>
                     <h1 className="text-base font-bold text-slate-800">Hydration</h1>
-                    <button
-                        onClick={() => setShowCustom(true)}
-                        className="w-9 h-9 bg-teal-500 hover:bg-teal-600 rounded-xl flex items-center justify-center transition-colors"
-                    >
-                        <Plus className="w-5 h-5 text-white" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={toggleUnit}
+                            className="h-8 px-3 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-600 hover:border-teal-400 hover:text-teal-700 transition-colors"
+                        >
+                            {unit === 'ml' ? 'oz' : 'ml'}
+                        </button>
+                        <button
+                            onClick={() => setShowCustom(true)}
+                            className="w-9 h-9 bg-teal-500 hover:bg-teal-600 rounded-xl flex items-center justify-center transition-colors"
+                        >
+                            <Plus className="w-5 h-5 text-white" />
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div className="max-w-lg mx-auto px-4 pt-6 space-y-5">
                 {/* Progress Ring */}
                 <div className="flex justify-center">
-                    <ProgressRing intake={totalIntake} goal={trueGoal} size={220} />
+                    <ProgressRing intake={totalIntake} goal={trueGoal} size={220} unit={unit} />
                 </div>
 
                 {/* Goal reached celebration */}
@@ -96,7 +106,7 @@ export default function HydrationHome() {
                                     <span className="text-3xl">🎉</span>
                                     <div>
                                         <p className="font-extrabold text-sm">Goal reached!</p>
-                                        <p className="text-white/80 text-xs mt-0.5">You hit {trueGoal}ml today. Great work.</p>
+                                        <p className="text-white/80 text-xs mt-0.5">You hit your goal today. Great work.</p>
                                     </div>
                                 </div>
                                 <button
@@ -118,7 +128,9 @@ export default function HydrationHome() {
                         <div>
                             <p className="text-sm font-bold text-emerald-700">Daily goal complete</p>
                             <p className="text-xs text-emerald-600 mt-0.5">
-                                {totalIntake - trueGoal > 0 ? `+${totalIntake - trueGoal}ml above your goal.` : 'You hit your target for today.'} Keep it up.
+                                {totalIntake - trueGoal > 0
+                                ? `+${unit === 'oz' ? `${(((totalIntake - trueGoal) / 29.5735) * 10 | 0) / 10} oz` : `${totalIntake - trueGoal} ml`} above your goal.`
+                                : 'You hit your target for today.'} Keep it up.
                             </p>
                         </div>
                     </div>
@@ -127,7 +139,7 @@ export default function HydrationHome() {
                 {/* Quick Add */}
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-4">
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Quick Add</p>
-                    <QuickAddButtons onLog={logDrink} />
+                    <QuickAddButtons onLog={logDrink} unit={unit} />
                 </div>
 
                 {/* Biological Intelligence Banner */}
@@ -146,12 +158,12 @@ export default function HydrationHome() {
                 {/* Today's Timeline */}
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-4">
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Today's Log</p>
-                    <TodayTimeline logs={todayLogs} onDelete={deleteLog} />
+                    <TodayTimeline logs={todayLogs} onDelete={deleteLog} unit={unit} />
                 </div>
             </div>
 
             {showCustom && (
-                <CustomAmountModal onLog={logDrink} onClose={() => setShowCustom(false)} />
+                <CustomAmountModal onLog={logDrink} onClose={() => setShowCustom(false)} unit={unit} />
             )}
 
             <HydrationBottomNav />

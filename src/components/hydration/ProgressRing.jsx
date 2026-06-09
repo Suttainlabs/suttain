@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
+import { mlToOz } from './useHydrationUnit';
 
-export default function ProgressRing({ intake, goal, size = 220 }) {
+export default function ProgressRing({ intake, goal, size = 220, unit = 'ml' }) {
     const canvasRef = useRef(null);
     const pct = Math.min(intake / Math.max(goal, 1), 1);
     const radius = (size - 24) / 2;
@@ -40,8 +41,12 @@ export default function ProgressRing({ intake, goal, size = 220 }) {
         <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
             <canvas ref={canvasRef} width={size} height={size} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-extrabold text-slate-800">{intake}</span>
-                <span className="text-xs text-slate-400 font-medium">of {goal} ml</span>
+                <span className="text-3xl font-extrabold text-slate-800">
+                    {unit === 'oz' ? mlToOz(intake) : intake}
+                </span>
+                <span className="text-xs text-slate-400 font-medium">
+                    of {unit === 'oz' ? mlToOz(goal) : goal} {unit}
+                </span>
                 <span className="text-xs text-teal-600 font-semibold mt-0.5">{Math.round(pct * 100)}%</span>
             </div>
         </div>
