@@ -825,8 +825,8 @@ export default function Layout({ children, currentPageName }) {
           </AuthContext.Provider>
           </main>
       
-      {/* Footer - Hidden on Dashboard/Profile page */}
-      {currentPageName !== 'Profile' && (
+      {/* Footer - Home page only */}
+      {currentPageName === 'Home' && (
       <footer className="bg-gradient-to-br from-[#1a3a35] via-slate-900 to-slate-900 text-sm pb-[env(safe-area-inset-bottom)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
