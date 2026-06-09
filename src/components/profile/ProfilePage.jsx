@@ -185,13 +185,13 @@ export default function ProfilePage() {
           ].map(s => {
             const Icon = s.icon;
             return (
-              <div key={s.label} className="bg-white rounded-2xl border border-slate-100 px-6 py-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${s.gradient} flex items-center justify-center flex-shrink-0 shadow-sm`}>
-                  <Icon className="w-6 h-6 text-white" />
+              <div key={s.label} className="bg-white rounded-2xl border border-slate-100 px-4 py-4 flex flex-col items-center text-center gap-2 shadow-sm hover:shadow-md transition-shadow sm:flex-row sm:items-center sm:text-left sm:gap-4 sm:px-6 sm:py-5">
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br ${s.gradient} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                  <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-slate-900">{s.value}</p>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-0.5">{s.label}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-slate-900">{s.value}</p>
+                  <p className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wide mt-0.5">{s.label}</p>
                 </div>
               </div>
             );
