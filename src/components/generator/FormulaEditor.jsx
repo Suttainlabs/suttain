@@ -12,7 +12,7 @@ import {
   Droplets, Clock, BrainCircuit, History, Save, Loader2, MessageSquare, Star, X,
   Menu, Printer, Search,
   Calculator,
-  Leaf, Sparkles, DollarSign // Added icons
+  Leaf, Sparkles, DollarSign, Share2 // Added icons
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -59,6 +59,7 @@ import RegulatoryScanner from "../compliance/RegulatoryScanner";
 import SupplierLinkModal from "../suppliers/SupplierLinkModal";
 import SupplierManager from "../suppliers/SupplierManager";
 import SupplierVerificationPanel from "../suppliers/SupplierVerificationPanel";
+import ShareModal from "../shared/ShareModal";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -257,6 +258,7 @@ export default function FormulaEditor({
   const [showRegulatoryCheck, setShowRegulatoryCheck] = useState(false); // Regulatory compliance check
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [selectedIngredientForSupplier, setSelectedIngredientForSupplier] = useState(null);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // NEW: Ingredient search states
   const [ingredientSearchTerm, setIngredientSearchTerm] = useState("");
@@ -674,6 +676,11 @@ export default function FormulaEditor({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => setShowShareModal(true)}>
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share with Team
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setShowExportDialog(true)}>
                   <Download className="w-4 h-4 mr-2" />
                   Export (PDF / CSV)
@@ -1408,6 +1415,19 @@ export default function FormulaEditor({
           ingredientName={selectedIngredientForSupplier}
         />
       )}
+
+      {/* Share Formula Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        title={formula.name || "Formula Draft"}
+        shareType="formula"
+        payload={{
+          formula,
+          productType,
+          businessMode,
+        }}
+      />
     </div>
   );
 }
