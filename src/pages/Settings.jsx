@@ -86,7 +86,12 @@ export default function Settings() {
           <main className="flex-1 min-w-0">
             {activeTab === 'billing' && (
               <div className="space-y-5">
-                <SectionHeader title="Billing & Subscription" description="Manage your plan, billing cycle, and payment details." />
+                <div className="flex items-center justify-between">
+                  <SectionHeader title="Billing & Subscription" description="Manage your plan, billing cycle, and payment details." />
+                  <Link to={createPageUrl('BillingDashboard')} className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal-600 hover:text-teal-700 transition-colors">
+                    View Full Dashboard <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </div>
                 <SubscriptionCard />
                 <BillingInfo user={user} />
                 <BillingHistory />

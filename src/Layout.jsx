@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -503,6 +503,13 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("BillingDashboard")} className="cursor-pointer">
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Billing & Payments
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
                         <Link to={createPageUrl("Workspace")} className="cursor-pointer">
                           <FolderOpen className="w-4 h-4 mr-2" />
                           My Workspace
@@ -747,6 +754,14 @@ export default function Layout({ children, currentPageName }) {
                         >
                           <LayoutDashboard className="w-5 h-5" />
                           My Dashboard
+                        </Link>
+                        <Link
+                          to={createPageUrl("BillingDashboard")}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="w-full justify-start text-base font-semibold flex items-center gap-4 px-4 py-3 text-suttain-dark hover:bg-slate-100 rounded-lg"
+                        >
+                          <CreditCard className="w-5 h-5" />
+                          Billing & Payments
                         </Link>
                         {user.role === 'admin' && (
                           <Link
