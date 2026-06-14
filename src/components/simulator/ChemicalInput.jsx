@@ -424,8 +424,8 @@ export default function ChemicalInput({
               <PersonaIcon className="w-6 h-6" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold">Chemical Setup</CardTitle>
-              <p className="text-sm text-white/90 mt-1">Add chemicals to test their interactions</p>
+              <CardTitle className="text-lg sm:text-2xl font-bold">Chemical Setup</CardTitle>
+              <p className="text-xs sm:text-sm text-white/90 mt-0.5 sm:mt-1">Add chemicals to test their interactions</p>
             </div>
           </div>
           {onBackToPersonaSelection && (
@@ -441,7 +441,7 @@ export default function ChemicalInput({
         </div>
       </CardHeader>
 
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Chemical Search */}
         <div className="relative" ref={searchInputRef}>
           <Label className="block text-sm font-semibold text-slate-700 mb-2">

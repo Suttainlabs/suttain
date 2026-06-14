@@ -454,25 +454,25 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                         )}
                         
                         {/* Energy Profile */}
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className={`p-4 ${styling.bg} border ${styling.border} rounded-xl text-center`}>
-                                <Thermometer className={`w-6 h-6 mx-auto mb-2 ${styling.text}`} />
-                                <p className="text-xs text-slate-600 mb-1">Reaction Type</p>
-                                <p className={`font-bold ${styling.text}`}>{energy_profile?.type || 'Unknown'}</p>
+                        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                            <div className={`p-2 sm:p-4 ${styling.bg} border ${styling.border} rounded-xl text-center`}>
+                                <Thermometer className={`w-5 h-5 mx-auto mb-1 sm:mb-2 ${styling.text}`} />
+                                <p className="text-[10px] sm:text-xs text-slate-600 mb-0.5 sm:mb-1">Reaction Type</p>
+                                <p className={`font-bold text-xs sm:text-sm leading-tight ${styling.text}`}>{energy_profile?.type || 'Unknown'}</p>
                             </div>
-                            <div className={`p-4 ${styling.bg} border ${styling.border} rounded-xl text-center`}>
+                            <div className={`p-2 sm:p-4 ${styling.bg} border ${styling.border} rounded-xl text-center`}>
                                 {energy_profile?.type === 'Exothermic' ? (
-                                    <TrendingDown className={`w-6 h-6 mx-auto mb-2 ${styling.text}`} />
+                                    <TrendingDown className={`w-5 h-5 mx-auto mb-1 sm:mb-2 ${styling.text}`} />
                                 ) : (
-                                    <TrendingUp className={`w-6 h-6 mx-auto mb-2 ${styling.text}`} />
+                                    <TrendingUp className={`w-5 h-5 mx-auto mb-1 sm:mb-2 ${styling.text}`} />
                                 )}
-                                <p className="text-xs text-slate-600 mb-1">Energy Change</p>
-                                <p className={`font-bold ${styling.text}`}>{energy_profile?.energy_change || 0} kJ/mol</p>
+                                <p className="text-[10px] sm:text-xs text-slate-600 mb-0.5 sm:mb-1">Energy Change</p>
+                                <p className={`font-bold text-xs sm:text-sm leading-tight ${styling.text}`}>{energy_profile?.energy_change || 0} kJ/mol</p>
                             </div>
-                            <div className={`p-4 ${styling.bg} border ${styling.border} rounded-xl text-center`}>
-                                <Zap className={`w-6 h-6 mx-auto mb-2 ${styling.text}`} />
-                                <p className="text-xs text-slate-600 mb-1">Activation Energy</p>
-                                <p className={`font-bold ${styling.text}`}>{energy_profile?.activation_energy || 0} kJ/mol</p>
+                            <div className={`p-2 sm:p-4 ${styling.bg} border ${styling.border} rounded-xl text-center`}>
+                                <Zap className={`w-5 h-5 mx-auto mb-1 sm:mb-2 ${styling.text}`} />
+                                <p className="text-[10px] sm:text-xs text-slate-600 mb-0.5 sm:mb-1">Activation Energy</p>
+                                <p className={`font-bold text-xs sm:text-sm leading-tight ${styling.text}`}>{energy_profile?.activation_energy || 0} kJ/mol</p>
                             </div>
                         </div>
 
@@ -856,8 +856,8 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                     <CardContent className="p-4">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                             {/* Left: Status & Chemicals */}
-                            <div className="flex items-center gap-4 flex-1 min-w-0">
-                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${styling.gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${styling.gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
                                     <div className="text-white">
                                         {React.cloneElement(styling.icon, { className: 'w-6 h-6' })}
                                     </div>
@@ -865,14 +865,14 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
 
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <h2 className="text-lg font-bold text-slate-900">{safety_status.level}</h2>
+                                        <h2 className="text-base sm:text-lg font-bold text-slate-900">{safety_status.level}</h2>
                                         {isAdvanced && (
                                             <Badge variant="outline" className="text-xs">
                                                 {persona === 'researcher' ? 'Research' : persona === 'business' ? 'Business' : 'Teaching'}
                                             </Badge>
                                         )}
                                     </div>
-                                    <p className="text-sm text-slate-600 truncate">
+                                    <p className="text-xs sm:text-sm text-slate-600 truncate">
                                         {chemicals.map(c => c.scientific_name || c.name).join(' + ')}
                                     </p>
                                     <p className="text-xs text-slate-400 mt-0.5">
@@ -884,17 +884,17 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                             {/* Right: Risk Score */}
                             <div className="flex items-center gap-4 mt-2 sm:mt-0 self-end sm:self-center">
                                 <div className="text-right">
-                                    <p className="text-xs text-slate-500 mb-1">Risk Score</p>
+                                    <p className="text-xs text-slate-500 mb-0.5">Risk Score</p>
                                     <div className="flex items-baseline gap-1">
-                                        <span className="text-3xl font-bold text-slate-900">
+                                        <span className="text-2xl sm:text-3xl font-bold text-slate-900">
                                             {risk_assessment.overall_risk_score || 0}
                                         </span>
-                                        <span className="text-sm text-slate-500">/100</span>
+                                        <span className="text-xs sm:text-sm text-slate-500">/100</span>
                                     </div>
                                 </div>
 
-                                <div className="relative w-16 h-16 flex-shrink-0">
-                                    <svg className="w-full h-full transform -rotate-90">
+                                <div className="relative w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0">
+                                    <svg viewBox="0 0 64 64" className="w-full h-full transform -rotate-90">
                                         <circle
                                             cx="32"
                                             cy="32"
@@ -1007,7 +1007,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                             </div>
 
                             {/* Tab Content */}
-                            <div className="bg-white rounded-b-xl border border-slate-200 border-t-0 p-6">
+                            <div className="bg-white rounded-b-xl border border-slate-200 border-t-0 p-4 sm:p-6">
                                 {renderTabContent()}
                             </div>
                         </Card>
