@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Trash2, TrendingUp, Flame, Utensils, ShoppingCart } from 'lucide-react';
+import { Loader2, Trash2, TrendingUp, Flame, Utensils, ShoppingCart, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import GroceryListExport from './GroceryListExport';
+import usePullToRefresh from '@/hooks/../hooks/usePullToRefresh';
 
 const threatColors = {
   safe: 'bg-emerald-100 text-emerald-700',
@@ -20,14 +21,16 @@ export default function NutriScanHistory({ user }) {
   const [loading, setLoading] = useState(true);
   const [showGrocery, setShowGrocery] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     const data = await base44.entities.FoodScanHistory.list('-created_date', 50);
     setScans(data);
     setLoading(false);
-  };
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const { pullDistance, isRefreshing } = usePullToRefresh(load);
 
   const handleDelete = async (id) => {
     await base44.entities.FoodScanHistory.delete(id);
@@ -56,6 +59,12 @@ export default function NutriScanHistory({ user }) {
 
   return (
     <div className="space-y-4">
+      {/* Pull-to-refresh indicator */}
+      {(isRefreshing || pullDistance > 20) && (
+        <div className="flex justify-center py-2">
+          <RefreshCw className={`w-5 h-5 text-teal-500 ${isRefreshing ? 'animate-spin' : ''}`} style={{ transform: `rotate(${pullDistance * 2}deg)` }} />
+        </div>
+      )}
       {showGrocery && (
         <GroceryListExport scans={weekScans.length > 0 ? weekScans : scans} onClose={() => setShowGrocery(false)} />
       )}

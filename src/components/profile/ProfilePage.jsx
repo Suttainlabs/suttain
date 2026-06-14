@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AuthContext from '../auth/AuthContext';
@@ -15,6 +15,7 @@ import {
   ChevronRight, BarChart2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import usePullToRefresh from '../../hooks/usePullToRefresh';
 
 function timeAgo(dateStr) {
   if (!dateStr) return '';
@@ -39,30 +40,31 @@ export default function ProfilePage() {
 
   const isPro = trialStatus.isPro;
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!user) return;
-    const fetch = async () => {
-      setIsLoading(true);
-      try {
-        const [statsData, formulas, simulations] = await Promise.all([
-          getUserStats(),
-          base44.entities.Formula.list('-updated_date', 6),
-          base44.entities.Simulation.list('-created_date', 6),
-        ]);
-        if (statsData?.data) setStats(statsData.data);
-        const merged = [
-          ...(formulas || []).map(f => ({ ...f, _type: 'Formula', _icon: FlaskConical, _color: 'bg-violet-100 text-violet-600' })),
-          ...(simulations || []).map(s => ({ ...s, _type: 'Simulation', _icon: TestTube, _color: 'bg-teal-100 text-teal-600' })),
-        ].sort((a, b) => new Date(b.updated_date || b.created_date) - new Date(a.updated_date || a.created_date)).slice(0, 4);
-        setRecentItems(merged);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetch();
+    setIsLoading(true);
+    try {
+      const [statsData, formulas, simulations] = await Promise.all([
+        getUserStats(),
+        base44.entities.Formula.list('-updated_date', 6),
+        base44.entities.Simulation.list('-created_date', 6),
+      ]);
+      if (statsData?.data) setStats(statsData.data);
+      const merged = [
+        ...(formulas || []).map(f => ({ ...f, _type: 'Formula', _icon: FlaskConical, _color: 'bg-violet-100 text-violet-600' })),
+        ...(simulations || []).map(s => ({ ...s, _type: 'Simulation', _icon: TestTube, _color: 'bg-teal-100 text-teal-600' })),
+      ].sort((a, b) => new Date(b.updated_date || b.created_date) - new Date(a.updated_date || a.created_date)).slice(0, 4);
+      setRecentItems(merged);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   }, [user]);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  const { isRefreshing } = usePullToRefresh(fetchData);
 
   const getGreeting = () => {
     const h = new Date().getHours();
@@ -77,6 +79,11 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
+      {isRefreshing && (
+        <div className="flex justify-center py-2 bg-white/60 backdrop-blur-sm sticky top-16 z-10">
+          <div className="w-4 h-4 border-2 border-slate-200 border-t-teal-500 rounded-full animate-spin" />
+        </div>
+      )}
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
 
         {/* ── Hero Header ── */}

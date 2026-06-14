@@ -126,8 +126,8 @@ const NotificationItem = ({ notification, onMarkRead, onSnooze, onClose }) => {
 
 export default function NotificationCenter({ isOpen, onClose }) {
   const queryClient = useQueryClient();
-  
-  const { data: notifications = [], refetch } = useQuery({
+
+  const { data: notifications = [], refetch, isFetching } = useQuery({
     queryKey: ['notifications'],
     queryFn: async () => {
       const allNotifications = await base44.entities.Notification.list('-created_date', 50);
@@ -203,6 +203,7 @@ export default function NotificationCenter({ isOpen, onClose }) {
           exit={{ x: 400 }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           className="fixed right-0 top-0 h-full w-full sm:w-[450px] bg-white shadow-2xl"
+          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex flex-col h-full">
@@ -230,11 +231,21 @@ export default function NotificationCenter({ isOpen, onClose }) {
                     Mark all read
                   </Button>
                 )}
+                <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8 w-8 p-0" title="Refresh">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+                </Button>
                 <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
                   <X className="w-5 h-5" />
                 </Button>
               </div>
             </div>
+
+            {/* Pull to refresh indicator */}
+            {isFetching && (
+              <div className="flex justify-center py-2 bg-slate-50 border-b">
+                <div className="w-4 h-4 border-2 border-slate-300 border-t-blue-500 rounded-full animate-spin" />
+              </div>
+            )}
 
             {/* Notifications List */}
             <ScrollArea className="flex-1 p-4">
