@@ -160,10 +160,10 @@
     user-select: none;
   }
 
-  h1 { font-size: clamp(1.25rem, 5.5vw, 2.5rem); line-height: 1.2; font-weight: 700; }
-  h2 { font-size: clamp(1.1rem,  4.5vw, 2rem);   line-height: 1.25; font-weight: 700; }
-  h3 { font-size: clamp(0.95rem, 3.5vw, 1.5rem); line-height: 1.3; font-weight: 600; }
-  h4 { font-size: clamp(0.875rem,3vw,  1.25rem); line-height: 1.4; font-weight: 600; }
+  h1 { font-size: clamp(1rem, 5.5vw, 2.5rem); line-height: 1.2; font-weight: 700; }
+  h2 { font-size: clamp(0.95rem, 4.5vw, 2rem); line-height: 1.25; font-weight: 700; }
+  h3 { font-size: clamp(0.875rem, 3.5vw, 1.5rem); line-height: 1.3; font-weight: 600; }
+  h4 { font-size: clamp(0.8rem, 3vw, 1.25rem); line-height: 1.4; font-weight: 600; }
   h5 { font-size: 0.9rem;  line-height: 1.5; font-weight: 600; }
   h6 { font-size: 0.825rem; line-height: 1.5; font-weight: 600; }
 
@@ -202,19 +202,17 @@
 /* text-xs / text-sm / text-base are already readable — left untouched.      */
 @layer utilities {
   @media (max-width: 639px) {
-    /* Slightly tighten lg text so it doesn't crowd small screens */
-    .text-lg   { font-size: clamp(0.9rem,  3.5vw, 1.125rem) !important; line-height: 1.5 !important; }
-    .text-xl   { font-size: clamp(0.95rem, 4vw,   1.25rem)  !important; line-height: 1.45 !important; }
-    /* Medium headings */
-    .text-2xl  { font-size: clamp(1.05rem, 5vw,   1.5rem)   !important; line-height: 1.3 !important; }
-    .text-3xl  { font-size: clamp(1.15rem, 5.5vw, 1.875rem) !important; line-height: 1.25 !important; }
-    /* Large display headings — capped hard so they never overflow */
-    .text-4xl  { font-size: clamp(1.3rem,  6vw,   2.25rem)  !important; line-height: 1.2 !important; }
-    .text-5xl  { font-size: clamp(1.45rem, 7vw,   3rem)     !important; line-height: 1.15 !important; }
-    .text-6xl  { font-size: clamp(1.6rem,  8vw,   3.75rem)  !important; line-height: 1.1 !important; }
-    .text-7xl  { font-size: clamp(1.75rem, 9vw,   4.5rem)   !important; line-height: 1.08 !important; }
-    .text-8xl  { font-size: clamp(1.9rem,  10vw,  6rem)     !important; line-height: 1.05 !important; }
-    .text-9xl  { font-size: clamp(2rem,    11vw,  8rem)     !important; line-height: 1.05 !important; }
+    /* Tighten all Tailwind text classes on mobile */
+    .text-lg   { font-size: clamp(0.8rem,  3.5vw, 1.125rem) !important; line-height: 1.5 !important; }
+    .text-xl   { font-size: clamp(0.85rem, 4vw,   1.25rem)  !important; line-height: 1.45 !important; }
+    .text-2xl  { font-size: clamp(0.9rem,  5vw,   1.5rem)   !important; line-height: 1.3 !important; }
+    .text-3xl  { font-size: clamp(0.95rem, 5.5vw, 1.875rem) !important; line-height: 1.25 !important; }
+    .text-4xl  { font-size: clamp(1rem,    6vw,   2.25rem)  !important; line-height: 1.2 !important; }
+    .text-5xl  { font-size: clamp(1.1rem,  7vw,   3rem)     !important; line-height: 1.15 !important; }
+    .text-6xl  { font-size: clamp(1.2rem,  8vw,   3.75rem)  !important; line-height: 1.1 !important; }
+    .text-7xl  { font-size: clamp(1.4rem,  9vw,   4.5rem)   !important; line-height: 1.08 !important; }
+    .text-8xl  { font-size: clamp(1.6rem,  10vw,  6rem)     !important; line-height: 1.05 !important; }
+    .text-9xl  { font-size: clamp(1.8rem,  11vw,  8rem)     !important; line-height: 1.05 !important; }
   }
 }
 
