@@ -238,11 +238,11 @@ export default function ProfilePage() {
               {/* Actions */}
               <div className="px-5 pb-5 pt-1 space-y-2 border-t border-slate-100">
                 {isPro ? (
-                  <>
-                    <Link to={createPageUrl('Settings')}
-                      className="flex items-center justify-between text-sm font-semibold text-teal-700 hover:text-teal-800 py-2 transition-colors">
-                      Manage Billing <ChevronRight className="w-4 h-4" />
-                    </Link>
+                    <>
+                      <Link to={createPageUrl('BillingDashboard')}
+                        className="flex items-center justify-between text-sm font-semibold text-teal-700 hover:text-teal-800 py-2 transition-colors">
+                        Manage Billing <ChevronRight className="w-4 h-4" />
+                      </Link>
                     <Link to={createPageUrl('Pricing')}
                       className="flex items-center justify-between text-sm text-slate-400 hover:text-slate-600 py-1 transition-colors">
                       View all plans <ChevronRight className="w-4 h-4" />
