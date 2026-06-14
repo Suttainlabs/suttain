@@ -71,17 +71,20 @@ export default function HydrationReminders() {
     const currentStyle = STYLE_OPTIONS.find(s => s.value === settings.reminder_style);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/20 pb-28">
-            <div className="bg-white border-b border-slate-100 px-4 pt-4 pb-3 sticky top-0 z-20">
-                <div className="flex items-center gap-3 max-w-lg mx-auto">
-                    <Link to="/HydrationHome" className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
-                        <ChevronLeft className="w-5 h-5 text-slate-600" />
-                    </Link>
-                    <h1 className="text-base font-bold text-slate-800">Reminder Settings</h1>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/20 pb-24 lg:pb-8">
+            <div className="bg-white sticky top-0 z-20">
+                <div className="border-b border-slate-100 px-4 pt-4 pb-3">
+                    <div className="flex items-center gap-3 max-w-lg mx-auto">
+                        <Link to="/HydrationHome" className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                            <ChevronLeft className="w-5 h-5 text-slate-600" />
+                        </Link>
+                        <h1 className="text-base font-bold text-slate-800">Reminder Settings</h1>
+                    </div>
                 </div>
+                <HydrationBottomNav />
             </div>
 
-            <div className="max-w-lg mx-auto px-4 pt-6 space-y-4">
+            <div className="max-w-lg mx-auto px-4 pt-4 space-y-4">
                 {/* Smart Reminders Toggle */}
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5">
                     <div className="flex items-center justify-between mb-2">
@@ -206,7 +209,6 @@ export default function HydrationReminders() {
                 </button>
             </div>
 
-            <HydrationBottomNav />
         </div>
     );
 }

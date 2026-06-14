@@ -57,9 +57,10 @@ export default function HydrationHome() {
     const streak = profile?.current_streak || 0;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50/30 pb-28">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50/30 pb-24 lg:pb-8">
             {/* Header */}
-            <div className="bg-white border-b border-slate-100 px-4 pt-4 pb-3 sticky top-0 z-20">
+            <div className="bg-white sticky top-0 z-20">
+            <div className="border-b border-slate-100 px-4 pt-4 pb-3">
                 <div className="flex items-center justify-between max-w-lg mx-auto">
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1.5 bg-orange-50 border border-orange-200 rounded-full px-3 py-1">
@@ -85,8 +86,10 @@ export default function HydrationHome() {
                     </div>
                 </div>
             </div>
+            <HydrationBottomNav />
+            </div>
 
-            <div className="max-w-lg mx-auto px-4 pt-6 space-y-5">
+            <div className="max-w-lg mx-auto px-4 pt-4 space-y-5">
                 {/* Progress Ring */}
                 <div className="flex justify-center">
                     <ProgressRing intake={totalIntake} goal={trueGoal} size={220} unit={unit} />
@@ -166,7 +169,7 @@ export default function HydrationHome() {
                 <CustomAmountModal onLog={(ml, type) => logDrink(ml, type, trueGoal)} onClose={() => setShowCustom(false)} unit={unit} />
             )}
 
-            <HydrationBottomNav />
+            {/* HydrationBottomNav is now a sticky sub-nav at the top, rendered inside the page layout */}
         </div>
     );
 }

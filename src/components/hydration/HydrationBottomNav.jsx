@@ -11,23 +11,26 @@ const TABS = [
 export default function HydrationBottomNav() {
     const location = useLocation();
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 pb-[env(safe-area-inset-bottom)]">
-            <div className="flex">
+        <div className="sticky top-[64px] z-30 bg-white border-b border-slate-100 shadow-sm">
+            <div className="flex overflow-x-auto no-scrollbar max-w-lg mx-auto px-2">
                 {TABS.map(({ path, label, icon: Icon }) => {
                     const active = location.pathname === path;
                     return (
                         <Link
                             key={path}
                             to={path}
-                            className={`flex-1 flex flex-col items-center gap-1 py-2.5 text-xs font-semibold transition-colors
-                                ${active ? 'text-teal-600' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`flex-shrink-0 flex flex-col items-center gap-1 px-5 py-2.5 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap
+                                ${active
+                                    ? 'border-teal-500 text-teal-600'
+                                    : 'border-transparent text-slate-400 hover:text-slate-600'
+                                }`}
                         >
-                            <Icon className={`w-5 h-5 ${active ? 'text-teal-600' : 'text-slate-400'}`} />
+                            <Icon className="w-4 h-4" />
                             {label}
                         </Link>
                     );
                 })}
             </div>
-        </nav>
+        </div>
     );
 }

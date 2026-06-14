@@ -958,7 +958,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                 </Card>
 
                 {/* Main Content */}
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 items-start">
                     {/* Left: Tabs Content (3 columns) */}
                     <div className="lg:col-span-3">
                         <Card className="border-slate-200 shadow-md">
@@ -983,14 +983,14 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                             <button
                                                 key={tab.id}
                                                 onClick={() => setActiveTab(tab.id)}
-                                                className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium whitespace-nowrap transition-all border-b-2 ${
+                                                className={`flex items-center gap-1.5 px-3 py-3 text-xs font-medium whitespace-nowrap transition-all border-b-2 ${
                                                     activeTab === tab.id
                                                         ? 'border-indigo-600 text-indigo-600 bg-white'
-                                                        : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                                                        : 'border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                                                 }`}
                                             >
                                                 {tab.icon}
-                                                <span className="hidden sm:inline">{tab.label}</span>
+                                                <span className="sr-only sm:not-sr-only sm:inline">{tab.label}</span>
                                             </button>
                                         ))}
                                     </nav>
@@ -1014,7 +1014,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                     </div>
 
                     {/* Right: Sidebar (1 column) */}
-                    <div className="space-y-4">
+                     <div className="space-y-3 sm:space-y-4">
                         {/* Risk Metrics - Compact */}
                         <Card className="border-slate-200 shadow-md">
                             <CardHeader className="pb-3">
