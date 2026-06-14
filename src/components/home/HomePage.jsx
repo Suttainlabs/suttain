@@ -256,36 +256,44 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Tools Grid ── */}
-      <section className="py-24 sm:py-32 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeIn()} className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
-              Eight Tools, One Platform
-            </h2>
-            <p className="text-slate-500 text-lg max-w-xl mx-auto">From chemical safety and formula generation to hydration tracking and carbon reporting — everything in one place.</p>
-          </motion.div>
+      {/* ── Tools Marquee ── */}
+      <section className="py-14 bg-white overflow-hidden">
+        <motion.div {...fadeIn()} className="text-center mb-8 px-4">
+          <p className="text-slate-400 text-sm font-medium uppercase tracking-widest">Everything you need</p>
+        </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {tools.map(({ icon: Icon, label, desc, href, color }, i) => (
-              <motion.div key={i} {...fadeIn(i * 0.06)}>
-                <Link to={createPageUrl(href)} className="group block h-full">
-                  <div className="h-full border border-slate-200 rounded-2xl p-6 bg-white hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col" style={{ borderTopColor: color, borderTopWidth: 3 }}>
-                    <div
-                      className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 flex-shrink-0"
-                      style={{ background: `${color}14` }}
-                    >
-                      <Icon className="w-5 h-5" style={{ color }} />
-                    </div>
-                    <h3 className="font-bold text-slate-900 mb-2 text-base">{label}</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed flex-1">{desc}</p>
-                    <div className="mt-4 flex items-center text-sm font-semibold" style={{ color }}>
-                      Explore
-                      <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+        <style>{`
+          @keyframes marquee {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marquee 28s linear infinite;
+          }
+          .marquee-track:hover { animation-play-state: paused; }
+        `}</style>
+
+        <div className="relative">
+          {/* Fade edges */}
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-10" style={{ background: "linear-gradient(to right, white, transparent)" }} />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10" style={{ background: "linear-gradient(to left, white, transparent)" }} />
+
+          <div className="marquee-track">
+            {[...tools, ...tools].map(({ icon: Icon, label, href, color }, i) => (
+              <Link
+                key={i}
+                to={createPageUrl(href)}
+                className="group flex items-center gap-3 mx-3 px-5 py-3 rounded-full border border-slate-200 bg-white hover:border-transparent hover:shadow-md transition-all duration-200 whitespace-nowrap flex-shrink-0"
+                style={{ "--tool-color": color }}
+              >
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${color}14` }}>
+                  <Icon className="w-4 h-4" style={{ color }} />
+                </div>
+                <span className="font-semibold text-sm text-slate-700 group-hover:text-slate-900">{label}</span>
+                <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200" style={{ color }} />
+              </Link>
             ))}
           </div>
         </div>
