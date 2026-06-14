@@ -228,7 +228,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
         { id: 'visualization', label: 'Visualization', icon: <Eye className="w-4 h-4" /> },
         { id: 'reaction', label: 'Reaction', icon: <ArrowRightLeft className="w-4 h-4" /> },
         { id: 'health', label: 'Health & Safety', icon: <Heart className="w-4 h-4" /> },
-        { id: 'safety_advisor', label: 'AI Safety Advisor', icon: <Shield className="w-4 h-4" /> },
+
         { id: 'analysis', label: 'Advanced Analysis', icon: <BarChart className="w-4 h-4" /> },
         ...(isAdvanced ? [
             { id: 'experimental', label: 'Experimental', icon: <Microscope className="w-4 h-4" /> },
@@ -640,19 +640,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                         )}
                     </div>
                 );
-            case 'safety_advisor':
-                return (
-                    <SafetyAdvisor 
-                        chemicals={chemicals} 
-                        simulationResults={{
-                            risk_score: risk_assessment.overall_risk_score,
-                            health_impact: risk_assessment.health_impact_score,
-                            environmental_impact: risk_assessment.environmental_impact_score,
-                            reactivity: risk_assessment.reactivity_score,
-                            reaction_summary: reaction_details?.what_happens
-                        }}
-                    />
-                );
+
             case 'analysis':
                 return (
                     <AdvancedAnalysisPanel currentSimulation={data} />
