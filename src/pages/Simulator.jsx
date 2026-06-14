@@ -923,14 +923,26 @@ export default function Simulator() {
                   <h1 className="text-2xl md:text-3xl font-bold text-slate-800">
                     Chemical Interaction Simulator
                   </h1>
-                  <span className={`px-4 py-1.5 text-sm font-semibold rounded-full ${
-                    isBusinessMode
-                      ? 'bg-slate-900 text-white'
-                      : isResearchMode
-                      ? persona === 'researcher' ? 'bg-slate-700 text-white' : 'bg-teal-600 text-white'
-                      : persona === 'student' ? 'bg-blue-600 text-white' : persona === 'diy' ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'
+                  <span className={`px-4 py-1.5 text-sm font-semibold rounded-full capitalize ${
+                    {
+                      business: 'bg-slate-900 text-white',
+                      researcher: 'bg-slate-700 text-white',
+                      teacher: 'bg-teal-600 text-white',
+                      student: 'bg-blue-600 text-white',
+                      diy: 'bg-orange-600 text-white',
+                      chef: 'bg-amber-600 text-white',
+                      manufacturer: 'bg-red-700 text-white',
+                      engineer: 'bg-cyan-700 text-white',
+                      pharma: 'bg-purple-600 text-white',
+                      doctor: 'bg-blue-700 text-white',
+                      nurse: 'bg-pink-600 text-white',
+                      eco: 'bg-green-700 text-white',
+                      cosmetic: 'bg-rose-500 text-white',
+                      safety: 'bg-red-600 text-white',
+                      lab: 'bg-violet-600 text-white',
+                    }[persona] || 'bg-green-600 text-white'
                   }`}>
-                    {isBusinessMode ? 'Business' : persona === 'researcher' ? 'Research' : persona === 'teacher' ? 'Teaching' : persona === 'student' ? 'Student' : persona === 'diy' ? 'DIY' : 'Household'}
+                    {persona?.replace(/_/g, ' ') || 'Household'}
                   </span>
                 </div>
                 <p className="text-base text-slate-600 max-w-2xl mx-auto">

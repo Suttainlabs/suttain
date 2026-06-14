@@ -371,26 +371,49 @@ export default function ChemicalInput({
     onRunSimulation(enhancedData);
   };
 
-  // Determine icon based on persona
-  const getPersonaIcon = () => {
-    switch(persona) {
-      case 'student': return GraduationCap;
-      case 'diy': return Hammer;
-      case 'household': 
-      default: return Home;
-    }
+  const PERSONA_ICON_MAP = {
+    student: GraduationCap, teacher: GraduationCap, professor: GraduationCap,
+    diy: Hammer, household: Home, chef: Home,
+    parent: Home, traveler: Home,
   };
-  
-  const PersonaIcon = getPersonaIcon();
-  
-  const getPersonaGradient = () => {
-    switch(persona) {
-      case 'student': return 'from-blue-500 to-cyan-500';
-      case 'diy': return 'from-orange-500 to-amber-500';
-      case 'household':
-      default: return 'from-green-500 to-emerald-500';
-    }
+  const PersonaIcon = PERSONA_ICON_MAP[persona] || Atom;
+
+  const PERSONA_GRADIENT_MAP = {
+    student: 'from-blue-500 to-cyan-500',
+    teacher: 'from-teal-600 to-cyan-600',
+    professor: 'from-indigo-600 to-blue-600',
+    researcher: 'from-indigo-600 to-purple-600',
+    diy: 'from-orange-500 to-amber-500',
+    chef: 'from-amber-500 to-orange-400',
+    manufacturer: 'from-red-600 to-red-700',
+    engineer: 'from-cyan-600 to-sky-600',
+    petroleum: 'from-gray-600 to-slate-700',
+    textile: 'from-pink-500 to-rose-500',
+    automotive: 'from-slate-600 to-gray-700',
+    pharma: 'from-purple-500 to-violet-600',
+    doctor: 'from-blue-600 to-blue-700',
+    nurse: 'from-pink-500 to-pink-600',
+    nutrition: 'from-green-500 to-teal-500',
+    fitness: 'from-emerald-500 to-green-600',
+    vet: 'from-teal-500 to-emerald-600',
+    eco: 'from-green-600 to-emerald-700',
+    water: 'from-cyan-500 to-blue-500',
+    forestry: 'from-green-700 to-lime-700',
+    marine: 'from-blue-600 to-cyan-700',
+    air: 'from-sky-500 to-blue-500',
+    recycling: 'from-lime-600 to-green-600',
+    parent: 'from-pink-400 to-rose-400',
+    traveler: 'from-sky-500 to-indigo-500',
+    business: 'from-slate-800 to-slate-900',
+    cosmetic: 'from-rose-400 to-pink-500',
+    safety: 'from-red-600 to-orange-600',
+    regulatory: 'from-yellow-600 to-amber-600',
+    consultant: 'from-slate-600 to-gray-700',
+    lab: 'from-violet-600 to-purple-600',
+    mining: 'from-stone-600 to-gray-700',
+    logistics: 'from-yellow-600 to-orange-600',
   };
+  const getPersonaGradient = () => PERSONA_GRADIENT_MAP[persona] || 'from-green-500 to-emerald-500';
 
   return (
     <Card className="max-w-4xl mx-auto bg-white/80 backdrop-blur-sm shadow-xl border-0">
