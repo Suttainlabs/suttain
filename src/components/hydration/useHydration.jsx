@@ -50,7 +50,51 @@ export function useHydration(user) {
             logged_at: now.toISOString(),
             log_date: TODAY()
         });
-        setTodayLogs(prev => [entry, ...prev]);
+        setTodayLogs(prev => {
+            const updated = [entry, ...prev];
+
+            // Recompute streak after logging
+            setProfile(currentProfile => {
+                if (!currentProfile?.id) return currentProfile;
+
+                const newTotal = updated.reduce((s, l) => s + (l.amount_ml || 0), 0);
+                const baseGoal = currentProfile.base_goal_ml || 2000;
+                const actBonus = { sedentary: 0, light: 150, moderate: 300, active: 500, very_active: 700 }[currentProfile.activity_level] || 0;
+                const climBonus = { cool: 0, moderate: 100, hot: 300, humid: 250 }[currentProfile.climate] || 0;
+                const goal = baseGoal + actBonus + climBonus;
+
+                // Only update streak once per day when goal is first hit
+                if (newTotal >= goal) {
+                    const today = TODAY();
+                    const lastActive = currentProfile.last_active_date;
+
+                    // Already counted today
+                    if (lastActive === today) return currentProfile;
+
+                    // Check if yesterday was also active (streak continues)
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    const yesterdayStr = yesterday.toISOString().split('T')[0];
+                    const isConsecutive = lastActive === yesterdayStr;
+
+                    const newStreak = isConsecutive ? (currentProfile.current_streak || 0) + 1 : 1;
+                    const newLongest = Math.max(newStreak, currentProfile.longest_streak || 0);
+
+                    const updates = {
+                        current_streak: newStreak,
+                        longest_streak: newLongest,
+                        last_active_date: today
+                    };
+
+                    base44.entities.HydrationProfile.update(currentProfile.id, updates).catch(console.error);
+                    return { ...currentProfile, ...updates };
+                }
+
+                return currentProfile;
+            });
+
+            return updated;
+        });
         return entry;
     }, [user]);
 

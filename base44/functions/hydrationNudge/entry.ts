@@ -24,6 +24,18 @@ Deno.serve(async (req) => {
             return Response.json({ message: 'No hydration profiles found.', notified: 0 });
         }
 
+        // Build a userId->email map upfront to avoid N+1 queries in the loop
+        const userIds = [...new Set(profiles.map(p => p.created_by_id).filter(Boolean))];
+        const userEmailMap = {};
+        try {
+            const allUsers = await base44.asServiceRole.entities.User.list('-created_date', 1000);
+            for (const u of allUsers) {
+                userEmailMap[u.id] = u.email;
+            }
+        } catch (userErr) {
+            console.error('Failed to fetch users for email map:', userErr.message);
+        }
+
         let notified = 0;
 
         for (const profile of profiles) {
@@ -32,6 +44,9 @@ Deno.serve(async (req) => {
 
             // Skip users who have reminders disabled
             if (!profile.smart_reminders) continue;
+
+            const userEmail = userEmailMap[userId];
+            if (!userEmail) continue;
 
             // Parse reminder window (stored as HH:MM)
             const startParts = (profile.reminder_start || '07:00').split(':');
@@ -72,7 +87,7 @@ Deno.serve(async (req) => {
             const freqMins = parseInt(profile.reminder_frequency || '60') || 60;
 
             const recentNotifs = await base44.asServiceRole.entities.Notification.filter(
-                { target_user: userId, type: 'system' },
+                { target_user: userEmail, type: 'system' },
                 '-created_date',
                 10
             );
@@ -119,7 +134,7 @@ Deno.serve(async (req) => {
                 message,
                 type: 'system',
                 severity: pct < 40 ? 'warning' : 'info',
-                target_user: userId,
+                target_user: userEmail,
                 action_url: '/HydrationHome',
                 metadata: {
                     hydration_reminder: true,
@@ -132,10 +147,6 @@ Deno.serve(async (req) => {
 
             // Also send an email reminder via Resend
             try {
-                // Fetch user email
-                const users = await base44.asServiceRole.entities.User.filter({ id: userId }, '-created_date', 1);
-                const userEmail = users[0]?.email;
-
                 if (userEmail) {
                     const resendKey = Deno.env.get('RESEND_API_KEY');
                     if (resendKey) {
