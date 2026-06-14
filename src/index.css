@@ -160,23 +160,24 @@
     user-select: none;
   }
 
-  h1 { font-size: clamp(1.5rem, 5vw, 2.5rem); line-height: 1.2; font-weight: 700; }
-  h2 { font-size: clamp(1.25rem, 4vw, 2rem); line-height: 1.25; font-weight: 700; }
-  h3 { font-size: clamp(1.1rem, 3vw, 1.5rem); line-height: 1.3; font-weight: 600; }
-  h4 { font-size: clamp(1rem, 2.5vw, 1.25rem); line-height: 1.4; font-weight: 600; }
-  h5 { font-size: 1rem; line-height: 1.5; font-weight: 600; }
-  h6 { font-size: 0.9rem; line-height: 1.5; font-weight: 600; }
+  h1 { font-size: clamp(1.4rem, 4vw, 2.5rem); line-height: 1.2; font-weight: 700; }
+  h2 { font-size: clamp(1.15rem, 3.5vw, 2rem); line-height: 1.25; font-weight: 700; }
+  h3 { font-size: clamp(1rem, 2.5vw, 1.5rem); line-height: 1.3; font-weight: 600; }
+  h4 { font-size: clamp(0.9rem, 2vw, 1.25rem); line-height: 1.4; font-weight: 600; }
+  h5 { font-size: 0.95rem; line-height: 1.5; font-weight: 600; }
+  h6 { font-size: 0.875rem; line-height: 1.5; font-weight: 600; }
 
   p, li, span, label, input, textarea, select, button {
     font-family: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
   }
 
   @media (max-width: 640px) {
-    h1 { font-size: 1.5rem; line-height: 1.2; }
-    h2 { font-size: 1.25rem; line-height: 1.25; }
-    h3 { font-size: 1.1rem; line-height: 1.3; }
-    h4 { font-size: 1rem; }
-    p, li { font-size: 0.9rem; line-height: 1.6; }
+    body { font-size: 0.9rem; }
+    h1 { font-size: 1.4rem; line-height: 1.2; }
+    h2 { font-size: 1.15rem; line-height: 1.25; }
+    h3 { font-size: 1rem; line-height: 1.3; }
+    h4 { font-size: 0.9rem; }
+    p, li { font-size: 0.85rem; line-height: 1.6; }
   }
 
   /* 44px minimum touch targets on mobile */
@@ -197,6 +198,18 @@
   [data-radix-dialog-content],
   [data-vaul-drawer-content] {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ── Constrain oversized Tailwind text classes on mobile ── */
+@layer utilities {
+  @media (max-width: 640px) {
+    .text-4xl { font-size: 1.5rem !important; line-height: 1.2 !important; }
+    .text-5xl { font-size: 1.75rem !important; line-height: 1.15 !important; }
+    .text-6xl { font-size: 2rem !important; line-height: 1.1 !important; }
+    .text-7xl { font-size: 2.25rem !important; line-height: 1.1 !important; }
+    .text-8xl { font-size: 2.5rem !important; line-height: 1.05 !important; }
+    .text-9xl { font-size: 2.75rem !important; line-height: 1.05 !important; }
   }
 }
 
