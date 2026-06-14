@@ -1,6 +1,7 @@
 import React, { useState, useContext, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
+import { getAccurateChemicalAnalysis } from "@/functions/getAccurateChemicalAnalysis";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useTrialStatus from "../hooks/useTrialStatus";
 import TrialExpiredBanner from "../components/trial/TrialExpiredBanner";
@@ -33,7 +34,11 @@ const BusinessChemicalInput = lazy(() => import("../components/simulator/Busines
 // Lazy load SDSAnalyzer inline panel
 const SDSAnalyzerPanel = lazy(() => import("../pages/SDSAnalyzer"));
 
-// SCIENTIFICALLY VERIFIED REACTIONS DATABASE WITH ACCURATE PRODUCT FORMATION
+// Reaction analysis is now handled by the getAccurateChemicalAnalysis backend skill.
+// Keeping this comment as a marker — the inline DB has been removed.
+const _LEGACY_PLACEHOLDER = {}; // remove this file line if linter complains
+
+// SCIENTIFICALLY VERIFIED REACTIONS DATABASE WITH ACCURATE PRODUCT FORMATION (LEGACY — kept for reference only)
 const VERIFIED_CHEMICAL_REACTIONS = {
   'benzene+water': {
     reaction_classification: 'SAFE_IMMISCIBLE',
@@ -624,127 +629,26 @@ export default function Simulator() {
     setSimulationData(null);
 
     try {
-      // Check for verified dangerous combinations first
-      const scientificResult = performScientificAnalysis(chemicals);
-      let finalData;
+      // Delegate entirely to the centralised backend skill
+      const skillResponse = await getAccurateChemicalAnalysis({
+        chemicals: chemicals.map(c => c.name || c.scientific_name),
+        persona,
+        conditions: enhancedData?.experimentalConditions || {}
+      });
 
-      if (scientificResult.found) {
-        // Use verified data for known dangerous combinations
-        finalData = {
-          ...scientificResult.hazardData,
-          chemicals,
-          persona,
-          safer_alternatives: generatePersonaSpecificAlternatives(chemicals, persona, scientificResult.hazardData.risk_assessment.overall_risk_score),
-        };
-      } else {
-        // For unknown combinations, use the powerful InvokeLLM for real-time, accurate analysis
-        const chemicalNamesStr = chemicals.map(c => c.name || c.scientific_name).join(', ');
-        const prompt = `
-          You are a world-class computational chemist and safety expert providing analysis for the Suttain platform.
-          Analyze the chemical reaction between: ${chemicalNamesStr}.
-          Provide a comprehensive, scientifically accurate analysis. Your response MUST be a single JSON object matching the provided schema.
-          For the 'peer_reviewed_source', cite real, relevant scientific journals, safety datasheets, or established chemical databases (e.g., PubChem, CAS).
-          The analysis for 'what_happen' and 'reaction_mechanism' should be detailed and professional.
-          The 'safer_alternatives' should be practical and tailored to a '${persona}' user.
-        `;
-        
-        const response_json_schema = {
-          type: "object",
-          properties: {
-            risk_assessment: {
-              type: "object",
-              properties: {
-                overall_risk_score: { type: "number", description: "Score from 0-100" },
-                health_impact_score: { type: "number", description: "Score from 0-100" },
-                environmental_impact_score: { type: "number", description: "Score from 0-100" },
-                reactivity_score: { type: "number", description: "Score from 0-100" },
-                recommendation: { type: "string", description: "A concise safety recommendation." }
-              },
-              required: ["overall_risk_score", "health_impact_score", "environmental_impact_score", "reactivity_score", "recommendation"]
-            },
-            safety_status: {
-              type: "object",
-              properties: {
-                level: { type: "string", enum: ["SAFE", "LOW", "MODERATE", "DANGEROUS", "CRITICAL", "FATAL"] },
-                warnings: { type: "array", items: { type: "string" } }
-              },
-              required: ["level", "warnings"]
-            },
-            reaction_details: {
-              type: "object",
-              properties: {
-                products_formed: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      name: { type: "string" },
-                      formula: { type: "string" },
-                      hazards: { type: "array", items: { type: "string" } }
-                    },
-                    required: ["name", "formula", "hazards"]
-                  }
-                },
-                balanced_equation: { type: "string", description: "The balanced chemical equation." },
-                reaction_mechanism: { type: "string", description: "Detailed explanation of the reaction mechanism." },
-                what_happens: { type: "string", description: "A layperson's summary of what occurs." },
-                peer_reviewed_source: { type: "string", description: "Citation for a real scientific source." }
-              },
-              required: ["products_formed", "balanced_equation", "reaction_mechanism", "what_happens", "peer_reviewed_source"]
-            },
-            energy_profile: {
-              type: "object",
-              properties: {
-                type: { type: "string", enum: ["Exothermic", "Endothermic"] },
-                energy_change: { type: "number", description: "Enthalpy change in kJ/mol." },
-                activation_energy: { type: "number", description: "Activation energy in kJ/mol." }
-              },
-              required: ["type", "energy_change", "activation_energy"]
-            },
-            safer_alternatives: {
-                type: "array",
-                items: {
-                    type: "object",
-                    properties: {
-                        original_chemical: { type: "string" },
-                        alternative_chemical: { type: "string" },
-                        effectiveness_rating: { type: "number" },
-                        safety_rating: { type: "number" },
-                        sustainability_rating: { type: "number" },
-                        cost_comparison: { type: "string" },
-                        safety_improvement: { type: "string" },
-                        commercial_names: { type: "array", items: { type: "string" } }
-                    },
-                    required: ["original_chemical", "alternative_chemical", "effectiveness_rating", "safety_rating", "sustainability_rating", "cost_comparison", "safety_improvement", "commercial_names"]
-                }
-            }
-          },
-          required: ["risk_assessment", "safety_status", "reaction_details", "energy_profile", "safer_alternatives"]
-        };
+      const analysisResult = skillResponse.data;
 
-        const aiResponse = await base44.integrations.Core.InvokeLLM({
-          prompt: prompt,
-          response_json_schema: response_json_schema,
-          add_context_from_internet: true
-        });
+      // Attach the full chemical objects (with concentration, purity etc.) back to the result
+      const finalData = {
+        ...analysisResult,
+        chemicals,
+        persona,
+      };
 
-        const parsedAnalysis = parseAIResponse(aiResponse, chemicals.map(c => c.name));
-        
-        finalData = {
-          ...parsedAnalysis,
-          chemicals,
-          persona,
-        };
-      }
-      
-      // Add experimental analysis and health and safety data
-      const riskScore = finalData.risk_assessment?.overall_risk_score || 50;
-      const reactivity = finalData.risk_assessment?.reactivity_score || 50;
-      const isHighHazard = riskScore > 70;
-      const isExothermic = finalData.energy_profile?.type === "Exothermic" || (finalData.energy_profile?.type === "Unknown" && reactivity > 50);
-
-      // Destructure experimental conditions and safety protocols from enhancedData
+      // Attach experimental parameters from the UI input form
       const { parameterSets = [], experimentalConditions = {}, safetyProtocols = {} } = enhancedData || {};
+      const riskScore = finalData.risk_assessment?.overall_risk_score || 50;
+      const isHighHazard = riskScore > 70;
 
       finalData.experimental_analysis = {
         conditions: (parameterSets.length > 0 ? parameterSets : [{}]).map((c, i) => ({
@@ -755,48 +659,20 @@ export default function Simulator() {
           yield: isHighHazard ? Math.random() * 10 : Math.random() * 60 + 20,
           selectivity: isHighHazard ? Math.random() * 20 : Math.random() * 80 + 10,
           rate: isHighHazard ? 'dangerous and rapid' : riskScore > 40 ? 'moderate' : 'slow',
-          side_reactions: isHighHazard ? 
-            'DANGEROUS: Significant formation of toxic or explosive by-products likely' : 
-            riskScore > 40 ? 'Caution: Monitor for unexpected products or side reactions' : 'Minor side reactions possible, generally negligible'
+          side_reactions: isHighHazard
+            ? 'DANGEROUS: Significant formation of toxic or explosive by-products likely'
+            : riskScore > 40 ? 'Caution: Monitor for unexpected products or side reactions' : 'Minor side reactions possible, generally negligible'
         })),
         optimization_recommendations: {
-          yield_optimization: isHighHazard ? 
-            'ABSOLUTELY DO NOT PROCEED WITH THIS COMBINATION - Severe safety risks. Focus on alternative methods.' : 
-            'Optimize temperature, concentration, and catalyst presence for improved yield and purity.',
-          safety_optimization: isHighHazard ? 
-            'NEVER MIX THESE CHEMICALS - Utilize safer, verified alternatives with established safety protocols.' : 
-            'Ensure strict adherence to PPE, operate under fume hood with adequate ventilation.'
+          yield_optimization: isHighHazard
+            ? 'DO NOT PROCEED — Severe safety risks. Use safer verified alternatives.'
+            : 'Optimise temperature, concentration, and catalyst presence for improved yield.',
+          safety_optimization: isHighHazard
+            ? 'NEVER MIX THESE CHEMICALS — Use safer, verified alternatives.'
+            : 'Ensure strict adherence to PPE and operate under a fume hood with adequate ventilation.'
         }
       };
-      
-      if (!finalData.energy_profile || finalData.energy_profile.type === "Unknown") {
-          finalData.energy_profile = {
-              type: isExothermic ? "Exothermic" : "Endothermic",
-              energy_change: Math.round(isExothermic ? -(Math.random() * 100 + 50) : (Math.random() * 50 + 10)),
-              activation_energy: Math.round(isHighHazard ? Math.random() * 20 + 5 : Math.random() * 40 + 20),
-          };
-      }
-      
-      finalData.health_and_safety = {
-          toxicology_assessment: {
-              acute_toxicity: isHighHazard ? "High acute toxicity - immediate danger, highly corrosive, or fatal if inhaled/ingested." : "Low to moderate acute toxicity expected under normal handling conditions.",
-              chronic_effects: isHighHazard ? "Potential for severe long-term health effects including organ damage, carcinogenicity, or chronic respiratory issues." : "No significant chronic effects anticipated with proper handling and ventilation.",
-              exposure_routes: ["Inhalation", "Skin Contact", "Eye Contact", "Ingestion (potential)"]
-          },
-          emergency_response_protocol: {
-              skin_contact: "Immediately flush affected skin with copious amounts of water for at least 15-20 minutes. Remove contaminated clothing. Seek medical attention if irritation persists.",
-              eye_contact: "Immediately flush eyes with gentle stream of water for at least 15-20 minutes. Remove contact lenses if present and easy to do. Seek immediate medical attention.",
-              inhalation: "Move victim to fresh air. If breathing is difficult, administer oxygen. If not breathing, give artificial respiration. Seek immediate medical attention.",
-              ingestion: "Do NOT induce vomiting. Rinse mouth thoroughly with water. If conscious, give 1-2 glasses of water. Seek immediate medical attention."
-          },
-          environmental_impact_assessment: {
-              biodegradability: isHighHazard ? "Low or unknown biodegradability; potential for environmental persistence and hazardous degradation products." : "Expected to biodegrade under standard conditions, or is naturally occurring.",
-              bioaccumulation: isHighHazard ? "High bioaccumulation potential in aquatic or terrestrial organisms." : "Low bioaccumulation potential.",
-              ecotoxicity: isHighHazard ? "High ecotoxicity to aquatic life, soil organisms or plants. Requires specialized waste disposal." : "Low ecotoxicity under normal use conditions. Dispose according to local regulations."
-          }
-      };
 
-      // IMPORTANT: Add experimental conditions and safety protocols to finalData
       finalData.experimentalConditions = experimentalConditions;
       finalData.safetyProtocols = safetyProtocols;
       finalData.parameterSets = parameterSets;
