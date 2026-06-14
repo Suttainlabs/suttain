@@ -53,9 +53,12 @@ export default function HydrationProgress() {
     const [logsLoaded, setLogsLoaded] = useState(false);
     const { unit } = useHydrationUnit();
 
+    // Only fetch the 30 days needed for charts — streaks come from profile directly
+    const cutoff = format(subDays(new Date(), 29), 'yyyy-MM-dd');
+
     const fetchLogs = async () => {
         const [logs, ins] = await Promise.all([
-            base44.entities.HydrationLog.list('-log_date', 500),
+            base44.entities.HydrationLog.filter({ log_date: { $gte: cutoff } }, '-log_date', 1000),
             base44.entities.HydrationInsight.list('-insight_date', 20)
         ]);
         setAllLogs(logs);
@@ -67,12 +70,14 @@ export default function HydrationProgress() {
         if (!user) return;
         fetchLogs().catch(() => setLogsLoaded(true));
 
-        // Real-time subscription — update whenever a log is added/deleted/updated
+        // Real-time subscription — only touch logs within the 30-day window
         const unsubscribe = base44.entities.HydrationLog.subscribe((event) => {
             if (event.type === 'create') {
-                setAllLogs(prev => [event.data, ...prev]);
+                if (event.data?.log_date >= cutoff) {
+                    setAllLogs(prev => [event.data, ...prev]);
+                }
             } else if (event.type === 'update') {
-                setAllLogs(prev => prev.map(l => l.id === event.id ? event.data : l));
+                setAllLogs(prev => prev.map(l => l.id === event.id ? { ...l, ...event.data } : l));
             } else if (event.type === 'delete') {
                 setAllLogs(prev => prev.filter(l => l.id !== event.id));
             }
