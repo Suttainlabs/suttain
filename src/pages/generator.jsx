@@ -626,6 +626,7 @@ export default function Generator() {
                 onBack={() => setCurrentStep(2)}
                 onGenerateOptions={handleGenerateOptions}
                 isGenerating={isGenerating}
+                initialDescription={sdsSourceChemical ? `Safer alternative to ${sdsSourceChemical} — looking for a lower-risk, effective replacement` : ""}
               />
             )}
 

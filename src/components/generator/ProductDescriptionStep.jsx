@@ -12,9 +12,10 @@ export default function ProductDescriptionStep({
   productType, 
   onBack, 
   onGenerateOptions,
-  isGenerating 
+  isGenerating,
+  initialDescription
 }) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialDescription || "");
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);

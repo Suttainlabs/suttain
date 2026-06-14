@@ -132,6 +132,10 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
     const simType = urlParams.get('sim_type') || '';
     const simStability = urlParams.get('stability') || '';
 
+    // Detect if opened from SDS Analyzer
+    const fromSDS = urlParams.get('source') === 'sds';
+    const sdsChemical = urlParams.get('chemical') || '';
+
     useEffect(() => {
         const fetchRecent = async () => {
             try {
@@ -177,6 +181,27 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
             </div>
             
             <div className="max-w-6xl mx-auto space-y-12 relative z-10">
+
+                {/* SDS Analyzer Banner */}
+                {fromSDS && sdsChemical && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-teal-50 border-2 border-teal-300 rounded-2xl p-5 flex items-start gap-4"
+                    >
+                        <div className="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <FlaskConical className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="font-bold text-teal-900 text-sm mb-0.5">
+                                Generating a safer formula for: {sdsChemical}
+                            </p>
+                            <p className="text-xs text-teal-700">
+                                Source: SDS Analyzer — the description field will be pre-filled with a safer alternative context.
+                            </p>
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* Simulation Pipeline Banner */}
                 {fromSimulation && (
