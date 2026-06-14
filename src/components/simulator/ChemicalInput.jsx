@@ -651,37 +651,34 @@ export default function ChemicalInput({
               <p className="text-sm text-slate-400 mt-1">Search and add at least 2 chemicals to run a simulation</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="flex flex-col gap-2">
               {chemicals.map((chemical) => (
                 <motion.div
                   key={chemical.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="bg-white border-2 border-slate-200 rounded-lg p-3 hover:shadow-md transition-shadow"
+                  className="bg-white border border-slate-200 rounded-lg px-3 py-2.5 flex items-center gap-3 hover:shadow-sm transition-shadow"
                 >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-teal-100 to-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <TestTube className="w-4 h-4 text-[var(--suttain-teal)]" />
-                    </div>
-                    <Button
-                      onClick={() => onRemoveChemical(chemical.id)}
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0 h-6 w-6 p-0"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </Button>
+                  <div className="w-8 h-8 bg-gradient-to-br from-teal-100 to-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <TestTube className="w-4 h-4 text-[var(--suttain-teal)]" />
                   </div>
-
-                  <div className="text-center">
+                  <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-slate-900 truncate capitalize" title={chemical.display_name || chemical.name}>
                       {chemical.display_name || chemical.name}
                     </p>
-                    <p className="text-xs text-slate-500 truncate mt-1">
+                    <p className="text-xs text-slate-500 truncate">
                       {chemical.molecular_formula || 'Chemical compound'}
                     </p>
                   </div>
+                  <Button
+                    onClick={() => onRemoveChemical(chemical.id)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0 h-7 w-7 p-0"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </Button>
                 </motion.div>
               ))}
             </div>
