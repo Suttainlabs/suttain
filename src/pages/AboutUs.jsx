@@ -5,7 +5,7 @@ import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Target, Eye, ArrowRight, Users, Zap, Cpu, Building2, Beaker, Sparkles, Smartphone, Microscope, CheckCircle, Rocket, Home } from 'lucide-react';
+import { Target, Eye, ArrowRight, Users, Zap, Cpu, Building2, Beaker, Sparkles, Smartphone, Microscope, CheckCircle, Rocket, Home, Droplets, Leaf, Database } from 'lucide-react';
 import SEOHead, { pageSEO } from '../components/shared/SEOHead';
 
 const IMAGES = {
@@ -103,37 +103,49 @@ export default function AboutUsPage() {
               {
                 num: '1',
                 title: 'Chemical Safety Simulator',
-                desc: 'Test interactions and predict reactions before mixing chemicals. Get instant hazard profiles.',
+                desc: 'Test interactions and predict reactions before mixing. Get instant hazard profiles, SDS analysis, and AI risk scoring.',
                 icon: Beaker
               },
               {
                 num: '2',
                 title: 'AI Formula Generator',
-                desc: 'Create custom skincare, cleaning, and specialty formulas with AI guidance and safety validation.',
+                desc: 'Create custom skincare, cleaning, and specialty formulas with safety scoring, compliance flags, and sustainability ratings.',
                 icon: Sparkles
               },
               {
                 num: '3',
-                title: 'Quick Product Scanner',
-                desc: 'Scan barcodes to analyze ingredients, allergens, and safety ratings instantly.',
+                title: 'SuttainScan',
+                desc: 'Scan any product barcode for a full ingredient breakdown, toxicity profile, and eco-impact score.',
                 icon: Smartphone
               },
               {
                 num: '4',
-                title: 'Advanced Research Simulations',
-                desc: 'Molecular modeling, dynamics, drug discovery, protein analysis, and quantum research—pro-only.',
-                icon: Microscope
+                title: 'Hydration Intelligence',
+                desc: 'Track daily water intake with biological food-linked adjustments, smart reminders, and progress analytics.',
+                icon: Droplets
               },
               {
                 num: '5',
-                title: 'Compliance & Regulatory',
-                desc: 'Stay compliant with global regulations. AI-powered compliance checking and documentation.',
-                icon: CheckCircle
+                title: 'Computational Simulations',
+                desc: 'Run DFT, molecular dynamics, drug discovery, protein modeling, and quantum chemistry scripts without a lab.',
+                icon: Microscope
               },
               {
                 num: '6',
+                title: 'Carbon & Sustainability Reporting',
+                desc: 'Simulate carbon tax scenarios, model decarbonization ROI, and generate exportable sustainability reports.',
+                icon: Leaf
+              },
+              {
+                num: '7',
+                title: 'Ingredient Database',
+                desc: 'Explore 250k+ chemicals by toxicity, INCI name, eco-impact, regulatory status, CAS number, and origin.',
+                icon: Database
+              },
+              {
+                num: '8',
                 title: 'Enterprise API',
-                desc: 'Integrate Suttain into enterprise systems for advanced chemical analysis at scale.',
+                desc: 'Integrate Suttain into enterprise systems for automated chemical analysis, compliance checks, and reporting at scale.',
                 icon: Rocket
               }
             ].map((item, idx) => (

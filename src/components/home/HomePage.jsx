@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, FlaskConical, Sparkles, ShieldCheck,
-  Leaf, BarChart3, Zap, TestTube, QrCode, Cpu, Check, Crown
+  Leaf, BarChart3, Zap, TestTube, QrCode, Cpu, Droplets, Database
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -109,26 +109,58 @@ export default function HomePage() {
     {
       icon: TestTube,
       label: "Chemical Simulator",
-      desc: "Test interactions, predict hazards, and analyze safety data sheets — all in one place.",
+      desc: "Test chemical interactions, predict hazards, and analyze safety data sheets with AI-powered risk scoring.",
       href: "Simulator",
+      color: "#02988C",
     },
     {
       icon: Sparkles,
       label: "Formula Generator",
-      desc: "AI-built formulas validated for safety and compliance.",
+      desc: "Build fully validated formulas with safety scoring, compliance flags, and sustainability ratings built in.",
       href: "generator",
+      color: "#9531F5",
     },
     {
       icon: QrCode,
       label: "SuttainScan",
-      desc: "Scan any product for toxicity and ingredient breakdown.",
+      desc: "Scan any product barcode for a full ingredient breakdown, toxicity profile, and eco-impact score.",
       href: "BarcodeScanner",
+      color: "#02988C",
+    },
+    {
+      icon: Droplets,
+      label: "Hydration Intelligence",
+      desc: "Track daily water intake with biological food-linked adjustments and personalized smart reminders.",
+      href: "HydrationHome",
+      color: "#9531F5",
     },
     {
       icon: Cpu,
       label: "Computational Simulations",
-      desc: "Run DFT, molecular dynamics, drug discovery, and quantum chemistry.",
+      desc: "Run DFT, molecular dynamics, drug discovery, protein modeling, and quantum chemistry scripts.",
       href: "ComputationalSimulation",
+      color: "#02988C",
+    },
+    {
+      icon: Leaf,
+      label: "Carbon & Reporting",
+      desc: "Simulate carbon tax scenarios, model decarbonization ROI, and export sustainability reports.",
+      href: "CarbonTaxSimulator",
+      color: "#9531F5",
+    },
+    {
+      icon: Database,
+      label: "Ingredient Database",
+      desc: "Explore 250k+ chemicals by toxicity, INCI name, eco-impact, regulatory status, and origin.",
+      href: "IngredientDatabase",
+      color: "#02988C",
+    },
+    {
+      icon: BarChart3,
+      label: "Comparative Impact Report",
+      desc: "Benchmark your formula's environmental score against industry averages with exportable reports.",
+      href: "ComparativeImpactReport",
+      color: "#9531F5",
     },
   ];
 
@@ -229,25 +261,25 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div {...fadeIn()} className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
-              One Platform, Every Tool
+              Eight Tools, One Platform
             </h2>
-            <p className="text-slate-500 text-lg">From raw ingredients to market-ready formula — covered end to end.</p>
+            <p className="text-slate-500 text-lg max-w-xl mx-auto">From chemical safety and formula generation to hydration tracking and carbon reporting — everything in one place.</p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {tools.map(({ icon: Icon, label, desc, href }, i) => (
-              <motion.div key={i} {...fadeIn(i * 0.07)}>
+            {tools.map(({ icon: Icon, label, desc, href, color }, i) => (
+              <motion.div key={i} {...fadeIn(i * 0.06)}>
                 <Link to={createPageUrl(href)} className="group block h-full">
-                  <div className="h-full border border-slate-200 rounded-2xl p-6 bg-white hover:border-[#02988C]/40 hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col">
+                  <div className="h-full border border-slate-200 rounded-2xl p-6 bg-white hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col" style={{ borderTopColor: color, borderTopWidth: 3 }}>
                     <div
                       className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 flex-shrink-0"
-                      style={{ background: i % 2 === 0 ? "rgba(2,152,140,0.08)" : "rgba(149,49,245,0.08)" }}
+                      style={{ background: `${color}14` }}
                     >
-                      <Icon className="w-5 h-5" style={{ color: i % 2 === 0 ? "#02988C" : "#9531F5" }} />
+                      <Icon className="w-5 h-5" style={{ color }} />
                     </div>
                     <h3 className="font-bold text-slate-900 mb-2 text-base">{label}</h3>
                     <p className="text-slate-500 text-sm leading-relaxed flex-1">{desc}</p>
-                    <div className="mt-4 flex items-center text-sm font-semibold" style={{ color: "#02988C" }}>
+                    <div className="mt-4 flex items-center text-sm font-semibold" style={{ color }}>
                       Explore
                       <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
                     </div>
