@@ -240,7 +240,7 @@ export default function ProfilePage() {
                           {item.status || item._type}
                         </span>
                       </div>
-                      <p className="text-sm font-bold text-slate-800 truncate mb-1">{item.name || 'Untitled'}</p>
+                      <p className="text-sm font-bold text-slate-800 truncate mb-1">{item.name || item.title || item.chemicals_input || 'Untitled'}</p>
                       <div className="flex items-center gap-1 text-xs text-slate-400">
                         <Clock className="w-3 h-3" />
                         {timeAgo(item.updated_date || item.created_date)}
