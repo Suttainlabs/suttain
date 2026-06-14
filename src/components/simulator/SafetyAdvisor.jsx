@@ -195,7 +195,11 @@ Provide a detailed safety analysis in the following JSON format:
     if (chemicals?.length && !analysis && !isAnalyzing) {
       runAnalysis();
     }
-  }, [chemicals]);
+    // Reset analysis when chemicals change so a new run is triggered
+    if (!chemicals?.length) {
+      setAnalysis(null);
+    }
+  }, [JSON.stringify(chemicals?.map(c => (typeof c === 'string' ? c : c?.name)))]);
 
   if (isAnalyzing) {
     return (
