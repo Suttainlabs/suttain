@@ -40,7 +40,7 @@ export function useHydration(user) {
         ? Math.round((profile.base_goal_ml || 2000) + bioAdjustments.total)
         : 2000;
 
-    const logDrink = useCallback(async (amount_ml, drink_type = 'water') => {
+    const logDrink = useCallback(async (amount_ml, drink_type = 'water', currentTrueGoal) => {
         if (!user) return;
         const now = new Date();
         const entry = await base44.entities.HydrationLog.create({
@@ -58,10 +58,12 @@ export function useHydration(user) {
                 if (!currentProfile?.id) return currentProfile;
 
                 const newTotal = updated.reduce((s, l) => s + (l.amount_ml || 0), 0);
+                // Use the passed-in trueGoal (which includes bio adjustments) if available,
+                // otherwise fall back to base goal + activity + climate
                 const baseGoal = currentProfile.base_goal_ml || 2000;
                 const actBonus = { sedentary: 0, light: 150, moderate: 300, active: 500, very_active: 700 }[currentProfile.activity_level] || 0;
                 const climBonus = { cool: 0, moderate: 100, hot: 300, humid: 250 }[currentProfile.climate] || 0;
-                const goal = baseGoal + actBonus + climBonus;
+                const goal = currentTrueGoal || (baseGoal + actBonus + climBonus);
 
                 // Only update streak once per day when goal is first hit
                 if (newTotal >= goal) {

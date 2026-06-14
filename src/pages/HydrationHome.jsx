@@ -139,7 +139,7 @@ export default function HydrationHome() {
                 {/* Quick Add */}
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-4">
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Quick Add</p>
-                    <QuickAddButtons onLog={logDrink} unit={unit} />
+                    <QuickAddButtons onLog={(ml, type) => logDrink(ml, type, trueGoal)} unit={unit} />
                 </div>
 
                 {/* Biological Intelligence Banner */}
@@ -163,7 +163,7 @@ export default function HydrationHome() {
             </div>
 
             {showCustom && (
-                <CustomAmountModal onLog={logDrink} onClose={() => setShowCustom(false)} unit={unit} />
+                <CustomAmountModal onLog={(ml, type) => logDrink(ml, type, trueGoal)} onClose={() => setShowCustom(false)} unit={unit} />
             )}
 
             <HydrationBottomNav />
