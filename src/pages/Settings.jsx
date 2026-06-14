@@ -6,6 +6,7 @@ import SafetyProfileManager from '../components/profile/SafetyProfileManager';
 import NotificationPreferences from '../components/notifications/NotificationPreferences';
 import AccountDeletionSection from '../components/settings/AccountDeletionSection';
 import SubscriptionCard from '../components/profile/SubscriptionCard';
+import BillingHistory from '../components/profile/BillingHistory';
 import {
   ArrowLeft, CreditCard, ShieldCheck, Bell, Trash2, User, ChevronRight, Crown, Check
 } from 'lucide-react';
@@ -88,6 +89,7 @@ export default function Settings() {
                 <SectionHeader title="Billing & Subscription" description="Manage your plan, billing cycle, and payment details." />
                 <SubscriptionCard />
                 <BillingInfo user={user} />
+                <BillingHistory />
               </div>
             )}
             {activeTab === 'safety' && (

@@ -5,9 +5,10 @@ import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Check, Sparkles, ArrowRight, Shield, Zap, HeartPulse, Star, Infinity, AlertTriangle, Loader2, XCircle, CalendarClock, Leaf, FlaskConical, QrCode, BarChart3, Cpu, FolderOpen, FileText, Atom } from 'lucide-react';
+import { Crown, Check, Sparkles, ArrowRight, Shield, Zap, HeartPulse, Star, Infinity, AlertTriangle, Loader2, XCircle, CalendarClock, Leaf, FlaskConical, QrCode, BarChart3, Cpu, FolderOpen, FileText, Atom, ArrowUpDown } from 'lucide-react';
 import AuthContext from '../auth/AuthContext';
 import { cancelSubscription } from '@/functions/cancelSubscription';
+import { changeSubscription } from '@/functions/changeSubscription';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,6 +51,8 @@ export default function SubscriptionCard() {
   const { user, refreshUser } = useContext(AuthContext);
   const [canceling, setCanceling] = useState(false);
   const [cancelResult, setCancelResult] = useState(null);
+  const [changing, setChanging] = useState(false);
+  const [changeResult, setChangeResult] = useState(null);
 
   // If user just came back from a Stripe checkout (success=true in URL),
   // poll refreshUser to pick up webhook-updated subscription data.
@@ -69,6 +72,10 @@ export default function SubscriptionCard() {
   const isLifetimePlan = billing === 'lifetime';
   // Only show cancel if they have a real Stripe subscription (not lifetime, not admin-granted)
   const canCancel = isPro && !isAdmin && !isLifetimePlan && user?.stripe_subscription_id && !isCanceling;
+  const canSwitch = isPro && !isAdmin && !isLifetimePlan && user?.stripe_subscription_id && !isCanceling;
+  const isMonthly = billing === 'monthly';
+  const switchTarget = isMonthly ? 'pro_yearly' : 'pro_monthly';
+  const switchLabel = isMonthly ? 'Switch to Annual ($49.99/yr — save 17%)' : 'Switch to Monthly ($4.99/mo)';
 
   const planDisplay = isAdmin
     ? PLAN_DISPLAY.admin
@@ -83,6 +90,21 @@ export default function SubscriptionCard() {
   const cancelAtFormatted = cancelAt
     ? new Date(cancelAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     : null;
+
+  const handleChange = async () => {
+    setChanging(true);
+    try {
+      const res = await changeSubscription({ targetPlan: switchTarget });
+      if (res.data?.success) {
+        setChangeResult(res.data.billing);
+        if (refreshUser) refreshUser();
+      }
+    } catch (e) {
+      console.error('Change failed:', e);
+    } finally {
+      setChanging(false);
+    }
+  };
 
   const handleCancel = async () => {
     setCanceling(true);
@@ -170,6 +192,50 @@ export default function SubscriptionCard() {
                 );
               })}
             </div>
+
+            {/* Switch billing cycle */}
+            {canSwitch && (
+              <div className="pt-2 border-t border-slate-100">
+                <p className="text-xs font-semibold text-slate-500 mb-2">Change Plan</p>
+                {changeResult ? (
+                  <div className="flex items-center gap-2 p-3 bg-teal-50 border border-teal-200 rounded-lg text-sm text-teal-700 font-medium">
+                    <Check className="w-4 h-4 flex-shrink-0" />
+                    Switched to {changeResult === 'yearly' ? 'annual' : 'monthly'} billing.
+                  </div>
+                ) : (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full text-teal-700 border-teal-200 hover:bg-teal-50 text-sm"
+                        disabled={changing}
+                      >
+                        {changing
+                          ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Updating plan...</>
+                          : <><ArrowUpDown className="w-4 h-4 mr-2" />{switchLabel}</>
+                        }
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Change billing cycle?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-sm text-slate-600">
+                          {isMonthly
+                            ? 'You will be switched to annual billing at $49.99/year. A prorated invoice will be generated immediately for the difference.'
+                            : 'You will be switched to monthly billing at $4.99/month. The change takes effect at the next billing cycle.'}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Keep current plan</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleChange} className="bg-teal-600 hover:bg-teal-700 text-white">
+                          Confirm change
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              </div>
+            )}
 
             {/* Cancel subscription */}
             {canCancel && (
