@@ -524,10 +524,19 @@ export default function Simulator() {
   const [step, setStep] = useState(1);
   const [chemicals, setChemicals] = useState([]);
 
+  const [sdsSourceBanner, setSdsSourceBanner] = React.useState(null);
+
   // Pre-populate chemicals from URL params (e.g. from SDS Analyzer)
   React.useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const chemParam = urlParams.get("chemicals");
+    const source = urlParams.get("source");
+    const sdsProduct = urlParams.get("sds_product");
+
+    if (source === "sds" && sdsProduct) {
+      setSdsSourceBanner(sdsProduct);
+    }
+
     if (chemParam) {
       const names = chemParam.split(",").map(n => n.trim()).filter(Boolean);
       if (names.length > 0) {
@@ -932,6 +941,24 @@ export default function Simulator() {
                     : "Understand how chemicals interact safely in everyday life"}
                 </p>
               </motion.div>
+
+              {/* SDS Source Banner */}
+              {sdsSourceBanner && step === 1 && (
+                <div className="mb-4 flex items-center gap-3 bg-teal-50 border border-teal-200 rounded-xl px-4 py-3">
+                  <FileText className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-teal-800">
+                      Chemicals loaded from SDS: <span className="font-bold">{sdsSourceBanner}</span>
+                    </p>
+                    <p className="text-xs text-teal-600 mt-0.5">
+                      Add at least one more chemical below, then run the simulation.
+                    </p>
+                  </div>
+                  <button onClick={() => setSdsSourceBanner(null)} className="text-teal-400 hover:text-teal-600 flex-shrink-0">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
 
               {/* Error Display */}
               {error && (

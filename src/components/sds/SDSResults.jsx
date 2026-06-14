@@ -75,12 +75,15 @@ export default function SDSResults({ data, fileName, onReset }) {
   const navigate = useNavigate();
 
   const handleSimulate = () => {
-    const chemicals = (data.ingredients || []).map(i => i.name || i.ingredient_name).filter(Boolean).join(",");
-    navigate(`${createPageUrl("Simulator")}?chemicals=${encodeURIComponent(chemicals)}`);
+    // Use ingredients if available, otherwise fall back to the product name itself
+    const ingredientNames = (data.ingredients || []).map(i => i.name || i.ingredient_name).filter(Boolean);
+    const chemicals = ingredientNames.length > 0 ? ingredientNames.join(",") : (data.product_name || "");
+    navigate(`${createPageUrl("Simulator")}?chemicals=${encodeURIComponent(chemicals)}&source=sds&sds_product=${encodeURIComponent(data.product_name || "")}`);
   };
 
   const handleGenerateFormula = () => {
-    navigate(createPageUrl("generator"));
+    const chemical = data.product_name || (data.ingredients?.[0]?.name) || "";
+    navigate(`${createPageUrl("generator")}?chemical=${encodeURIComponent(chemical)}&source=sds`);
   };
 
   return (

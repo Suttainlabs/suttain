@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import useTrialStatus from "../hooks/useTrialStatus";
@@ -33,6 +33,17 @@ export default function Generator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPointsNotification, setShowPointsNotification] = useState(false);
   const [showSmartStart, setShowSmartStart] = useState(false);
+  const [sdsSourceChemical, setSdsSourceChemical] = useState(null);
+
+  // Pre-populate from SDS source via URL params
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const chemical = urlParams.get("chemical");
+    const source = urlParams.get("source");
+    if (source === "sds" && chemical) {
+      setSdsSourceChemical(chemical);
+    }
+  }, []);
 
   const awardPoints = async (points, reason) => {
     try {
@@ -77,6 +88,10 @@ export default function Generator() {
 
   const handleProductTypeSelected = (product) => {
     setSelectedProductType(product);
+    // Pre-fill description with SDS chemical context if available
+    if (sdsSourceChemical && !productDescription) {
+      setProductDescription(`Safer alternative to ${sdsSourceChemical} — looking for a lower-risk, effective replacement`);
+    }
     setCurrentStep(3);
   };
 
@@ -562,6 +577,24 @@ export default function Generator() {
                 onComplete={handleSmartStartComplete}
                 onBack={() => setShowSmartStart(false)}
               />
+            )}
+
+            {/* SDS Source Banner */}
+            {sdsSourceChemical && currentStep === 1 && (
+              <div className="mb-6 flex items-start gap-3 bg-teal-50 border border-teal-200 rounded-xl px-4 py-3">
+                <div className="w-9 h-9 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-teal-800">Generating a safer formula for: {sdsSourceChemical}</p>
+                  <p className="text-xs text-teal-600 mt-0.5">
+                    Source: SDS Analyzer. Select a product type and describe what you need — the formula will be tailored as a safer alternative to this chemical.
+                  </p>
+                </div>
+                <button onClick={() => setSdsSourceChemical(null)} className="text-teal-400 hover:text-teal-600 flex-shrink-0 mt-0.5">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
             )}
 
             {/* Step 1: Dashboard */}
