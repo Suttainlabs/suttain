@@ -547,8 +547,16 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                         {/* Balanced Equation */}
                         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
                             <h4 className="font-semibold text-slate-900 mb-2">Balanced Equation</h4>
-                            <p className="font-mono text-sm text-indigo-600">
-                                {reaction_details?.balanced_equation || 'No equation available'}
+                            <p className="text-sm text-indigo-600 leading-relaxed">
+                                {reaction_details?.balanced_equation
+                                    ? reaction_details.balanced_equation
+                                        .split(/(\d+)/)
+                                        .map((part, i) =>
+                                            /^\d+$/.test(part)
+                                                ? <sub key={i} className="text-xs">{part}</sub>
+                                                : part
+                                        )
+                                    : 'No equation available'}
                             </p>
                         </div>
 
