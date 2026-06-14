@@ -1073,6 +1073,7 @@ export default function Simulator() {
                    >
                      <SimulationResults
                        data={simulationData}
+                       chemicals={chemicals}
                        onViewAlternatives={() => setStep(3)}
                        onStartNew={startNewSimulation}
                        persona={persona}

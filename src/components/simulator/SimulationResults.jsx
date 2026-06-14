@@ -123,7 +123,7 @@ const RiskMetric = ({ icon, label, value, maxValue = 100, color }) => {
     );
 };
 
-export default function SimulationResults({ data, onViewAlternatives, onStartNew, persona }) {
+export default function SimulationResults({ data, chemicals: chemicalsProp, onViewAlternatives, onStartNew, persona }) {
     const [activeTab, setActiveTab] = useState('overview');
     const [isGeneratingReport, setIsGeneratingReport] = useState(false);
     const [showDetails, setShowDetails] = useState(true);
@@ -195,7 +195,7 @@ export default function SimulationResults({ data, onViewAlternatives, onStartNew
     const risk_assessment = data?.risk_assessment || {};
     const safety_status = data?.safety_status || { level: 'UNKNOWN', warnings: [] };
     const reaction_details = data?.reaction_details || {};
-    const chemicals = data?.chemicals || [];
+    const chemicals = (chemicalsProp?.length ? chemicalsProp : data?.chemicals) || [];
     const experimental_analysis = data?.experimental_analysis || {};
     const energy_profile = data?.energy_profile || {};
     const health_and_safety = data?.health_and_safety || {};
