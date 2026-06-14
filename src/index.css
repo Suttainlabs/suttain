@@ -172,12 +172,12 @@
   }
 
   @media (max-width: 640px) {
-    body { font-size: 0.9rem; }
-    h1 { font-size: 1.4rem; line-height: 1.2; }
-    h2 { font-size: 1.15rem; line-height: 1.25; }
-    h3 { font-size: 1rem; line-height: 1.3; }
-    h4 { font-size: 0.9rem; }
-    p, li { font-size: 0.85rem; line-height: 1.6; }
+    body { font-size: 0.875rem; line-height: 1.5; }
+    h1 { font-size: 1.3rem !important; line-height: 1.2; }
+    h2 { font-size: 1.1rem !important; line-height: 1.25; }
+    h3 { font-size: 1rem !important; line-height: 1.3; }
+    h4 { font-size: 0.875rem !important; }
+    p, li { font-size: 0.8rem; line-height: 1.55; }
   }
 
   /* 44px minimum touch targets on mobile */
@@ -204,12 +204,15 @@
 /* ── Constrain oversized Tailwind text classes on mobile ── */
 @layer utilities {
   @media (max-width: 640px) {
-    .text-4xl { font-size: 1.5rem !important; line-height: 1.2 !important; }
-    .text-5xl { font-size: 1.75rem !important; line-height: 1.15 !important; }
-    .text-6xl { font-size: 2rem !important; line-height: 1.1 !important; }
-    .text-7xl { font-size: 2.25rem !important; line-height: 1.1 !important; }
-    .text-8xl { font-size: 2.5rem !important; line-height: 1.05 !important; }
-    .text-9xl { font-size: 2.75rem !important; line-height: 1.05 !important; }
+    .text-xl   { font-size: 1rem !important;    line-height: 1.4 !important; }
+    .text-2xl  { font-size: 1.1rem !important;  line-height: 1.3 !important; }
+    .text-3xl  { font-size: 1.2rem !important;  line-height: 1.25 !important; }
+    .text-4xl  { font-size: 1.35rem !important; line-height: 1.2 !important; }
+    .text-5xl  { font-size: 1.5rem !important;  line-height: 1.15 !important; }
+    .text-6xl  { font-size: 1.75rem !important; line-height: 1.1 !important; }
+    .text-7xl  { font-size: 2rem !important;    line-height: 1.1 !important; }
+    .text-8xl  { font-size: 2.25rem !important; line-height: 1.05 !important; }
+    .text-9xl  { font-size: 2.5rem !important;  line-height: 1.05 !important; }
   }
 }
 
