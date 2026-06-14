@@ -36,6 +36,18 @@ import ShareSimulationModal from './ShareSimulationModal';
 // Lazy load visualization component
 const ChemicalVisualization = lazy(() => import('./ChemicalVisualization'));
 
+const ChemFormula = ({ formula }) => {
+    if (!formula) return null;
+    const parts = formula.split(/(\d+)/);
+    return (
+        <span className="font-mono">
+            {parts.map((part, i) =>
+                /^\d+$/.test(part) ? <sub key={i}>{part}</sub> : part
+            )}
+        </span>
+    );
+};
+
 const getSafetyStyling = (level) => {
     switch (level) {
         case 'FATAL':
@@ -548,15 +560,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
                             <h4 className="font-semibold text-slate-900 mb-2">Balanced Equation</h4>
                             <p className="text-sm text-indigo-600 leading-relaxed">
-                                {reaction_details?.balanced_equation
-                                    ? reaction_details.balanced_equation
-                                        .split(/(\d+)/)
-                                        .map((part, i) =>
-                                            /^\d+$/.test(part)
-                                                ? <sub key={i} className="text-xs">{part}</sub>
-                                                : part
-                                        )
-                                    : 'No equation available'}
+                                <ChemFormula formula={reaction_details?.balanced_equation || 'No equation available'} />
                             </p>
                         </div>
 
@@ -787,7 +791,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                 <ul className="text-xs text-slate-600 space-y-1">
                                     {chemicals.map((chem, idx) => (
                                         <li key={idx} className="flex justify-between items-center">
-                                            <span className="font-mono text-slate-500">{chem.name}:</span>
+                                            <span className="text-slate-500"><ChemFormula formula={chem.molecular_formula || chem.name} />:</span>
                                             <span className="font-semibold text-slate-800">
                                                 {calculateMolarMass(chem.molecular_formula)} g/mol
                                             </span>
@@ -1070,8 +1074,8 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                                 <p className="font-semibold text-xs text-slate-900 truncate" title={product.name}>
                                                     {product.name}
                                                 </p>
-                                                <p className="text-xs font-mono text-slate-600 mt-0.5">
-                                                    {product.formula} (MW: {calculateMolarMass(product.formula)})
+                                                <p className="text-xs text-slate-600 mt-0.5">
+                                                    <ChemFormula formula={product.formula} /> (MW: {calculateMolarMass(product.formula)})
                                                 </p>
                                                 {product.hazards?.length > 0 && (
                                                     <div className="flex flex-wrap gap-1 mt-1">
