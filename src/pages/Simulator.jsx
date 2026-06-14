@@ -919,11 +919,11 @@ export default function Simulator() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center mb-8"
               >
-                <div className="flex items-center justify-center gap-3 mb-3">
-                  <h1 className="text-2xl md:text-3xl font-bold text-slate-800">
+                <div className="flex flex-col items-center gap-2 mb-3 sm:flex-row sm:justify-center sm:gap-3">
+                  <h1 className="text-2xl md:text-3xl font-bold text-slate-800 text-center">
                     Chemical Interaction Simulator
                   </h1>
-                  <span className={`px-4 py-1.5 text-sm font-semibold rounded-full capitalize ${
+                  <span className={`px-4 py-1.5 text-sm font-semibold rounded-full capitalize flex-shrink-0 ${
                     {
                       business: 'bg-slate-900 text-white',
                       researcher: 'bg-slate-700 text-white',
