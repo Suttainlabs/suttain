@@ -1,13 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, X, Send, MessageSquare, Loader2, Home, Mic, MicOff, Crown, XCircle, ArrowRight, CheckCircle } from 'lucide-react';
+import { X, Send, MessageSquare, Loader2, Home, Mic, MicOff, Crown, XCircle, ArrowRight, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { sendSlackNotification } from '@/functions/sendSlackNotification';
 import { cancelSubscription } from '@/functions/cancelSubscription';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import AuthContext from '../auth/AuthContext';
+
+const CLARA_AVATAR = "https://media.base44.com/images/public/688eaf737ea3b621021f8bac/481a0dd8d_Screenshot2026-06-13at83527PM.png";
 
 const SYSTEM_PROMPT = `You are Clara — the core intelligence layer of Suttain (suttain.com), an AI-native platform for chemical safety, sustainable formulation, and climate compliance. You are not a chatbot with tools attached. You are the connective tissue between every feature, every dataset, and every decision on the platform.
 
@@ -165,7 +168,9 @@ const UpgradeActionCard = ({ onDismiss }) => (
 );
 
 export default function ClaraAssistant() {
+    const { user } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
+    const [hasGreeted, setHasGreeted] = useState(false);
     const [messages, setMessages] = useState([]);
     const [userMessage, setUserMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -184,6 +189,17 @@ export default function ClaraAssistant() {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, actionCard]);
+
+    useEffect(() => {
+        if (isOpen && !hasGreeted) {
+            const firstName = user?.full_name?.split(' ')[0] || null;
+            const greeting = firstName
+                ? `Hi ${firstName}! I'm Clara, your Suttain assistant. How can I help you today?`
+                : `Hi there! I'm Clara, your Suttain assistant. How can I help you today?`;
+            setMessages([{ role: 'assistant', content: greeting }]);
+            setHasGreeted(true);
+        }
+    }, [isOpen, hasGreeted, user]);
 
     // Voice input setup
     const startListening = () => {
@@ -324,6 +340,7 @@ export default function ClaraAssistant() {
 
     const resetChat = () => {
         setMessages([]);
+        setHasGreeted(false);
         setLiveAgentRequested(false);
         setLiveAgentSent(false);
         setLiveAgentName('');
@@ -352,8 +369,8 @@ export default function ClaraAssistant() {
                     {/* Header */}
                     <div className="bg-gradient-to-r from-[#02988C] to-[#09D2FF] px-4 py-3 flex items-center justify-between flex-shrink-0">
                         <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                                <Sparkles className="w-4 h-4 text-[#02988C]" />
+                            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white/50 flex-shrink-0">
+                                <img src={CLARA_AVATAR} alt="Clara" className="w-full h-full object-cover object-top" />
                             </div>
                             <div>
                                 <h3 className="font-bold text-white text-sm">Clara, your Assistant</h3>
@@ -376,8 +393,8 @@ export default function ClaraAssistant() {
                     <div className="flex-1 overflow-y-auto p-3 space-y-3">
                         {messages.length === 0 && (
                             <div className="text-center pt-4 pb-2">
-                                <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <Sparkles className="w-6 h-6 text-teal-600" />
+                                <div className="w-14 h-14 rounded-full overflow-hidden mx-auto mb-3 border-2 border-teal-200">
+                                    <img src={CLARA_AVATAR} alt="Clara" className="w-full h-full object-cover object-top" />
                                 </div>
                                 <h4 className="font-semibold text-slate-900 mb-1 text-sm">Ask me anything!</h4>
                                 <p className="text-xs text-slate-500 mb-1">I can help you navigate, subscribe, or cancel.</p>
@@ -527,9 +544,10 @@ export default function ClaraAssistant() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-20 lg:bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-[#02988C] to-[#09D2FF] rounded-full shadow-lg flex items-center justify-center text-white z-50 hover:shadow-xl transition-shadow"
+                    className="fixed bottom-20 lg:bottom-6 right-6 w-14 h-14 rounded-full shadow-lg z-50 hover:shadow-xl transition-shadow overflow-hidden border-2 border-white"
+                    style={{ background: 'linear-gradient(135deg, #02988C, #09D2FF)' }}
                 >
-                    <Sparkles className="w-6 h-6" />
+                    <img src={CLARA_AVATAR} alt="Clara" className="w-full h-full object-cover object-top" />
                 </motion.button>
             )}
         </AnimatePresence>
