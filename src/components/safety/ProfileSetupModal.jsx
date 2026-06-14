@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
-import { X, Save, Upload, AlertCircle, Plus, Search } from 'lucide-react';
+import { X, Save, Upload, Info, Plus, Search } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { HEALTH_CONDITIONS } from './healthConditionsData';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
@@ -518,9 +518,9 @@ export default function ProfileSetupModal({ profile, onClose, onSave }) {
                   />
                 </div>
               </div>
-              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="mt-3 p-3 bg-blue-50 border-l-4 border-l-blue-600 rounded">
                 <p className="text-xs text-blue-800 flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <span>Critical and high-severity alerts will be sent to your email for immediate attention. You'll receive detailed analysis and safer alternatives.</span>
                 </p>
               </div>
@@ -531,7 +531,7 @@ export default function ProfileSetupModal({ profile, onClose, onSave }) {
         {/* Footer */}
         <div className="border-t border-slate-200 p-4 sm:p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
           <div className="hidden sm:flex items-start gap-2 text-xs text-slate-600">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <p>Your health data is encrypted and stored securely</p>
           </div>
           <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
