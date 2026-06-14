@@ -555,24 +555,24 @@ export default function ChemicalVisualization({ data }) {
       }`}
     >
       <CardHeader className="border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-purple-50">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
               <Atom className="w-5 h-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-lg">Chemical Visualization</CardTitle>
-              <p className="text-sm text-slate-500">
+              <CardTitle className="text-base">Chemical Visualization</CardTitle>
+              <p className="text-xs text-slate-500">
                 Interactive 2D/3D structures & reaction pathways
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end sm:self-auto">
             <Button
               variant="outline"
               size="sm"
               onClick={toggleFullscreen}
-              className="h-8"
+              className="h-8 w-8 p-0"
             >
               {isFullscreen ? (
                 <Minimize2 className="w-4 h-4" />
@@ -580,19 +580,16 @@ export default function ChemicalVisualization({ data }) {
                 <Maximize2 className="w-4 h-4" />
               )}
             </Button>
-            <Select
-              value="png"
-              onValueChange={(format) => exportAsImage(format)}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => exportAsImage("png")}
+              disabled={isExporting}
+              className="h-8 gap-1.5"
             >
-              <SelectTrigger className="w-32 h-8">
-                <Download className="w-3 h-3 mr-1" />
-                <SelectValue placeholder="Export" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="png">Export PNG</SelectItem>
-                <SelectItem value="jpeg">Export JPEG</SelectItem>
-              </SelectContent>
-            </Select>
+              <Download className="w-3 h-3" />
+              <span className="text-xs">Export PNG</span>
+            </Button>
           </div>
         </div>
       </CardHeader>
