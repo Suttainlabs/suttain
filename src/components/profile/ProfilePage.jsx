@@ -10,8 +10,8 @@ import NotificationCenter from '../notifications/NotificationCenter';
 import {
   User as UserIcon, Edit2, Settings, Star, Crown, Gem,
   FlaskConical, TestTube, QrCode, Cpu,
-  Loader2, Clock, FileText, Zap, Check, Lock,
-  Bell, ArrowUpRight, Sparkles, TrendingUp, Activity,
+  Loader2, Zap, Check, Lock,
+  Bell, Sparkles, TrendingUp,
   ChevronRight, BarChart2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,6 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const trialStatus = useTrialStatus(user);
   const [stats, setStats] = useState({ totalFormulas: 0, totalSimulations: 0, totalScans: 0 });
-  const [recentItems, setRecentItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -44,17 +43,8 @@ export default function ProfilePage() {
     if (!user) return;
     setIsLoading(true);
     try {
-      const [statsData, formulas, simulations] = await Promise.all([
-        getUserStats(),
-        base44.entities.Formula.list('-updated_date', 6),
-        base44.entities.Simulation.list('-created_date', 6),
-      ]);
+      const statsData = await getUserStats();
       if (statsData?.data) setStats(statsData.data);
-      const merged = [
-        ...(formulas || []).map(f => ({ ...f, _type: 'Formula', _icon: FlaskConical, _color: 'bg-violet-100 text-violet-600' })),
-        ...(simulations || []).map(s => ({ ...s, _type: 'Simulation', _icon: TestTube, _color: 'bg-teal-100 text-teal-600' })),
-      ].sort((a, b) => new Date(b.updated_date || b.created_date) - new Date(a.updated_date || a.created_date)).slice(0, 4);
-      setRecentItems(merged);
     } catch (e) {
       console.error(e);
     } finally {
@@ -205,62 +195,10 @@ export default function ProfilePage() {
           })}
         </div>
 
-        {/* ── Activity Highlights + Plan ── */}
+        {/* ── Plan Card ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-          {/* Recent Activity as Highlights */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-slate-400" />
-                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Recent Activity</h2>
-              </div>
-              <Link to={createPageUrl('Workspace')} className="text-xs text-teal-600 font-semibold hover:underline flex items-center gap-1">
-                View all <ArrowUpRight className="w-3 h-3" />
-              </Link>
-            </div>
-
-            {isLoading ? (
-              <div className="flex justify-center py-12 bg-white rounded-2xl border border-slate-100">
-                <Loader2 className="w-5 h-5 animate-spin text-slate-300" />
-              </div>
-            ) : recentItems.length === 0 ? (
-              <div className="text-center py-14 bg-white rounded-2xl border border-slate-100">
-                <FileText className="w-8 h-8 mx-auto mb-3 text-slate-200" />
-                <p className="text-sm text-slate-400">No activity yet. Start by creating a formula or running a simulation.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {recentItems.map((item, i) => {
-                  const Icon = item._icon;
-                  const isFormula = item._type === 'Formula';
-                  return (
-                    <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all group cursor-pointer">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className={`w-10 h-10 rounded-xl ${item._color} flex items-center justify-center flex-shrink-0`}>
-                          <Icon className="w-5 h-5" />
-                        </div>
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
-                          item.status === 'completed' ? 'bg-green-100 text-green-700' :
-                          isFormula ? 'bg-violet-100 text-violet-600' : 'bg-teal-100 text-teal-600'
-                        }`}>
-                          {item.status || item._type}
-                        </span>
-                      </div>
-                      <p className="text-sm font-bold text-slate-800 truncate mb-1">{item.name || item.title || item.chemicals_input || 'Untitled'}</p>
-                      <div className="flex items-center gap-1 text-xs text-slate-400">
-                        <Clock className="w-3 h-3" />
-                        {timeAgo(item.updated_date || item.created_date)}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
           {/* Plan Card */}
-          <div className="space-y-4">
+          <div className="lg:col-start-3 space-y-4">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-slate-400" />
               <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Your Plan</h2>
