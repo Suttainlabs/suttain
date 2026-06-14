@@ -80,7 +80,7 @@ export default function ProfilePage() {
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
 
         {/* ── Hero Header ── */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#00281E] via-[#007850] to-[#00B478] rounded-3xl px-8 py-8 shadow-xl">
+        <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 rounded-3xl px-8 py-8 shadow-xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-4 right-8 w-40 h-40 rounded-full bg-white/30 blur-2xl" />
             <div className="absolute bottom-0 left-16 w-32 h-32 rounded-full bg-white/20 blur-xl" />
