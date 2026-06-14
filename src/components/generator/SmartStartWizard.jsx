@@ -292,37 +292,37 @@ export default function SmartStartWizard({ onComplete, onBack }) {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleSelect(option.id)}
-                    className={`p-4 rounded-xl border-2 text-left transition-all ${
+                    className={`p-4 rounded-xl border-2 text-left transition-all flex flex-col ${
                       isSelected
                         ? "border-slate-700 bg-slate-50 shadow-md"
                         : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                     }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        isSelected 
-                          ? "bg-slate-700" 
-                          : option.color 
-                            ? option.color.split(" ")[0] 
-                            : "bg-slate-100"
-                      }`}>
-                        <Icon className={`w-4 h-4 ${
-                          isSelected 
-                            ? "text-white" 
-                            : option.color 
-                              ? option.color.split(" ")[1] 
-                              : "text-slate-600"
-                        }`} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className={`font-semibold text-sm ${isSelected ? "text-slate-900" : "text-slate-800"}`}>
-                          {option.label}
-                        </p>
-                        {option.desc && (
-                          <p className="text-xs text-slate-500 mt-0.5">{option.desc}</p>
-                        )}
-                      </div>
-                    </div>
+                    >
+                     <div className="flex items-start gap-3 flex-1">
+                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                         isSelected 
+                           ? "bg-slate-700" 
+                           : option.color 
+                             ? option.color.split(" ")[0] 
+                             : "bg-slate-100"
+                       }`}>
+                         <Icon className={`w-5 h-5 ${
+                           isSelected 
+                             ? "text-white" 
+                             : option.color 
+                               ? option.color.split(" ")[1] 
+                               : "text-slate-600"
+                         }`} />
+                       </div>
+                       <div className="min-w-0 flex-1">
+                         <p className={`font-semibold text-sm leading-snug ${isSelected ? "text-slate-900" : "text-slate-800"}`}>
+                           {option.label}
+                         </p>
+                         {option.desc && (
+                           <p className="text-xs text-slate-500 mt-1 leading-tight">{option.desc}</p>
+                         )}
+                       </div>
+                     </div>
                     {isSelected && (
                       <div className="mt-2 flex justify-end">
                         <div className="w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center">
