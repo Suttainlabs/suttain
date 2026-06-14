@@ -176,7 +176,7 @@ export default function HomePage() {
       <SEOHead {...pageSEO.home} />
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-white pt-20 pb-28 sm:pt-28 sm:pb-36">
+      <section className="relative overflow-hidden bg-white pt-12 pb-16 sm:pt-28 sm:pb-36">
         {/* Soft background blobs — teal + purple only */}
         <div
           className="pointer-events-none absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full opacity-[0.07]"
@@ -196,7 +196,7 @@ export default function HomePage() {
 
           <motion.h1
             {...fade(0.08)}
-            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 leading-[1.1] tracking-tight mb-6"
+            className="text-3xl sm:text-5xl lg:text-7xl font-bold text-slate-900 leading-[1.1] tracking-tight mb-4 sm:mb-6"
             style={{ textWrap: "balance" }}
           >
             Safe Products,{" "}
@@ -206,7 +206,7 @@ export default function HomePage() {
 
           <motion.p
             {...fade(0.16)}
-            className="text-lg sm:text-xl text-slate-500 max-w-xl mx-auto mb-10 leading-relaxed"
+            className="text-sm sm:text-xl text-slate-500 max-w-xl mx-auto mb-8 sm:mb-10 leading-relaxed"
           >
             Suttain gives formulators, brands, and researchers instant chemical safety analysis, compliance checks, and AI-powered formula generation — no lab required.
           </motion.p>
@@ -303,10 +303,10 @@ export default function HomePage() {
       <section className="py-24 sm:py-32 bg-slate-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div {...fadeIn()} className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
+            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3">
               From Idea to Safe Product in Three Steps
             </h2>
-            <p className="text-slate-500 text-lg max-w-xl mx-auto">No chemistry degree needed. No expensive lab tests. Just results.</p>
+            <p className="text-slate-500 text-sm sm:text-lg max-w-xl mx-auto">No chemistry degree needed. No expensive lab tests. Just results.</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -350,7 +350,7 @@ export default function HomePage() {
             <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, white 1px, transparent 1px), radial-gradient(circle at 70% 80%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
 
             <div className="relative z-10">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4" style={{ textWrap: "balance" }}>
+              <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4" style={{ textWrap: "balance" }}>
                 Stop Guessing. Start Knowing.
               </h2>
               <p className="text-white/70 text-base mb-10 max-w-md mx-auto">
