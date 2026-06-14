@@ -42,13 +42,13 @@ export default function SaferAlternatives({
   const handleSimulateAlternative = (alt) => {
     // Navigate to Simulator with the alternative pre-filled via URL param
     const params = new URLSearchParams({ chemicals: alt.alternative_chemical });
-    navigate(`/Simulator?${params.toString()}`);
+    navigate(`${createPageUrl('Simulator')}?${params.toString()}`);
   };
 
   const handleGenerateFormula = (alt) => {
     // Navigate to generator with the alternative as a suggested ingredient
     const params = new URLSearchParams({ ingredient: alt.alternative_chemical });
-    navigate(`/generator?${params.toString()}`);
+    navigate(`${createPageUrl('generator')}?${params.toString()}`);
   };
 
   return (
