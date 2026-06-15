@@ -36,5 +36,15 @@
       ]
     }
   ],
+  "selected_skill_names": [
+    "support-escalation"
+  ],
+  "selected_workspace_skill_ids": [],
+  "model": "automatic",
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "instructions": null
+  },
   "name": "SuttainOrchestrator"
 }
