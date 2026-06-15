@@ -65,6 +65,17 @@ const modules = [
     status: 'operational',
   },
   {
+    id: 'explorer',
+    label: 'Molecule Explorer',
+    route: 'MoleculeExplorer',
+    icon: Microscope,
+    color: '#0D9E8E',
+    badge: 'Live',
+    description: 'Browse your chemical database in 3D. Renders PubChem-sourced conformers for any stored compound alongside all physical, toxicity, and environmental properties.',
+    metrics: ['3Dmol.js WebGL', 'PubChem 3D', 'Property Panel'],
+    status: 'operational',
+  },
+  {
     id: 'sds',
     label: 'SDS Analyzer',
     route: 'SDSAnalyzer',
