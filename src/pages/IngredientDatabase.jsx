@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
-import { Search, Filter, Leaf, FlaskConical, Droplets, ShieldCheck, AlertTriangle, Skull, Info, X, ExternalLink, Loader2, FileDown } from "lucide-react";
+import { Search, Filter, Leaf, FlaskConical, Droplets, ShieldCheck, AlertTriangle, Skull, Info, X, ExternalLink, Loader2, FileDown, Tag } from "lucide-react";
+import TagManagerModal, { getTagColor } from "@/components/ingredients/TagManagerModal.jsx";
 
 // --- Tooltip Component ---
 const Tooltip = ({ content, children }) => {
@@ -100,7 +101,7 @@ const getOrigin = (chemical) => {
 };
 
 // --- Chemical Card ---
-const ChemicalCard = ({ chemical }) => {
+const ChemicalCard = ({ chemical, tagRecord, allTags, onOpenTagModal }) => {
   const toxicity = chemical.safety_level || "unknown";
   const toxConfig = TOXICITY_CONFIG[toxicity] || TOXICITY_CONFIG.unknown;
   const ToxIcon = toxConfig.icon;
@@ -222,6 +223,20 @@ const ChemicalCard = ({ chemical }) => {
         )}
       </div>
 
+      {/* Tags row */}
+      {tagRecord && tagRecord.tags && tagRecord.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {tagRecord.tags.map(tag => (
+            <span
+              key={tag}
+              className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${getTagColor(tag, allTags)}`}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Action row */}
       <div className="mt-3 flex items-center gap-3 flex-wrap">
         <button
@@ -230,6 +245,13 @@ const ChemicalCard = ({ chemical }) => {
         >
           {summaryLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
           {showSummary ? "Hide summary" : "Get summary"}
+        </button>
+        <button
+          onClick={() => onOpenTagModal(chemical)}
+          className="text-xs font-semibold text-violet-600 hover:text-violet-800 flex items-center gap-1 transition-colors"
+        >
+          <Tag className="w-3 h-3" />
+          {tagRecord?.tags?.length > 0 ? "Edit tags" : "Add tags"}
         </button>
         <a
           href={chemical._pubchem_cid
@@ -334,11 +356,15 @@ export default function IngredientDatabase() {
   const [toxFilter, setToxFilter] = useState("all");
   const [originFilter, setOriginFilter] = useState("all");
   const [ecoFilter, setEcoFilter] = useState("all");
+  const [tagFilter, setTagFilter] = useState("all");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSuggestLoading, setIsSuggestLoading] = useState(false);
   const [pubchemResults, setPubchemResults] = useState([]);
   const [isPubchemLoading, setIsPubchemLoading] = useState(false);
+  // Tag state
+  const [tagRecords, setTagRecords] = useState([]); // all ChemicalTag records for this user
+  const [tagModalChemical, setTagModalChemical] = useState(null);
   const searchRef = useRef(null);
   const debounceRef = useRef(null);
   const suppressSuggestRef = useRef(false);
@@ -348,7 +374,25 @@ export default function IngredientDatabase() {
       .then(data => setLocalChemicals(data || []))
       .catch(() => setLocalChemicals([]))
       .finally(() => setIsLoading(false));
+    // Load all tag records for the current user
+    base44.entities.ChemicalTag.list()
+      .then(data => setTagRecords(data || []))
+      .catch(() => {});
   }, []);
+
+  // All unique tags across all records
+  const allTags = [...new Set(tagRecords.flatMap(r => r.tags || []))].sort();
+
+  // Map chemId -> tagRecord for quick lookup
+  const tagMap = Object.fromEntries(tagRecords.map(r => [r.chemical_id, r]));
+
+  const handleTagsUpdated = (chemId, newTags) => {
+    setTagRecords(prev => {
+      const existing = prev.find(r => r.chemical_id === chemId);
+      if (existing) return prev.map(r => r.chemical_id === chemId ? { ...r, tags: newTags } : r);
+      return [...prev, { chemical_id: chemId, tags: newTags }];
+    });
+  };
 
   // Debounced autocomplete: local filter + PubChem autocomplete
   useEffect(() => {
@@ -431,9 +475,9 @@ export default function IngredientDatabase() {
     }
   };
 
-  const hasFilters = toxFilter !== "all" || originFilter !== "all" || ecoFilter !== "all" || search;
+  const hasFilters = toxFilter !== "all" || originFilter !== "all" || ecoFilter !== "all" || tagFilter !== "all" || search;
   const clearFilters = () => {
-    setToxFilter("all"); setOriginFilter("all"); setEcoFilter("all");
+    setToxFilter("all"); setOriginFilter("all"); setEcoFilter("all"); setTagFilter("all");
     setSearch(""); setSuggestions([]); setShowSuggestions(false); setPubchemResults([]);
   };
 
@@ -443,6 +487,10 @@ export default function IngredientDatabase() {
     if (toxFilter !== "all" && c.safety_level !== toxFilter) return false;
     if (originFilter !== "all" && getOrigin(c) !== originFilter) return false;
     if (ecoFilter !== "all" && getEcoLevel(c) !== ecoFilter) return false;
+    if (tagFilter !== "all") {
+      const rec = tagMap[c.id] || tagMap[`pubchem_${c._pubchem_cid}`];
+      if (!rec || !rec.tags?.includes(tagFilter)) return false;
+    }
     return true;
   });
 
@@ -562,6 +610,21 @@ export default function IngredientDatabase() {
             </button>
           )}
         </div>
+
+        {/* Tag filter row — only show when tags exist */}
+        {allTags.length > 0 && (
+          <div className="max-w-5xl mx-auto flex items-center gap-2 mt-2 overflow-x-auto no-scrollbar pb-1">
+            <span className="text-xs text-slate-400 font-semibold flex items-center gap-1 flex-shrink-0">
+              <Tag className="w-3 h-3" /> Tags:
+            </span>
+            <FilterPill active={tagFilter === "all"} onClick={() => setTagFilter("all")}>All</FilterPill>
+            {allTags.map(tag => (
+              <FilterPill key={tag} active={tagFilter === tag} onClick={() => setTagFilter(tag)}>
+                {tag}
+              </FilterPill>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Results */}
@@ -599,7 +662,15 @@ export default function IngredientDatabase() {
         ) : (
           <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <AnimatePresence mode="popLayout">
-              {filtered.map(c => <ChemicalCard key={c.id} chemical={c} />)}
+              {filtered.map(c => (
+                <ChemicalCard
+                  key={c.id}
+                  chemical={c}
+                  tagRecord={tagMap[c.id] || tagMap[`pubchem_${c._pubchem_cid}`]}
+                  allTags={allTags}
+                  onOpenTagModal={setTagModalChemical}
+                />
+              ))}
             </AnimatePresence>
           </motion.div>
         )}
@@ -611,6 +682,18 @@ export default function IngredientDatabase() {
           </div>
         )}
       </section>
+
+      {/* Tag Manager Modal */}
+      <AnimatePresence>
+        {tagModalChemical && (
+          <TagManagerModal
+            chemical={tagModalChemical}
+            onClose={() => setTagModalChemical(null)}
+            onTagsUpdated={handleTagsUpdated}
+            existingAllTags={allTags}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
