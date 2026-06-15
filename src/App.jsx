@@ -51,6 +51,9 @@ const HydrationReminders = lazy(() => import('./pages/HydrationReminders'));
 const HydrationProgress = lazy(() => import('./pages/HydrationProgress'));
 const BillingDashboard = lazy(() => import('./pages/BillingDashboard'));
 const MolecularIntelligence = lazy(() => import('./pages/MolecularIntelligence'));
+const ResearchPortal = lazy(() => import('./pages/ResearchPortal'));
+const ResearchDashboard = lazy(() => import('./pages/ResearchDashboard'));
+const APIPortal = lazy(() => import('./pages/APIPortal'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -158,6 +161,9 @@ const AuthenticatedApp = () => {
       <Route path="/HydrationProgress" element={<LayoutWrapper currentPageName="HydrationProgress"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationProgress /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BillingDashboard" element={<LayoutWrapper currentPageName="BillingDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BillingDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/MolecularIntelligence" element={<LayoutWrapper currentPageName="MolecularIntelligence"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MolecularIntelligence /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/ResearchPortal" element={<LayoutWrapper currentPageName="ResearchPortal"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ResearchPortal /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/ResearchDashboard" element={<LayoutWrapper currentPageName="ResearchDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ResearchDashboard /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/APIPortal" element={<LayoutWrapper currentPageName="APIPortal"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><APIPortal /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
