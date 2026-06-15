@@ -195,8 +195,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const openAuthModal = (mode) => {
-    setAuthMode(mode);
-    setShowAuthModal(true);
+    base44.auth.redirectToLogin();
   };
 
   const navLinks = [
@@ -939,20 +938,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Bottom Navigation Bar - Mobile Only */}
       {user && <BottomNavBar />}
 
-      {/* Auth Modal */}
-      <React.Suspense fallback={null}>
-        {showAuthModal && (
-          <AuthModal
-            isOpen={showAuthModal}
-            onClose={() => setShowAuthModal(false)}
-            mode={authMode}
-            onSuccess={() => {
-              setShowAuthModal(false);
-              fetchUserAndSetState();
-            }}
-          />
-        )}
-      </React.Suspense>
+
       
       {/* User Acknowledgement Modal */}
       <React.Suspense fallback={null}>
