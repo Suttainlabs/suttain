@@ -164,6 +164,40 @@ function Mol3DViewer({ cid, smiles, name }) {
   );
 }
 
+// ── Compound list row ──────────────────────────────────────────────
+
+function CompoundRow({ c, selected, onSelect, fromPubchem }) {
+  const color = SAFETY_COLOR[c.safety_level] || SAFETY_COLOR.unknown;
+  return (
+    <button
+      onClick={() => onSelect(c)}
+      className={`w-full text-left px-4 py-3 border-b border-slate-800/60 hover:bg-slate-800/60 transition-colors flex items-start gap-3 ${
+        selected?.id === c.id ? 'bg-[#0D9E8E]/10 border-l-2 border-l-[#0D9E8E]' : ''
+      }`}
+    >
+      <div
+        className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5"
+        style={{ background: color + '20' }}
+      >
+        <Atom className="w-3.5 h-3.5" style={{ color }} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold text-slate-200 truncate leading-tight">{c.name}</p>
+        {c.molecular_formula && (
+          <p className="text-[10px] font-mono text-slate-600 mt-0.5">{c.molecular_formula}</p>
+        )}
+        {fromPubchem && c.pubchem_cid && (
+          <p className="text-[10px] text-slate-700 mt-0.5">CID {c.pubchem_cid}</p>
+        )}
+        {!fromPubchem && c.cas_number && (
+          <p className="text-[10px] text-slate-700 mt-0.5">CAS {c.cas_number}</p>
+        )}
+      </div>
+      <ChevronRight className="w-3.5 h-3.5 text-slate-700 flex-shrink-0 mt-1" />
+    </button>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────────
 
 export default function MoleculeExplorer() {
@@ -173,6 +207,9 @@ export default function MoleculeExplorer() {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [pubchemResults, setPubchemResults] = useState([]);
+  const [pubchemLoading, setPubchemLoading] = useState(false);
+  const searchTimeout = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -192,14 +229,59 @@ export default function MoleculeExplorer() {
 
   useEffect(() => {
     const q = search.trim().toLowerCase();
-    if (!q) { setFiltered(chemicals); return; }
-    setFiltered(chemicals.filter(c =>
+    if (!q) {
+      setFiltered(chemicals);
+      setPubchemResults([]);
+      return;
+    }
+    const localMatches = chemicals.filter(c =>
       c.name?.toLowerCase().includes(q) ||
       c.cas_number?.includes(q) ||
       c.iupac_name?.toLowerCase().includes(q) ||
       c.molecular_formula?.toLowerCase().includes(q) ||
       c.pubchem_cid?.includes(q)
-    ));
+    );
+    setFiltered(localMatches);
+
+    // Search PubChem if local results are sparse
+    clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(async () => {
+      if (q.length < 2) return;
+      setPubchemLoading(true);
+      try {
+        const res = await fetch(
+          `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(q)}/property/MolecularFormula,MolecularWeight,IUPACName,CanonicalSMILES,InChIKey/JSON?MaxRecords=8`,
+          { signal: AbortSignal.timeout(6000) }
+        );
+        if (res.ok) {
+          const json = await res.json();
+          const props = json.PropertyTable?.Properties || [];
+          // Filter out ones already in local DB
+          const localCids = new Set(chemicals.map(c => String(c.pubchem_cid)).filter(Boolean));
+          const newResults = props
+            .filter(p => !localCids.has(String(p.CID)))
+            .map(p => ({
+              id: `pubchem_${p.CID}`,
+              _pubchem_cid: p.CID,
+              pubchem_cid: String(p.CID),
+              name: q.charAt(0).toUpperCase() + q.slice(1),
+              iupac_name: p.IUPACName,
+              molecular_formula: p.MolecularFormula,
+              molecular_weight: p.MolecularWeight,
+              canonical_smiles: p.CanonicalSMILES,
+              inchi_key: p.InChIKey,
+              _fromPubchem: true,
+            }));
+          setPubchemResults(newResults);
+        } else {
+          setPubchemResults([]);
+        }
+      } catch {
+        setPubchemResults([]);
+      } finally {
+        setPubchemLoading(false);
+      }
+    }, 500);
   }, [search, chemicals]);
 
   const safetyColor = selected ? (SAFETY_COLOR[selected.safety_level] || SAFETY_COLOR.unknown) : SAFETY_COLOR.unknown;
@@ -252,39 +334,47 @@ export default function MoleculeExplorer() {
               <div className="flex items-center justify-center py-16">
                 <Loader2 className="w-5 h-5 text-[#0D9E8E] animate-spin" />
               </div>
-            ) : filtered.length === 0 ? (
-              <div className="px-4 py-10 text-center">
-                <p className="text-xs text-slate-600">
-                  {chemicals.length === 0 ? 'No compounds in database.' : 'No matches found.'}
-                </p>
-              </div>
             ) : (
-              filtered.map(c => (
-                <button
-                  key={c.id}
-                  onClick={() => setSelected(c)}
-                  className={`w-full text-left px-4 py-3 border-b border-slate-800/60 hover:bg-slate-800/60 transition-colors flex items-start gap-3 ${
-                    selected?.id === c.id ? 'bg-[#0D9E8E]/10 border-l-2 border-l-[#0D9E8E]' : ''
-                  }`}
-                >
-                  <div
-                    className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ background: (SAFETY_COLOR[c.safety_level] || SAFETY_COLOR.unknown) + '20' }}
-                  >
-                    <Atom className="w-3.5 h-3.5" style={{ color: SAFETY_COLOR[c.safety_level] || SAFETY_COLOR.unknown }} />
+              <>
+                {/* Local DB results */}
+                {filtered.map(c => (
+                  <CompoundRow key={c.id} c={c} selected={selected} onSelect={setSelected} />
+                ))}
+
+                {/* PubChem results */}
+                {pubchemResults.length > 0 && (
+                  <>
+                    <div className="px-3 py-1.5 bg-slate-800/40 border-y border-slate-700/40">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                        <Database className="w-2.5 h-2.5" /> PubChem
+                      </p>
+                    </div>
+                    {pubchemResults.map(c => (
+                      <CompoundRow key={c.id} c={c} selected={selected} onSelect={setSelected} fromPubchem />
+                    ))}
+                  </>
+                )}
+
+                {/* Loading PubChem */}
+                {pubchemLoading && (
+                  <div className="flex items-center justify-center py-4 gap-2">
+                    <Loader2 className="w-3.5 h-3.5 text-[#0D9E8E] animate-spin" />
+                    <p className="text-[10px] text-slate-600">Searching PubChem...</p>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold text-slate-200 truncate leading-tight">{c.name}</p>
-                    {c.molecular_formula && (
-                      <p className="text-[10px] font-mono text-slate-600 mt-0.5">{c.molecular_formula}</p>
-                    )}
-                    {c.cas_number && (
-                      <p className="text-[10px] text-slate-700 mt-0.5">CAS {c.cas_number}</p>
-                    )}
+                )}
+
+                {/* Empty state */}
+                {filtered.length === 0 && pubchemResults.length === 0 && !pubchemLoading && search && (
+                  <div className="px-4 py-10 text-center">
+                    <p className="text-xs text-slate-600">No matches found.</p>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-700 flex-shrink-0 mt-1" />
-                </button>
-              ))
+                )}
+                {filtered.length === 0 && pubchemResults.length === 0 && !pubchemLoading && !search && chemicals.length === 0 && (
+                  <div className="px-4 py-10 text-center">
+                    <p className="text-xs text-slate-600">No compounds in database.</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

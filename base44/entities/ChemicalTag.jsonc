@@ -1,0 +1,34 @@
+{
+  "name": "ChemicalTag",
+  "type": "object",
+  "properties": {
+    "chemical_id": {
+      "type": "string",
+      "description": "ID or PubChem CID of the tagged chemical"
+    },
+    "chemical_name": {
+      "type": "string",
+      "description": "Display name of the chemical (denormalized for quick display)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of user-defined tags (project names, research phases, etc.)"
+    }
+  },
+  "required": [
+    "chemical_id",
+    "chemical_name",
+    "tags"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
