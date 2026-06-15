@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, X, Database, Globe, FlaskConical, Loader2 } from 'lucide-react';
+import ChemicalFormula from '@/components/shared/ChemicalFormula';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -32,7 +33,9 @@ function ResultRow({ result, onSelect }) {
             <span className="text-[10px] font-mono text-slate-500">CAS {result.cas_number}</span>
           )}
           {result.molecular_formula && (
-            <span className="text-[10px] font-mono text-slate-400">{result.molecular_formula}</span>
+            <span className="text-[10px] font-mono text-slate-400">
+              <ChemicalFormula formula={result.molecular_formula} />
+            </span>
           )}
           {result.iupac_name && result.iupac_name !== result.name && (
             <span className="text-[10px] text-slate-400 truncate max-w-[200px]">{result.iupac_name}</span>

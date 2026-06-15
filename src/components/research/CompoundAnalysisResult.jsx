@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Shield, Leaf, FlaskConical, Globe, BookOpen, Download, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import ChemicalFormula from '@/components/shared/ChemicalFormula';
 
 function ConfidenceBar({ value }) {
   const color = value >= 80 ? 'bg-emerald-500' : value >= 55 ? 'bg-yellow-500' : 'bg-red-500';
@@ -96,7 +97,9 @@ export default function CompoundAnalysisResult({ data, query }) {
               <p className="text-xs text-slate-500 font-mono mt-0.5">CAS {pubchem.cas_number}</p>
             )}
             {pubchem?.molecular_formula && (
-              <p className="text-sm font-mono text-[#0D9E8E] mt-1">{pubchem.molecular_formula}</p>
+              <p className="text-sm font-mono text-[#0D9E8E] mt-1">
+                <ChemicalFormula formula={pubchem.molecular_formula} />
+              </p>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -155,6 +158,12 @@ export default function CompoundAnalysisResult({ data, query }) {
       {/* Tab Content */}
       {activeTab === 'identity' && pubchem && (
         <Section icon={FlaskConical} title="Molecular Identity">
+          <div className="mb-3 py-2 border-b border-slate-700/30">
+            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-1">Molecular Formula</p>
+            <p className="text-base font-mono text-[#0D9E8E]">
+              <ChemicalFormula formula={pubchem.molecular_formula} />
+            </p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
             <DataRow label="PubChem CID" value={pubchem.cid} />
             <DataRow label="Molecular Weight" value={pubchem.molecular_weight ? `${pubchem.molecular_weight} g/mol` : null} />
