@@ -442,8 +442,8 @@ export default function MoleculeExplorer() {
                 <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-2">Identity</p>
                 <div>
                   <PropRow label="Formula" value={selected.molecular_formula} />
-                  <PropRow label="MW" value={selected.molecular_weight?.toFixed(3)} unit="g/mol" />
-                  <PropRow label="Exact Mass" value={selected.exact_mass?.toFixed(4)} unit="Da" />
+                  <PropRow label="MW" value={selected.molecular_weight != null ? Number(selected.molecular_weight).toFixed(3) : null} unit="g/mol" />
+                                     <PropRow label="Exact Mass" value={selected.exact_mass != null ? Number(selected.exact_mass).toFixed(4) : null} unit="Da" />
                   <PropRow label="CAS" value={selected.cas_number} />
                   <PropRow label="PubChem CID" value={selected.pubchem_cid} />
                   <PropRow label="InChI Key" value={selected.inchi_key} />
