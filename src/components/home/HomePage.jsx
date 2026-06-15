@@ -9,6 +9,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import AuthContext from "../auth/AuthContext";
 import SEOHead, { pageSEO } from "../shared/SEOHead";
+import ChemicalQuickSearch from "./ChemicalQuickSearch";
 
 function useCountUp(target, duration = 1800, startOnView = true) {
   const [count, setCount] = useState(0);
@@ -210,6 +211,11 @@ export default function HomePage() {
           >
             Suttain gives formulators, brands, and researchers instant chemical safety analysis, compliance checks, and AI-powered formula generation — no lab required.
           </motion.p>
+
+          {/* Chemical Quick Search */}
+          <motion.div {...fade(0.20)} className="mb-8">
+            <ChemicalQuickSearch />
+          </motion.div>
 
           <motion.div {...fade(0.22)} className="flex flex-col sm:flex-row gap-3 justify-center items-center">
             <Link to={createPageUrl("Simulator")}>
