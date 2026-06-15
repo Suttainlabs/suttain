@@ -412,6 +412,7 @@ export default function Layout({ children, currentPageName }) {
                     <div className="border-l border-slate-100 pl-4">
                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Advanced</p>
                      {[
+                       { href: "MolecularIntelligence", label: "Molecular Intelligence", icon: Atom, description: "Hazard scoring, toxicity & regulatory mapping via PubChem" },
                        { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, description: "DFT, MD, protein modeling", tier: 'pro' },
                        { href: "CarbonTaxSimulator", label: "Carbon & Reporting", icon: Leaf, description: "Carbon tax, decarbonization ROI & sustainability reports" },
                        { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, description: "Integrate into your systems", status: 'coming_soon' },
@@ -718,6 +719,7 @@ export default function Layout({ children, currentPageName }) {
                           ))}
                           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-3 pb-1">Advanced</p>
                           {[
+                            { href: "MolecularIntelligence", label: "Molecular Intelligence", icon: Atom },
                             { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, tier: 'pro' },
                             { href: "CarbonTaxSimulator", label: "Carbon & Reporting", icon: Leaf },
                             { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, status: 'coming_soon' },
