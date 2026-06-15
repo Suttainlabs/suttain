@@ -76,6 +76,17 @@ const modules = [
     status: 'operational',
   },
   {
+    id: 'comparison',
+    label: 'Chemical Comparison',
+    route: 'ChemicalComparison',
+    icon: GitBranch,
+    color: '#f59e0b',
+    badge: 'Live',
+    description: 'Side-by-side comparison of any two compounds. Contrast molecular structure, physical properties, toxicity, and environmental data with delta highlighting.',
+    metrics: ['3D Structures', 'Property Deltas', 'PubChem Search'],
+    status: 'operational',
+  },
+  {
     id: 'sds',
     label: 'SDS Analyzer',
     route: 'SDSAnalyzer',
