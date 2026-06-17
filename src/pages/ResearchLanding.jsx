@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import DarkNavBar from "@/components/navigation/DarkNavBar";
 
 const ADVANCED_MODULES = [
   {
@@ -108,6 +109,7 @@ export default function ResearchLanding() {
 
   return (
     <div className="min-h-screen bg-[#0A0E17] text-slate-100">
+      <DarkNavBar />
       {/* ── Ambient background effects ── */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute -top-96 -left-96 w-[800px] h-[800px] bg-violet-600/10 rounded-full blur-[180px]" />

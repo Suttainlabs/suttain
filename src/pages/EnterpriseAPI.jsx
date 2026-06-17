@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import DarkNavBar from "@/components/navigation/DarkNavBar";
 
 const API_FEATURES = [
   {
@@ -93,6 +94,7 @@ export default function EnterpriseAPI() {
 
   return (
     <div className="min-h-screen bg-[#06080D] text-slate-100">
+      <DarkNavBar />
       {/* ── Ambient effects ── */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-0 left-1/4 w-[900px] h-[900px] bg-violet-600/6 rounded-full blur-[200px]" />
