@@ -8,8 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Plus, Trash2, Edit2, Check, X, FlaskConical, Package,
-  AlertTriangle, Search, ChevronDown, ChevronUp, Tag
+  AlertTriangle, Search, Tag, Upload, Download, FileSpreadsheet,
+  Loader2, CheckCircle, XCircle
 } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 
 const UNITS = ["g", "kg", "mL", "L", "mol", "mmol", "units"];
 const CONC_UNITS = ["M", "mM", "% w/v", "% w/w", "ppm", "ppb"];
@@ -207,11 +210,190 @@ function InventoryCard({ item, onAddToSim, onEdit, onDelete }) {
   );
 }
 
+// ── CSV export ──────────────────────────────────────────────
+function exportInventoryCSV(inventory) {
+  const headers = ["name","scientific_name","cas_number","quantity","unit","concentration","concentration_unit","purity","location","low_stock_threshold","tags","notes"];
+  const rows = inventory.map(item =>
+    headers.map(h => {
+      const v = h === "tags" ? (item.tags || []).join(";") : (item[h] ?? "");
+      return `"${String(v).replace(/"/g, '""')}"`;
+    }).join(",")
+  );
+  const csv = [headers.join(","), ...rows].join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `chemical_inventory_${new Date().toISOString().split("T")[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── CSV/Excel import modal ───────────────────────────────────
+function ImportModal({ onClose, onImported }) {
+  const [file, setFile] = useState(null);
+  const [parsed, setParsed] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [importing, setImporting] = useState(false);
+  const [result, setResult] = useState(null);
+
+  const INVENTORY_HEADERS = ["name","scientific_name","cas_number","quantity","unit","concentration","concentration_unit","purity","location","low_stock_threshold","tags","notes"];
+
+  const parseCSV = async (f) => {
+    const text = await f.text();
+    const lines = text.split("\n").filter(l => l.trim());
+    if (lines.length < 2) return;
+    const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g,"").toLowerCase());
+    const rows = lines.slice(1).map(line => {
+      const vals = [];
+      let cur = "", inQ = false;
+      for (const ch of line) {
+        if (ch === '"') { inQ = !inQ; }
+        else if (ch === ',' && !inQ) { vals.push(cur); cur = ""; }
+        else cur += ch;
+      }
+      vals.push(cur);
+      const row = {};
+      headers.forEach((h, i) => { row[h] = vals[i]?.trim().replace(/^"|"$/g,"") || ""; });
+      return row;
+    }).filter(r => r.name);
+    setParsed({ headers, rows });
+  };
+
+  const handleFile = async (e) => {
+    const f = e.target.files[0] || e.dataTransfer?.files[0];
+    if (!f) return;
+    setFile(f);
+    setParsed(null);
+    setResult(null);
+    await parseCSV(f);
+  };
+
+  const handleImport = async () => {
+    if (!parsed?.rows?.length) return;
+    setImporting(true);
+    setProgress(0);
+    let success = 0, failed = 0;
+    const batchSize = 10;
+    for (let i = 0; i < parsed.rows.length; i += batchSize) {
+      const batch = parsed.rows.slice(i, i + batchSize).map(row => ({
+        name: row.name,
+        scientific_name: row.scientific_name || undefined,
+        cas_number: row.cas_number || undefined,
+        quantity: parseFloat(row.quantity) || 0,
+        unit: row.unit || "g",
+        concentration: row.concentration ? parseFloat(row.concentration) : undefined,
+        concentration_unit: row.concentration_unit || "M",
+        purity: row.purity ? parseFloat(row.purity) : 99.9,
+        location: row.location || undefined,
+        low_stock_threshold: row.low_stock_threshold ? parseFloat(row.low_stock_threshold) : undefined,
+        tags: row.tags ? row.tags.split(";").map(t => t.trim()).filter(Boolean) : [],
+        notes: row.notes || undefined,
+      }));
+      try {
+        await base44.entities.ChemicalInventory.bulkCreate(batch);
+        success += batch.length;
+      } catch { failed += batch.length; }
+      setProgress(Math.round(((i + batch.length) / parsed.rows.length) * 100));
+    }
+    setResult({ success, failed });
+    setImporting(false);
+    if (success > 0) onImported();
+  };
+
+  const downloadTemplate = () => {
+    const csv = INVENTORY_HEADERS.join(",") + "\nSodium Chloride,sodium chloride,7647-14-5,500,g,,,99.9,Cabinet A,,acid;salt,Example row";
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "inventory_template.csv";
+    a.click();
+  };
+
+  return (
+    <div className="p-6 space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-bold text-slate-800">Bulk Import Inventory</h3>
+          <p className="text-sm text-slate-500 mt-0.5">Upload a CSV file to add multiple chemicals at once</p>
+        </div>
+        <button onClick={onClose} className="p-1 rounded hover:bg-slate-100">
+          <X className="w-5 h-5 text-slate-400" />
+        </button>
+      </div>
+
+      <button
+        onClick={downloadTemplate}
+        className="text-xs text-teal-600 hover:underline flex items-center gap-1"
+      >
+        <Download className="w-3.5 h-3.5" /> Download CSV template
+      </button>
+
+      {!result && (
+        <div
+          className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${file ? "border-teal-300 bg-teal-50" : "border-slate-200 hover:border-teal-300"}`}
+          onDragOver={e => e.preventDefault()}
+          onDrop={handleFile}
+        >
+          {file && parsed ? (
+            <div className="space-y-2">
+              <CheckCircle className="w-10 h-10 text-teal-500 mx-auto" />
+              <p className="font-semibold text-slate-800">{file.name}</p>
+              <p className="text-sm text-slate-500">{parsed.rows.length} rows ready to import</p>
+              <button onClick={() => { setFile(null); setParsed(null); }} className="text-xs text-slate-400 hover:underline">
+                Choose a different file
+              </button>
+            </div>
+          ) : (
+            <label className="cursor-pointer block space-y-3">
+              <FileSpreadsheet className="w-10 h-10 text-slate-300 mx-auto" />
+              <p className="text-sm text-slate-600 font-medium">Drop a CSV file here or click to browse</p>
+              <input type="file" accept=".csv" className="hidden" onChange={handleFile} />
+            </label>
+          )}
+        </div>
+      )}
+
+      {importing && (
+        <div className="space-y-2">
+          <p className="text-sm text-slate-600">Importing... {progress}%</p>
+          <Progress value={progress} />
+        </div>
+      )}
+
+      {result && (
+        <div className="text-center space-y-3 py-4">
+          {result.success > 0
+            ? <CheckCircle className="w-12 h-12 text-teal-500 mx-auto" />
+            : <XCircle className="w-12 h-12 text-red-400 mx-auto" />}
+          <p className="font-semibold text-slate-800">{result.success} chemicals imported successfully{result.failed > 0 && `, ${result.failed} failed`}</p>
+          <Button onClick={onClose} className="bg-teal-600 hover:bg-teal-700 text-white">Done</Button>
+        </div>
+      )}
+
+      {!result && (
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button
+            className="bg-teal-600 hover:bg-teal-700 text-white"
+            disabled={!parsed?.rows?.length || importing}
+            onClick={handleImport}
+          >
+            {importing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Upload className="w-4 h-4 mr-2" />}
+            Import {parsed?.rows?.length || 0} rows
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ChemicalInventoryManager({ onAddToSimulation }) {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [showImport, setShowImport] = useState(false);
 
   const { data: inventory = [], isLoading } = useQuery({
     queryKey: ["chemical-inventory"],
@@ -273,14 +455,44 @@ export default function ChemicalInventoryManager({ onAddToSimulation }) {
             </p>
           </div>
         </div>
-        <Button
-          onClick={() => { setShowAddForm(true); setEditingItem(null); }}
-          className="bg-teal-600 hover:bg-teal-700 text-white"
-          size="sm"
-        >
-          <Plus className="w-4 h-4 mr-1" /> Add chemical
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => exportInventoryCSV(inventory)}
+            disabled={inventory.length === 0}
+          >
+            <Download className="w-4 h-4 mr-1" /> Export CSV
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowImport(true)}
+          >
+            <Upload className="w-4 h-4 mr-1" /> Import
+          </Button>
+          <Button
+            onClick={() => { setShowAddForm(true); setEditingItem(null); }}
+            className="bg-teal-600 hover:bg-teal-700 text-white"
+            size="sm"
+          >
+            <Plus className="w-4 h-4 mr-1" /> Add chemical
+          </Button>
+        </div>
       </div>
+
+      {/* Import modal */}
+      <Dialog open={showImport} onOpenChange={setShowImport}>
+        <DialogContent className="max-w-lg p-0">
+          <ImportModal
+            onClose={() => setShowImport(false)}
+            onImported={() => {
+              queryClient.invalidateQueries(["chemical-inventory"]);
+              setShowImport(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Add form */}
       <AnimatePresence>
