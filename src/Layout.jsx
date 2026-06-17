@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -210,23 +210,14 @@ export default function Layout({ children, currentPageName }) {
 
   const helpMenuItems = [];
 
-  const productSuiteItems = [
-    { type: 'header', label: 'Safety & Formulation', icon: TestTube },
-    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", type: 'product', tier: 'free' },
-    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", type: 'product', tier: 'free' },
-    { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive", type: 'product', tier: 'free' },
-
-    { href: "IngredientDatabase", label: "Ingredient Database", icon: Leaf, description: "Explore chemicals by toxicity, origin & eco-impact", type: 'product', tier: 'free' },
-
-    { type: 'separator' },
-    { type: 'header', label: 'Advanced Tools', icon: Cpu },
-    { href: "SimulationEngine", label: "Formula Simulation Engine", icon: Cpu, description: "Adjust ingredient % live and see cost & sustainability shift", type: 'product' },
-    { href: "ComputationalSimulation", label: "Computational Simulations", icon: Cpu, description: "DFT, MD, drug discovery, protein modeling & QM scripts", type: 'product', tier: 'pro' },
-
-    { href: "ComparativeImpactReport", label: "Comparative Impact Report", icon: BarChart2, description: "Benchmark your formula's eco-score vs. industry averages", type: 'product', tier: 'free' },
-    { type: 'separator' },
-    { href: "EnterpriseAPI", label: "Enterprise API Access", icon: AppWindow, description: "Integrate Suttain into your enterprise systems", type: 'premium', status: 'coming_soon' },
+  const consumerToolItems = [
+    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in" },
+    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring" },
+    { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive" },
+    { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments" },
   ];
+
+  const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
 
 
   const getLinkClasses = (href) => {
@@ -240,8 +231,20 @@ export default function Layout({ children, currentPageName }) {
 
   // Updated active state checks
   const isCompanyMenuActive = companyMenuItems.some(item => location.pathname === createPageUrl(item.href));
-  const isProductSuiteActive = productSuiteItems.some(tool => tool.href && location.pathname === createPageUrl(tool.href));
   const isHelpToolActive = helpMenuItems.some(item => location.pathname === createPageUrl(item.href));
+
+  const isResearchActive = location.pathname === '/research' || location.pathname === '/ResearchLanding'
+    || location.pathname === createPageUrl("MolecularIntelligence")
+    || location.pathname === createPageUrl("ComputationalSimulation")
+    || location.pathname === createPageUrl("CarbonTaxSimulator")
+    || location.pathname === createPageUrl("ResearchDashboard")
+    || location.pathname === createPageUrl("MoleculeExplorer")
+    || location.pathname === createPageUrl("ChemicalComparison")
+    || location.pathname === createPageUrl("SDSAnalyzer")
+    || location.pathname === createPageUrl("SimulationEngine")
+    || location.pathname === createPageUrl("ComparativeImpactReport");
+
+  const isEnterpriseActive = location.pathname === '/enterprise' || location.pathname === '/EnterpriseAPI';
 
 
   const mobileMenuVariants = {
@@ -372,73 +375,60 @@ export default function Layout({ children, currentPageName }) {
                 </DropdownMenuContent>
               </DropdownMenu>
 
+              {/* Consumer Tools Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+                    isConsumerToolsActive
+                      ? "bg-cyan-100 text-cyan-600"
+                      : "text-slate-700 hover:bg-cyan-50 hover:text-cyan-600"
+                  }`}>
+                    <span>Tools</span>
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-72">
+                  {consumerToolItems.map((item) => (
+                    <DropdownMenuItem key={item.href} asChild>
+                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 p-3">
+                        <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
+                          <item.icon className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-suttain-dark text-sm">{item.label}</p>
+                          <p className="text-xs text-suttain-text/80">{item.description}</p>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
+              {/* Research Link */}
+              <Link
+                to="/research"
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+                  isResearchActive
+                    ? "bg-violet-100 text-violet-600"
+                    : "text-slate-700 hover:bg-violet-50 hover:text-violet-600"
+                }`}
+              >
+                <Microscope className="w-4 h-4" />
+                <span>Research</span>
+              </Link>
 
-              {/* Combined Product Suite Dropdown — 2-column mega menu */}
-              <div className="relative group">
-                <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
-                  isProductSuiteActive
-                    ? "bg-cyan-100 text-cyan-600"
-                    : "text-slate-700 hover:bg-cyan-50 hover:text-cyan-600"
-                }`}>
-                  <span>Tools</span>
-                  <ChevronDown className="w-3 h-3" />
-                </button>
-                {/* Mega menu panel */}
-                <div className="absolute right-0 top-full mt-1 w-[560px] bg-white border border-slate-200 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-4">
-                  <div className="grid grid-cols-2 gap-x-4">
-                    {/* Column 1: Core Tools */}
-                    <div>
-                     <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Core Tools</p>
-                     {[
-                       { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety, SDS analysis, compliance, ingredient DB & impact reports" },
-                       { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with sim engine & eco scoring" },
-                       { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive" },
-                       { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments" },
-
-                     ].map(item => (
-                       <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                         <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
-                           <item.icon className="w-4 h-4 text-white" />
-                         </div>
-                         <div className="min-w-0">
-                           <p className="font-semibold text-slate-800 text-sm leading-tight">{item.label}</p>
-                           <p className="text-xs text-slate-500 leading-tight">{item.description}</p>
-                         </div>
-                       </Link>
-                     ))}
-                    </div>
-                    {/* Column 2: Advanced Tools */}
-                    <div className="border-l border-slate-100 pl-4">
-                     <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 mb-2">Advanced</p>
-                     {[
-                       { href: "ResearchPortal", label: "Research Portal", icon: Atom, description: "Molecular intelligence OS — the full research workflow" },
-                       { href: "MolecularIntelligence", label: "Molecular Intelligence", icon: Atom, description: "Hazard scoring, toxicity & regulatory mapping via PubChem" },
-                       { href: "ResearchPortal", label: "Research Portal", icon: Atom, description: "Molecular intelligence OS — full research workflow" },
-                       { href: "APIPortal", label: "Research API", icon: AppWindow, description: "REST API with SDK, docs & live test console", tier: 'pro' },
-                       { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, description: "DFT, MD, protein modeling", tier: 'pro' },
-                       { href: "CarbonTaxSimulator", label: "Carbon & Reporting", icon: Leaf, description: "Carbon tax, decarbonization ROI & sustainability reports" },
-                       { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, description: "Integrate into your systems", status: 'coming_soon' },
-
-                     ].map(item => (
-                       <Link key={item.href} to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-slate-50 transition-colors group/item">
-                         <div className="w-8 h-8 bg-[var(--suttain-violet)] rounded-lg flex items-center justify-center flex-shrink-0">
-                           <item.icon className="w-4 h-4 text-white" />
-                         </div>
-                         <div className="min-w-0 flex-1">
-                           <div className="flex items-center gap-1.5">
-                             <p className="font-semibold text-slate-800 text-sm leading-tight">{item.label}</p>
-                             {item.tier === 'pro' && <span className="px-1 py-0.5 text-[9px] bg-violet-100 text-violet-700 rounded font-bold shrink-0">PRO</span>}
-                             {item.status === 'coming_soon' && <span className="px-1 py-0.5 text-[9px] bg-slate-100 text-slate-500 rounded font-medium shrink-0">Soon</span>}
-                           </div>
-                           <p className="text-xs text-slate-500 leading-tight">{item.description}</p>
-                         </div>
-                       </Link>
-                     ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Enterprise Link */}
+              <Link
+                to="/enterprise"
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+                  isEnterpriseActive
+                    ? "bg-amber-100 text-amber-700"
+                    : "text-slate-700 hover:bg-amber-50 hover:text-amber-600"
+                }`}
+              >
+                <Terminal className="w-4 h-4" />
+                <span>Enterprise</span>
+              </Link>
             </nav>
 
             {/* Auth Buttons / User Menu */}
@@ -681,16 +671,16 @@ export default function Layout({ children, currentPageName }) {
 
 
 
-                  {/* Combined Product Suite Collapsible */}
+                  {/* Consumer Tools Collapsible */}
                   <motion.div variants={mobileNavItemVariants}>
                     <button
                       onClick={() => setIsProductSuiteOpen(!isProductSuiteOpen)}
                       className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-cyan-50 ${
-                        isProductSuiteActive ? 'bg-cyan-100' : ''
+                        isConsumerToolsActive ? 'bg-cyan-100' : ''
                       }`}
                     >
                       <div className="flex items-center gap-4">
-                        <AppWindow className="w-5 h-5" />
+                        <TestTube className="w-5 h-5" />
                         Tools
                       </div>
                       <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isProductSuiteOpen ? 'rotate-180' : ''}`} />
@@ -704,14 +694,7 @@ export default function Layout({ children, currentPageName }) {
                           transition={{ type: "spring", stiffness: 300, damping: 30 }}
                           className="pl-4 pt-1 pb-1 overflow-hidden"
                         >
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-2 pb-1">Core Tools</p>
-                          {[
-                            { href: "Simulator", label: "Chemical Simulator", icon: TestTube },
-                            { href: "generator", label: "Formula Generator", icon: Atom },
-                            { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode },
-                            { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets },
-
-                          ].map(item => (
+                          {consumerToolItems.map(item => (
                             <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
                               className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
                                 location.pathname === createPageUrl(item.href) ? "bg-cyan-100 text-cyan-600" : "text-suttain-dark hover:bg-cyan-50"
@@ -720,28 +703,37 @@ export default function Layout({ children, currentPageName }) {
                               <span>{item.label}</span>
                             </Link>
                           ))}
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 pt-3 pb-1">Advanced</p>
-                          {[
-                            { href: "ResearchPortal", label: "Research Portal", icon: Atom },
-                            { href: "MolecularIntelligence", label: "Molecular Intelligence", icon: Atom },
-                            { href: "APIPortal", label: "Research API", icon: AppWindow, tier: 'pro' },
-                            { href: "ComputationalSimulation", label: "Computational Sims", icon: Cpu, tier: 'pro' },
-                            { href: "CarbonTaxSimulator", label: "Carbon & Reporting", icon: Leaf },
-                            { href: "EnterpriseAPI", label: "Enterprise API", icon: AppWindow, status: 'coming_soon' },
-                          ].map(item => (
-                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
-                                location.pathname === createPageUrl(item.href) ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
-                              }`}>
-                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
-                              <span className="flex-1">{item.label}</span>
-                              {item.tier === 'pro' && <span className="text-[10px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-bold">PRO</span>}
-                              {item.status === 'coming_soon' && <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-medium">Soon</span>}
-                            </Link>
-                          ))}
                         </motion.div>
                       )}
                     </AnimatePresence>
+                  </motion.div>
+
+                  {/* Research Link - Mobile */}
+                  <motion.div variants={mobileNavItemVariants}>
+                    <Link
+                      to="/research"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
+                        isResearchActive ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
+                      }`}
+                    >
+                      <Microscope className="w-5 h-5" />
+                      Research
+                    </Link>
+                  </motion.div>
+
+                  {/* Enterprise Link - Mobile */}
+                  <motion.div variants={mobileNavItemVariants}>
+                    <Link
+                      to="/enterprise"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
+                        isEnterpriseActive ? "bg-amber-100 text-amber-700" : "text-suttain-dark hover:bg-amber-50"
+                      }`}
+                    >
+                      <Terminal className="w-5 h-5" />
+                      Enterprise
+                    </Link>
                   </motion.div>
                 </nav>
 
@@ -887,11 +879,10 @@ export default function Layout({ children, currentPageName }) {
               <ul className="space-y-1.5 text-sm">
                 <li><Link to={createPageUrl('Simulator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
                 <li><Link to={createPageUrl('generator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
+                <li><Link to="/research" className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
+                <li><Link to="/enterprise" className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
                 <li><Link to={createPageUrl('AboutUs')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
-                <li><Link to={createPageUrl('FAQ')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">FAQs, Reviews & Contact</Link></li>
-                <li><Link to={createPageUrl('LearningSuite')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Learning Center</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
-                <li><Link to={createPageUrl('Blog')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
                 </ul>
                 </div>
 

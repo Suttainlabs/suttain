@@ -57,6 +57,8 @@ const ResearchPortal = lazy(() => import('./pages/ResearchPortal'));
 const ResearchDashboard = lazy(() => import('./pages/ResearchDashboard'));
 const APIPortal = lazy(() => import('./pages/APIPortal'));
 const ChemicalComparison = lazy(() => import('./pages/ChemicalComparison'));
+const ResearchLanding = lazy(() => import('./pages/ResearchLanding'));
+const EnterpriseAPI = lazy(() => import('./pages/EnterpriseAPI'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -170,6 +172,10 @@ const AuthenticatedApp = () => {
       <Route path="/ResearchDashboard" element={<LayoutWrapper currentPageName="ResearchDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ResearchDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/APIPortal" element={<LayoutWrapper currentPageName="APIPortal"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><APIPortal /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/ChemicalComparison" element={<LayoutWrapper currentPageName="ChemicalComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-amber-500 rounded-full animate-spin"/></div>}><PageTransition><ChemicalComparison /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/research" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchLanding /></Suspense>} />
+      <Route path="/ResearchLanding" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchLanding /></Suspense>} />
+      <Route path="/enterprise" element={<Suspense fallback={<div className="fixed inset-0 bg-[#06080D] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><EnterpriseAPI /></Suspense>} />
+      <Route path="/EnterpriseAPI" element={<Suspense fallback={<div className="fixed inset-0 bg-[#06080D] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><EnterpriseAPI /></Suspense>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
