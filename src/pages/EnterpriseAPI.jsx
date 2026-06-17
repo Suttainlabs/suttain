@@ -133,7 +133,7 @@ export default function EnterpriseAPI() {
                 </Button>
               </a>
               <a href="#features">
-                <Button variant="outline" size="lg" className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white h-14 px-10 text-base rounded-xl">
+                <Button variant="outline" size="lg" className="border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-14 px-10 text-base rounded-xl">
                   <BookOpen className="mr-2 w-5 h-5" />
                   Explore API Docs
                 </Button>
@@ -357,19 +357,19 @@ export default function EnterpriseAPI() {
           <div className="max-w-7xl mx-auto px-6 py-16 text-center">
             <div className="flex flex-col md:flex-row items-center justify-center gap-6">
               <Link to={createPageUrl("ResearchLanding")}>
-                <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 h-12 px-8 rounded-xl">
+                <Button variant="outline" className="border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-12 px-8 rounded-xl">
                   <Cpu className="mr-2 w-4 h-4" />
                   Research Portal
                 </Button>
               </Link>
               <Link to={createPageUrl("APIPortal")}>
-                <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 h-12 px-8 rounded-xl">
+                <Button variant="outline" className="border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-12 px-8 rounded-xl">
                   <BookOpen className="mr-2 w-4 h-4" />
                   Interactive API Docs
                 </Button>
               </Link>
               <a href="mailto:enterprise@suttain.com">
-                <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 h-12 px-8 rounded-xl">
+                <Button variant="outline" className="border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-12 px-8 rounded-xl">
                   <Mail className="mr-2 w-4 h-4" />
                   Contact Sales
                 </Button>

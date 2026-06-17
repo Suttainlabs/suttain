@@ -146,7 +146,7 @@ export default function ResearchLanding() {
                 </Button>
               </Link>
               <Link to={createPageUrl("APIPortal")}>
-                <Button variant="outline" size="lg" className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white h-14 px-8 text-base rounded-xl">
+                <Button variant="outline" size="lg" className="border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-14 px-8 text-base rounded-xl">
                   <Terminal className="mr-2 w-5 h-5" />
                   API Access
                 </Button>
@@ -273,7 +273,7 @@ export default function ResearchLanding() {
                 </Button>
               </Link>
               <Link to={createPageUrl("APIPortal")}>
-                <Button variant="outline" size="lg" className="border-slate-700 text-slate-300 hover:bg-slate-800 h-14 px-10 text-base rounded-xl">
+                <Button variant="outline" size="lg" className="border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-14 px-10 text-base rounded-xl">
                   <Code2 className="mr-2 w-5 h-5" />
                   API Docs
                 </Button>
