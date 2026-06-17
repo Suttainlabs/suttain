@@ -1,0 +1,30 @@
+{
+  "name": "ChemicalProject",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Project or research phase name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the project"
+    },
+    "color": {
+      "type": "string",
+      "description": "Hex color for the project folder",
+      "default": "#6B3FA0"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

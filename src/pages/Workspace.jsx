@@ -8,7 +8,7 @@ import FolderSidebar from '../components/workspace/FolderSidebar';
 import SessionCard from '../components/workspace/SessionCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Pin, LayoutGrid, List, FolderOpen, BarChart2 } from 'lucide-react';
+import { Search, Pin, LayoutGrid, List, FolderOpen, BarChart2, Library } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Select,
@@ -111,6 +111,12 @@ export default function Workspace() {
             }`}
           >
             <BarChart2 className="w-3.5 h-3.5" /> Dashboard
+          </button>
+          <button
+            onClick={() => window.location.href = '/ChemicalLibrary'}
+            className="px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-1.5 border-transparent text-slate-500 hover:text-slate-700 ml-auto"
+          >
+            <Library className="w-3.5 h-3.5" /> Chemical Library
           </button>
         </div>
 

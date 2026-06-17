@@ -1,0 +1,36 @@
+{
+  "name": "ChemicalProjectItem",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "description": "Reference to ChemicalProject"
+    },
+    "chemical_id": {
+      "type": "string",
+      "description": "Chemical ID or PubChem CID"
+    },
+    "chemical_name": {
+      "type": "string",
+      "description": "Denormalized chemical name for quick display"
+    },
+    "added_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the chemical was added to this project"
+    }
+  },
+  "required": [
+    "project_id",
+    "chemical_id",
+    "chemical_name"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
