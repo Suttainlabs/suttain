@@ -73,6 +73,10 @@
       ],
       "default": "gentle"
     },
+    "timezone": {
+      "type": "string",
+      "description": "IANA timezone identifier for accurate reminder window checks (e.g. America/Chicago)"
+    },
     "onboarding_complete": {
       "type": "boolean",
       "default": false

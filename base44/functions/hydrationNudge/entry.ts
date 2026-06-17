@@ -1,9 +1,36 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 /**
+ * Converts a UTC Date to a user's local date/time components using their IANA timezone.
+ * Falls back to UTC if timezone is missing or invalid.
+ */
+function getLocalTime(date, tz) {
+    try {
+        const opts = { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+        const parts = new Intl.DateTimeFormat('en-CA', opts).formatToParts(date);
+        const get = (type) => parts.find(p => p.type === type)?.value || '00';
+        return {
+            date: `${get('year')}-${get('month')}-${get('day')}`,
+            hour: parseInt(get('hour')),
+            minute: parseInt(get('minute')),
+            minutes: parseInt(get('hour')) * 60 + parseInt(get('minute'))
+        };
+    } catch {
+        // Fallback: treat as UTC
+        const iso = date.toISOString();
+        return {
+            date: iso.substring(0, 10),
+            hour: date.getUTCHours(),
+            minute: date.getUTCMinutes(),
+            minutes: date.getUTCHours() * 60 + date.getUTCMinutes()
+        };
+    }
+}
+
+/**
  * Scheduled function: runs every 30 minutes.
  * For each user with smart_reminders=true, checks:
- * 1. Current time is within their reminder window
+ * 1. Current time is within their reminder window (using their local timezone)
  * 2. Enough time has passed since their last reminder (based on reminder_frequency)
  * 3. They haven't hit their goal yet
  * Then creates an in-app Notification and sends an email reminder.
@@ -13,10 +40,6 @@ Deno.serve(async (req) => {
         const base44 = createClientFromRequest(req);
 
         const now = new Date();
-        const today = now.toISOString().split('T')[0];
-        // Current time as HH:MM in UTC (reminders stored as HH:MM, we compare roughly)
-        const nowHHMM = now.toISOString().substring(11, 16);
-        const nowMinutes = parseInt(nowHHMM.split(':')[0]) * 60 + parseInt(nowHHMM.split(':')[1]);
 
         const profiles = await base44.asServiceRole.entities.HydrationProfile.list('-created_date', 500);
 
@@ -48,22 +71,23 @@ Deno.serve(async (req) => {
             const userEmail = userEmailMap[userId];
             if (!userEmail) continue;
 
-            // Parse reminder window (stored as HH:MM)
+            // Get user's local time using their stored timezone (fallback: UTC)
+            const tz = profile.timezone || 'UTC';
+            const local = getLocalTime(now, tz);
+            const today = local.date;
+
+            // Parse reminder window (stored as HH:MM in user's local time)
             const startParts = (profile.reminder_start || '07:00').split(':');
             const endParts = (profile.reminder_end || '22:00').split(':');
             const startMinutes = parseInt(startParts[0]) * 60 + parseInt(startParts[1]);
             const endMinutes = parseInt(endParts[0]) * 60 + parseInt(endParts[1]);
 
-            // Check if current UTC time is within window (approximate — no per-user TZ stored)
-            // Add a 2-hour buffer to account for US timezones (UTC-8 to UTC-5)
-            // Users in US will typically have 07:00-22:00 local which is ~13:00-04:00 UTC
-            // We run every 30 min so we'll catch the right windows
-            if (nowMinutes < startMinutes - 120 || nowMinutes > endMinutes + 120) {
-                // Outside reasonable window, skip
-                // Note: this is a best-effort check without per-user timezone
+            // Check if current LOCAL time is within the reminder window
+            if (local.minutes < startMinutes || local.minutes > endMinutes) {
+                continue; // Outside reminder window for this user
             }
 
-            // Get today's logs for this user
+            // Get today's logs for this user (using local date)
             const logs = await base44.asServiceRole.entities.HydrationLog.filter(
                 { log_date: today, created_by_id: userId },
                 '-logged_at',
@@ -186,7 +210,7 @@ Deno.serve(async (req) => {
         }
 
         console.log(`Hydration nudge complete. Notified ${notified} users.`);
-        return Response.json({ success: true, notified, date: today, time: nowHHMM });
+        return Response.json({ success: true, notified, date: now.toISOString().substring(0, 10) });
     } catch (error) {
         console.error('Hydration nudge error:', error.message);
         return Response.json({ error: error.message }, { status: 500 });

@@ -22,6 +22,11 @@ const STYLE_OPTIONS = [
     { value: 'biological', label: 'Biological alert', preview: 'Your sodium intake from lunch increases your filtration demand. Drink now.' },
 ];
 
+const detectTimezone = () => {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone; }
+    catch { return 'America/Chicago'; }
+};
+
 export default function HydrationReminders() {
     const { user } = useContext(AuthContext);
     const { profile, saveProfile, totalIntake, trueGoal } = useHydration(user);
@@ -58,9 +63,11 @@ export default function HydrationReminders() {
         ? pct < 0.5 ? Math.max(15, freqMins - 15) : pct > 0.8 ? freqMins + 20 : freqMins
         : freqMins;
 
+    const timezone = detectTimezone();
+
     const handleSave = async () => {
         setSaving(true);
-        await saveProfile(settings);
+        await saveProfile({ ...settings, timezone });
         setSaving(false);
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
