@@ -266,8 +266,8 @@ export default function HomePage() {
 
           <motion.h1
             {...fade(0.08)}
-            className="text-3xl sm:text-5xl lg:text-7xl font-bold text-slate-900 leading-none tracking-tight mb-4 sm:mb-6"
-            style={{ textWrap: "balance", lineHeight: 1.05 }}
+            className="text-3xl sm:text-5xl lg:text-7xl font-bold text-slate-900 tracking-tight mb-4 sm:mb-6"
+            style={{ lineHeight: 0.95 }}
           >
             The complete platform for{" "}
             <span style={{ color: "#007850" }}>chemical research</span>
