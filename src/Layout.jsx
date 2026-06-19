@@ -222,14 +222,12 @@ export default function Layout({ children, currentPageName }) {
 
   const getLinkClasses = (href) => {
     const isActive = location.pathname === createPageUrl(href);
-    return `flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 font-semibold text-sm ${
+    return `flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
       isActive
-        ? "text-[#3D2E1C]"
-        : "text-[#6B5B4A] hover:text-[#3D2E1C]"
+        ? "bg-violet-100 text-violet-600"
+        : "text-slate-700 hover:bg-violet-50 hover:text-violet-600"
     }`;
   };
-
-  const activeInsetStyle = "background: #DED4C2; box-shadow: inset 0 1px 3px rgba(0,0,0,0.12)";
 
 
   // Updated active state checks
@@ -318,61 +316,59 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6 py-3">
-          <div className="flex justify-between items-center h-14 px-4 lg:px-5 rounded-full" style={{ background: '#EAE0D0', boxShadow: '0 2px 12px rgba(60,46,28,0.10), 0 0 0 1px rgba(60,46,28,0.06)' }}>
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
             {/* Back button — mobile only, hidden on home routes */}
             {location.pathname !== '/' && location.pathname !== '/Home' && (
               <button
                 onClick={() => navigate(-1)}
                 aria-label="Go back"
-                className="lg:hidden p-2 -ml-1 mr-1 rounded-lg text-[#6B5B4A] hover:bg-[#DED4C2] flex-shrink-0"
+                className="lg:hidden p-2 -ml-1 mr-1 rounded-lg text-slate-600 hover:bg-slate-100 flex-shrink-0"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
             )}
-            <Link to={createPageUrl("Home")} className="flex items-center gap-3 flex-shrink-0">
-              <span className="text-xl font-bold tracking-tight" style={{ color: '#3D2E1C' }}>Suttain</span>
+            <Link to={createPageUrl("Home")} className="flex items-center gap-3">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
+                alt="Suttain"
+                className="h-10 w-auto"
+              />
             </Link>
 
 
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-0.5 ml-6 px-1.5 py-1 rounded-full" style={{ background: '#DED4C2', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.08)' }}>
-              {navLinks.map(({ href, label }) => {
-                const isActive = location.pathname === createPageUrl(href);
-                return (
-                  <Link key={href} to={createPageUrl(href)}
-                    className={`px-4 py-1.5 rounded-full font-semibold text-sm transition-all duration-200 ${isActive ? 'text-[#3D2E1C]' : 'text-[#6B5B4A] hover:text-[#3D2E1C]'}`}
-                    style={isActive ? { background: '#EAE0D0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' } : {}}
-                  >
-                    {label}
-                  </Link>
-                );
-              })}
+            <nav className="hidden lg:flex items-center gap-1">
+              {navLinks.map(({ href, label }) => (
+                <Link key={href} to={createPageUrl(href)} className={getLinkClasses(href)}>
+                  <span>{label}</span>
+                </Link>
+              ))}
 
               {/* Company Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all duration-200 font-semibold text-sm ${
-                    isCompanyMenuActive ? "text-[#3D2E1C]" : "text-[#6B5B4A] hover:text-[#3D2E1C]"
-                  }`}
-                    style={isCompanyMenuActive ? { background: '#EAE0D0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' } : {}}
-                  >
+                  <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+                    isCompanyMenuActive
+                      ? "bg-rose-100 text-rose-600"
+                      : "text-slate-700 hover:bg-rose-50 hover:text-rose-600"
+                  }`}>
                     <span>Company</span>
                     <ChevronDown className="w-3 h-3" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 rounded-xl border-[#D4C9B5]" style={{ background: '#F5EFE6' }}>
+                <DropdownMenuContent align="end" className="w-64">
                   {companyMenuItems.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
                       <Link to={createPageUrl(item.href)} className="flex items-start gap-3 p-3">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#5A9B8A' }}>
+                        <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
                           <item.icon className="w-4 h-4 text-white" />
                         </div>
                         <div>
-                          <p className="font-semibold text-sm" style={{ color: '#3D2E1C' }}>{item.label}</p>
-                          <p className="text-xs" style={{ color: '#6B5B4A' }}>{item.description}</p>
+                          <p className="font-semibold text-suttain-dark text-sm">{item.label}</p>
+                          <p className="text-xs text-suttain-text/80">{item.description}</p>
                         </div>
                       </Link>
                     </DropdownMenuItem>
@@ -383,25 +379,25 @@ export default function Layout({ children, currentPageName }) {
               {/* Consumer Tools Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all duration-200 font-semibold text-sm ${
-                    isConsumerToolsActive ? "text-[#3D2E1C]" : "text-[#6B5B4A] hover:text-[#3D2E1C]"
-                  }`}
-                    style={isConsumerToolsActive ? { background: '#EAE0D0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' } : {}}
-                  >
+                  <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+                    isConsumerToolsActive
+                      ? "bg-cyan-100 text-cyan-600"
+                      : "text-slate-700 hover:bg-cyan-50 hover:text-cyan-600"
+                  }`}>
                     <span>Tools</span>
                     <ChevronDown className="w-3 h-3" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-72 rounded-xl border-[#D4C9B5]" style={{ background: '#F5EFE6' }}>
+                <DropdownMenuContent align="end" className="w-72">
                   {consumerToolItems.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
                       <Link to={createPageUrl(item.href)} className="flex items-start gap-3 p-3">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#5A9B8A' }}>
+                        <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
                           <item.icon className="w-4 h-4 text-white" />
                         </div>
                         <div>
-                          <p className="font-semibold text-sm" style={{ color: '#3D2E1C' }}>{item.label}</p>
-                          <p className="text-xs" style={{ color: '#6B5B4A' }}>{item.description}</p>
+                          <p className="font-semibold text-suttain-dark text-sm">{item.label}</p>
+                          <p className="text-xs text-suttain-text/80">{item.description}</p>
                         </div>
                       </Link>
                     </DropdownMenuItem>
@@ -410,56 +406,61 @@ export default function Layout({ children, currentPageName }) {
               </DropdownMenu>
 
               {/* Research Link */}
-              <div className="relative">
-                <Link
-                  to="/research"
-                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all duration-200 font-semibold text-sm ${
-                    isResearchActive ? "text-[#3D2E1C]" : "text-[#6B5B4A] hover:text-[#3D2E1C]"
-                  }`}
-                  style={isResearchActive ? { background: '#EAE0D0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' } : {}}
-                >
-                  <Microscope className="w-3.5 h-3.5" />
-                  <span>Research</span>
-                </Link>
-              </div>
+              <Link
+                to="/research"
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+                  isResearchActive
+                    ? "bg-violet-100 text-violet-600"
+                    : "text-slate-700 hover:bg-violet-50 hover:text-violet-600"
+                }`}
+              >
+                <Microscope className="w-4 h-4" />
+                <span>Research</span>
+              </Link>
 
               {/* Enterprise Link */}
               <Link
                 to="/enterprise"
-                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all duration-200 font-semibold text-sm ${
-                  isEnterpriseActive ? "text-[#3D2E1C]" : "text-[#6B5B4A] hover:text-[#3D2E1C]"
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+                  isEnterpriseActive
+                    ? "bg-amber-100 text-amber-700"
+                    : "text-slate-700 hover:bg-amber-50 hover:text-amber-600"
                 }`}
-                style={isEnterpriseActive ? { background: '#EAE0D0', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' } : {}}
               >
+                <Terminal className="w-4 h-4" />
                 <span>Enterprise</span>
               </Link>
             </nav>
 
             {/* Auth Buttons / User Menu */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {!isAuthLoading && user && (
-                <div className="hidden md:flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-3">
                   {/* Trial Status Badge */}
                   <TrialBadge trialStatus={trialStatus} />
                   {/* Notification Bell */}
                   <button
                     onClick={() => setShowNotifications(true)}
-                    className="relative w-10 h-10 rounded-full flex items-center justify-center transition-colors"
-                    style={{ background: '#DED4C2' }}
+                    className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors"
                   >
-                    <Bell className="w-4.5 h-4.5" style={{ color: '#6B5B4A' }} />
+                    <Bell className="w-5 h-5 text-slate-600" />
                     {unreadCount > 0 && (
-                      <span className="absolute top-0.5 right-0.5 w-4 h-4 text-white text-[10px] font-bold rounded-full flex items-center justify-center" style={{ background: '#C45B4D' }}>
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
                     )}
                   </button>
 
-                  <div className="flex flex-col items-center px-2">
-                    <span className="font-bold text-sm leading-none" style={{ color: '#5A9B8A' }}>
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-orange-100 border border-yellow-300 rounded-lg px-3 py-1.5">
+                    <Star className="w-4 h-4 text-yellow-600" />
+                    <span className="text-yellow-800 font-semibold text-sm">
                       {user.reward_points || 0}
                     </span>
-                    <span className="text-[10px] font-medium" style={{ color: '#8A7D6B' }}>points</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-slate-600 leading-tight">
+                      {currentGreeting}
+                    </div>
                   </div>
                 </div>
               )}
@@ -467,24 +468,26 @@ export default function Layout({ children, currentPageName }) {
                 user ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2.5 pl-4 pr-2 py-1.5 rounded-full transition-colors" style={{ background: '#DED4C2' }}>
-                        <span className="text-sm font-semibold hidden lg:block" style={{ color: '#3D2E1C' }}>{currentGreeting}</span>
-                        <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-[#D4C9B5] flex-shrink-0" style={{ background: '#C4B9A5' }}>
+                      <Button variant="ghost" className="flex items-center gap-2 text-suttain-dark/90 px-2 py-1 h-10 hover:bg-slate-100">
+                        <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
                            {user.profile_image_url ? (
                              <img src={user.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
                            ) : (
-                             <div className="w-full h-full flex items-center justify-center" style={{ background: '#8A7D6B' }}>
+                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-400 to-cyan-500">
                                <UserIcon className="w-4 h-4 text-white" />
                              </div>
                            )}
                         </div>
-                        <ChevronDown className="w-3 h-3" style={{ color: '#6B5B4A' }} />
-                      </button>
+                        <div className="hidden lg:block text-left">
+                          <div className="font-semibold text-sm leading-tight">{(user.display_name || user.full_name || 'Account').split(' ')[0]}</div>
+                        </div>
+                        <ChevronDown className="w-3 h-3" />
+                      </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 rounded-xl border-[#D4C9B5]" style={{ background: '#F5EFE6' }}>
-                      <div className="px-3 py-2 border-b border-[#D4C9B5]">
-                        <p className="font-semibold text-sm" style={{ color: '#3D2E1C' }}>{user.display_name || user.full_name}</p>
-                        <p className="text-xs" style={{ color: '#8A7D6B' }}>{user.email}</p>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <div className="px-3 py-2 border-b">
+                        <p className="font-semibold text-sm">{user.display_name || user.full_name}</p>
+                        <p className="text-xs text-slate-500">{user.email}</p>
                       </div>
                       <DropdownMenuItem asChild>
                         <Link to="/Dashboard" className="cursor-pointer">
@@ -523,12 +526,12 @@ export default function Layout({ children, currentPageName }) {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
-                  <div className="hidden md:flex items-center gap-2">
+                  <div className="hidden md:flex items-center gap-3">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => openAuthModal("login")}
-                      className="text-[#6B5B4A] hover:text-[#3D2E1C] hover:bg-[#DED4C2] rounded-full"
+                      className="text-suttain-dark/80 hover:text-suttain-dark"
                     >
                       <LogIn className="w-4 h-4 mr-2" />
                       Sign In
@@ -536,18 +539,18 @@ export default function Layout({ children, currentPageName }) {
                     <Button
                       size="sm"
                       onClick={() => openAuthModal("signup")}
-                      className="text-white hover:opacity-90 rounded-full px-5 font-bold"
-                      style={{ background: '#5A9B8A' }}
+                      className="bg-gradient-to-r from-suttain-teal to-suttain-blue text-white hover:opacity-90 rounded-full px-5 font-bold shadow-md"
                     >
+                      <Sparkles className="w-4 h-4 mr-2" />
                       Sign Up Free
                     </Button>
                   </div>
                 )
               ) : (
                 // Optionally show a loading indicator or nothing while auth status is being fetched
-                <div className="hidden md:flex items-center gap-2">
-                  <div className="w-20 h-9 rounded-full animate-pulse" style={{ background: '#DED4C2' }}></div>
-                  <div className="w-24 h-9 rounded-full animate-pulse" style={{ background: '#DED4C2' }}></div>
+                <div className="hidden md:flex items-center gap-3">
+                  <div className="w-20 h-10 bg-slate-100 rounded-md animate-pulse"></div>
+                  <div className="w-24 h-10 bg-slate-100 rounded-md animate-pulse"></div>
                 </div>
               )}
 
@@ -555,8 +558,7 @@ export default function Layout({ children, currentPageName }) {
               <div className="lg:hidden">
                 <button
                   onClick={() => setIsMobileMenuOpen(true)}
-                  className="p-2 rounded-full transition-colors"
-                  style={{ color: '#6B5B4A' }}
+                  className="p-2 rounded-md text-slate-600 hover:bg-slate-100"
                 >
                   <Menu className="w-6 h-6" />
                 </button>
