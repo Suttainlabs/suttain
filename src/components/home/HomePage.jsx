@@ -90,10 +90,42 @@ export default function HomePage() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [chemSearch, setChemSearch] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Common chemicals for autocomplete
+  const commonChemicals = [
+    'Benzene', 'Ethanol', 'Acetone', 'Water', 'Sodium Chloride',
+    'Glucose', 'Caffeine', 'Aspirin', 'Methane', 'Formaldehyde',
+    'Phenol', 'Toluene', 'Xylene', 'Propanol', 'Butanol',
+    'Acetaldehyde', 'Acetic Acid', 'Formic Acid', 'Citric Acid', 'Oxalic Acid'
+  ];
+
+  const handleChemChange = (value) => {
+    setChemSearch(value);
+    if (value.trim().length > 0) {
+      const filtered = commonChemicals.filter(chem => 
+        chem.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(filtered);
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSelectSuggestion = (chemical) => {
+    setChemSearch(chemical);
+    setSuggestions([]);
+    setShowSuggestions(false);
+    navigate(createPageUrl('MoleculeExplorer') + '?q=' + encodeURIComponent(chemical));
+  };
 
   const handleChemSearch = (e) => {
     e.preventDefault();
     if (!chemSearch.trim()) return;
+    setShowSuggestions(false);
     navigate(createPageUrl('MoleculeExplorer') + '?q=' + encodeURIComponent(chemSearch.trim()));
   };
 
@@ -163,14 +195,15 @@ export default function HomePage() {
           </motion.div>
 
           {/* Chemical search bar */}
-          <motion.div {...fade(0.28)} className="mt-10 max-w-2xl mx-auto">
+          <motion.div {...fade(0.28)} className="mt-10 max-w-2xl mx-auto relative">
             <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-3 text-center">Search 130M+ chemicals</p>
-            <form onSubmit={handleChemSearch} className="flex items-center gap-2 bg-white border border-slate-200 rounded-full px-5 py-3 shadow-sm hover:shadow-md transition-shadow">
+            <form onSubmit={handleChemSearch} className="flex items-center gap-2 bg-white border border-slate-200 rounded-full px-5 py-3 shadow-sm hover:shadow-md transition-shadow relative">
               <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
               <input
                 type="text"
                 value={chemSearch}
-                onChange={(e) => setChemSearch(e.target.value)}
+                onChange={(e) => handleChemChange(e.target.value)}
+                onFocus={() => chemSearch.trim().length > 0 && setShowSuggestions(true)}
                 placeholder="Search by IUPAC name, CAS number, or chemical name..."
                 className="flex-1 text-sm text-slate-700 placeholder-slate-400 bg-transparent outline-none"
               />
@@ -182,6 +215,21 @@ export default function HomePage() {
                 Search
               </button>
             </form>
+            
+            {/* Suggestions dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden z-10">
+                {suggestions.map((chem, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelectSuggestion(chem)}
+                    className="w-full text-left px-5 py-3 text-sm text-slate-700 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 transition-colors"
+                  >
+                    {chem}
+                  </button>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Trust stats */}
