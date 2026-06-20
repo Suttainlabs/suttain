@@ -326,216 +326,128 @@ export default function Layout({ children, currentPageName }) {
         }
       `}</style>
 
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Back button — mobile only, hidden on home routes */}
-            {location.pathname !== '/' && location.pathname !== '/Home' && (
-              <button
-                onClick={() => navigate(-1)}
-                aria-label="Go back"
-                className="lg:hidden p-2 -ml-1 mr-1 rounded-lg text-slate-600 hover:bg-slate-100 flex-shrink-0"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-            )}
-            <Link to={createPageUrl("Home")} className="flex items-center gap-3">
-              <img 
+      {/* Floating Nav Bar */}
+      <header className="sticky top-3 z-50 px-4 pt-[env(safe-area-inset-top)]">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14">
+
+            {/* Logo */}
+            <Link to={createPageUrl("Home")} className="flex items-center gap-2 flex-shrink-0">
+              <img
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
                 alt="Suttain"
-                className="h-10 w-auto"
+                className="h-8 w-auto"
               />
             </Link>
 
-
-
-            {/* Desktop Navigation */}
+            {/* Desktop: minimal link row + menu trigger */}
             <nav className="hidden lg:flex items-center gap-1">
-              {navLinks.map(({ href, label }) => (
-                <Link key={href} to={createPageUrl(href)} className={getLinkClasses(href)}>
-                  <span>{label}</span>
-                </Link>
-              ))}
+              <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>Pricing</Link>
+              <Link to="/research" className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${isResearchActive ? "bg-violet-100 text-violet-600" : "text-slate-600 hover:bg-slate-100"}`}>
+                <Microscope className="w-3.5 h-3.5" />Research
+              </Link>
 
-
-
-              {/* Consumer Tools Dropdown */}
+              {/* Expandable nav — Tools + more */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
-                    isConsumerToolsActive
-                      ? "bg-cyan-100 text-cyan-600"
-                      : "text-slate-700 hover:bg-cyan-50 hover:text-cyan-600"
-                  }`}>
-                    <span>Tools</span>
-                    <ChevronDown className="w-3 h-3" />
+                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                    <Menu className="w-4 h-4" />
+                    <span>Menu</span>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-72">
+                <DropdownMenuContent align="end" className="w-64 p-2">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 pb-1">Tools</p>
                   {consumerToolItems.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
-                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 p-3">
-                        <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
-                          <item.icon className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-suttain-dark text-sm">{item.label}</p>
-                          <p className="text-xs text-suttain-text/80">{item.description}</p>
-                        </div>
+                      <Link to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-lg">
+                        <item.icon className="w-4 h-4 flex-shrink-0" style={{ color: "#007850" }} />
+                        <span className="text-sm font-medium text-slate-700">{item.label}</span>
                       </Link>
                     </DropdownMenuItem>
                   ))}
+                  <DropdownMenuSeparator className="my-1.5" />
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("AboutUs")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
+                      <Building2 className="w-4 h-4 text-slate-400" />
+                      <span className="text-sm font-medium text-slate-700">About Us</span>
+                    </Link>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              {/* Research Link */}
-              <Link
-                to="/research"
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
-                  isResearchActive
-                    ? "bg-violet-100 text-violet-600"
-                    : "text-slate-700 hover:bg-violet-50 hover:text-violet-600"
-                }`}
-              >
-                <Microscope className="w-4 h-4" />
-                <span>Research</span>
-              </Link>
-
-
             </nav>
 
-            {/* Auth Buttons / User Menu */}
-            <div className="flex items-center gap-3">
+            {/* Right side: auth */}
+            <div className="flex items-center gap-2">
               {!isAuthLoading && user && (
-                <div className="hidden md:flex items-center gap-3">
-                  {/* Trial Status Badge */}
+                <div className="hidden md:flex items-center gap-2">
                   <TrialBadge trialStatus={trialStatus} />
-                  {/* Notification Bell */}
-                  <button
-                    onClick={() => setShowNotifications(true)}
-                    className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors"
-                  >
-                    <Bell className="w-5 h-5 text-slate-600" />
+                  <button onClick={() => setShowNotifications(true)} className="relative p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <Bell className="w-4 h-4 text-slate-600" />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                      <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
                     )}
                   </button>
-
-                  <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-orange-100 border border-yellow-300 rounded-lg px-3 py-1.5">
-                    <Star className="w-4 h-4 text-yellow-600" />
-                    <span className="text-yellow-800 font-semibold text-sm">
-                      {user.reward_points || 0}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-medium text-slate-600 leading-tight">
-                      {currentGreeting}
-                    </div>
-                  </div>
                 </div>
               )}
+
               {!isAuthLoading ? (
                 user ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="flex items-center gap-2 text-suttain-dark/90 px-2 py-1 h-10 hover:bg-slate-100">
-                        <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
-                           {user.profile_image_url ? (
-                             <img src={user.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
-                           ) : (
-                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-400 to-cyan-500">
-                               <UserIcon className="w-4 h-4 text-white" />
-                             </div>
-                           )}
+                      <Button variant="ghost" className="flex items-center gap-1.5 px-2 py-1 h-9 hover:bg-slate-100 rounded-xl">
+                        <div className="w-7 h-7 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
+                          {user.profile_image_url ? (
+                            <img src={user.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-400 to-cyan-500">
+                              <UserIcon className="w-3.5 h-3.5 text-white" />
+                            </div>
+                          )}
                         </div>
-                        <div className="hidden lg:block text-left">
-                          <div className="font-semibold text-sm leading-tight">{(user.display_name || user.full_name || 'Account').split(' ')[0]}</div>
-                        </div>
-                        <ChevronDown className="w-3 h-3" />
+                        <span className="hidden lg:block text-sm font-semibold">{(user.display_name || user.full_name || 'Account').split(' ')[0]}</span>
+                        <ChevronDown className="w-3 h-3 text-slate-400" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuContent align="end" className="w-52">
                       <div className="px-3 py-2 border-b">
                         <p className="font-semibold text-sm">{user.display_name || user.full_name}</p>
                         <p className="text-xs text-slate-500">{user.email}</p>
                       </div>
-                      <DropdownMenuItem asChild>
-                        <Link to="/Dashboard" className="cursor-pointer">
-                            <LayoutDashboard className="w-4 h-4 mr-2" />
-                            My Dashboard
-                           </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild>
-                        <Link to={createPageUrl("BillingDashboard")} className="cursor-pointer">
-                          <CreditCard className="w-4 h-4 mr-2" />
-                          Billing & Payments
-                        </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild>
-                        <Link to={createPageUrl("Workspace")} className="cursor-pointer">
-                          <FolderOpen className="w-4 h-4 mr-2" />
-                          My Workspace
-                        </Link>
-                      </DropdownMenuItem>
-
+                      <DropdownMenuItem asChild><Link to="/Dashboard" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />My Dashboard</Link></DropdownMenuItem>
+                      <DropdownMenuItem asChild><Link to={createPageUrl("BillingDashboard")} className="cursor-pointer"><CreditCard className="w-4 h-4 mr-2" />Billing & Payments</Link></DropdownMenuItem>
+                      <DropdownMenuItem asChild><Link to={createPageUrl("Workspace")} className="cursor-pointer"><FolderOpen className="w-4 h-4 mr-2" />My Workspace</Link></DropdownMenuItem>
                       {user.role === 'admin' && (
-                        <DropdownMenuItem asChild>
-                          <Link to={createPageUrl("AdminDashboard")} className="cursor-pointer">
-                            <LayoutDashboard className="w-4 h-4 mr-2" />
-                            Admin Dashboard
-                          </Link>
-                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link to={createPageUrl("AdminDashboard")} className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Admin Dashboard</Link></DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500 focus:bg-red-50 cursor-pointer">
-                        <LogOut className="w-4 h-4 mr-2" />
-                        Logout
+                        <LogOut className="w-4 h-4 mr-2" />Logout
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
-                  <div className="hidden md:flex items-center gap-3">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openAuthModal("login")}
-                      className="text-suttain-dark/80 hover:text-suttain-dark"
-                    >
-                      <LogIn className="w-4 h-4 mr-2" />
+                  <div className="hidden md:flex items-center gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => openAuthModal("login")} className="text-slate-600 hover:text-slate-900 text-sm font-semibold">
                       Sign In
                     </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => openAuthModal("signup")}
-                      className="bg-gradient-to-r from-suttain-teal to-suttain-blue text-white hover:opacity-90 rounded-full px-5 font-bold shadow-md"
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Sign Up Free
+                    <Button size="sm" onClick={() => openAuthModal("signup")} className="bg-[#007850] text-white hover:opacity-90 rounded-full px-4 text-sm font-bold">
+                      Get Started
                     </Button>
                   </div>
                 )
               ) : (
-                // Optionally show a loading indicator or nothing while auth status is being fetched
-                <div className="hidden md:flex items-center gap-3">
-                  <div className="w-20 h-10 bg-slate-100 rounded-md animate-pulse"></div>
-                  <div className="w-24 h-10 bg-slate-100 rounded-md animate-pulse"></div>
+                <div className="hidden md:flex gap-2">
+                  <div className="w-16 h-8 bg-slate-100 rounded-lg animate-pulse" />
+                  <div className="w-20 h-8 bg-slate-100 rounded-lg animate-pulse" />
                 </div>
               )}
 
-              {/* Mobile Menu Button */}
-              <div className="lg:hidden">
-                <button
-                  onClick={() => setIsMobileMenuOpen(true)}
-                  className="p-2 rounded-md text-slate-600 hover:bg-slate-100"
-                >
-                  <Menu className="w-6 h-6" />
-                </button>
-              </div>
+              {/* Mobile hamburger */}
+              <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100">
+                <Menu className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </div>
