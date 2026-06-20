@@ -250,25 +250,6 @@ export default function APIPortal() {
           </div>
         </div>
 
-        {/* Tier table */}
-        <div className="mb-10">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3">API Tiers</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {TIERS.map((tier) => (
-              <div key={tier.name} className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-4">
-                <p className="text-xs font-bold text-white mb-0.5">{tier.name}</p>
-                <p className="text-base font-black mb-0.5" style={{ color: tier.color }}>{tier.price}</p>
-                <p className="text-[10px] text-slate-600 mb-3">{tier.limit}</p>
-                <div className="space-y-1">
-                  {tier.features.map((f) => (
-                    <p key={f} className="text-[10px] text-slate-500">{f}</p>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Endpoint docs + SDK snippets */}
         <div className="grid lg:grid-cols-3 gap-5">
 
