@@ -189,7 +189,7 @@ export default function HomePage() {
             <div className="relative inline-flex flex-wrap justify-center rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden divide-x divide-slate-100">
               <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #02988C60, #9531F560, transparent)" }} />
               {[
-                { value: "250k+", label: "Ingredients", color: "#007850" },
+                { value: "130M+", label: "Chemicals", color: "#007850" },
                 { value: "8", label: "Consumer Tools", color: "#0D9E8E" },
                 { value: "<1s", label: "Analysis Time", color: "#6366f1" },
                 { value: "Free", label: "To Start", color: "#007850" },
