@@ -7,45 +7,61 @@ import {
   Shirt, Beaker, Droplets, Heart, Package,
   Building2, FlaskConical, Factory, Wrench, User as UserIcon,
   Shield, Leaf, BarChart3, DollarSign,
-  Globe, MapPin, Plane, Map
+  Globe, MapPin, Plane, Map, Microscope
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-// ── Q1: What do you make? ─────────────────────────────────────────────────────
+// ── Step 0: Profile type ──────────────────────────────────────────────────────
+const PROFILE_OPTIONS = [
+  {
+    id: 'consumer',
+    icon: FlaskConical,
+    title: 'I am a consumer, DIY creator, or small brand',
+    description: 'I formulate products, scan ingredients, or manage a brand. I want formula tools, sustainability scoring, and compliance guidance.',
+    color: '#007850',
+  },
+  {
+    id: 'researcher',
+    icon: Microscope,
+    title: 'I am a researcher, scientist, or institution',
+    description: 'I run computational simulations, query chemical databases, or manage a lab. I need molecular intelligence, DFT, and API access.',
+    color: '#6366f1',
+  },
+];
+
+// ── Consumer onboarding questions ────────────────────────────────────────────
 const WHAT_YOU_MAKE = [
-  { id: 'cleaning',     label: 'Cleaning products',  icon: Beaker },
-  { id: 'cosmetics',    label: 'Cosmetics',           icon: Shirt },
-  { id: 'soap',         label: 'Soap',                icon: Droplets },
-  { id: 'personal_care',label: 'Personal care',       icon: Heart },
-  { id: 'other',        label: 'Other',               icon: Package },
+  { id: 'cleaning',      label: 'Cleaning products', icon: Beaker },
+  { id: 'cosmetics',     label: 'Cosmetics',          icon: Shirt },
+  { id: 'soap',          label: 'Soap',               icon: Droplets },
+  { id: 'personal_care', label: 'Personal care',      icon: Heart },
+  { id: 'other',         label: 'Other',              icon: Package },
 ];
 
-// ── Q2: What is your role? ────────────────────────────────────────────────────
 const ROLES = [
-  { id: 'founder',      label: 'Founder',             icon: Building2 },
-  { id: 'formulator',   label: 'Formulator',          icon: FlaskConical },
-  { id: 'manufacturer', label: 'Manufacturer',        icon: Factory },
-  { id: 'diy',          label: 'DIY Maker',           icon: Wrench },
-  { id: 'consultant',   label: 'Consultant',          icon: UserIcon },
+  { id: 'founder',      label: 'Founder',       icon: Building2 },
+  { id: 'formulator',   label: 'Formulator',    icon: FlaskConical },
+  { id: 'manufacturer', label: 'Manufacturer',  icon: Factory },
+  { id: 'diy',          label: 'DIY Maker',     icon: Wrench },
+  { id: 'consultant',   label: 'Consultant',    icon: UserIcon },
 ];
 
-// ── Q3: What matters most? ────────────────────────────────────────────────────
 const PRIORITIES = [
-  { id: 'safety',         label: 'Safety',            icon: Shield },
-  { id: 'compliance',     label: 'Compliance',        icon: CheckCircle2 },
-  { id: 'sustainability', label: 'Sustainability',    icon: Leaf },
-  { id: 'carbon_costs',   label: 'Carbon costs',      icon: DollarSign },
+  { id: 'safety',         label: 'Safety',        icon: Shield },
+  { id: 'compliance',     label: 'Compliance',    icon: CheckCircle2 },
+  { id: 'sustainability', label: 'Sustainability', icon: Leaf },
+  { id: 'carbon_costs',   label: 'Carbon costs',  icon: DollarSign },
 ];
 
-// ── Q4: Where do you sell? ────────────────────────────────────────────────────
 const MARKETS = [
-  { id: 'usa',          label: 'USA',                 icon: MapPin },
-  { id: 'eu',           label: 'EU',                  icon: Globe },
-  { id: 'africa',       label: 'Africa',              icon: Map },
-  { id: 'asia_pacific', label: 'Asia-Pacific',        icon: Plane },
-  { id: 'global',       label: 'Global',              icon: Globe },
+  { id: 'usa',          label: 'USA',          icon: MapPin },
+  { id: 'eu',           label: 'EU',           icon: Globe },
+  { id: 'africa',       label: 'Africa',       icon: Map },
+  { id: 'asia_pacific', label: 'Asia-Pacific', icon: Plane },
+  { id: 'global',       label: 'Global',       icon: Globe },
 ];
 
-const QUESTIONS = [
+const CONSUMER_QUESTIONS = [
   {
     key: 'what_you_make',
     question: 'What do you make?',
@@ -90,18 +106,25 @@ const slideVariants = {
 };
 
 export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) {
+  const navigate = useNavigate();
+  // phase: 'profile' | 'consumer_quiz'
+  const [phase, setPhase] = useState('profile');
+  const [profileType, setProfileType] = useState(null);
+
+  // Consumer quiz state
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [answers, setAnswers] = useState({ what_you_make: '', role: '', priority: '', markets: [] });
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Persist progress in case user closes mid-quiz
   useEffect(() => {
     const saved = localStorage.getItem('suttain_onboarding_progress');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        if (parsed.phase) setPhase(parsed.phase);
+        if (parsed.profileType) setProfileType(parsed.profileType);
         if (parsed.step !== undefined) setStep(parsed.step);
         if (parsed.answers) setAnswers(parsed.answers);
       } catch {}
@@ -109,12 +132,40 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('suttain_onboarding_progress', JSON.stringify({ step, answers }));
-  }, [step, answers]);
+    localStorage.setItem('suttain_onboarding_progress', JSON.stringify({ phase, profileType, step, answers }));
+  }, [phase, profileType, step, answers]);
 
   if (!isOpen) return null;
 
-  const q = QUESTIONS[step];
+  // ── Profile type selection ────────────────────────────────────────────────
+  const handleProfileContinue = async () => {
+    if (!profileType) return;
+    setIsSaving(true);
+    try {
+      await base44.auth.updateMe({ profile_type: profileType, first_login: false });
+    } catch {}
+    setIsSaving(false);
+
+    if (profileType === 'researcher') {
+      // Notify admin, skip consumer quiz, go straight to research portal
+      base44.auth.me().then(currentUser => {
+        base44.functions.invoke('sendSlackNotification', {
+          channel: '#all-suttain',
+          type: 'new_user',
+          data: { userName: currentUser.full_name, userEmail: currentUser.email, role: 'researcher', industry: 'research' }
+        }).catch(() => {});
+      }).catch(() => {});
+
+      localStorage.removeItem('suttain_onboarding_progress');
+      if (onAccept) onAccept();
+      navigate('/research');
+    } else {
+      setPhase('consumer_quiz');
+    }
+  };
+
+  // ── Consumer quiz ─────────────────────────────────────────────────────────
+  const q = CONSUMER_QUESTIONS[step];
 
   const select = (id) => {
     if (q.multi) {
@@ -138,17 +189,22 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
 
   const advance = () => {
     if (!canAdvance) return;
-    if (step < QUESTIONS.length - 1) {
+    if (step < CONSUMER_QUESTIONS.length - 1) {
       setDirection(1);
       setStep(s => s + 1);
     } else {
-      save(answers);
+      saveConsumer(answers);
     }
   };
 
   const back = () => {
-    setDirection(-1);
-    setStep(s => s - 1);
+    if (step === 0) {
+      setPhase('profile');
+      setDirection(-1);
+    } else {
+      setDirection(-1);
+      setStep(s => s - 1);
+    }
   };
 
   const applySkip = () => {
@@ -157,11 +213,11 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
       const v = answers[k];
       if (v && (!Array.isArray(v) || v.length > 0)) filled[k] = v;
     });
-    save(filled);
+    saveConsumer(filled);
     setShowSkipConfirm(false);
   };
 
-  const save = async (data) => {
+  const saveConsumer = async (data) => {
     setIsSaving(true);
     try {
       await base44.auth.updateMe({
@@ -177,6 +233,7 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
       base44.analytics.track({
         eventName: 'onboarding_completed',
         properties: {
+          profile_type: 'consumer',
           what_you_make: data.what_you_make,
           role: data.role,
           priority: data.priority,
@@ -202,7 +259,7 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
       }).catch(() => {});
 
       localStorage.removeItem('suttain_onboarding_progress');
-      if (onAccept) onAccept(); else onClose();
+      if (onAccept) onAccept();
     } catch (error) {
       console.error("Failed to save onboarding data:", error);
       alert("Could not save your preferences. Please try again.");
@@ -211,9 +268,99 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
     }
   };
 
+  // ── Render: Profile Type Screen ──────────────────────────────────────────
+  if (phase === 'profile') {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-white flex flex-col">
+        <div className="flex items-center justify-between px-6 pt-5 pb-3 flex-shrink-0">
+          <img
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
+            alt="Suttain"
+            className="h-8 w-auto"
+          />
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center px-4">
+          <div className="w-full max-w-lg">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-3">
+                How will you use Suttain?
+              </h1>
+              <p className="text-slate-500 text-base">
+                This helps us route you to the right tools. You can switch at any time.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {PROFILE_OPTIONS.map((opt) => {
+                const Icon = opt.icon;
+                const isActive = profileType === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => setProfileType(opt.id)}
+                    className={cn(
+                      "w-full text-left rounded-2xl border-2 p-5 transition-all duration-150 focus:outline-none",
+                      isActive
+                        ? "shadow-md"
+                        : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
+                    )}
+                    style={isActive ? { borderColor: opt.color, background: opt.color + "06" } : {}}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div
+                        className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                        style={{ background: opt.color + "14" }}
+                      >
+                        <Icon className="w-5 h-5" style={{ color: opt.color }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={cn("font-semibold text-sm mb-1", isActive ? "text-slate-900" : "text-slate-800")}>
+                          {opt.title}
+                        </p>
+                        <p className="text-xs text-slate-500 leading-relaxed">{opt.description}</p>
+                      </div>
+                      <div
+                        className={cn("w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 transition-all",
+                          isActive ? "border-4" : "border-slate-300"
+                        )}
+                        style={isActive ? { borderColor: opt.color, background: opt.color } : {}}
+                      />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="px-6 pb-8 pt-4 flex-shrink-0">
+          <div className="max-w-lg mx-auto">
+            <button
+              onClick={handleProfileContinue}
+              disabled={!profileType || isSaving}
+              className={cn(
+                "w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-base transition-all",
+                profileType && !isSaving
+                  ? "text-white shadow-lg"
+                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
+              )}
+              style={profileType && !isSaving ? {
+                background: PROFILE_OPTIONS.find(o => o.id === profileType)?.color
+              } : {}}
+            >
+              {isSaving ? "Setting up your account..." : "Continue"}
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Render: Consumer Quiz ─────────────────────────────────────────────────
   return (
     <div className="fixed inset-0 z-[9999] bg-white flex flex-col">
-      {/* Skip confirm overlay */}
       <AnimatePresence>
         {showSkipConfirm && (
           <motion.div
@@ -249,7 +396,6 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
         )}
       </AnimatePresence>
 
-      {/* Top bar */}
       <div className="flex items-center justify-between px-6 pt-5 pb-3 flex-shrink-0">
         <img
           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
@@ -264,9 +410,8 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
         </button>
       </div>
 
-      {/* Progress dots */}
       <div className="flex items-center justify-center gap-2 py-3 flex-shrink-0">
-        {QUESTIONS.map((_, i) => (
+        {CONSUMER_QUESTIONS.map((_, i) => (
           <div
             key={i}
             className={cn(
@@ -281,7 +426,6 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
         ))}
       </div>
 
-      {/* Question card — animated */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
@@ -294,10 +438,9 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
             transition={{ duration: 0.28, ease: "easeInOut" }}
             className="w-full max-w-lg"
           >
-            {/* Question heading */}
             <div className="text-center mb-8">
               <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#02988C] mb-2">
-                Question {step + 1} of {QUESTIONS.length}
+                Question {step + 1} of {CONSUMER_QUESTIONS.length}
               </p>
               <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-3">
                 {q.question}
@@ -305,7 +448,6 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
               <p className="text-slate-500 text-base">{q.subtitle}</p>
             </div>
 
-            {/* Answer cards */}
             <div className={cn(
               "grid gap-3",
               q.options.length <= 4 ? "grid-cols-1 max-w-sm mx-auto" : "grid-cols-2"
@@ -335,9 +477,7 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
                     )}>
                       {label}
                     </span>
-                    {selected && (
-                      <CheckCircle2 className="w-4 h-4 text-[#02988C] flex-shrink-0" />
-                    )}
+                    {selected && <CheckCircle2 className="w-4 h-4 text-[#02988C] flex-shrink-0" />}
                   </button>
                 );
               })}
@@ -350,18 +490,15 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
         </AnimatePresence>
       </div>
 
-      {/* Bottom navigation */}
       <div className="px-6 pb-8 pt-4 flex-shrink-0">
         <div className="max-w-lg mx-auto flex items-center gap-3">
-          {step > 0 && (
-            <button
-              onClick={back}
-              className="flex items-center gap-1.5 px-5 py-3 rounded-xl border-2 border-slate-200 text-slate-700 font-semibold text-sm hover:border-slate-300 transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back
-            </button>
-          )}
+          <button
+            onClick={back}
+            className="flex items-center gap-1.5 px-5 py-3 rounded-xl border-2 border-slate-200 text-slate-700 font-semibold text-sm hover:border-slate-300 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back
+          </button>
           <button
             onClick={advance}
             disabled={!canAdvance || isSaving}
@@ -374,7 +511,7 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
           >
             {isSaving
               ? "Building your dashboard..."
-              : step === QUESTIONS.length - 1
+              : step === CONSUMER_QUESTIONS.length - 1
                 ? "Build My Dashboard"
                 : "Next"}
             {!isSaving && <ChevronRight className="w-4 h-4" />}
