@@ -140,9 +140,9 @@ export default function ResearchLanding() {
             </p>
 
             <div className="flex items-center justify-center gap-4 mt-10">
-              <Link to={createPageUrl("MolecularIntelligence")}>
+              <Link to={createPageUrl("ResearchDashboard")}>
                 <Button size="lg" className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white border-0 h-14 px-8 text-base font-semibold rounded-xl shadow-lg shadow-violet-500/25">
-                  Launch Molecular Intelligence
+                  Launch Research Dashboard
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
@@ -267,9 +267,9 @@ export default function ResearchLanding() {
               Join thousands of researchers using Suttain for molecular intelligence, computational simulation, and chemical safety analysis.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
-              <Link to={createPageUrl("MolecularIntelligence")}>
+              <Link to={createPageUrl("ResearchDashboard")}>
                 <Button size="lg" className="bg-violet-600 hover:bg-violet-500 text-white h-14 px-10 text-base font-semibold rounded-xl">
-                  Launch Molecular Intelligence
+                  Launch Research Dashboard
                   <Zap className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
