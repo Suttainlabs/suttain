@@ -151,16 +151,7 @@ export default function HomePage() {
                 Build a Formula
               </Button>
             </Link>
-            <Link to={createPageUrl("Pricing")}>
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base border-2"
-                style={{ borderColor: "#6366f1", color: "#6366f1" }}
-              >
-                View Pricing
-              </Button>
-            </Link>
+
           </motion.div>
 
           {/* Trust stats */}
