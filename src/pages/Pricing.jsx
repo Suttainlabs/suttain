@@ -123,7 +123,7 @@ const RESEARCH_PLANS = [
   {
     id: 'researcher_pro',
     name: 'Researcher Pro',
-    price: '$49.99',
+    price: '$19.99',
     priceSuffix: '/month',
     priceNote: 'Cancel anytime',
     description: 'Full molecular intelligence and computational access.',
@@ -143,7 +143,7 @@ const RESEARCH_PLANS = [
   {
     id: 'academic',
     name: 'Academic / Institution',
-    price: '$299',
+    price: '$199',
     priceSuffix: '/month per lab',
     priceNote: '.edu verified discount available',
     description: 'For research labs and university departments.',

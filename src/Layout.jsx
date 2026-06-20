@@ -27,6 +27,7 @@ import TrialBadge from './components/trial/TrialBadge';
 const ClaraAssistant = React.lazy(() => import("./components/shared/ClaraAssistant").catch(() => ({ default: () => null })));
 const AuthModal = React.lazy(() => import("./components/auth/AuthModal").catch(() => ({ default: () => null })));
 const UserAcknowledgementModal = React.lazy(() => import("./components/auth/UserAcknowledgementModal").catch(() => ({ default: () => null })));
+const ProfileTypeSelector = React.lazy(() => import("./components/auth/ProfileTypeSelector").catch(() => ({ default: () => null })));
 
 
 export default function Layout({ children, currentPageName }) {
@@ -44,6 +45,7 @@ export default function Layout({ children, currentPageName }) {
   const [showAcknowledgementModal, setShowAcknowledgementModal] = useState(false);
   const [currentGreeting, setCurrentGreeting] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileSelector, setShowProfileSelector] = useState(false);
 
   const trialStatus = useTrialStatus(user);
 
@@ -169,10 +171,16 @@ export default function Layout({ children, currentPageName }) {
   
   const handleAcceptAcknowledgement = async () => {
     try {
-      await User.updateMyUserData({ first_login: false });
+      // Don't mark first_login false yet — ProfileTypeSelector will do that
       setShowAcknowledgementModal(false);
+      // Check if user has already chosen a profile type
       const currentUser = await User.me();
       setUser(currentUser);
+      if (!currentUser.profile_type) {
+        setShowProfileSelector(true);
+      } else {
+        await User.updateMyUserData({ first_login: false });
+      }
     } catch (error) {
       console.error("Failed to accept acknowledgment:", error);
       await User.logout();
@@ -419,18 +427,7 @@ export default function Layout({ children, currentPageName }) {
                 <span>Research</span>
               </Link>
 
-              {/* Enterprise Link */}
-              <Link
-                to="/enterprise"
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
-                  isEnterpriseActive
-                    ? "bg-amber-100 text-amber-700"
-                    : "text-slate-700 hover:bg-amber-50 hover:text-amber-600"
-                }`}
-              >
-                <Terminal className="w-4 h-4" />
-                <span>Enterprise</span>
-              </Link>
+
             </nav>
 
             {/* Auth Buttons / User Menu */}
@@ -738,19 +735,7 @@ export default function Layout({ children, currentPageName }) {
                     </Link>
                   </motion.div>
 
-                  {/* Enterprise Link - Mobile */}
-                  <motion.div variants={mobileNavItemVariants}>
-                    <Link
-                      to="/enterprise"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        isEnterpriseActive ? "bg-amber-100 text-amber-700" : "text-suttain-dark hover:bg-amber-50"
-                      }`}
-                    >
-                      <Terminal className="w-5 h-5" />
-                      Enterprise
-                    </Link>
-                  </motion.div>
+
                 </nav>
 
                 {/* Mobile Auth Section */}
@@ -948,6 +933,9 @@ export default function Layout({ children, currentPageName }) {
             onAccept={handleAcceptAcknowledgement}
             onClose={handleDeclineAcknowledgement}
           />
+        )}
+        {showProfileSelector && (
+          <ProfileTypeSelector onComplete={() => setShowProfileSelector(false)} />
         )}
       </React.Suspense>
     </div>

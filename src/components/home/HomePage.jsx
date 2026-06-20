@@ -2,9 +2,8 @@ import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, FlaskConical, Sparkles, ShieldCheck,
-  Leaf, BarChart3, Zap, TestTube, QrCode, Cpu, Droplets,
-  Database, Atom, Code2, FileText, Microscope, BarChart2,
-  ChevronRight, Star, Globe, Check
+  Leaf, BarChart3, Zap, TestTube, QrCode, Droplets,
+  Database, Atom, ChevronRight, Star, Globe, Check
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -26,10 +25,10 @@ const fadeIn = (delay = 0) => ({
   transition: { duration: 0.5, delay, ease: "easeOut" },
 });
 
-// ── Tool categories ──────────────────────────────────────────────────
+// ── Consumer tool categories only (Research is NOT promoted here) ──────
 const TOOL_GROUPS = [
   {
-    label: "Core Safety Tools",
+    label: "Safety and Formulation",
     color: "#007850",
     tools: [
       {
@@ -59,59 +58,26 @@ const TOOL_GROUPS = [
     ],
   },
   {
-    label: "Research Portal",
-    color: "#0D9E8E",
-    badge: "New",
-    tools: [
-      {
-        icon: Atom,
-        label: "Molecular Intelligence",
-        desc: "Query any compound by name, SMILES, or InChI. Hazard classification, toxicity, and regulatory mapping via PubChem.",
-        href: "MolecularIntelligence",
-      },
-      {
-        icon: Microscope,
-        label: "Molecule Explorer",
-        desc: "Browse your chemical database in 3D. Renders PubChem-sourced conformers with a full property panel alongside.",
-        href: "MoleculeExplorer",
-        badge: "New",
-      },
-      {
-        icon: BarChart2,
-        label: "Chemical Dashboard",
-        desc: "Visualize chemical property trends, MW distributions, safety breakdowns, and data coverage — live from your database.",
-        href: "ChemicalDashboard",
-        badge: "New",
-      },
-      {
-        icon: Code2,
-        label: "Research API",
-        desc: "REST API with endpoints for compound lookup, hazard scoring, and formula generation. Python and JS SDKs included.",
-        href: "APIPortal",
-      },
-    ],
-  },
-  {
-    label: "Advanced Simulation",
+    label: "Analytics and Compliance",
     color: "#6366f1",
     tools: [
       {
-        icon: Cpu,
-        label: "Computational Simulations",
-        desc: "Run DFT, molecular dynamics, drug discovery, protein modeling, and quantum chemistry scripts.",
-        href: "ComputationalSimulation",
-      },
-      {
         icon: Leaf,
-        label: "Carbon & Reporting",
-        desc: "Simulate carbon tax scenarios, model decarbonization ROI, and export sustainability reports.",
-        href: "CarbonTaxSimulator",
+        label: "Sustainability Scoring",
+        desc: "Detailed eco-impact analysis, biodegradability scores, and carbon footprint per formula.",
+        href: "SustainabilityImpact",
       },
       {
         icon: BarChart3,
         label: "Comparative Impact Report",
         desc: "Benchmark your formula's environmental score against industry averages with exportable reports.",
         href: "ComparativeImpactReport",
+      },
+      {
+        icon: ShieldCheck,
+        label: "AI Compliance Co-Pilot",
+        desc: "Automated regulatory checks across 50+ global regions including EU, FDA, and ASEAN.",
+        href: "ComplianceDashboard",
       },
       {
         icon: Droplets,
@@ -148,18 +114,18 @@ function StatStrip() {
 // ── What's new banner ────────────────────────────────────────────────
 function WhatsNewBanner() {
   const updates = [
-    "Molecule Explorer — 3D structure viewer from your database",
-    "Chemical Intelligence Dashboard — property trend charts",
-    "Research Portal — unified molecular intelligence OS",
-    "Research API — REST endpoints with Python & JS SDKs",
+    "AI Compliance Co-Pilot — automated checks across 50+ regions",
+    "Hydration Intelligence — biological food-linked adjustments",
+    "Sustainability Scoring — per-ingredient carbon and eco data",
+    "Formula Generator — INCI names, pH guidance, safety scoring",
   ];
   return (
     <motion.div
       {...fadeIn()}
-      className="bg-[#0D9E8E]/8 border border-[#0D9E8E]/25 rounded-2xl p-5 sm:p-7 mb-16"
+      className="bg-[#007850]/6 border border-[#007850]/20 rounded-2xl p-5 sm:p-7 mb-16"
     >
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[#0D9E8E] border border-[#0D9E8E]/30 rounded px-2 py-0.5">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[#007850] border border-[#007850]/30 rounded px-2 py-0.5">
           June 2026 Release
         </span>
       </div>
@@ -169,7 +135,7 @@ function WhatsNewBanner() {
       <div className="grid sm:grid-cols-2 gap-2.5">
         {updates.map((u, i) => (
           <div key={i} className="flex items-start gap-2.5">
-            <div className="w-4 h-4 rounded-full bg-[#0D9E8E] flex items-center justify-center flex-shrink-0 mt-0.5">
+            <div className="w-4 h-4 rounded-full bg-[#007850] flex items-center justify-center flex-shrink-0 mt-0.5">
               <Check className="w-2.5 h-2.5 text-white" />
             </div>
             <p className="text-sm text-slate-700">{u}</p>
@@ -178,8 +144,8 @@ function WhatsNewBanner() {
       </div>
       <div className="mt-5 pt-4 border-t border-slate-200 flex items-center justify-between gap-3 flex-wrap">
         <p className="text-xs text-slate-500">Full release notes sent to all registered users.</p>
-        <Link to={createPageUrl("ResearchPortal")} className="flex items-center gap-1.5 text-sm font-semibold text-[#0D9E8E] hover:underline">
-          Explore Research Portal <ChevronRight className="w-3.5 h-3.5" />
+        <Link to={createPageUrl("Pricing")} className="flex items-center gap-1.5 text-sm font-semibold text-[#007850] hover:underline">
+          View Pricing <ChevronRight className="w-3.5 h-3.5" />
         </Link>
       </div>
     </motion.div>
@@ -291,35 +257,34 @@ export default function HomePage() {
           </motion.div>
 
           <motion.div {...fade(0.22)} className="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
-            <Link to={createPageUrl("ResearchPortal")}>
-              <Button
-                size="lg"
-                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white shadow-lg shadow-[#007850]/20 hover:shadow-xl hover:shadow-[#007850]/30"
-                style={{ background: "#007850" }}
-              >
-                <Atom className="w-4 h-4 mr-2" />
-                Open Research Portal
-              </Button>
-            </Link>
             <Link to={createPageUrl("Simulator")}>
               <Button
                 size="lg"
-                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white shadow-md"
-                style={{ background: "#0D9E8E" }}
+                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white shadow-lg shadow-[#007850]/20 hover:shadow-xl"
+                style={{ background: "#007850" }}
               >
                 Analyze Your Product Free
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
-            <Link to={createPageUrl("APIPortal")}>
+            <Link to={createPageUrl("generator")}>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white shadow-md"
+                style={{ background: "#0D9E8E" }}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Build a Formula
+              </Button>
+            </Link>
+            <Link to={createPageUrl("Pricing")}>
               <Button
                 size="lg"
                 variant="outline"
                 className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base border-2"
                 style={{ borderColor: "#6366f1", color: "#6366f1" }}
               >
-                <Code2 className="w-4 h-4 mr-2" />
-                View API Docs
+                View Pricing
               </Button>
             </Link>
           </motion.div>
@@ -439,10 +404,10 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-4 gap-5">
             {[
-              { n: "01", title: "Query any compound", body: "Search by name, CAS, SMILES, or InChI. Get hazard scores, regulatory status, and toxicity data in under a second.", color: "#007850" },
-              { n: "02", title: "Visualize in 3D", body: "Render PubChem-sourced 3D conformers in the browser. Inspect physical, toxicity, and environmental properties side by side.", color: "#0D9E8E" },
-              { n: "03", title: "Generate a formula", body: "Get AI-generated formula options with INCI names, pH guidance, safety scores, and compliance flags — in plain language.", color: "#6366f1" },
-              { n: "04", title: "Export and act", body: "Export reports to PDF, JSON, or CSV. Citation-ready outputs in APA, ACS, and Vancouver formats.", color: "#007850" },
+              { n: "01", title: "Scan any product", body: "Scan a barcode or enter an ingredient list. Get a full toxicity profile, eco-impact score, and safety breakdown instantly.", color: "#007850" },
+              { n: "02", title: "Simulate interactions", body: "Test how ingredients interact. Get hazard scores, pH estimates, and compliance flags before you ever mix a batch.", color: "#0D9E8E" },
+              { n: "03", title: "Generate a formula", body: "Get AI-generated formula options with INCI names, safety scores, and sustainability ratings — in plain language.", color: "#6366f1" },
+              { n: "04", title: "Export and share", body: "Export professional PDF reports with full compliance documentation and sustainability scores for your brand or clients.", color: "#007850" },
             ].map((step, i) => (
               <motion.div key={i} {...fadeIn(i * 0.1)}>
                 <div className="bg-white rounded-2xl p-6 border border-slate-200 h-full relative overflow-hidden hover:shadow-md transition-shadow">
@@ -513,13 +478,13 @@ export default function HomePage() {
                 Join thousands of formulators and researchers using Suttain. No credit card required to access the core tools.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to={createPageUrl("ResearchPortal")}>
+                <Link to={createPageUrl("Simulator")}>
                   <Button
                     size="lg"
                     className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base bg-white hover:bg-white/90 transition-colors"
                     style={{ color: "#007850" }}
                   >
-                    Open Research Portal
+                    Analyze Your Product Free
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
