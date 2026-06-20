@@ -266,7 +266,7 @@ export default function HomePage() {
 
           <motion.h1
             {...fade(0.08)}
-            className="text-3xl sm:text-5xl lg:text-7xl font-bold text-slate-900 tracking-tight mb-4 sm:mb-6"
+            className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight mb-4 sm:mb-6"
             style={{ lineHeight: 0.95 }}
           >
             The complete platform for{" "}
