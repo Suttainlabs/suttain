@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthGate from "../components/auth/AuthGate";
 import AuthContext from "../components/auth/AuthContext";
 import useTrialStatus from "../hooks/useTrialStatus";
 import { Link } from "react-router-dom";
@@ -308,7 +307,6 @@ export default function ComputationalSimulation() {
   };
 
   return (
-    <AuthGate featureName="Computational Simulation" featureDescription="AI-powered computational chemistry simulations — Pro feature.">
       <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
         <div className="max-w-6xl mx-auto px-4 py-10">
 
@@ -454,6 +452,5 @@ export default function ComputationalSimulation() {
 
         </div>
       </div>
-    </AuthGate>
   );
 }

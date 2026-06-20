@@ -227,6 +227,7 @@ export default function Layout({ children, currentPageName }) {
     { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive" },
     { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments" },
   ];
+  // Research tools are exclusively accessed via the Research portal navigation — not listed here.
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
 
