@@ -74,6 +74,18 @@ export default function Layout({ children, currentPageName }) {
       setUser(currentUser);
       setCurrentGreeting(getGreetingText(currentUser));
 
+      // Returning researcher — redirect straight to research portal (skip consumer layout)
+      if (currentUser && currentUser.first_login === false && currentUser.profile_type === 'researcher') {
+        const isOnResearchPage = window.location.pathname.startsWith('/research')
+          || window.location.pathname === '/enterprise' || window.location.pathname === '/EnterpriseAPI'
+          || ['/MolecularIntelligence', '/MoleculeExplorer', '/ChemicalDashboard', '/ResearchPortal',
+              '/ResearchDashboard', '/APIPortal', '/ChemicalComparison', '/SDSAnalyzer',
+              '/ComputationalSimulation', '/SimulationEngine', '/ChemicalLibrary'].includes(window.location.pathname);
+        if (!isOnResearchPage) {
+          navigate('/research');
+        }
+      }
+
       if (currentUser && currentUser.first_login !== false) {
         setShowAcknowledgementModal(true);
         // Send welcome email via backend function (reliable, server-side)
@@ -170,7 +182,13 @@ export default function Layout({ children, currentPageName }) {
   const handleAcceptAcknowledgement = async () => {
     setShowAcknowledgementModal(false);
     const currentUser = await User.me().catch(() => null);
-    if (currentUser) setUser(currentUser);
+    if (currentUser) {
+      setUser(currentUser);
+      // Route returning researchers back to their portal
+      if (currentUser.profile_type === 'researcher') {
+        navigate('/research');
+      }
+    }
   };
 
   const handleDeclineAcknowledgement = async () => {
