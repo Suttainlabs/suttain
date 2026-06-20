@@ -342,21 +342,17 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Desktop: minimal link row + menu trigger */}
             <nav className="hidden lg:flex items-center gap-1">
+              <Link to={createPageUrl("Home")} className={getLinkClasses("Home")}>Home</Link>
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>Pricing</Link>
-              <Link to="/research" className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${isResearchActive ? "bg-violet-100 text-violet-600" : "text-slate-600 hover:bg-slate-100"}`}>
-                <Microscope className="w-3.5 h-3.5" />Research
-              </Link>
 
-              {/* Expandable nav — Tools + more */}
+              {/* Tools dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
-                    <Menu className="w-4 h-4" />
-                    <span>Menu</span>
+                    <span>Tools</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 p-2">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2 pb-1">Tools</p>
                   {consumerToolItems.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
                       <Link to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-lg">
@@ -365,15 +361,20 @@ export default function Layout({ children, currentPageName }) {
                       </Link>
                     </DropdownMenuItem>
                   ))}
-                  <DropdownMenuSeparator className="my-1.5" />
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("AboutUs")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
-                      <Building2 className="w-4 h-4 text-slate-400" />
-                      <span className="text-sm font-medium text-slate-700">About Us</span>
-                    </Link>
-                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+
+              {/* Research — special pill button */}
+              <Link
+                to="/research"
+                className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all border ${
+                  isResearchActive
+                    ? "bg-violet-600 text-white border-violet-600"
+                    : "border-violet-500 text-violet-600 hover:bg-violet-600 hover:text-white"
+                }`}
+              >
+                Research
+              </Link>
             </nav>
 
             {/* Right side: auth */}
