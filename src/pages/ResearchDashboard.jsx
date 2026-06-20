@@ -1,7 +1,6 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import AuthContext from '../components/auth/AuthContext';
 import AuthGate from '../components/auth/AuthGate';
 import { base44 } from '@/api/base44Client';
 import {
@@ -61,11 +60,19 @@ const FEED_ITEMS = [
 ];
 
 export default function ResearchDashboard() {
-  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [queryHistory, setQueryHistory] = useState([]);
   const [savedFormulas, setSavedFormulas] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    base44.auth.me()
+      .then(u => setUser(u))
+      .catch(() => setUser(null))
+      .finally(() => setAuthChecked(true));
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -83,6 +90,14 @@ export default function ResearchDashboard() {
   const handleRerun = (item) => {
     navigate(`${createPageUrl('MolecularIntelligence')}?q=${encodeURIComponent(item.query)}&type=${item.type}`);
   };
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!user) {
     return (
