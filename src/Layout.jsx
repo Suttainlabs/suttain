@@ -195,6 +195,8 @@ export default function Layout({ children, currentPageName }) {
     { href: "LearningSuite", label: "Academic", icon: GraduationCap },
   ];
 
+  // Consumer nav only — Research is accessible but not promoted
+
   const companyMenuItems = [
     { href: "AboutUs", label: "About Us", icon: Building2, description: "Learn about our mission and team" },
     { href: "Careers", label: "Careers", icon: Briefcase, description: "View open positions and join us" },

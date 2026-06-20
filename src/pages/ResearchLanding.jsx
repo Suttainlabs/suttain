@@ -258,6 +258,96 @@ export default function ResearchLanding() {
           </div>
         </section>
 
+        {/* ── Research Pricing Preview ── */}
+        <section className="px-6 py-20 max-w-7xl mx-auto">
+          <div className="mb-12">
+            <p className="text-xs text-violet-400 uppercase tracking-[0.2em] font-semibold mb-3">Pricing</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+              Built for researchers. Priced for labs.
+            </h2>
+            <p className="text-slate-400 max-w-2xl">
+              All plans start free. API access is included from Researcher Pro and above.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                name: "Researcher Free",
+                price: "Free",
+                note: "Public database access",
+                items: ["Basic molecular queries", "Limited simulations", "PubChem access"],
+                color: "#6366f1",
+              },
+              {
+                name: "Researcher Pro",
+                price: "$19.99/mo",
+                note: "Cancel anytime",
+                items: ["Unlimited molecular intelligence", "Full DFT, MD, QM/MM simulations", "Research API access", "Citation-ready PDF export"],
+                color: "#8b5cf6",
+                popular: true,
+              },
+              {
+                name: "Academic / Institution",
+                price: "$199/mo per lab",
+                note: ".edu verified discount available",
+                items: ["Up to 10 team seats", "Bulk compound export", "Priority compute queue", "Dedicated lab workspace"],
+                color: "#0D9E8E",
+              },
+              {
+                name: "Enterprise",
+                price: "Custom",
+                note: "Tailored to your infrastructure",
+                items: ["White-label deployment", "Custom API integrations", "SSO and unlimited seats", "SLA-backed support"],
+                color: "#334155",
+              },
+            ].map((plan, i) => (
+              <div
+                key={plan.name}
+                className={`relative rounded-2xl border p-6 flex flex-col ${
+                  plan.popular
+                    ? "border-violet-500 bg-violet-950/40 shadow-xl shadow-violet-500/10"
+                    : "border-slate-700 bg-slate-800/40"
+                }`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white bg-violet-600">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+                <h3 className="font-bold text-white text-base mb-1">{plan.name}</h3>
+                <p className="text-xl font-bold mb-0.5" style={{ color: plan.color }}>{plan.price}</p>
+                <p className="text-xs text-slate-500 mb-4">{plan.note}</p>
+                <ul className="space-y-2 flex-1 mb-5">
+                  {plan.items.map((item, j) => (
+                    <li key={j} className="flex items-start gap-2">
+                      <div className="w-3.5 h-3.5 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center" style={{ background: plan.color + "30" }}>
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ background: plan.color }} />
+                      </div>
+                      <span className="text-xs text-slate-400">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href="mailto:contact@suttain.com"
+                  className="w-full py-2.5 rounded-xl text-center text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  style={{ background: plan.color }}
+                >
+                  {plan.price === "Custom" ? "Contact Sales" : "Get Started"}
+                </a>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-center text-slate-500 text-xs mt-8">
+            Academic plans include .edu verified discounts.{" "}
+            <a href="mailto:contact@suttain.com" className="text-violet-400 hover:underline">Contact us</a>{" "}
+            for custom arrangements or institution licensing.
+          </p>
+        </section>
+
         {/* ── CTA Footer ── */}
         <section className="border-t border-slate-800">
           <div className="max-w-7xl mx-auto px-6 py-20 text-center">
@@ -267,10 +357,10 @@ export default function ResearchLanding() {
             <p className="text-slate-400 max-w-xl mx-auto mb-8">
               Join thousands of researchers using Suttain for molecular intelligence, computational simulation, and chemical safety analysis.
             </p>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link to={createPageUrl("MolecularIntelligence")}>
                 <Button size="lg" className="bg-violet-600 hover:bg-violet-500 text-white h-14 px-10 text-base font-semibold rounded-xl">
-                  Start Researching
+                  Launch Molecular Intelligence
                   <Zap className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
@@ -280,6 +370,81 @@ export default function ResearchLanding() {
                   API Docs
                 </Button>
               </Link>
+            </div>
+          </div>
+
+          {/* Research Footer */}
+          <div className="border-t border-slate-800 bg-slate-950/60">
+            <div className="max-w-7xl mx-auto px-6 py-10">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Research</p>
+                  <ul className="space-y-2">
+                    {[
+                      { label: "Molecular Intelligence", href: "MolecularIntelligence" },
+                      { label: "Molecule Explorer", href: "MoleculeExplorer" },
+                      { label: "Chemical Comparison", href: "ChemicalComparison" },
+                      { label: "SDS Analyzer", href: "SDSAnalyzer" },
+                    ].map(({ label, href }) => (
+                      <li key={href}>
+                        <Link to={createPageUrl(href)} className="text-sm text-slate-400 hover:text-white transition-colors">
+                          {label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Simulations</p>
+                  <ul className="space-y-2">
+                    {[
+                      { label: "Computational Simulations", href: "ComputationalSimulation" },
+                      { label: "Simulation Engine", href: "SimulationEngine" },
+                      { label: "Research Dashboard", href: "ResearchDashboard" },
+                    ].map(({ label, href }) => (
+                      <li key={href}>
+                        <Link to={createPageUrl(href)} className="text-sm text-slate-400 hover:text-white transition-colors">
+                          {label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Science</p>
+                  <ul className="space-y-2">
+                    {[
+                      { label: "Methodology", href: "LearningSuite" },
+                      { label: "Publications", href: "ExternalDatabases" },
+                      { label: "API Docs", href: "APIPortal" },
+                      { label: "Academic Access", href: "LearningSuite" },
+                    ].map(({ label, href }) => (
+                      <li key={label}>
+                        <Link to={createPageUrl(href)} className="text-sm text-slate-400 hover:text-white transition-colors">
+                          {label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">API Access</p>
+                  <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                    Access the Research API via Python, JavaScript, and R SDKs.
+                  </p>
+                  <Link to={createPageUrl("APIPortal")}>
+                    <span className="text-xs font-semibold text-violet-400 hover:text-violet-300 transition-colors">
+                      View API Documentation
+                    </span>
+                  </Link>
+                </div>
+              </div>
+              <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+                <p>© {new Date().getFullYear()} Suttain. Suttain Research is a separate product from Suttain Consumer.</p>
+                <Link to="/" className="text-slate-500 hover:text-slate-300 transition-colors">
+                  Back to Consumer Platform
+                </Link>
+              </div>
             </div>
           </div>
         </section>
