@@ -68,14 +68,24 @@ export default function ResearchDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      setUser(null);
+      setAuthChecked(true);
+    }, 4000);
+
     base44.auth.me()
       .then(u => setUser(u))
       .catch(() => setUser(null))
-      .finally(() => setAuthChecked(true));
+      .finally(() => {
+        clearTimeout(timeout);
+        setAuthChecked(true);
+      });
+
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) { setLoading(false); return; }
     try {
       const hist = JSON.parse(localStorage.getItem('mi_query_history') || '[]');
       setQueryHistory(hist);
