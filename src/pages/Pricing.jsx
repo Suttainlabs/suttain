@@ -108,15 +108,14 @@ const CONSUMER_PLANS = [
 const RESEARCH_PLANS = [
   {
     id: 'researcher_free',
-    name: 'Researcher Free',
+    name: 'Free',
     price: 'Free',
-    priceNote: 'Public database access',
-    description: 'Basic molecular queries and limited simulations.',
+    priceNote: 'Public database',
+    description: 'Basic queries and limited simulations.',
     features: [
-      'Basic molecular queries',
+      'Molecular queries',
       'Limited simulations',
-      'Public database access (PubChem)',
-      'Community support',
+      'PubChem access',
     ],
     cta: 'Get Started Free',
     ctaDisabled: true,
@@ -125,19 +124,18 @@ const RESEARCH_PLANS = [
   },
   {
     id: 'researcher_pro',
-    name: 'Researcher Pro',
+    name: 'Pro',
     price: '$19.99',
     priceSuffix: '/month',
     priceNote: 'Cancel anytime',
-    description: 'Full molecular intelligence and computational access.',
+    description: 'Unlimited queries and full computational access.',
     features: [
-      'Unlimited molecular intelligence queries',
-      'Full computational simulations (DFT, MD, QM/MM)',
-      'Research API access',
-      'Citation-ready PDF export (APA/ACS/Vancouver)',
-      'Unlimited workspace storage',
+      'Unlimited queries',
+      'Full simulations (DFT, MD)',
+      'Research API',
+      'Citation-ready exports',
     ],
-    cta: 'Start Researcher Pro',
+    cta: 'Start Pro',
     popular: true,
     contactSales: true,
     color: '#6366f1',
@@ -145,18 +143,16 @@ const RESEARCH_PLANS = [
   },
   {
     id: 'academic',
-    name: 'Academic / Institution',
+    name: 'Academic',
     price: '$199',
-    priceSuffix: '/month per lab',
-    priceNote: '.edu verified discount available',
+    priceSuffix: '/month',
+    priceNote: '.edu discount available',
     description: 'For research labs and university departments.',
     features: [
       'Up to 10 team seats',
-      'Bulk compound export (CSV, JSON)',
-      'Priority DFT and MD compute queue',
-      'Dedicated lab workspace with version history',
+      'Priority compute queue',
+      'Lab workspace',
       'API included',
-      '.edu verified discount',
     ],
     cta: 'Contact Sales',
     badge: 'Lab Ready',
@@ -168,14 +164,13 @@ const RESEARCH_PLANS = [
     id: 'enterprise',
     name: 'Enterprise',
     price: 'Custom',
-    priceNote: 'Tailored to your infrastructure',
-    description: 'White-label deployment, dedicated infrastructure, and SLA-backed support.',
+    priceNote: 'Contact us',
+    description: 'Dedicated infrastructure and white-label deployment.',
     features: [
       'White-label deployment',
-      'Custom API integrations',
       'Dedicated infrastructure',
       'SSO and unlimited seats',
-      'SLA-backed support',
+      'SLA support',
     ],
     cta: 'Contact Sales',
     contactSales: true,
@@ -389,29 +384,17 @@ export default function Pricing() {
 
         {/* ── SECTION 2: Research ── */}
         <motion.div {...fadeIn(0.2)}>
-          <div className="flex items-center gap-4 mb-8">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">For Researchers and Institutions</h2>
-              <p className="text-slate-500 text-sm mt-1">Molecular intelligence, computational simulations, Research API, and citation-ready exports — for scientists.</p>
-            </div>
-            <div className="flex-1 h-px bg-violet-100 hidden sm:block" />
-            <span className="hidden sm:inline-block text-[11px] font-bold uppercase tracking-widest text-violet-600 border border-violet-200 bg-violet-50 px-3 py-1 rounded-full flex-shrink-0">
-              Research
-            </span>
+          <div className="mb-10">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">For Researchers and Institutions</h2>
+            <p className="text-slate-500 text-sm max-w-2xl">Molecular intelligence, computational simulations, and research APIs for scientists.</p>
           </div>
 
-          <div className="rounded-3xl bg-slate-950 p-6 sm:p-10">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {RESEARCH_PLANS.map((plan, i) => (
-                <motion.div key={plan.id} {...fadeIn(0.05 * i)}>
-                  <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={true} billingCycle="monthly" />
-                </motion.div>
-              ))}
-            </div>
-            <p className="text-center text-slate-500 text-xs mt-8">
-              Research Pro and above include API access. Academic plans include .edu verified discounts.{' '}
-              <a href="mailto:contact@suttain.com" className="text-violet-400 hover:underline">Contact us</a> for custom arrangements.
-            </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {RESEARCH_PLANS.map((plan, i) => (
+              <motion.div key={plan.id} {...fadeIn(0.05 * i)}>
+                <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={false} billingCycle="monthly" />
+              </motion.div>
+            ))}
           </div>
         </motion.div>
 
