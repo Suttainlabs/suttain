@@ -17,7 +17,6 @@ const TOOLS_MENU = [
   { href: "/SDSAnalyzer", label: "SDS Analyzer", icon: ShieldCheck, desc: "Safety data sheet hazard extraction" },
   { href: "/SimulationEngine", label: "Simulation Engine", icon: FlaskConical, desc: "Formula cost & sustainability modeling" },
   { href: "/CarbonTaxSimulator", label: "Carbon & Sustainability", icon: BarChart2, desc: "Carbon tax & ESG compliance" },
-  { href: "/ResearchDashboard", label: "Research Dashboard", icon: BookOpen, desc: "Saved queries, history & workspace" },
 ];
 
 const NAV_LINKS = [
