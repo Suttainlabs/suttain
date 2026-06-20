@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight, Code2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -201,6 +201,7 @@ export default function Layout({ children, currentPageName }) {
   const navLinks = [
     { href: "Home", label: "Home", icon: Home },
     { href: "Pricing", label: "Pricing", icon: Star },
+    { href: "LearningSuite", label: "Academic", icon: GraduationCap },
   ];
 
   const companyMenuItems = [
@@ -709,6 +710,20 @@ export default function Layout({ children, currentPageName }) {
                     </AnimatePresence>
                   </motion.div>
 
+                  {/* Academic Link - Mobile */}
+                  <motion.div variants={mobileNavItemVariants}>
+                    <Link
+                      to={createPageUrl("LearningSuite")}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
+                        location.pathname === createPageUrl("LearningSuite") ? "bg-teal-100 text-teal-600" : "text-suttain-dark hover:bg-teal-50"
+                      }`}
+                    >
+                      <GraduationCap className="w-5 h-5" />
+                      Academic
+                    </Link>
+                  </motion.div>
+
                   {/* Research Link - Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
                     <Link
@@ -897,32 +912,18 @@ export default function Layout({ children, currentPageName }) {
               </ul>
             </div>
 
-            {/* Column 4: Get the App */}
+            {/* Column 4: Science */}
             <div className="bg-slate-800 rounded-lg p-4">
-              <h3 className="font-semibold mb-1 text-white text-sm">Get the App</h3>
-              <p className="text-slate-400 text-xs mb-3">
-                Android app available now. iOS coming soon.
-              </p>
-              <div className="space-y-1.5">
-                <a href="https://drive.google.com/file/d/1N2daMqPWoG8WSxvoNEUCMpKhMdFsiJP4/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-[#02988C] hover:bg-[#028a7f] px-3 py-2 rounded-lg transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M3 20.5V3.5c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35z"/>
-                    <path fill="#34A853" d="m13.69 12 3.49-3.49 1.38.8c.7.4.7 1.08 0 1.48l-1.38.8-3.49 3.49V12z"/>
-                    <path fill="#FBBC05" d="M3.84 2.15 13.69 12l-9.85 9.85c.5.24 1.11.08 1.35-.84l8.5-8.5-8.5-8.5c-.24-.92-.85-1.08-1.35-.86z"/>
-                    <path fill="#EA4335" d="m17.18 8.51-3.49 3.49 3.49 3.49 1.38-.8c.7-.4.7-1.08 0-1.48l-1.38-.8 1.38-.8c.7-.4.7-1.08 0-1.48l-1.38-.62z"/>
-                  </svg>
-                  <div>
-                    <span className="text-xs text-white font-bold block">Download for Android</span>
-                    <span className="text-[10px] text-green-200">Free APK — Available Now</span>
-                  </div>
-                </a>
-                <div className="flex items-center gap-2 bg-slate-700 px-3 py-2 rounded-lg opacity-60 cursor-not-allowed">
-                  <Apple className="w-4 h-4 text-white" />
-                  <div>
-                    <span className="text-xs text-white font-medium block">App Store</span>
-                    <span className="text-[10px] text-slate-400">Coming Soon</span>
-                  </div>
-                </div>
+              <h3 className="font-semibold mb-3 text-white text-sm">Science</h3>
+              <ul className="space-y-1.5 text-sm mb-4">
+                <li><Link to={createPageUrl('LearningSuite')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Methodology</Link></li>
+                <li><Link to={createPageUrl('APIPortal')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">API Docs</Link></li>
+                <li><Link to={createPageUrl('LearningSuite')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Academic Access</Link></li>
+                <li><Link to={createPageUrl('ExternalDatabases')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Publications</Link></li>
+              </ul>
+              <div className="border-t border-slate-700 pt-3">
+                <p className="text-xs text-slate-400 mb-2">Access the Research API</p>
+                <p className="text-[11px] text-[var(--suttain-teal)] font-medium">Python, JavaScript, and R SDKs available</p>
               </div>
             </div>
             </div>

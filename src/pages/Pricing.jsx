@@ -1,212 +1,283 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Sparkles, Building2, Zap, Shield, Leaf, HeartPulse, MessageSquare, Clock, AlertTriangle, Loader2, Cpu, BarChart3, QrCode, Atom, FlaskConical, FileText, Globe, Database, FolderOpen, Layers } from 'lucide-react';
+import {
+  Check, Sparkles, Building2, Zap, Shield, Leaf, MessageSquare,
+  Loader2, Cpu, BarChart3, Atom, FlaskConical, FileText, Globe,
+  FolderOpen, Microscope, Code2, Database, GraduationCap
+} from 'lucide-react';
 import { createCheckoutSession } from '@/functions/createCheckoutSession';
 import useTrialStatus from '../hooks/useTrialStatus';
 import useLocalPricing from '../hooks/useLocalPricing';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import AuthContext from '../components/auth/AuthContext';
 
-const plans = [
+const fadeIn = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { delay, duration: 0.5 },
+});
+
+// ── Consumer Plans ────────────────────────────────────────────────────
+const CONSUMER_PLANS = [
   {
     id: 'free',
     name: 'Free',
-    description: 'Get started with core features every month, no credit card needed.',
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    lifetimePrice: 0,
+    price: 'Free',
+    priceNote: 'No credit card required',
+    description: 'Get started with core tools — no commitment.',
     features: [
-      '3 Chemical Simulations per month',
-      '5 Formula Generations per month',
-      'Unlimited Product Scans',
-      'Community Support',
-      'Learning Center Access'
+      '3 simulations per month',
+      '5 formula generations per month',
+      'Unlimited product scans',
+      'Ingredient database access',
+      'Community support',
     ],
-    limitations: [
-      'Monthly usage limits apply'
-    ],
-    cta: 'Current Plan',
-    popular: false,
-    icon: Zap
+    cta: 'Get Started Free',
+    ctaDisabled: true,
+    color: '#007850',
+    icon: Zap,
   },
   {
     id: 'pro',
     name: 'Pro',
-    description: 'Everything you need to formulate safely and efficiently — unlimited access.',
-    monthlyPrice: 4.99,
-    yearlyPrice: null,
-    lifetimePrice: null,
+    price: '$4.99',
+    priceSuffix: '/month',
+    priceNote: 'Cancel anytime',
+    description: 'Unlimited access to all consumer tools.',
     features: [
-      'Unlimited Chemical Simulations',
-      'Unlimited Formula Generation',
-      'Unlimited Product Scans',
-      'Computational Simulations (DFT, MD, QM)',
-      'Formula Simulation Engine',
-      'AI Compliance Co-Pilot (50+ regions)',
-      'Personalized Safety Alerts',
-      'Sustainability & Carbon Footprint Scoring',
-      'Comparative Impact Reports',
-      'Ingredient Database (250k+ chemicals)',
-      'Unlimited Workspace Storage',
-      'PDF & Lab Report Export',
-      'Priority Email Support'
+      'Unlimited simulations',
+      'Unlimited formula generation',
+      'Unlimited product scans',
+      'Sustainability scoring',
+      'AI Compliance Co-Pilot',
+      'Hydration Intelligence',
+      'PDF export',
+      'Priority support',
     ],
-    limitations: [],
     cta: 'Upgrade to Pro',
     popular: true,
-    icon: Sparkles
+    priceKey: 'pro_monthly',
+    color: '#0D9E8E',
+    icon: Sparkles,
   },
   {
     id: 'lifetime',
-    name: 'Lifetime Access',
-    description: 'Pay once, use forever. The smartest investment for serious formulators.',
-    monthlyPrice: null,
-    yearlyPrice: null,
-    lifetimePrice: 99.99,
+    name: 'Lifetime',
+    price: '$99.99',
+    priceNote: 'One-time payment, forever',
+    description: 'Everything in Pro — all future consumer updates included.',
     features: [
-      'Everything in Pro — forever',
-      'All future feature updates included',
-      'Unlimited Chemical Simulations',
-      'Unlimited Formula Generation',
-      'Unlimited Product Scans',
-      'AI Compliance Co-Pilot',
-      'Priority Support for Life',
-      'Export to PDF/Print'
+      'All Pro features forever',
+      'All future consumer updates',
+      'PDF & report export',
+      'Priority support for life',
     ],
-    limitations: [],
     cta: 'Get Lifetime Access',
-    popular: false,
     badge: 'Best Value',
-    icon: Building2
-  }
+    priceKey: 'lifetime',
+    color: '#f59e0b',
+    icon: Building2,
+  },
+  {
+    id: 'business',
+    name: 'Business',
+    price: '$29.99',
+    priceSuffix: '/month',
+    priceNote: 'Up to 5 team seats',
+    description: 'For small brands and formulation teams.',
+    features: [
+      'Everything in Pro',
+      'Up to 5 team seats',
+      'Bulk ingredient validation',
+      'White-label report export',
+      'Compliance documentation',
+      'Priority support',
+    ],
+    cta: 'Contact Sales',
+    contactSales: true,
+    color: '#6366f1',
+    icon: Building2,
+  },
 ];
 
-const featureDetails = [
+// ── Research Plans ────────────────────────────────────────────────────
+const RESEARCH_PLANS = [
   {
-    icon: Cpu,
-    title: 'Computational Simulations',
-    description: 'Run DFT, Molecular Dynamics, ORCA, GROMACS & quantum chemistry scripts — no lab needed.',
-    color: 'from-violet-500 to-purple-600',
-    badge: 'Advanced'
+    id: 'researcher_free',
+    name: 'Researcher Free',
+    price: 'Free',
+    priceNote: 'Public database access',
+    description: 'Basic molecular queries and limited simulations.',
+    features: [
+      'Basic molecular queries',
+      'Limited simulations',
+      'Public database access (PubChem)',
+      'Community support',
+    ],
+    cta: 'Get Started Free',
+    ctaDisabled: true,
+    color: '#6366f1',
+    icon: Microscope,
   },
   {
-    icon: Shield,
-    title: 'AI Compliance Co-Pilot',
-    description: 'Automated regulatory checks across 50+ global regions including EU, FDA, and ASEAN.',
-    color: 'from-teal-500 to-cyan-500',
-    badge: null
-  },
-  {
-    icon: HeartPulse,
-    title: 'Personalized Safety Alerts',
-    description: 'Custom alerts based on your health profile, conditions, and ingredient sensitivities.',
-    color: 'from-rose-500 to-pink-500',
-    badge: null
-  },
-  {
-    icon: Leaf,
-    title: 'Sustainability Scoring',
-    description: 'Detailed eco-impact analysis, biodegradability scores, and carbon footprint per formula.',
-    color: 'from-green-500 to-emerald-500',
-    badge: null
-  },
-  {
-    icon: BarChart3,
-    title: 'Comparative Impact Reports',
-    description: "Benchmark your formula's eco-score vs. industry averages with exportable reports.",
-    color: 'from-blue-500 to-indigo-500',
-    badge: null
-  },
-  {
+    id: 'researcher_pro',
+    name: 'Researcher Pro',
+    price: '$49.99',
+    priceSuffix: '/month',
+    priceNote: 'Cancel anytime',
+    description: 'Full molecular intelligence and computational access.',
+    features: [
+      'Unlimited molecular intelligence queries',
+      'Full computational simulations (DFT, MD, QM/MM)',
+      'Research API access',
+      'Citation-ready PDF export (APA/ACS/Vancouver)',
+      'Unlimited workspace storage',
+    ],
+    cta: 'Start Researcher Pro',
+    popular: true,
+    contactSales: true,
+    color: '#6366f1',
     icon: Atom,
-    title: 'Formula Simulation Engine',
-    description: 'Adjust ingredient percentages live and instantly see cost, pH, and sustainability shifts.',
-    color: 'from-amber-500 to-orange-500',
-    badge: null
   },
   {
-    icon: QrCode,
-    title: 'Unlimited Quick Scans',
-    description: 'Scan any product barcode for full ingredient safety, toxicity & eco analysis — no limits.',
-    color: 'from-cyan-500 to-teal-500',
-    badge: null
+    id: 'academic',
+    name: 'Academic / Institution',
+    price: '$299',
+    priceSuffix: '/month per lab',
+    priceNote: '.edu verified discount available',
+    description: 'For research labs and university departments.',
+    features: [
+      'Up to 10 team seats',
+      'Bulk compound export (CSV, JSON)',
+      'Priority DFT and MD compute queue',
+      'Dedicated lab workspace with version history',
+      'API included',
+      '.edu verified discount',
+    ],
+    cta: 'Contact Sales',
+    badge: 'Lab Ready',
+    contactSales: true,
+    color: '#0D9E8E',
+    icon: GraduationCap,
   },
   {
-    icon: Globe,
-    title: 'Ingredient Database Access',
-    description: 'Explore 250k+ chemicals with full toxicity, origin, INCI names, and eco-impact data.',
-    color: 'from-slate-600 to-slate-800',
-    badge: null
-  },
-  {
-    icon: FlaskConical,
-    title: 'Unlimited Simulations',
-    description: 'Run as many chemical interaction simulations as you need — no monthly cap.',
-    color: 'from-teal-600 to-green-600',
-    badge: null
-  },
-  {
-    icon: FileText,
-    title: 'PDF & Lab Report Export',
-    description: 'Export professional-grade formulas, safety reports, and lab documentation as PDFs.',
-    color: 'from-indigo-500 to-blue-600',
-    badge: null
-  },
-  {
-    icon: FolderOpen,
-    title: 'Unlimited Workspace',
-    description: 'Save, organize, and revisit all simulations, formulas, and scans in your personal workspace.',
-    color: 'from-violet-500 to-fuchsia-500',
-    badge: null
-  },
-  {
-    icon: MessageSquare,
-    title: 'Priority Support',
-    description: '24/7 dedicated support with under 4-hour response time and direct team access.',
-    color: 'from-rose-500 to-red-500',
-    badge: null
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 'Custom',
+    priceNote: 'Tailored to your infrastructure',
+    description: 'White-label deployment, dedicated infrastructure, and SLA-backed support.',
+    features: [
+      'White-label deployment',
+      'Custom API integrations',
+      'Dedicated infrastructure',
+      'SSO and unlimited seats',
+      'SLA-backed support',
+    ],
+    cta: 'Contact Sales',
+    contactSales: true,
+    color: '#1e1b4b',
+    icon: Building2,
   },
 ];
+
+function PlanCard({ plan, onUpgrade, checkoutLoading, dark }) {
+  const isBusy = checkoutLoading === plan.priceKey;
+
+  const handleClick = () => {
+    if (plan.ctaDisabled) return;
+    if (plan.contactSales) {
+      window.location.href = 'mailto:contact@suttain.com?subject=' + encodeURIComponent(plan.name + ' Plan Inquiry');
+      return;
+    }
+    if (plan.priceKey) onUpgrade(plan.priceKey);
+  };
+
+  return (
+    <div className={`relative flex flex-col rounded-2xl border p-6 h-full transition-shadow hover:shadow-lg ${
+      plan.popular
+        ? dark
+          ? 'border-violet-500 bg-violet-950/40 shadow-xl'
+          : 'border-2 border-[#0D9E8E] shadow-xl'
+        : dark
+          ? 'border-slate-700 bg-slate-800/60'
+          : 'border-slate-200 bg-white'
+    }`}>
+      {plan.popular && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white" style={{ background: plan.color }}>
+            Most Popular
+          </span>
+        </div>
+      )}
+      {plan.badge && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full bg-amber-500 text-white">
+            {plan.badge}
+          </span>
+        </div>
+      )}
+
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: plan.color + '18' }}>
+          <plan.icon className="w-4.5 h-4.5" style={{ color: plan.color }} />
+        </div>
+        <h3 className={`font-bold text-base ${dark ? 'text-white' : 'text-slate-900'}`}>{plan.name}</h3>
+      </div>
+
+      <div className="mb-4">
+        <div className="flex items-baseline gap-1">
+          <span className={`text-3xl font-bold ${dark ? 'text-white' : 'text-slate-900'}`}>{plan.price}</span>
+          {plan.priceSuffix && <span className={`text-sm ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{plan.priceSuffix}</span>}
+        </div>
+        <p className={`text-xs mt-1 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{plan.priceNote}</p>
+      </div>
+
+      <p className={`text-sm mb-5 leading-relaxed ${dark ? 'text-slate-300' : 'text-slate-600'}`}>{plan.description}</p>
+
+      <button
+        onClick={handleClick}
+        disabled={plan.ctaDisabled || isBusy}
+        className={`w-full py-2.5 rounded-xl font-semibold text-sm mb-5 transition-all ${
+          plan.ctaDisabled
+            ? dark ? 'bg-slate-700 text-slate-500 cursor-default' : 'bg-slate-100 text-slate-400 cursor-default'
+            : 'text-white hover:opacity-90 active:scale-[0.98]'
+        }`}
+        style={!plan.ctaDisabled ? { background: plan.color } : undefined}
+      >
+        {isBusy ? <span className="flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Processing...</span> : plan.cta}
+      </button>
+
+      <ul className="space-y-2 flex-1">
+        {plan.features.map((f, i) => (
+          <li key={i} className="flex items-start gap-2">
+            <Check className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: plan.color }} />
+            <span className={`text-xs ${dark ? 'text-slate-300' : 'text-slate-600'}`}>{f}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function Pricing() {
   const { user, refreshUser } = useContext(AuthContext);
-  const trialStatus = useTrialStatus(user);
-  const [isYearly, setIsYearly] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(null);
   const { pricing, countryCode, loading: pricingLoading, formatPrice } = useLocalPricing();
 
-  // When Stripe redirects back with ?success=true, re-fetch the user so their
-  // subscription plan is reflected immediately without a manual page refresh.
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === 'true' && refreshUser) {
-      // Poll a few times to account for webhook processing delay
       const delays = [1500, 4000, 8000];
-      delays.forEach(delay => {
-        setTimeout(() => refreshUser(), delay);
-      });
+      delays.forEach(delay => setTimeout(() => refreshUser(), delay));
     }
   }, []);
 
-  const handleUpgrade = async (planId) => {
-    if (planId === 'free') return;
-
+  const handleUpgrade = async (priceKey) => {
     if (window.self !== window.top) {
       alert('Checkout works only from the published app. Please open the app in a new tab.');
       return;
     }
-
-    let priceKey;
-    if (planId === 'lifetime') {
-      priceKey = 'lifetime';
-    } else if (planId === 'pro') {
-      priceKey = isYearly ? 'pro_yearly' : 'pro_monthly';
-    }
-
-    if (!priceKey) return;
     setCheckoutLoading(priceKey);
     try {
       const res = await createCheckoutSession({
@@ -215,9 +286,7 @@ export default function Pricing() {
         cancelUrl: window.location.origin + '/Pricing?canceled=true',
         countryCode: countryCode || undefined,
       });
-      if (res.data?.url) {
-        window.location.href = res.data.url;
-      }
+      if (res.data?.url) window.location.href = res.data.url;
     } catch (error) {
       console.error('Checkout failed:', error);
       alert('Failed to start checkout. Please try again.');
@@ -226,289 +295,106 @@ export default function Pricing() {
     }
   };
 
-  // Handle success/canceled URL params
   const urlParams = new URLSearchParams(window.location.search);
   const isSuccess = urlParams.get('success') === 'true';
   const isCanceled = urlParams.get('canceled') === 'true';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Success/Cancel Banners */}
-        {isSuccess && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-            className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-            <p className="text-green-800 font-semibold">🎉 Payment successful! Your Pro subscription is now active.</p>
-          </motion.div>
-        )}
-        {isCanceled && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-            className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
-            <p className="text-yellow-800 font-semibold">Checkout was canceled. You can try again anytime.</p>
-          </motion.div>
-        )}
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <Badge className="bg-purple-100 text-purple-700 mb-4">Pricing</Badge>
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
-            Choose Your <span className="gradient-text">Perfect Plan</span>
-          </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
-            Start free with monthly limits, or upgrade for unlimited access
-          </p>
-
-          {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-3 flex-wrap">
-            <span className={`text-sm font-semibold ${!isYearly ? 'text-slate-900' : 'text-slate-400'}`}>Monthly</span>
-            <button
-              onClick={() => setIsYearly(!isYearly)}
-              className={`relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none ${
-                isYearly ? 'bg-[var(--suttain-violet)]' : 'bg-slate-300'
-              }`}
-            >
-              <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300 ${
-                isYearly ? 'translate-x-6' : 'translate-x-0'
-              }`} />
-            </button>
-            <span className={`text-sm font-semibold ${isYearly ? 'text-slate-900' : 'text-slate-400'}`}>
-              Yearly
-            </span>
-            {isYearly && (
-              <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">Save 16%</span>
-            )}
-          </div>
-          {/* Local currency notice */}
-          {!pricingLoading && pricing.country && (
-            <p className="text-xs text-slate-500 mt-3">
-              🌍 Prices shown in <strong>{pricing.currency.toUpperCase()}</strong> for {pricing.country}
-            </p>
-          )}
-        </motion.div>
-
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
-          {plans.map((plan, index) => (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card className={`relative h-full ${
-                plan.popular ? 'border-2 border-[var(--suttain-violet)] shadow-xl' :
-                plan.id === 'lifetime' ? 'border-2 border-amber-400 shadow-xl' :
-                'border border-slate-200'
-              }`}>
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-gradient-to-r from-[var(--suttain-violet)] to-purple-600 text-white px-4">
-                      Most Popular
-                    </Badge>
-                  </div>
-                )}
-                {plan.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4">
-                      {plan.badge}
-                    </Badge>
-                  </div>
-                )}
-                <CardHeader className="text-center pb-2">
-                  <div className={`w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center ${
-                    plan.popular ? 'bg-gradient-to-r from-[var(--suttain-violet)] to-purple-600' :
-                    plan.id === 'lifetime' ? 'bg-gradient-to-r from-amber-500 to-orange-500' :
-                    'bg-slate-100'
-                  }`}>
-                    <plan.icon className={`w-6 h-6 ${plan.id !== 'free' ? 'text-white' : 'text-slate-600'}`} />
-                  </div>
-                  <CardTitle className="text-xl">{plan.name}</CardTitle>
-                  <CardDescription className="text-sm leading-relaxed">{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Price */}
-                  <div className="text-center">
-                    {plan.id === 'free' ? (
-                      <div>
-                        <span className="text-4xl font-bold text-slate-900">Free</span>
-                        <p className="text-sm text-slate-500 mt-1">No credit card required</p>
-                      </div>
-                    ) : plan.id === 'lifetime' ? (
-                      <div>
-                        <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-4xl font-bold text-slate-900">
-                            {pricingLoading ? '...' : formatPrice(pricing.lifetime)}
-                          </span>
-                        </div>
-                        <p className="text-sm text-slate-500 mt-1">One-time payment, access forever</p>
-                        {pricing.currency !== 'usd' && (
-                          <p className="text-xs text-slate-400 mt-0.5">≈ $99.99 USD</p>
-                        )}
-                      </div>
-                    ) : (
-                      <div>
-                        {isYearly ? (
-                          <>
-                            <div className="flex items-baseline justify-center gap-1">
-                              <span className="text-4xl font-bold text-slate-900">
-                                {pricingLoading ? '...' : formatPrice(pricing.yearly)}
-                              </span>
-                              <span className="text-slate-500">/year</span>
-                            </div>
-                            <p className="text-sm text-green-600 font-semibold mt-1">Save ~16% vs monthly</p>
-                            {pricing.currency !== 'usd' && (
-                              <p className="text-xs text-slate-400 mt-0.5">≈ $49.99 USD/year</p>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            <div className="flex items-baseline justify-center gap-1">
-                              <span className="text-4xl font-bold text-slate-900">
-                                {pricingLoading ? '...' : formatPrice(pricing.monthly)}
-                              </span>
-                              <span className="text-slate-500">/month</span>
-                            </div>
-                            <p className="text-sm text-slate-500 mt-1">Cancel anytime</p>
-                            {pricing.currency !== 'usd' && (
-                              <p className="text-xs text-slate-400 mt-0.5">≈ $4.99 USD/month</p>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* CTA Button */}
-                  <Button
-                    className={`w-full ${
-                      plan.popular
-                        ? 'bg-gradient-to-r from-[var(--suttain-violet)] to-purple-600 hover:opacity-90 text-white'
-                        : plan.id === 'lifetime'
-                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 text-white'
-                        : 'bg-slate-100 text-slate-500 cursor-default'
-                    }`}
-                    onClick={() => handleUpgrade(plan.id)}
-                    disabled={plan.id === 'free' || checkoutLoading !== null}
-                  >
-                    {checkoutLoading === (plan.id === 'lifetime' ? 'lifetime' : 'pro_monthly') ? (
-                      <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</>
-                    ) : plan.cta}
-                  </Button>
-
-                  {/* Features */}
-                  <div className="space-y-3">
-                    <p className="text-sm font-semibold text-slate-700">What's included:</p>
-                    {plan.features.map((feature, i) => (
-                      <div key={i} className="flex items-start gap-2">
-                        <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-slate-600">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+    <div className="min-h-screen bg-white">
+      {/* Banners */}
+      {isSuccess && (
+        <div className="bg-green-50 border-b border-green-200 py-3 px-4 text-center">
+          <p className="text-green-800 font-semibold text-sm">Payment successful. Your subscription is now active.</p>
         </div>
+      )}
+      {isCanceled && (
+        <div className="bg-yellow-50 border-b border-yellow-200 py-3 px-4 text-center">
+          <p className="text-yellow-800 font-semibold text-sm">Checkout was canceled. You can try again anytime.</p>
+        </div>
+      )}
 
-        {/* Enterprise / Custom Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="mb-16"
-        >
-          <div className="relative rounded-2xl border border-[#007850]/30 bg-gradient-to-br from-[#003d28] via-[#00281E] to-[#001a14] p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl overflow-hidden">
-            {/* Background accent */}
-            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 30%, #6B3FA0 0%, transparent 55%)' }} />
-            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 10% 80%, #007850 0%, transparent 50%)' }} />
-            <div className="flex items-start gap-5 relative z-10">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#007850] to-[#00B478] border border-[#00B478]/30 flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-xl font-bold text-white">Custom Built</h3>
-                  <span className="text-[11px] px-2 py-0.5 bg-violet-600 text-white font-bold rounded-full">Enterprise</span>
-                </div>
-                <p className="text-slate-200 text-sm max-w-lg leading-relaxed">
-                  Need white-labeling, custom integrations, dedicated infrastructure, team seats, or a tailored compliance workflow? We build it for you.
-                </p>
-                <div className="flex flex-wrap gap-4 mt-3">
-                  {['White-label & branding', 'Custom API integrations', 'Dedicated support SLA', 'Team & SSO management'].map(f => (
-                    <div key={f} className="flex items-center gap-1.5">
-                      <Check className="w-3.5 h-3.5 text-[#00B478] flex-shrink-0" />
-                      <span className="text-xs text-slate-200">{f}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-3 relative z-10 flex-shrink-0">
-              <p className="text-[#00B478] text-sm font-medium">Starts at</p>
-              <p className="text-3xl font-bold text-white">Custom Pricing</p>
-              <a
-                href="mailto:contact@suttain.com?subject=Enterprise%20%2F%20Custom%20Plan%20Inquiry"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#007850] text-white font-bold text-sm hover:bg-[#00B478] transition-colors shadow-md border border-[#00B478]/40"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Contact Sales
-              </a>
-            </div>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+        {/* Page header */}
+        <motion.div {...fadeIn()} className="text-center mb-16">
+          <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#007850] border border-[#007850]/25 bg-[#007850]/6 px-4 py-1.5 rounded-full mb-4">
+            Pricing
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
+            Two products. One platform.
+          </h1>
+          <p className="text-slate-500 text-base sm:text-lg max-w-2xl mx-auto">
+            Suttain Consumer is built for formulators and brands. Suttain Research is built for scientists and institutions. Both start free.
+          </p>
         </motion.div>
 
-        {/* Feature Highlights */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="space-y-6"
-        >
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">Everything in Pro, Explained</h2>
-            <p className="text-slate-500">12 powerful features unlocked the moment you upgrade</p>
+        {/* ── SECTION 1: Consumer ── */}
+        <motion.div {...fadeIn(0.1)} className="mb-24">
+          <div className="flex items-center gap-4 mb-8">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">For Consumers and Small Brands</h2>
+              <p className="text-slate-500 text-sm mt-1">Formula generation, product scanning, safety alerts, and sustainability tools — for creators and brands.</p>
+            </div>
+            <div className="flex-1 h-px bg-slate-100 hidden sm:block" />
+            <span className="hidden sm:inline-block text-[11px] font-bold uppercase tracking-widest text-[#007850] border border-[#007850]/25 bg-[#007850]/6 px-3 py-1 rounded-full flex-shrink-0">
+              Consumer
+            </span>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {featureDetails.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 * i }}
-                className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 flex gap-4 items-start"
-              >
-                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center flex-shrink-0`}>
-                  <feature.icon className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <h3 className="font-semibold text-slate-900 text-sm leading-snug">{feature.title}</h3>
-                    {feature.badge && (
-                      <span className="text-[10px] px-1.5 py-0.5 bg-violet-100 text-violet-700 font-bold rounded">
-                        {feature.badge}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">{feature.description}</p>
-                </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {CONSUMER_PLANS.map((plan, i) => (
+              <motion.div key={plan.id} {...fadeIn(0.05 * i)}>
+                <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={false} />
               </motion.div>
             ))}
           </div>
         </motion.div>
 
-        {/* FAQ or Contact */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="text-center mt-12"
-        >
-          <p className="text-slate-600">
-            Have questions? <a href="mailto:contact@suttain.com" className="text-[var(--suttain-violet)] font-semibold hover:underline">Contact our team</a>
+        {/* Divider */}
+        <div className="relative my-4 mb-20">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t-2 border-dashed border-slate-200" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-white px-6 py-2 text-xs font-bold uppercase tracking-widest text-slate-400 border border-slate-200 rounded-full">
+              Suttain Research — For Scientists and Institutions
+            </span>
+          </div>
+        </div>
+
+        {/* ── SECTION 2: Research ── */}
+        <motion.div {...fadeIn(0.2)}>
+          <div className="flex items-center gap-4 mb-8">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">For Researchers and Institutions</h2>
+              <p className="text-slate-500 text-sm mt-1">Molecular intelligence, computational simulations, Research API, and citation-ready exports — for scientists.</p>
+            </div>
+            <div className="flex-1 h-px bg-violet-100 hidden sm:block" />
+            <span className="hidden sm:inline-block text-[11px] font-bold uppercase tracking-widest text-violet-600 border border-violet-200 bg-violet-50 px-3 py-1 rounded-full flex-shrink-0">
+              Research
+            </span>
+          </div>
+
+          <div className="rounded-3xl bg-slate-950 p-6 sm:p-10">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {RESEARCH_PLANS.map((plan, i) => (
+                <motion.div key={plan.id} {...fadeIn(0.05 * i)}>
+                  <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={true} />
+                </motion.div>
+              ))}
+            </div>
+            <p className="text-center text-slate-500 text-xs mt-8">
+              Research Pro and above include API access. Academic plans include .edu verified discounts.{' '}
+              <a href="mailto:contact@suttain.com" className="text-violet-400 hover:underline">Contact us</a> for custom arrangements.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Bottom contact */}
+        <motion.div {...fadeIn(0.3)} className="text-center mt-16">
+          <p className="text-slate-500 text-sm">
+            Questions about which plan is right for you?{' '}
+            <a href="mailto:contact@suttain.com" className="text-[#007850] font-semibold hover:underline">Contact our team</a>
           </p>
         </motion.div>
       </div>

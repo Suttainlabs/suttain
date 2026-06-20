@@ -267,12 +267,14 @@ export default function HomePage() {
           <motion.h1
             {...fade(0.08)}
             className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight mb-4 sm:mb-6"
-            style={{ lineHeight: 0.95 }}
+            style={{ lineHeight: 1.1 }}
           >
-            The complete platform for{" "}
+            The molecular intelligence platform for{" "}
             <span style={{ color: "#007850" }}>chemical research</span>
-            {" "}and{" "}
-            <span style={{ color: "#0D9E8E" }}>safe formulation</span>
+            {", "}
+            <span style={{ color: "#0D9E8E" }}>safety validation</span>
+            {", and "}
+            <span style={{ color: "#6366f1" }}>sustainable formulation</span>
           </motion.h1>
 
           <motion.p
@@ -305,19 +307,19 @@ export default function HomePage() {
                 className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white shadow-md"
                 style={{ background: "#0D9E8E" }}
               >
-                {user ? "Open Simulator" : "Analyze for Free"}
+                Analyze Your Product Free
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
-            <Link to={createPageUrl("generator")}>
+            <Link to={createPageUrl("APIPortal")}>
               <Button
                 size="lg"
                 variant="outline"
                 className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base border-2"
                 style={{ borderColor: "#6366f1", color: "#6366f1" }}
               >
-                <Sparkles className="w-4 h-4 mr-2" />
-                Build a Formula
+                <Code2 className="w-4 h-4 mr-2" />
+                View API Docs
               </Button>
             </Link>
           </motion.div>
@@ -325,6 +327,26 @@ export default function HomePage() {
           {/* Stat strip */}
           <motion.div {...fade(0.32)} className="mt-16">
             <StatStrip />
+          </motion.div>
+
+          {/* Trust bar */}
+          <motion.div {...fade(0.40)} className="mt-8 pt-6 border-t border-slate-100">
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">
+              Built on the same scientific databases trusted by NIH, EMBL-EBI, and the US EPA
+            </p>
+            <div className="flex flex-wrap justify-center gap-6">
+              {[
+                { name: "PubChem", org: "NCBI / NIH" },
+                { name: "ChEMBL", org: "EMBL-EBI" },
+                { name: "EPA CompTox", org: "US EPA" },
+                { name: "RCSB PDB", org: "Research Collaboratory" },
+              ].map((db) => (
+                <div key={db.name} className="flex flex-col items-center">
+                  <span className="text-sm font-bold text-slate-700">{db.name}</span>
+                  <span className="text-[10px] text-slate-400">{db.org}</span>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
