@@ -140,14 +140,6 @@ export default function DarkNavBar() {
               <LogIn className="w-4 h-4" />
               Sign In
             </button>
-            <Link to="/research">
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white border-0 rounded-full px-5 font-semibold text-sm shadow-lg shadow-violet-500/20"
-              >
-                Launch Research
-              </Button>
-            </Link>
           </div>
 
           {/* Mobile toggle */}
@@ -215,14 +207,7 @@ export default function DarkNavBar() {
               <LogIn className="w-4 h-4" />
               Sign In
             </button>
-            <Link
-              to="/research"
-              onClick={() => setMobileOpen(false)}
-              className="w-full py-3 rounded-xl text-center text-sm font-bold text-white"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #0891b2)" }}
-            >
-              Launch Research
-            </Link>
+
           </div>
         </div>
       )}
