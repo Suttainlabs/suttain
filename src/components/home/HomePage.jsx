@@ -195,37 +195,37 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Consumer Tools Grid ── */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeIn()} className="mb-12">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#007850] mb-3 block">Consumer Tools</span>
-            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3">
-              Everything you need to make safer products
-            </h2>
-            <p className="text-slate-500 text-sm sm:text-lg max-w-xl">
-              From scanning an ingredient label to generating a fully validated formula — all your tools in one place.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {CONSUMER_TOOLS.map(({ icon: Icon, label, desc, href, color }, i) => (
-              <motion.div key={href} {...fadeIn(i * 0.05)}>
-                <Link
-                  to={createPageUrl(href)}
-                  className="group bg-white rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-md p-5 flex flex-col transition-all duration-200 h-full"
-                >
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mb-4" style={{ background: color + "12" }}>
-                    <Icon className="w-5 h-5" style={{ color }} />
-                  </div>
-                  <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight">{label}</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed flex-1">{desc}</p>
-                  <div className="flex items-center gap-1 mt-4 text-[11px] font-semibold" style={{ color }}>
-                    Open tool
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </Link>
-              </motion.div>
+      {/* ── Consumer Tools — auto-scrolling marquee ── */}
+      <section className="py-10 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#007850]">Consumer Tools</span>
+        </div>
+        <style>{`
+          @keyframes marquee {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marquee 28s linear infinite;
+          }
+          .marquee-track:hover { animation-play-state: paused; }
+        `}</style>
+        <div className="relative">
+          <div className="marquee-track">
+            {[...CONSUMER_TOOLS, ...CONSUMER_TOOLS].map(({ icon: Icon, label, href, color }, i) => (
+              <Link
+                key={i}
+                to={createPageUrl(href)}
+                className="flex items-center gap-2.5 mx-3 px-5 py-3 rounded-full border border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm transition-all whitespace-nowrap group flex-shrink-0"
+              >
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: color + "14" }}>
+                  <Icon className="w-3.5 h-3.5" style={{ color }} />
+                </div>
+                <span className="text-sm font-semibold text-slate-800 group-hover:text-slate-900">{label}</span>
+                <ArrowRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" style={{ color }} />
+              </Link>
             ))}
           </div>
         </div>
