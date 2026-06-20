@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AuthContext from '../components/auth/AuthContext';
-import AuthGate from '../components/auth/AuthGate';
 import CompoundAnalysisResult from '../components/research/CompoundAnalysisResult';
 import { getMolecularData } from '@/functions/getMolecularData';
 import {
@@ -120,17 +119,6 @@ export default function MolecularIntelligence() {
   };
 
   const activeType = QUERY_TYPES.find(t => t.id === queryType);
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4 py-12">
-        <AuthGate
-          featureName="Molecular Intelligence"
-          featureDescription="Hazard scoring, toxicity profiling, and regulatory mapping for any compound. Powered by PubChem, ChEMBL, and EPA CompTox."
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-[#0F172A] text-white">
