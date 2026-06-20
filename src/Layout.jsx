@@ -210,7 +210,6 @@ export default function Layout({ children, currentPageName }) {
   const navLinks = [
     { href: "Home", label: "Home", icon: Home },
     { href: "Pricing", label: "Pricing", icon: Star },
-    { href: "LearningSuite", label: "Academic", icon: GraduationCap },
   ];
 
   // Consumer nav only — Research is accessible but not promoted
@@ -708,20 +707,6 @@ export default function Layout({ children, currentPageName }) {
                         </motion.div>
                       )}
                     </AnimatePresence>
-                  </motion.div>
-
-                  {/* Academic Link - Mobile */}
-                  <motion.div variants={mobileNavItemVariants}>
-                    <Link
-                      to={createPageUrl("LearningSuite")}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        location.pathname === createPageUrl("LearningSuite") ? "bg-teal-100 text-teal-600" : "text-suttain-dark hover:bg-teal-50"
-                      }`}
-                    >
-                      <GraduationCap className="w-5 h-5" />
-                      Academic
-                    </Link>
                   </motion.div>
 
                   {/* Research Link - Mobile */}
