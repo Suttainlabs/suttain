@@ -358,34 +358,7 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               ))}
 
-              {/* Company Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
-                    isCompanyMenuActive
-                      ? "bg-rose-100 text-rose-600"
-                      : "text-slate-700 hover:bg-rose-50 hover:text-rose-600"
-                  }`}>
-                    <span>Company</span>
-                    <ChevronDown className="w-3 h-3" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64">
-                  {companyMenuItems.map((item) => (
-                    <DropdownMenuItem key={item.href} asChild>
-                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 p-3">
-                        <div className="w-8 h-8 bg-[var(--suttain-teal)] rounded-lg flex items-center justify-center flex-shrink-0">
-                          <item.icon className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-suttain-dark text-sm">{item.label}</p>
-                          <p className="text-xs text-suttain-text/80">{item.description}</p>
-                        </div>
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+
 
               {/* Consumer Tools Dropdown */}
               <DropdownMenu>
@@ -626,48 +599,7 @@ export default function Layout({ children, currentPageName }) {
                     </motion.div>
                   ))}
                   
-                   {/* Company Mobile Collapsible */}
-                   <motion.div variants={mobileNavItemVariants}>
-                    <button
-                      onClick={() => setIsCompanyMenuOpen(!isCompanyMenuOpen)}
-                      className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-rose-50 ${
-                        isCompanyMenuActive ? 'bg-rose-100' : ''
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <Building2 className="w-5 h-5" />
-                        Company
-                      </div>
-                      <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isCompanyMenuOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    <AnimatePresence>
-                      {isCompanyMenuOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          className="pl-6 pt-2 flex flex-col gap-2"
-                        >
-                          {companyMenuItems.map(({ href, label, icon: Icon }) => (
-                             <Link
-                              key={href}
-                              to={createPageUrl(href)}
-                              onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                                location.pathname === createPageUrl(href)
-                                  ? "bg-rose-100 text-rose-600"
-                                  : "text-suttain-dark hover:bg-rose-50"
-                              }`}
-                            >
-                              <Icon className="w-5 h-5" />
-                              {label}
-                            </Link>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
+
 
 
 
@@ -872,6 +804,7 @@ export default function Layout({ children, currentPageName }) {
                 <li><Link to="/enterprise" className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
                 <li><Link to={createPageUrl('AboutUs')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
+
                 </ul>
                 </div>
 
