@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AuthContext from '../components/auth/AuthContext';
-import AuthGate from '../components/auth/AuthGate';
 import {
   Code2, ArrowLeft, Copy, CheckCheck, Zap, Shield,
   Globe, Layers, ChevronRight, BookOpen, Terminal, Key,
@@ -183,14 +182,6 @@ export default function APIPortal() {
   const navigate = useNavigate();
   const [activeEndpoint, setActiveEndpoint] = useState(0);
   const [activeLang, setActiveLang] = useState('python');
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4 py-12">
-        <AuthGate featureName="Research API" featureDescription="Developer-facing REST API with endpoints for compound lookup, hazard scoring, interaction checking, and formula generation." />
-      </div>
-    );
-  }
 
   const ep = ENDPOINTS[activeEndpoint];
 
