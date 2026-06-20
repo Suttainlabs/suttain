@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   LogIn, Menu, X,
-  Atom, Cpu, ShieldCheck, Layers, Dna, BarChart2,
+  Atom, Cpu, Layers, Dna,
   ChevronDown, FlaskConical, LogOut, User as UserIcon
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -13,9 +13,7 @@ const TOOLS_MENU = [
   { href: "/ComputationalSimulation", label: "Computational Simulations", icon: Cpu, desc: "DFT, MD, drug discovery & QM/MM" },
   { href: "/MoleculeExplorer", label: "Molecule Explorer", icon: Dna, desc: "Interactive 3D molecular visualization" },
   { href: "/ChemicalComparison", label: "Chemical Comparison", icon: Layers, desc: "Side-by-side compound evaluation" },
-  { href: "/SDSAnalyzer", label: "SDS Analyzer", icon: ShieldCheck, desc: "Safety data sheet hazard extraction" },
   { href: "/SimulationEngine", label: "Simulation Engine", icon: FlaskConical, desc: "Formula cost & sustainability modeling" },
-  { href: "/CarbonTaxSimulator", label: "Carbon & Sustainability", icon: BarChart2, desc: "Carbon tax & ESG compliance" },
 ];
 
 const NAV_LINKS = [
