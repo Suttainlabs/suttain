@@ -328,7 +328,7 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       {/* Floating Nav Bar */}
-      <header className="sticky top-3 z-50 px-4 pt-[env(safe-area-inset-top)]">
+      <header className="fixed top-3 left-0 right-0 z-50 px-4 pt-[env(safe-area-inset-top)]">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14">
 
@@ -655,7 +655,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 pb-16 lg:pb-0">
+      <main className="flex-1 pb-16 lg:pb-0 pt-20">
         <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: fetchUserAndSetState }}>
           {children}
           {/* Clara AI Assistant */}
