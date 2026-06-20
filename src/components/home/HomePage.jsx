@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import {
   ArrowRight, FlaskConical, Sparkles, ShieldCheck,
   Leaf, BarChart3, Zap, TestTube, QrCode, Droplets,
-  Database, ChevronRight, Star, Check, Users, FileText,
+  Database, Star, Users,
   Microscope
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -85,37 +85,6 @@ const CONSUMER_TOOLS = [
   },
 ];
 
-const CONSUMER_PLANS_PREVIEW = [
-  {
-    name: "Free",
-    price: "Free",
-    note: "No credit card required",
-    items: ["3 simulations/month", "5 formula generations/month", "Unlimited product scans"],
-    color: "#007850",
-  },
-  {
-    name: "Pro",
-    price: "$4.99/mo",
-    note: "Cancel anytime",
-    items: ["Unlimited simulations and formulas", "Sustainability scoring", "AI Compliance Co-Pilot", "PDF export"],
-    color: "#0D9E8E",
-    popular: true,
-  },
-  {
-    name: "Lifetime",
-    price: "$99.99",
-    note: "One-time payment",
-    items: ["Everything in Pro forever", "All future consumer updates", "Priority support for life"],
-    color: "#f59e0b",
-  },
-  {
-    name: "Business",
-    price: "$29.99/mo",
-    note: "Up to 5 team seats",
-    items: ["Everything in Pro", "Bulk ingredient validation", "White-label report export", "Compliance documentation"],
-    color: "#6366f1",
-  },
-];
 
 export default function HomePage() {
   const { user } = useContext(AuthContext);
@@ -311,60 +280,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Pricing preview ── */}
-      <section className="py-24 sm:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeIn()} className="text-center mb-12">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#007850] mb-3 block">Consumer Pricing</span>
-            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3">
-              Start free. Upgrade when you are ready.
-            </h2>
-            <p className="text-slate-500 text-sm sm:text-lg max-w-xl mx-auto">
-              No credit card required to access core tools. Pro plans unlock unlimited access.
-            </p>
-          </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {CONSUMER_PLANS_PREVIEW.map((plan, i) => (
-              <motion.div key={plan.name} {...fadeIn(i * 0.06)}>
-                <div className={`relative bg-white rounded-2xl border p-6 h-full ${
-                  plan.popular ? "border-2 shadow-xl" : "border-slate-200"
-                }`} style={plan.popular ? { borderColor: plan.color } : {}}>
-                  {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white" style={{ background: plan.color }}>
-                        Most Popular
-                      </span>
-                    </div>
-                  )}
-                  <div className="mb-4">
-                    <h3 className="font-bold text-slate-900 text-base">{plan.name}</h3>
-                    <p className="text-2xl font-bold mt-1" style={{ color: plan.color }}>{plan.price}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{plan.note}</p>
-                  </div>
-                  <ul className="space-y-2 mb-5">
-                    {plan.items.map((item, j) => (
-                      <li key={j} className="flex items-start gap-2">
-                        <Check className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: plan.color }} />
-                        <span className="text-xs text-slate-600">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div {...fadeIn(0.3)} className="text-center mt-8">
-            <Link to={createPageUrl("Pricing")}>
-              <Button variant="outline" className="border-2 border-slate-300 text-slate-700 hover:border-[#007850] hover:text-[#007850] rounded-full px-8 font-semibold">
-                See Full Pricing Details
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
 
       {/* ── Research callout — subtle, not promotional ── */}
       <section className="py-12 bg-slate-50 border-y border-slate-100">
