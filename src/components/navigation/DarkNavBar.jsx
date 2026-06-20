@@ -2,11 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  Home, Microscope, Terminal, Star, LogIn, Menu, X,
+  LogIn, Menu, X,
   Atom, Cpu, ShieldCheck, Layers, Dna, BarChart2,
-  Code2, BookOpen, ChevronDown, FlaskConical
+  ChevronDown, FlaskConical, LogOut, User as UserIcon
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 
 const TOOLS_MENU = [
@@ -32,7 +31,12 @@ export default function DarkNavBar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
+  const [user, setUser] = useState(undefined); // undefined = loading
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => setUser(null));
+  }, []);
 
   const isActive = (href) => {
     if (href === "/") return location.pathname === "/" || location.pathname === "/Home";
@@ -132,13 +136,31 @@ export default function DarkNavBar() {
 
           {/* Right CTAs */}
           <div className="hidden md:flex items-center gap-3">
-            <button
-              onClick={() => base44.auth.redirectToLogin()}
-              className="text-slate-400 hover:text-white text-sm font-semibold flex items-center gap-1.5 transition-colors"
-            >
-              <LogIn className="w-4 h-4" />
-              Sign In
-            </button>
+            {user === null && (
+              <button
+                onClick={() => base44.auth.redirectToLogin()}
+                className="text-slate-400 hover:text-white text-sm font-semibold flex items-center gap-1.5 transition-colors"
+              >
+                <LogIn className="w-4 h-4" />
+                Sign In
+              </button>
+            )}
+            {user && (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-sm text-slate-300 font-semibold">
+                  <div className="w-7 h-7 rounded-full bg-violet-500/20 border border-violet-500/30 flex items-center justify-center">
+                    <UserIcon className="w-3.5 h-3.5 text-violet-400" />
+                  </div>
+                  <span className="hidden lg:inline">{user.full_name?.split(" ")[0] || user.email}</span>
+                </div>
+                <button
+                  onClick={() => base44.auth.logout()}
+                  className="text-slate-500 hover:text-slate-300 text-xs flex items-center gap-1 transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Mobile toggle */}
@@ -199,14 +221,24 @@ export default function DarkNavBar() {
           )}
 
           <div className="border-t border-slate-800 mt-2 pt-3 flex flex-col gap-2">
-            <button
-              onClick={() => { setMobileOpen(false); base44.auth.redirectToLogin(); }}
-              className="flex items-center gap-2 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 text-sm font-semibold transition-colors"
-            >
-              <LogIn className="w-4 h-4" />
-              Sign In
-            </button>
-
+            {user === null && (
+              <button
+                onClick={() => { setMobileOpen(false); base44.auth.redirectToLogin(); }}
+                className="flex items-center gap-2 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 text-sm font-semibold transition-colors"
+              >
+                <LogIn className="w-4 h-4" />
+                Sign In
+              </button>
+            )}
+            {user && (
+              <button
+                onClick={() => { setMobileOpen(false); base44.auth.logout(); }}
+                className="flex items-center gap-2 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 text-sm font-semibold transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+            )}
           </div>
         </div>
       )}
