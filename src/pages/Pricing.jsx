@@ -42,8 +42,11 @@ const CONSUMER_PLANS = [
     id: 'pro',
     name: 'Pro',
     price: '$4.99',
+    priceMonthly: '$4.99',
+    priceYearly: '$3.99',
     priceSuffix: '/month',
     priceNote: 'Cancel anytime',
+    priceNoteYearly: 'Billed $47.88/year — save 20%',
     description: 'Unlimited access to all consumer tools.',
     features: [
       'Unlimited simulations',
@@ -58,6 +61,7 @@ const CONSUMER_PLANS = [
     cta: 'Upgrade to Pro',
     popular: true,
     priceKey: 'pro_monthly',
+    priceKeyYearly: 'pro_yearly',
     color: '#0D9E8E',
     icon: Sparkles,
   },
@@ -82,9 +86,8 @@ const CONSUMER_PLANS = [
   {
     id: 'business',
     name: 'Business',
-    price: '$29.99',
-    priceSuffix: '/month',
-    priceNote: 'Up to 5 team seats',
+    price: 'Custom',
+    priceNote: 'Contact us for a quote',
     description: 'For small brands and formulation teams.',
     features: [
       'Everything in Pro',
@@ -181,8 +184,12 @@ const RESEARCH_PLANS = [
   },
 ];
 
-function PlanCard({ plan, onUpgrade, checkoutLoading, dark }) {
-  const isBusy = checkoutLoading === plan.priceKey;
+function PlanCard({ plan, onUpgrade, checkoutLoading, dark, billingCycle }) {
+  const isYearly = billingCycle === 'yearly';
+  const activeKey = (isYearly && plan.priceKeyYearly) ? plan.priceKeyYearly : plan.priceKey;
+  const isBusy = checkoutLoading === activeKey;
+  const displayPrice = (isYearly && plan.priceYearly) ? plan.priceYearly : plan.price;
+  const displayNote = (isYearly && plan.priceNoteYearly) ? plan.priceNoteYearly : plan.priceNote;
 
   const handleClick = () => {
     if (plan.ctaDisabled) return;
@@ -190,7 +197,7 @@ function PlanCard({ plan, onUpgrade, checkoutLoading, dark }) {
       window.location.href = 'mailto:contact@suttain.com?subject=' + encodeURIComponent(plan.name + ' Plan Inquiry');
       return;
     }
-    if (plan.priceKey) onUpgrade(plan.priceKey);
+    if (activeKey) onUpgrade(activeKey);
   };
 
   return (
@@ -227,10 +234,10 @@ function PlanCard({ plan, onUpgrade, checkoutLoading, dark }) {
 
       <div className="mb-4">
         <div className="flex items-baseline gap-1">
-          <span className={`text-3xl font-bold ${dark ? 'text-white' : 'text-slate-900'}`}>{plan.price}</span>
-          {plan.priceSuffix && <span className={`text-sm ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{plan.priceSuffix}</span>}
+          <span className={`text-3xl font-bold ${dark ? 'text-white' : 'text-slate-900'}`}>{displayPrice}</span>
+          {plan.priceSuffix && displayPrice !== 'Custom' && <span className={`text-sm ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{plan.priceSuffix}</span>}
         </div>
-        <p className={`text-xs mt-1 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{plan.priceNote}</p>
+        <p className={`text-xs mt-1 ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{displayNote}</p>
       </div>
 
       <p className={`text-sm mb-5 leading-relaxed ${dark ? 'text-slate-300' : 'text-slate-600'}`}>{plan.description}</p>
@@ -263,6 +270,7 @@ function PlanCard({ plan, onUpgrade, checkoutLoading, dark }) {
 export default function Pricing() {
   const { user, refreshUser } = useContext(AuthContext);
   const [checkoutLoading, setCheckoutLoading] = useState(null);
+  const [billingCycle, setBillingCycle] = useState('monthly');
   const { pricing, countryCode, loading: pricingLoading, formatPrice } = useLocalPricing();
 
   useEffect(() => {
@@ -330,7 +338,7 @@ export default function Pricing() {
 
         {/* ── SECTION 1: Consumer ── */}
         <motion.div {...fadeIn(0.1)} className="mb-24">
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-4 mb-6">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900">For Consumers and Small Brands</h2>
               <p className="text-slate-500 text-sm mt-1">Formula generation, product scanning, safety alerts, and sustainability tools — for creators and brands.</p>
@@ -341,10 +349,27 @@ export default function Pricing() {
             </span>
           </div>
 
+          {/* Billing toggle */}
+          <div className="flex items-center gap-3 mb-8">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all ${billingCycle === 'monthly' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle('yearly')}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all flex items-center gap-2 ${billingCycle === 'yearly' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Yearly
+              <span className="text-[10px] font-bold bg-[#007850] text-white px-2 py-0.5 rounded-full">20% off</span>
+            </button>
+          </div>
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {CONSUMER_PLANS.map((plan, i) => (
               <motion.div key={plan.id} {...fadeIn(0.05 * i)}>
-                <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={false} />
+                <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={false} billingCycle={billingCycle} />
               </motion.div>
             ))}
           </div>
@@ -379,7 +404,7 @@ export default function Pricing() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {RESEARCH_PLANS.map((plan, i) => (
                 <motion.div key={plan.id} {...fadeIn(0.05 * i)}>
-                  <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={true} />
+                  <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={true} billingCycle="monthly" />
                 </motion.div>
               ))}
             </div>

@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, FlaskConical, Sparkles, ShieldCheck,
   Leaf, BarChart3, Zap, TestTube, QrCode, Droplets,
   Database, Star, Users,
-  Microscope
+  Microscope, Search
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import AuthContext from "../auth/AuthContext";
@@ -88,6 +88,14 @@ const CONSUMER_TOOLS = [
 
 export default function HomePage() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [chemSearch, setChemSearch] = useState('');
+
+  const handleChemSearch = (e) => {
+    e.preventDefault();
+    if (!chemSearch.trim()) return;
+    navigate(createPageUrl('MoleculeExplorer') + '?q=' + encodeURIComponent(chemSearch.trim()));
+  };
 
   return (
     <div className="min-h-screen bg-white font-gilroy">
@@ -154,8 +162,30 @@ export default function HomePage() {
 
           </motion.div>
 
+          {/* Chemical search bar */}
+          <motion.div {...fade(0.28)} className="mt-10 max-w-2xl mx-auto">
+            <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-3 text-center">Search 130M+ chemicals</p>
+            <form onSubmit={handleChemSearch} className="flex items-center gap-2 bg-white border border-slate-200 rounded-full px-5 py-3 shadow-sm hover:shadow-md transition-shadow">
+              <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <input
+                type="text"
+                value={chemSearch}
+                onChange={(e) => setChemSearch(e.target.value)}
+                placeholder="Search by IUPAC name, CAS number, or chemical name..."
+                className="flex-1 text-sm text-slate-700 placeholder-slate-400 bg-transparent outline-none"
+              />
+              <button
+                type="submit"
+                className="px-5 py-2 rounded-full text-sm font-semibold text-white flex-shrink-0 transition-opacity hover:opacity-90"
+                style={{ background: '#007850' }}
+              >
+                Search
+              </button>
+            </form>
+          </motion.div>
+
           {/* Trust stats */}
-          <motion.div {...fade(0.32)} className="mt-16">
+          <motion.div {...fade(0.32)} className="mt-10">
             <div className="relative inline-flex flex-wrap justify-center rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden divide-x divide-slate-100">
               <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #02988C60, #9531F560, transparent)" }} />
               {[
