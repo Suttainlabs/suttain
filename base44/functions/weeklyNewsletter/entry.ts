@@ -13,6 +13,13 @@ const WEEKLY_UPDATES = [
 
 const BLOG_URL = 'https://suttain.com/Blog';
 
+function getWeekNumber(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
 function getWeeklyNewsletterHtml(firstName, updates) {
   const week = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   return `
@@ -150,9 +157,27 @@ Deno.serve(async (req) => {
     const updates = WEEKLY_UPDATES;
     let sent = 0;
     let failed = 0;
+    let skipped = 0;
+
+    // Calculate the current week identifier (ISO week year + week number)
+    const weekNum = getWeekNumber(new Date());
+    const weekKey = `${new Date().getFullYear()}-W${weekNum}`;
 
     for (const user of users) {
       if (!user.email) continue;
+
+      // Deduplicate: check if we already sent this week's newsletter to this user
+      const existing = await base44.asServiceRole.entities.Notification.filter(
+        { target_user: user.email, type: 'feature' },
+        '-created_date',
+        5
+      );
+      const alreadySent = existing.find(n => n.metadata?.weekly_newsletter === true && n.metadata?.week_key === weekKey);
+      if (alreadySent) {
+        skipped++;
+        continue;
+      }
+
       const firstName = user.full_name?.split(' ')[0] || 'there';
       try {
         await resend.emails.send({
@@ -161,6 +186,15 @@ Deno.serve(async (req) => {
           subject: `Suttain Weekly Update - ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`,
           html: getWeeklyNewsletterHtml(firstName, updates),
         });
+
+        // Record that we sent this week's newsletter so we don't duplicate
+        await base44.asServiceRole.entities.Notification.create({
+          title: 'Weekly newsletter sent',
+          message: `Weekly update for ${weekKey} was emailed.`,
+          type: 'feature',
+          target_user: user.email,
+          metadata: { weekly_newsletter: true, week_key: weekKey }
+        });
         sent++;
       } catch (err) {
         console.error(`Failed to send to ${user.email}:`, err.message);
@@ -168,8 +202,8 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`Weekly newsletter: sent=${sent}, failed=${failed}, total=${users.length}`);
-    return Response.json({ success: true, sent, failed, total: users.length });
+    console.log(`Weekly newsletter: sent=${sent}, failed=${failed}, skipped=${skipped}, total=${users.length}`);
+    return Response.json({ success: true, sent, failed, skipped, total: users.length });
   } catch (error) {
     console.error('weeklyNewsletter error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });

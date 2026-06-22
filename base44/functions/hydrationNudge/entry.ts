@@ -128,6 +128,14 @@ Deno.serve(async (req) => {
                 if (minutesSinceLast < freqMins) continue; // Too soon
             }
 
+            // Only send ONE email per day — check if we already sent an email today
+            const alreadyEmailedToday = recentNotifs.find(n =>
+                n.metadata?.hydration_reminder === true &&
+                n.metadata?.email_sent === true &&
+                n.created_date &&
+                n.created_date.startsWith(today)
+            );
+
             // Build reminder message based on style
             const style = profile.reminder_style || 'gentle';
             const remaining = trueGoal - totalIntake;
@@ -162,6 +170,7 @@ Deno.serve(async (req) => {
                 action_url: '/HydrationHome',
                 metadata: {
                     hydration_reminder: true,
+                    email_sent: !alreadyEmailedToday,
                     totalIntake,
                     trueGoal,
                     pct: Math.round(pct),
@@ -169,9 +178,9 @@ Deno.serve(async (req) => {
                 }
             });
 
-            // Also send an email reminder via Resend
+            // Only send ONE email per day — subsequent reminders are in-app only
             try {
-                if (userEmail) {
+                if (userEmail && !alreadyEmailedToday) {
                     const resendKey = Deno.env.get('RESEND_API_KEY');
                     if (resendKey) {
                         await fetch('https://api.resend.com/emails', {
