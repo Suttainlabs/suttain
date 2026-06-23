@@ -821,7 +821,7 @@ export default function Simulator() {
         <div className="max-w-7xl mx-auto relative z-10">
           {/* Mode Toggle */}
           <div className="flex justify-center mb-6 px-2">
-            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm overflow-x-auto max-w-full no-scrollbar">
+            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm overflow-x-auto max-w-full">
               <button
                 onClick={() => setActiveMode("simulator")}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${

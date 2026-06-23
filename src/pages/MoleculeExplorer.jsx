@@ -253,29 +253,48 @@ export default function MoleculeExplorer() {
           `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(q)}/property/MolecularFormula,MolecularWeight,IUPACName,CanonicalSMILES,InChIKey/JSON?MaxRecords=8`,
           { signal: AbortSignal.timeout(6000) }
         );
-        if (res.ok) {
-          const json = await res.json();
-          const props = json.PropertyTable?.Properties || [];
-          // Filter out ones already in local DB
-          const localCids = new Set(chemicals.map(c => String(c.pubchem_cid)).filter(Boolean));
-          const newResults = props
-            .filter(p => !localCids.has(String(p.CID)))
-            .map(p => ({
-              id: `pubchem_${p.CID}`,
-              _pubchem_cid: p.CID,
-              pubchem_cid: String(p.CID),
-              name: q.charAt(0).toUpperCase() + q.slice(1),
-              iupac_name: p.IUPACName,
-              molecular_formula: p.MolecularFormula,
-              molecular_weight: p.MolecularWeight,
-              canonical_smiles: p.CanonicalSMILES,
-              inchi_key: p.InChIKey,
-              _fromPubchem: true,
-            }));
-          setPubchemResults(newResults);
-        } else {
+        if (!res.ok) {
           setPubchemResults([]);
+          return;
         }
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          setPubchemResults([]);
+          return;
+        }
+        let json;
+        try {
+          json = await res.json();
+        } catch {
+          setPubchemResults([]);
+          return;
+        }
+        if (json.Fault || !json.PropertyTable) {
+          setPubchemResults([]);
+          return;
+        }
+        const props = (json.PropertyTable?.Properties || []).filter(p => p.CID != null);
+        if (props.length === 0) {
+          setPubchemResults([]);
+          return;
+        }
+        // Filter out ones already in local DB
+        const localCids = new Set(chemicals.map(c => String(c.pubchem_cid)).filter(Boolean));
+        const newResults = props
+          .filter(p => !localCids.has(String(p.CID)))
+          .map(p => ({
+            id: `pubchem_${p.CID}`,
+            _pubchem_cid: p.CID,
+            pubchem_cid: String(p.CID),
+            name: q.charAt(0).toUpperCase() + q.slice(1),
+            iupac_name: p.IUPACName,
+            molecular_formula: p.MolecularFormula,
+            molecular_weight: p.MolecularWeight,
+            canonical_smiles: p.CanonicalSMILES,
+            inchi_key: p.InChIKey,
+            _fromPubchem: true,
+          }));
+        setPubchemResults(newResults);
       } catch {
         setPubchemResults([]);
       } finally {
@@ -363,10 +382,16 @@ export default function MoleculeExplorer() {
                   </div>
                 )}
 
-                {/* Empty state */}
+                {/* Empty / not-found state */}
                 {filtered.length === 0 && pubchemResults.length === 0 && !pubchemLoading && search && (
-                  <div className="px-4 py-10 text-center">
-                    <p className="text-xs text-slate-600">No matches found.</p>
+                  <div className="px-4 py-10 text-center flex flex-col items-center gap-2">
+                    <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center">
+                      <Search className="w-4 h-4 text-slate-600" />
+                    </div>
+                    <p className="text-xs text-slate-500 font-semibold">No compounds found</p>
+                    <p className="text-[10px] text-slate-600 leading-relaxed max-w-[200px]">
+                      No matches in your database or PubChem for "{search}". Try a different name, CAS number, or molecular formula.
+                    </p>
                   </div>
                 )}
                 {filtered.length === 0 && pubchemResults.length === 0 && !pubchemLoading && !search && chemicals.length === 0 && (

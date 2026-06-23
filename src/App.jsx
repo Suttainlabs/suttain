@@ -63,7 +63,7 @@ const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const ResearchLayout = lazy(() => import('./components/research/ResearchLayout'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 // IngredientDatabase and FormulaComparison are lazy-loaded above
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
@@ -127,6 +127,7 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/IngredientDatabase" element={<LayoutWrapper currentPageName="IngredientDatabase"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><IngredientDatabase /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/Generator" element={<Navigate to="/generator" replace />} />
       <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaComparison /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/MyAnalytics" element={<LayoutWrapper currentPageName="MyAnalytics"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MyAnalytics /></PageTransition></Suspense></LayoutWrapper>} />
       {/* ── Research Portal layout group — dark-themed, no consumer Layout ── */}

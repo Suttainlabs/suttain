@@ -23,6 +23,55 @@ import useTrialStatus from './hooks/useTrialStatus';
 import useInactivityTimeout from './hooks/useInactivityTimeout';
 import TrialBadge from './components/trial/TrialBadge';
 
+// ── Page title formatter (handles camelCase + acronyms) ────────────
+function formatPageTitle(slug) {
+  if (!slug) return 'Suttain';
+  return slug
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .split(' ')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+// ── Unique meta descriptions per page ──────────────────────────────
+const PAGE_META_DESCRIPTIONS = {
+  Home: 'Suttain is an AI-powered platform for chemical safety analysis, formula generation, and product scanning. Test chemical interactions, create safe formulas, and scan products for hazards.',
+  Pricing: 'Suttain pricing plans for consumers and researchers. Free, Pro, and Lifetime tiers for chemical safety tools. Research plans with API access, simulation credits, and academic discounts.',
+  Simulator: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations with Suttain chemical interaction simulator.',
+  generator: 'Create professional skincare, soap, and cleaning product formulas with AI. Get ingredient recommendations, safety validation, and step-by-step manufacturing instructions.',
+  BarcodeScanner: 'Scan any product barcode to instantly analyze ingredients. Get safety ratings, allergen alerts, and healthier alternatives for household and personal care products.',
+  HydrationHome: 'Track your daily water intake with biological intelligence. Personalized hydration goals based on your weight, activity, climate, and food-linked adjustments.',
+  TermsOfService: 'Suttain Terms of Service — the terms and conditions governing use of the Suttain chemical safety, formula generation, and research platform.',
+  PrivacyPolicy: 'Suttain Privacy Policy — how we collect, use, and protect your data when using our chemical safety analysis, formula generation, and product scanning tools.',
+  FAQ: 'Frequently asked questions about Suttain — chemical safety analysis, formula generation, product scanning, pricing, and research API access.',
+  AboutUs: 'Suttain makes chemical safety accessible to everyone. Learn about our mission to democratize chemical knowledge for safer products and formulations.',
+  Careers: 'Join Suttain — careers in chemical safety, AI, and sustainable product development. View open positions and help build the future of chemical intelligence.',
+  ResearchLanding: 'Suttain Research Portal — a unified computational chemistry platform integrating PubChem, ChEMBL, and EPA CompTox for molecular intelligence, simulation, and API access.',
+  ResearchDashboard: 'Your Suttain research dashboard — monitor activity, manage saved molecular formulas, and access computational chemistry tools.',
+  ResearchPortal: 'Suttain Research Portal — molecular intelligence, computational simulation, formula generation, and API access for professional chemists and scientists.',
+  APIPortal: 'Suttain Research API documentation — REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. Python and JavaScript SDKs available.',
+  MolecularIntelligence: 'Query any chemical compound for hazard classification, toxicity profiling, environmental fate, and regulatory status. Search by name, SMILES, InChI, or CAS number.',
+  MoleculeExplorer: 'Browse and visualize chemical compounds in 3D. Search your database or PubChem, render molecular structures, and view physical, toxicity, and environmental properties.',
+  ChemicalDashboard: 'Comprehensive chemical dashboard — view and manage your chemical database with detailed properties, safety data, and regulatory information.',
+  ChemicalComparison: 'Compare any two chemical compounds side-by-side. Contrast molecular structure, physical properties, toxicity, and environmental data with delta highlighting.',
+  ChemicalLibrary: 'Browse and manage your chemical library. Search by name, CAS, formula, or safety level. Import and export chemical data.',
+  ComputationalSimulation: 'Run semi-empirical and DFT-tier computational chemistry simulations. Upload PDB, SDF, MOL2, or SMILES. 3D WebGL viewer with ESP mapping and trajectory playback.',
+  SimulationEngine: 'Suttain simulation engine — run molecular dynamics, DFT, and quantum mechanics calculations. Configure forcefields, solvation, and analysis parameters.',
+  SDSAnalyzer: 'Upload Safety Data Sheets and extract hazard data, GHS classifications, first aid measures, and regulatory information automatically.',
+  EnterpriseAPI: 'Suttain Enterprise API — custom integrations, dedicated infrastructure, and white-label solutions for organizations needing chemical intelligence at scale.',
+  Dashboard: 'Your Suttain dashboard — track your chemical safety analyses, saved formulas, scanned products, and sustainability scores in one place.',
+  Profile: 'Manage your Suttain profile, subscription, safety preferences, and account settings.',
+  BillingDashboard: 'Manage your Suttain subscription, view billing history, update payment methods, and download invoices.',
+  Workspace: 'Your Suttain workspace — organize simulations, formulas, and research sessions in custom folders.',
+  AdminDashboard: 'Suttain admin dashboard — manage users, subscriptions, blog posts, and platform analytics.',
+  Blog: 'Suttain blog — insights on chemical safety, sustainable formulation, regulatory compliance, and the science behind safer products.',
+  ComplianceGuide: 'Suttain compliance guide — understand FDA, EU, REACH, and global regulatory requirements for cosmetics, cleaning products, and chemical formulations.',
+  LearningSuite: 'Suttain learning center — tutorials and guides on chemical safety, product formulation, and sustainable manufacturing from basics to advanced techniques.',
+  ExternalDatabases: 'Explore external chemical databases integrated with Suttain — PubChem, ChEMBL, EPA CompTox, RCSB PDB, and more scientific data sources.',
+  BookADemo: 'Book a demo of the Suttain chemical safety and compliance platform. See how our tools can streamline your formulation and regulatory workflows.',
+};
+
 // Lazy-loaded components with error boundaries
 const ClaraAssistant = React.lazy(() => import("./components/shared/ClaraAssistant").catch(() => ({ default: () => null })));
 const AuthModal = React.lazy(() => import("./components/auth/AuthModal").catch(() => ({ default: () => null })));
