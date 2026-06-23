@@ -161,7 +161,7 @@ export default function ResearchLanding() {
           <div className="max-w-7xl mx-auto px-6 py-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
               {[
-                { value: "115M+", label: "Compounds Indexed", sub: "Across PubChem & ChEMBL" },
+                { value: "118M+", label: "Compounds Indexed", sub: "Across PubChem & ChEMBL" },
                 { value: "12+", label: "Simulation Engines", sub: "DFT, MD, QM/MM & more" },
                 { value: "8", label: "Regulatory Frameworks", sub: "GHS, REACH, EPA, FDA" },
                 { value: "< 3s", label: "Average Query Time", sub: "API-backed with caching" },

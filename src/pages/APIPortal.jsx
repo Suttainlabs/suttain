@@ -239,7 +239,7 @@ export default function APIPortal() {
             {[
               { label: 'Tier', value: user?.subscription_plan === 'pro' ? 'Pro Researcher' : 'Free Academic' },
               { label: 'Daily Limit', value: user?.subscription_plan === 'pro' ? '10,000 req' : '100 req' },
-              { label: 'Today Used', value: '—' },
+              { label: 'Today Used', value: '0' },
               { label: 'Status', value: 'Active' },
             ].map(({ label, value }) => (
               <div key={label}>

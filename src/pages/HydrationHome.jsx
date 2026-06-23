@@ -75,7 +75,7 @@ export default function HydrationHome() {
                             onClick={toggleUnit}
                             className="h-8 px-3 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-600 hover:border-teal-400 hover:text-teal-700 transition-colors"
                         >
-                            {unit === 'ml' ? 'oz' : 'ml'}
+                            {unit}
                         </button>
                         <button
                             onClick={() => setShowCustom(true)}

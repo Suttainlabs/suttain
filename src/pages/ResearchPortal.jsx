@@ -100,7 +100,7 @@ const modules = [
 ];
 
 const dataSources = [
-  { name: 'PubChem', org: 'NCBI / NIH', records: '117M+', type: 'Compound identity, bioassay, properties' },
+  { name: 'PubChem', org: 'NCBI / NIH', records: '118M+', type: 'Compound identity, bioassay, properties' },
   { name: 'ChEMBL', org: 'EMBL-EBI', records: '2.4M+', type: 'Bioactivity, drug-likeness, target data' },
   { name: 'EPA CompTox', org: 'US EPA', records: '900k+', type: 'Toxicity, environmental fate, regulatory' },
   { name: 'RCSB PDB', org: 'Research Collaboratory', records: '220k+', type: 'Protein structures, ligand binding' },
