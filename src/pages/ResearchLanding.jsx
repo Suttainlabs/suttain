@@ -156,7 +156,47 @@ export default function ResearchLanding() {
           </div>
         </Section>
 
+        {/* ── Data Infrastructure ── */}
+        <Section spacing="default" width="wide">
+          <div className="mb-12">
+            <p className="text-xs text-teal-400 uppercase tracking-[0.2em] font-semibold mb-3">Infrastructure</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">Data Sources & Compute</h2>
+            <p className="text-slate-400 text-base max-w-2xl">Every analysis is backed by authoritative public databases and validated against regulatory standards.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {STACK_SECTION.map((src, i) => (
+              <div key={i} className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all group">
+                <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center mb-4 group-hover:bg-slate-700 transition-colors">
+                  <src.icon className="w-5 h-5 text-teal-400" />
+                </div>
+                <h4 className="font-bold text-white text-sm mb-1">{src.name}</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">{src.desc}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
 
+        {/* ── CTA Section ── */}
+        <Section spacing="default" width="wide" className="border-t border-slate-800">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to accelerate your research?</h2>
+            <p className="text-slate-400 text-base mb-8">Join thousands of researchers using Suttain for molecular intelligence, computational simulation, and chemical safety analysis.</p>
+            <div className="flex items-center justify-center gap-4 flex-wrap">
+              <Link to="/ResearchDashboard">
+                <Button size="lg" className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white h-12 px-8 text-base font-semibold rounded-lg shadow-lg shadow-violet-500/20 active:scale-[0.97]">
+                  <Zap className="mr-2 w-5 h-5" />
+                  Launch Research Dashboard
+                </Button>
+              </Link>
+              <Link to={createPageUrl("APIPortal")}>
+                <Button variant="outline" size="lg" className="bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-12 px-8 text-base rounded-lg active:scale-[0.97]">
+                  <Code2 className="mr-2 w-5 h-5" />
+                  API Docs
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </Section>
 
         {/* Research Footer */}
         <div className="border-t border-slate-800 bg-slate-950/60">
