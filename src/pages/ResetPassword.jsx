@@ -28,7 +28,7 @@ export default function ResetPassword() {
       await base44.auth.resetPassword({ resetToken, newPassword });
       window.location.href = "/login";
     } catch (err) {
-      setError(err.message || "Failed to reset password");
+      setError("Failed to reset password. Please request a new reset link.");
     } finally {
       setLoading(false);
     }

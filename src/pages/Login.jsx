@@ -26,7 +26,7 @@ export default function Login() {
       // 1. Server-side input validation
       const valRes = await validateAuthInput({ action: "login", email, password });
       if (!valRes.data?.valid) {
-        setError(valRes.data?.error || "Invalid email or password.");
+        setError(valRes.data?.error || "Incorrect email or password");
         return;
       }
       const sanitizedEmail = valRes.data.sanitized?.email || email;
@@ -34,7 +34,7 @@ export default function Login() {
       // 2. Rate-limit + lockout + progressive-delay check
       const accessRes = await checkLoginAccess({ email: sanitizedEmail });
       if (!accessRes.data?.allowed) {
-        setError(accessRes.data?.error || "Invalid email or password.");
+        setError(accessRes.data?.error || "Incorrect email or password");
         return;
       }
 
@@ -47,10 +47,10 @@ export default function Login() {
         // Record failure for lockout tracking (fire-and-forget)
         try { await recordLoginResult({ email: sanitizedEmail, success: false }); } catch {}
         // Same generic message — never reveal lockout vs wrong password
-        setError("Invalid email or password.");
+        setError("Incorrect email or password");
       }
     } catch (err) {
-      setError("Invalid email or password.");
+      setError("Incorrect email or password");
     } finally {
       setLoading(false);
     }

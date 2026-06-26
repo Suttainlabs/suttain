@@ -37,7 +37,7 @@ export default function Register() {
       await base44.auth.register({ email: res.data.sanitized?.email || email, password });
       setShowOtp(true);
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError("Something went wrong. Please check your details and try again.");
     } finally {
       setLoading(false);
     }

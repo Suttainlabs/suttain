@@ -3,7 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 // ── Constants ────────────────────────────────────────────────────
 const MAX_ATTEMPTS    = 5;
 const LOCKOUT_MINUTES = 15;
-const GENERIC_ERROR  = "Invalid email or password.";
+const GENERIC_ERROR  = "Incorrect email or password";
 
 Deno.serve(async (req) => {
   try {

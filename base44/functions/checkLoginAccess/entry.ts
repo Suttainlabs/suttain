@@ -3,7 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 // ── Constants ────────────────────────────────────────────────────
 const MAX_IP_REQUESTS = 10;       // per minute
 const WINDOW_SECONDS  = 60;
-const GENERIC_ERROR  = "Invalid email or password.";
+const GENERIC_ERROR  = "Incorrect email or password";
 
 Deno.serve(async (req) => {
   try {
