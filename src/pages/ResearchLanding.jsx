@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Section, SectionHeader } from "@/components/shared/Section";
 
 
-const ADVANCED_MODULES = [
+const RESEARCH_TOOLS = [
   {
     title: "Molecular Intelligence",
     description: "Hazard scoring, toxicity profiling, and regulatory mapping via PubChem, ChEMBL, and EPA CompTox.",
@@ -24,7 +24,7 @@ const ADVANCED_MODULES = [
     status: "live"
   },
   {
-    title: "Computational Simulations",
+    title: "Computational Simulation",
     description: "DFT calculations, molecular dynamics, protein modeling, and QM/MM hybrid simulations.",
     icon: Cpu,
     href: "ComputationalSimulation",
@@ -33,16 +33,7 @@ const ADVANCED_MODULES = [
     status: "pro"
   },
   {
-    title: "Carbon & Sustainability",
-    description: "Carbon tax modeling, decarbonization ROI, lifecycle assessment, and ESG compliance reporting.",
-    icon: Leaf,
-    href: "CarbonTaxSimulator",
-    gradient: "from-emerald-500 to-teal-600",
-    tags: ["LCA", "ESG", "Carbon Tax"],
-    status: "live"
-  },
-  {
-    title: "Formula Simulation Engine",
+    title: "Formula Intelligence",
     description: "Real-time ingredient percentage adjustment with live cost, safety, and sustainability shift visualization.",
     icon: FlaskConical,
     href: "SimulationEngine",
@@ -51,21 +42,21 @@ const ADVANCED_MODULES = [
     status: "pro"
   },
   {
-    title: "Comparative Impact Reports",
-    description: "Benchmark formulations against industry averages with detailed eco-score delta analysis.",
-    icon: BarChart2,
-    href: "ComparativeImpactReport",
-    gradient: "from-rose-500 to-pink-600",
-    tags: ["Benchmark", "Eco-Score"],
+    title: "Sustainability Intelligence",
+    description: "Carbon tax modeling, lifecycle assessment, and ESG compliance reporting for formulations.",
+    icon: Leaf,
+    href: "CarbonTaxSimulator",
+    gradient: "from-emerald-500 to-teal-600",
+    tags: ["LCA", "ESG", "Carbon"],
     status: "live"
   },
   {
-    title: "Research Dashboard",
-    description: "Centralized workspace for saved queries, formulas, simulation history, and cross-referenced results.",
-    icon: BookOpen,
-    href: "ResearchDashboard",
-    gradient: "from-slate-600 to-slate-800",
-    tags: ["Workspace", "History"],
+    title: "Research API",
+    description: "REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation.",
+    icon: Terminal,
+    href: "APIPortal",
+    gradient: "from-slate-600 to-slate-700",
+    tags: ["REST", "Python", "JavaScript"],
     status: "live"
   },
   {
@@ -76,24 +67,6 @@ const ADVANCED_MODULES = [
     gradient: "from-fuchsia-500 to-purple-600",
     tags: ["3Dmol.js", "PubChem"],
     status: "pro"
-  },
-  {
-    title: "Chemical Comparison",
-    description: "Side-by-side technical evaluation of two compounds with delta highlighting across all property dimensions.",
-    icon: Layers,
-    href: "ChemicalComparison",
-    gradient: "from-amber-600 to-red-600",
-    tags: ["Delta", "Compare"],
-    status: "live"
-  },
-  {
-    title: "SDS Analyzer",
-    description: "Automated safety data sheet ingestion, hazard extraction, and GHS classification mapping.",
-    icon: ShieldCheck,
-    href: "SDSAnalyzer",
-    gradient: "from-red-500 to-rose-600",
-    tags: ["GHS", "SDS", "Hazard"],
-    status: "live"
   }
 ];
 
@@ -120,80 +93,29 @@ export default function ResearchLanding() {
       <div className="relative z-10">
         {/* ── Hero Section ── */}
         <Section spacing="default" width="wide" className="hero-offset">
-          <div className="text-center max-w-4xl mx-auto">
-            <SectionHeader
-              as="h1"
-              align="center"
-              eyebrow={
-                <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20 px-4 py-1.5 text-xs tracking-widest uppercase">
-                  Molecular Intelligence OS
-                </Badge>
-              }
-              headingClassName="text-5xl md:text-7xl font-bold tracking-tight"
-              heading={
-                <span className="bg-gradient-to-r from-violet-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-                  Research Portal
-                </span>
-              }
-              subtextClassName="text-lg md:text-xl text-slate-400 leading-relaxed"
-              subtext={(
-                <>
-                  A unified computational chemistry platform integrating public databases, AI-powered molecular analysis, and advanced simulation engines for professional researchers.
-                  <br /><br />
-                  <span className="text-sm text-slate-500">Powered by PubChem, ChEMBL, EPA CompTox, and RCSB PDB. Built for chemists, pharmacologists, and materials scientists.</span>
-                </>
-              )}
-            >
-              <div className="flex items-center justify-center gap-4">
-                <Link to="/ResearchDashboard">
-                  <Button size="lg" className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white border-0 h-12 px-8 text-base font-semibold rounded-lg shadow-lg shadow-violet-500/25 active:scale-[0.97]">
-                    Launch Research Dashboard
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </Link>
-                <Link to={createPageUrl("APIPortal")}>
-                  <Button variant="outline" size="lg" className="bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-12 px-8 text-base rounded-lg active:scale-[0.97]">
-                    <Terminal className="mr-2 w-5 h-5" />
-                    API Access
-                  </Button>
-                </Link>
-              </div>
-            </SectionHeader>
+          <div className="max-w-5xl">
+            <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20 px-3 py-1 text-[11px] tracking-widest uppercase font-semibold mb-6">
+              Molecular Intelligence OS
+            </Badge>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+              One platform for the complete{" "}
+              <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">
+                chemical research workflow
+              </span>
+              .
+            </h1>
+            <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-3xl">
+              Query any compound. Run simulations. Generate and validate formulas. Export publication-ready citations. Powered by PubChem, ChEMBL, and EPA CompTox — every output includes source citation and confidence score.
+            </p>
           </div>
         </Section>
 
-        {/* ── Stats Bar ── */}
-        <Section spacing="default" width="wide" className="border-y border-slate-800 bg-slate-900/50 backdrop-blur-sm">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {[
-              { value: "118M+", label: "Compounds Indexed", sub: "Across PubChem & ChEMBL" },
-              { value: "12+", label: "Simulation Engines", sub: "DFT, MD, QM/MM & more" },
-              { value: "8", label: "Regulatory Frameworks", sub: "GHS, REACH, EPA, FDA" },
-              { value: "< 3s", label: "Average Query Time", sub: "API-backed with caching" },
-            ].map((stat, i) => (
-              <div key={i}>
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">
-                  {stat.value}
-                </div>
-                <div className="text-sm font-semibold text-slate-300 mt-1">{stat.label}</div>
-                <div className="text-xs text-slate-500">{stat.sub}</div>
-              </div>
-            ))}
-          </div>
-        </Section>
 
-        {/* ── Advanced Modules Grid ── */}
+
+        {/* ── Research Tools Grid ── */}
         <Section spacing="default" width="wide">
-          <SectionHeader
-            eyebrow={<p className="text-xs text-violet-400 uppercase tracking-[0.2em] font-semibold">Advanced Tools</p>}
-            headingClassName="text-3xl md:text-4xl font-bold text-white"
-            heading="Computational Research Suite"
-            subtextClassName="text-slate-400"
-            subtext="Every module connects to live databases and runs on production-grade simulation infrastructure."
-            align="left"
-          />
-          <div style={{ marginTop: "var(--space-6)" }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ADVANCED_MODULES.map((module, i) => (
+          <div style={{ marginTop: "0" }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {RESEARCH_TOOLS.map((module, i) => (
               <Link
                 key={i}
                 to={createPageUrl(module.href)}
@@ -234,53 +156,7 @@ export default function ResearchLanding() {
           </div>
         </Section>
 
-        {/* ── Data Infrastructure ── */}
-        <Section spacing="default" width="wide">
-          <SectionHeader
-            eyebrow={<p className="text-xs text-cyan-400 uppercase tracking-[0.2em] font-semibold">Infrastructure</p>}
-            headingClassName="text-3xl md:text-4xl font-bold text-white"
-            heading="Data Sources & Compute"
-            subtextClassName="text-slate-400"
-            subtext="Every analysis is backed by authoritative public databases and validated against regulatory standards."
-            align="left"
-          />
-          <div style={{ marginTop: "var(--space-6)" }} className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {STACK_SECTION.map((src, i) => (
-              <div key={i} className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all group">
-                <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center mb-4 group-hover:bg-slate-700 transition-colors">
-                  <src.icon className="w-5 h-5 text-cyan-400" />
-                </div>
-                <h4 className="font-bold text-white text-sm mb-1">{src.name}</h4>
-                <p className="text-xs text-slate-500 leading-relaxed">{src.desc}</p>
-              </div>
-            ))}
-          </div>
-        </Section>
 
-        {/* ── CTA Footer ── */}
-        <Section spacing="default" width="wide" className="border-t border-slate-800">
-          <SectionHeader
-            headingClassName="text-3xl md:text-4xl font-bold text-white"
-            heading="Ready to accelerate your research?"
-            subtextClassName="text-slate-400"
-            subtext="Join thousands of researchers using Suttain for molecular intelligence, computational simulation, and chemical safety analysis."
-          >
-            <div className="flex items-center justify-center gap-4 flex-wrap">
-              <Link to="/ResearchDashboard">
-                <Button size="lg" className="bg-violet-600 hover:bg-violet-500 text-white h-12 px-8 text-base font-semibold rounded-lg active:scale-[0.97]">
-                  Launch Research Dashboard
-                  <Zap className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link to={createPageUrl("APIPortal")}>
-                <Button variant="outline" size="lg" className="bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-12 px-8 text-base rounded-lg active:scale-[0.97]">
-                  <Code2 className="mr-2 w-5 h-5" />
-                  API Docs
-                </Button>
-              </Link>
-            </div>
-          </SectionHeader>
-        </Section>
 
         {/* Research Footer */}
         <div className="border-t border-slate-800 bg-slate-950/60">
