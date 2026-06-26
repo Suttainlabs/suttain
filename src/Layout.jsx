@@ -399,7 +399,7 @@ export default function Layout({ children, currentPageName }) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
-                    <span>Tools</span>
+                    <span>Free Tools</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 p-2">
@@ -480,10 +480,10 @@ export default function Layout({ children, currentPageName }) {
                   </DropdownMenu>
                 ) : (
                   <div className="hidden md:flex items-center gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => openAuthModal("login")} className="text-slate-600 hover:text-slate-900 text-sm font-semibold">
+                    <Button variant="outline" size="sm" onClick={() => openAuthModal("login")}>
                       Sign In
                     </Button>
-                    <Button size="sm" onClick={() => openAuthModal("signup")} className="bg-[#007850] text-white hover:opacity-90 rounded-full px-4 text-sm font-bold">
+                    <Button size="sm" onClick={() => openAuthModal("signup")}>
                       Get Started
                     </Button>
                   </div>
@@ -577,7 +577,7 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <div className="flex items-center gap-4">
                         <TestTube className="w-5 h-5" />
-                        Tools
+                        Free Tools
                       </div>
                       <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isProductSuiteOpen ? 'rotate-180' : ''}`} />
                     </button>
@@ -667,22 +667,24 @@ export default function Layout({ children, currentPageName }) {
                     ) : (
                       <motion.div variants={mobileNavItemVariants} className="space-y-2">
                         <Button
+                          variant="outline"
+                          size="lg"
                           onClick={() => {
                             setIsMobileMenuOpen(false);
                             openAuthModal("login");
                           }}
-                          variant="ghost"
-                          className="w-full justify-start text-base font-semibold flex items-center gap-4 px-4 py-3 text-suttain-dark hover:bg-slate-100"
+                          className="w-full"
                         >
-                          <LogIn className="w-5 h-5" />
+                          <LogIn className="w-5 h-5 mr-2" />
                           Login
                         </Button>
                         <Button
+                          size="lg"
                           onClick={() => {
                             setIsMobileMenuOpen(false);
                             openAuthModal("signup");
                           }}
-                          className="w-full justify-center text-base font-semibold bg-gradient-to-r from-suttain-teal to-suttain-blue text-white py-3 rounded-full"
+                          className="w-full"
                         >
                           <Sparkles className="w-5 h-5 mr-2" />
                           Sign Up Free

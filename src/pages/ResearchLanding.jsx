@@ -146,13 +146,13 @@ export default function ResearchLanding() {
             >
               <div className="flex items-center justify-center gap-4">
                 <Link to="/ResearchDashboard">
-                  <Button size="lg" className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white border-0 h-14 px-8 text-base font-semibold rounded-xl shadow-lg shadow-violet-500/25">
+                  <Button size="lg" className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white border-0 h-12 px-8 text-base font-semibold rounded-lg shadow-lg shadow-violet-500/25 active:scale-[0.97]">
                     Launch Research Dashboard
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </Link>
                 <Link to={createPageUrl("APIPortal")}>
-                  <Button variant="outline" size="lg" className="bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-14 px-8 text-base rounded-xl">
+                  <Button variant="outline" size="lg" className="bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-12 px-8 text-base rounded-lg active:scale-[0.97]">
                     <Terminal className="mr-2 w-5 h-5" />
                     API Access
                   </Button>
@@ -163,7 +163,7 @@ export default function ResearchLanding() {
         </Section>
 
         {/* ── Stats Bar ── */}
-        <Section spacing="compact" width="wide" className="border-y border-slate-800 bg-slate-900/50 backdrop-blur-sm">
+        <Section spacing="default" width="wide" className="border-y border-slate-800 bg-slate-900/50 backdrop-blur-sm">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { value: "118M+", label: "Compounds Indexed", sub: "Across PubChem & ChEMBL" },
@@ -267,13 +267,13 @@ export default function ResearchLanding() {
           >
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link to="/ResearchDashboard">
-                <Button size="lg" className="bg-violet-600 hover:bg-violet-500 text-white h-14 px-10 text-base font-semibold rounded-xl">
+                <Button size="lg" className="bg-violet-600 hover:bg-violet-500 text-white h-12 px-8 text-base font-semibold rounded-lg active:scale-[0.97]">
                   Launch Research Dashboard
                   <Zap className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
               <Link to={createPageUrl("APIPortal")}>
-                <Button variant="outline" size="lg" className="bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-14 px-10 text-base rounded-xl">
+                <Button variant="outline" size="lg" className="bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-12 px-8 text-base rounded-lg active:scale-[0.97]">
                   <Code2 className="mr-2 w-5 h-5" />
                   API Docs
                 </Button>

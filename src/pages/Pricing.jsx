@@ -241,12 +241,13 @@ function PlanCard({ plan, onUpgrade, checkoutLoading, dark, billingCycle }) {
       <button
         onClick={handleClick}
         disabled={plan.ctaDisabled || isBusy}
-        className={`w-full py-2.5 rounded-xl font-semibold text-sm mb-5 transition-all ${
+        className={`w-full h-10 rounded-lg font-semibold text-sm mb-5 transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00695C] focus-visible:ring-offset-2 ${
           plan.ctaDisabled
             ? dark ? 'bg-slate-700 text-slate-500 cursor-default' : 'bg-slate-100 text-slate-400 cursor-default'
-            : 'text-white hover:opacity-90 active:scale-[0.98]'
+            : dark
+              ? 'bg-[#00B478] text-white shadow-md hover:bg-[#00A06A] hover:shadow-lg'
+              : 'bg-[#00695C] text-white shadow-md hover:bg-[#005048] hover:shadow-lg'
         }`}
-        style={!plan.ctaDisabled ? { background: plan.color } : undefined}
       >
         {isBusy ? <span className="flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Processing...</span> : plan.cta}
       </button>

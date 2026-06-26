@@ -4,7 +4,7 @@ import {
   ArrowRight, FlaskConical, Sparkles, ShieldCheck,
   Leaf, BarChart3, Zap, TestTube, QrCode, Droplets,
   Database, Star, Users,
-  Microscope, Search
+  Microscope, Search, Loader2
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -93,6 +93,7 @@ export default function HomePage() {
   const [chemSearch, setChemSearch] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Common chemicals for autocomplete
   const commonChemicals = [
@@ -125,9 +126,12 @@ export default function HomePage() {
 
   const handleChemSearch = (e) => {
     e.preventDefault();
-    if (!chemSearch.trim()) return;
+    if (!chemSearch.trim() || isSearching) return;
     setShowSuggestions(false);
-    navigate(createPageUrl('MoleculeExplorer') + '?q=' + encodeURIComponent(chemSearch.trim()));
+    setIsSearching(true);
+    setTimeout(() => {
+      navigate(createPageUrl('MoleculeExplorer') + '?q=' + encodeURIComponent(chemSearch.trim()));
+    }, 400);
   };
 
   return (
@@ -174,21 +178,13 @@ export default function HomePage() {
         >
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
             <Link to={createPageUrl("Simulator")}>
-              <Button
-                size="lg"
-                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white shadow-lg shadow-[#007850]/20 hover:shadow-xl"
-                style={{ background: "#007850" }}
-              >
+              <Button size="lg" className="w-full sm:w-auto">
                 Analyze Your Product Free
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
             <Link to={createPageUrl("generator")}>
-              <Button
-                size="lg"
-                className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white shadow-md"
-                style={{ background: "#0D9E8E" }}
-              >
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 <Sparkles className="w-4 h-4 mr-2" />
                 Build a Formula
               </Button>
@@ -212,10 +208,11 @@ export default function HomePage() {
               />
               <button
                 type="submit"
-                className="px-5 py-2 rounded-full text-sm font-semibold text-white flex-shrink-0 transition-opacity hover:opacity-90"
-                style={{ background: '#007850' }}
+                disabled={isSearching || !chemSearch.trim()}
+                className="px-5 py-2 rounded-lg text-sm font-semibold text-white flex-shrink-0 transition-all hover:opacity-90 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00695C] focus-visible:ring-offset-2"
+                style={{ background: '#00695C' }}
               >
-                Search
+                {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Search'}
               </button>
             </form>
             
@@ -231,6 +228,13 @@ export default function HomePage() {
                     {chem}
                   </button>
                 ))}
+              </div>
+            )}
+            {showSuggestions && chemSearch.trim().length > 0 && suggestions.length === 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden z-10">
+                <p className="px-5 py-4 text-sm text-slate-500 text-center">
+                  No chemicals found matching "{chemSearch}". Try a different name or CAS number.
+                </p>
               </div>
             )}
           </motion.div>
@@ -255,7 +259,7 @@ export default function HomePage() {
       </Section>
 
       {/* ── Pillar strip ── */}
-      <Section spacing="compact" width="default" background="muted" className="border-y border-slate-100">
+      <Section spacing="default" width="default" background="muted" className="border-y border-slate-100">
           <div className="flex flex-wrap justify-center gap-8">
             {[
               { icon: ShieldCheck, label: "Safety Analysis", color: "#007850" },
@@ -274,8 +278,8 @@ export default function HomePage() {
       </Section>
 
       {/* ── Consumer Tools — auto-scrolling marquee ── */}
-      <section className="py-10 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+      <Section spacing="default" width="wide" background="light" className="overflow-hidden">
+        <div className="mb-6">
           <span className="text-xs font-bold uppercase tracking-widest text-[#007850]">Consumer Tools</span>
         </div>
         <style>{`
@@ -307,7 +311,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* ── How it works ── */}
       <Section spacing="default" width="default" background="muted" className="border-y border-slate-100">
@@ -395,8 +399,7 @@ export default function HomePage() {
                 <Link to={createPageUrl("Simulator")}>
                   <Button
                     size="lg"
-                    className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base bg-white hover:bg-white/90 transition-colors"
-                    style={{ color: "#007850" }}
+                    className="w-full sm:w-auto bg-white text-[#00695C] hover:bg-white/90 shadow-lg"
                   >
                     Analyze Your Product Free
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -405,8 +408,7 @@ export default function HomePage() {
                 <Link to={createPageUrl("Pricing")}>
                   <Button
                     size="lg"
-                    variant="outline"
-                    className="w-full sm:w-auto px-8 py-3 rounded-full font-semibold text-base text-white border-2 border-white/40 bg-transparent hover:bg-white/10 transition-colors"
+                    className="w-full sm:w-auto bg-transparent text-white border-2 border-white/50 hover:bg-white/10"
                   >
                     <Star className="w-4 h-4 mr-2" />
                     View Pricing

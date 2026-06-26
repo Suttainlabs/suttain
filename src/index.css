@@ -138,8 +138,21 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Global keyboard focus states (WCAG 2.4.7) ── */
+  /* 2px solid brand teal with 2px offset on every interactive element */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid #00695C;
+    outline-offset: 2px;
   }
 
   body {
@@ -307,21 +320,21 @@
     gap: var(--section-gap);
   }
 
-  /* ── Section spacing scale (8px base, token-driven) ── */
-  .section-pad-default { padding-top: var(--space-6); padding-bottom: var(--space-6); }
-  .section-pad-compact { padding-top: var(--space-4); padding-bottom: var(--space-4); }
-  .section-pad-spacious { padding-top: var(--space-7); padding-bottom: var(--space-7); }
+  /* ── Section spacing scale — standardized 48/64/96 for ALL sections ── */
+  .section-pad-default,
+  .section-pad-compact,
+  .section-pad-spacious { padding-top: var(--space-6); padding-bottom: var(--space-6); }
 
   @media (min-width: 768px) {
-    .section-pad-default { padding-top: var(--space-8); padding-bottom: var(--space-8); }
-    .section-pad-compact { padding-top: var(--space-6); padding-bottom: var(--space-6); }
-    .section-pad-spacious { padding-top: var(--space-10); padding-bottom: var(--space-10); }
+    .section-pad-default,
+    .section-pad-compact,
+    .section-pad-spacious { padding-top: var(--space-8); padding-bottom: var(--space-8); }
   }
 
   @media (min-width: 1024px) {
-    .section-pad-default { padding-top: var(--space-12); padding-bottom: var(--space-12); }
-    .section-pad-compact { padding-top: var(--space-8); padding-bottom: var(--space-8); }
-    .section-pad-spacious { padding-top: var(--space-16); padding-bottom: var(--space-16); }
+    .section-pad-default,
+    .section-pad-compact,
+    .section-pad-spacious { padding-top: var(--space-12); padding-bottom: var(--space-12); }
   }
 
   /* Hero offset — extra top padding to clear the fixed nav (token-driven) */
