@@ -9,6 +9,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { toast } from "@/components/ui/use-toast";
+import { validateAuthInput } from "@/functions/validateAuthInput";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,12 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      await base44.auth.register({ email, password });
+      const res = await validateAuthInput({ action: "signup", email, password });
+      if (!res.data?.valid) {
+        setError(res.data?.error || "Invalid input. Please check your details and try again.");
+        return;
+      }
+      await base44.auth.register({ email: res.data.sanitized?.email || email, password });
       setShowOtp(true);
     } catch (err) {
       setError(err.message || "Registration failed");

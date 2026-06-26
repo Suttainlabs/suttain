@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
+import { validateAuthInput } from "@/functions/validateAuthInput";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,12 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
+      const res = await validateAuthInput({ action: "login", email, password });
+      if (!res.data?.valid) {
+        setError(res.data?.error || "Invalid input. Please check your details and try again.");
+        return;
+      }
+      await base44.auth.loginViaEmailPassword(res.data.sanitized?.email || email, password);
       window.location.href = "/";
     } catch (err) {
       setError(err.message || "Invalid email or password");
