@@ -132,6 +132,12 @@ const AuthenticatedApp = () => {
       <Route path="/Generator" element={<Navigate to="/generator" replace />} />
       <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaComparison /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/MyAnalytics" element={<LayoutWrapper currentPageName="MyAnalytics"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MyAnalytics /></PageTransition></Suspense></LayoutWrapper>} />
+      {/* ── Auth Pages (outside Layout) ── */}
+      <Route path="/login" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.Login ? <Pages.Login /> : null}</Suspense>} />
+      <Route path="/register" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.Register ? <Pages.Register /> : null}</Suspense>} />
+      <Route path="/forgot-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.ForgotPassword ? <Pages.ForgotPassword /> : null}</Suspense>} />
+      <Route path="/reset-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.ResetPassword ? <Pages.ResetPassword /> : null}</Suspense>} />
+
       {/* ── Research Portal layout group — dark-themed, no consumer Layout ── */}
       <Route element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17]"/>}><ResearchLayout /></Suspense>}>
         <Route path="/research" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchLanding /></Suspense>} />
