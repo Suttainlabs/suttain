@@ -237,7 +237,7 @@ export default function HomePage() {
 
           {/* Trust stats */}
           <motion.div {...fade(0.32)} style={{ marginTop: "var(--space-5)" }}>
-            <div className="relative inline-flex flex-wrap justify-center rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden divide-x divide-slate-100">
+            <div className="relative flex flex-wrap justify-center rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden divide-x divide-slate-100 w-full max-w-2xl mx-auto">
               <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #02988C60, #9531F560, transparent)" }} />
               {[
                 { value: "130M+", label: "Chemicals", color: "#007850" },
@@ -245,7 +245,7 @@ export default function HomePage() {
                 { value: "<1s", label: "Analysis Time", color: "#6366f1" },
                 { value: "Free", label: "To Start", color: "#007850" },
               ].map(({ value, label, color }) => (
-                <div key={label} className="flex flex-col items-center px-5 py-4">
+                <div key={label} className="flex flex-col items-center justify-center px-5 py-4 flex-1 min-w-[120px] text-center">
                   <p className="text-2xl font-bold leading-none tabular-nums" style={{ color }}>{value}</p>
                   <p className="text-xs text-slate-500 mt-1.5 font-medium">{label}</p>
                 </div>
