@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   LogIn, Menu, X,
-  Atom, Cpu, Layers, Dna,
+  Atom, Cpu, Layers, Dna, Microscope,
   ChevronDown, FlaskConical, LogOut, User as UserIcon
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -14,6 +14,7 @@ const TOOLS_MENU = [
   { href: "/MoleculeExplorer", label: "Molecule Explorer", icon: Dna, desc: "Interactive 3D molecular visualization" },
   { href: "/ChemicalComparison", label: "Chemical Comparison", icon: Layers, desc: "Side-by-side compound evaluation" },
   { href: "/SimulationEngine", label: "Simulation Engine", icon: FlaskConical, desc: "Formula cost & sustainability modeling" },
+  { href: "/StructuralBiology", label: "Structural Biology", icon: Microscope, desc: "AlphaFold protein structures & binding analysis" },
 ];
 
 const NAV_LINKS = [

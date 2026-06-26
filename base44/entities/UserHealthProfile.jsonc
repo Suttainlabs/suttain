@@ -1,0 +1,57 @@
+{
+  "name": "UserHealthProfile",
+  "type": "object",
+  "properties": {
+    "life_stage": {
+      "type": "string",
+      "enum": [
+        "adult",
+        "pregnant",
+        "nursing",
+        "child",
+        "adolescent",
+        "elderly"
+      ],
+      "description": "User's current life stage for population-level risk assessment"
+    },
+    "allergies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Known allergies (ingredient names or chemical classes)"
+    },
+    "health_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Diagnosed health conditions (e.g. endocrine disorder, asthma, sensitive skin)"
+    },
+    "medications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Current medications for drug-interaction screening"
+    },
+    "sensitivity_preferences": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User-flagged sensitivities (e.g. fragrance-sensitive, hormone-sensitive)"
+    }
+  },
+  "required": [
+    "life_stage"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

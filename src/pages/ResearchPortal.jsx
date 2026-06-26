@@ -5,7 +5,7 @@ import AuthContext from '../components/auth/AuthContext';
 import {
   Atom, Cpu, FlaskConical, Leaf, Code2, BarChart2,
   Database, ChevronRight, BookOpen, ExternalLink, Shield,
-  Globe, Microscope, Layers, GitBranch, FileText, Zap
+  Globe, Microscope, Layers, GitBranch, FileText, Zap, Dna
 } from 'lucide-react';
 
 const modules = [
@@ -99,11 +99,64 @@ const modules = [
   },
 ];
 
+const structuralBiologyTools = [
+  {
+    id: 'protein-explorer',
+    label: 'Protein Structure Explorer',
+    route: 'StructuralBiology',
+    icon: Microscope,
+    color: '#2563eb',
+    description: 'Search any human protein by UniProt ID or gene. 3D structures, pLDDT confidence, PAE heatmaps.',
+    tags: ['AlphaFold API', '3Dmol.js', 'pLDDT'],
+    tier: 'Free',
+  },
+  {
+    id: 'binding-scanner',
+    label: 'Chemical Binding Risk Scanner',
+    route: 'StructuralBiology',
+    icon: FlaskConical,
+    color: '#dc2626',
+    description: 'Analyze chemical-protein binding against 10 toxicology target proteins.',
+    tags: ['AlphaFold', 'Toxicology', 'AI'],
+    tier: 'Pro',
+  },
+  {
+    id: 'mutation-analyzer',
+    label: 'Mutation Sensitivity Analyzer',
+    route: 'StructuralBiology',
+    icon: Dna,
+    color: '#9333ea',
+    description: 'AlphaMissense pathogenicity analysis for amino acid variants.',
+    tags: ['AlphaMissense', 'Pathogenicity'],
+    tier: 'Pro',
+  },
+  {
+    id: 'domain-heatmap',
+    label: 'Domain Reliability Heatmap',
+    route: 'StructuralBiology',
+    icon: BarChart2,
+    color: '#0d9e8e',
+    description: 'Visualize PAE matrix to assess structural domain reliability. AI interpretation.',
+    tags: ['PAE Matrix', 'AI'],
+    tier: 'Pro',
+  },
+  {
+    id: 'population-profiler',
+    label: 'Population Safety Profiler',
+    route: 'StructuralBiology',
+    icon: Shield,
+    color: '#f59e0b',
+    description: 'Personalized ingredient safety warnings from AlphaFold + your health profile.',
+    tags: ['Health Profile', 'Personalized'],
+    tier: 'Pro',
+  },
+];
+
 const dataSources = [
   { name: 'PubChem', org: 'NCBI / NIH', records: '118M+', type: 'Compound identity, bioassay, properties' },
   { name: 'ChEMBL', org: 'EMBL-EBI', records: '2.4M+', type: 'Bioactivity, drug-likeness, target data' },
   { name: 'EPA CompTox', org: 'US EPA', records: '900k+', type: 'Toxicity, environmental fate, regulatory' },
-  { name: 'RCSB PDB', org: 'Research Collaboratory', records: '220k+', type: 'Protein structures, ligand binding' },
+  { name: 'AlphaFold DB', org: 'EMBL-EBI / DeepMind', records: '200k+', type: 'Protein structures, pLDDT, PAE, AlphaMissense' },
 ];
 
 export default function ResearchPortal() {
@@ -116,8 +169,11 @@ export default function ResearchPortal() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
           <Microscope className="w-3.5 h-3.5 text-[#0D9E8E]" />
           <span className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Research Portal</span>
-          <span className="ml-auto flex items-center gap-2 text-[10px] text-slate-600">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+          <span className="ml-auto flex items-center gap-1.5 text-[10px] text-slate-600">
+            <span className="px-1.5 py-0.5 rounded bg-slate-700/40 text-slate-400 font-semibold">PubChem</span>
+            <span className="px-1.5 py-0.5 rounded bg-slate-700/40 text-slate-400 font-semibold">ChEMBL</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#2563eb]/15 text-[#2563eb] font-bold">AlphaFold DB</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block ml-1" />
             All systems operational
           </span>
         </div>
@@ -191,6 +247,54 @@ export default function ResearchPortal() {
               </Link>
             );
           })}
+        </div>
+
+        {/* Structural Biology section */}
+        <div className="mb-14">
+          <div className="flex items-center gap-2 mb-4">
+            <Dna className="w-3.5 h-3.5 text-[#2563eb]" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Structural Biology — AlphaFold Integration</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#2563eb]/15 text-[#2563eb] font-bold">CC BY 4.0</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {structuralBiologyTools.map((tool) => {
+              const Icon = tool.icon;
+              return (
+                <Link
+                  key={tool.id}
+                  to={createPageUrl(tool.route)}
+                  className="group bg-slate-800/40 hover:bg-slate-800/70 border border-slate-700/50 hover:border-slate-600/70 rounded-xl p-5 transition-all duration-200 flex flex-col"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: tool.color + '18', border: `1px solid ${tool.color}30` }}
+                    >
+                      <Icon className="w-5 h-5" style={{ color: tool.color }} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded"
+                        style={{ backgroundColor: tool.color + '15', color: tool.color }}
+                      >
+                        {tool.tier}
+                      </span>
+                      <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
+                    </div>
+                  </div>
+                  <h3 className="text-sm font-bold text-white mb-1.5">{tool.label}</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed flex-1 mb-3">{tool.description}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {tool.tags.map((t) => (
+                      <span key={t} className="text-[10px] font-mono text-slate-600 bg-slate-900/60 px-2 py-0.5 rounded">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
         {/* Data sources */}
