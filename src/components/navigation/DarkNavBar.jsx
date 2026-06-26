@@ -57,8 +57,26 @@ export default function DarkNavBar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      {/* Research Portal header */}
+      <div className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-3">
+            <Microscope className="w-4 h-4 text-teal-400" />
+            <span className="text-teal-400 font-semibold uppercase tracking-wider">Research Portal</span>
+          </div>
+          <div className="hidden sm:flex items-center gap-4 text-slate-500">
+            <a href="#" className="hover:text-slate-300 transition-colors">PubChem</a>
+            <a href="#" className="hover:text-slate-300 transition-colors">ChEMBL</a>
+            <a href="#" className="hover:text-slate-300 transition-colors">AlphaFold DB</a>
+            <span className="text-slate-700">All systems operational</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main navigation */}
+      <nav className="sticky top-14 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
@@ -241,6 +259,7 @@ export default function DarkNavBar() {
           </div>
         </div>
       )}
-    </nav>
+      </nav>
+    </>
   );
 }
