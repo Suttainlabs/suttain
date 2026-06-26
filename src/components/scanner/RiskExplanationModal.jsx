@@ -1,10 +1,9 @@
 import React from 'react';
-import { CheckCircle, AlertTriangle, Shield, HelpCircle, X } from 'lucide-react';
+import { CheckCircle, AlertTriangle, Shield, HelpCircle, Info } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-const RISK_LEVELS = [
-  {
-    key: 'low',
+const RISK_CONFIG = {
+  low: {
     label: 'Low Risk',
     Icon: CheckCircle,
     color: 'text-emerald-600',
@@ -17,8 +16,7 @@ const RISK_LEVELS = [
       'Suitable for regular, everyday use by most people.'
     ]
   },
-  {
-    key: 'medium',
+  medium: {
     label: 'Medium Risk',
     Icon: AlertTriangle,
     color: 'text-amber-600',
@@ -31,8 +29,7 @@ const RISK_LEVELS = [
       'Check the Safety and Ingredients tabs for specifics before regular use.'
     ]
   },
-  {
-    key: 'high',
+  high: {
     label: 'High Risk',
     Icon: Shield,
     color: 'text-red-600',
@@ -45,8 +42,7 @@ const RISK_LEVELS = [
       'Review the Safety tab and consider the suggested alternatives.'
     ]
   },
-  {
-    key: 'unknown',
+  unknown: {
     label: 'Risk Unknown',
     Icon: HelpCircle,
     color: 'text-slate-600',
@@ -58,57 +54,42 @@ const RISK_LEVELS = [
       'Try scanning again or check the Ingredients tab for what we could find.'
     ]
   }
-];
+};
 
 export default function RiskExplanationModal({ isOpen, onClose, currentRisk }) {
-  const levels = RISK_LEVELS;
-  const current = levels.find(l => l.key === currentRisk) || levels.find(l => l.key === 'unknown');
+  const config = RISK_CONFIG[currentRisk] || RISK_CONFIG.unknown;
+  const { label, Icon, color, bg, border, summary, details } = config;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <HelpCircle className="w-5 h-5 text-slate-500" />
-            Understanding Risk Levels
+            <Info className="w-5 h-5 text-slate-500" />
+            What does this mean?
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3 mt-2">
-          {levels.map(({ key, label, Icon, color, bg, border, summary, details }) => {
-            const isCurrent = key === current.key;
-            return (
-              <div
-                key={key}
-                className={`p-4 rounded-xl border ${border} ${bg} ${isCurrent ? 'ring-2 ring-offset-1 ring-slate-300' : ''}`}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <Icon className={`w-5 h-5 ${color}`} />
-                  <span className={`font-bold text-base ${color}`}>{label}</span>
-                  {isCurrent && (
-                    <span className="ml-auto text-[11px] font-semibold text-slate-500 bg-white/70 px-2 py-0.5 rounded-full">
-                      This product
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm font-medium text-slate-700 mb-1.5">{summary}</p>
-                <ul className="space-y-1">
-                  {details.map((d, i) => (
-                    <li key={i} className="text-xs text-slate-600 flex items-start gap-1.5">
-                      <span className="text-slate-400 mt-0.5">•</span>
-                      <span>{d}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+        <div className={`mt-2 p-5 rounded-xl border ${border} ${bg}`}>
+          <div className="flex items-center gap-2.5 mb-2">
+            <Icon className={`w-7 h-7 ${color}`} />
+            <span className={`font-bold text-xl ${color}`}>{label}</span>
+          </div>
+          <p className="text-sm font-medium text-slate-700 mb-3">{summary}</p>
+          <ul className="space-y-2">
+            {details.map((d, i) => (
+              <li key={i} className="text-sm text-slate-600 flex items-start gap-2">
+                <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${color.replace('text-', 'bg-')}`} />
+                <span>{d}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-xs text-blue-700 leading-relaxed">
-            Risk levels are calculated from ingredient safety scores, known hazards, and regulatory data
-            sourced from PubChem, EWG, and EU regulatory databases. Tap the badge anytime to revisit this guide.
+            This rating is calculated from ingredient safety scores, known hazards, and regulatory data
+            sourced from PubChem, EWG, and EU regulatory databases.
           </p>
         </div>
       </DialogContent>
