@@ -379,10 +379,10 @@ export default function Layout({ children, currentPageName }) {
       {/* Floating Nav Bar */}
       <header className="fixed top-3 left-0 right-0 z-50 px-4 pt-[env(safe-area-inset-top)]">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14">
 
             {/* Logo */}
-            <Link to={createPageUrl("Home")} className="flex items-center gap-2 flex-shrink-0">
+            <Link to={createPageUrl("Home")} className="flex items-center gap-2 flex-shrink-0 justify-self-start">
               <img
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
                 alt="Suttain"
@@ -391,7 +391,7 @@ export default function Layout({ children, currentPageName }) {
             </Link>
 
             {/* Desktop: minimal link row + menu trigger */}
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap">
               <Link to={createPageUrl("Home")} className={getLinkClasses("Home")}>Home</Link>
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>Pricing</Link>
 
@@ -428,7 +428,7 @@ export default function Layout({ children, currentPageName }) {
             </nav>
 
             {/* Right side: auth */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-self-end">
               {!isAuthLoading && user && (
                 <div className="hidden md:flex items-center gap-2">
                   <TrialBadge trialStatus={trialStatus} />
