@@ -1155,6 +1155,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
         isOpen={showRiskModal}
         onClose={() => setShowRiskModal(false)}
         currentRisk={product.riskAssessment?.overallRisk}
+        product={product}
       />
     </motion.div>
   );
