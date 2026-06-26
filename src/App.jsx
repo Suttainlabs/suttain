@@ -70,6 +70,7 @@ import PageNotFound from './lib/PageNotFound';
 // IngredientDatabase and FormulaComparison are lazy-loaded above
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -137,6 +138,14 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.Register ? <Pages.Register /> : null}</Suspense>} />
       <Route path="/forgot-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.ForgotPassword ? <Pages.ForgotPassword /> : null}</Suspense>} />
       <Route path="/reset-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.ResetPassword ? <Pages.ResetPassword /> : null}</Suspense>} />
+
+      {/* ── Protected Free Tools (require login) ── */}
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        {['Simulator', 'generator', 'BarcodeScanner', 'HydrationHome', 'HydrationIntelligence', 'HydrationReminders', 'HydrationProgress'].map(path => {
+          const Page = Pages[path];
+          return Page ? <Route key={path} path={`/${path}`} element={<LayoutWrapper currentPageName={path}><PageTransition><Page /></PageTransition></LayoutWrapper>} /> : null;
+        })}
+      </Route>
 
       {/* ── Research Portal layout group — dark-themed, no consumer Layout ── */}
       <Route element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17]"/>}><ResearchLayout /></Suspense>}>
