@@ -1,12 +1,21 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Microscope, FlaskConical, Dna, BarChart2, HeartPulse, Lock } from 'lucide-react';
+import { Microscope, FlaskConical, Dna, BarChart2, HeartPulse, Lock, Wrench } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import ProteinStructureExplorer from '../components/structural/ProteinStructureExplorer';
 import ChemicalBindingScanner from '../components/structural/ChemicalBindingScanner';
 import MutationSensitivityAnalyzer from '../components/structural/MutationSensitivityAnalyzer';
 import DomainReliabilityHeatmap from '../components/structural/DomainReliabilityHeatmap';
 import PopulationSafetyProfiler from '../components/structural/PopulationSafetyProfiler';
+import StructurePrepSuite from '../components/structural/StructurePrepSuite';
+
+function StructurePrepTab() {
+  return (
+    <StructurePrepSuite
+      modes={['split', 'merge', 'missing_residues', 'renumber']}
+    />
+  );
+}
 
 const TOOLS = [
   {
@@ -58,6 +67,16 @@ const TOOLS = [
     tags: ['Health Profile', 'Personalized', 'Risk'],
     tier: 'pro',
     component: PopulationSafetyProfiler,
+  },
+  {
+    id: 'prep',
+    label: 'Structure Prep Utilities',
+    icon: Wrench,
+    color: '#0D9E8E',
+    description: 'Free PDB preparation: split protein-ligand complexes, merge structures, find missing residues, and renumber residues. Powered by Biopython algorithms.',
+    tags: ['Biopython', 'PDB', 'Free'],
+    tier: 'free',
+    component: StructurePrepTab,
   },
 ];
 

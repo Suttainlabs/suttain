@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Atom, Search, X, ChevronRight, Loader2, ExternalLink, Database, RefreshCw, Info } from 'lucide-react';
+import { ArrowLeft, Atom, Search, X, ChevronRight, Loader2, ExternalLink, Database, RefreshCw, Info, Wrench, ChevronDown } from 'lucide-react';
+import StructurePrepSuite from '../components/structural/StructurePrepSuite';
 
 // ── Chemical property display helpers ─────────────────────────────
 
@@ -37,7 +38,7 @@ const SAFETY_COLOR = {
 
 // ── 3Dmol.js viewer via PubChem SDF ───────────────────────────────
 
-function Mol3DViewer({ cid, smiles, name }) {
+function Mol3DViewer({ cid, smiles, name, pdbContent, pdbName }) {
   const containerRef = useRef(null);
   const viewerRef = useRef(null);
   const [status, setStatus] = useState('idle'); // idle | loading | ready | error
@@ -49,6 +50,29 @@ function Mol3DViewer({ cid, smiles, name }) {
     setMessage('');
 
     try {
+      // If PDB content is provided directly, load it instead of fetching from PubChem
+      if (pdbContent) {
+        if (!window.$3Dmol) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = 'https://3dmol.org/build/3Dmol-min.js';
+            s.onload = resolve;
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+        if (containerRef.current) containerRef.current.innerHTML = '';
+        const viewer = window.$3Dmol.createViewer(containerRef.current, { backgroundColor: '#0F172A', antialias: true });
+        viewerRef.current = viewer;
+        viewer.addModel(pdbContent, 'pdb');
+        viewer.setStyle({}, { stick: { radius: 0.15, colorscheme: 'Jmol' }, sphere: { scale: 0.3, colorscheme: 'Jmol' } });
+        viewer.zoomTo();
+        viewer.spin('y', 0.5);
+        viewer.render();
+        setStatus('ready');
+        return;
+      }
+
       // Dynamically load 3Dmol if not already loaded
       if (!window.$3Dmol) {
         await new Promise((resolve, reject) => {
@@ -118,7 +142,7 @@ function Mol3DViewer({ cid, smiles, name }) {
       setStatus('error');
       setMessage('Could not load 3D structure. The compound may not have 3D coordinates in PubChem.');
     }
-  }, [cid, smiles, name]);
+  }, [cid, smiles, name, pdbContent]);
 
   useEffect(() => {
     loadStructure();
@@ -210,6 +234,9 @@ export default function MoleculeExplorer() {
   const [pubchemResults, setPubchemResults] = useState([]);
   const [pubchemLoading, setPubchemLoading] = useState(false);
   const searchTimeout = useRef(null);
+  const [prepPdb, setPrepPdb] = useState(null);
+  const [prepPdbName, setPrepPdbName] = useState('');
+  const [showPrep, setShowPrep] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -406,39 +433,66 @@ export default function MoleculeExplorer() {
 
         {/* Center: 3D viewer */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          {selected ? (
-            <>
-              <div className="px-4 py-3 border-b border-slate-700/50 bg-slate-900/40 flex items-center gap-3 flex-shrink-0">
-                <div>
-                  <p className="text-sm font-bold text-white leading-tight">{selected.name}</p>
-                  {selected.iupac_name && (
-                    <p className="text-[10px] text-slate-600 font-mono mt-0.5 truncate max-w-xs">{selected.iupac_name}</p>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 ml-auto flex-shrink-0">
-                  {selected.safety_level && (
-                    <Badge color={safetyColor}>{selected.safety_level.replace(/_/g, ' ')}</Badge>
-                  )}
-                  {selected.pubchem_cid && (
-                    <a
-                      href={`https://pubchem.ncbi.nlm.nih.gov/compound/${selected.pubchem_cid}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[10px] text-slate-500 hover:text-[#0D9E8E] flex items-center gap-1 transition-colors"
-                    >
-                      PubChem <ExternalLink className="w-2.5 h-2.5" />
-                    </a>
-                  )}
-                </div>
-              </div>
-              <div className="flex-1 p-4 min-h-0">
-                <Mol3DViewer
-                  cid={selected.pubchem_cid}
-                  smiles={selected.smiles || selected.canonical_smiles}
-                  name={selected.name}
-                />
-              </div>
-            </>
+          {/* Header bar — always visible */}
+          <div className="px-4 py-3 border-b border-slate-700/50 bg-slate-900/40 flex items-center gap-3 flex-shrink-0">
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-white leading-tight truncate">
+                {prepPdb ? (prepPdbName || 'Prepared structure') : (selected?.name || 'Molecule Explorer')}
+              </p>
+              {prepPdb ? (
+                <p className="text-[10px] text-[#0D9E8E] mt-0.5">PDB from Structure Prep</p>
+              ) : selected?.iupac_name ? (
+                <p className="text-[10px] text-slate-600 font-mono mt-0.5 truncate max-w-xs">{selected.iupac_name}</p>
+              ) : null}
+            </div>
+            <div className="flex items-center gap-2 ml-auto flex-shrink-0">
+              {prepPdb && (
+                <button
+                  onClick={() => { setPrepPdb(null); setPrepPdbName(''); }}
+                  className="text-[10px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition-colors"
+                >
+                  <X className="w-3 h-3" /> Clear
+                </button>
+              )}
+              {!prepPdb && selected?.safety_level && (
+                <Badge color={safetyColor}>{selected.safety_level.replace(/_/g, ' ')}</Badge>
+              )}
+              {!prepPdb && selected?.pubchem_cid && (
+                <a
+                  href={`https://pubchem.ncbi.nlm.nih.gov/compound/${selected.pubchem_cid}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] text-slate-500 hover:text-[#0D9E8E] flex items-center gap-1 transition-colors"
+                >
+                  PubChem <ExternalLink className="w-2.5 h-2.5" />
+                </a>
+              )}
+              <button
+                onClick={() => setShowPrep(!showPrep)}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
+                  showPrep
+                    ? 'bg-[#0D9E8E]/15 text-[#0D9E8E]'
+                    : 'bg-slate-800 text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <Wrench className="w-3 h-3" />
+                Prep
+                <ChevronDown className={`w-2.5 h-2.5 transition-transform ${showPrep ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          </div>
+
+          {/* 3D viewer or empty state */}
+          {(selected || prepPdb) ? (
+            <div className="flex-1 p-4 min-h-0">
+              <Mol3DViewer
+                cid={prepPdb ? null : selected?.pubchem_cid}
+                smiles={prepPdb ? null : (selected?.smiles || selected?.canonical_smiles)}
+                name={prepPdb ? prepPdbName : selected?.name}
+                pdbContent={prepPdb}
+                pdbName={prepPdbName}
+              />
+            </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-8">
               <div className="w-16 h-16 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-center">
@@ -447,9 +501,23 @@ export default function MoleculeExplorer() {
               <div>
                 <p className="text-sm font-semibold text-slate-400 mb-1">Select a compound</p>
                 <p className="text-xs text-slate-600 max-w-xs leading-relaxed">
-                  Choose any compound from your database to render its 3D structure via PubChem's coordinate database.
+                  Choose any compound to render its 3D structure, or use Structure Prep to split/merge PDB files and visualize the result.
                 </p>
               </div>
+            </div>
+          )}
+
+          {/* Structure Prep panel */}
+          {showPrep && (
+            <div className="border-t border-slate-700/50 bg-slate-900/80 max-h-[45%] overflow-y-auto p-4 flex-shrink-0">
+              <StructurePrepSuite
+                modes={['split', 'merge']}
+                onResult={(pdb, name) => {
+                  setPrepPdb(pdb);
+                  setPrepPdbName(name);
+                  setSelected(null);
+                }}
+              />
             </div>
           )}
         </div>
