@@ -85,9 +85,7 @@ export default function DarkNavBar() {
               alt="Suttain"
               className="h-8 w-auto brightness-0 invert opacity-90"
             />
-            <span className="text-xs font-bold uppercase tracking-widest text-violet-400 border border-violet-500/30 bg-violet-500/10 px-2 py-0.5 rounded hidden sm:inline">
-              Research
-            </span>
+
           </Link>
 
           {/* Desktop nav */}

@@ -58,7 +58,7 @@ const ResearchPortal = lazy(() => import('./pages/ResearchPortal'));
 const ResearchDashboard = lazy(() => import('./pages/ResearchDashboard'));
 const APIPortal = lazy(() => import('./pages/APIPortal'));
 const ChemicalComparison = lazy(() => import('./pages/ChemicalComparison'));
-const ResearchLanding = lazy(() => import('./pages/ResearchLanding'));
+
 const StructuralBiology = lazy(() => import('./pages/StructuralBiology'));
 const EnterpriseAPI = lazy(() => import('./pages/EnterpriseAPI'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
@@ -84,10 +84,8 @@ const AuthenticatedApp = () => {
   const location = useLocation();
 
   // Only block on loading for a short window; never block research/public pages
-  const isResearchRoute = location.pathname.startsWith('/research')
-    || location.pathname === '/enterprise'
-    || location.pathname === '/EnterpriseAPI'
-    || location.pathname === '/ResearchLanding';
+  const isResearchRoute = location.pathname === '/enterprise'
+    || location.pathname === '/EnterpriseAPI';
 
   if (!isResearchRoute && (isLoadingPublicSettings || isLoadingAuth)) {
     return (
@@ -134,8 +132,6 @@ const AuthenticatedApp = () => {
       <Route path="/MyAnalytics" element={<LayoutWrapper currentPageName="MyAnalytics"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MyAnalytics /></PageTransition></Suspense></LayoutWrapper>} />
       {/* ── Research Portal layout group — dark-themed, no consumer Layout ── */}
       <Route element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17]"/>}><ResearchLayout /></Suspense>}>
-        <Route path="/research" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchLanding /></Suspense>} />
-        <Route path="/ResearchLanding" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchLanding /></Suspense>} />
         <Route path="/enterprise" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><EnterpriseAPI /></Suspense>} />
         <Route path="/EnterpriseAPI" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><EnterpriseAPI /></Suspense>} />
         <Route path="/MolecularIntelligence" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><MolecularIntelligence /></Suspense>} />
