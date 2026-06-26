@@ -21,6 +21,7 @@ import { base44 } from '@/api/base44Client';
 import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';
 import ShareButton from '../shared/ShareButton';
 import { triggerSafetyAlertIfNeeded } from '@/utils/twilioAlertTrigger';
+import RiskExplanationModal from './RiskExplanationModal';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -348,6 +349,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
   const [isLoadingSustainability, setIsLoadingSustainability] = useState(false);
   const [healthData, setHealthData] = useState(null);
   const [isLoadingHealth, setIsLoadingHealth] = useState(false);
+  const [showRiskModal, setShowRiskModal] = useState(false);
   const navigate = useNavigate();
 
   const isPro = user?.subscription_plan === 'pro' || user?.subscription_plan === 'enterprise'
@@ -537,9 +539,17 @@ export default function ProductAnalysis({ product, onClear, user }) {
     };
     const { label, Icon, color } = config[risk] || config.unknown;
     return (
-      <Badge className={`border-transparent ${color} py-1.5 px-3 text-sm`}>
-        <Icon className="w-4 h-4 mr-1.5 inline" />{label}
-      </Badge>
+      <button
+        type="button"
+        onClick={() => setShowRiskModal(true)}
+        className="inline-flex items-center group"
+        aria-label={`Risk level: ${label}. Tap to learn what this means.`}
+      >
+        <Badge className={`border-transparent ${color} py-1.5 px-3 text-sm cursor-pointer hover:opacity-80 transition-opacity`}>
+          <Icon className="w-4 h-4 mr-1.5 inline" />{label}
+        </Badge>
+        <HelpCircle className="w-3.5 h-3.5 ml-1 text-slate-400 group-hover:text-slate-600 transition-colors" />
+      </button>
     );
   };
 
@@ -1140,6 +1150,12 @@ export default function ProductAnalysis({ product, onClear, user }) {
           </Tabs>
         </CardContent>
       </Card>
+
+      <RiskExplanationModal
+        isOpen={showRiskModal}
+        onClose={() => setShowRiskModal(false)}
+        currentRisk={product.riskAssessment?.overallRisk}
+      />
     </motion.div>
   );
 }
