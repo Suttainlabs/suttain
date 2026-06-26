@@ -10,6 +10,7 @@ import {
   FileText, Layers, ArrowLeft, Loader2, Plus, FolderOpen
 } from 'lucide-react';
 import NewProjectModal from '../components/research/NewProjectModal';
+import KanbanBoard from '../components/research/KanbanBoard';
 
 function StatCard({ label, value, sub, color = '#0D9E8E' }) {
   return (
@@ -70,6 +71,7 @@ export default function ResearchDashboard() {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [showNewProject, setShowNewProject] = useState(false);
+  const [viewMode, setViewMode] = useState('list');
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -100,7 +102,7 @@ export default function ResearchDashboard() {
       .catch(() => {})
       .finally(() => setLoading(false));
 
-    base44.entities.ChemicalProject.filter({ created_by_id: user.id }, '-created_date', 10)
+    base44.entities.ChemicalProject.filter({ created_by_id: user.id }, '-created_date', 50)
       .then(data => setProjects(data || []))
       .catch(() => {});
   }, [user]);
@@ -108,6 +110,15 @@ export default function ResearchDashboard() {
   const handleCreateProject = async (projectData) => {
     const created = await base44.entities.ChemicalProject.create(projectData);
     setProjects(prev => [created, ...prev]);
+  };
+
+  const handleStatusChange = async (projectId, newStatus) => {
+    setProjects(prev => prev.map(p => p.id === projectId ? { ...p, status: newStatus } : p));
+    try {
+      await base44.entities.ChemicalProject.update(projectId, { status: newStatus });
+    } catch (err) {
+      console.error('Failed to update project status:', err);
+    }
   };
 
   const handleRerun = (item) => {
@@ -201,14 +212,36 @@ export default function ResearchDashboard() {
                   <FolderOpen className="w-4 h-4 text-slate-500" />
                   <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Projects</span>
                 </div>
-                <button
-                  onClick={() => setShowNewProject(true)}
-                  className="flex items-center gap-1 text-violet-400 text-xs font-semibold hover:underline"
-                >
-                  <Plus className="w-3 h-3" /> New
-                </button>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center bg-slate-900/60 rounded-lg p-0.5">
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${viewMode === 'list' ? 'bg-slate-700 text-slate-200' : 'text-slate-600 hover:text-slate-400'}`}
+                    >
+                      List
+                    </button>
+                    <button
+                      onClick={() => setViewMode('board')}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${viewMode === 'board' ? 'bg-slate-700 text-slate-200' : 'text-slate-600 hover:text-slate-400'}`}
+                    >
+                      Board
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setShowNewProject(true)}
+                    className="flex items-center gap-1 text-violet-400 text-xs font-semibold hover:underline"
+                  >
+                    <Plus className="w-3 h-3" /> New
+                  </button>
+                </div>
               </div>
-              {projects.length === 0 ? (
+              {viewMode === 'board' ? (
+                <KanbanBoard
+                  projects={projects}
+                  onStatusChange={handleStatusChange}
+                  onNewProject={() => setShowNewProject(true)}
+                />
+              ) : projects.length === 0 ? (
                 <div className="text-center py-4">
                   <p className="text-xs text-slate-600 mb-2">No projects yet.</p>
                   <button onClick={() => setShowNewProject(true)} className="text-xs text-violet-400 font-semibold hover:underline">

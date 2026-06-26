@@ -29,6 +29,17 @@
       ],
       "description": "Category of research this project represents"
     },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "in_progress",
+        "completed",
+        "archived"
+      ],
+      "default": "planning",
+      "description": "Workflow status for the kanban board"
+    },
     "tags": {
       "type": "array",
       "items": {
