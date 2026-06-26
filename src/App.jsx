@@ -52,6 +52,7 @@ const HydrationProgress = lazy(() => import('./pages/HydrationProgress'));
 const BillingDashboard = lazy(() => import('./pages/BillingDashboard'));
 const MolecularIntelligence = lazy(() => import('./pages/MolecularIntelligence'));
 const ChemicalDashboard = lazy(() => import('./pages/ChemicalDashboard'));
+const InventoryDashboard = lazy(() => import('./pages/InventoryDashboard'));
 const MoleculeExplorer = lazy(() => import('./pages/MoleculeExplorer'));
 const ResearchPortal = lazy(() => import('./pages/ResearchPortal'));
 const ResearchDashboard = lazy(() => import('./pages/ResearchDashboard'));
@@ -140,6 +141,7 @@ const AuthenticatedApp = () => {
         <Route path="/MolecularIntelligence" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><MolecularIntelligence /></Suspense>} />
         <Route path="/MoleculeExplorer" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><MoleculeExplorer /></Suspense>} />
         <Route path="/ChemicalDashboard" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ChemicalDashboard /></Suspense>} />
+        <Route path="/InventoryDashboard" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><InventoryDashboard /></Suspense>} />
         <Route path="/ResearchPortal" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchPortal /></Suspense>} />
         <Route path="/ResearchDashboard" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchDashboard /></Suspense>} />
         <Route path="/APIPortal" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><APIPortal /></Suspense>} />
