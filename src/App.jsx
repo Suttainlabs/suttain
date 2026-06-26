@@ -90,7 +90,10 @@ const AuthenticatedApp = () => {
     || location.pathname === '/EnterpriseAPI'
     || location.pathname === '/ResearchLanding';
 
-  if (!isResearchRoute && (isLoadingPublicSettings || isLoadingAuth)) {
+  // Check if on auth routes — never redirect these
+  const isAuthRoute = ['/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname);
+
+  if (!isResearchRoute && !isAuthRoute && (isLoadingPublicSettings || isLoadingAuth)) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
@@ -98,15 +101,15 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
+  // Handle authentication errors — but never on auth pages
   if (authError) {
-    if (authError.type === 'user_not_registered') {
+    if (authError.type === 'user_not_registered' && !isAuthRoute) {
       return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
+    } else if (authError.type === 'auth_required' && !isAuthRoute) {
       navigateToLogin();
       return null;
     }
-    // For unknown errors, fall through and render the app anyway
+    // For unknown errors on auth routes, fall through and render them anyway
   }
 
   // Render the main app
