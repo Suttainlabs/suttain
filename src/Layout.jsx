@@ -253,7 +253,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const openAuthModal = (mode) => {
-    base44.auth.redirectToLogin();
+    navigate('/login');
   };
 
   const navLinks = [

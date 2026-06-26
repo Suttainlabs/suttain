@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   LogIn, Menu, X,
@@ -27,6 +27,7 @@ const NAV_LINKS = [
 
 export default function DarkNavBar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
@@ -155,7 +156,7 @@ export default function DarkNavBar() {
           <div className="hidden md:flex items-center gap-3">
             {user === null && (
               <button
-                onClick={() => base44.auth.redirectToLogin()}
+                onClick={() => navigate('/login')}
                 className="text-slate-400 hover:text-white text-sm font-semibold flex items-center gap-1.5 transition-colors"
               >
                 <LogIn className="w-4 h-4" />
@@ -240,7 +241,7 @@ export default function DarkNavBar() {
           <div className="border-t border-slate-800 mt-2 pt-3 flex flex-col gap-2">
             {user === null && (
               <button
-                onClick={() => { setMobileOpen(false); base44.auth.redirectToLogin(); }}
+                onClick={() => { setMobileOpen(false); navigate('/login'); }}
                 className="flex items-center gap-2 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 text-sm font-semibold transition-colors"
               >
                 <LogIn className="w-4 h-4" />

@@ -31,7 +31,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
     const handleLogin = () => {
         setIsLoading(true);
         base44.analytics.track({ eventName: 'auth_attempt', properties: { provider: 'google' } });
-        base44.auth.redirectToLogin();
+        window.location.href = '/login';
     };
 
     if (!isOpen) return null;

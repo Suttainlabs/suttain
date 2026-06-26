@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import {
   Leaf, FlaskConical, ShieldCheck, TrendingUp, BarChart3,
@@ -67,6 +67,7 @@ const CustomBarTooltip = ({ active, payload, label }) => {
 };
 
 export default function ImpactDashboard() {
+  const navigate = useNavigate();
   const [formulas, setFormulas] = useState([]);
   const [sustainabilityProfiles, setSustainabilityProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -177,7 +178,7 @@ export default function ImpactDashboard() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Sign in to view your Impact</h2>
           <p className="text-slate-500 mb-6 text-sm">Your sustainability dashboard is waiting. Sign in to see aggregated green chemistry insights across your formula library.</p>
           <button
-            onClick={() => base44.auth.redirectToLogin()}
+            onClick={() => navigate('/login')}
             className="px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-xl shadow-md hover:opacity-90 transition"
           >
             Sign In
