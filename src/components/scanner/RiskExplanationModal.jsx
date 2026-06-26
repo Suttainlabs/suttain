@@ -62,36 +62,33 @@ export default function RiskExplanationModal({ isOpen, onClose, currentRisk }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <Info className="w-5 h-5 text-slate-500" />
+      <DialogContent className="max-w-sm p-0 gap-0">
+        <DialogHeader className="px-4 pt-4 pb-2">
+          <DialogTitle className="flex items-center gap-2 text-base">
+            <Info className="w-4 h-4 text-slate-500" />
             What does this mean?
           </DialogTitle>
         </DialogHeader>
 
-        <div className={`mt-2 p-5 rounded-xl border ${border} ${bg}`}>
-          <div className="flex items-center gap-2.5 mb-2">
-            <Icon className={`w-7 h-7 ${color}`} />
-            <span className={`font-bold text-xl ${color}`}>{label}</span>
+        <div className={`mx-4 mb-3 p-3 rounded-lg border ${border} ${bg}`}>
+          <div className="flex items-center gap-2 mb-1">
+            <Icon className={`w-5 h-5 ${color}`} />
+            <span className={`font-bold text-base ${color}`}>{label}</span>
+            <span className="text-xs text-slate-500 ml-auto">{summary}</span>
           </div>
-          <p className="text-sm font-medium text-slate-700 mb-3">{summary}</p>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {details.map((d, i) => (
-              <li key={i} className="text-sm text-slate-600 flex items-start gap-2">
-                <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${color.replace('text-', 'bg-')}`} />
+              <li key={i} className="text-xs text-slate-600 flex items-start gap-1.5">
+                <span className={`mt-1 w-1 h-1 rounded-full flex-shrink-0 ${color.replace('text-', 'bg-')}`} />
                 <span>{d}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-xs text-blue-700 leading-relaxed">
-            This rating is calculated from ingredient safety scores, known hazards, and regulatory data
-            sourced from PubChem, EWG, and EU regulatory databases.
-          </p>
-        </div>
+        <p className="px-4 pb-4 text-[11px] text-slate-400 leading-snug">
+          Rating from PubChem, EWG, and EU regulatory data.
+        </p>
       </DialogContent>
     </Dialog>
   );
