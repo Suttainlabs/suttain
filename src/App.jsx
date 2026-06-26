@@ -116,11 +116,12 @@ const AuthenticatedApp = () => {
   return (
     <AnimatePresence mode="wait">
     <Routes location={location} key={location.pathname}>
-      {isResearchSubdomain && <Route path="/" element={<Navigate to="/research" replace />} />}
       <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <PageTransition><MainPage /></PageTransition>
-        </LayoutWrapper>
+        isResearchSubdomain
+          ? <Navigate to="/research" replace />
+          : <LayoutWrapper currentPageName={mainPageKey}>
+              <PageTransition><MainPage /></PageTransition>
+            </LayoutWrapper>
       } />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
