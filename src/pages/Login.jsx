@@ -8,6 +8,8 @@ import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { validateAuthInput } from "@/functions/validateAuthInput";
+import { checkLoginAccess } from "@/functions/checkLoginAccess";
+import { recordLoginResult } from "@/functions/recordLoginResult";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,16 +21,36 @@ export default function Login() {
     e.preventDefault();
     setError("");
     setLoading(true);
+    const loginEmail = email;
     try {
-      const res = await validateAuthInput({ action: "login", email, password });
-      if (!res.data?.valid) {
-        setError(res.data?.error || "Invalid input. Please check your details and try again.");
+      // 1. Server-side input validation
+      const valRes = await validateAuthInput({ action: "login", email, password });
+      if (!valRes.data?.valid) {
+        setError(valRes.data?.error || "Invalid email or password.");
         return;
       }
-      await base44.auth.loginViaEmailPassword(res.data.sanitized?.email || email, password);
-      window.location.href = "/";
+      const sanitizedEmail = valRes.data.sanitized?.email || email;
+
+      // 2. Rate-limit + lockout + progressive-delay check
+      const accessRes = await checkLoginAccess({ email: sanitizedEmail });
+      if (!accessRes.data?.allowed) {
+        setError(accessRes.data?.error || "Invalid email or password.");
+        return;
+      }
+
+      // 3. Attempt login
+      try {
+        await base44.auth.loginViaEmailPassword(sanitizedEmail, password);
+        await recordLoginResult({ email: sanitizedEmail, success: true });
+        window.location.href = "/";
+      } catch (loginErr) {
+        // Record failure for lockout tracking (fire-and-forget)
+        try { await recordLoginResult({ email: sanitizedEmail, success: false }); } catch {}
+        // Same generic message — never reveal lockout vs wrong password
+        setError("Invalid email or password.");
+      }
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      setError("Invalid email or password.");
     } finally {
       setLoading(false);
     }

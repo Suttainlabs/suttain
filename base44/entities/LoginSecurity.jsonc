@@ -1,0 +1,59 @@
+{
+  "name": "LoginSecurity",
+  "type": "object",
+  "properties": {
+    "identifier": {
+      "type": "string",
+      "description": "IP address (for rate limiting) or normalized email (for lockout tracking)"
+    },
+    "tracker_type": {
+      "type": "string",
+      "enum": [
+        "ip_rate",
+        "email_lockout"
+      ],
+      "description": "Whether this record tracks IP-based rate limiting or email-based account lockout"
+    },
+    "attempt_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Requests in current window (IP) or consecutive failed logins (email)"
+    },
+    "window_start": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Start of the 60-second rate-limit window (IP tracker only)"
+    },
+    "last_attempt_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the most recent attempt"
+    },
+    "locked_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the account lockout expires (null if not locked)"
+    },
+    "delay_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the progressive delay expires (null if no active delay)"
+    }
+  },
+  "required": [
+    "identifier",
+    "tracker_type"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
