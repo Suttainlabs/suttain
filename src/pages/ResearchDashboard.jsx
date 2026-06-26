@@ -3,11 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AuthGate from '../components/auth/AuthGate';
 import { base44 } from '@/api/base44Client';
+import { Button } from '@/components/ui/button';
 import {
   Atom, Cpu, FlaskConical, Clock, Play,
   Database, BarChart2, ChevronRight, TrendingUp,
-  FileText, Layers, ArrowLeft, Loader2
+  FileText, Layers, ArrowLeft, Loader2, Plus, FolderOpen
 } from 'lucide-react';
+import NewProjectModal from '../components/research/NewProjectModal';
 
 function StatCard({ label, value, sub, color = '#0D9E8E' }) {
   return (
@@ -66,6 +68,8 @@ export default function ResearchDashboard() {
   const [queryHistory, setQueryHistory] = useState([]);
   const [savedFormulas, setSavedFormulas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState([]);
+  const [showNewProject, setShowNewProject] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -95,7 +99,16 @@ export default function ResearchDashboard() {
       .then(data => setSavedFormulas(data || []))
       .catch(() => {})
       .finally(() => setLoading(false));
+
+    base44.entities.ChemicalProject.filter({ created_by_id: user.id }, '-created_date', 10)
+      .then(data => setProjects(data || []))
+      .catch(() => {});
   }, [user]);
+
+  const handleCreateProject = async (projectData) => {
+    const created = await base44.entities.ChemicalProject.create(projectData);
+    setProjects(prev => [created, ...prev]);
+  };
 
   const handleRerun = (item) => {
     navigate(`${createPageUrl('MolecularIntelligence')}?q=${encodeURIComponent(item.query)}&type=${item.type}`);
@@ -135,11 +148,19 @@ export default function ResearchDashboard() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Greeting */}
-        <div className="mb-8">
-          <h1 className="text-xl font-bold text-white mb-1">
-            {user.full_name?.split(' ')[0] ? `Welcome back, ${user.full_name.split(' ')[0]}.` : 'Research Dashboard'}
-          </h1>
-          <p className="text-sm text-slate-500">Your molecular intelligence workspace.</p>
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-bold text-white mb-1">
+              {user.full_name?.split(' ')[0] ? `Welcome back, ${user.full_name.split(' ')[0]}.` : 'Research Dashboard'}
+            </h1>
+            <p className="text-sm text-slate-500">Your molecular intelligence workspace.</p>
+          </div>
+          <Button
+            onClick={() => setShowNewProject(true)}
+            className="bg-violet-600 hover:bg-violet-700 text-white"
+          >
+            <Plus className="w-4 h-4 mr-1.5" /> New Project
+          </Button>
         </div>
 
         {/* Stats row */}
@@ -170,6 +191,51 @@ export default function ResearchDashboard() {
                 queryHistory.slice(0, 8).map((item, i) => (
                   <RecentQueryRow key={i} item={item} onRerun={handleRerun} />
                 ))
+              )}
+            </div>
+
+            {/* Projects */}
+            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <FolderOpen className="w-4 h-4 text-slate-500" />
+                  <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Projects</span>
+                </div>
+                <button
+                  onClick={() => setShowNewProject(true)}
+                  className="flex items-center gap-1 text-violet-400 text-xs font-semibold hover:underline"
+                >
+                  <Plus className="w-3 h-3" /> New
+                </button>
+              </div>
+              {projects.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-xs text-slate-600 mb-2">No projects yet.</p>
+                  <button onClick={() => setShowNewProject(true)} className="text-xs text-violet-400 font-semibold hover:underline">
+                    Start a project from a template
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {projects.map(p => (
+                    <div key={p.id} className="flex items-center gap-3 py-2.5 border-b border-slate-700/30 last:border-0">
+                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: p.color || '#6B3FA0' }} />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-semibold text-slate-300 truncate">{p.name}</p>
+                        {p.project_type && (
+                          <p className="text-[10px] text-slate-600 mt-0.5 capitalize">{p.project_type.replace(/_/g, ' ')}</p>
+                        )}
+                      </div>
+                      {p.tags?.length > 0 && (
+                        <div className="flex gap-1 flex-shrink-0">
+                          {p.tags.slice(0, 2).map(tag => (
+                            <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-700 text-slate-400 font-medium">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
 
@@ -266,6 +332,12 @@ export default function ResearchDashboard() {
           </div>
         </div>
       </div>
+
+      <NewProjectModal
+        isOpen={showNewProject}
+        onClose={() => setShowNewProject(false)}
+        onCreate={handleCreateProject}
+      />
     </div>
   );
 }

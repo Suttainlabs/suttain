@@ -14,6 +14,35 @@
       "type": "string",
       "description": "Hex color for the project folder",
       "default": "#6B3FA0"
+    },
+    "project_type": {
+      "type": "string",
+      "enum": [
+        "formulation",
+        "toxicology",
+        "computational",
+        "regulatory",
+        "materials",
+        "environmental",
+        "analytical",
+        "custom"
+      ],
+      "description": "Category of research this project represents"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Standard tags applied from the selected template"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Initial research notes or objectives from the template"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "Identifier of the template used to create this project, if any"
     }
   },
   "required": [
