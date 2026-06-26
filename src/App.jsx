@@ -83,10 +83,6 @@ const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
   const location = useLocation();
 
-  // If visiting the research subdomain, send root to the research portal
-  const isResearchSubdomain = typeof window !== 'undefined'
-    && window.location.hostname.endsWith('research.suttain.com');
-
   // Only block on loading for a short window; never block research/public pages
   const isResearchRoute = location.pathname.startsWith('/research')
     || location.pathname === '/enterprise'
@@ -117,11 +113,9 @@ const AuthenticatedApp = () => {
     <AnimatePresence mode="wait">
     <Routes location={location} key={location.pathname}>
       <Route path="/" element={
-        isResearchSubdomain
-          ? <Navigate to="/research" replace />
-          : <LayoutWrapper currentPageName={mainPageKey}>
-              <PageTransition><MainPage /></PageTransition>
-            </LayoutWrapper>
+        <LayoutWrapper currentPageName={mainPageKey}>
+          <PageTransition><MainPage /></PageTransition>
+        </LayoutWrapper>
       } />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route

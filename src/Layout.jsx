@@ -415,10 +415,8 @@ export default function Layout({ children, currentPageName }) {
               </DropdownMenu>
 
               {/* Research — special pill button */}
-              <a
-                href="https://research.suttain.com"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/research"
                 className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all border ${
                   isResearchActive
                     ? "bg-violet-600 text-white border-violet-600"
@@ -426,7 +424,7 @@ export default function Layout({ children, currentPageName }) {
                 }`}
               >
                 Research
-              </a>
+              </Link>
             </nav>
 
             {/* Right side: auth */}
@@ -608,10 +606,8 @@ export default function Layout({ children, currentPageName }) {
 
                   {/* Research Link - Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
-                    <a
-                      href="https://research.suttain.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to="/research"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
                         isResearchActive ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
@@ -619,7 +615,7 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <Microscope className="w-5 h-5" />
                       Research
-                    </a>
+                    </Link>
                   </motion.div>
 
 
