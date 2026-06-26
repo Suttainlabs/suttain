@@ -118,8 +118,7 @@ Deno.serve(async (req) => {
 
             const lastHydrationNotif = recentNotifs.find(n =>
                 n.metadata?.hydration_reminder === true &&
-                n.created_date &&
-                n.created_date.startsWith(today)
+                n.metadata?.date === today
             );
 
             if (lastHydrationNotif) {
@@ -132,8 +131,7 @@ Deno.serve(async (req) => {
             const alreadyEmailedToday = recentNotifs.find(n =>
                 n.metadata?.hydration_reminder === true &&
                 n.metadata?.email_sent === true &&
-                n.created_date &&
-                n.created_date.startsWith(today)
+                n.metadata?.date === today
             );
 
             // Build reminder message based on style
