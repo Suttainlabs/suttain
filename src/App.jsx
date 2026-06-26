@@ -63,6 +63,11 @@ const StructuralBiology = lazy(() => import('./pages/StructuralBiology'));
 const EnterpriseAPI = lazy(() => import('./pages/EnterpriseAPI'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const ResearchLayout = lazy(() => import('./components/research/ResearchLayout'));
+// Import auth pages directly (not from pagesConfig which may not have them)
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
@@ -137,10 +142,10 @@ const AuthenticatedApp = () => {
       <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaComparison /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/MyAnalytics" element={<LayoutWrapper currentPageName="MyAnalytics"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MyAnalytics /></PageTransition></Suspense></LayoutWrapper>} />
       {/* ── Auth Pages (outside Layout) ── */}
-      <Route path="/login" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.Login ? <Pages.Login /> : null}</Suspense>} />
-      <Route path="/register" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.Register ? <Pages.Register /> : null}</Suspense>} />
-      <Route path="/forgot-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.ForgotPassword ? <Pages.ForgotPassword /> : null}</Suspense>} />
-      <Route path="/reset-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}>{Pages.ResetPassword ? <Pages.ResetPassword /> : null}</Suspense>} />
+      <Route path="/login" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}><Login /></Suspense>} />
+      <Route path="/register" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}><Register /></Suspense>} />
+      <Route path="/forgot-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}><ForgotPassword /></Suspense>} />
+      <Route path="/reset-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}><ResetPassword /></Suspense>} />
 
       {/* ── Protected Free Tools (require login) ── */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
