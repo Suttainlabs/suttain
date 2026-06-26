@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Section, SectionHeader } from "@/components/shared/Section";
 
 
 const ADVANCED_MODULES = [
@@ -118,79 +119,80 @@ export default function ResearchLanding() {
 
       <div className="relative z-10">
         {/* ── Hero Section ── */}
-        <section className="px-6 pt-24 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 lg:pb-24 max-w-7xl mx-auto">
+        <Section spacing="default" width="wide" className="hero-offset">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20 mb-6 px-4 py-1.5 text-xs tracking-widest uppercase">
-              Molecular Intelligence OS
-            </Badge>
-
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
-              <span className="bg-gradient-to-r from-violet-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-                Research Portal
-              </span>
-            </h1>
-
-            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6">
-              A unified computational chemistry platform integrating public databases,
-              AI-powered molecular analysis, and advanced simulation engines for professional researchers.
-            </p>
-
-            <p className="text-sm text-slate-500 max-w-xl mx-auto">
-              Powered by PubChem, ChEMBL, EPA CompTox, and RCSB PDB. Built for chemists, pharmacologists, and materials scientists.
-            </p>
-
-            <div className="flex items-center justify-center gap-4 mt-10">
-              <Link to="/ResearchDashboard">
-                <Button size="lg" className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white border-0 h-14 px-8 text-base font-semibold rounded-xl shadow-lg shadow-violet-500/25">
-                  Launch Research Dashboard
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link to={createPageUrl("APIPortal")}>
-                <Button variant="outline" size="lg" className="bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-14 px-8 text-base rounded-xl">
-                  <Terminal className="mr-2 w-5 h-5" />
-                  API Access
-                </Button>
-              </Link>
-            </div>
+            <SectionHeader
+              as="h1"
+              align="center"
+              eyebrow={
+                <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20 px-4 py-1.5 text-xs tracking-widest uppercase">
+                  Molecular Intelligence OS
+                </Badge>
+              }
+              headingClassName="text-5xl md:text-7xl font-bold tracking-tight"
+              heading={
+                <span className="bg-gradient-to-r from-violet-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                  Research Portal
+                </span>
+              }
+              subtextClassName="text-lg md:text-xl text-slate-400 leading-relaxed"
+              subtext={(
+                <>
+                  A unified computational chemistry platform integrating public databases, AI-powered molecular analysis, and advanced simulation engines for professional researchers.
+                  <br /><br />
+                  <span className="text-sm text-slate-500">Powered by PubChem, ChEMBL, EPA CompTox, and RCSB PDB. Built for chemists, pharmacologists, and materials scientists.</span>
+                </>
+              )}
+            >
+              <div className="flex items-center justify-center gap-4">
+                <Link to="/ResearchDashboard">
+                  <Button size="lg" className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white border-0 h-14 px-8 text-base font-semibold rounded-xl shadow-lg shadow-violet-500/25">
+                    Launch Research Dashboard
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+                <Link to={createPageUrl("APIPortal")}>
+                  <Button variant="outline" size="lg" className="bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:border-slate-400 h-14 px-8 text-base rounded-xl">
+                    <Terminal className="mr-2 w-5 h-5" />
+                    API Access
+                  </Button>
+                </Link>
+              </div>
+            </SectionHeader>
           </div>
-        </section>
+        </Section>
 
         {/* ── Stats Bar ── */}
-        <section className="border-y border-slate-800 bg-slate-900/50 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 py-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-              {[
-                { value: "118M+", label: "Compounds Indexed", sub: "Across PubChem & ChEMBL" },
-                { value: "12+", label: "Simulation Engines", sub: "DFT, MD, QM/MM & more" },
-                { value: "8", label: "Regulatory Frameworks", sub: "GHS, REACH, EPA, FDA" },
-                { value: "< 3s", label: "Average Query Time", sub: "API-backed with caching" },
-              ].map((stat, i) => (
-                <div key={i}>
-                  <div className="text-3xl md:text-4xl font-bold bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm font-semibold text-slate-300 mt-1">{stat.label}</div>
-                  <div className="text-xs text-slate-500">{stat.sub}</div>
+        <Section spacing="compact" width="wide" className="border-y border-slate-800 bg-slate-900/50 backdrop-blur-sm">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {[
+              { value: "118M+", label: "Compounds Indexed", sub: "Across PubChem & ChEMBL" },
+              { value: "12+", label: "Simulation Engines", sub: "DFT, MD, QM/MM & more" },
+              { value: "8", label: "Regulatory Frameworks", sub: "GHS, REACH, EPA, FDA" },
+              { value: "< 3s", label: "Average Query Time", sub: "API-backed with caching" },
+            ].map((stat, i) => (
+              <div key={i}>
+                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">
+                  {stat.value}
                 </div>
-              ))}
-            </div>
+                <div className="text-sm font-semibold text-slate-300 mt-1">{stat.label}</div>
+                <div className="text-xs text-slate-500">{stat.sub}</div>
+              </div>
+            ))}
           </div>
-        </section>
+        </Section>
 
         {/* ── Advanced Modules Grid ── */}
-        <section className="px-6 py-12 sm:py-16 lg:py-24 max-w-7xl mx-auto">
-          <div className="mb-12">
-            <p className="text-xs text-violet-400 uppercase tracking-[0.2em] font-semibold mb-3">Advanced Tools</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Computational Research Suite
-            </h2>
-            <p className="text-slate-400 max-w-2xl">
-              Every module connects to live databases and runs on production-grade simulation infrastructure.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Section spacing="default" width="wide">
+          <SectionHeader
+            eyebrow={<p className="text-xs text-violet-400 uppercase tracking-[0.2em] font-semibold">Advanced Tools</p>}
+            headingClassName="text-3xl md:text-4xl font-bold text-white"
+            heading="Computational Research Suite"
+            subtextClassName="text-slate-400"
+            subtext="Every module connects to live databases and runs on production-grade simulation infrastructure."
+            align="left"
+          />
+          <div style={{ marginTop: "var(--space-6)" }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ADVANCED_MODULES.map((module, i) => (
               <Link
                 key={i}
@@ -230,21 +232,19 @@ export default function ResearchLanding() {
               </Link>
             ))}
           </div>
-        </section>
+        </Section>
 
         {/* ── Data Infrastructure ── */}
-        <section className="px-6 py-12 sm:py-16 lg:py-24 max-w-7xl mx-auto">
-          <div className="mb-12">
-            <p className="text-xs text-cyan-400 uppercase tracking-[0.2em] font-semibold mb-3">Infrastructure</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Data Sources & Compute
-            </h2>
-            <p className="text-slate-400 max-w-2xl">
-              Every analysis is backed by authoritative public databases and validated against regulatory standards.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <Section spacing="default" width="wide">
+          <SectionHeader
+            eyebrow={<p className="text-xs text-cyan-400 uppercase tracking-[0.2em] font-semibold">Infrastructure</p>}
+            headingClassName="text-3xl md:text-4xl font-bold text-white"
+            heading="Data Sources & Compute"
+            subtextClassName="text-slate-400"
+            subtext="Every analysis is backed by authoritative public databases and validated against regulatory standards."
+            align="left"
+          />
+          <div style={{ marginTop: "var(--space-6)" }} className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {STACK_SECTION.map((src, i) => (
               <div key={i} className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all group">
                 <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center mb-4 group-hover:bg-slate-700 transition-colors">
@@ -255,17 +255,16 @@ export default function ResearchLanding() {
               </div>
             ))}
           </div>
-        </section>
+        </Section>
 
         {/* ── CTA Footer ── */}
-        <section className="border-t border-slate-800">
-          <div className="max-w-7xl mx-auto px-6 py-12 sm:py-16 lg:py-24 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Ready to accelerate your research?
-            </h2>
-            <p className="text-slate-400 max-w-xl mx-auto mb-10">
-              Join thousands of researchers using Suttain for molecular intelligence, computational simulation, and chemical safety analysis.
-            </p>
+        <Section spacing="default" width="wide" className="border-t border-slate-800">
+          <SectionHeader
+            headingClassName="text-3xl md:text-4xl font-bold text-white"
+            heading="Ready to accelerate your research?"
+            subtextClassName="text-slate-400"
+            subtext="Join thousands of researchers using Suttain for molecular intelligence, computational simulation, and chemical safety analysis."
+          >
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link to="/ResearchDashboard">
                 <Button size="lg" className="bg-violet-600 hover:bg-violet-500 text-white h-14 px-10 text-base font-semibold rounded-xl">
@@ -280,83 +279,83 @@ export default function ResearchLanding() {
                 </Button>
               </Link>
             </div>
-          </div>
+          </SectionHeader>
+        </Section>
 
-          {/* Research Footer */}
-          <div className="border-t border-slate-800 bg-slate-950/60">
-            <div className="max-w-7xl mx-auto px-6 py-10">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Research</p>
-                  <ul className="space-y-2">
-                    {[
-                      { label: "Molecular Intelligence", href: "MolecularIntelligence" },
-                      { label: "Molecule Explorer", href: "MoleculeExplorer" },
-                      { label: "Chemical Comparison", href: "ChemicalComparison" },
-                      { label: "SDS Analyzer", href: "SDSAnalyzer" },
-                    ].map(({ label, href }) => (
-                      <li key={href}>
-                        <Link to={createPageUrl(href)} className="text-sm text-slate-400 hover:text-white transition-colors">
-                          {label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Simulations</p>
-                  <ul className="space-y-2">
-                    {[
-                      { label: "Computational Simulations", href: "ComputationalSimulation" },
-                      { label: "Simulation Engine", href: "SimulationEngine" },
-                      { label: "Research Dashboard", href: "ResearchDashboard" },
-                    ].map(({ label, href }) => (
-                      <li key={href}>
-                        <Link to={createPageUrl(href)} className="text-sm text-slate-400 hover:text-white transition-colors">
-                          {label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Science</p>
-                  <ul className="space-y-2">
-                    {[
-                      { label: "Methodology", href: "LearningSuite" },
-                      { label: "Publications", href: "ExternalDatabases" },
-                      { label: "API Docs", href: "APIPortal" },
-                      { label: "Academic Access", href: "LearningSuite" },
-                    ].map(({ label, href }) => (
-                      <li key={label}>
-                        <Link to={createPageUrl(href)} className="text-sm text-slate-400 hover:text-white transition-colors">
-                          {label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">API Access</p>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-3">
-                    Access the Research API via Python, JavaScript, and R SDKs.
-                  </p>
-                  <Link to={createPageUrl("APIPortal")}>
-                    <span className="text-xs font-semibold text-violet-400 hover:text-violet-300 transition-colors">
-                      View API Documentation
-                    </span>
-                  </Link>
-                </div>
+        {/* Research Footer */}
+        <div className="border-t border-slate-800 bg-slate-950/60">
+          <div className="max-w-7xl mx-auto px-6 py-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Research</p>
+                <ul className="space-y-2">
+                  {[
+                    { label: "Molecular Intelligence", href: "MolecularIntelligence" },
+                    { label: "Molecule Explorer", href: "MoleculeExplorer" },
+                    { label: "Chemical Comparison", href: "ChemicalComparison" },
+                    { label: "SDS Analyzer", href: "SDSAnalyzer" },
+                  ].map(({ label, href }) => (
+                    <li key={href}>
+                      <Link to={createPageUrl(href)} className="text-sm text-slate-400 hover:text-white transition-colors">
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
-                <p>© {new Date().getFullYear()} Suttain. Suttain Research is a separate product from Suttain Consumer.</p>
-                <Link to="/" className="text-slate-500 hover:text-slate-300 transition-colors">
-                  Back to Consumer Platform
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Simulations</p>
+                <ul className="space-y-2">
+                  {[
+                    { label: "Computational Simulations", href: "ComputationalSimulation" },
+                    { label: "Simulation Engine", href: "SimulationEngine" },
+                    { label: "Research Dashboard", href: "ResearchDashboard" },
+                  ].map(({ label, href }) => (
+                    <li key={href}>
+                      <Link to={createPageUrl(href)} className="text-sm text-slate-400 hover:text-white transition-colors">
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Science</p>
+                <ul className="space-y-2">
+                  {[
+                    { label: "Methodology", href: "LearningSuite" },
+                    { label: "Publications", href: "ExternalDatabases" },
+                    { label: "API Docs", href: "APIPortal" },
+                    { label: "Academic Access", href: "LearningSuite" },
+                  ].map(({ label, href }) => (
+                    <li key={label}>
+                      <Link to={createPageUrl(href)} className="text-sm text-slate-400 hover:text-white transition-colors">
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">API Access</p>
+                <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                  Access the Research API via Python, JavaScript, and R SDKs.
+                </p>
+                <Link to={createPageUrl("APIPortal")}>
+                  <span className="text-xs font-semibold text-violet-400 hover:text-violet-300 transition-colors">
+                    View API Documentation
+                  </span>
                 </Link>
               </div>
             </div>
+            <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+              <p>© {new Date().getFullYear()} Suttain. Suttain Research is a separate product from Suttain Consumer.</p>
+              <Link to="/" className="text-slate-500 hover:text-slate-300 transition-colors">
+                Back to Consumer Platform
+              </Link>
+            </div>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   );

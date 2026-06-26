@@ -236,15 +236,20 @@
 
 /* Spacing tokens */
 :root {
-  --space-1: 0.25rem;   /* 4px  */
-  --space-2: 0.5rem;    /* 8px  */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-7: 56px;
+  --space-8: 64px;
+  --space-9: 72px;
+  --space-10: 80px;
+  --space-11: 88px;
+  --space-12: 96px;
+  --space-14: 112px;
+  --space-16: 128px;
 
   /* Page-level horizontal gutter — scales with viewport */
   --page-gutter: 1rem;        /* mobile  ≤ 639px */
@@ -302,38 +307,30 @@
     gap: var(--section-gap);
   }
 
-  /* ── Standardized section spacing scale (8px base) ── */
-  /* Section vertical padding: 48px mobile / 64px tablet / 96px desktop */
-  .section-pad {
-    padding-top: 48px;
-    padding-bottom: 48px;
-  }
+  /* ── Section spacing scale (8px base, token-driven) ── */
+  .section-pad-default { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+  .section-pad-compact { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+  .section-pad-spacious { padding-top: var(--space-7); padding-bottom: var(--space-7); }
+
   @media (min-width: 768px) {
-    .section-pad {
-      padding-top: 64px;
-      padding-bottom: 64px;
-    }
+    .section-pad-default { padding-top: var(--space-8); padding-bottom: var(--space-8); }
+    .section-pad-compact { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+    .section-pad-spacious { padding-top: var(--space-10); padding-bottom: var(--space-10); }
+  }
+
+  @media (min-width: 1024px) {
+    .section-pad-default { padding-top: var(--space-12); padding-bottom: var(--space-12); }
+    .section-pad-compact { padding-top: var(--space-8); padding-bottom: var(--space-8); }
+    .section-pad-spacious { padding-top: var(--space-16); padding-bottom: var(--space-16); }
+  }
+
+  /* Hero offset — extra top padding to clear the fixed nav (token-driven) */
+  .hero-offset { padding-top: var(--space-12); }
+  @media (min-width: 768px) {
+    .hero-offset { padding-top: var(--space-16); }
   }
   @media (min-width: 1024px) {
-    .section-pad {
-      padding-top: 96px;
-      padding-bottom: 96px;
-    }
-  }
-
-  /* Gap between a section heading and its subtext — 24px */
-  .heading-gap {
-    margin-bottom: 24px;
-  }
-
-  /* Gap between subtext and the CTAs below it — 40px */
-  .cta-gap {
-    margin-top: 40px;
-  }
-
-  /* Gap between stat tiles / cards in a row — 24px */
-  .card-gap {
-    gap: 24px;
+    .hero-offset { padding-top: calc(var(--space-16) + var(--space-4)); }
   }
 }
 

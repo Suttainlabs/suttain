@@ -11,6 +11,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import AuthContext from "../auth/AuthContext";
 import SEOHead from "../shared/SEOHead";
+import { Section, SectionHeader } from "../shared/Section";
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -137,39 +138,41 @@ export default function HomePage() {
       />
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-white pt-24 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 lg:pb-24">
-        <div
-          className="pointer-events-none absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full opacity-[0.07]"
-          style={{ background: "radial-gradient(circle, #007850 0%, transparent 70%)" }}
-        />
-        <div
-          className="pointer-events-none absolute -bottom-24 -right-24 w-[400px] h-[400px] rounded-full opacity-[0.06]"
-          style={{ background: "radial-gradient(circle, #6366f1 0%, transparent 70%)" }}
-        />
-
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div {...fade(0)} className="inline-flex items-center gap-2 border border-[#007850]/25 bg-[#007850]/6 text-[#007850] text-sm font-semibold px-4 py-1.5 rounded-full mb-8">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            Chemical Safety for Everyone
-          </motion.div>
-
-          <motion.h1
-            {...fade(0.08)}
-            className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight mb-6"
-          >
-            Analyze your product.{" "}
-            <span style={{ color: "#007850" }}>Understand every ingredient.</span>
-            {" "}Make safer, greener choices.
-          </motion.h1>
-
-          <motion.p
-            {...fade(0.16)}
-            className="text-sm sm:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed"
-          >
-            Suttain gives consumers, DIY creators, and small brands the tools to scan products, generate validated formulas, and check compliance — all in one place. No lab required.
-          </motion.p>
-
-          <motion.div {...fade(0.22)} className="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
+      <Section spacing="default" width="default" className="relative overflow-hidden bg-white hero-offset"
+        overlay={
+          <>
+            <div
+              className="pointer-events-none absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full opacity-[0.07]"
+              style={{ background: "radial-gradient(circle, #007850 0%, transparent 70%)" }}
+            />
+            <div
+              className="pointer-events-none absolute -bottom-24 -right-24 w-[400px] h-[400px] rounded-full opacity-[0.06]"
+              style={{ background: "radial-gradient(circle, #6366f1 0%, transparent 70%)" }}
+            />
+          </>
+        }
+      >
+        <SectionHeader
+          as="h1"
+          align="center"
+          eyebrow={
+            <span className="inline-flex items-center gap-2 border border-[#007850]/25 bg-[#007850]/6 text-[#007850] text-sm font-semibold px-4 py-1.5 rounded-full">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Chemical Safety for Everyone
+            </span>
+          }
+          headingClassName="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900"
+          heading={
+            <>
+              Analyze your product.{" "}
+              <span style={{ color: "#007850" }}>Understand every ingredient.</span>
+              {" "}Make safer, greener choices.
+            </>
+          }
+          subtextClassName="text-sm sm:text-xl text-slate-500 leading-relaxed"
+          subtext="Suttain gives consumers, DIY creators, and small brands the tools to scan products, generate validated formulas, and check compliance — all in one place. No lab required."
+        >
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
             <Link to={createPageUrl("Simulator")}>
               <Button
                 size="lg"
@@ -191,10 +194,11 @@ export default function HomePage() {
               </Button>
             </Link>
 
-          </motion.div>
+          </div>
+        </SectionHeader>
 
-          {/* Chemical search bar */}
-          <motion.div {...fade(0.28)} className="mt-10 max-w-2xl mx-auto relative">
+        {/* Chemical search bar */}
+        <motion.div {...fade(0.28)} style={{ marginTop: "var(--space-5)" }} className="max-w-2xl mx-auto relative">
             <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-3 text-center">Search 130M+ chemicals</p>
             <form onSubmit={handleChemSearch} className="flex items-center gap-2 bg-white border border-slate-200 rounded-full px-5 py-3 shadow-sm hover:shadow-md transition-shadow relative">
               <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
@@ -232,7 +236,7 @@ export default function HomePage() {
           </motion.div>
 
           {/* Trust stats */}
-          <motion.div {...fade(0.32)} className="mt-10">
+          <motion.div {...fade(0.32)} style={{ marginTop: "var(--space-5)" }}>
             <div className="relative inline-flex flex-wrap justify-center rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden divide-x divide-slate-100">
               <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #02988C60, #9531F560, transparent)" }} />
               {[
@@ -248,12 +252,10 @@ export default function HomePage() {
               ))}
             </div>
           </motion.div>
-        </div>
-      </section>
+      </Section>
 
       {/* ── Pillar strip ── */}
-      <section className="bg-slate-50 border-y border-slate-100 py-6">
-        <div className="max-w-5xl mx-auto px-4">
+      <Section spacing="compact" width="default" background="muted" className="border-y border-slate-100">
           <div className="flex flex-wrap justify-center gap-8">
             {[
               { icon: ShieldCheck, label: "Safety Analysis", color: "#007850" },
@@ -269,8 +271,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
+      </Section>
 
       {/* ── Consumer Tools — auto-scrolling marquee ── */}
       <section className="py-10 bg-white overflow-hidden">
@@ -309,16 +310,17 @@ export default function HomePage() {
       </section>
 
       {/* ── How it works ── */}
-      <section className="py-12 sm:py-16 lg:py-24 bg-slate-50 border-y border-slate-100">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeIn()} className="text-center mb-12">
-            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-6">
-              From ingredient scan to production-ready formula
-            </h2>
-            <p className="text-slate-500 text-sm sm:text-lg max-w-xl mx-auto">Every step in a single workflow. No lab required.</p>
+      <Section spacing="default" width="default" background="muted" className="border-y border-slate-100">
+          <motion.div {...fadeIn()}>
+            <SectionHeader
+              headingClassName="text-2xl sm:text-4xl font-bold text-slate-900"
+              heading="From ingredient scan to production-ready formula"
+              subtextClassName="text-slate-500 text-sm sm:text-lg"
+              subtext="Every step in a single workflow. No lab required."
+            />
           </motion.div>
 
-          <div className="grid md:grid-cols-4 gap-6">
+          <div style={{ marginTop: "var(--space-6)" }} className="grid md:grid-cols-4 gap-6">
             {[
               { n: "01", title: "Scan any product", body: "Scan a barcode or enter an ingredient list. Get a full toxicity profile, eco-impact score, and safety breakdown instantly.", color: "#007850" },
               { n: "02", title: "Simulate interactions", body: "Test how ingredients interact. Get hazard scores, pH estimates, and compliance flags before you ever mix a batch.", color: "#0D9E8E" },
@@ -345,14 +347,10 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
+          </Section>
 
-
-
-      {/* ── Research callout — subtle, not promotional ── */}
-      <section className="py-12 sm:py-16 lg:py-24 bg-slate-50 border-y border-slate-100">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* ── Research callout — subtle, not promotional ── */}
+          <Section spacing="default" width="default" background="muted" className="border-y border-slate-100">
           <motion.div {...fadeIn()} className="flex flex-col sm:flex-row items-center justify-between gap-6 bg-white rounded-2xl border border-slate-200 p-6 sm:p-8">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center flex-shrink-0">
@@ -376,12 +374,10 @@ export default function HomePage() {
               </Button>
             </Link>
           </motion.div>
-        </div>
-      </section>
+      </Section>
 
       {/* ── CTA ── */}
-      <section className="py-12 sm:py-16 lg:py-24 bg-white px-4">
-        <div className="max-w-3xl mx-auto">
+      <Section spacing="default" width="narrow" background="light">
           <motion.div
             {...fadeIn()}
             className="relative rounded-3xl overflow-hidden text-center px-8 py-16 sm:px-16 sm:py-20"
@@ -389,13 +385,13 @@ export default function HomePage() {
           >
             <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, white 1px, transparent 1px), radial-gradient(circle at 70% 80%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
             <div className="relative z-10">
-              <h2 className="text-2xl sm:text-4xl font-bold text-white mb-6" style={{ textWrap: "balance" }}>
-                Chemical safety tools. Free to start.
-              </h2>
-              <p className="text-white/70 text-base mb-10 max-w-md mx-auto">
-                Join thousands of formulators and brands using Suttain. No credit card required for core tools.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <SectionHeader
+                headingClassName="text-2xl sm:text-4xl font-bold text-white"
+                heading="Chemical safety tools. Free to start."
+                subtextClassName="text-white/70 text-base"
+                subtext="Join thousands of formulators and brands using Suttain. No credit card required for core tools."
+              >
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to={createPageUrl("Simulator")}>
                   <Button
                     size="lg"
@@ -416,11 +412,11 @@ export default function HomePage() {
                     View Pricing
                   </Button>
                 </Link>
-              </div>
+                </div>
+              </SectionHeader>
             </div>
           </motion.div>
-        </div>
-      </section>
+      </Section>
     </div>
   );
 }

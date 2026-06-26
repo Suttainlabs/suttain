@@ -11,6 +11,7 @@ import useLocalPricing from '../hooks/useLocalPricing';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import AuthContext from '../components/auth/AuthContext';
+import { Section, SectionHeader } from '@/components/shared/Section';
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -316,27 +317,30 @@ export default function Pricing() {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
+      <Section spacing="default" width="wide">
 
         {/* Page header */}
-        <motion.div {...fadeIn()} className="text-center mb-12">
-          <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#007850] border border-[#007850]/25 bg-[#007850]/6 px-4 py-1.5 rounded-full mb-4">
-            Pricing
-          </span>
-          <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
-            Two products. One platform.
-          </h1>
-          <p className="text-slate-500 text-base sm:text-lg max-w-2xl mx-auto">
-            Suttain Consumer is built for formulators and brands. Suttain Research is built for scientists and institutions. Both start free.
-          </p>
+        <motion.div {...fadeIn()}>
+          <SectionHeader
+            as="h1"
+            eyebrow={
+              <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#007850] border border-[#007850]/25 bg-[#007850]/6 px-4 py-1.5 rounded-full">
+                Pricing
+              </span>
+            }
+            headingClassName="text-3xl sm:text-5xl font-bold text-slate-900"
+            heading="Two products. One platform."
+            subtextClassName="text-slate-500 text-base sm:text-lg"
+            subtext="Suttain Consumer is built for formulators and brands. Suttain Research is built for scientists and institutions. Both start free."
+          />
         </motion.div>
 
         {/* ── SECTION 1: Consumer ── */}
-        <motion.div {...fadeIn(0.1)} className="mb-12">
-          <div className="flex items-center gap-4 mb-6">
+        <motion.div {...fadeIn(0.1)} style={{ marginTop: "var(--space-6)" }}>
+          <div className="flex items-center gap-4" style={{ marginBottom: "var(--space-6)" }}>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">For Consumers and Small Brands</h2>
-              <p className="text-slate-500 text-sm mt-6">Formula generation, product scanning, safety alerts, and sustainability tools — for creators and brands.</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900" style={{ marginBottom: "var(--space-3)" }}>For Consumers and Small Brands</h2>
+              <p className="text-slate-500 text-sm">Formula generation, product scanning, safety alerts, and sustainability tools — for creators and brands.</p>
             </div>
             <div className="flex-1 h-px bg-slate-100 hidden sm:block" />
             <span className="hidden sm:inline-block text-[11px] font-bold uppercase tracking-widest text-[#007850] border border-[#007850]/25 bg-[#007850]/6 px-3 py-1 rounded-full flex-shrink-0">
@@ -345,7 +349,7 @@ export default function Pricing() {
           </div>
 
           {/* Billing toggle */}
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center gap-3" style={{ marginBottom: "var(--space-6)" }}>
             <button
               onClick={() => setBillingCycle('monthly')}
               className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all ${billingCycle === 'monthly' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-700'}`}
@@ -361,7 +365,7 @@ export default function Pricing() {
             </button>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4" style={{ gap: "var(--space-3)" }}>
             {CONSUMER_PLANS.map((plan, i) => (
               <motion.div key={plan.id} {...fadeIn(0.05 * i)}>
                 <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={false} billingCycle={billingCycle} />
@@ -371,7 +375,7 @@ export default function Pricing() {
         </motion.div>
 
         {/* Divider */}
-        <div className="relative my-4 mb-12">
+        <div className="relative" style={{ marginTop: "var(--space-6)", marginBottom: "var(--space-6)" }}>
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t-2 border-dashed border-slate-200" />
           </div>
@@ -384,12 +388,12 @@ export default function Pricing() {
 
         {/* ── SECTION 2: Research ── */}
         <motion.div {...fadeIn(0.2)}>
-          <div className="mb-12">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6">For Researchers and Institutions</h2>
+          <div style={{ marginBottom: "var(--space-6)" }}>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900" style={{ marginBottom: "var(--space-3)" }}>For Researchers and Institutions</h2>
             <p className="text-slate-500 text-sm max-w-2xl">Molecular intelligence, computational simulations, and research APIs for scientists.</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4" style={{ gap: "var(--space-3)" }}>
             {RESEARCH_PLANS.map((plan, i) => (
               <motion.div key={plan.id} {...fadeIn(0.05 * i)}>
                 <PlanCard plan={plan} onUpgrade={handleUpgrade} checkoutLoading={checkoutLoading} dark={false} billingCycle="monthly" />
@@ -399,13 +403,13 @@ export default function Pricing() {
         </motion.div>
 
         {/* Bottom contact */}
-        <motion.div {...fadeIn(0.3)} className="text-center mt-12">
+        <motion.div {...fadeIn(0.3)} className="text-center" style={{ marginTop: "var(--space-6)" }}>
           <p className="text-slate-500 text-sm">
             Questions about which plan is right for you?{' '}
             <a href="mailto:contact@suttain.com" className="text-[#007850] font-semibold hover:underline">Contact our team</a>
           </p>
         </motion.div>
-      </div>
+      </Section>
     </div>
   );
 }
