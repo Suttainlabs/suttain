@@ -197,13 +197,13 @@ Deno.serve(async (req) => {
                                     <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#f0faf5;border-radius:16px;">
                                         <h2 style="color:#007850;margin-bottom:8px;">${title}</h2>
                                         <p style="color:#464646;font-size:15px;line-height:1.6;">${message}</p>
-                                        <a href="https://app.suttain.com/HydrationHome"
+                                        <a href="https://suttain.com/HydrationHome"
                                            style="display:inline-block;margin-top:20px;padding:12px 28px;background:#007850;color:#fff;border-radius:999px;text-decoration:none;font-weight:700;font-size:15px;">
                                             Log Water Now
                                         </a>
                                         <p style="color:#828282;font-size:12px;margin-top:24px;">
                                             You are receiving this because you have Smart Reminders enabled in Suttain. 
-                                            <a href="https://app.suttain.com/HydrationReminders" style="color:#007850;">Manage reminders</a>
+                                            <a href="https://suttain.com/HydrationReminders" style="color:#007850;">Manage reminders</a>
                                         </p>
                                     </div>
                                 `
