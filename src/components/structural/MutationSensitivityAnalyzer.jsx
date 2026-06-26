@@ -46,12 +46,12 @@ export default function MutationSensitivityAnalyzer() {
     setPrediction(null);
     setVariants([]);
     try {
-      const predRes = await alphafoldApi({ action: 'prediction', uniprotId: cleanId });
-      if (predRes.error) throw new Error(predRes.error);
+      const { data: predRes } = await alphafoldApi({ action: 'prediction', uniprotId: cleanId });
+      if (predRes?.error) throw new Error(predRes.error);
       setPrediction(predRes);
-      if (!predRes.amAnnotationsUrl) throw new Error('No AlphaMissense data available for this protein');
-      const csvRes = await alphafoldApi({ action: 'fetchCsv', url: predRes.amAnnotationsUrl });
-      if (csvRes.error) throw new Error(csvRes.error);
+      if (!predRes?.amAnnotationsUrl) throw new Error('No AlphaMissense data available for this protein');
+      const { data: csvRes } = await alphafoldApi({ action: 'fetchCsv', url: predRes.amAnnotationsUrl });
+      if (csvRes?.error) throw new Error(csvRes.error);
       const parsed = parseCsv(csvRes.csv);
       const processed = parsed
         .filter(r => r.am_pathogenicity && r.am_class)

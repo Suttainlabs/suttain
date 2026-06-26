@@ -37,8 +37,8 @@ export default function PopulationSafetyProfiler() {
     setError('');
     setResult(null);
     try {
-      const res = await proteinStructureIntelligence({ chemical: chemical.trim(), context: 'general' });
-      if (res.error) throw new Error(res.error);
+      const { data: res } = await proteinStructureIntelligence({ chemical: chemical.trim(), context: 'general' });
+      if (res?.error) throw new Error(res.error);
       setResult(res);
     } catch (e) {
       setError(e.message);

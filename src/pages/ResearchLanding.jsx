@@ -6,7 +6,7 @@ import {
   Atom, Cpu, Leaf, BarChart2, FlaskConical, Dna,
   Microscope, BookOpen, ShieldCheck, Zap, ArrowRight,
   Layers, Binary, Globe, Server, Cloud, Lock, Database,
-  Terminal, Code2, Cpu as Processor, GitBranch, Workflow
+  Terminal, Code2, GitBranch, Workflow
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

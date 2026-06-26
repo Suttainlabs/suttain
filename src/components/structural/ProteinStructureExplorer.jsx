@@ -60,12 +60,12 @@ export default function ProteinStructureExplorer() {
     setPrediction(null);
     setPlddtData(null);
     try {
-      const res = await alphafoldApi({ action: 'prediction', uniprotId: cleanId });
-      if (res.error) throw new Error(res.error);
+      const { data: res } = await alphafoldApi({ action: 'prediction', uniprotId: cleanId });
+      if (res?.error) throw new Error(res.error);
       setPrediction(res);
       // Fetch pLDDT data
-      if (res.plddtDocUrl) {
-        const plddtRes = await alphafoldApi({ action: 'fetchJson', url: res.plddtDocUrl });
+      if (res?.plddtDocUrl) {
+        const { data: plddtRes } = await alphafoldApi({ action: 'fetchJson', url: res.plddtDocUrl });
         if (!plddtRes.error && plddtRes.confidence) {
           const chartData = plddtRes.confidence.map((score, i) => ({
             residue: res.sequenceStart + i,
@@ -87,9 +87,9 @@ export default function ProteinStructureExplorer() {
     setGeneLoading(true);
     setGeneResults(null);
     try {
-      const res = await alphafoldApi({ action: 'geneSearch', gene: geneSearch.trim() });
-      if (res.error) throw new Error(res.error);
-      setGeneResults(res.results || []);
+      const { data: res } = await alphafoldApi({ action: 'geneSearch', gene: geneSearch.trim() });
+      if (res?.error) throw new Error(res.error);
+      setGeneResults(res?.results || []);
     } catch (e) {
       setError(e.message);
     } finally {

@@ -24,12 +24,12 @@ export default function DomainReliabilityHeatmap() {
     setMaxPae(null);
     setInterpretation('');
     try {
-      const predRes = await alphafoldApi({ action: 'prediction', uniprotId: cleanId });
-      if (predRes.error) throw new Error(predRes.error);
+      const { data: predRes } = await alphafoldApi({ action: 'prediction', uniprotId: cleanId });
+      if (predRes?.error) throw new Error(predRes.error);
       setPrediction(predRes);
       // Fetch PAE JSON for max value
-      if (predRes.paeDocUrl) {
-        const paeRes = await alphafoldApi({ action: 'fetchJson', url: predRes.paeDocUrl });
+      if (predRes?.paeDocUrl) {
+        const { data: paeRes } = await alphafoldApi({ action: 'fetchJson', url: predRes.paeDocUrl });
         if (!paeRes.error && paeRes.max_predicted_aligned_error != null) {
           setMaxPae(paeRes.max_predicted_aligned_error);
         }
