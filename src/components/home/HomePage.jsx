@@ -137,7 +137,7 @@ export default function HomePage() {
       />
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-white pt-12 pb-16 sm:pt-28 sm:pb-36">
+      <section className="relative overflow-hidden bg-white pt-24 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 lg:pb-24">
         <div
           className="pointer-events-none absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full opacity-[0.07]"
           style={{ background: "radial-gradient(circle, #007850 0%, transparent 70%)" }}
@@ -155,8 +155,7 @@ export default function HomePage() {
 
           <motion.h1
             {...fade(0.08)}
-            className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight mb-4 sm:mb-6"
-            style={{ lineHeight: 1.1 }}
+            className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight mb-6"
           >
             Analyze your product.{" "}
             <span style={{ color: "#007850" }}>Understand every ingredient.</span>
@@ -165,7 +164,7 @@ export default function HomePage() {
 
           <motion.p
             {...fade(0.16)}
-            className="text-sm sm:text-xl text-slate-500 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed"
+            className="text-sm sm:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed"
           >
             Suttain gives consumers, DIY creators, and small brands the tools to scan products, generate validated formulas, and check compliance — all in one place. No lab required.
           </motion.p>
@@ -310,16 +309,16 @@ export default function HomePage() {
       </section>
 
       {/* ── How it works ── */}
-      <section className="py-24 sm:py-32 bg-slate-50 border-y border-slate-100">
+      <section className="py-12 sm:py-16 lg:py-24 bg-slate-50 border-y border-slate-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeIn()} className="text-center mb-16">
-            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3">
+          <motion.div {...fadeIn()} className="text-center mb-12">
+            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-6">
               From ingredient scan to production-ready formula
             </h2>
             <p className="text-slate-500 text-sm sm:text-lg max-w-xl mx-auto">Every step in a single workflow. No lab required.</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-4 gap-5">
+          <div className="grid md:grid-cols-4 gap-6">
             {[
               { n: "01", title: "Scan any product", body: "Scan a barcode or enter an ingredient list. Get a full toxicity profile, eco-impact score, and safety breakdown instantly.", color: "#007850" },
               { n: "02", title: "Simulate interactions", body: "Test how ingredients interact. Get hazard scores, pH estimates, and compliance flags before you ever mix a batch.", color: "#0D9E8E" },
@@ -352,7 +351,7 @@ export default function HomePage() {
 
 
       {/* ── Research callout — subtle, not promotional ── */}
-      <section className="py-12 bg-slate-50 border-y border-slate-100">
+      <section className="py-12 sm:py-16 lg:py-24 bg-slate-50 border-y border-slate-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div {...fadeIn()} className="flex flex-col sm:flex-row items-center justify-between gap-6 bg-white rounded-2xl border border-slate-200 p-6 sm:p-8">
             <div className="flex items-start gap-4">
@@ -381,7 +380,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-24 sm:py-32 bg-white px-4">
+      <section className="py-12 sm:py-16 lg:py-24 bg-white px-4">
         <div className="max-w-3xl mx-auto">
           <motion.div
             {...fadeIn()}
@@ -390,7 +389,7 @@ export default function HomePage() {
           >
             <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, white 1px, transparent 1px), radial-gradient(circle at 70% 80%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
             <div className="relative z-10">
-              <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4" style={{ textWrap: "balance" }}>
+              <h2 className="text-2xl sm:text-4xl font-bold text-white mb-6" style={{ textWrap: "balance" }}>
                 Chemical safety tools. Free to start.
               </h2>
               <p className="text-white/70 text-base mb-10 max-w-md mx-auto">

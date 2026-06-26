@@ -118,19 +118,19 @@ export default function ResearchLanding() {
 
       <div className="relative z-10">
         {/* ── Hero Section ── */}
-        <section className="px-6 pt-24 pb-20 max-w-7xl mx-auto">
+        <section className="px-6 pt-24 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 lg:pb-24 max-w-7xl mx-auto">
           <div className="text-center max-w-4xl mx-auto">
             <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/20 mb-6 px-4 py-1.5 text-xs tracking-widest uppercase">
               Molecular Intelligence OS
             </Badge>
 
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
               <span className="bg-gradient-to-r from-violet-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
                 Research Portal
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed mb-4">
+            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6">
               A unified computational chemistry platform integrating public databases,
               AI-powered molecular analysis, and advanced simulation engines for professional researchers.
             </p>
@@ -179,10 +179,10 @@ export default function ResearchLanding() {
         </section>
 
         {/* ── Advanced Modules Grid ── */}
-        <section className="px-6 py-20 max-w-7xl mx-auto">
+        <section className="px-6 py-12 sm:py-16 lg:py-24 max-w-7xl mx-auto">
           <div className="mb-12">
             <p className="text-xs text-violet-400 uppercase tracking-[0.2em] font-semibold mb-3">Advanced Tools</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               Computational Research Suite
             </h2>
             <p className="text-slate-400 max-w-2xl">
@@ -190,7 +190,7 @@ export default function ResearchLanding() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ADVANCED_MODULES.map((module, i) => (
               <Link
                 key={i}
@@ -233,10 +233,10 @@ export default function ResearchLanding() {
         </section>
 
         {/* ── Data Infrastructure ── */}
-        <section className="px-6 py-20 max-w-7xl mx-auto">
+        <section className="px-6 py-12 sm:py-16 lg:py-24 max-w-7xl mx-auto">
           <div className="mb-12">
             <p className="text-xs text-cyan-400 uppercase tracking-[0.2em] font-semibold mb-3">Infrastructure</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               Data Sources & Compute
             </h2>
             <p className="text-slate-400 max-w-2xl">
@@ -259,11 +259,11 @@ export default function ResearchLanding() {
 
         {/* ── CTA Footer ── */}
         <section className="border-t border-slate-800">
-          <div className="max-w-7xl mx-auto px-6 py-20 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <div className="max-w-7xl mx-auto px-6 py-12 sm:py-16 lg:py-24 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               Ready to accelerate your research?
             </h2>
-            <p className="text-slate-400 max-w-xl mx-auto mb-8">
+            <p className="text-slate-400 max-w-xl mx-auto mb-10">
               Join thousands of researchers using Suttain for molecular intelligence, computational simulation, and chemical safety analysis.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
