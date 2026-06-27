@@ -273,26 +273,6 @@ export default function LandingHub() {
           })}
         </div>
 
-        {/* Research dashboard callout */}
-        <motion.div {...fadeIn(0.2)} style={{ marginTop: "var(--space-6)" }} className="flex flex-col sm:flex-row items-center justify-between gap-6 bg-white rounded-2xl border border-violet-200 p-6 sm:p-8">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center flex-shrink-0">
-              <BarChart3 className="w-5 h-5 text-violet-600" />
-            </div>
-            <div>
-              <p className="font-bold text-slate-900 text-sm">Research Dashboard</p>
-              <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-                Track projects, manage saved compounds, view simulation history, and access your research workflow in one place.
-              </p>
-            </div>
-          </div>
-          <Link to={createPageUrl("ResearchDashboard")} className="flex-shrink-0">
-            <Button size="sm" className="bg-violet-600 hover:bg-violet-700 text-white rounded-full px-6 font-semibold whitespace-nowrap">
-              Open Dashboard
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
-        </motion.div>
       </Section>
 
       {/* Data Infrastructure */}
