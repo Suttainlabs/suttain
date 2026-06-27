@@ -1,6 +1,6 @@
 import React from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Plus } from 'lucide-react';
+import { Plus, Share2 } from 'lucide-react';
 
 const COLUMNS = [
   { id: 'planning', title: 'Planning', color: '#64748b' },
@@ -9,7 +9,7 @@ const COLUMNS = [
   { id: 'archived', title: 'Archived', color: '#6B3FA0' },
 ];
 
-export default function KanbanBoard({ projects, onStatusChange, onNewProject }) {
+export default function KanbanBoard({ projects, onStatusChange, onNewProject, onShare }) {
   const handleDragEnd = (result) => {
     if (!result.destination) return;
     const projectId = result.draggableId;
@@ -85,20 +85,31 @@ export default function KanbanBoard({ projects, onStatusChange, onNewProject }) 
                                 {p.description}
                               </p>
                             )}
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              {p.project_type && (
-                                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-700/60 text-slate-400 font-medium capitalize">
-                                  {p.project_type.replace(/_/g, ' ')}
-                                </span>
-                              )}
-                              {p.tags?.slice(0, 2).map((tag) => (
-                                <span
-                                  key={tag}
-                                  className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-700/40 text-slate-500 font-medium"
+                            <div className="flex items-center justify-between gap-1.5">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                {p.project_type && (
+                                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-700/60 text-slate-400 font-medium capitalize">
+                                    {p.project_type.replace(/_/g, ' ')}
+                                  </span>
+                                )}
+                                {p.tags?.slice(0, 2).map((tag) => (
+                                  <span
+                                    key={tag}
+                                    className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-700/40 text-slate-500 font-medium"
+                                  >
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                              {onShare && (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); onShare(p); }}
+                                  className="p-1 rounded text-slate-500 hover:text-violet-400 hover:bg-violet-500/10 transition-colors flex-shrink-0"
+                                  title="Share project"
                                 >
-                                  {tag}
-                                </span>
-                              ))}
+                                  <Share2 className="w-3 h-3" />
+                                </button>
+                              )}
                             </div>
                           </div>
                         )}

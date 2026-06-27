@@ -1,0 +1,87 @@
+{
+  "name": "ProjectShare",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "description": "Reference to the shared ChemicalProject"
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Denormalized project name for display"
+    },
+    "shared_with_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email of the team member invited to collaborate"
+    },
+    "permission": {
+      "type": "string",
+      "enum": [
+        "view",
+        "edit"
+      ],
+      "default": "view",
+      "description": "Access level granted to the invitee"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "revoked"
+      ],
+      "default": "pending",
+      "description": "Current state of the share invitation"
+    },
+    "invited_by_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email of the project owner who sent the invite"
+    },
+    "token": {
+      "type": "string",
+      "description": "Unique token for the share invite link"
+    },
+    "message": {
+      "type": "string",
+      "description": "Optional personal message included in the invite"
+    }
+  },
+  "required": [
+    "project_id",
+    "project_name",
+    "shared_with_email",
+    "permission",
+    "token"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "shared_with_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

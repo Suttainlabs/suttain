@@ -7,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import {
   Atom, Cpu, FlaskConical, Clock, Play,
   Database, BarChart2, ChevronRight, TrendingUp,
-  FileText, Layers, ArrowLeft, Loader2, Plus, FolderOpen
+  FileText, Layers, ArrowLeft, Loader2, Plus, FolderOpen, Share2
 } from 'lucide-react';
 import NewProjectModal from '../components/research/NewProjectModal';
 import KanbanBoard from '../components/research/KanbanBoard';
+import ShareProjectModal from '../components/research/ShareProjectModal';
 
 function StatCard({ label, value, sub, color = '#0D9E8E' }) {
   return (
@@ -72,6 +73,7 @@ export default function ResearchDashboard() {
   const [projects, setProjects] = useState([]);
   const [showNewProject, setShowNewProject] = useState(false);
   const [viewMode, setViewMode] = useState('list');
+  const [shareProject, setShareProject] = useState(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -240,6 +242,7 @@ export default function ResearchDashboard() {
                   projects={projects}
                   onStatusChange={handleStatusChange}
                   onNewProject={() => setShowNewProject(true)}
+                  onShare={setShareProject}
                 />
               ) : projects.length === 0 ? (
                 <div className="text-center py-4">
@@ -266,6 +269,13 @@ export default function ResearchDashboard() {
                           ))}
                         </div>
                       )}
+                      <button
+                        onClick={() => setShareProject(p)}
+                        className="p-1.5 rounded text-slate-500 hover:text-violet-400 hover:bg-violet-500/10 transition-colors flex-shrink-0"
+                        title="Share project"
+                      >
+                        <Share2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -370,6 +380,12 @@ export default function ResearchDashboard() {
         isOpen={showNewProject}
         onClose={() => setShowNewProject(false)}
         onCreate={handleCreateProject}
+      />
+
+      <ShareProjectModal
+        project={shareProject}
+        isOpen={!!shareProject}
+        onClose={() => setShareProject(null)}
       />
     </div>
   );
