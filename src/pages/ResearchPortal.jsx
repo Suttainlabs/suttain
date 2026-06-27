@@ -43,17 +43,6 @@ const modules = [
     status: 'operational',
   },
   {
-    id: 'sustainability',
-    label: 'Sustainability Intelligence',
-    route: 'ComparativeImpactReport',
-    icon: Leaf,
-    color: '#00B478',
-    badge: 'Live',
-    description: 'Sustainability scoring for every ingredient and formula. Radar chart benchmarked against 500+ commercially verified products. Exportable reports.',
-    metrics: ['Biodegradability', 'Aquatic Toxicity', 'Carbon Intensity'],
-    status: 'operational',
-  },
-  {
     id: 'api',
     label: 'Research API',
     route: 'APIPortal',
