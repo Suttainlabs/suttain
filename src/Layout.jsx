@@ -222,7 +222,7 @@ export default function Layout({ children, currentPageName }) {
       setCurrentGreeting('');
       localStorage.removeItem('suttain_free_simulation_used');
       setIsMobileMenuOpen(false);
-      navigate(createPageUrl('Home'));
+      navigate('/');
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -291,7 +291,7 @@ export default function Layout({ children, currentPageName }) {
 
 
   const getLinkClasses = (href) => {
-    const isActive = location.pathname === createPageUrl(href);
+    const isActive = location.pathname === (href === "Home" ? "/" : createPageUrl(href));
     return `flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
       isActive
         ? "bg-violet-100 text-violet-600"
@@ -389,7 +389,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="grid grid-cols-[1fr_auto_1fr] items-center bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14">
 
             {/* Logo */}
-            <Link to={createPageUrl("Home")} className="flex items-center gap-2 flex-shrink-0 justify-self-start min-w-0">
+            <Link to="/" className="flex items-center gap-2 flex-shrink-0 justify-self-start min-w-0">
               <img
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
                 alt="Suttain"
@@ -399,7 +399,7 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Desktop: minimal link row + menu trigger */}
             <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap min-w-0">
-              <Link to={createPageUrl("Home")} className={getLinkClasses("Home")}>Home</Link>
+              <Link to="/" className={getLinkClasses("Home")}>Home</Link>
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>Pricing</Link>
 
               {/* Tools dropdown */}
@@ -553,8 +553,8 @@ export default function Layout({ children, currentPageName }) {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center p-4 border-b border-slate-200">
-                <Link to={createPageUrl("Home")} onClick={() => setIsMobileMenuOpen(false)}>
-                  <img 
+                <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
+                  <img
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
                     alt="Suttain"
                     className="h-10 w-auto"
@@ -578,10 +578,10 @@ export default function Layout({ children, currentPageName }) {
                   {navLinks.map(({ href, label, icon: Icon }) => (
                     <motion.div key={href} variants={mobileNavItemVariants}>
                       <Link
-                        to={createPageUrl(href)}
+                        to={href === "Home" ? "/" : createPageUrl(href)}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                          location.pathname === createPageUrl(href)
+                          location.pathname === (href === "Home" ? "/" : createPageUrl(href))
                             ? `bg-violet-100 text-violet-600`
                             : "text-suttain-dark hover:bg-violet-50"
                         }`}
@@ -784,7 +784,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Column 1: Logo & Tagline */}
             <div className="space-y-2">
-              <Link to={createPageUrl("Home")} className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-2">
                 <img
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
                   alt="Suttain"
