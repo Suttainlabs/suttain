@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import AuthGate from '../components/auth/AuthGate';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import {
   Atom, Cpu, FlaskConical, Clock, Play,
   Database, BarChart2, ChevronRight, TrendingUp,
-  FileText, Layers, ArrowLeft, Loader2, Plus, FolderOpen, Share2
+  FileText, Layers, ArrowLeft, Loader2, Plus, FolderOpen, Share2,
+  Lock, Sparkles
 } from 'lucide-react';
 import NewProjectModal from '../components/research/NewProjectModal';
 import KanbanBoard from '../components/research/KanbanBoard';
@@ -138,7 +138,33 @@ export default function ResearchDashboard() {
   if (!user) {
     return (
       <div className="min-h-screen bg-[#EDF7F2] flex items-center justify-center px-4 py-12">
-        <AuthGate featureName="Research Dashboard" featureDescription="Your personal research hub — saved compounds, usage metrics, active simulations, and a scientific feed." />
+        <div className="max-w-2xl mx-auto text-center bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
+          <div className="w-16 h-16 bg-gradient-to-br from-[#6B3FA0] to-[#8B5CF6] rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">Unlock the Research Dashboard</h2>
+          <p className="text-slate-600 leading-relaxed mb-6">
+            Your personal research hub — saved compounds, usage metrics, active simulations, and a scientific feed.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              onClick={() => navigate('/login')}
+              variant="outline"
+              size="lg"
+              className="flex-1 bg-white"
+            >
+              Login
+            </Button>
+            <Button
+              onClick={() => navigate('/register')}
+              size="lg"
+              className="flex-1 bg-gradient-to-r from-[#007850] to-[#00A8C8] hover:opacity-90 text-white"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Sign Up Free
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
