@@ -58,7 +58,6 @@ const ResearchPortal = lazy(() => import('./pages/ResearchPortal'));
 const ResearchDashboard = lazy(() => import('./pages/ResearchDashboard'));
 const APIPortal = lazy(() => import('./pages/APIPortal'));
 const ChemicalComparison = lazy(() => import('./pages/ChemicalComparison'));
-const ResearchLanding = lazy(() => import('./pages/ResearchLanding'));
 const StructuralBiology = lazy(() => import('./pages/StructuralBiology'));
 const EnterpriseAPI = lazy(() => import('./pages/EnterpriseAPI'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
@@ -148,14 +147,6 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}><Register /></Suspense>} />
       <Route path="/forgot-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}><ForgotPassword /></Suspense>} />
       <Route path="/reset-password" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}><ResetPassword /></Suspense>} />
-
-      {/* ── Protected Free Tools (require login) ── */}
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        {['Simulator', 'generator', 'BarcodeScanner', 'HydrationHome', 'HydrationIntelligence', 'HydrationReminders', 'HydrationProgress'].map(path => {
-          const Page = Pages[path];
-          return Page ? <Route key={path} path={`/${path}`} element={<LayoutWrapper currentPageName={path}><PageTransition><Page /></PageTransition></LayoutWrapper>} /> : null;
-        })}
-      </Route>
 
       {/* ── Redirects for deprecated routes ── */}
       <Route path="/research" element={<Navigate to="/" replace />} />
