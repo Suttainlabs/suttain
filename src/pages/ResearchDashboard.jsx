@@ -13,39 +13,39 @@ import NewProjectModal from '../components/research/NewProjectModal';
 import KanbanBoard from '../components/research/KanbanBoard';
 import ShareProjectModal from '../components/research/ShareProjectModal';
 
-function StatCard({ label, value, sub, color = '#0D9E8E' }) {
+function StatCard({ label, value, sub, color = '#007850' }) {
   return (
-    <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">{label}</p>
+    <div className="bg-white border border-slate-200 rounded-xl p-4">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{label}</p>
       <p className="text-2xl font-black" style={{ color }}>{value}</p>
-      {sub && <p className="text-[10px] text-slate-600 mt-1">{sub}</p>}
+      {sub && <p className="text-[10px] text-slate-400 mt-1">{sub}</p>}
     </div>
   );
 }
 
 function RecentQueryRow({ item, onRerun }) {
   const typeColor = {
-    name: '#0D9E8E',
-    smiles: '#6366f1',
-    inchi: '#f59e0b',
-    ingredient_list: '#10b981',
+    name: '#007850',
+    smiles: '#6B3FA0',
+    inchi: '#00A8C8',
+    ingredient_list: '#00B478',
   };
   return (
-    <div className="flex items-center justify-between py-3 border-b border-slate-700/30 last:border-0 group">
+    <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0 group">
       <div className="flex items-center gap-3 min-w-0">
         <span
           className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded flex-shrink-0"
-          style={{ backgroundColor: (typeColor[item.type] || '#0D9E8E') + '15', color: typeColor[item.type] || '#0D9E8E' }}
+          style={{ backgroundColor: (typeColor[item.type] || '#007850') + '15', color: typeColor[item.type] || '#007850' }}
         >
           {item.type}
         </span>
-        <span className="text-xs font-mono text-slate-400 truncate">{item.query}</span>
+        <span className="text-xs font-mono text-slate-600 truncate">{item.query}</span>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-        <span className="text-[10px] text-slate-600">{new Date(item.timestamp).toLocaleDateString()}</span>
+        <span className="text-[10px] text-slate-400">{new Date(item.timestamp).toLocaleDateString()}</span>
         <button
           onClick={() => onRerun(item)}
-          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-[#0D9E8E]/10 text-[#0D9E8E]"
+          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-teal-50 text-[#007850]"
           title="Re-run analysis"
         >
           <Play className="w-3 h-3" />
@@ -129,15 +129,15 @@ export default function ResearchDashboard() {
 
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#EDF7F2] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-[#6B3FA0] rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-[#EDF7F2] flex items-center justify-center px-4 py-12">
         <AuthGate featureName="Research Dashboard" featureDescription="Your personal research hub — saved compounds, usage metrics, active simulations, and a scientific feed." />
       </div>
     );
@@ -146,16 +146,16 @@ export default function ResearchDashboard() {
   const totalQueries = queryHistory.length;
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-white">
+    <div className="min-h-screen bg-[#EDF7F2] text-slate-800">
       {/* Sub-header */}
-      <div className="border-b border-slate-700/50 bg-slate-900/60 sticky top-16 z-20">
+      <div className="border-b border-slate-200 bg-white/80 sticky top-16 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
-          <button onClick={() => navigate(createPageUrl('ResearchPortal'))} className="text-slate-500 hover:text-slate-300 transition-colors">
+          <button onClick={() => navigate(createPageUrl('ResearchPortal'))} className="text-slate-400 hover:text-slate-600 transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <span className="w-px h-4 bg-slate-700" />
-          <BarChart2 className="w-3.5 h-3.5 text-[#0D9E8E]" />
-          <span className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Research Dashboard</span>
+          <span className="w-px h-4 bg-slate-200" />
+          <BarChart2 className="w-3.5 h-3.5 text-[#007850]" />
+          <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Research Dashboard</span>
         </div>
       </div>
 
@@ -163,14 +163,14 @@ export default function ResearchDashboard() {
         {/* Greeting */}
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-white mb-1">
+            <h1 className="text-xl font-bold text-slate-900 mb-1">
               {user.full_name?.split(' ')[0] ? `Welcome back, ${user.full_name.split(' ')[0]}.` : 'Research Dashboard'}
             </h1>
             <p className="text-sm text-slate-500">Your molecular intelligence workspace.</p>
           </div>
           <Button
             onClick={() => setShowNewProject(true)}
-            className="bg-violet-600 hover:bg-violet-700 text-white"
+            className="bg-[#6B3FA0] hover:bg-violet-700 text-white"
           >
             <Plus className="w-4 h-4 mr-1.5" /> New Project
           </Button>
@@ -178,28 +178,28 @@ export default function ResearchDashboard() {
 
         {/* Stats row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-          <StatCard label="Queries Run" value={totalQueries} sub="all time" color="#0D9E8E" />
-          <StatCard label="Saved Formulas" value={savedFormulas.length} sub="in workspace" color="#6366f1" />
-          <StatCard label="Data Sources" value="3" sub="PubChem · ChEMBL · EPA" color="#f59e0b" />
-          <StatCard label="Export Formats" value="4" sub="JSON · CSV · PDF · APA" color="#10b981" />
+          <StatCard label="Queries Run" value={totalQueries} sub="all time" color="#007850" />
+          <StatCard label="Saved Formulas" value={savedFormulas.length} sub="in workspace" color="#6B3FA0" />
+          <StatCard label="Data Sources" value="3" sub="PubChem · ChEMBL · EPA" color="#00A8C8" />
+          <StatCard label="Export Formats" value="4" sub="JSON · CSV · PDF · APA" color="#00B478" />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-5">
 
           {/* Recent queries */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
+            <div className="bg-white border border-slate-200 rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-slate-500" />
-                  <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Recent Queries</span>
+                  <Clock className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-widest">Recent Queries</span>
                 </div>
-                <Link to={createPageUrl('MolecularIntelligence')} className="flex items-center gap-1 text-[#0D9E8E] text-xs font-semibold hover:underline">
+                <Link to={createPageUrl('MolecularIntelligence')} className="flex items-center gap-1 text-[#007850] text-xs font-semibold hover:underline">
                   New Query <ChevronRight className="w-3 h-3" />
                 </Link>
               </div>
               {queryHistory.length === 0 ? (
-                <p className="text-xs text-slate-600 py-4 text-center">No queries yet. Run your first compound analysis.</p>
+                <p className="text-xs text-slate-400 py-4 text-center">No queries yet. Run your first compound analysis.</p>
               ) : (
                 queryHistory.slice(0, 8).map((item, i) => (
                   <RecentQueryRow key={i} item={item} onRerun={handleRerun} />
@@ -208,30 +208,30 @@ export default function ResearchDashboard() {
             </div>
 
             {/* Projects */}
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
+            <div className="bg-white border border-slate-200 rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <FolderOpen className="w-4 h-4 text-slate-500" />
-                  <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Projects</span>
+                  <FolderOpen className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-widest">Projects</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center bg-slate-900/60 rounded-lg p-0.5">
+                  <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
                     <button
                       onClick={() => setViewMode('list')}
-                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${viewMode === 'list' ? 'bg-slate-700 text-slate-200' : 'text-slate-600 hover:text-slate-400'}`}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${viewMode === 'list' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       List
                     </button>
                     <button
                       onClick={() => setViewMode('board')}
-                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${viewMode === 'board' ? 'bg-slate-700 text-slate-200' : 'text-slate-600 hover:text-slate-400'}`}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${viewMode === 'board' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       Board
                     </button>
                   </div>
                   <button
                     onClick={() => setShowNewProject(true)}
-                    className="flex items-center gap-1 text-violet-400 text-xs font-semibold hover:underline"
+                    className="flex items-center gap-1 text-[#6B3FA0] text-xs font-semibold hover:underline"
                   >
                     <Plus className="w-3 h-3" /> New
                   </button>
@@ -246,32 +246,32 @@ export default function ResearchDashboard() {
                 />
               ) : projects.length === 0 ? (
                 <div className="text-center py-4">
-                  <p className="text-xs text-slate-600 mb-2">No projects yet.</p>
-                  <button onClick={() => setShowNewProject(true)} className="text-xs text-violet-400 font-semibold hover:underline">
+                  <p className="text-xs text-slate-400 mb-2">No projects yet.</p>
+                  <button onClick={() => setShowNewProject(true)} className="text-xs text-[#6B3FA0] font-semibold hover:underline">
                     Start a project from a template
                   </button>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {projects.map(p => (
-                    <div key={p.id} className="flex items-center gap-3 py-2.5 border-b border-slate-700/30 last:border-0">
+                    <div key={p.id} className="flex items-center gap-3 py-2.5 border-b border-slate-100 last:border-0">
                       <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: p.color || '#6B3FA0' }} />
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-slate-300 truncate">{p.name}</p>
+                        <p className="text-xs font-semibold text-slate-800 truncate">{p.name}</p>
                         {p.project_type && (
-                          <p className="text-[10px] text-slate-600 mt-0.5 capitalize">{p.project_type.replace(/_/g, ' ')}</p>
+                          <p className="text-[10px] text-slate-400 mt-0.5 capitalize">{p.project_type.replace(/_/g, ' ')}</p>
                         )}
                       </div>
                       {p.tags?.length > 0 && (
                         <div className="flex gap-1 flex-shrink-0">
                           {p.tags.slice(0, 2).map(tag => (
-                            <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-700 text-slate-400 font-medium">{tag}</span>
+                            <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-medium">{tag}</span>
                           ))}
                         </div>
                       )}
                       <button
                         onClick={() => setShareProject(p)}
-                        className="p-1.5 rounded text-slate-500 hover:text-violet-400 hover:bg-violet-500/10 transition-colors flex-shrink-0"
+                        className="p-1.5 rounded text-slate-400 hover:text-[#6B3FA0] hover:bg-violet-50 transition-colors flex-shrink-0"
                         title="Share project"
                       >
                         <Share2 className="w-3.5 h-3.5" />
@@ -283,39 +283,39 @@ export default function ResearchDashboard() {
             </div>
 
             {/* Saved formulas */}
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
+            <div className="bg-white border border-slate-200 rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <FlaskConical className="w-4 h-4 text-slate-500" />
-                  <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Saved Formulas</span>
+                  <FlaskConical className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-widest">Saved Formulas</span>
                 </div>
-                <Link to={createPageUrl('FormulaPortfolio')} className="flex items-center gap-1 text-[#0D9E8E] text-xs font-semibold hover:underline">
+                <Link to={createPageUrl('FormulaPortfolio')} className="flex items-center gap-1 text-[#007850] text-xs font-semibold hover:underline">
                   View all <ChevronRight className="w-3 h-3" />
                 </Link>
               </div>
               {loading ? (
                 <div className="flex items-center justify-center py-6">
-                  <Loader2 className="w-5 h-5 animate-spin text-slate-600" />
+                  <Loader2 className="w-5 h-5 animate-spin text-slate-300" />
                 </div>
               ) : savedFormulas.length === 0 ? (
                 <div className="text-center py-4">
-                  <p className="text-xs text-slate-600 mb-2">No formulas saved yet.</p>
-                  <Link to={createPageUrl('generator')} className="text-xs text-[#0D9E8E] font-semibold hover:underline">
+                  <p className="text-xs text-slate-400 mb-2">No formulas saved yet.</p>
+                  <Link to={createPageUrl('generator')} className="text-xs text-[#007850] font-semibold hover:underline">
                     Generate your first formula
                   </Link>
                 </div>
               ) : (
                 savedFormulas.map((f) => (
-                  <div key={f.id} className="flex items-center justify-between py-3 border-b border-slate-700/30 last:border-0">
+                  <div key={f.id} className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold text-slate-300 truncate">{f.name}</p>
-                      {f.product_type && <p className="text-[10px] text-slate-600 mt-0.5">{f.product_type}</p>}
+                      <p className="text-xs font-semibold text-slate-800 truncate">{f.name}</p>
+                      {f.product_type && <p className="text-[10px] text-slate-400 mt-0.5">{f.product_type}</p>}
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0 ml-3">
                       {f.safety_score != null && (
-                        <span className="text-[10px] font-bold text-emerald-400">{f.safety_score} safety</span>
+                        <span className="text-[10px] font-bold text-emerald-600">{f.safety_score} safety</span>
                       )}
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${f.status === 'completed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-700 text-slate-500'}`}>
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${f.status === 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
                         {f.status || 'draft'}
                       </span>
                     </div>
@@ -328,46 +328,46 @@ export default function ResearchDashboard() {
           {/* Right column */}
           <div className="space-y-4">
             {/* Quick access */}
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3">Quick Access</p>
+            <div className="bg-white border border-slate-200 rounded-xl p-5">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Quick Access</p>
               <div className="space-y-1">
                 {[
-                  { label: 'Molecular Intelligence', Icon: Atom, route: 'MolecularIntelligence', color: '#0D9E8E' },
-                  { label: 'Computational Simulation', Icon: Cpu, route: 'ComputationalSimulation', color: '#6366f1' },
-                  { label: 'Formula Generator', Icon: FlaskConical, route: 'generator', color: '#f59e0b' },
+                  { label: 'Molecular Intelligence', Icon: Atom, route: 'MolecularIntelligence', color: '#007850' },
+                  { label: 'Computational Simulation', Icon: Cpu, route: 'ComputationalSimulation', color: '#00A8C8' },
+                  { label: 'Formula Generator', Icon: FlaskConical, route: 'generator', color: '#6B3FA0' },
                   { label: 'SDS Analyzer', Icon: FileText, route: 'SDSAnalyzer', color: '#64748b' },
-                  { label: 'Ingredient Database', Icon: Database, route: 'IngredientDatabase', color: '#10b981' },
-                  { label: 'Research API', Icon: Layers, route: 'APIPortal', color: '#8b5cf6' },
+                  { label: 'Ingredient Database', Icon: Database, route: 'IngredientDatabase', color: '#00B478' },
+                  { label: 'Research API', Icon: Layers, route: 'APIPortal', color: '#6B3FA0' },
                 ].map(({ label, Icon, route, color }) => (
                   <Link
                     key={route}
                     to={createPageUrl(route)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-700/50 transition-colors group"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 transition-colors group"
                   >
-                    <Icon className="w-4 h-4 flex-shrink-0" style={{ color }} />  {/* eslint-disable-line */}
-                    <span className="text-xs font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">{label}</span>
-                    <ChevronRight className="w-3 h-3 text-slate-700 group-hover:text-slate-500 ml-auto transition-colors" />
+                    <Icon className="w-4 h-4 flex-shrink-0" style={{ color }} />
+                    <span className="text-xs font-semibold text-slate-600 group-hover:text-slate-900 transition-colors">{label}</span>
+                    <ChevronRight className="w-3 h-3 text-slate-300 group-hover:text-slate-400 ml-auto transition-colors" />
                   </Link>
                 ))}
               </div>
             </div>
 
             {/* Scientific feed */}
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
+            <div className="bg-white border border-slate-200 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="w-4 h-4 text-slate-500" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Scientific Feed</span>
+                <TrendingUp className="w-4 h-4 text-slate-400" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Scientific Feed</span>
               </div>
               <div className="space-y-3">
                 {FEED_ITEMS.map((item, i) => (
-                  <div key={i} className="border-b border-slate-700/30 last:border-0 pb-3 last:pb-0">
+                  <div key={i} className="border-b border-slate-100 last:border-0 pb-3 last:pb-0">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-[9px] font-bold text-[#0D9E8E] uppercase">{item.source}</span>
-                      <span className="text-slate-700">·</span>
-                      <span className="text-[9px] text-slate-600">{item.type}</span>
+                      <span className="text-[9px] font-bold text-[#007850] uppercase">{item.source}</span>
+                      <span className="text-slate-300">·</span>
+                      <span className="text-[9px] text-slate-400">{item.type}</span>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-snug">{item.title}</p>
-                    <p className="text-[9px] text-slate-600 mt-1">{item.date}</p>
+                    <p className="text-[11px] text-slate-600 leading-snug">{item.title}</p>
+                    <p className="text-[9px] text-slate-400 mt-1">{item.date}</p>
                   </div>
                 ))}
               </div>

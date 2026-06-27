@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 import AuthContext from '../components/auth/AuthContext';
 import {
   Atom, Cpu, FlaskConical, Leaf, Code2, BarChart2,
-  Database, ChevronRight, BookOpen, ExternalLink, Shield,
+  Database, ChevronRight, BookOpen, Shield,
   Globe, Microscope, Layers, GitBranch, FileText, Zap, Dna
 } from 'lucide-react';
 
@@ -14,7 +14,7 @@ const modules = [
     label: 'Molecular Intelligence',
     route: 'MolecularIntelligence',
     icon: Atom,
-    color: '#0D9E8E',
+    color: '#6B3FA0',
     badge: 'Live',
     description: 'Hazard classification, toxicity profiling, environmental fate, and regulatory status for any compound. Query by name, SMILES, InChI, or ingredient list.',
     metrics: ['PubChem', 'ChEMBL', 'EPA CompTox'],
@@ -25,7 +25,7 @@ const modules = [
     label: 'Computational Simulation',
     route: 'ComputationalSimulation',
     icon: Cpu,
-    color: '#6366f1',
+    color: '#00A8C8',
     badge: 'Pro',
     description: 'Semi-empirical and DFT-tier simulations. Upload PDB, SDF, MOL2, or SMILES. 3D WebGL viewer with ESP mapping, NCI detection, and trajectory playback.',
     metrics: ['GFN2-xTB', 'B3LYP/6-31G*', 'OpenMM MD'],
@@ -36,7 +36,7 @@ const modules = [
     label: 'Formula Intelligence',
     route: 'generator',
     icon: FlaskConical,
-    color: '#f59e0b',
+    color: '#007850',
     badge: 'Live',
     description: 'Generate complete formulas from a plain-language goal. INCI names, percentage ranges, pH guidance, preservation systems, and estimated shelf life.',
     metrics: ['Safety Score', 'Sustainability Score', 'Compliance Check'],
@@ -47,7 +47,7 @@ const modules = [
     label: 'Sustainability Intelligence',
     route: 'ComparativeImpactReport',
     icon: Leaf,
-    color: '#10b981',
+    color: '#00B478',
     badge: 'Live',
     description: 'Sustainability scoring for every ingredient and formula. Radar chart benchmarked against 500+ commercially verified products. Exportable reports.',
     metrics: ['Biodegradability', 'Aquatic Toxicity', 'Carbon Intensity'],
@@ -58,7 +58,7 @@ const modules = [
     label: 'Research API',
     route: 'APIPortal',
     icon: Code2,
-    color: '#8b5cf6',
+    color: '#6B3FA0',
     badge: 'Pro',
     description: 'Developer-facing REST API with endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. JSON with confidence scores on every field.',
     metrics: ['Python SDK', 'JavaScript SDK', 'Interactive Docs'],
@@ -69,7 +69,7 @@ const modules = [
     label: 'Molecule Explorer',
     route: 'MoleculeExplorer',
     icon: Microscope,
-    color: '#0D9E8E',
+    color: '#00A8C8',
     badge: 'Live',
     description: 'Browse your chemical database in 3D. Renders PubChem-sourced conformers for any stored compound alongside all physical, toxicity, and environmental properties.',
     metrics: ['3Dmol.js WebGL', 'PubChem 3D', 'Property Panel'],
@@ -80,7 +80,7 @@ const modules = [
     label: 'Chemical Comparison',
     route: 'ChemicalComparison',
     icon: GitBranch,
-    color: '#f59e0b',
+    color: '#007850',
     badge: 'Live',
     description: 'Side-by-side comparison of any two compounds. Contrast molecular structure, physical properties, toxicity, and environmental data with delta highlighting.',
     metrics: ['3D Structures', 'Property Deltas', 'PubChem Search'],
@@ -105,7 +105,7 @@ const structuralBiologyTools = [
     label: 'Protein Structure Explorer',
     route: 'StructuralBiology',
     icon: Microscope,
-    color: '#2563eb',
+    color: '#00A8C8',
     description: 'Search any human protein by UniProt ID or gene. 3D structures, pLDDT confidence, PAE heatmaps.',
     tags: ['AlphaFold API', '3Dmol.js', 'pLDDT'],
     tier: 'Free',
@@ -115,7 +115,7 @@ const structuralBiologyTools = [
     label: 'Chemical Binding Risk Scanner',
     route: 'StructuralBiology',
     icon: FlaskConical,
-    color: '#dc2626',
+    color: '#C42B2B',
     description: 'Analyze chemical-protein binding against 10 toxicology target proteins.',
     tags: ['AlphaFold', 'Toxicology', 'AI'],
     tier: 'Pro',
@@ -125,7 +125,7 @@ const structuralBiologyTools = [
     label: 'Mutation Sensitivity Analyzer',
     route: 'StructuralBiology',
     icon: Dna,
-    color: '#9333ea',
+    color: '#6B3FA0',
     description: 'AlphaMissense pathogenicity analysis for amino acid variants.',
     tags: ['AlphaMissense', 'Pathogenicity'],
     tier: 'Pro',
@@ -135,7 +135,7 @@ const structuralBiologyTools = [
     label: 'Domain Reliability Heatmap',
     route: 'StructuralBiology',
     icon: BarChart2,
-    color: '#0d9e8e',
+    color: '#007850',
     description: 'Visualize PAE matrix to assess structural domain reliability. AI interpretation.',
     tags: ['PAE Matrix', 'AI'],
     tier: 'Pro',
@@ -145,7 +145,7 @@ const structuralBiologyTools = [
     label: 'Population Safety Profiler',
     route: 'StructuralBiology',
     icon: Shield,
-    color: '#f59e0b',
+    color: '#007850',
     description: 'Personalized ingredient safety warnings from AlphaFold + your health profile.',
     tags: ['Health Profile', 'Personalized'],
     tier: 'Pro',
@@ -163,16 +163,16 @@ export default function ResearchPortal() {
   const { user } = useContext(AuthContext);
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-white">
+    <div className="min-h-screen bg-[#EDF7F2] text-slate-800">
       {/* Sub-header */}
-      <div className="border-b border-slate-700/50 bg-slate-900/60 sticky top-16 z-20">
+      <div className="border-b border-slate-200 bg-white/80 sticky top-16 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
-          <Microscope className="w-3.5 h-3.5 text-[#0D9E8E]" />
-          <span className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Research Portal</span>
-          <span className="ml-auto flex items-center gap-1.5 text-[10px] text-slate-600">
-            <span className="px-1.5 py-0.5 rounded bg-slate-700/40 text-slate-400 font-semibold">PubChem</span>
-            <span className="px-1.5 py-0.5 rounded bg-slate-700/40 text-slate-400 font-semibold">ChEMBL</span>
-            <span className="px-1.5 py-0.5 rounded bg-[#2563eb]/15 text-[#2563eb] font-bold">AlphaFold DB</span>
+          <Microscope className="w-3.5 h-3.5 text-[#007850]" />
+          <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Research Portal</span>
+          <span className="ml-auto flex items-center gap-1.5 text-[10px] text-slate-400">
+            <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-semibold">PubChem</span>
+            <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-semibold">ChEMBL</span>
+            <span className="px-1.5 py-0.5 rounded bg-violet-50 text-[#6B3FA0] font-bold">AlphaFold DB</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block ml-1" />
             All systems operational
           </span>
@@ -184,22 +184,22 @@ export default function ResearchPortal() {
         {/* Hero */}
         <div className="mb-12">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#0D9E8E] border border-[#0D9E8E]/30 rounded px-2 py-0.5">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#007850] border border-teal-200 bg-teal-50 rounded px-2 py-0.5">
               Molecular Intelligence OS
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight mb-4 max-w-3xl">
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight mb-4 max-w-3xl">
             One platform for the complete<br />
-            <span style={{ color: '#0D9E8E' }}>chemical research workflow.</span>
+            <span style={{ color: '#007850' }}>chemical research workflow.</span>
           </h1>
-          <p className="text-slate-400 text-sm max-w-2xl leading-relaxed mb-6">
+          <p className="text-slate-600 text-sm max-w-2xl leading-relaxed mb-6">
             Query any compound. Run simulations. Generate and validate formulas. Export publication-ready citations.
             Powered by PubChem, ChEMBL, and EPA CompTox — every output includes source citation and confidence score.
           </p>
           {user && (
             <Link
               to={createPageUrl('ResearchDashboard')}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#0D9E8E]/10 hover:bg-[#0D9E8E]/20 border border-[#0D9E8E]/30 text-[#0D9E8E] text-sm font-semibold rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 hover:bg-teal-100 border border-teal-200 text-[#007850] text-sm font-semibold rounded-lg transition-colors"
             >
               <BarChart2 className="w-4 h-4" />
               Open Research Dashboard
@@ -216,12 +216,12 @@ export default function ResearchPortal() {
               <Link
                 key={mod.id}
                 to={createPageUrl(mod.route)}
-                className="group bg-slate-800/40 hover:bg-slate-800/70 border border-slate-700/50 hover:border-slate-600/70 rounded-xl p-5 transition-all duration-200 flex flex-col"
+                className="group bg-white hover:bg-slate-50 border border-slate-200 hover:border-violet-200 rounded-xl p-5 transition-all duration-200 flex flex-col hover:shadow-md"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div
                     className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: mod.color + '18', border: `1px solid ${mod.color}30` }}
+                    style={{ backgroundColor: mod.color + '15', border: `1px solid ${mod.color}30` }}
                   >
                     <Icon className="w-5 h-5" style={{ color: mod.color }} />
                   </div>
@@ -232,14 +232,14 @@ export default function ResearchPortal() {
                     >
                       {mod.badge}
                     </span>
-                    <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-violet-500 group-hover:translate-x-0.5 transition-all" />
                   </div>
                 </div>
-                <h3 className="text-sm font-bold text-white mb-2">{mod.label}</h3>
+                <h3 className="text-sm font-bold text-slate-900 mb-2">{mod.label}</h3>
                 <p className="text-xs text-slate-500 leading-relaxed flex-1 mb-4">{mod.description}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {mod.metrics.map((m) => (
-                    <span key={m} className="text-[10px] font-mono text-slate-600 bg-slate-900/60 px-2 py-0.5 rounded">
+                    <span key={m} className="text-[10px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
                       {m}
                     </span>
                   ))}
@@ -252,9 +252,9 @@ export default function ResearchPortal() {
         {/* Structural Biology section */}
         <div className="mb-14">
           <div className="flex items-center gap-2 mb-4">
-            <Dna className="w-3.5 h-3.5 text-[#2563eb]" />
+            <Dna className="w-3.5 h-3.5 text-[#00A8C8]" />
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Structural Biology — AlphaFold Integration</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#2563eb]/15 text-[#2563eb] font-bold">CC BY 4.0</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-50 text-[#00A8C8] font-bold">CC BY 4.0</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {structuralBiologyTools.map((tool) => {
@@ -263,12 +263,12 @@ export default function ResearchPortal() {
                 <Link
                   key={tool.id}
                   to={createPageUrl(tool.route)}
-                  className="group bg-slate-800/40 hover:bg-slate-800/70 border border-slate-700/50 hover:border-slate-600/70 rounded-xl p-5 transition-all duration-200 flex flex-col"
+                  className="group bg-white hover:bg-slate-50 border border-slate-200 hover:border-violet-200 rounded-xl p-5 transition-all duration-200 flex flex-col hover:shadow-md"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div
                       className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: tool.color + '18', border: `1px solid ${tool.color}30` }}
+                      style={{ backgroundColor: tool.color + '15', border: `1px solid ${tool.color}30` }}
                     >
                       <Icon className="w-5 h-5" style={{ color: tool.color }} />
                     </div>
@@ -279,14 +279,14 @@ export default function ResearchPortal() {
                       >
                         {tool.tier}
                       </span>
-                      <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-violet-500 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
-                  <h3 className="text-sm font-bold text-white mb-1.5">{tool.label}</h3>
+                  <h3 className="text-sm font-bold text-slate-900 mb-1.5">{tool.label}</h3>
                   <p className="text-xs text-slate-500 leading-relaxed flex-1 mb-3">{tool.description}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {tool.tags.map((t) => (
-                      <span key={t} className="text-[10px] font-mono text-slate-600 bg-slate-900/60 px-2 py-0.5 rounded">
+                      <span key={t} className="text-[10px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
                         {t}
                       </span>
                     ))}
@@ -300,17 +300,17 @@ export default function ResearchPortal() {
         {/* Data sources */}
         <div className="mb-14">
           <div className="flex items-center gap-2 mb-4">
-            <Database className="w-3.5 h-3.5 text-slate-500" />
+            <Database className="w-3.5 h-3.5 text-slate-400" />
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Integrated Data Sources</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {dataSources.map((src) => (
-              <div key={src.name} className="bg-slate-800/30 border border-slate-700/40 rounded-xl p-4">
+              <div key={src.name} className="bg-white border border-slate-200 rounded-xl p-4">
                 <div className="flex items-start justify-between mb-2">
-                  <span className="text-sm font-bold text-white">{src.name}</span>
-                  <span className="text-[10px] text-[#0D9E8E] font-mono">{src.records}</span>
+                  <span className="text-sm font-bold text-slate-900">{src.name}</span>
+                  <span className="text-[10px] text-[#007850] font-mono">{src.records}</span>
                 </div>
-                <p className="text-[10px] text-slate-600 mb-1">{src.org}</p>
+                <p className="text-[10px] text-slate-400 mb-1">{src.org}</p>
                 <p className="text-xs text-slate-500 leading-snug">{src.type}</p>
               </div>
             ))}
@@ -318,7 +318,7 @@ export default function ResearchPortal() {
         </div>
 
         {/* Platform promise */}
-        <div className="border border-slate-700/40 rounded-xl p-6 bg-slate-800/20">
+        <div className="border border-slate-200 rounded-xl p-6 bg-white">
           <div className="grid sm:grid-cols-3 gap-6 text-center">
             {[
               { icon: Shield, label: 'No Black Box Outputs', desc: 'Every number includes its data source and a confidence score.' },
@@ -326,10 +326,10 @@ export default function ResearchPortal() {
               { icon: GitBranch, label: 'Simulation to Formula Pipeline', desc: 'Transfer any compound directly from simulation into the formula engine.' },
             ].map(({ icon: Icon, label, desc }) => (
               <div key={label} className="flex flex-col items-center gap-2">
-                <div className="w-9 h-9 rounded-lg bg-[#0D9E8E]/10 border border-[#0D9E8E]/20 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-[#0D9E8E]" />
+                <div className="w-9 h-9 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-[#007850]" />
                 </div>
-                <p className="text-xs font-bold text-white">{label}</p>
+                <p className="text-xs font-bold text-slate-900">{label}</p>
                 <p className="text-[11px] text-slate-500 leading-snug max-w-xs">{desc}</p>
               </div>
             ))}
