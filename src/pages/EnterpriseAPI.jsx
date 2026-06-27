@@ -178,8 +178,8 @@ export default function EnterpriseAPI() {
 
                 <div className="space-y-1.5">
                   {feature.endpoints.map((ep, j) => (
-                    <div key={j} className="flex items-center gap-2 text-xs font-mono text-slate-500 bg-slate-50 rounded-lg px-3 py-1.5">
-                      <span className={`w-1 h-1 rounded-full ${ep.startsWith("GET") ? "bg-emerald-500" : ep.startsWith("POST") ? "bg-violet-500" : "bg-rose-500"}`} />
+                    <div key={j} className="flex items-center gap-2 text-xs font-mono font-semibold text-slate-700 bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5">
+                      <span className={`w-1.5 h-1.5 rounded-full ${ep.startsWith("GET") ? "bg-emerald-500" : ep.startsWith("POST") ? "bg-violet-500" : "bg-rose-500"}`} />
                       {ep}
                     </div>
                   ))}
