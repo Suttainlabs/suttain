@@ -280,7 +280,6 @@ export default function Layout({ children, currentPageName }) {
   const researchToolItems = [
     { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization" },
     { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization" },
-    { href: "ResearchDashboard", label: "Research Dashboard", icon: BarChart2, description: "Track projects, saved compounds & simulation history" },
     { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets" },
   ];
 
