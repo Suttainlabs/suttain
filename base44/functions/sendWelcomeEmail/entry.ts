@@ -1,5 +1,50 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+// ── Centralized feature/tool registry ──────────────────────────────
+// Update this list whenever a new feature, tool, or platform is added
+// to Suttain. The welcome email will automatically include it.
+const FEATURE_REGISTRY = {
+  tools: [
+    { name: 'Chemical Simulator', desc: 'Test chemical interactions safely before mixing — hazard analysis, reaction predictions, and GHS safety warnings.', url: 'https://suttain.com/Simulator' },
+    { name: 'Formula Generator', desc: 'Create production-ready formulas with AI — ingredient percentages, mixing instructions, pH targets, and safety validation.', url: 'https://suttain.com/generator' },
+    { name: 'SuttainScan', desc: 'Scan any product barcode to instantly analyze ingredients for safety, toxicity, and eco-impact.', url: 'https://suttain.com/BarcodeScanner' },
+    { name: 'Hydration Intelligence', desc: 'Track daily water intake with biological, food-linked adjustments tailored to your body.', url: 'https://suttain.com/HydrationHome' },
+  ],
+  research: [
+    { name: 'Molecule Analysis', desc: 'Query any compound for hazard classification, toxicity profiling, and 3D structure visualization.', url: 'https://suttain.com/MoleculeAnalysis' },
+    { name: 'Computational Simulation', desc: 'Run DFT and semi-empirical simulations with 3D visualization and ESP mapping.', url: 'https://suttain.com/ComputationalSimulation' },
+    { name: 'SDS Analyzer', desc: 'Upload Safety Data Sheets and extract hazard data and GHS classifications automatically.', url: 'https://suttain.com/SDSAnalyzer' },
+    { name: 'Structural Biology', desc: 'AlphaFold-powered protein structure analysis and exploration.', url: 'https://suttain.com/StructuralBiology' },
+    { name: 'Chemical Comparison', desc: 'Compare any two chemical compounds side-by-side with delta highlighting.', url: 'https://suttain.com/ChemicalComparison' },
+    { name: 'Chemical Library', desc: 'Browse and manage your chemical library with search by name, CAS, formula, or safety level.', url: 'https://suttain.com/ChemicalLibrary' },
+  ],
+  business: [
+    { name: 'Enterprise API', desc: 'Custom integrations, dedicated infrastructure, and white-label solutions for organizations at scale.', url: 'https://suttain.com/EnterpriseAPI' },
+    { name: 'API Documentation', desc: 'REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation.', url: 'https://suttain.com/APIPortal' },
+  ],
+};
+
+function renderFeatureSection(title, color, items) {
+  const rows = items.map(f => `
+    <tr>
+      <td style="padding:14px 16px;border-bottom:1px solid #f1f5f9;">
+        <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:${color};">${f.name}</p>
+        <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">${f.desc}</p>
+      </td>
+    </tr>`).join('');
+  return `
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;">
+      <tr>
+        <td style="background:linear-gradient(135deg,${color},#0d9488);border-radius:8px 8px 0 0;padding:10px 16px;">
+          <p style="margin:0;font-size:11px;font-weight:700;color:#ffffff;letter-spacing:1.5px;text-transform:uppercase;">${title}</p>
+        </td>
+      </tr>
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;margin-bottom:24px;overflow:hidden;">
+      ${rows}
+    </table>`;
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -18,6 +63,12 @@ Deno.serve(async (req) => {
 
     console.log(`Sending welcome email to: ${email}`);
 
+    const toolsSection = renderFeatureSection('Tools', '#02988C', FEATURE_REGISTRY.tools);
+    const researchSection = renderFeatureSection('Research', '#7c3aed', FEATURE_REGISTRY.research);
+    const businessSection = renderFeatureSection('Business', '#1e293b', FEATURE_REGISTRY.business);
+
+    const totalTools = FEATURE_REGISTRY.tools.length + FEATURE_REGISTRY.research.length + FEATURE_REGISTRY.business.length;
+
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: email,
       from_name: 'Abel at Suttain',
@@ -35,7 +86,7 @@ Deno.serve(async (req) => {
           <td style="background:linear-gradient(135deg,#02988C,#09D2FF);border-radius:12px 12px 0 0;padding:40px 40px 32px;text-align:center;">
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:48px;width:auto;margin-bottom:16px;"/>
             <h1 style="color:#ffffff;font-size:26px;font-weight:700;margin:0 0 8px;">Welcome to Suttain, ${firstName}!</h1>
-            <p style="color:rgba(255,255,255,0.9);font-size:15px;margin:0;">Your free account is ready — no credit card required.</p>
+            <p style="color:rgba(255,255,255,0.9);font-size:15px;margin:0;">Your free account is ready — ${totalTools} tools and features waiting for you.</p>
           </td>
         </tr>
 
@@ -43,8 +94,14 @@ Deno.serve(async (req) => {
         <tr>
           <td style="background:#ffffff;padding:36px 40px;">
             <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 16px;">Hi ${firstName},</p>
-            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 16px;">Welcome to Suttain — the platform for chemical safety analysis, formula generation, and product scanning. We built Suttain to make safer chemistry accessible to everyone, from individuals to global enterprises.</p>
-            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 24px;">To get started, try running your first chemical simulation or scanning a product barcode from your dashboard. Everything is free to explore on the Starter tier.</p>
+            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 16px;">Welcome to Suttain — the platform for chemical safety analysis, formula generation, computational simulation, and product scanning. We built Suttain to make safer chemistry accessible to everyone, from individuals to global enterprises.</p>
+            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 24px;">Here is everything currently available on Suttain, organized by category:</p>
+
+            ${toolsSection}
+            ${researchSection}
+            ${businessSection}
+
+            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 24px;">On the free tier, you get 3 simulations, 5 formula generations, and 2 product scans per month at no cost. Upgrade to Starter, Pro, or Lifetime anytime for unlimited access.</p>
 
             <!-- CTA -->
             <table width="100%" cellpadding="0" cellspacing="0">
@@ -111,7 +168,7 @@ Deno.serve(async (req) => {
 </body></html>`
     });
 
-    return Response.json({ success: true, email });
+    return Response.json({ success: true, email, featuresListed: totalTools });
   } catch (error) {
     console.error('Failed to send welcome email:', error.message, error.stack);
     return Response.json({ error: error.message }, { status: 500 });
