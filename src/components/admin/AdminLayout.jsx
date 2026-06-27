@@ -17,18 +17,33 @@ import SubscriptionEmailPanel from './SubscriptionEmailPanel';
 import UserAnalytics from './UserAnalytics';
 import BlogBroadcast from './BlogBroadcast';
 
-const navItems = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'traffic', label: 'Live Traffic', icon: Wifi },
-  { id: 'analytics', label: 'User Analytics', icon: BarChart2 },
-  { id: 'support', label: 'Support CRM', icon: Headphones },
-  { id: 'subscriptions', label: 'Subscriptions', icon: Crown },
-  { id: 'subscription-emails', label: 'Subscription Emails', icon: Mail },
-  { id: 'users', label: 'User Management', icon: Users },
-  { id: 'blog-broadcast', label: 'Blog Broadcast', icon: Rss },
-  { id: 'submissions', label: 'Submissions', icon: FileText },
-  { id: 'jobs', label: 'Job Postings', icon: Briefcase },
-  { id: 'announcements', label: 'Announcements', icon: Megaphone },
+const navCategories = [
+  {
+    title: 'Users & Subscriptions',
+    items: [
+      { id: 'users', label: 'User Management', icon: Users },
+      { id: 'subscriptions', label: 'Subscriptions', icon: Crown },
+      { id: 'subscription-emails', label: 'Subscription Emails', icon: Mail },
+    ]
+  },
+  {
+    title: 'Analytics & Logs',
+    items: [
+      { id: 'overview', label: 'Dashboard Overview', icon: LayoutDashboard },
+      { id: 'traffic', label: 'Live Traffic', icon: Wifi },
+      { id: 'analytics', label: 'User Analytics', icon: BarChart2 },
+    ]
+  },
+  {
+    title: 'Platform Actions',
+    items: [
+      { id: 'support', label: 'Support CRM', icon: Headphones },
+      { id: 'blog-broadcast', label: 'Blog Broadcast', icon: Rss },
+      { id: 'announcements', label: 'Announcements', icon: Megaphone },
+      { id: 'submissions', label: 'Submissions', icon: FileText },
+      { id: 'jobs', label: 'Job Postings', icon: Briefcase },
+    ]
+  },
 ];
 
 export default function AdminLayout() {
@@ -73,32 +88,40 @@ export default function AdminLayout() {
   };
   
   const SidebarContent = () => (
-     <div className="flex flex-col h-full">
-        <div className="p-4 border-b border-slate-200">
-          <h2 className="text-xl font-bold text-slate-800">Admin Panel</h2>
+     <div className="flex flex-col h-full bg-[#0A0E17]">
+        <div className="p-4 border-b border-slate-800">
+          <h2 className="text-lg font-bold text-slate-100">Admin Panel</h2>
+          <p className="text-xs text-slate-400 mt-1">Platform Management</p>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setActiveTab(item.id);
-                setIsSidebarOpen(false);
-              }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-semibold ${
-                activeTab === item.id
-                  ? 'bg-teal-100 text-teal-800'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              {item.label}
-            </button>
+        <nav className="flex-1 p-3 space-y-6 overflow-y-auto">
+          {navCategories.map((category) => (
+            <div key={category.title}>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest px-4 mb-2">{category.title}</p>
+              <div className="space-y-1">
+                {category.items.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setIsSidebarOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold ${
+                      activeTab === item.id
+                        ? 'bg-[#007850] text-white'
+                        : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/50'
+                    }`}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-200">
-          <Link to={createPageUrl("Home")} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-semibold text-slate-600 hover:bg-slate-100">
-             <Power className="w-5 h-5" />
+        <div className="p-4 border-t border-slate-800">
+          <Link to={createPageUrl("Home")} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors text-sm font-semibold text-slate-400 hover:text-slate-300 hover:bg-slate-800/50">
+             <Power className="w-4 h-4" />
              Exit Admin Panel
           </Link>
         </div>
@@ -106,17 +129,17 @@ export default function AdminLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-[#0A0E17] flex">
       {/* Mobile Sidebar Toggle */}
       <button 
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-slate-900 rounded-md shadow-md border border-slate-800"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
-        {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        {isSidebarOpen ? <X className="w-6 h-6 text-slate-100" /> : <Menu className="w-6 h-6 text-slate-100" />}
       </button>
 
       {/* Sidebar */}
-      <aside className={`fixed lg:relative inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out`}>
+      <aside className={`fixed lg:relative inset-y-0 left-0 z-40 w-64 bg-[#0F1419] border-r border-slate-800 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out`}>
          <SidebarContent />
       </aside>
       
