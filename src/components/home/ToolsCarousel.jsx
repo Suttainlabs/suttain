@@ -9,9 +9,9 @@ export default function ToolsCarousel({ tools, autoInterval = 3500 }) {
 
   const getStep = () => {
     const el = scrollRef.current;
-    if (!el) return 300;
-    const card = el.querySelector("[data-card]");
-    return card ? card.offsetWidth + 20 : el.clientWidth;
+    if (!el) return 240;
+    const pill = el.querySelector("[data-card]");
+    return pill ? pill.offsetWidth + 12 : el.clientWidth;
   };
 
   const scrollByDir = (dir) => {
@@ -42,35 +42,27 @@ export default function ToolsCarousel({ tools, autoInterval = 3500 }) {
     >
       <div
         ref={scrollRef}
-        className="flex gap-5 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2"
+        className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1"
       >
         {tools.map((tool, i) => {
           const Icon = tool.icon;
           return (
-            <div
-              key={i}
-              data-card
-              className="snap-start shrink-0 w-[85%] sm:w-[45%] lg:w-[28%] xl:w-[24%]"
-            >
+            <div key={i} data-card className="snap-start shrink-0">
               <Link
                 to={createPageUrl(tool.href)}
-                className="block bg-white rounded-2xl p-5 border border-slate-200 h-full hover:shadow-md hover:border-slate-300 transition-all group"
+                className="inline-flex items-center gap-2.5 pl-3.5 pr-3 py-2.5 bg-white rounded-full border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all group whitespace-nowrap"
               >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                <span
+                  className="w-7 h-7 rounded-full flex items-center justify-center"
                   style={{ background: tool.color + "14" }}
                 >
-                  <Icon className="w-5 h-5" style={{ color: tool.color }} />
-                </div>
-                <h3 className="font-bold text-slate-900 text-sm mb-1.5">{tool.label}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed mb-3">{tool.desc}</p>
-                <span
-                  className="inline-flex items-center gap-1 text-xs font-semibold"
-                  style={{ color: tool.color }}
-                >
-                  Open tool
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  <Icon className="w-4 h-4" style={{ color: tool.color }} />
                 </span>
+                <span className="text-sm font-semibold text-slate-800">{tool.label}</span>
+                <ArrowRight
+                  className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"
+                  style={{ color: tool.color }}
+                />
               </Link>
             </div>
           );
@@ -81,14 +73,14 @@ export default function ToolsCarousel({ tools, autoInterval = 3500 }) {
       <button
         onClick={() => scrollByDir(-1)}
         aria-label="Previous tools"
-        className="hidden sm:flex absolute -left-4 top-1/2 -translate-y-1/2 w-9 h-9 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm text-slate-600 hover:text-slate-900 hover:shadow-md transition-all"
+        className="hidden sm:flex absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm text-slate-600 hover:text-slate-900 hover:shadow-md transition-all"
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
       <button
         onClick={() => scrollByDir(1)}
         aria-label="Next tools"
-        className="hidden sm:flex absolute -right-4 top-1/2 -translate-y-1/2 w-9 h-9 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm text-slate-600 hover:text-slate-900 hover:shadow-md transition-all"
+        className="hidden sm:flex absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm text-slate-600 hover:text-slate-900 hover:shadow-md transition-all"
       >
         <ChevronRight className="w-4 h-4" />
       </button>
