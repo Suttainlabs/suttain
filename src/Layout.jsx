@@ -408,12 +408,15 @@ export default function Layout({ children, currentPageName }) {
                     <span>Professional Tools</span>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 p-2">
+                <DropdownMenuContent align="end" className="w-72 p-2">
                   {consumerToolItems.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
-                      <Link to={createPageUrl(item.href)} className="flex items-center gap-3 px-2 py-2 rounded-lg">
-                        <item.icon className="w-4 h-4 flex-shrink-0" style={{ color: "#007850" }} />
-                        <span className="text-sm font-medium text-slate-700">{item.label}</span>
+                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 px-2 py-2 rounded-lg">
+                        <item.icon className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#007850" }} />
+                        <div>
+                          <span className="text-sm font-medium text-slate-700 block">{item.label}</span>
+                          <span className="text-xs text-slate-400">{item.description}</span>
+                        </div>
                       </Link>
                     </DropdownMenuItem>
                   ))}
