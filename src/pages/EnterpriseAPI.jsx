@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Section, SectionHeader } from "@/components/shared/Section";
+import SdkCodeViewer from "@/components/enterprise/SdkCodeViewer";
 
 const API_FEATURES = [
   {
@@ -59,12 +60,7 @@ const API_FEATURES = [
   }
 ];
 
-const SDK_LANGUAGES = [
-  { name: "Python", color: "from-[#00A8C8] to-[#0096B7]", badge: "Primary" },
-  { name: "JavaScript", color: "from-[#007850] to-[#009970]", badge: "Node/Browser" },
-  { name: "R", color: "from-[#6B3FA0] to-[#8B5CF6]", badge: "CRAN" },
-  { name: "cURL", color: "from-slate-400 to-slate-600", badge: "Any" },
-];
+
 
 export default function EnterpriseAPI() {
   const [form, setForm] = useState({ name: "", email: "", company_name: "", role: "", message: "" });
@@ -204,24 +200,8 @@ export default function EnterpriseAPI() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {SDK_LANGUAGES.map((lang, i) => (
-                <div key={i} className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center hover:border-violet-200 transition-all group">
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${lang.color} flex items-center justify-center mx-auto mb-4 shadow-md`}>
-                    <Code2 className="w-7 h-7 text-white" />
-                  </div>
-                  <h4 className="font-bold text-slate-900 text-lg mb-1">{lang.name}</h4>
-                  <span className="text-xs text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-md">{lang.badge}</span>
-                  <div className="mt-5 bg-slate-900 rounded-xl p-4 text-left">
-                    <code className="text-xs text-slate-300 font-mono">
-                      {lang.name === "Python" && <>pip install suttain-sdk</>}
-                      {lang.name === "JavaScript" && <>npm install @suttain/sdk</>}
-                      {lang.name === "R" && <>install.packages("suttain")</>}
-                      {lang.name === "cURL" && <>curl -H "Authorization: Bearer $TOKEN" https://api.suttain.com/v1/chemicals/search</>}
-                    </code>
-                  </div>
-                </div>
-              ))}
+            <div className="max-w-3xl mx-auto">
+              <SdkCodeViewer />
             </div>
           </div>
         </Section>
