@@ -122,12 +122,6 @@ export default function LandingHub() {
         <SectionHeader
           as="h1"
           align="center"
-          eyebrow={
-            <span className="inline-flex items-center gap-2 border border-[#007850]/25 bg-[#007850]/6 text-[#007850] text-sm font-semibold px-4 py-1.5 rounded-full">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Molecular Intelligence for Everyone
-            </span>
-          }
           headingClassName="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900"
           heading={
             <>
