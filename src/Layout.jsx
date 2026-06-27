@@ -282,7 +282,6 @@ export default function Layout({ children, currentPageName }) {
     { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization" },
     { href: "ResearchDashboard", label: "Research Dashboard", icon: BarChart2, description: "Track projects, saved compounds & simulation history" },
     { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets" },
-    { href: "APIPortal", label: "Research API", icon: Code2, description: "REST endpoints for compound lookup & hazard scoring" },
   ];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
