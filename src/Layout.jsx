@@ -75,7 +75,7 @@ const PAGE_META_DESCRIPTIONS = {
 // Lazy-loaded components with error boundaries
 const ClaraAssistant = React.lazy(() => import("./components/shared/ClaraAssistant").catch(() => ({ default: () => null })));
 const AuthModal = React.lazy(() => import("./components/auth/AuthModal").catch(() => ({ default: () => null })));
-const UserAcknowledgementModal = React.lazy(() => import("./components/auth/UserAcknowledgementModal").catch(() => ({ default: () => null })));
+const SimplifiedOnboarding = React.lazy(() => import("./components/auth/SimplifiedOnboarding").catch(() => ({ default: () => null })));
 
 
 export default function Layout({ children, currentPageName }) {
@@ -901,16 +901,15 @@ export default function Layout({ children, currentPageName }) {
 
 
       
-      {/* User Acknowledgement Modal */}
+      {/* Simplified Onboarding */}
       <React.Suspense fallback={null}>
-        {showAcknowledgementModal && (
-          <UserAcknowledgementModal
-            isOpen={showAcknowledgementModal}
-            onAccept={handleAcceptAcknowledgement}
-            onClose={handleDeclineAcknowledgement}
-          />
-        )}
-
+        {showAcknowledgementModal && 
+          React.createElement(SimplifiedOnboarding, {
+            isOpen: showAcknowledgementModal,
+            onAccept: handleAcceptAcknowledgement,
+            onClose: handleDeclineAcknowledgement,
+          })
+        }
       </React.Suspense>
     </div>
   );
