@@ -38,12 +38,10 @@ const CONSUMER_TOOLS = [
 ];
 
 const RESEARCH_TOOLS = [
-  { icon: Atom, label: "Molecule Analysis", desc: "Query any compound for hazard classification, toxicity profiling, and regulatory status — then visualize its 3D structure and inspect full properties.", href: "MoleculeAnalysis", color: "#6B3FA0" },
-  { icon: Cpu, label: "Computational Simulation", desc: "Run semi-empirical and DFT-tier simulations with 3D WebGL visualization and ESP mapping.", href: "ComputationalSimulation", color: "#00A8C8" },
-  { icon: Leaf, label: "Sustainability Intelligence", desc: "Lifecycle analysis, biodegradability modeling, and carbon footprint assessment for formulations.", href: "SustainabilityImpact", color: "#00B478" },
-  { icon: Code2, label: "Research API", desc: "REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation.", href: "APIPortal", color: "#6B3FA0" },
-  { icon: FileText, label: "SDS Analyzer", desc: "Upload Safety Data Sheets and extract hazard data, GHS classifications, and regulatory info automatically.", href: "SDSAnalyzer", color: "#64748b" },
-  { icon: Layers, label: "Chemical Library", desc: "Browse and manage your chemical library with search by name, CAS, formula, or safety level.", href: "ChemicalLibrary", color: "#00B478" },
+  { icon: Atom, label: "Molecule Analysis", desc: "Query any compound for hazard classification, toxicity profiling, and regulatory status. Visualize 3D structure and inspect full properties.", href: "MoleculeAnalysis", color: "#6B3FA0" },
+  { icon: Cpu, label: "Computational Simulation", desc: "Run semi-empirical and DFT-tier simulations. 3D WebGL visualization with ESP mapping and trajectory playback.", href: "ComputationalSimulation", color: "#00A8C8" },
+  { icon: FlaskConical, label: "SDS Analyzer", desc: "Upload Safety Data Sheets and extract hazard data, GHS classifications, and regulatory information automatically.", href: "SDSAnalyzer", color: "#64748b" },
+  { icon: Microscope, label: "Structural Biology", desc: "Search proteins by UniProt ID. 3D structures, pLDDT confidence, PAE heatmaps, and binding analysis powered by AlphaFold.", href: "StructuralBiology", color: "#00A8C8" },
 ];
 
 const DATA_SOURCES = [
@@ -256,15 +254,15 @@ export default function LandingHub() {
             const Icon = tool.icon;
             return (
               <motion.div key={i} {...fadeIn(i * 0.05)}>
-                <Link to={createPageUrl(tool.href)} className="block bg-white rounded-2xl p-5 border border-slate-200 h-full hover:shadow-md hover:border-violet-200 transition-all group">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: tool.color + "14" }}>
+                <Link to={createPageUrl(tool.href)} className="block bg-white rounded-2xl p-5 border border-slate-200 h-full hover:shadow-lg hover:border-slate-300 hover:-translate-y-0.5 transition-all group">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ background: tool.color + "14", border: `1px solid ${tool.color}20` }}>
                     <Icon className="w-5 h-5" style={{ color: tool.color }} />
                   </div>
-                  <h3 className="font-bold text-slate-900 text-sm mb-1.5">{tool.label}</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-3">{tool.desc}</p>
+                  <h3 className="font-bold text-slate-900 text-sm mb-2">{tool.label}</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed flex-1 mb-4">{tool.desc}</p>
                   <span className="inline-flex items-center gap-1 text-xs font-semibold" style={{ color: tool.color }}>
                     Open tool
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </Link>
               </motion.div>
