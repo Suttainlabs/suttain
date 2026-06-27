@@ -43,17 +43,6 @@ const modules = [
     status: 'operational',
   },
   {
-    id: 'api',
-    label: 'Research API',
-    route: 'APIPortal',
-    icon: Code2,
-    color: '#6B3FA0',
-    badge: 'Pro',
-    description: 'Developer-facing REST API with endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. JSON with confidence scores on every field.',
-    metrics: ['Python SDK', 'JavaScript SDK', 'Interactive Docs'],
-    status: 'operational',
-  },
-  {
     id: 'comparison',
     label: 'Chemical Comparison',
     route: 'ChemicalComparison',
