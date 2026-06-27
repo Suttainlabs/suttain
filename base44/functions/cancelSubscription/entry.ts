@@ -37,6 +37,7 @@ Deno.serve(async (req) => {
         month: 'long', day: 'numeric', year: 'numeric'
       });
       const firstName = (user.full_name || '').split(' ')[0] || 'there';
+      const planLabel = (user.subscription_plan || 'pro').charAt(0).toUpperCase() + (user.subscription_plan || 'pro').slice(1);
 
       await base44.asServiceRole.integrations.Core.SendEmail({
         to: user.email,
@@ -58,10 +59,10 @@ Deno.serve(async (req) => {
         <tr>
           <td style="background:#fff;padding:36px 40px;border-radius:0 0 12px 12px;border:1px solid #e2e8f0;border-top:none;">
             <p style="font-size:16px;color:#1e293b;">Hi ${firstName},</p>
-            <p style="color:#475569;font-size:15px;line-height:1.6;">We've received your cancellation request. Your subscription will not renew, and you will <strong>not be charged again</strong>.</p>
+            <p style="color:#475569;font-size:15px;line-height:1.6;">We've received your cancellation request. Your ${planLabel} subscription will not renew, and you will <strong>not be charged again</strong>.</p>
 
             <div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:20px 24px;margin:24px 0;text-align:center;">
-              <p style="margin:0 0 6px;font-weight:700;font-size:16px;color:#713f12;">You keep full Pro access until:</p>
+              <p style="margin:0 0 6px;font-weight:700;font-size:16px;color:#713f12;">You keep full ${planLabel} access until:</p>
               <p style="margin:0;font-size:22px;font-weight:800;color:#92400e;">${accessUntilFormatted}</p>
             </div>
 

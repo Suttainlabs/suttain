@@ -20,55 +20,44 @@ async function sendEmailViaResend(to, subject, html) {
 }
 
 const PLAN_DETAILS = {
+  starter_monthly: {
+    name: 'Suttain Starter (Monthly)', price: '$4.99/month', billing: 'monthly',
+    features: ['10 simulations per month', 'Full Structural Biology access', 'Unlimited formula generations', 'Unlimited product scans', 'Ingredient database access'],
+  },
+  starter_yearly: {
+    name: 'Suttain Starter (Yearly)', price: '$47.88/year', billing: 'yearly',
+    features: ['10 simulations per month', 'Full Structural Biology access', 'Unlimited formula generations', 'Unlimited product scans', 'Ingredient database access', 'Save 20% vs monthly billing'],
+  },
   pro_monthly: {
-    name: 'Suttain Pro (Monthly)',
-    price: '$19.00/month',
-    billing: 'monthly',
-    features: [
-      'Unlimited Chemical Simulations',
-      'Unlimited Formula Generation',
-      'Unlimited Quick Scans',
-      'AI Compliance Co-Pilot',
-      'Personalized Safety Alerts',
-      'Sustainability Scoring & Reports',
-      'Advanced Computational Simulations',
-      'Priority Support',
-      'Workspace & History (Unlimited)',
-    ]
+    name: 'Suttain Pro (Monthly)', price: '$49.99/month', billing: 'monthly',
+    features: ['Unlimited simulations (DFT, MD)', 'Research API access', 'Citation-ready exports', 'Full Structural Biology access', 'Priority support'],
   },
   pro_yearly: {
-    name: 'Suttain Pro (Yearly)',
-    price: '$190.00/year',
-    billing: 'yearly',
-    features: [
-      'Unlimited Chemical Simulations',
-      'Unlimited Formula Generation',
-      'Unlimited Quick Scans',
-      'AI Compliance Co-Pilot',
-      'Personalized Safety Alerts',
-      'Sustainability Scoring & Reports',
-      'Advanced Computational Simulations',
-      'Priority Support',
-      'Workspace & History (Unlimited)',
-      '2 months FREE vs monthly billing',
-    ]
+    name: 'Suttain Pro (Yearly)', price: '$479.90/year', billing: 'yearly',
+    features: ['Unlimited simulations (DFT, MD)', 'Research API access', 'Citation-ready exports', 'Full Structural Biology access', 'Priority support', 'Save 20% vs monthly billing'],
   },
-  pro_lifetime: {
-    name: 'Suttain Pro (Lifetime)',
-    price: '$4.99 one-time',
-    billing: 'lifetime',
-    features: [
-      'Lifetime access to all Pro features',
-      'Unlimited Chemical Simulations',
-      'Unlimited Formula Generation',
-      'Unlimited Quick Scans',
-      'AI Compliance Co-Pilot',
-      'Personalized Safety Alerts',
-      'Sustainability Scoring & Reports',
-      'Advanced Computational Simulations',
-      'Priority Support — Forever',
-    ]
-  }
+  academic_monthly: {
+    name: 'Suttain Academic (Monthly)', price: '$199.00/month', billing: 'monthly',
+    features: ['Up to 10 team seats', 'Priority compute queue', 'Lab workspace', 'API included', 'Everything in Pro'],
+  },
+  academic_yearly: {
+    name: 'Suttain Academic (Yearly)', price: '$1,910.00/year', billing: 'yearly',
+    features: ['Up to 10 team seats', 'Priority compute queue', 'Lab workspace', 'API included', 'Everything in Pro', 'Save 20% vs monthly billing'],
+  },
+  lifetime: {
+    name: 'Suttain Lifetime', price: '$999.99 one-time', billing: 'lifetime',
+    features: ['Lifetime access to all Pro features', 'Unlimited simulations (DFT, MD)', 'Research API access', 'Citation-ready exports', 'No recurring payments'],
+  },
+};
+
+// Reverse map: Stripe price ID → plan name
+const PRICE_ID_TO_PLAN = {
+  'price_1Tn2eSI9tsZ7WvXe3JMrHrYf': 'starter',
+  'price_1Tn2eSI9tsZ7WvXeVksFLuTl': 'starter',
+  'price_1Tn2eSI9tsZ7WvXeJuOqhhJa': 'pro',
+  'price_1Tn2eSI9tsZ7WvXePJt1xh7M': 'pro',
+  'price_1Tn2eSI9tsZ7WvXemMKTBrgC': 'academic',
+  'price_1Tn2eSI9tsZ7WvXePwoaGUvP': 'academic',
 };
 
 async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
@@ -160,7 +149,11 @@ Deno.serve(async (req) => {
 
         console.log('Checkout completed:', { userId, priceKey, customerEmail });
 
-        const plan = priceKey?.startsWith('enterprise') ? 'enterprise' : 'pro';
+        const plan = priceKey?.startsWith('starter') ? 'starter'
+          : priceKey?.startsWith('academic') ? 'academic'
+          : priceKey?.startsWith('lifetime') ? 'lifetime'
+          : priceKey?.startsWith('enterprise') ? 'enterprise'
+          : 'pro';
         const billing = priceKey?.includes('yearly') ? 'yearly' : priceKey?.includes('lifetime') ? 'lifetime' : 'monthly';
 
         // Fetch subscription period end if this is a recurring subscription
@@ -307,10 +300,14 @@ Deno.serve(async (req) => {
           break;
         }
 
-        // Determine billing interval from invoice line items
+        // Determine billing interval and plan from invoice line items
         let billing = 'monthly';
+        let plan = 'pro';
         const lineItem = invoice.lines?.data?.[0];
         if (lineItem?.plan?.interval === 'year') billing = 'yearly';
+        if (lineItem?.price?.id && PRICE_ID_TO_PLAN[lineItem.price.id]) {
+          plan = PRICE_ID_TO_PLAN[lineItem.price.id];
+        }
 
         let targetUserId = null;
 
@@ -342,14 +339,14 @@ Deno.serve(async (req) => {
         if (targetUserId) {
           try {
             await base44.asServiceRole.entities.User.update(targetUserId, {
-              subscription_plan: 'pro',
+              subscription_plan: plan,
               subscription_status: 'active',
               subscription_billing: billing,
               stripe_subscription_id: invoiceSubId,
               stripe_customer_id: invoice.customer,
               ...(invoicePeriodEnd && { subscription_end_date: invoicePeriodEnd }),
             });
-            console.log(`invoice.paid: confirmed pro/active for user ${targetUserId} (${billing})`);
+            console.log(`invoice.paid: confirmed ${plan}/active for user ${targetUserId} (${billing})`);
 
             // Notify admin via email
             const userName = invoice.customer_name || invoiceEmail || targetUserId;
