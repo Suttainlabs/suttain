@@ -47,11 +47,15 @@
     "log_date"
   ],
   "rls": {
+    "create": null,
     "read": {
-      "created_by": "{{user.email}}"
+      "created_by_id": "{{user.id}}"
     },
-    "write": {
-      "created_by": "{{user.email}}"
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
     }
   }
 }

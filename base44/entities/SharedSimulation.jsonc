@@ -59,18 +59,18 @@
   ],
   "rls": {
     "create": {
-      "created_by": "{{user.email}}"
+      "created_by_id": "{{user.id}}"
     },
     "read": {
       "$or": [
         {
-          "created_by": "{{user.email}}"
+          "created_by_id": "{{user.id}}"
         },
         {
-          "share_type": "public"
+          "data.share_type": "public"
         },
         {
-          "shared_with": {
+          "data.shared_with": {
             "$in": [
               "{{user.email}}"
             ]
@@ -86,7 +86,7 @@
     "update": {
       "$or": [
         {
-          "created_by": "{{user.email}}"
+          "created_by_id": "{{user.id}}"
         },
         {
           "user_condition": {
@@ -98,7 +98,7 @@
     "delete": {
       "$or": [
         {
-          "created_by": "{{user.email}}"
+          "created_by_id": "{{user.id}}"
         },
         {
           "user_condition": {

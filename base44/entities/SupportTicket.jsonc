@@ -87,11 +87,16 @@
     "description"
   ],
   "rls": {
-    "create": {},
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
     "read": {
       "$or": [
         {
           "data.customer_email": "{{user.email}}"
+        },
+        {
+          "created_by_id": "{{user.id}}"
         },
         {
           "user_condition": {

@@ -37,11 +37,21 @@
     "message"
   ],
   "rls": {
+    "create": null,
     "read": {
       "user_condition": {
         "role": "admin"
       }
     },
-    "write": {}
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
   }
 }

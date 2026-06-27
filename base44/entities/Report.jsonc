@@ -255,20 +255,21 @@
     "report_type"
   ],
   "rls": {
+    "create": null,
     "read": {
       "$or": [
         {
-          "created_by": "{{user.email}}"
+          "created_by_id": "{{user.id}}"
         },
         {
-          "shared_with": {
+          "data.shared_with": {
             "$in": [
               "{{user.email}}"
             ]
           }
         },
         {
-          "is_public": true
+          "data.is_public": true
         },
         {
           "user_condition": {
@@ -277,10 +278,22 @@
         }
       ]
     },
-    "write": {
+    "update": {
       "$or": [
         {
-          "created_by": "{{user.email}}"
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
         },
         {
           "user_condition": {
