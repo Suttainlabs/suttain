@@ -405,7 +405,7 @@ export default function Layout({ children, currentPageName }) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
-                    <span>Professional Tools</span>
+                    <span>Tools</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-72 p-2">
@@ -630,7 +630,7 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <div className="flex items-center gap-4">
                         <TestTube className="w-5 h-5" />
-                        Professional Tools
+                        Tools
                       </div>
                       <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isProductSuiteOpen ? 'rotate-180' : ''}`} />
                     </button>
