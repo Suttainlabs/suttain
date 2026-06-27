@@ -457,7 +457,7 @@ export default function Layout({ children, currentPageName }) {
                       : "text-slate-600 hover:bg-slate-100"
                   }`}>
                     <Terminal className="w-3.5 h-3.5" />
-                    <span>Enterprise API</span>
+                    <span>Business</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 p-2">
@@ -664,7 +664,7 @@ export default function Layout({ children, currentPageName }) {
                       }`}
                     >
                       <Terminal className="w-5 h-5" />
-                      Enterprise API
+                      Business
                     </Link>
                   </motion.div>
 
