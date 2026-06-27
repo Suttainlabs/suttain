@@ -3,307 +3,339 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Target, Eye, ArrowRight, Users, Zap, Cpu, Building2, Beaker, Sparkles, Smartphone, Microscope, CheckCircle, Rocket, Home, Droplets, Leaf, Database } from 'lucide-react';
 import SEOHead, { pageSEO } from '../components/shared/SEOHead';
+import {
+  ArrowRight,
+  Atom,
+  Beaker,
+  Cpu,
+  Database,
+  Microscope,
+  Code2,
+  FlaskConical,
+  Layers,
+  ShieldCheck,
+  Terminal,
+  Zap,
+  QrCode,
+  Droplets,
+  BookOpen,
+} from 'lucide-react';
 
-const IMAGES = {
-  lab: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/025e8ec13_laboratory-glassware-and-molecular-structure-sitti-2026-01-09-09-41-04-utc.jpg",
-  innovation: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688eaf737ea3b621021f8bac/76fc85d0c_a-woman-holds-the-skincare-jar-for-beauty-wellne-2026-01-07-02-20-26-utc.jpg"
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-80px' },
+  transition: { duration: 0.5 },
 };
 
 export default function AboutUsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20">
+    <div className="min-h-screen bg-[#0A0E17] text-slate-200 font-body antialiased">
       <SEOHead {...pageSEO.about} />
-      
-      {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 text-center bg-white relative overflow-hidden border-b border-slate-200">
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <img src={IMAGES.lab} alt="" className="w-full h-full object-cover" />
+
+      {/* ── Hero ───────────────────────────────────────────── */}
+      <section className="relative overflow-hidden border-b border-white/5">
+        {/* Ambient gradient glow */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[80rem] h-[40rem] bg-violet-600/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-[-30%] right-[-10%] w-[40rem] h-[40rem] bg-cyan-500/10 rounded-full blur-[120px]" />
         </div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative z-10 max-w-3xl mx-auto"
-        >
-          <Badge className="bg-violet-100 text-violet-700 border-violet-300 mb-6">
-            Our Story
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Powerful Tools for Everyone
-          </h1>
-          <p className="text-xl text-slate-600 leading-relaxed">
-            Suttain brings powerful tools and insights to everyone—making it easy for creators, teams, and businesses to create, test, and innovate with confidence.
-          </p>
-        </motion.div>
-      </section>
 
-      {/* Mission & Vision */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="space-y-6"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#02988C] to-[#09D2FF] rounded-xl flex items-center justify-center">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-slate-800">Our Mission</h2>
-            </div>
-            <p className="text-slate-600 leading-relaxed">
-              Empower individuals, startups, and enterprises with AI tools for creating, testing, and optimizing products—removing barriers to innovation while ensuring safety, compliance, and environmental responsibility.
-            </p>
+        {/* Grid overlay */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              'linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
+
+        <div className="relative z-10 max-w-5xl mx-auto px-6 py-32 md:py-40 text-center">
+          <motion.div {...fadeUp}>
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium tracking-wider uppercase border border-violet-400/30 bg-violet-500/10 text-violet-300">
+              <Atom className="w-3.5 h-3.5" />
+              Molecular Intelligence OS
+            </span>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="space-y-6"
+          <motion.h1
+            {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.05 }}
+            className="mt-8 text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white font-heading leading-[1.05]"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#9531F5] to-[#09D2FF] rounded-xl flex items-center justify-center">
-                <Eye className="w-6 h-6 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-slate-800">Our Vision</h2>
-            </div>
-            <p className="text-slate-600 leading-relaxed">
-              A world where powerful tools and safety insights are accessible to everyone—from DIY creators to Fortune 500 companies—accelerating innovation while protecting people and the planet.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+            The operating system for
+            <br />
+            <span className="bg-gradient-to-r from-violet-400 via-cyan-300 to-teal-300 bg-clip-text text-transparent">
+              molecular intelligence
+            </span>
+          </motion.h1>
 
-      {/* What We Offer */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white/70 relative overflow-hidden border-y border-slate-200">
-        <div className="max-w-6xl mx-auto relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
+          <motion.p
+            {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mt-8 text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed"
           >
-            <Badge className="bg-purple-100 text-purple-700 border-purple-300 mb-4">
-              Our Platform
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              A Complete Ecosystem for Innovation
-            </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              From quick safety checks to advanced research simulations—all in one platform for everyone.
-            </p>
-          </motion.div>
+            Suttain unifies chemical databases, computational simulation, and structural biology
+            into a single research portal — built for scientists who need to move from hypothesis
+            to insight without leaving the browser.
+          </motion.p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                num: '1',
-                title: 'Chemical Safety Simulator',
-                desc: 'Test interactions and predict reactions before mixing. Get instant hazard profiles, SDS analysis, and AI risk scoring.',
-                icon: Beaker
-              },
-              {
-                num: '2',
-                title: 'AI Formula Generator',
-                desc: 'Create custom skincare, cleaning, and specialty formulas with safety scoring, compliance flags, and sustainability ratings.',
-                icon: Sparkles
-              },
-              {
-                num: '3',
-                title: 'SuttainScan',
-                desc: 'Scan any product barcode for a full ingredient breakdown, toxicity profile, and eco-impact score.',
-                icon: Smartphone
-              },
-              {
-                num: '4',
-                title: 'Hydration Intelligence',
-                desc: 'Track daily water intake with biological food-linked adjustments, smart reminders, and progress analytics.',
-                icon: Droplets
-              },
-              {
-                num: '5',
-                title: 'Computational Simulations',
-                desc: 'Run DFT, molecular dynamics, drug discovery, protein modeling, and quantum chemistry scripts without a lab.',
-                icon: Microscope
-              },
-              {
-                num: '6',
-                title: 'Carbon & Sustainability Reporting',
-                desc: 'Simulate carbon tax scenarios, model decarbonization ROI, and generate exportable sustainability reports.',
-                icon: Leaf
-              },
-              {
-                num: '7',
-                title: 'Ingredient Database',
-                desc: 'Explore 250k+ chemicals by toxicity, INCI name, eco-impact, regulatory status, CAS number, and origin.',
-                icon: Database
-              },
-              {
-                num: '8',
-                title: 'Enterprise API',
-                desc: 'Integrate Suttain into enterprise systems for automated chemical analysis, compliance checks, and reporting at scale.',
-                icon: Rocket
-              }
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.08 }}
-              >
-                <Card className="h-full hover:shadow-lg transition-all border-slate-200">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 flex-shrink-0 text-violet-600">
-                        <item.icon className="w-full h-full" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-slate-900 mb-2">{item.title}</h3>
-                        <p className="text-sm text-slate-600">{item.desc}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mt-12 flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <Button asChild size="lg" className="bg-violet-600 hover:bg-violet-500 text-white border-0">
+              <Link to="/APIPortal">
+                Explore the API <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+            >
+              <Link to="/research">Enter the Research Portal</Link>
+            </Button>
+          </motion.div>
         </div>
       </section>
 
-      {/* Why Suttain */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-             Why Choose Suttain
-            </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-             Reliable intelligence meets easy-to-use design.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Users,
-                title: 'For Everyone',
-                desc: 'Hobbyists, startups, researchers, and enterprises all benefit from the same powerful platform.'
-              },
-              {
-                icon: Cpu,
-                title: 'Advanced Tools',
-                desc: 'Access research-grade simulations and modeling previously limited to large institutions.'
-              },
-              {
-                icon: Zap,
-                title: 'Fast & Reliable',
-                desc: 'Get accurate analysis in seconds. AI-powered insights you can trust.'
-              }
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <Card className="h-full hover:shadow-lg transition-all border-t-4 border-t-violet-500">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-violet-100 rounded-lg flex items-center justify-center mb-4">
-                      <item.icon className="w-6 h-6 text-violet-600" />
-                    </div>
-                    <h3 className="font-bold text-lg text-slate-900 mb-2">{item.title}</h3>
-                    <p className="text-slate-600 text-sm">{item.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* For Different Users */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 border-y border-slate-200">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Built for Different Needs
+      {/* ── Platform Architecture (single-column narrative) ── */}
+      <section className="relative border-b border-white/5">
+        <div className="max-w-3xl mx-auto px-6 py-24 md:py-32">
+          <motion.div {...fadeUp}>
+            <span className="text-xs font-medium tracking-wider uppercase text-violet-400">
+              Platform Architecture
+            </span>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold text-white font-heading leading-tight">
+              One platform. Two portals. A complete molecular toolkit.
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'DIY Creators',
-                desc: 'Make safe skincare, soaps, and cleaners at home with instant safety analysis.',
-                color: 'from-teal-500 to-cyan-500'
-              },
-              {
-                title: 'Experts & Teams',
-                desc: 'Run advanced analysis and detailed simulations without expensive infrastructure.',
-                color: 'from-purple-500 to-violet-500'
-              },
-              {
-                title: 'Enterprises',
-                desc: 'Integrate Suttain API into your systems for automated analysis at scale.',
-                color: 'from-blue-500 to-cyan-500'
-              }
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="text-center"
-              >
-                <div className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center`}>
-                  {idx === 0 ? <Home className="w-10 h-10 text-white" /> : idx === 1 ? <Microscope className="w-10 h-10 text-white" /> : <Building2 className="w-10 h-10 text-white" />}
+          <motion.p
+            {...fadeUp}
+            transition={{ delay: 0.05 }}
+            className="mt-8 text-lg text-slate-400 leading-relaxed"
+          >
+            Suttain has evolved from a consumer safety tool into a professional-grade research
+            environment. The same intelligence that powers everyday product scanning now drives
+            high-fidelity computational chemistry, protein structure analysis, and enterprise-scale
+            API access — all from a unified data layer.
+          </motion.p>
+
+          <motion.div
+            {...fadeUp}
+            transition={{ delay: 0.1 }}
+            className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4"
+          >
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-violet-500/15 flex items-center justify-center">
+                  <Microscope className="w-5 h-5 text-violet-300" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-slate-600">{item.desc}</p>
+                <h3 className="text-lg font-semibold text-white">Research Portal</h3>
+              </div>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Molecular intelligence, computational simulation, structural biology, and
+                enterprise API access for professional chemists and scientists.
+              </p>
+              <Link
+                to="/research"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-violet-300 hover:text-violet-200 transition-colors"
+              >
+                Enter portal <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/15 flex items-center justify-center">
+                  <Beaker className="w-5 h-5 text-teal-300" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Consumer Toolset</h3>
+              </div>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Chemical safety simulation, formula generation, product scanning, and hydration
+                intelligence — accessible safety tools for everyday use.
+              </p>
+              <Link
+                to={createPageUrl('Simulator')}
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-teal-300 hover:text-teal-200 transition-colors"
+              >
+                Open tools <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Feature Deep-Dive (3-column grid) ──────────────── */}
+      <section className="relative border-b border-white/5 bg-white/[0.015]">
+        <div className="max-w-6xl mx-auto px-6 py-24 md:py-32">
+          <motion.div {...fadeUp} className="max-w-2xl">
+            <span className="text-xs font-medium tracking-wider uppercase text-cyan-400">
+              Capabilities
+            </span>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold text-white font-heading leading-tight">
+              Research-grade tools, natively integrated
+            </h2>
+            <p className="mt-4 text-lg text-slate-400 leading-relaxed">
+              Every module shares the same chemical knowledge graph — so a structure queried in the
+              explorer flows directly into a simulation, a compliance check, or an API response.
+            </p>
+          </motion.div>
+
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/10">
+            {FEATURES.map((feature, idx) => (
+              <motion.div
+                key={feature.title}
+                {...fadeUp}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                className="bg-[#0A0E17] p-8 hover:bg-white/[0.03] transition-colors duration-300"
+              >
+                <div className="w-11 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-5">
+                  <feature.icon className="w-5 h-5 text-violet-300" />
+                </div>
+                <h3 className="text-base font-semibold text-white mb-2">{feature.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-          >
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Join the Innovation Revolution</h2>
-            <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
-              Start with our free tier or explore enterprise solutions for your team.
+      {/* ── Data Infrastructure ─────────────────────────────── */}
+      <section className="relative border-b border-white/5">
+        <div className="max-w-5xl mx-auto px-6 py-24 md:py-32">
+          <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto">
+            <span className="text-xs font-medium tracking-wider uppercase text-teal-400">
+              Data Infrastructure
+            </span>
+            <h2 className="mt-4 text-3xl md:text-4xl font-bold text-white font-heading">
+              Grounded in trusted scientific sources
+            </h2>
+            <p className="mt-4 text-lg text-slate-400 leading-relaxed">
+              Suttain integrates authoritative chemical and biological databases so your results
+              are reproducible and citation-ready.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-gradient-to-r from-[#02988C] to-[#09D2FF] text-white hover:shadow-lg hover:opacity-90 transition-all">
-                <Link to={createPageUrl('Simulator')}>
-                  Get Started Free <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link to={createPageUrl('Careers')}>
-                  Join Our Team
-                </Link>
-              </Button>
-            </div>
           </motion.div>
+
+          <motion.div
+            {...fadeUp}
+            transition={{ delay: 0.1 }}
+            className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4"
+          >
+            {DATA_SOURCES.map((source) => (
+              <div
+                key={source.name}
+                className="rounded-xl border border-white/10 bg-white/[0.02] px-5 py-6 text-center"
+              >
+                <p className="text-sm font-semibold text-white tracking-wide">{source.name}</p>
+                <p className="mt-1 text-xs text-slate-500">{source.desc}</p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── CTA ─────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[30rem] bg-violet-600/10 rounded-full blur-[120px]" />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-6 py-24 md:py-32 text-center">
+          <motion.div {...fadeUp}>
+            <h2 className="text-3xl md:text-5xl font-bold text-white font-heading leading-tight">
+              Build with molecular intelligence
+            </h2>
+            <p className="mt-6 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              Integrate Suttain into your research pipeline with REST endpoints and SDKs, or
+              request a guided demo for your team.
+            </p>
+          </motion.div>
+
+          <motion.div
+            {...fadeUp}
+            transition={{ delay: 0.1 }}
+            className="mt-12 flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <Button asChild size="lg" className="bg-violet-600 hover:bg-violet-500 text-white border-0">
+              <Link to="/APIPortal">
+                <Terminal className="w-4 h-4 mr-2" />
+                View API Documentation
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+            >
+              <Link to={createPageUrl('BookADemo')}>Request a Demo</Link>
+            </Button>
+          </motion.div>
+
+          <motion.p
+            {...fadeUp}
+            transition={{ delay: 0.15 }}
+            className="mt-10 text-sm text-slate-500"
+          >
+            Looking for everyday safety tools?{' '}
+            <Link
+              to={createPageUrl('Simulator')}
+              className="text-teal-400 hover:text-teal-300 underline-offset-4 hover:underline"
+            >
+              Access the consumer toolset
+            </Link>
+            .
+          </motion.p>
         </div>
       </section>
     </div>
   );
 }
+
+const FEATURES = [
+  {
+    icon: Atom,
+    title: 'Molecular Intelligence',
+    desc: 'Query any compound by name, SMILES, InChI, or CAS. Get hazard classification, toxicity, and regulatory status in one call.',
+  },
+  {
+    icon: Cpu,
+    title: 'Computational Simulation',
+    desc: 'Run DFT, molecular dynamics, and quantum chemistry workflows with configurable forcefields and solvation models.',
+  },
+  {
+    icon: Microscope,
+    title: 'Structural Biology',
+    desc: 'AlphaFold-integrated protein structure prediction, mutation pathogenicity, and binding risk assessment.',
+  },
+  {
+    icon: Database,
+    title: 'Chemical Knowledge Graph',
+    desc: 'A unified data layer spanning PubChem, ChEMBL, and EPA CompTox — shared across every module.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Compliance & SDS',
+    desc: 'Automated GHS classification, regulatory checks, and Safety Data Sheet extraction and analysis.',
+  },
+  {
+    icon: Code2,
+    title: 'Enterprise API',
+    desc: 'REST endpoints with Python, JavaScript, and R SDKs for integrating molecular intelligence at scale.',
+  },
+];
+
+const DATA_SOURCES = [
+  { name: 'PubChem', desc: 'Compound data' },
+  { name: 'ChEMBL', desc: 'Bioactivity' },
+  { name: 'EPA CompTox', desc: 'Toxicology' },
+  { name: 'RCSB PDB', desc: '3D structures' },
+];
