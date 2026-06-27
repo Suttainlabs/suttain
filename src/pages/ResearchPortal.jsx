@@ -32,17 +32,6 @@ const modules = [
     status: 'operational',
   },
   {
-    id: 'formula',
-    label: 'Formula Intelligence',
-    route: 'generator',
-    icon: FlaskConical,
-    color: '#007850',
-    badge: 'Live',
-    description: 'Generate complete formulas from a plain-language goal. INCI names, percentage ranges, pH guidance, preservation systems, and estimated shelf life.',
-    metrics: ['Safety Score', 'Sustainability Score', 'Compliance Check'],
-    status: 'operational',
-  },
-  {
     id: 'comparison',
     label: 'Chemical Comparison',
     route: 'ChemicalComparison',
