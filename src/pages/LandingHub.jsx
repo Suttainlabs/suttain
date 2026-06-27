@@ -145,7 +145,7 @@ export default function LandingHub() {
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
-            <Link to={createPageUrl("MolecularIntelligence")}>
+            <Link to={createPageUrl("ResearchPortal")}>
               <Button variant="outline" size="lg" className="w-full sm:w-auto border-violet-300 text-violet-600 hover:bg-violet-50">
                 <Microscope className="w-4 h-4 mr-2" />
                 Explore Research Tools
