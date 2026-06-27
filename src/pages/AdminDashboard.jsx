@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import AuthContext from '../components/auth/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, Lock } from 'lucide-react';
-import AdminLayout from '../components/admin/AdminLayout';
+import AdminCommandCenter from '../components/admin/AdminCommandCenter';
 
 export default function AdminDashboard() {
   const { user } = useContext(AuthContext);
@@ -43,7 +43,5 @@ export default function AdminDashboard() {
     );
   }
 
-  return (
-      <AdminLayout />
-  );
+  return <AdminCommandCenter />;
 }
