@@ -63,7 +63,7 @@ const StructuralBiology = lazy(() => import('./pages/StructuralBiology'));
 const EnterpriseAPI = lazy(() => import('./pages/EnterpriseAPI'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
-const ResearchLayout = lazy(() => import('./components/research/ResearchLayout'));
+const LandingHub = lazy(() => import('./pages/LandingHub'));
 // Import auth pages directly (not from pagesConfig which may not have them)
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -90,16 +90,16 @@ const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
   const location = useLocation();
 
-  // Only block on loading for a short window; never block research/public pages
-  const isResearchRoute = location.pathname.startsWith('/research')
+  // Only block on loading for a short window; never block public pages
+  const isPublicRoute = location.pathname === '/'
     || location.pathname === '/enterprise'
     || location.pathname === '/EnterpriseAPI'
-    || location.pathname === '/ResearchLanding';
+    || location.pathname === '/APIPortal';
 
   // Check if on auth routes — never redirect these
   const isAuthRoute = ['/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname);
 
-  if (!isResearchRoute && !isAuthRoute && (isLoadingPublicSettings || isLoadingAuth)) {
+  if (!isPublicRoute && !isAuthRoute && (isLoadingPublicSettings || isLoadingAuth)) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
@@ -123,8 +123,8 @@ const AuthenticatedApp = () => {
     <AnimatePresence mode="wait">
     <Routes location={location} key={location.pathname}>
       <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <PageTransition><MainPage /></PageTransition>
+        <LayoutWrapper currentPageName="Home">
+          <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><LandingHub /></PageTransition></Suspense>
         </LayoutWrapper>
       } />
       {Object.entries(Pages).map(([path, Page]) => (
@@ -157,25 +157,39 @@ const AuthenticatedApp = () => {
         })}
       </Route>
 
-      {/* ── Research Portal layout group — dark-themed, no consumer Layout ── */}
-      <Route element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17]"/>}><ResearchLayout /></Suspense>}>
-        <Route path="/research" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchLanding /></Suspense>} />
-        <Route path="/ResearchLanding" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchLanding /></Suspense>} />
-        <Route path="/enterprise" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><EnterpriseAPI /></Suspense>} />
-        <Route path="/EnterpriseAPI" element={<Suspense fallback={<div className="fixed inset-0 bg-[#0A0E17] flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><EnterpriseAPI /></Suspense>} />
-        <Route path="/MolecularIntelligence" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><MolecularIntelligence /></Suspense>} />
-        <Route path="/MoleculeExplorer" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><MoleculeExplorer /></Suspense>} />
-        <Route path="/ChemicalDashboard" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ChemicalDashboard /></Suspense>} />
-        <Route path="/InventoryDashboard" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><InventoryDashboard /></Suspense>} />
-        <Route path="/ResearchPortal" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchPortal /></Suspense>} />
-        <Route path="/ResearchDashboard" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ResearchDashboard /></Suspense>} />
-        <Route path="/APIPortal" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><APIPortal /></Suspense>} />
-        <Route path="/ChemicalComparison" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ChemicalComparison /></Suspense>} />
-        <Route path="/SDSAnalyzer" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><SDSAnalyzer /></Suspense>} />
-        <Route path="/ComputationalSimulation" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ComputationalSimulation /></Suspense>} />
-        <Route path="/SimulationEngine" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><SimulationEngine /></Suspense>} />
-        <Route path="/ChemicalLibrary" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><ChemicalLibrary /></Suspense>} />
-        <Route path="/StructuralBiology" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><StructuralBiology /></Suspense>} />
+      {/* ── Redirects for deprecated routes ── */}
+      <Route path="/research" element={<Navigate to="/" replace />} />
+      <Route path="/ResearchLanding" element={<Navigate to="/" replace />} />
+
+      {/* ── Public marketing pages (no login required) ── */}
+      <Route path="/enterprise" element={<LayoutWrapper currentPageName="EnterpriseAPI"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><EnterpriseAPI /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/EnterpriseAPI" element={<LayoutWrapper currentPageName="EnterpriseAPI"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><EnterpriseAPI /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/APIPortal" element={<LayoutWrapper currentPageName="APIPortal"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><APIPortal /></PageTransition></Suspense></LayoutWrapper>} />
+
+      {/* ── Protected Tools (consumer + research — require login) ── */}
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        {['Simulator', 'generator', 'BarcodeScanner', 'HydrationHome', 'HydrationIntelligence', 'HydrationReminders', 'HydrationProgress',
+          'MolecularIntelligence', 'MoleculeExplorer', 'ChemicalDashboard', 'InventoryDashboard',
+          'ResearchPortal', 'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
+          'ComputationalSimulation', 'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology'
+        ].map(path => {
+          const Page = Pages[path];
+          if (!Page) {
+            const lazyMap = {
+              MolecularIntelligence, MoleculeExplorer, ChemicalDashboard, InventoryDashboard,
+              ResearchPortal, ResearchDashboard, ChemicalComparison, SDSAnalyzer,
+              ComputationalSimulation, SimulationEngine, ChemicalLibrary, StructuralBiology,
+              Simulator: Pages['Simulator'], generator: Pages['generator'],
+              BarcodeScanner: Pages['BarcodeScanner'],
+              HydrationHome: Pages['HydrationHome'], HydrationIntelligence: Pages['HydrationIntelligence'],
+              HydrationReminders: Pages['HydrationReminders'], HydrationProgress: Pages['HydrationProgress'],
+            };
+            const LazyPage = lazyMap[path];
+            if (!LazyPage) return null;
+            return <Route key={path} path={`/${path}`} element={<LayoutWrapper currentPageName={path}><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><LazyPage /></PageTransition></Suspense></LayoutWrapper>} />;
+          }
+          return <Route key={path} path={`/${path}`} element={<LayoutWrapper currentPageName={path}><PageTransition><Page /></PageTransition></LayoutWrapper>} />;
+        })}
       </Route>
       <Route path="/BatchSimulation" element={<LayoutWrapper currentPageName="BatchSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><BatchSimulation /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationComparison" element={<LayoutWrapper currentPageName="SimulationComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationComparison /></PageTransition></Suspense></LayoutWrapper>} />
@@ -198,7 +212,6 @@ const AuthenticatedApp = () => {
       <Route path="/SimulationProductivity" element={<LayoutWrapper currentPageName="SimulationProductivity"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-fuchsia-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationProductivity /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationSandbox" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-950 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><SimulationSandbox /></Suspense>} />
       <Route path="/NutriScan" element={<LayoutWrapper currentPageName="NutriScan"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><NutriScan /></PageTransition></Suspense></LayoutWrapper>} />
-      {/* SDSAnalyzer is now under ResearchLayout group above */}
       <Route path="/Dashboard" element={<LayoutWrapper currentPageName="Dashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><Dashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaBuilder" element={<LayoutWrapper currentPageName="FormulaBuilder"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaBuilder /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaResults" element={<LayoutWrapper currentPageName="FormulaResults"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaResults /></PageTransition></Suspense></LayoutWrapper>} />
@@ -218,9 +231,6 @@ const AuthenticatedApp = () => {
       <Route path="/HydrationReminders" element={<LayoutWrapper currentPageName="HydrationReminders"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationReminders /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/HydrationProgress" element={<LayoutWrapper currentPageName="HydrationProgress"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationProgress /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BillingDashboard" element={<LayoutWrapper currentPageName="BillingDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BillingDashboard /></PageTransition></Suspense></LayoutWrapper>} />
-      {/* MoleculeExplorer, ChemicalDashboard, MolecularIntelligence, ResearchPortal, ResearchDashboard,
-          APIPortal, ChemicalComparison, research, ResearchLanding, enterprise, EnterpriseAPI, ChemicalLibrary
-          are all now under the ResearchLayout group above */}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>

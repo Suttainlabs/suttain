@@ -83,6 +83,7 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProductSuiteOpen, setIsProductSuiteOpen] = useState(false); // Renamed and combined
+  const [isResearchSuiteOpen, setIsResearchSuiteOpen] = useState(false);
   const [isHelpMenuOpen, setIsHelpMenuConsistency] = useState(false);
   const [isCompanyMenuOpen, setIsCompanyMenuOpen] = useState(false); // New state for Company menu
   // Removed isPremiumOpen and isProductOpen
@@ -123,15 +124,14 @@ export default function Layout({ children, currentPageName }) {
       setUser(currentUser);
       setCurrentGreeting(getGreetingText(currentUser));
 
-      // Returning researcher — redirect straight to research portal (skip consumer layout)
+      // Returning researcher — redirect straight to research dashboard
       if (currentUser && currentUser.first_login === false && currentUser.profile_type === 'researcher') {
-        const isOnResearchPage = window.location.pathname.startsWith('/research')
-          || window.location.pathname === '/enterprise' || window.location.pathname === '/EnterpriseAPI'
+        const isOnResearchPage = window.location.pathname === '/enterprise' || window.location.pathname === '/EnterpriseAPI'
           || ['/MolecularIntelligence', '/MoleculeExplorer', '/ChemicalDashboard', '/ResearchPortal',
               '/ResearchDashboard', '/APIPortal', '/ChemicalComparison', '/SDSAnalyzer',
               '/ComputationalSimulation', '/SimulationEngine', '/ChemicalLibrary'].includes(window.location.pathname);
         if (!isOnResearchPage) {
-          navigate('/research');
+          navigate(createPageUrl('ResearchDashboard'));
         }
       }
 
@@ -233,9 +233,9 @@ export default function Layout({ children, currentPageName }) {
     const currentUser = await User.me().catch(() => null);
     if (currentUser) {
       setUser(currentUser);
-      // Route returning researchers back to their portal
+      // Route returning researchers to their research dashboard
       if (currentUser.profile_type === 'researcher') {
-        navigate('/research');
+        navigate(createPageUrl('ResearchDashboard'));
       }
     }
   };
@@ -276,9 +276,18 @@ export default function Layout({ children, currentPageName }) {
     { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive" },
     { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments" },
   ];
-  // Research tools are exclusively accessed via the Research portal navigation — not listed here.
+
+  const researchToolItems = [
+    { href: "MolecularIntelligence", label: "Molecular Intelligence", icon: Atom, description: "Query compounds for hazard, toxicity & regulatory data" },
+    { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization" },
+    { href: "MoleculeExplorer", label: "Molecule Explorer", icon: Microscope, description: "Browse & visualize 130M+ chemical compounds in 3D" },
+    { href: "ResearchDashboard", label: "Research Dashboard", icon: BarChart2, description: "Track projects, saved compounds & simulation history" },
+    { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets" },
+    { href: "APIPortal", label: "Research API", icon: Code2, description: "REST endpoints for compound lookup & hazard scoring" },
+  ];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
+  const isResearchToolsActive = researchToolItems.some(tool => location.pathname === createPageUrl(tool.href));
 
 
   const getLinkClasses = (href) => {
@@ -295,16 +304,14 @@ export default function Layout({ children, currentPageName }) {
   const isCompanyMenuActive = companyMenuItems.some(item => location.pathname === createPageUrl(item.href));
   const isHelpToolActive = helpMenuItems.some(item => location.pathname === createPageUrl(item.href));
 
-  const isResearchActive = location.pathname === '/research' || location.pathname === '/ResearchLanding'
-    || location.pathname === createPageUrl("MolecularIntelligence")
-    || location.pathname === createPageUrl("ComputationalSimulation")
-    || location.pathname === createPageUrl("CarbonTaxSimulator")
-    || location.pathname === createPageUrl("ResearchDashboard")
-    || location.pathname === createPageUrl("MoleculeExplorer")
+  const isResearchActive = isResearchToolsActive
     || location.pathname === createPageUrl("ChemicalComparison")
-    || location.pathname === createPageUrl("SDSAnalyzer")
     || location.pathname === createPageUrl("SimulationEngine")
-    || location.pathname === createPageUrl("ComparativeImpactReport");
+    || location.pathname === createPageUrl("ChemicalLibrary")
+    || location.pathname === createPageUrl("ChemicalDashboard")
+    || location.pathname === createPageUrl("InventoryDashboard")
+    || location.pathname === createPageUrl("StructuralBiology")
+    || location.pathname === createPageUrl("ResearchPortal");
 
   const isEnterpriseActive = location.pathname === '/enterprise' || location.pathname === '/EnterpriseAPI';
 
@@ -414,17 +421,40 @@ export default function Layout({ children, currentPageName }) {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Research — special pill button */}
-              <Link
-                to="/research"
-                className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all border ${
-                  isResearchActive
-                    ? "bg-violet-600 text-white border-violet-600"
-                    : "border-violet-500 text-violet-600 hover:bg-violet-600 hover:text-white"
-                }`}
-              >
-                Research
-              </Link>
+              {/* Research dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    isResearchActive
+                      ? "bg-violet-100 text-violet-600"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}>
+                    <span>Research</span>
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-72 p-2">
+                  <DropdownMenuLabel className="text-xs font-bold uppercase tracking-widest text-slate-400 px-2 py-1.5">Research Tools</DropdownMenuLabel>
+                  {researchToolItems.map((item) => (
+                    <DropdownMenuItem key={item.href} asChild>
+                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 px-2 py-2 rounded-lg">
+                        <item.icon className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#6B3FA0" }} />
+                        <div>
+                          <span className="text-sm font-medium text-slate-700 block">{item.label}</span>
+                          <span className="text-xs text-slate-400">{item.description}</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("EnterpriseAPI")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
+                      <Terminal className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
+                      <span className="text-sm font-medium text-slate-700">Enterprise API</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </nav>
 
             {/* Right side: auth */}
@@ -604,18 +634,41 @@ export default function Layout({ children, currentPageName }) {
                     </AnimatePresence>
                   </motion.div>
 
-                  {/* Research Link - Mobile */}
+                  {/* Research Tools Collapsible - Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
-                    <Link
-                      to="/research"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        isResearchActive ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
+                    <button
+                      onClick={() => setIsResearchSuiteOpen(!isResearchSuiteOpen)}
+                      className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-violet-50 ${
+                        isResearchToolsActive ? 'bg-violet-100' : ''
                       }`}
                     >
-                      <Microscope className="w-5 h-5" />
-                      Research
-                    </Link>
+                      <div className="flex items-center gap-4">
+                        <Microscope className="w-5 h-5" />
+                        Research Tools
+                      </div>
+                      <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isResearchSuiteOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                      {isResearchSuiteOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                          className="pl-4 pt-1 pb-1 overflow-hidden"
+                        >
+                          {researchToolItems.map(item => (
+                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
+                              className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
+                                location.pathname === createPageUrl(item.href) ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
+                              }`}>
+                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
+                              <span>{item.label}</span>
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </motion.div>
 
 
@@ -765,7 +818,7 @@ export default function Layout({ children, currentPageName }) {
               <ul className="space-y-1.5 text-sm">
                 <li><Link to={createPageUrl('Simulator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
                 <li><Link to={createPageUrl('generator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
-                <li><Link to="/research" className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
+                <li><Link to={createPageUrl("ResearchDashboard")} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
                 <li><Link to="/enterprise" className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
                 <li><Link to={createPageUrl('AboutUs')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
