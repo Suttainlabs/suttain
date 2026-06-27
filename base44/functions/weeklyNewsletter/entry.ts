@@ -3,32 +3,34 @@ import { Resend } from 'npm:resend@2.0.0';
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
-const WEEKLY_UPDATES = [
-  'Ingredient database now covers 130 million+ chemicals — the most comprehensive chemical library on Suttain to date',
-  'Launched a new tool: Carbon Tax & Decarbonization Simulator — model regulatory carbon costs and green ROI for your formulas',
-  'Computational Simulation Suite upgraded with improved DFT, Molecular Dynamics, and protein docking workflows',
-  'Users can now request a custom-built platform at Suttain — enterprise teams can contact us to discuss bespoke solutions',
-  'Barcode scanner upgraded with faster recognition and expanded product database coverage',
-];
-
 const BLOG_URL = 'https://suttain.com/Blog';
 
-function getWeekNumber(d) {
-  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}
+function getMonthlyNewsletterHtml(firstName, updates, monthLabel) {
+  const updatesHtml = updates.length > 0
+    ? updates.map(u => `
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:14px;">
+                <tr>
+                  <td width="28" valign="top" style="padding-top:2px;">
+                    <div style="width:22px;height:22px;background:#00B478;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                      <span style="color:#fff;font-size:13px;font-weight:700;line-height:22px;display:block;text-align:center;">&#10003;</span>
+                    </div>
+                  </td>
+                  <td style="padding-left:10px;">
+                    <p style="color:#00281E;font-size:15px;font-weight:600;margin:0 0 4px;">${u.title}</p>
+                    <p style="color:#464646;font-size:14px;line-height:1.6;margin:0;">${u.description}</p>
+                    ${u.url ? `<a href="${u.url}" style="color:#007850;font-size:13px;font-weight:600;text-decoration:none;margin-top:4px;display:inline-block;">Learn more &rarr;</a>` : ''}
+                  </td>
+                </tr>
+              </table>`).join('')
+    : `<p style="color:#464646;font-size:14px;line-height:1.6;margin:0;">We are working behind the scenes on new capabilities. Stay tuned for exciting updates next month.</p>`;
 
-function getWeeklyNewsletterHtml(firstName, updates) {
-  const week = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Suttain Weekly Update</title>
+  <title>Suttain Monthly Update</title>
 </head>
 <body style="margin:0;padding:0;background:#EDF7F2;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#EDF7F2;padding:32px 16px;">
@@ -39,8 +41,8 @@ function getWeeklyNewsletterHtml(firstName, updates) {
           <tr>
             <td style="background:linear-gradient(135deg,#007850 0%,#00A8C8 100%);padding:36px 32px;text-align:center;">
               <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" height="48" style="margin-bottom:16px;display:block;margin-left:auto;margin-right:auto;background:#ffffff;padding:8px 16px;border-radius:10px;" />
-              <h1 style="color:#ffffff;margin:0;font-size:26px;font-weight:700;letter-spacing:-0.5px;">Weekly Update</h1>
-              <p style="color:rgba(255,255,255,0.80);margin:8px 0 0;font-size:14px;">${week}</p>
+              <h1 style="color:#ffffff;margin:0;font-size:26px;font-weight:700;letter-spacing:-0.5px;">Monthly Update</h1>
+              <p style="color:rgba(255,255,255,0.80);margin:8px 0 0;font-size:14px;">${monthLabel}</p>
             </td>
           </tr>
 
@@ -49,7 +51,7 @@ function getWeeklyNewsletterHtml(firstName, updates) {
             <td style="padding:32px 32px 16px;">
               <p style="color:#00281E;font-size:16px;margin:0 0 8px;font-weight:600;">Hi ${firstName},</p>
               <p style="color:#464646;font-size:15px;line-height:1.7;margin:0;">
-                Here is a look at what has been updated and improved on Suttain this week. We are constantly working to make your formulation and chemical safety experience better.
+                Here is a look at the new features, tools, and improvements we shipped on Suttain this month. We are constantly working to make your formulation and chemical safety experience better.
               </p>
             </td>
           </tr>
@@ -57,21 +59,8 @@ function getWeeklyNewsletterHtml(firstName, updates) {
           <!-- Updates -->
           <tr>
             <td style="padding:16px 32px;">
-              <h2 style="color:#00281E;font-size:17px;font-weight:700;margin:0 0 16px;border-bottom:2px solid #D9EDE5;padding-bottom:10px;">What Is New This Week</h2>
-              ${updates.map(u => `
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
-                <tr>
-                  <td width="28" valign="top" style="padding-top:2px;">
-                    <div style="width:22px;height:22px;background:#00B478;border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                      <span style="color:#fff;font-size:13px;font-weight:700;line-height:22px;display:block;text-align:center;">&#10003;</span>
-                    </div>
-                  </td>
-                  <td style="padding-left:10px;">
-                    <p style="color:#464646;font-size:14px;line-height:1.6;margin:0;">${u}</p>
-                  </td>
-                </tr>
-              </table>
-              `).join('')}
+              <h2 style="color:#00281E;font-size:17px;font-weight:700;margin:0 0 16px;border-bottom:2px solid #D9EDE5;padding-bottom:10px;">What Is New This Month</h2>
+              ${updatesHtml}
             </td>
           </tr>
 
@@ -154,25 +143,42 @@ Deno.serve(async (req) => {
 
     console.log(`Total users fetched: ${users.length}`);
 
-    const updates = WEEKLY_UPDATES;
+    // Fetch real-time platform updates from the last 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const cutoffIso = thirtyDaysAgo.toISOString();
+
+    let updates = [];
+    try {
+      const allUpdates = await base44.asServiceRole.entities.PlatformUpdate.list('-created_date', 200);
+      updates = (allUpdates || [])
+        .filter(u => u.is_published !== false && u.created_date && new Date(u.created_date) >= new Date(cutoffIso))
+        .map(u => ({ title: u.title, description: u.description, url: u.url || '' }));
+    } catch (err) {
+      console.error('Failed to fetch PlatformUpdate records:', err.message);
+    }
+
+    console.log(`Platform updates found (last 30 days): ${updates.length}`);
+
     let sent = 0;
     let failed = 0;
     let skipped = 0;
 
-    // Calculate the current week identifier (ISO week year + week number)
-    const weekNum = getWeekNumber(new Date());
-    const weekKey = `${new Date().getFullYear()}-W${weekNum}`;
+    // Calculate the current month identifier for deduplication
+    const now = new Date();
+    const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const monthLabel = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
     for (const user of users) {
       if (!user.email) continue;
 
-      // Deduplicate: check if we already sent this week's newsletter to this user
+      // Deduplicate: check if we already sent this month's newsletter to this user
       const existing = await base44.asServiceRole.entities.Notification.filter(
         { target_user: user.email, type: 'feature' },
         '-created_date',
         5
       );
-      const alreadySent = existing.find(n => n.metadata?.weekly_newsletter === true && n.metadata?.week_key === weekKey);
+      const alreadySent = existing.find(n => n.metadata?.monthly_newsletter === true && n.metadata?.month_key === monthKey);
       if (alreadySent) {
         skipped++;
         continue;
@@ -185,17 +191,17 @@ Deno.serve(async (req) => {
           to: [user.email],
           cc: 'contact@suttain.com',
           reply_to: 'contact@suttain.com',
-          subject: `Suttain Weekly Update - ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`,
-          html: getWeeklyNewsletterHtml(firstName, updates),
+          subject: `Suttain Monthly Update - ${monthLabel}`,
+          html: getMonthlyNewsletterHtml(firstName, updates, monthLabel),
         });
 
-        // Record that we sent this week's newsletter so we don't duplicate
+        // Record that we sent this month's newsletter so we don't duplicate
         await base44.asServiceRole.entities.Notification.create({
-          title: 'Weekly newsletter sent',
-          message: `Weekly update for ${weekKey} was emailed.`,
+          title: 'Monthly newsletter sent',
+          message: `Monthly update for ${monthKey} was emailed.`,
           type: 'feature',
           target_user: user.email,
-          metadata: { weekly_newsletter: true, week_key: weekKey }
+          metadata: { monthly_newsletter: true, month_key: monthKey }
         });
         sent++;
       } catch (err) {
@@ -204,10 +210,10 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`Weekly newsletter: sent=${sent}, failed=${failed}, skipped=${skipped}, total=${users.length}`);
-    return Response.json({ success: true, sent, failed, skipped, total: users.length });
+    console.log(`Monthly newsletter: sent=${sent}, failed=${failed}, skipped=${skipped}, total=${users.length}, updates=${updates.length}`);
+    return Response.json({ success: true, sent, failed, skipped, total: users.length, updatesIncluded: updates.length });
   } catch (error) {
-    console.error('weeklyNewsletter error:', error.message);
+    console.error('monthlyNewsletter error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

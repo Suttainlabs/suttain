@@ -1,0 +1,48 @@
+{
+  "name": "PlatformUpdate",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short headline for the update (e.g. 'New Carbon Tax Simulator')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the feature, tool, or change"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "tool",
+        "research",
+        "business",
+        "improvement",
+        "announcement"
+      ],
+      "default": "tool",
+      "description": "Category of the update for grouping and filtering"
+    },
+    "url": {
+      "type": "string",
+      "description": "Optional link to the feature page or blog post"
+    },
+    "is_published": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this update should be included in the next newsletter"
+    }
+  },
+  "required": [
+    "title",
+    "description",
+    "category"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
