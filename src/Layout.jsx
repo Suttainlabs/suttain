@@ -446,11 +446,32 @@ export default function Layout({ children, currentPageName }) {
                       </Link>
                     </DropdownMenuItem>
                   ))}
-                  <DropdownMenuSeparator />
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Enterprise API — standalone */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    isEnterpriseActive
+                      ? "bg-violet-100 text-violet-600"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}>
+                    <Terminal className="w-3.5 h-3.5" />
+                    <span>Enterprise API</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-64 p-2">
                   <DropdownMenuItem asChild>
                     <Link to={createPageUrl("EnterpriseAPI")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
                       <Terminal className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
                       <span className="text-sm font-medium text-slate-700">Enterprise API</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("APIPortal")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
+                      <Code2 className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
+                      <span className="text-sm font-medium text-slate-700">API Documentation</span>
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -632,6 +653,20 @@ export default function Layout({ children, currentPageName }) {
                         </motion.div>
                       )}
                     </AnimatePresence>
+                  </motion.div>
+
+                  {/* Enterprise API — Mobile */}
+                  <motion.div variants={mobileNavItemVariants}>
+                    <Link
+                      to={createPageUrl("EnterpriseAPI")}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
+                        isEnterpriseActive ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
+                      }`}
+                    >
+                      <Terminal className="w-5 h-5" />
+                      Enterprise API
+                    </Link>
                   </motion.div>
 
                   {/* Research Tools Collapsible - Mobile */}
