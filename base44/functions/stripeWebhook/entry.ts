@@ -50,7 +50,7 @@ const PLAN_DETAILS = {
   },
 };
 
-// Reverse map: Stripe price ID → plan name
+// Reverse map: Stripe price ID -> plan name
 const PRICE_ID_TO_PLAN = {
   'price_1Tn2eSI9tsZ7WvXe3JMrHrYf': 'starter',
   'price_1Tn2eSI9tsZ7WvXeVksFLuTl': 'starter',
@@ -63,6 +63,11 @@ const PRICE_ID_TO_PLAN = {
 async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
   const planInfo = PLAN_DETAILS[planKey] || PLAN_DETAILS['pro_monthly'];
   const firstName = userName ? userName.split(' ')[0] : 'there';
+  const featuresList = planInfo.features.map(f => `<li>${f}</li>`).join('');
+  const isLifetime = planInfo.billing === 'lifetime';
+  const renewalText = isLifetime
+    ? 'Your lifetime access never expires — no renewal needed.'
+    : `Your ${planInfo.billing} subscription is active and will renew automatically. You can manage your billing anytime from your dashboard.`;
 
   const body = `
     <div style="margin:0;padding:0;background:#f6fbfa;font-family:Arial,Helvetica,sans-serif;color:#1e293b;">
@@ -73,38 +78,28 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
               <tr>
                 <td style="background:linear-gradient(135deg,#02988C 0%,#09D2FF 55%,#9531F5 100%);padding:34px 36px;text-align:center;">
                   <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:48px;width:auto;margin:0 auto 18px;display:block;" />
-                  <h1 style="margin:0;color:#ffffff;font-size:28px;line-height:1.25;font-weight:700;">Welcome to Suttain Pro</h1>
+                  <h1 style="margin:0;color:#ffffff;font-size:28px;line-height:1.25;font-weight:700;">Welcome to ${planInfo.name}</h1>
                   <p style="margin:10px 0 0;color:rgba(255,255,255,0.92);font-size:16px;line-height:1.5;">Your subscription is active and ready to use.</p>
                 </td>
               </tr>
               <tr>
                 <td style="padding:38px 36px 34px;">
                   <p style="font-size:17px;line-height:1.7;margin:0 0 20px;color:#0f172a;font-weight:600;">Hello ${firstName},</p>
-                  <p style="font-size:16px;line-height:1.75;margin:0 0 22px;color:#475569;">Thank you for subscribing to Suttain Pro - we’re excited to welcome you to our community.</p>
-                  <p style="font-size:16px;line-height:1.75;margin:0 0 18px;color:#475569;">You now have access to a powerful suite of features designed to enhance your workflow:</p>
+                  <p style="font-size:16px;line-height:1.75;margin:0 0 22px;color:#475569;">Thank you for subscribing to ${planInfo.name} — we are excited to welcome you to our community.</p>
+                  <p style="font-size:16px;line-height:1.75;margin:0 0 18px;color:#475569;">${renewalText}</p>
+                  <p style="font-size:16px;line-height:1.75;margin:0 0 18px;color:#475569;">You now have access to the following features:</p>
                   <div style="background:#f0fdfa;border:1px solid #b2f5ea;border-radius:14px;padding:22px 24px;margin:0 0 30px;">
                     <ul style="font-size:15px;line-height:1.9;margin:0;padding-left:20px;color:#334155;">
-                      <li>Unlimited Chemical Simulations</li>
-                      <li>Unlimited Formula Generation</li>
-                      <li>AI Compliance Co-Pilot (50+ regions)</li>
-                      <li>Sustainability and Carbon Footprint Scoring</li>
-                      <li>Computational Simulations (DFT, Molecular Dynamics, Quantum Mechanics)</li>
-                      <li>Advanced Analytics and Reporting</li>
-                      <li>Personalized Safety Alerts</li>
-                      <li>Priority Email Support</li>
+                      ${featuresList}
                     </ul>
                   </div>
-                  <h2 style="font-size:20px;line-height:1.4;margin:0 0 12px;color:#0f172a;">Getting Started</h2>
-                  <p style="font-size:16px;line-height:1.75;margin:0 0 14px;color:#475569;">To begin using your Pro features, navigate to the Tools section within your account and run your first simulation.</p>
-                  <p style="font-size:16px;line-height:1.75;margin:0 0 24px;color:#475569;">Our Learning Center offers comprehensive tutorials and guides to help you get the most out of your subscription.</p>
                   <div style="text-align:center;margin:0 0 32px;">
-                    <a href="https://suttain.com/Simulator" style="display:inline-block;background:#02988C;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 28px;border-radius:999px;">Start Your First Simulation</a>
+                    <a href="https://suttain.com/Dashboard" style="display:inline-block;background:#02988C;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 28px;border-radius:999px;">Go to Your Dashboard</a>
                   </div>
                   <h2 style="font-size:20px;line-height:1.4;margin:0 0 12px;color:#0f172a;">Support and Assistance</h2>
                   <p style="font-size:16px;line-height:1.75;margin:0 0 14px;color:#475569;">If you have any questions or need help, feel free to reach out:</p>
                   <p style="font-size:16px;line-height:1.75;margin:0 0 6px;color:#475569;">Email: <a href="mailto:contact@suttain.com" style="color:#02988C;text-decoration:underline;font-weight:600;">contact@suttain.com</a></p>
-                  <p style="font-size:16px;line-height:1.75;margin:0 0 26px;color:#475569;">Live chat: Available in the application</p>
-                  <p style="font-size:16px;line-height:1.75;margin:0 0 28px;color:#475569;">We’re committed to helping you succeed with Suttain Pro.</p>
+                  <p style="font-size:16px;line-height:1.75;margin:0 0 28px;color:#475569;">We are committed to helping you succeed with Suttain.</p>
                   <p style="font-size:16px;line-height:1.7;margin:0;color:#0f172a;">Best regards,<br /><strong>The Suttain Team</strong></p>
                 </td>
               </tr>
@@ -120,7 +115,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
     </div>
   `;
 
-  await sendEmailViaResend(email, `Welcome to ${planInfo.name} - Your Subscription is Active`, body);
+  await sendEmailViaResend(email, `Welcome to ${planInfo.name} — Your Subscription is Active`, body);
 }
 
 Deno.serve(async (req) => {
@@ -194,35 +189,31 @@ Deno.serve(async (req) => {
                 subscription_billing: billing,
                 stripe_customer_id: session.customer,
                 stripe_subscription_id: session.subscription || null,
+                ...(periodEnd && { subscription_end_date: periodEnd }),
               });
               console.log(`Updated user by email ${customerEmail} to ${plan} plan`);
             }
           } catch (e) {
             console.error('Failed to find/update user by email:', e);
           }
-        } else if (customerEmail && periodEnd) {
-          // Also try to set period end when found by email above
-          // (already done inside the block above, this is just a fallback note)
         }
 
         // Send payment confirmation email to customer
         if (customerEmail) {
-          let planKey = priceKey;
-          if (planKey === 'lifetime') planKey = 'pro_lifetime';
-          await sendPaymentConfirmationEmail(base44, customerEmail, customerName, planKey);
+          await sendPaymentConfirmationEmail(base44, customerEmail, customerName, priceKey);
 
           // Notify admin via email
           await sendEmailViaResend(
             Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
-            `New Suttain Pro Purchase: ${customerName || customerEmail}`,
+            `New Suttain Purchase: ${customerName || customerEmail}`,
             `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${customerName || '—'}</li><li><b>Email:</b> ${customerEmail}</li><li><b>Plan:</b> ${priceKey}</li><li><b>Billing:</b> ${billing}</li><li><b>Session ID:</b> ${session.id}</li></ul>`
           );
 
           // Create in-app admin notification
           try {
             await base44.asServiceRole.entities.Notification.create({
-              title: `New Pro Subscriber`,
-                  message: `${customerName || customerEmail} subscribed to ${priceKey} (${billing}).`,
+              title: `New Subscriber`,
+              message: `${customerName || customerEmail} subscribed to ${priceKey} (${billing}).`,
               type: 'subscription',
               severity: 'info',
               is_read: false,
@@ -291,7 +282,6 @@ Deno.serve(async (req) => {
         const invoice = event.data.object;
         console.log('Invoice paid:', invoice.id, 'customer:', invoice.customer, 'email:', invoice.customer_email);
 
-        // On invoice.paid, ensure the user is marked as active pro (covers renewals + new subs)
         const invoiceEmail = invoice.customer_email;
         const invoiceSubId = invoice.subscription;
 
@@ -353,14 +343,14 @@ Deno.serve(async (req) => {
             await sendEmailViaResend(
               Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
               `Subscription Renewal/New: ${userName}`,
-              `<p>New subscription confirmed via invoice.paid.</p><ul><li><b>Email:</b> ${invoiceEmail}</li><li><b>Billing:</b> ${billing}</li><li><b>Subscription ID:</b> ${invoiceSubId}</li><li><b>Invoice:</b> ${invoice.id}</li></ul>`
+              `<p>New subscription confirmed via invoice.paid.</p><ul><li><b>Email:</b> ${invoiceEmail}</li><li><b>Plan:</b> ${plan}</li><li><b>Billing:</b> ${billing}</li><li><b>Subscription ID:</b> ${invoiceSubId}</li><li><b>Invoice:</b> ${invoice.id}</li></ul>`
             );
 
             // Create in-app admin notification
             try {
               await base44.asServiceRole.entities.Notification.create({
-                title: `New Pro Subscriber`,
-                message: `${invoiceEmail} subscribed to Pro (${billing}).`,
+                title: `New Subscriber`,
+                message: `${invoiceEmail} subscribed to ${plan} (${billing}).`,
                 type: 'subscription',
                 severity: 'info',
                 is_read: false,
