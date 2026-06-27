@@ -62,6 +62,7 @@ const ResearchLanding = lazy(() => import('./pages/ResearchLanding'));
 const StructuralBiology = lazy(() => import('./pages/StructuralBiology'));
 const EnterpriseAPI = lazy(() => import('./pages/EnterpriseAPI'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
+const AboutUs = lazy(() => import('./pages/AboutUs'));
 const ResearchLayout = lazy(() => import('./components/research/ResearchLayout'));
 // Import auth pages directly (not from pagesConfig which may not have them)
 const Login = lazy(() => import('./pages/Login'));
@@ -137,6 +138,7 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/AboutUs" element={<LayoutWrapper currentPageName="AboutUs"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><AboutUs /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/IngredientDatabase" element={<LayoutWrapper currentPageName="IngredientDatabase"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><IngredientDatabase /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/Generator" element={<Navigate to="/generator" replace />} />
       <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaComparison /></PageTransition></Suspense></LayoutWrapper>} />
