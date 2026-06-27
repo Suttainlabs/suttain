@@ -167,6 +167,8 @@ Deno.serve(async (req) => {
           await resend.emails.send({
             from: 'Suttain <noreply@suttain.com>',
             to: email,
+            cc: 'contact@suttain.com',
+            reply_to: 'contact@suttain.com',
             subject: "What's new in Suttain — June 2026 Platform Update",
             html,
           });

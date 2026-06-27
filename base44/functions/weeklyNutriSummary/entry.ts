@@ -88,6 +88,8 @@ Deno.serve(async (req) => {
       await resend.emails.send({
         from: 'Food Analysis by Suttain <noreply@suttain.com>',
         to: user.email,
+        cc: 'contact@suttain.com',
+        reply_to: 'contact@suttain.com',
         subject: `Your Weekly Food Report — ${totals.scans} meals, ${Math.round(totals.calories)} kcal`,
         html: emailBody,
       });

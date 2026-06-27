@@ -55,6 +55,16 @@ Deno.serve(async (req) => {
         body: html
       });
       emailSent = true;
+      // CC contact@suttain.com
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: 'contact@suttain.com',
+          subject: `[CC] ${inviter_name} shared "${project_name}" on Suttain`,
+          body: html
+        });
+      } catch (ccErr) {
+        console.warn('CC email failed:', ccErr.message);
+      }
     } catch (emailErr) {
       emailError = emailErr.message || String(emailErr);
       console.warn('sendProjectShareEmail: email delivery failed (share still recorded):', emailError);

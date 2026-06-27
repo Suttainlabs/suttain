@@ -413,6 +413,8 @@ Deno.serve(async (req) => {
             await resend.emails.send({
                 from: 'Suttain <noreply@suttain.com>',
                 to: [userEmail],
+                cc: 'contact@suttain.com',
+                reply_to: 'contact@suttain.com',
                 subject: 'Welcome to Suttain! 🎉',
                 html: getWelcomeEmailHtml(userName)
             });
@@ -435,6 +437,8 @@ Deno.serve(async (req) => {
             await resend.emails.send({
                 from: 'Suttain <noreply@suttain.com>',
                 to: [userEmail],
+                cc: 'contact@suttain.com',
+                reply_to: 'contact@suttain.com',
                 subject: `Your ${featureType === 'simulation' ? 'Simulation' : featureType === 'formula' ? 'Formula' : 'Scan'} Results - Suttain`,
                 html: getFeatureUsageHtml(userName, featureType, details)
             });
@@ -449,6 +453,8 @@ Deno.serve(async (req) => {
             await resend.emails.send({
                 from: 'Suttain <noreply@suttain.com>',
                 to: [userEmail],
+                cc: 'contact@suttain.com',
+                reply_to: 'contact@suttain.com',
                 subject: '🎓 Congratulations on Completing Your Course!',
                 html: getLearningCompleteHtml(userName, courseName)
             });
@@ -534,6 +540,8 @@ Deno.serve(async (req) => {
                 await resend.emails.send({
                     from: 'Suttain <noreply@suttain.com>',
                     to: [recipient],
+                    cc: 'contact@suttain.com',
+                    reply_to: 'contact@suttain.com',
                     subject: `🚀 Suttain Update: ${updateTitle}`,
                     html: getUpdateAnnouncementHtml(updateTitle, updateDescription, features)
                 });
@@ -549,6 +557,8 @@ Deno.serve(async (req) => {
             await resend.emails.send({
                 from: 'Suttain <noreply@suttain.com>',
                 to: [userEmail],
+                cc: 'contact@suttain.com',
+                reply_to: 'contact@suttain.com',
                 subject: `🏆 Certification Earned: ${certName}`,
                 html: getCertificationHtml(userName, certName, score, earnedDate)
             });
@@ -563,6 +573,8 @@ Deno.serve(async (req) => {
             await resend.emails.send({
                 from: 'Suttain <noreply@suttain.com>',
                 to: [userEmail],
+                cc: 'contact@suttain.com',
+                reply_to: 'contact@suttain.com',
                 subject: `📥 Your ${downloadType} is Ready - Suttain`,
                 html: getDownloadNotificationHtml(userName, downloadType, fileName, { fileUrl })
             });
@@ -577,6 +589,8 @@ Deno.serve(async (req) => {
             await resend.emails.send({
                 from: 'Suttain <noreply@suttain.com>',
                 to: [userEmail],
+                cc: 'contact@suttain.com',
+                reply_to: 'contact@suttain.com',
                 subject: '📊 Your Weekly Suttain Summary',
                 html: getWeeklyDigestHtml(userName, stats)
             });
@@ -591,6 +605,8 @@ Deno.serve(async (req) => {
             await resend.emails.send({
                 from: 'Suttain <noreply@suttain.com>',
                 to: [userEmail],
+                cc: 'contact@suttain.com',
+                reply_to: 'contact@suttain.com',
                 subject: `⚠️ Safety Alert: ${alertData?.productName || 'Important Notice'}`,
                 html: getSafetyAlertHtml(userName, alertData)
             });
@@ -613,6 +629,8 @@ Deno.serve(async (req) => {
         const { data: emailData, error } = await resend.emails.send({
             from: from || 'Suttain <noreply@suttain.com>',
             to: Array.isArray(to) ? to : [to],
+            cc: 'contact@suttain.com',
+            reply_to: 'contact@suttain.com',
             subject,
             html,
             text

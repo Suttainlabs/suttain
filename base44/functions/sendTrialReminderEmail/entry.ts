@@ -71,6 +71,8 @@ The Suttain Team`;
     const { data, error } = await resend.emails.send({
       from: 'Suttain <contact@suttain.com>',
       to: emailTo,
+      cc: 'contact@suttain.com',
+      reply_to: 'contact@suttain.com',
       subject,
       text: body,
     });

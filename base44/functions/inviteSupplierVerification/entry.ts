@@ -19,6 +19,8 @@ Deno.serve(async (req) => {
     const { error } = await resend.emails.send({
       from: 'Suttain <noreply@suttain.com>',
       to: supplierEmail,
+      cc: 'contact@suttain.com',
+      reply_to: 'contact@suttain.com',
       subject: `Ingredient Verification Request for "${formulaName}" — Suttain`,
       html: `
         <div style="font-family:'Source Sans 3',sans-serif;max-width:600px;margin:0 auto;background:#f8fafc;padding:32px 16px;">

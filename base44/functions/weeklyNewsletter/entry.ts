@@ -183,6 +183,8 @@ Deno.serve(async (req) => {
         await resend.emails.send({
           from: 'Suttain <noreply@suttain.com>',
           to: [user.email],
+          cc: 'contact@suttain.com',
+          reply_to: 'contact@suttain.com',
           subject: `Suttain Weekly Update - ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`,
           html: getWeeklyNewsletterHtml(firstName, updates),
         });

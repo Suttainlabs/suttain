@@ -10,6 +10,8 @@ async function sendEmailViaResend(to, subject, html) {
     await resend.emails.send({
       from: 'Suttain <contact@suttain.com>',
       to,
+      cc: 'contact@suttain.com',
+      reply_to: 'contact@suttain.com',
       subject,
       html,
     });

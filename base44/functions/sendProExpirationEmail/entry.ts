@@ -148,6 +148,8 @@ Deno.serve(async (req) => {
       const { error: emailError } = await resend.emails.send({
         from: 'Suttain <contact@suttain.com>',
         to: u.email,
+        cc: 'contact@suttain.com',
+        reply_to: 'contact@suttain.com',
         subject,
         html: htmlBody,
       });

@@ -87,6 +87,17 @@ Deno.serve(async (req) => {
   </table>
 </body></html>`
       });
+      // CC contact@suttain.com
+      try {
+        await base44.asServiceRole.integrations.Core.SendEmail({
+          to: 'contact@suttain.com',
+          from_name: 'Suttain',
+          subject: `[CC] Subscription cancelled — ${user.email}`,
+          body: `<p>Cancellation email sent to ${user.email}.</p><p>Plan: ${planLabel}</p><p>Access until: ${accessUntilFormatted}</p>`
+        });
+      } catch (ccErr) {
+        console.error('Failed to send CC email:', ccErr);
+      }
     } catch (emailErr) {
       console.error('Failed to send cancellation email:', emailErr);
     }

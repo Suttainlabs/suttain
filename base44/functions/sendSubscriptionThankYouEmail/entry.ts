@@ -75,6 +75,19 @@ Deno.serve(async (req) => {
     });
 
     console.log(`Subscription thank you email sent to ${email}`);
+
+    // CC contact@suttain.com
+    try {
+      await base44.integrations.Core.SendEmail({
+        to: 'contact@suttain.com',
+        subject: `[CC] Welcome to Suttain Pro — Thank You for Subscribing`,
+        body: emailContent,
+        from_name: 'Suttain'
+      });
+    } catch (ccErr) {
+      console.error('Failed to send CC email:', ccErr);
+    }
+
     return Response.json({ success: true, email });
   } catch (error) {
     console.error('Error sending subscription thank you email:', error);

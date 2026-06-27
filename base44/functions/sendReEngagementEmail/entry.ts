@@ -32,6 +32,8 @@ Deno.serve(async (req) => {
             await resend.emails.send({
                 from: 'Suttain <contact@suttain.com>',
                 to: u.email,
+                cc: 'contact@suttain.com',
+                reply_to: 'contact@suttain.com',
                 subject: `${firstName}, your formulas are waiting`,
                 html: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b;">
