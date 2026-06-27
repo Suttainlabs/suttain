@@ -38,11 +38,10 @@ const CONSUMER_TOOLS = [
 ];
 
 const RESEARCH_TOOLS = [
-  { icon: Atom, label: "Molecular Intelligence", desc: "Query any compound for hazard classification, toxicity profiling, environmental fate, and regulatory status.", href: "MolecularIntelligence", color: "#6B3FA0" },
+  { icon: Atom, label: "Molecule Analysis", desc: "Query any compound for hazard classification, toxicity profiling, and regulatory status — then visualize its 3D structure and inspect full properties.", href: "MoleculeAnalysis", color: "#6B3FA0" },
   { icon: Cpu, label: "Computational Simulation", desc: "Run semi-empirical and DFT-tier simulations with 3D WebGL visualization and ESP mapping.", href: "ComputationalSimulation", color: "#00A8C8" },
   { icon: Leaf, label: "Sustainability Intelligence", desc: "Lifecycle analysis, biodegradability modeling, and carbon footprint assessment for formulations.", href: "SustainabilityImpact", color: "#00B478" },
   { icon: Code2, label: "Research API", desc: "REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation.", href: "APIPortal", color: "#6B3FA0" },
-  { icon: Microscope, label: "Molecule Explorer", desc: "Browse and visualize chemical compounds in 3D with full physical, toxicity, and environmental data.", href: "MoleculeExplorer", color: "#00A8C8" },
   { icon: FileText, label: "SDS Analyzer", desc: "Upload Safety Data Sheets and extract hazard data, GHS classifications, and regulatory info automatically.", href: "SDSAnalyzer", color: "#64748b" },
   { icon: Layers, label: "Chemical Library", desc: "Browse and manage your chemical library with search by name, CAS, formula, or safety level.", href: "ChemicalLibrary", color: "#00B478" },
 ];

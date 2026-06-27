@@ -54,6 +54,7 @@ const MolecularIntelligence = lazy(() => import('./pages/MolecularIntelligence')
 const ChemicalDashboard = lazy(() => import('./pages/ChemicalDashboard'));
 const InventoryDashboard = lazy(() => import('./pages/InventoryDashboard'));
 const MoleculeExplorer = lazy(() => import('./pages/MoleculeExplorer'));
+const MoleculeAnalysis = lazy(() => import('./pages/MoleculeAnalysis'));
 const ResearchPortal = lazy(() => import('./pages/ResearchPortal'));
 const ResearchDashboard = lazy(() => import('./pages/ResearchDashboard'));
 const APIPortal = lazy(() => import('./pages/APIPortal'));
@@ -152,6 +153,8 @@ const AuthenticatedApp = () => {
       <Route path="/research" element={<Navigate to="/" replace />} />
       <Route path="/ResearchLanding" element={<Navigate to="/" replace />} />
       <Route path="/Home" element={<Navigate to="/" replace />} />
+      <Route path="/MolecularIntelligence" element={<Navigate to="/MoleculeAnalysis" replace />} />
+      <Route path="/MoleculeExplorer" element={<Navigate to="/MoleculeAnalysis" replace />} />
 
       {/* ── Public marketing pages (no login required) ── */}
       <Route path="/enterprise" element={<LayoutWrapper currentPageName="EnterpriseAPI"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><EnterpriseAPI /></PageTransition></Suspense></LayoutWrapper>} />
@@ -161,14 +164,14 @@ const AuthenticatedApp = () => {
       {/* ── Protected Tools (consumer + research — require login) ── */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         {['Simulator', 'generator', 'BarcodeScanner', 'HydrationHome', 'HydrationIntelligence', 'HydrationReminders', 'HydrationProgress',
-          'MolecularIntelligence', 'MoleculeExplorer', 'ChemicalDashboard', 'InventoryDashboard',
+          'MolecularIntelligence', 'MoleculeExplorer', 'MoleculeAnalysis', 'ChemicalDashboard', 'InventoryDashboard',
           'ResearchPortal', 'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
           'ComputationalSimulation', 'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology'
         ].map(path => {
           const Page = Pages[path];
           if (!Page) {
             const lazyMap = {
-              MolecularIntelligence, MoleculeExplorer, ChemicalDashboard, InventoryDashboard,
+              MolecularIntelligence, MoleculeExplorer, MoleculeAnalysis, ChemicalDashboard, InventoryDashboard,
               ResearchPortal, ResearchDashboard, ChemicalComparison, SDSAnalyzer,
               ComputationalSimulation, SimulationEngine, ChemicalLibrary, StructuralBiology,
               Simulator: Pages['Simulator'], generator: Pages['generator'],

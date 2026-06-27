@@ -11,13 +11,13 @@ import {
 const modules = [
   {
     id: 'molecular',
-    label: 'Molecular Intelligence',
-    route: 'MolecularIntelligence',
+    label: 'Molecule Analysis',
+    route: 'MoleculeAnalysis',
     icon: Atom,
     color: '#6B3FA0',
     badge: 'Live',
-    description: 'Hazard classification, toxicity profiling, environmental fate, and regulatory status for any compound. Query by name, SMILES, InChI, or ingredient list.',
-    metrics: ['PubChem', 'ChEMBL', 'EPA CompTox'],
+    description: 'Query any compound for hazard classification, toxicity profiling, environmental fate, and regulatory status — then visualize its 3D structure and inspect full physical, toxicity, and environmental properties in one unified workspace.',
+    metrics: ['PubChem', 'ChEMBL', 'EPA CompTox', '3Dmol.js'],
     status: 'operational',
   },
   {
@@ -62,17 +62,6 @@ const modules = [
     badge: 'Pro',
     description: 'Developer-facing REST API with endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. JSON with confidence scores on every field.',
     metrics: ['Python SDK', 'JavaScript SDK', 'Interactive Docs'],
-    status: 'operational',
-  },
-  {
-    id: 'explorer',
-    label: 'Molecule Explorer',
-    route: 'MoleculeExplorer',
-    icon: Microscope,
-    color: '#00A8C8',
-    badge: 'Live',
-    description: 'Browse your chemical database in 3D. Renders PubChem-sourced conformers for any stored compound alongside all physical, toxicity, and environmental properties.',
-    metrics: ['3Dmol.js WebGL', 'PubChem 3D', 'Property Panel'],
     status: 'operational',
   },
   {

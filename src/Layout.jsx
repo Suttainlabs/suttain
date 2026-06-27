@@ -278,9 +278,8 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const researchToolItems = [
-    { href: "MolecularIntelligence", label: "Molecular Intelligence", icon: Atom, description: "Query compounds for hazard, toxicity & regulatory data" },
+    { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization" },
     { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization" },
-    { href: "MoleculeExplorer", label: "Molecule Explorer", icon: Microscope, description: "Browse & visualize 130M+ chemical compounds in 3D" },
     { href: "ResearchDashboard", label: "Research Dashboard", icon: BarChart2, description: "Track projects, saved compounds & simulation history" },
     { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets" },
     { href: "APIPortal", label: "Research API", icon: Code2, description: "REST endpoints for compound lookup & hazard scoring" },
@@ -311,7 +310,8 @@ export default function Layout({ children, currentPageName }) {
     || location.pathname === createPageUrl("ChemicalDashboard")
     || location.pathname === createPageUrl("InventoryDashboard")
     || location.pathname === createPageUrl("StructuralBiology")
-    || location.pathname === createPageUrl("ResearchPortal");
+    || location.pathname === createPageUrl("ResearchPortal")
+    || location.pathname === createPageUrl("MoleculeAnalysis");
 
   const isEnterpriseActive = location.pathname === '/enterprise' || location.pathname === '/EnterpriseAPI';
 
