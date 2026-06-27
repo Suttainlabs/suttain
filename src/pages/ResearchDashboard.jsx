@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import {
   Atom, Cpu, FlaskConical, Clock, Play,
   Database, BarChart2, ChevronRight, TrendingUp,
-  FileText, Layers, ArrowLeft, Loader2, Plus, FolderOpen, Share2,
+  FileText, Layers, Loader2, Plus, FolderOpen, Share2,
   Lock, Sparkles
 } from 'lucide-react';
 import NewProjectModal from '../components/research/NewProjectModal';
@@ -173,15 +173,15 @@ export default function ResearchDashboard() {
 
   return (
     <div className="min-h-screen bg-[#EDF7F2] text-slate-800">
-      {/* Sub-header */}
+      {/* Sub-header — breadcrumb, no back button */}
       <div className="border-b border-slate-200 bg-white/80 sticky top-16 z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
-          <button onClick={() => navigate(createPageUrl('ResearchPortal'))} className="text-slate-400 hover:text-slate-600 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <span className="w-px h-4 bg-slate-200" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-2">
+          <Link to={createPageUrl('ResearchPortal')} className="text-[11px] font-semibold text-slate-400 hover:text-[#6B3FA0] transition-colors uppercase tracking-widest">
+            Suttain Research
+          </Link>
+          <span className="text-slate-300 text-[11px]">/</span>
           <BarChart2 className="w-3.5 h-3.5 text-[#007850]" />
-          <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Research Dashboard</span>
+          <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Dashboard</span>
         </div>
       </div>
 
