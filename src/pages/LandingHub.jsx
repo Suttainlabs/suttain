@@ -11,6 +11,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import SEOHead from "../components/shared/SEOHead";
 import { Section, SectionHeader } from "../components/shared/Section";
+import ToolsCarousel from "../components/home/ToolsCarousel";
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -242,25 +243,8 @@ export default function LandingHub() {
             subtext="Scan products, generate validated formulas, and check compliance — no lab required."
           />
         </motion.div>
-        <div style={{ marginTop: "var(--space-6)" }} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {CONSUMER_TOOLS.map((tool, i) => {
-            const Icon = tool.icon;
-            return (
-              <motion.div key={i} {...fadeIn(i * 0.05)}>
-                <Link to={createPageUrl(tool.href)} className="block bg-white rounded-2xl p-5 border border-slate-200 h-full hover:shadow-md hover:border-slate-300 transition-all group">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: tool.color + "14" }}>
-                    <Icon className="w-5 h-5" style={{ color: tool.color }} />
-                  </div>
-                  <h3 className="font-bold text-slate-900 text-sm mb-1.5">{tool.label}</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-3">{tool.desc}</p>
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold" style={{ color: tool.color }}>
-                    Open tool
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  </span>
-                </Link>
-              </motion.div>
-            );
-          })}
+        <div style={{ marginTop: "var(--space-6)" }}>
+          <ToolsCarousel tools={CONSUMER_TOOLS} />
         </div>
       </Section>
 
