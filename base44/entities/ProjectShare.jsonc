@@ -56,13 +56,14 @@
     "token"
   ],
   "rls": {
+    "create": null,
     "read": {
       "$or": [
         {
-          "created_by": "{{user.email}}"
+          "created_by_id": "{{user.id}}"
         },
         {
-          "shared_with_email": "{{user.email}}"
+          "data.shared_with_email": "{{user.email}}"
         },
         {
           "user_condition": {
@@ -71,10 +72,22 @@
         }
       ]
     },
-    "write": {
+    "update": {
       "$or": [
         {
-          "created_by": "{{user.email}}"
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
         },
         {
           "user_condition": {
