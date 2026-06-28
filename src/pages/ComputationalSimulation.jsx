@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom,
-  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight, Layers, Target, Boxes
+  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight, Layers, Target, Boxes, Thermometer
 } from "lucide-react";
 import StructurePrepSuite from '../components/structural/StructurePrepSuite';
 
@@ -269,17 +269,35 @@ export const SIM_TYPES = [
     description: "Steady-state and dynamic process flowsheet simulation. Distillation columns, reactors, heat exchangers, and full plant models.",
     fields: [],
   },
+  {
+    id: "thermo_phase",
+    label: "Thermodynamics & Phase Diagrams",
+    icon: Thermometer,
+    color: "from-orange-500 to-red-600",
+    bgColor: "bg-orange-50",
+    borderColor: "border-orange-200",
+    engines: ["ThermoCalc", "CALPHAD", "NIST WebBook", "Group Contribution"],
+    description: "Thermodynamic property estimation, heat capacity curves, Gibbs energy analysis, and P-T phase diagram construction.",
+    fields: [
+      { key: "compound", label: "Compound / System", placeholder: "e.g. H2O, CO2, NaCl, Fe-C alloy" },
+      { key: "analysis_type", label: "Analysis Type", type: "select", options: ["phase_diagram", "thermodynamic_properties", "heat_capacity_curve", "gibbs_energy_curve"], default: "phase_diagram" },
+      { key: "temp_min", label: "Min Temperature (K)", placeholder: "100" },
+      { key: "temp_max", label: "Max Temperature (K)", placeholder: "800" },
+      { key: "pressure_min", label: "Min Pressure (bar)", placeholder: "0.01" },
+      { key: "pressure_max", label: "Max Pressure (bar)", placeholder: "100" },
+    ]
+  },
 ];
 
 export const DOMAIN_SIM_MAP = {
-  "Chemistry":         ["dft", "quantum_vqe", "materials_informatics", "structure_builder", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
-  "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
-  "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Engineering":       ["materials", "materials_informatics", "structure_builder", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
-  "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation"],
-  "Materials Science": ["materials", "materials_informatics", "structure_builder", "dft", "quantum_vqe", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
-  "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "quantum_vqe", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  "Chemistry":         ["dft", "quantum_vqe", "materials_informatics", "structure_builder", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation", "thermo_phase"],
+  "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization", "thermo_phase"],
+  "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization", "thermo_phase"],
+  "Engineering":       ["materials", "materials_informatics", "structure_builder", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation", "thermo_phase"],
+  "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization", "thermo_phase"],
+  "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation", "thermo_phase"],
+  "Materials Science": ["materials", "materials_informatics", "structure_builder", "dft", "quantum_vqe", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization", "thermo_phase"],
+  "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "quantum_vqe", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization", "thermo_phase"],
 };
 
 const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];

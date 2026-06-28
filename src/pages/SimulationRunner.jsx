@@ -24,7 +24,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../com
 import {
   Cpu, ChevronLeft, Beaker, Dna, Download, Copy, CheckCircle2,
   Loader2, RotateCcw, BookOpen, Microscope, Activity, AlertTriangle,
-  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info, Atom, Layers
+  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info, Atom, Layers, Thermometer, FileCode2
 } from "lucide-react";
 import QuantumSettings from "../components/computational/QuantumSettings";
 import QuantumResults from "../components/computational/QuantumResults";
@@ -32,6 +32,8 @@ import MaterialsSettings from "../components/computational/MaterialsSettings";
 import MaterialsResults from "../components/computational/MaterialsResults";
 import StructureBuilder from "../components/computational/StructureBuilder";
 import CrystalViewer3D from "../components/computational/CrystalViewer3D";
+import SimulationInputFiles from "../components/computational/SimulationInputFiles";
+import ThermoPhaseDiagram from "../components/computational/ThermoPhaseDiagram";
 
 function SelectField({ label, options, value, onChange }) {
   return (
@@ -79,6 +81,8 @@ export default function SimulationRunner() {
   const [useHardware, setUseHardware] = useState(false);
   const [structureData, setStructureData] = useState(null);
   const [structureBonds, setStructureBonds] = useState([]);
+  const [inputFiles, setInputFiles] = useState(null);
+  const [generatingInputs, setGeneratingInputs] = useState(false);
 
   const DRAWABLE_KEYS = ['molecule', 'ligand', 'compound', 'system', 'surface', 'reactants'];
 
@@ -124,6 +128,7 @@ export default function SimulationRunner() {
   const isQuantumMode = typeId === "quantum_vqe";
   const isMaterialsMode = typeId === "materials_informatics";
   const isStructureMode = typeId === "structure_builder";
+  const isThermoPhaseMode = typeId === "thermo_phase";
 
   const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
 
@@ -481,6 +486,107 @@ Provide a focused, technical analysis. Return JSON with:
     }
   };
 
+  const handleThermoPhaseRun = async () => {
+    const compound = inputs.compound || inputs.system;
+    if (!compound) return;
+
+    setIsRunning(true);
+    setResults(null);
+
+    const jobHash = generateJobHash();
+    setCurrentJobHash(jobHash);
+
+    let draftId = null;
+    if (user) {
+      try {
+        const draft = await base44.entities.SimulationDraft.create({
+          name: `Thermo/Phase — ${compound} — ${new Date().toLocaleString()}`,
+          sim_type: 'thermo_phase',
+          sim_type_label: 'Thermodynamics & Phase Diagrams',
+          engine: selectedEngine,
+          domain,
+          raw_inputs: { ...inputs },
+          run_id: jobHash,
+          status: 'running',
+        });
+        draftId = draft.id;
+        setCurrentDraftId(draftId);
+      } catch (e) {
+        console.error('Failed to create draft:', e);
+      }
+    }
+
+    try {
+      const thermoData = await base44.functions.invoke('thermoPhaseAnalysis', {
+        compound,
+        analysis_type: inputs.analysis_type || 'phase_diagram',
+        temperature_range: {
+          min: parseFloat(inputs.temp_min) || 100,
+          max: parseFloat(inputs.temp_max) || 800,
+          steps: 20,
+        },
+        pressure_range: {
+          min: parseFloat(inputs.pressure_min) || 0.01,
+          max: parseFloat(inputs.pressure_max) || 100,
+          steps: 10,
+        },
+        environmental_params: envParams || {},
+      });
+
+      const fullResult = {
+        ...thermoData,
+        simType: sim,
+        engine: selectedEngine,
+        domain,
+        inputs: { ...inputs },
+        job_hash: jobHash,
+      };
+      setResults(fullResult);
+      setActiveTab('analysis');
+
+      if (user && draftId) {
+        try {
+          await base44.entities.SimulationDraft.update(draftId, {
+            status: 'completed',
+            result: fullResult,
+          });
+          await base44.entities.SimulationJob.create({
+            draft_id: draftId,
+            job_hash: jobHash,
+            job_name: `Thermo/Phase — ${compound}`,
+            sim_type: 'thermo_phase',
+            sim_type_label: 'Thermodynamics & Phase Diagrams',
+            engine: selectedEngine,
+            inputs: { ...inputs },
+            status: 'completed',
+            result: fullResult,
+          });
+        } catch (e) {
+          console.error('Failed to record job:', e);
+        }
+      }
+
+      if (user) {
+        try {
+          await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
+          if (refreshUser) await refreshUser();
+        } catch {}
+      }
+      setShowFeedback(true);
+      setTimeout(() => setShowFeedback(false), 15000);
+    } catch (e) {
+      console.error(e);
+      if (user && draftId) {
+        try {
+          await base44.entities.SimulationDraft.update(draftId, { status: 'failed', error: e.message });
+        } catch {}
+      }
+      setResults({ error: e.message || 'Thermodynamic analysis failed' });
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
   const handleStructureLoaded = (result) => {
     if (result?.structure) {
       setStructureData(result.structure);
@@ -492,6 +598,24 @@ Provide a focused, technical analysis. Return JSON with:
         domain,
         job_hash: generateJobHash(),
       });
+    }
+  };
+
+  const handleGenerateInputs = async () => {
+    setGeneratingInputs(true);
+    setInputFiles(null);
+    try {
+      const result = await base44.functions.invoke('generateSimulationInputs', {
+        sim_type: typeId,
+        engine: selectedEngine,
+        inputs: { ...inputs },
+        environmental_params: envParams || {},
+      });
+      setInputFiles(result);
+    } catch (e) {
+      console.error('Failed to generate input files:', e);
+    } finally {
+      setGeneratingInputs(false);
     }
   };
 
@@ -648,6 +772,26 @@ Provide a focused, technical analysis. Return JSON with:
                     <Button onClick={isQuantumMode ? handleQuantumRun : handleMaterialsRun} disabled={isRunning} className={isQuantumMode ? "gap-2 bg-indigo-600 hover:bg-indigo-700 text-white" : "gap-2 bg-amber-600 hover:bg-amber-700 text-white"}>
                       {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : isQuantumMode ? <Atom className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
                       {isQuantumMode ? 'Re-run VQE' : 'Re-run Search'}
+                    </Button>
+                  </div>
+                </>
+              ) : isThermoPhaseMode ? (
+                <>
+                  {results?.error ? (
+                    <Card className="border-red-200 bg-red-50 border shadow-sm">
+                      <CardContent className="p-6 text-center">
+                        <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                        <p className="text-red-700 font-semibold">{results.error}</p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <ThermoPhaseDiagram results={results} />
+                  )}
+                  <div className="flex justify-center mt-8 gap-3 flex-wrap">
+                    <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />New Analysis</Button>
+                    <Button onClick={handleThermoPhaseRun} disabled={isRunning} className="gap-2 bg-orange-600 hover:bg-orange-700 text-white">
+                      {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Thermometer className="w-4 h-4" />}
+                      Re-run Analysis
                     </Button>
                   </div>
                 </>
@@ -1074,13 +1218,15 @@ Provide a focused, technical analysis. Return JSON with:
                 {/* Run button */}
                 <div className="flex items-center gap-4 flex-wrap">
                   <Button
-                    onClick={isQuantumMode ? handleQuantumRun : isMaterialsMode ? handleMaterialsRun : handleRun}
+                    onClick={isQuantumMode ? handleQuantumRun : isMaterialsMode ? handleMaterialsRun : isThermoPhaseMode ? handleThermoPhaseRun : handleRun}
                     disabled={isRunning}
                     className={isQuantumMode
                       ? "bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
                       : isMaterialsMode
                         ? "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
-                        : "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"}
+                        : isThermoPhaseMode
+                          ? "bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
+                          : "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"}
                   >
                     {isRunning
                       ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
@@ -1088,16 +1234,43 @@ Provide a focused, technical analysis. Return JSON with:
                         ? <><Atom className="w-4 h-4" /> Run VQE Simulation</>
                         : isMaterialsMode
                           ? <><Layers className="w-4 h-4" /> Search Materials</>
-                          : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
+                          : isThermoPhaseMode
+                            ? <><Thermometer className="w-4 h-4" /> Run Thermo Analysis</>
+                            : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
                   </Button>
+
+                  {/* Generate Input Files button — for standard sim types only */}
+                  {!isQuantumMode && !isMaterialsMode && !isThermoPhaseMode && (
+                    <Button
+                      onClick={handleGenerateInputs}
+                      disabled={generatingInputs}
+                      variant="outline"
+                      className="gap-2 border-violet-300 text-violet-700 hover:bg-violet-50"
+                    >
+                      {generatingInputs
+                        ? <Loader2 className="w-4 h-4 animate-spin" />
+                        : <FileCode2 className="w-4 h-4" />}
+                      Generate Input Files
+                    </Button>
+                  )}
+
                   <p className="text-xs text-slate-400">
                     {isQuantumMode
                       ? `VQE via Qiskit ${useHardware ? 'hardware' : 'simulator'} · 10-30 seconds`
                       : isMaterialsMode
                         ? `Live API queries to Materials Project & OPTIMADE · 5-10 seconds`
-                        : `AI analysis + ${selectedEngine} script · 5-10 seconds`}
+                        : isThermoPhaseMode
+                          ? `AI thermodynamic estimation · 5-10 seconds`
+                          : `AI analysis + ${selectedEngine} script · 5-10 seconds`}
                   </p>
                 </div>
+
+                {/* Generated Input Files Panel */}
+                {inputFiles && (
+                  <div className="mt-5">
+                    <SimulationInputFiles result={inputFiles} />
+                  </div>
+                )}
 
                 {isRunning && (
                   <div className={`mt-5 ${isQuantumMode ? 'bg-indigo-50 border-indigo-200' : isMaterialsMode ? 'bg-amber-50 border-amber-200' : 'bg-violet-50 border-violet-200'} border rounded-2xl p-4 flex items-center gap-3`}>
