@@ -121,6 +121,21 @@ export const SIM_TYPES = [
     ]
   },
   {
+    id: "materials_informatics",
+    label: "Materials Informatics",
+    icon: Layers,
+    color: "from-amber-500 to-orange-600",
+    bgColor: "bg-amber-50",
+    borderColor: "border-amber-200",
+    engines: ["Materials Project", "OPTIMADE", "AFLOW"],
+    description: "Search open materials databases for crystal structures, formation energies, band gaps, and electronic properties.",
+    fields: [
+      { key: "formula", label: "Chemical Formula", placeholder: "e.g. SiO2, BaTiO3, Fe2O3" },
+      { key: "elements", label: "Elements (comma-separated, optional)", placeholder: "e.g. Si, O" },
+      { key: "property_filter", label: "Property Filter", type: "select", options: ["None", "Semiconductors (band gap 0.1-3 eV)", "Insulators (band gap > 3 eV)", "Metals (band gap = 0)", "Stable materials (on hull)"], default: "None" },
+    ]
+  },
+  {
     id: "monte_carlo",
     label: "Monte Carlo / Statistical",
     icon: FlaskConical,
@@ -246,13 +261,13 @@ export const SIM_TYPES = [
 ];
 
 export const DOMAIN_SIM_MAP = {
-  "Chemistry":         ["dft", "quantum_vqe", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
+  "Chemistry":         ["dft", "quantum_vqe", "materials_informatics", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
   "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
   "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Engineering":       ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
+  "Engineering":       ["materials", "materials_informatics", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
   "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
   "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation"],
-  "Materials Science": ["materials", "dft", "quantum_vqe", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  "Materials Science": ["materials", "materials_informatics", "dft", "quantum_vqe", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
   "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "quantum_vqe", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
 };
 
@@ -333,10 +348,13 @@ export default function ComputationalSimulation() {
               AI-powered molecular modeling — DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.
             </p>
 
-            {/* Quantum-powered badge */}
-            <div className="flex justify-center mt-4">
+            {/* Capability badges */}
+            <div className="flex flex-wrap justify-center gap-2 mt-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200">
-                <Atom className="w-3 h-3" /> Quantum-powered — Run real quantum chemistry with IBM Qiskit
+                <Atom className="w-3 h-3" /> Quantum-powered — IBM Qiskit VQE
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200">
+                <Layers className="w-3 h-3" /> Materials Informatics — Materials Project & OPTIMADE
               </span>
             </div>
 

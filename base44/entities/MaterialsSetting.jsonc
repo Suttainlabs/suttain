@@ -1,0 +1,25 @@
+{
+  "name": "MaterialsSetting",
+  "type": "object",
+  "properties": {
+    "materials_project_api_key": {
+      "type": "string",
+      "description": "User's Materials Project API key from materialsproject.org for live crystal structure and property queries"
+    }
+  },
+  "required": [
+    "materials_project_api_key"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

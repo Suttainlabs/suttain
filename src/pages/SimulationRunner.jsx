@@ -24,10 +24,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../com
 import {
   Cpu, ChevronLeft, Beaker, Dna, Download, Copy, CheckCircle2,
   Loader2, RotateCcw, BookOpen, Microscope, Activity, AlertTriangle,
-  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info, Atom
+  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info, Atom, Layers
 } from "lucide-react";
 import QuantumSettings from "../components/computational/QuantumSettings";
 import QuantumResults from "../components/computational/QuantumResults";
+import MaterialsSettings from "../components/computational/MaterialsSettings";
+import MaterialsResults from "../components/computational/MaterialsResults";
 
 function SelectField({ label, options, value, onChange }) {
   return (
@@ -116,6 +118,7 @@ export default function SimulationRunner() {
   if (!sim) return null;
 
   const isQuantumMode = typeId === "quantum_vqe";
+  const isMaterialsMode = typeId === "materials_informatics";
 
   const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
 
@@ -382,6 +385,97 @@ Provide a focused, technical analysis. Return JSON with:
     }
   };
 
+  const handleMaterialsRun = async () => {
+    const formula = inputs.formula;
+    const elements = inputs.elements;
+    if (!formula && !elements) return;
+
+    setIsRunning(true);
+    setResults(null);
+
+    const jobHash = generateJobHash();
+    setCurrentJobHash(jobHash);
+
+    let draftId = null;
+    if (user) {
+      try {
+        const draft = await base44.entities.SimulationDraft.create({
+          name: `Materials Search — ${formula || elements} — ${new Date().toLocaleString()}`,
+          sim_type: 'materials_informatics',
+          sim_type_label: 'Materials Informatics',
+          engine: 'Materials Project / OPTIMADE',
+          domain,
+          raw_inputs: { formula, elements, property_filter: inputs.property_filter },
+          run_id: jobHash,
+          status: 'running',
+        });
+        draftId = draft.id;
+        setCurrentDraftId(draftId);
+      } catch (e) {
+        console.error('Failed to create draft:', e);
+      }
+    }
+
+    try {
+      const searchResponse = await base44.functions.invoke('materialsSearch', {
+        formula,
+        elements,
+        property_filter: inputs.property_filter,
+      });
+
+      const fullResult = {
+        ...searchResponse,
+        simType: sim,
+        engine: 'Materials Project / OPTIMADE',
+        domain,
+        inputs: { formula, elements, property_filter: inputs.property_filter },
+        job_hash: jobHash,
+      };
+      setResults(fullResult);
+
+      if (user && draftId) {
+        try {
+          await base44.entities.SimulationDraft.update(draftId, {
+            status: 'completed',
+            result: fullResult,
+          });
+          await base44.entities.SimulationJob.create({
+            draft_id: draftId,
+            job_hash: jobHash,
+            job_name: `Materials Search — ${formula || elements}`,
+            sim_type: 'materials_informatics',
+            sim_type_label: 'Materials Informatics',
+            engine: 'Materials Project / OPTIMADE',
+            inputs: { formula, elements, property_filter: inputs.property_filter },
+            status: 'completed',
+            result: fullResult,
+          });
+        } catch (e) {
+          console.error('Failed to record job:', e);
+        }
+      }
+
+      if (user) {
+        try {
+          await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
+          if (refreshUser) await refreshUser();
+        } catch {}
+      }
+      setShowFeedback(true);
+      setTimeout(() => setShowFeedback(false), 15000);
+    } catch (e) {
+      console.error(e);
+      if (user && draftId) {
+        try {
+          await base44.entities.SimulationDraft.update(draftId, { status: 'failed', error: e.message });
+        } catch {}
+      }
+      setResults({ error: e.message || 'Materials search failed' });
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
   const generatePDFReport = () => {
     if (!results) return;
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
@@ -527,14 +621,14 @@ Provide a focused, technical analysis. Return JSON with:
         <AnimatePresence>
           {results && (
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-8">
-              {results.ground_state_energy !== undefined || results.error ? (
+              {isQuantumMode || isMaterialsMode ? (
                 <>
-                  <QuantumResults results={results} />
+                  {isQuantumMode ? <QuantumResults results={results} /> : <MaterialsResults results={results} />}
                   <div className="flex justify-center mt-8 gap-3 flex-wrap">
-                    <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />New Simulation</Button>
-                    <Button onClick={handleQuantumRun} disabled={isRunning} className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white">
-                      {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Atom className="w-4 h-4" />}
-                      Re-run VQE
+                    <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />{isMaterialsMode ? 'New Search' : 'New Simulation'}</Button>
+                    <Button onClick={isQuantumMode ? handleQuantumRun : handleMaterialsRun} disabled={isRunning} className={isQuantumMode ? "gap-2 bg-indigo-600 hover:bg-indigo-700 text-white" : "gap-2 bg-amber-600 hover:bg-amber-700 text-white"}>
+                      {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : isQuantumMode ? <Atom className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
+                      {isQuantumMode ? 'Re-run VQE' : 'Re-run Search'}
                     </Button>
                   </div>
                 </>
@@ -794,11 +888,20 @@ Provide a focused, technical analysis. Return JSON with:
                   </div>
                 )}
 
-                {/* PubChem Auto-fill */}
-                <PubChemSearch onSelect={handlePubChemSelect} />
+                {/* Materials Settings — materials mode only */}
+                {isMaterialsMode && (
+                  <div className="mb-7">
+                    <MaterialsSettings />
+                  </div>
+                )}
 
-                {/* Engine selector — hidden for quantum mode (uses hardware toggle instead) */}
-                {!isQuantumMode && (
+                {/* PubChem Auto-fill — hidden for quantum and materials modes */}
+                {!isQuantumMode && !isMaterialsMode && (
+                  <PubChemSearch onSelect={handlePubChemSelect} />
+                )}
+
+                {/* Engine selector — hidden for quantum and materials modes */}
+                {!isQuantumMode && !isMaterialsMode && (
                 <div className="mb-7">
                   <label className="block text-xs font-semibold text-slate-500 mb-2.5 uppercase tracking-widest">Software / Engine</label>
                   <TooltipProvider>
@@ -899,7 +1002,8 @@ Provide a focused, technical analysis. Return JSON with:
                   </div>
                 </div>
 
-                {/* Environmental Parameters — isolated sandbox conditions */}
+                {/* Environmental Parameters — hidden for quantum and materials modes */}
+                {!isQuantumMode && !isMaterialsMode && (
                 <div className="mb-7">
                   <EnvironmentalParametersPanel
                     params={envParams}
@@ -907,40 +1011,49 @@ Provide a focused, technical analysis. Return JSON with:
                     simType={typeId}
                   />
                 </div>
+                )}
 
                 {/* Run button */}
                 <div className="flex items-center gap-4 flex-wrap">
                   <Button
-                    onClick={isQuantumMode ? handleQuantumRun : handleRun}
+                    onClick={isQuantumMode ? handleQuantumRun : isMaterialsMode ? handleMaterialsRun : handleRun}
                     disabled={isRunning}
                     className={isQuantumMode
                       ? "bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
-                      : "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"}
+                      : isMaterialsMode
+                        ? "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
+                        : "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"}
                   >
                     {isRunning
                       ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
                       : isQuantumMode
                         ? <><Atom className="w-4 h-4" /> Run VQE Simulation</>
-                        : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
+                        : isMaterialsMode
+                          ? <><Layers className="w-4 h-4" /> Search Materials</>
+                          : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
                   </Button>
                   <p className="text-xs text-slate-400">
                     {isQuantumMode
                       ? `VQE via Qiskit ${useHardware ? 'hardware' : 'simulator'} · 10-30 seconds`
-                      : `AI analysis + ${selectedEngine} script · 5-10 seconds`}
+                      : isMaterialsMode
+                        ? `Live API queries to Materials Project & OPTIMADE · 5-10 seconds`
+                        : `AI analysis + ${selectedEngine} script · 5-10 seconds`}
                   </p>
                 </div>
 
                 {isRunning && (
-                  <div className={`mt-5 ${isQuantumMode ? 'bg-indigo-50 border-indigo-200' : 'bg-violet-50 border-violet-200'} border rounded-2xl p-4 flex items-center gap-3`}>
-                    <Loader2 className={`w-5 h-5 ${isQuantumMode ? 'text-indigo-600' : 'text-violet-600'} animate-spin flex-shrink-0`} />
+                  <div className={`mt-5 ${isQuantumMode ? 'bg-indigo-50 border-indigo-200' : isMaterialsMode ? 'bg-amber-50 border-amber-200' : 'bg-violet-50 border-violet-200'} border rounded-2xl p-4 flex items-center gap-3`}>
+                    <Loader2 className={`w-5 h-5 ${isQuantumMode ? 'text-indigo-600' : isMaterialsMode ? 'text-amber-600' : 'text-violet-600'} animate-spin flex-shrink-0`} />
                     <div>
-                      <p className={`text-sm font-semibold ${isQuantumMode ? 'text-indigo-800' : 'text-violet-800'}`}>
-                        {isQuantumMode ? 'Running VQE quantum simulation…' : `Computing ${sim.label}…`}
+                      <p className={`text-sm font-semibold ${isQuantumMode ? 'text-indigo-800' : isMaterialsMode ? 'text-amber-800' : 'text-violet-800'}`}>
+                        {isQuantumMode ? 'Running VQE quantum simulation…' : isMaterialsMode ? 'Searching materials databases…' : `Computing ${sim.label}…`}
                       </p>
-                      <p className={`text-xs ${isQuantumMode ? 'text-indigo-500' : 'text-violet-500'}`}>
+                      <p className={`text-xs ${isQuantumMode ? 'text-indigo-500' : isMaterialsMode ? 'text-amber-500' : 'text-violet-500'}`}>
                         {isQuantumMode
                           ? `Running VQE on Qiskit ${useHardware ? 'hardware (may queue)' : 'statevector simulator'}…`
-                          : `Generating ${selectedEngine} script, predicted results & analysis…`}
+                          : isMaterialsMode
+                            ? `Querying Materials Project and OPTIMADE providers…`
+                            : `Generating ${selectedEngine} script, predicted results & analysis…`}
                       </p>
                     </div>
                   </div>
