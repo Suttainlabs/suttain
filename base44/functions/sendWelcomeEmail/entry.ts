@@ -83,10 +83,10 @@ Deno.serve(async (req) => {
 
         <!-- Header -->
         <tr>
-          <td style="background:linear-gradient(135deg,#02988C,#09D2FF);border-radius:12px 12px 0 0;padding:40px 40px 32px;text-align:center;">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:48px;width:auto;margin-bottom:16px;"/>
+          <td style="background-color:#007850;border-radius:12px 12px 0 0;padding:40px 40px 32px;text-align:center;">
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:48px;width:auto;margin-bottom:16px;display:block;"/>
             <h1 style="color:#ffffff;font-size:26px;font-weight:700;margin:0 0 8px;">Welcome to Suttain, ${firstName}!</h1>
-            <p style="color:rgba(255,255,255,0.9);font-size:15px;margin:0;">Your free account is ready — ${totalTools} tools and features waiting for you.</p>
+            <p style="color:#ffffff;font-size:15px;margin:0;">Your free account is ready — ${totalTools} tools and features waiting for you.</p>
           </td>
         </tr>
 
@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
             <table width="100%" cellpadding="0" cellspacing="0">
               <tr>
                 <td align="center">
-                  <a href="https://suttain.com/Dashboard" style="display:inline-block;background:linear-gradient(135deg,#02988C,#09D2FF);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:50px;">Go to Your Dashboard</a>
+                  <a href="https://suttain.com/Dashboard" style="display:inline-block;background-color:#007850;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:50px;">Go to Your Dashboard</a>
                 </td>
               </tr>
             </table>
