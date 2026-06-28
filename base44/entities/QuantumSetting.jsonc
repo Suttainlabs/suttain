@@ -1,0 +1,29 @@
+{
+  "name": "QuantumSetting",
+  "type": "object",
+  "properties": {
+    "ibm_quantum_token": {
+      "type": "string",
+      "description": "User's IBM Quantum API token from quantum.cloud.ibm.com for real hardware access"
+    },
+    "preferred_backend": {
+      "type": "string",
+      "description": "Preferred IBM quantum backend name (e.g. ibm_brisbane)"
+    }
+  },
+  "required": [
+    "ibm_quantum_token"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

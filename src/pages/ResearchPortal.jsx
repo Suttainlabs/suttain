@@ -27,8 +27,8 @@ const modules = [
     icon: Cpu,
     color: '#00A8C8',
     badge: 'Pro',
-    description: 'Semi-empirical and DFT-tier simulations. Upload PDB, SDF, MOL2, or SMILES. 3D WebGL viewer with ESP mapping, NCI detection, and trajectory playback.',
-    metrics: ['GFN2-xTB', 'B3LYP/6-31G*', 'OpenMM MD'],
+    description: 'Semi-empirical and DFT-tier simulations. Upload PDB, SDF, MOL2, or SMILES. 3D WebGL viewer with ESP mapping, NCI detection, and trajectory playback. Run real quantum chemistry simulations with IBM Qiskit.',
+    metrics: ['GFN2-xTB', 'B3LYP/6-31G*', 'OpenMM MD', 'IBM Qiskit VQE'],
     status: 'operational',
   },
   {

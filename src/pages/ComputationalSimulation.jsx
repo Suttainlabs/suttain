@@ -28,6 +28,19 @@ export const SIM_TYPES = [
     ]
   },
   {
+    id: "quantum_vqe",
+    label: "Quantum VQE (IBM Qiskit)",
+    icon: Atom,
+    color: "from-indigo-500 to-blue-600",
+    bgColor: "bg-indigo-50",
+    borderColor: "border-indigo-200",
+    engines: ["Qiskit Statevector", "IBM Hardware"],
+    description: "Variational Quantum Eigensolver for ground state energy using IBM Qiskit. Run on simulator or real quantum hardware.",
+    fields: [
+      { key: "molecule", label: "Molecule (name, SMILES, or formula)", placeholder: "e.g. H2, LiH, H2O, or SMILES" },
+    ]
+  },
+  {
     id: "molecular_dynamics",
     label: "Molecular Dynamics (MD)",
     icon: Activity,
@@ -233,14 +246,14 @@ export const SIM_TYPES = [
 ];
 
 export const DOMAIN_SIM_MAP = {
-  "Chemistry":         ["dft", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
+  "Chemistry":         ["dft", "quantum_vqe", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
   "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
   "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
   "Engineering":       ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
   "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
   "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation"],
-  "Materials Science": ["materials", "dft", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
-  "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  "Materials Science": ["materials", "dft", "quantum_vqe", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "quantum_vqe", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
 };
 
 const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
@@ -319,6 +332,13 @@ export default function ComputationalSimulation() {
             <p className="text-slate-500 max-w-2xl mx-auto text-base leading-relaxed">
               AI-powered molecular modeling — DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.
             </p>
+
+            {/* Quantum-powered badge */}
+            <div className="flex justify-center mt-4">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200">
+                <Atom className="w-3 h-3" /> Quantum-powered — Run real quantum chemistry with IBM Qiskit
+              </span>
+            </div>
 
             {/* Domain tabs */}
             <div className="flex flex-wrap justify-center gap-2 mt-6">

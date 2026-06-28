@@ -24,8 +24,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../com
 import {
   Cpu, ChevronLeft, Beaker, Dna, Download, Copy, CheckCircle2,
   Loader2, RotateCcw, BookOpen, Microscope, Activity, AlertTriangle,
-  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info
+  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info, Atom
 } from "lucide-react";
+import QuantumSettings from "../components/computational/QuantumSettings";
+import QuantumResults from "../components/computational/QuantumResults";
 
 function SelectField({ label, options, value, onChange }) {
   return (
@@ -70,6 +72,7 @@ export default function SimulationRunner() {
   const [envParams, setEnvParams] = useState(null);
   const [currentJobHash, setCurrentJobHash] = useState(null);
   const [currentDraftId, setCurrentDraftId] = useState(null);
+  const [useHardware, setUseHardware] = useState(false);
 
   const DRAWABLE_KEYS = ['molecule', 'ligand', 'compound', 'system', 'surface', 'reactants'];
 
@@ -111,6 +114,8 @@ export default function SimulationRunner() {
   }, [sim, navigate]);
 
   if (!sim) return null;
+
+  const isQuantumMode = typeId === "quantum_vqe";
 
   const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
 
@@ -287,6 +292,96 @@ Provide a focused, technical analysis. Return JSON with:
     }
   };
 
+  const handleQuantumRun = async () => {
+    const molecule = inputs.molecule;
+    if (!molecule) return;
+
+    setIsRunning(true);
+    setResults(null);
+
+    const jobHash = generateJobHash();
+    setCurrentJobHash(jobHash);
+
+    let draftId = null;
+    if (user) {
+      try {
+        const draft = await base44.entities.SimulationDraft.create({
+          name: `Quantum VQE — ${molecule} — ${new Date().toLocaleString()}`,
+          sim_type: 'quantum_vqe',
+          sim_type_label: 'Quantum VQE (IBM Qiskit)',
+          engine: useHardware ? 'IBM Hardware' : 'Qiskit Statevector',
+          domain,
+          raw_inputs: { molecule, use_hardware: useHardware },
+          run_id: jobHash,
+          status: 'running',
+        });
+        draftId = draft.id;
+        setCurrentDraftId(draftId);
+      } catch (e) {
+        console.error('Failed to create draft:', e);
+      }
+    }
+
+    try {
+      const quantumData = await base44.functions.invoke('quantumChemistry', {
+        molecule,
+        use_hardware: useHardware,
+      });
+
+      const fullResult = {
+        ...quantumData,
+        simType: sim,
+        engine: useHardware ? 'IBM Hardware' : 'Qiskit Statevector',
+        domain,
+        inputs: { molecule },
+        job_hash: jobHash,
+      };
+      setResults(fullResult);
+      setActiveTab('analysis');
+
+      if (user && draftId) {
+        try {
+          await base44.entities.SimulationDraft.update(draftId, {
+            status: 'completed',
+            result: fullResult,
+          });
+          await base44.entities.SimulationJob.create({
+            draft_id: draftId,
+            job_hash: jobHash,
+            job_name: `Quantum VQE — ${molecule}`,
+            sim_type: 'quantum_vqe',
+            sim_type_label: 'Quantum VQE (IBM Qiskit)',
+            engine: useHardware ? 'IBM Hardware' : 'Qiskit Statevector',
+            inputs: { molecule, use_hardware: useHardware },
+            status: 'completed',
+            result: fullResult,
+          });
+        } catch (e) {
+          console.error('Failed to record job:', e);
+        }
+      }
+
+      if (user) {
+        try {
+          await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
+          if (refreshUser) await refreshUser();
+        } catch {}
+      }
+      setShowFeedback(true);
+      setTimeout(() => setShowFeedback(false), 15000);
+    } catch (e) {
+      console.error(e);
+      if (user && draftId) {
+        try {
+          await base44.entities.SimulationDraft.update(draftId, { status: 'failed', error: e.message });
+        } catch {}
+      }
+      setResults({ error: e.message || 'Quantum simulation failed' });
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
   const generatePDFReport = () => {
     if (!results) return;
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
@@ -432,6 +527,19 @@ Provide a focused, technical analysis. Return JSON with:
         <AnimatePresence>
           {results && (
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-8">
+              {results.ground_state_energy !== undefined || results.error ? (
+                <>
+                  <QuantumResults results={results} />
+                  <div className="flex justify-center mt-8 gap-3 flex-wrap">
+                    <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />New Simulation</Button>
+                    <Button onClick={handleQuantumRun} disabled={isRunning} className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white">
+                      {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Atom className="w-4 h-4" />}
+                      Re-run VQE
+                    </Button>
+                  </div>
+                </>
+              ) : (
+              <>
               {/* Result Tabs */}
               <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 mb-6 w-fit">
                 {[
@@ -636,6 +744,8 @@ Provide a focused, technical analysis. Return JSON with:
                   Re-run Analysis
                 </Button>
               </div>
+              </>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -659,10 +769,36 @@ Provide a focused, technical analysis. Return JSON with:
             <Card className="border-0 shadow-md">
               <CardContent className="p-6 md:p-8">
 
+                {/* Quantum Settings — quantum mode only */}
+                {isQuantumMode && (
+                  <div className="mb-7">
+                    <QuantumSettings />
+                    <div className="mt-4 p-4 bg-indigo-50 border border-indigo-200 rounded-2xl">
+                      <label className="flex items-start gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={useHardware}
+                          onChange={e => setUseHardware(e.target.checked)}
+                          className="w-4 h-4 mt-0.5 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <div>
+                          <span className="text-sm font-semibold text-indigo-800">Run on real IBM quantum hardware</span>
+                          <p className="text-xs text-indigo-600 mt-0.5">
+                            Uses your IBM Quantum token via Qiskit Runtime. Best for small molecules (H2, LiH, H2O).
+                            Hardware runs may queue and take several minutes. Without a token, the local Qiskit
+                            simulator is used (no token needed).
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                )}
+
                 {/* PubChem Auto-fill */}
                 <PubChemSearch onSelect={handlePubChemSelect} />
 
-                {/* Engine selector */}
+                {/* Engine selector — hidden for quantum mode (uses hardware toggle instead) */}
+                {!isQuantumMode && (
                 <div className="mb-7">
                   <label className="block text-xs font-semibold text-slate-500 mb-2.5 uppercase tracking-widest">Software / Engine</label>
                   <TooltipProvider>
@@ -690,6 +826,7 @@ Provide a focused, technical analysis. Return JSON with:
                     </div>
                   </TooltipProvider>
                 </div>
+                )}
 
                 {/* Custom Forcefield picker — MD only */}
                 {typeId === "molecular_dynamics" && (
@@ -774,23 +911,37 @@ Provide a focused, technical analysis. Return JSON with:
                 {/* Run button */}
                 <div className="flex items-center gap-4 flex-wrap">
                   <Button
-                    onClick={handleRun}
+                    onClick={isQuantumMode ? handleQuantumRun : handleRun}
                     disabled={isRunning}
-                    className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
+                    className={isQuantumMode
+                      ? "bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
+                      : "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"}
                   >
                     {isRunning
                       ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
-                      : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
+                      : isQuantumMode
+                        ? <><Atom className="w-4 h-4" /> Run VQE Simulation</>
+                        : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
                   </Button>
-                  <p className="text-xs text-slate-400">AI analysis + {selectedEngine} script · 5-10 seconds</p>
+                  <p className="text-xs text-slate-400">
+                    {isQuantumMode
+                      ? `VQE via Qiskit ${useHardware ? 'hardware' : 'simulator'} · 10-30 seconds`
+                      : `AI analysis + ${selectedEngine} script · 5-10 seconds`}
+                  </p>
                 </div>
 
                 {isRunning && (
-                  <div className="mt-5 bg-violet-50 border border-violet-200 rounded-2xl p-4 flex items-center gap-3">
-                    <Loader2 className="w-5 h-5 text-violet-600 animate-spin flex-shrink-0" />
+                  <div className={`mt-5 ${isQuantumMode ? 'bg-indigo-50 border-indigo-200' : 'bg-violet-50 border-violet-200'} border rounded-2xl p-4 flex items-center gap-3`}>
+                    <Loader2 className={`w-5 h-5 ${isQuantumMode ? 'text-indigo-600' : 'text-violet-600'} animate-spin flex-shrink-0`} />
                     <div>
-                      <p className="text-sm font-semibold text-violet-800">Computing {sim.label}…</p>
-                      <p className="text-xs text-violet-500">Generating {selectedEngine} script, predicted results & analysis…</p>
+                      <p className={`text-sm font-semibold ${isQuantumMode ? 'text-indigo-800' : 'text-violet-800'}`}>
+                        {isQuantumMode ? 'Running VQE quantum simulation…' : `Computing ${sim.label}…`}
+                      </p>
+                      <p className={`text-xs ${isQuantumMode ? 'text-indigo-500' : 'text-violet-500'}`}>
+                        {isQuantumMode
+                          ? `Running VQE on Qiskit ${useHardware ? 'hardware (may queue)' : 'statevector simulator'}…`
+                          : `Generating ${selectedEngine} script, predicted results & analysis…`}
+                      </p>
                     </div>
                   </div>
                 )}
