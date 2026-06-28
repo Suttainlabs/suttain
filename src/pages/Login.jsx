@@ -18,6 +18,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const redirectParam = new URLSearchParams(window.location.search).get("redirect") || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +45,7 @@ export default function Login() {
       try {
         await base44.auth.loginViaEmailPassword(sanitizedEmail, password);
         await recordLoginResult({ email: sanitizedEmail, success: true });
-        window.location.href = "/";
+        window.location.href = redirectParam;
       } catch (loginErr) {
         // Record failure for lockout tracking (fire-and-forget)
         try { await recordLoginResult({ email: sanitizedEmail, success: false }); } catch {}
@@ -59,15 +60,15 @@ export default function Login() {
   };
 
   const handleGoogle = () => {
-    base44.auth.loginWithProvider("google", "/");
+    base44.auth.loginWithProvider("google", redirectParam);
   };
 
   const handleMicrosoft = () => {
-    base44.auth.loginWithProvider("microsoft", "/");
+    base44.auth.loginWithProvider("microsoft", redirectParam);
   };
 
   const handleApple = () => {
-    base44.auth.loginWithProvider("apple", "/");
+    base44.auth.loginWithProvider("apple", redirectParam);
   };
 
   return (
@@ -78,7 +79,7 @@ export default function Login() {
       footer={
         <>
           Don't have an account?{" "}
-          <Link to="/register" className="text-primary font-medium hover:underline">
+          <Link to={"/register" + (redirectParam !== "/" ? "?redirect=" + encodeURIComponent(redirectParam) : "")} className="text-primary font-medium hover:underline">
             Create one
           </Link>
         </>

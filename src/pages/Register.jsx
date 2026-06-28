@@ -21,6 +21,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
+  const redirectParam = new URLSearchParams(window.location.search).get("redirect") || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +54,7 @@ export default function Register() {
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
       }
-      window.location.href = "/";
+      window.location.href = redirectParam;
     } catch (err) {
       setError(err.message || "Invalid verification code");
     } finally {
@@ -75,15 +76,15 @@ export default function Register() {
   };
 
   const handleGoogle = () => {
-    base44.auth.loginWithProvider("google", "/");
+    base44.auth.loginWithProvider("google", redirectParam);
   };
 
   const handleMicrosoft = () => {
-    base44.auth.loginWithProvider("microsoft", "/");
+    base44.auth.loginWithProvider("microsoft", redirectParam);
   };
 
   const handleApple = () => {
-    base44.auth.loginWithProvider("apple", "/");
+    base44.auth.loginWithProvider("apple", redirectParam);
   };
 
   if (showOtp) {
@@ -148,7 +149,7 @@ export default function Register() {
       footer={
         <>
           Already have an account?{" "}
-          <Link to="/login" className="text-primary font-medium hover:underline">
+          <Link to={"/login" + (redirectParam !== "/" ? "?redirect=" + encodeURIComponent(redirectParam) : "")} className="text-primary font-medium hover:underline">
             Log in
           </Link>
         </>

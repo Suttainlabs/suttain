@@ -5,6 +5,7 @@ import {
   GraduationCap, Microscope, Table2
 } from 'lucide-react';
 import { createCheckoutSession } from '@/functions/createCheckoutSession';
+import { base44 } from '@/api/base44Client';
 import AuthContext from '../components/auth/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Section, SectionHeader } from '@/components/shared/Section';
@@ -240,6 +241,13 @@ export default function Pricing() {
       alert('Checkout works only from the published app. Please open the app in a new tab.');
       return;
     }
+    // Require an authenticated session before hitting Stripe
+    const isAuthed = user ? true : await base44.auth.isAuthenticated();
+    if (!isAuthed) {
+      sessionStorage.setItem('pendingCheckout', priceKey);
+      window.location.href = '/login?redirect=' + encodeURIComponent('/Pricing');
+      return;
+    }
     setCheckoutLoading(priceKey);
     try {
       const res = await createCheckoutSession({
@@ -255,6 +263,15 @@ export default function Pricing() {
       setCheckoutLoading(null);
     }
   };
+
+  // Resume a pending checkout once the user is authenticated after login/signup
+  useEffect(() => {
+    const pending = sessionStorage.getItem('pendingCheckout');
+    if (pending && user) {
+      sessionStorage.removeItem('pendingCheckout');
+      handleUpgrade(pending);
+    }
+  }, [user]);
 
   const urlParams = new URLSearchParams(window.location.search);
   const isSuccess = urlParams.get('success') === 'true';
