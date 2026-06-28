@@ -1,4 +1,4 @@
-import React, { useState, useContext, lazy, Suspense } from "react";
+import React, { useState, useContext, useEffect, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { getAccurateChemicalAnalysis } from "@/functions/getAccurateChemicalAnalysis";
@@ -525,6 +525,7 @@ export default function Simulator() {
   const [chemicals, setChemicals] = useState([]);
 
   const [sdsSourceBanner, setSdsSourceBanner] = React.useState(null);
+  const autoSimulateRef = React.useRef(false);
 
   // Pre-populate chemicals from URL params (e.g. from SDS Analyzer)
   React.useEffect(() => {
@@ -552,6 +553,11 @@ export default function Simulator() {
         // Default to researcher persona so they can run immediately
         setPersona("researcher");
       }
+    }
+
+    // Flag to auto-trigger simulation once chemicals are loaded
+    if (urlParams.get("auto_simulate") === "true") {
+      autoSimulateRef.current = true;
     }
   }, []);
   const [simulationData, setSimulationData] = useState(null);
@@ -628,8 +634,8 @@ export default function Simulator() {
   };
 
   const handleSimulate = async (enhancedData) => {
-    if (chemicals.length < 2) {
-      setError("Please add at least 2 chemicals to run a simulation.");
+    if (chemicals.length < 1) {
+      setError("Please add at least 1 chemical to run a simulation.");
       return;
     }
 
@@ -785,6 +791,14 @@ export default function Simulator() {
       points_earned: 5
     });
   };
+
+  // Auto-trigger simulation when arriving from SaferAlternatives with auto_simulate=true
+  React.useEffect(() => {
+    if (autoSimulateRef.current && chemicals.length > 0 && persona && !isLoading && !simulationData) {
+      autoSimulateRef.current = false;
+      handleSimulate();
+    }
+  }, [chemicals, persona, isLoading, simulationData]);
 
   const viewAlternatives = () => setStep(3);
   const backToAnalysis = () => setStep(2);

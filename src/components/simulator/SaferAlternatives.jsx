@@ -40,8 +40,8 @@ export default function SaferAlternatives({
   const hasValidAlternatives = validAlternatives.length > 0;
 
   const handleSimulateAlternative = (alt) => {
-    // Navigate to Simulator with the alternative pre-filled via URL param
-    const params = new URLSearchParams({ chemicals: alt.alternative_chemical });
+    // Navigate to Simulator with the alternative pre-filled and auto-run enabled
+    const params = new URLSearchParams({ chemicals: alt.alternative_chemical, auto_simulate: 'true' });
     navigate(`${createPageUrl('Simulator')}?${params.toString()}`);
   };
 
