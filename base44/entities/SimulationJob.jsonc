@@ -2,9 +2,13 @@
   "name": "SimulationJob",
   "type": "object",
   "properties": {
-    "queue_id": {
+    "draft_id": {
       "type": "string",
-      "description": "ID of the parent SimulationQueue this job belongs to"
+      "description": "Reference to the parent SimulationDraft workspace this job belongs to"
+    },
+    "job_hash": {
+      "type": "string",
+      "description": "Unique hash identifier for this job \u2014 generated from configuration + environmental params + timestamp for auditability"
     },
     "job_name": {
       "type": "string",
@@ -32,6 +36,11 @@
       "additionalProperties": true,
       "description": "Key-value input parameters for this job"
     },
+    "environmental_params": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Environmental parameters snapshot at time of job creation"
+    },
     "status": {
       "type": "string",
       "enum": [
@@ -58,7 +67,8 @@
     }
   },
   "required": [
-    "queue_id",
+    "draft_id",
+    "job_hash",
     "job_name",
     "sim_type",
     "engine"
@@ -66,13 +76,40 @@
   "rls": {
     "create": null,
     "read": {
-      "created_by_id": "{{user.id}}"
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "update": {
-      "created_by_id": "{{user.id}}"
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
-      "created_by_id": "{{user.id}}"
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }
