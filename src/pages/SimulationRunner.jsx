@@ -30,6 +30,8 @@ import QuantumSettings from "../components/computational/QuantumSettings";
 import QuantumResults from "../components/computational/QuantumResults";
 import MaterialsSettings from "../components/computational/MaterialsSettings";
 import MaterialsResults from "../components/computational/MaterialsResults";
+import StructureBuilder from "../components/computational/StructureBuilder";
+import CrystalViewer3D from "../components/computational/CrystalViewer3D";
 
 function SelectField({ label, options, value, onChange }) {
   return (
@@ -75,6 +77,8 @@ export default function SimulationRunner() {
   const [currentJobHash, setCurrentJobHash] = useState(null);
   const [currentDraftId, setCurrentDraftId] = useState(null);
   const [useHardware, setUseHardware] = useState(false);
+  const [structureData, setStructureData] = useState(null);
+  const [structureBonds, setStructureBonds] = useState([]);
 
   const DRAWABLE_KEYS = ['molecule', 'ligand', 'compound', 'system', 'surface', 'reactants'];
 
@@ -119,6 +123,7 @@ export default function SimulationRunner() {
 
   const isQuantumMode = typeId === "quantum_vqe";
   const isMaterialsMode = typeId === "materials_informatics";
+  const isStructureMode = typeId === "structure_builder";
 
   const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
 
@@ -476,6 +481,20 @@ Provide a focused, technical analysis. Return JSON with:
     }
   };
 
+  const handleStructureLoaded = (result) => {
+    if (result?.structure) {
+      setStructureData(result.structure);
+      setStructureBonds(result.bonds || []);
+      setResults({
+        ...result,
+        simType: sim,
+        engine: 'ASE / Three.js',
+        domain,
+        job_hash: generateJobHash(),
+      });
+    }
+  };
+
   const generatePDFReport = () => {
     if (!results) return;
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
@@ -629,6 +648,29 @@ Provide a focused, technical analysis. Return JSON with:
                     <Button onClick={isQuantumMode ? handleQuantumRun : handleMaterialsRun} disabled={isRunning} className={isQuantumMode ? "gap-2 bg-indigo-600 hover:bg-indigo-700 text-white" : "gap-2 bg-amber-600 hover:bg-amber-700 text-white"}>
                       {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : isQuantumMode ? <Atom className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
                       {isQuantumMode ? 'Re-run VQE' : 'Re-run Search'}
+                    </Button>
+                  </div>
+                </>
+              ) : isStructureMode && structureData ? (
+                <>
+                  <Card className="border-0 shadow-sm">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-2 mb-4 flex-wrap">
+                        <Badge className="bg-cyan-100 text-cyan-700 text-sm font-mono">{results?.formula || ''}</Badge>
+                        <Badge variant="outline" className="text-xs">{results?.source || ''}</Badge>
+                        <span className="text-xs text-slate-400">{results?.method_note || ''}</span>
+                      </div>
+                      {results?.plain_language && (
+                        <div className="mb-4 p-3 bg-slate-50 rounded-lg">
+                          <p className="text-sm text-slate-600 leading-relaxed">{results.plain_language}</p>
+                        </div>
+                      )}
+                      <CrystalViewer3D structure={structureData} bonds={structureBonds} />
+                    </CardContent>
+                  </Card>
+                  <div className="flex justify-center mt-8 gap-3 flex-wrap">
+                    <Button variant="outline" onClick={() => { setStructureData(null); setResults(null); setStructureBonds([]); }} className="gap-2">
+                      <RotateCcw className="w-4 h-4" /> New Structure
                     </Button>
                   </div>
                 </>
@@ -857,6 +899,22 @@ Provide a focused, technical analysis. Return JSON with:
         {/* Config Form */}
         {!results && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+            {isStructureMode ? (
+              <Card className="border-0 shadow-md">
+                <CardContent className="p-6 md:p-8">
+                  <div className="mb-5">
+                    <h2 className="font-bold text-slate-900 text-lg mb-1">Structure Builder & 3D Viewer</h2>
+                    <p className="text-sm text-slate-500">
+                      Upload a structure file (CIF, POSCAR, XYZ, PDB) or build a common crystal type,
+                      then convert between formats and visualize in 3D. Powered by ASE-compatible
+                      structure tools and Three.js.
+                    </p>
+                  </div>
+                  <StructureBuilder onStructureLoaded={handleStructureLoaded} />
+                </CardContent>
+              </Card>
+            ) : (
+            <>
             {/* Simulation Presets */}
             <SimulationPresets onSelectPreset={handlePresetSelect} />
 
@@ -1060,6 +1118,8 @@ Provide a focused, technical analysis. Return JSON with:
                 )}
               </CardContent>
             </Card>
+            </>
+            )}
           </motion.div>
         )}
 

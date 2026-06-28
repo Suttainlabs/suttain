@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom,
-  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight, Layers, Target
+  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight, Layers, Target, Boxes
 } from "lucide-react";
 import StructurePrepSuite from '../components/structural/StructurePrepSuite';
 
@@ -136,6 +136,17 @@ export const SIM_TYPES = [
     ]
   },
   {
+    id: "structure_builder",
+    label: "Structure Builder & 3D Viewer",
+    icon: Boxes,
+    color: "from-cyan-500 to-teal-600",
+    bgColor: "bg-cyan-50",
+    borderColor: "border-cyan-200",
+    engines: ["ASE", "Three.js", "CIF", "POSCAR", "XYZ", "PDB"],
+    description: "Upload or build crystal structures, convert between CIF/POSCAR/XYZ/PDB, and visualize in 3D with measurement tools.",
+    fields: []
+  },
+  {
     id: "monte_carlo",
     label: "Monte Carlo / Statistical",
     icon: FlaskConical,
@@ -261,13 +272,13 @@ export const SIM_TYPES = [
 ];
 
 export const DOMAIN_SIM_MAP = {
-  "Chemistry":         ["dft", "quantum_vqe", "materials_informatics", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
+  "Chemistry":         ["dft", "quantum_vqe", "materials_informatics", "structure_builder", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
   "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
   "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Engineering":       ["materials", "materials_informatics", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
+  "Engineering":       ["materials", "materials_informatics", "structure_builder", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
   "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
   "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation"],
-  "Materials Science": ["materials", "materials_informatics", "dft", "quantum_vqe", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  "Materials Science": ["materials", "materials_informatics", "structure_builder", "dft", "quantum_vqe", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
   "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "quantum_vqe", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
 };
 
@@ -355,6 +366,9 @@ export default function ComputationalSimulation() {
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200">
                 <Layers className="w-3 h-3" /> Materials Informatics — Materials Project & OPTIMADE
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-100 text-cyan-700 text-xs font-semibold border border-cyan-200">
+                <Boxes className="w-3 h-3" /> Structure Builder — ASE & 3D Crystal Viewer
               </span>
             </div>
 

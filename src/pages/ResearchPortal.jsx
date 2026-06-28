@@ -27,8 +27,8 @@ const modules = [
     icon: Cpu,
     color: '#00A8C8',
     badge: 'Pro',
-    description: 'Semi-empirical and DFT-tier simulations. Upload PDB, SDF, MOL2, or SMILES. 3D WebGL viewer with ESP mapping, NCI detection, and trajectory playback. Run real quantum chemistry with IBM Qiskit, and search open materials databases (Materials Project, OPTIMADE) for crystal structures and properties.',
-    metrics: ['GFN2-xTB', 'B3LYP/6-31G*', 'OpenMM MD', 'IBM Qiskit VQE', 'Materials Project'],
+    description: 'Semi-empirical and DFT-tier simulations. Upload PDB, SDF, MOL2, or SMILES. 3D WebGL viewer with ESP mapping, NCI detection, and trajectory playback. Run real quantum chemistry with IBM Qiskit, search open materials databases (Materials Project, OPTIMADE), and build/convert crystal structures with ASE-compatible tools and 3D measurement.',
+    metrics: ['GFN2-xTB', 'B3LYP/6-31G*', 'OpenMM MD', 'IBM Qiskit VQE', 'Materials Project', 'ASE Structure Tools'],
     status: 'operational',
   },
   {
