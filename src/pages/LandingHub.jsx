@@ -133,7 +133,7 @@ export default function LandingHub() {
         >
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
             <Button size="lg" className="w-full sm:w-auto" onClick={() => setShowAnalyzeModal(true)}>
-              Analyze Your Product Free
+              Analyze Your Product
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             <Link to={createPageUrl("ResearchPortal")}>
@@ -341,7 +341,7 @@ export default function LandingHub() {
             >
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button size="lg" className="w-full sm:w-auto bg-white text-[#00695C] hover:bg-white/90 shadow-lg" onClick={() => setShowAnalyzeModal(true)}>
-                  Analyze Your Product Free
+                  Analyze Your Product
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
                 <Link to={createPageUrl("Pricing")}>
