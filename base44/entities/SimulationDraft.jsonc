@@ -4,29 +4,115 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "A user-defined name for the simulation session."
+      "description": "User-defined name for the simulation workspace session"
     },
     "description": {
       "type": "string",
       "maxLength": 1000,
       "description": "Optional short description for search visibility and previews"
     },
-    "chemicals": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "List of chemical names in the simulation."
+    "sim_type": {
+      "type": "string",
+      "description": "Simulation type ID (e.g. dft, molecular_dynamics, drug_discovery)"
     },
-    "simulationParams": {
+    "sim_type_label": {
+      "type": "string",
+      "description": "Human-readable simulation type label"
+    },
+    "engine": {
+      "type": "string",
+      "description": "Software engine selected (e.g. ORCA, GROMACS, VASP)"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Scientific domain (e.g. Chemistry, Biochemistry, Materials Science)"
+    },
+    "raw_inputs": {
       "type": "object",
       "additionalProperties": true,
-      "description": "The parameters set for the simulation (temperature, pressure, etc.)"
+      "description": "Raw configuration inputs keyed by field name \u2014 decoupled from any saved entity references"
+    },
+    "environmental_params": {
+      "type": "object",
+      "properties": {
+        "solvent": {
+          "type": "string"
+        },
+        "solvent_custom": {
+          "type": "string"
+        },
+        "forcefield": {
+          "type": "string"
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Temperature in Kelvin"
+        },
+        "pressure": {
+          "type": "number",
+          "description": "Pressure in bar"
+        },
+        "ph": {
+          "type": "number",
+          "description": "pH value (0-14)"
+        },
+        "ionic_strength": {
+          "type": "number",
+          "description": "Ionic strength in mol/L"
+        },
+        "boundary_conditions": {
+          "type": "string"
+        },
+        "box_type": {
+          "type": "string"
+        },
+        "thermostat": {
+          "type": "string"
+        },
+        "barostat": {
+          "type": "string"
+        },
+        "environment_id": {
+          "type": "string",
+          "description": "Reference to a saved SimulationEnvironment preset if reused"
+        }
+      },
+      "description": "Isolated environmental parameters for this simulation sandbox"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Unique hash identifier generated for this simulation run \u2014 used for auditability"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "running",
+        "completed",
+        "failed"
+      ],
+      "default": "draft",
+      "description": "Current execution status of the workspace"
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "AI-generated result data after execution"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if the simulation failed"
+    },
+    "custom_forcefield_id": {
+      "type": "string",
+      "description": "Reference to a CustomForcefield record if used"
     }
   },
   "required": [
     "name",
-    "chemicals"
+    "sim_type",
+    "engine",
+    "raw_inputs"
   ],
   "rls": {
     "create": null,

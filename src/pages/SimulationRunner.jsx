@@ -5,6 +5,7 @@ import MoleculeDrawer from "../components/simulation/MoleculeDrawer";
 import MolViewer from "../components/simulation/MolViewer";
 import TrajectoryViewer from "../components/simulation/TrajectoryViewer";
 import CustomForcefieldManager from "../components/simulation/CustomForcefieldManager";
+import EnvironmentalParametersPanel from "../components/simulation/EnvironmentalParametersPanel";
 import ToolFeedbackToast from "../components/shared/ToolFeedbackToast";
 import PlainLanguageSummary from "../components/computational/PlainLanguageSummary";
 import SustainabilityProfileCard from "../components/computational/SustainabilityProfileCard";
@@ -66,6 +67,9 @@ export default function SimulationRunner() {
   const [drawerTargetKey, setDrawerTargetKey] = useState(null);
   const [ffManagerOpen, setFfManagerOpen] = useState(false);
   const [customForcefield, setCustomForcefield] = useState(null);
+  const [envParams, setEnvParams] = useState(null);
+  const [currentJobHash, setCurrentJobHash] = useState(null);
+  const [currentDraftId, setCurrentDraftId] = useState(null);
 
   const DRAWABLE_KEYS = ['molecule', 'ligand', 'compound', 'system', 'surface', 'reactants'];
 
@@ -126,27 +130,50 @@ export default function SimulationRunner() {
     }
   };
 
-  const handleSendToFormula = () => {
-    const molecule = inputs.molecule || inputs.ligand || inputs.compound || inputs.system || "";
-    const smiles = molecule.includes(" ") ? molecule.split(" ").slice(1).join(" ") : "";
-    const stability = results?.predicted_results?.key_values?.find(k =>
-      k.property?.toLowerCase().includes("stab") || k.property?.toLowerCase().includes("energy")
-    );
-    const params = new URLSearchParams({
-      from_simulation: "1",
-      molecule: molecule.split(" ")[0] || molecule,
-      smiles: smiles,
-      sim_type: sim?.label || "",
-      stability: stability?.value || "",
-      safety_level: results?.predicted_results?.summary?.slice(0, 120) || "",
-    });
-    window.location.href = `/generator?${params.toString()}`;
+  const generateJobHash = () => {
+    const ts = Date.now().toString(36);
+    const rand = Math.random().toString(36).substring(2, 10);
+    return `sim-${ts}-${rand}`;
   };
 
   const handleRun = async () => {
     const inputSummary = sim.fields.map(f => `${f.label}: ${inputs[f.key] || 'not specified'}`).join('\n');
+    const env = { solvent: 'water', temperature: 300, pressure: 1.0, ph: 7.0, ionic_strength: 0.15, boundary_conditions: 'periodic', ...envParams };
+    const envSummary = `Solvent: ${env.solvent === 'custom' ? (env.solvent_custom || 'custom') : env.solvent}
+Forcefield: ${env.forcefield || 'default'}
+Temperature: ${env.temperature || 300} K
+Pressure: ${env.pressure || 1.0} bar
+pH: ${env.ph || 7.0}
+Ionic Strength: ${env.ionic_strength || 0.15} mol/L
+Boundary Conditions: ${env.boundary_conditions || 'periodic'}`;
+
+    const jobHash = generateJobHash();
+    setCurrentJobHash(jobHash);
     setIsRunning(true);
     setResults(null);
+
+    // Create isolated SimulationDraft workspace (decoupled from saved entities)
+    let draftId = null;
+    if (user) {
+      try {
+        const draft = await base44.entities.SimulationDraft.create({
+          name: `${sim.label} — ${new Date().toLocaleString()}`,
+          sim_type: typeId,
+          sim_type_label: sim.label,
+          engine: selectedEngine,
+          domain,
+          raw_inputs: { ...inputs },
+          environmental_params: { ...env },
+          run_id: jobHash,
+          status: 'running',
+          custom_forcefield_id: customForcefield?.id || null,
+        });
+        draftId = draft.id;
+        setCurrentDraftId(draftId);
+      } catch (e) {
+        console.error('Failed to create simulation draft:', e);
+      }
+    }
 
     const customFFNote = customForcefield && typeId === "molecular_dynamics"
       ? `\n\nCustom Forcefield: "${customForcefield.name}" (extends ${customForcefield.base_forcefield})
@@ -160,7 +187,10 @@ Incorporate these custom parameters into the simulation script.` : "";
     const prompt = `You are a computational chemistry expert. A researcher wants to run a ${sim.label} simulation using ${selectedEngine} for ${domain}.
 
 Parameters:
-${inputSummary}${customFFNote}
+${inputSummary}
+
+Environmental Conditions:
+${envSummary}${customFFNote}
 
 Provide a focused, technical analysis. Return JSON with:
 1. system_overview: Brief 2-3 sentence description
@@ -209,8 +239,34 @@ Provide a focused, technical analysis. Return JSON with:
         }
       });
 
-      setResults({ ...response, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs } });
+      const fullResult = { ...response, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs }, environmental_params: { ...env }, job_hash: jobHash };
+      setResults(fullResult);
       setActiveTab("analysis");
+
+      // Update the draft with results and create an auditable SimulationJob
+      if (user && draftId) {
+        try {
+          await base44.entities.SimulationDraft.update(draftId, {
+            status: 'completed',
+            result: fullResult,
+          });
+          await base44.entities.SimulationJob.create({
+            draft_id: draftId,
+            job_hash: jobHash,
+            job_name: `${sim.label} — ${selectedEngine}`,
+            sim_type: typeId,
+            sim_type_label: sim.label,
+            engine: selectedEngine,
+            inputs: { ...inputs },
+            environmental_params: { ...env },
+            status: 'completed',
+            result: fullResult,
+          });
+        } catch (e) {
+          console.error('Failed to record simulation job:', e);
+        }
+      }
+
       if (user) {
         try {
           await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
@@ -221,6 +277,11 @@ Provide a focused, technical analysis. Return JSON with:
       setTimeout(() => setShowFeedback(false), 15000);
     } catch (e) {
       console.error(e);
+      if (user && draftId) {
+        try {
+          await base44.entities.SimulationDraft.update(draftId, { status: 'failed', error: e.message });
+        } catch {}
+      }
     } finally {
       setIsRunning(false);
     }
@@ -544,23 +605,18 @@ Provide a focused, technical analysis. Return JSON with:
                 />
               </div>
 
-              {/* Send to Formula Generator */}
-              <div className="mt-5">
-                <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border-2 border-teal-200 rounded-2xl p-5 flex items-center justify-between flex-wrap gap-4">
-                  <div>
-                    <p className="font-bold text-teal-900 text-sm">Send to Formula Generator</p>
-                    <p className="text-xs text-teal-700 mt-0.5">Pass this molecule's validated data directly into the formulation workflow.</p>
+              {/* Job Hash — auditability badge */}
+              {currentJobHash && (
+                <div className="mt-5 bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center flex-shrink-0">
+                    <Cpu className="w-4 h-4 text-white" />
                   </div>
-                  <Button
-                    onClick={handleSendToFormula}
-                    className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white gap-2 flex-shrink-0"
-                  >
-                    <FlaskConical className="w-4 h-4" />
-                    Send to Formula Generator
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Simulation Job ID</p>
+                    <p className="text-sm font-mono text-slate-800 truncate">{currentJobHash}</p>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Related Research */}
               <div className="mt-5">
@@ -704,6 +760,15 @@ Provide a focused, technical analysis. Return JSON with:
                       placeholder="Any special requirements or context..."
                       className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white" />
                   </div>
+                </div>
+
+                {/* Environmental Parameters — isolated sandbox conditions */}
+                <div className="mb-7">
+                  <EnvironmentalParametersPanel
+                    params={envParams}
+                    onChange={setEnvParams}
+                    simType={typeId}
+                  />
                 </div>
 
                 {/* Run button */}
