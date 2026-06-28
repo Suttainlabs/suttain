@@ -21,7 +21,7 @@ export default function useTrialStatus(user) {
       return { isPro: true, plan, isExpired: false, canSimulate: true, canFormulate: true, canScan: true, usage: null, limits: FREE_LIMITS };
     }
 
-    // Free tier — check monthly usage
+    // Free tier — check weekly (7-day rolling window) usage
     const usage = getCurrentUsage(user);
     return {
       isPro: false,
