@@ -1,0 +1,162 @@
+{
+  "name": "SimulationEnvironment",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "User-defined name for this reusable environment preset (e.g. 'Physiological Saline 310K')"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "solvent": {
+      "type": "string",
+      "enum": [
+        "none",
+        "water",
+        "tip3p",
+        "tip4p",
+        "spc",
+        "dms",
+        "methanol",
+        "ethanol",
+        "chloroform",
+        "hexane",
+        "toluene",
+        "dmso",
+        "acetonitrile",
+        "custom"
+      ],
+      "default": "water",
+      "description": "Solvent model or explicit solvent"
+    },
+    "solvent_custom": {
+      "type": "string",
+      "description": "Custom solvent description if solvent is 'custom'"
+    },
+    "forcefield": {
+      "type": "string",
+      "description": "Forcefield name (e.g. AMBER99SB-ILDN, CHARMM36, OPLS-AA)"
+    },
+    "temperature": {
+      "type": "number",
+      "description": "Temperature in Kelvin"
+    },
+    "pressure": {
+      "type": "number",
+      "description": "Pressure in bar"
+    },
+    "ph": {
+      "type": "number",
+      "description": "pH value (0-14)"
+    },
+    "ionic_strength": {
+      "type": "number",
+      "description": "Ionic strength in mol/L"
+    },
+    "boundary_conditions": {
+      "type": "string",
+      "enum": [
+        "periodic",
+        "vacuum",
+        "spherical",
+        "cylindrical",
+        "slab"
+      ],
+      "default": "periodic",
+      "description": "Boundary conditions for the simulation box"
+    },
+    "box_type": {
+      "type": "string",
+      "enum": [
+        "cubic",
+        "orthorhombic",
+        "truncated_octahedron",
+        "rhombic_dodecahedron",
+        "custom"
+      ],
+      "default": "cubic",
+      "description": "Simulation box geometry"
+    },
+    "thermostat": {
+      "type": "string",
+      "enum": [
+        "berendsen",
+        "vrescale",
+        "nose_hoover",
+        "langevin",
+        "andersen",
+        "none"
+      ],
+      "default": "vrescale",
+      "description": "Thermostat algorithm for temperature coupling"
+    },
+    "barostat": {
+      "type": "string",
+      "enum": [
+        "berendsen",
+        "parrinello_rahman",
+        "c_rescale",
+        "monte_carlo",
+        "none"
+      ],
+      "default": "parrinello_rahman",
+      "description": "Barostat algorithm for pressure coupling"
+    },
+    "is_template": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a shared template available to all users"
+    }
+  },
+  "required": [
+    "name",
+    "solvent",
+    "forcefield",
+    "temperature"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "is_template": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
