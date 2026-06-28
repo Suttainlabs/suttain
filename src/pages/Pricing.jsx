@@ -300,7 +300,7 @@ export default function Pricing() {
               </span>
             }
             headingClassName="text-3xl sm:text-5xl font-bold text-slate-900"
-            heading="One platform. Plans for every scientist."
+            heading="One platform. Plans for everyone."
             subtextClassName="text-slate-500 text-base sm:text-lg"
             subtext="From free exploration to enterprise-grade compute. Upgrade, downgrade, or cancel anytime."
           />
