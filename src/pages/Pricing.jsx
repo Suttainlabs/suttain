@@ -307,20 +307,22 @@ export default function Pricing() {
         </motion.div>
 
         {/* Billing toggle */}
-        <motion.div {...fadeIn(0.1)} className="flex items-center justify-center gap-3" style={{ marginTop: "var(--space-6)", marginBottom: "var(--space-6)" }}>
-          <button
-            onClick={() => setBillingCycle('monthly')}
-            className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all ${billingCycle === 'monthly' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-700'}`}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setBillingCycle('yearly')}
-            className={`text-sm font-semibold px-4 py-1.5 rounded-full transition-all flex items-center gap-2 ${billingCycle === 'yearly' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-700'}`}
-          >
-            Yearly
-            <span className="text-[10px] font-bold bg-[#007850] text-white px-2 py-0.5 rounded-full">20% off</span>
-          </button>
+        <motion.div {...fadeIn(0.1)} className="flex items-center justify-center" style={{ marginTop: "var(--space-6)", marginBottom: "var(--space-6)" }}>
+          <div className="inline-flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-full p-1">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`text-sm font-semibold px-5 py-2 rounded-full transition-all ${billingCycle === 'monthly' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle('yearly')}
+              className={`text-sm font-semibold px-5 py-2 rounded-full transition-all flex items-center gap-2 ${billingCycle === 'yearly' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Yearly
+              <span className="text-[10px] font-bold bg-[#007850] text-white px-2 py-0.5 rounded-full">20% off</span>
+            </button>
+          </div>
         </motion.div>
 
         {/* Plan cards */}
