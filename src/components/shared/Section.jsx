@@ -88,6 +88,9 @@ export function SectionHeader({
           lineHeight: 1.1,
           letterSpacing: "-0.02em",
           marginBottom: "var(--space-3)",
+          maxWidth: align === "center" ? "46rem" : undefined,
+          margin: align === "center" ? "0 auto" : undefined,
+          textWrap: "balance",
         }}
       >
         {heading}
