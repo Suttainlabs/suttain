@@ -290,7 +290,7 @@ export default function Layout({ children, currentPageName }) {
 
   const getLinkClasses = (href) => {
     const isActive = location.pathname === (href === "Home" ? "/" : createPageUrl(href));
-    return `flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+    return `flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
       isActive
         ? "bg-violet-100 text-violet-600"
         : "text-slate-700 hover:bg-violet-50 hover:text-violet-600"
@@ -399,7 +399,6 @@ export default function Layout({ children, currentPageName }) {
             {/* Desktop: minimal link row + menu trigger */}
             <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap min-w-0">
               <Link to="/" className={getLinkClasses("Home")}>Home</Link>
-              <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>Pricing</Link>
 
               {/* Tools dropdown */}
               <DropdownMenu>
@@ -450,6 +449,8 @@ export default function Layout({ children, currentPageName }) {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+
+              <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>Pricing</Link>
 
               {/* Enterprise API — standalone */}
               <DropdownMenu>
