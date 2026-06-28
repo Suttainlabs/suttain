@@ -84,7 +84,14 @@
           "created_by_id": "{{user.id}}"
         },
         {
-          "data.target_user": "{{user.email}}"
+          "target_user": "{{user.email}}"
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
         },
         {
           "user_condition": {
@@ -92,11 +99,6 @@
           }
         }
       ]
-    },
-    "update": {
-      "user_condition": {
-        "role": "admin"
-      }
     },
     "delete": {
       "user_condition": {
