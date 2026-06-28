@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import SEOHead from "../components/shared/SEOHead";
 import { Section, SectionHeader } from "../components/shared/Section";
 import ToolsCarousel from "../components/home/ToolsCarousel";
+import AnalyzeProductModal from "../components/home/AnalyzeProductModal";
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -57,6 +58,7 @@ export default function LandingHub() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [showAnalyzeModal, setShowAnalyzeModal] = useState(false);
 
   const commonChemicals = [
     "Benzene", "Ethanol", "Acetone", "Water", "Sodium Chloride",
@@ -130,12 +132,10 @@ export default function LandingHub() {
           subtext="Suttain gives consumers, DIY creators, brands, and research scientists a unified toolkit to scan products, generate formulas, run computational simulations, and access molecular intelligence — all in one place."
         >
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
-            <Link to={createPageUrl("Simulator")}>
-              <Button size="lg" className="w-full sm:w-auto">
-                Analyze Your Product Free
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
+            <Button size="lg" className="w-full sm:w-auto" onClick={() => setShowAnalyzeModal(true)}>
+              Analyze Your Product Free
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
             <Link to={createPageUrl("ResearchPortal")}>
               <Button variant="outline" size="lg" className="w-full sm:w-auto border-violet-300 text-violet-600 hover:bg-violet-50">
                 <Microscope className="w-4 h-4 mr-2" />
@@ -340,12 +340,10 @@ export default function LandingHub() {
               subtext="Join thousands of formulators, brands, and researchers using Suttain. Free to start — no credit card required."
             >
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to={createPageUrl("Simulator")}>
-                  <Button size="lg" className="w-full sm:w-auto bg-white text-[#00695C] hover:bg-white/90 shadow-lg">
-                    Analyze Your Product Free
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
+                <Button size="lg" className="w-full sm:w-auto bg-white text-[#00695C] hover:bg-white/90 shadow-lg" onClick={() => setShowAnalyzeModal(true)}>
+                  Analyze Your Product Free
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
                 <Link to={createPageUrl("Pricing")}>
                   <Button size="lg" className="w-full sm:w-auto bg-transparent text-white border-2 border-white/50 hover:bg-white/10">
                     <Star className="w-4 h-4 mr-2" />
@@ -357,6 +355,7 @@ export default function LandingHub() {
           </div>
         </motion.div>
       </Section>
+      <AnalyzeProductModal open={showAnalyzeModal} onOpenChange={setShowAnalyzeModal} />
     </div>
   );
 }
