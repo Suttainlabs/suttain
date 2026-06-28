@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json();
-    const { priceKey, successUrl, cancelUrl } = body;
+    const { priceKey, promoCode, successUrl, cancelUrl } = body;
 
     if (!priceKey || !PRICE_MAP[priceKey]) {
       return Response.json({ error: 'Invalid price key' }, { status: 400 });
@@ -53,9 +53,25 @@ Deno.serve(async (req) => {
         base44_app_id: Deno.env.get('BASE44_APP_ID'),
         price_key: priceKey,
         user_id: userId || '',
+        promo_code: promoCode || '',
       },
       allow_promotion_codes: true,
     };
+
+    // Pre-apply a specific promo code if provided
+    if (promoCode) {
+      try {
+        const promoCodes = await stripe.promotionCodes.list({ code: promoCode, active: true });
+        if (promoCodes.data.length > 0) {
+          sessionConfig.discounts = [{ promotion_code: promoCodes.data[0].id }];
+          console.log(`Promo code applied: ${promoCode} -> ${promoCodes.data[0].id}`);
+        } else {
+          console.log(`Promo code not found or inactive: ${promoCode}`);
+        }
+      } catch (promoErr) {
+        console.error('Promo code lookup failed:', promoErr.message);
+      }
+    }
 
     if (userEmail) sessionConfig.customer_email = userEmail;
 

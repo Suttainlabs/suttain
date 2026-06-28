@@ -227,6 +227,7 @@ export default function Pricing() {
   const [checkoutLoading, setCheckoutLoading] = useState(null);
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [showComparison, setShowComparison] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -252,6 +253,7 @@ export default function Pricing() {
     try {
       const res = await createCheckoutSession({
         priceKey,
+        promoCode: promoCode.trim() || undefined,
         successUrl: window.location.origin + '/Pricing?success=true',
         cancelUrl: window.location.origin + '/Pricing?canceled=true',
       });
@@ -323,6 +325,28 @@ export default function Pricing() {
               <span className="text-[10px] font-bold bg-[#007850] text-white px-2 py-0.5 rounded-full">20% off</span>
             </button>
           </div>
+        </motion.div>
+
+        {/* Promo code input */}
+        <motion.div {...fadeIn(0.12)} className="flex flex-col items-center gap-2" style={{ marginBottom: "var(--space-5)" }}>
+          <div className="flex items-center gap-2 max-w-xs w-full">
+            <input
+              type="text"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+              placeholder="PROMO CODE"
+              className="flex-1 h-10 px-4 rounded-lg border border-slate-200 bg-white text-sm font-mono tracking-wider text-slate-700 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-[#00695C] focus:border-transparent"
+            />
+            {promoCode && (
+              <button
+                onClick={() => setPromoCode('')}
+                className="text-xs font-semibold text-slate-400 hover:text-slate-600 px-2"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          <p className="text-xs text-slate-400">Have a promo code? Enter it here and it will be applied at checkout.</p>
         </motion.div>
 
         {/* Plan cards */}
