@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   LayoutDashboard, Users, FileText, Power,
-  Menu, X, Briefcase, Megaphone, Crown, Headphones, Mail, BarChart2, Rss, Wifi
+  Menu, X, Briefcase, Megaphone, Crown, Headphones, Mail, BarChart2, Rss, Wifi, Activity
 } from 'lucide-react';
 import RealTimeTrafficPanel from './RealTimeTrafficPanel';
 import DashboardOverview from './DashboardOverview';
@@ -16,11 +16,13 @@ import CustomerSupportCRM from './CustomerSupportCRM';
 import SubscriptionEmailPanel from './SubscriptionEmailPanel';
 import UserAnalytics from './UserAnalytics';
 import BlogBroadcast from './BlogBroadcast';
+import AdminActivityLogs from './AdminActivityLogs';
 
 const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'traffic', label: 'Live Traffic', icon: Wifi },
   { id: 'analytics', label: 'User Analytics', icon: BarChart2 },
+  { id: 'activity', label: 'Activity Logs', icon: Activity },
   { id: 'support', label: 'Support CRM', icon: Headphones },
   { id: 'subscriptions', label: 'Subscriptions', icon: Crown },
   { id: 'subscription-emails', label: 'Subscription Emails', icon: Mail },
@@ -51,6 +53,8 @@ export default function AdminLayout() {
         );
       case 'analytics':
         return <UserAnalytics />;
+      case 'activity':
+        return <AdminActivityLogs />;
       case 'blog-broadcast':
         return <BlogBroadcast />;
       case 'support':
