@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Command, ChevronRight, Zap, Users, TrendingUp, Activity, AlertCircle, BarChart3, Calendar } from 'lucide-react';
+import { Search, Command, ChevronRight, Zap, Users, TrendingUp, Activity, AlertCircle, BarChart3, Calendar, Crown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import AdminKPIOverview from './AdminKPIOverview';
 import AdminAnalyticsChart from './AdminAnalyticsChart';
 import AdminUserManagement from './AdminUserManagement';
 import AdminSystemLogs from './AdminSystemLogs';
+import AdminActivityLogs from './AdminActivityLogs';
+import SubscriptionsPanel from './SubscriptionsPanel';
 import AdminCommandMenu from './AdminCommandMenu';
 
 export default function AdminCommandCenter() {
@@ -122,9 +124,11 @@ export default function AdminCommandCenter() {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="mt-8 border-b border-slate-800 flex gap-8">
+            <div className="mt-8 border-b border-slate-800 flex gap-6 overflow-x-auto">
               {[
-                { id: 'overview', label: 'Users & Submissions', icon: Users },
+                { id: 'users', label: 'User Management', icon: Users },
+                { id: 'subscriptions', label: 'Subscriptions', icon: Crown },
+                { id: 'activity', label: 'Activity Logs', icon: Activity },
                 { id: 'logs', label: 'System Logs', icon: AlertCircle },
               ].map(tab => {
                 const Icon = tab.icon;
@@ -132,9 +136,9 @@ export default function AdminCommandCenter() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-4 text-sm font-semibold border-b-2 transition-colors ${
+                    className={`flex items-center gap-2 px-4 py-4 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === tab.id
-                        ? 'border-emerald-500 text-emerald-400'
+                        ? 'border-[#007850] text-[#10d981]'
                         : 'border-transparent text-slate-400 hover:text-slate-300'
                     }`}
                   >
@@ -147,7 +151,9 @@ export default function AdminCommandCenter() {
 
             {/* Content Area */}
             <div className="mt-8">
-              {activeTab === 'overview' && <AdminUserManagement />}
+              {activeTab === 'users' && <AdminUserManagement />}
+              {activeTab === 'subscriptions' && <SubscriptionsPanel />}
+              {activeTab === 'activity' && <AdminActivityLogs />}
               {activeTab === 'logs' && <AdminSystemLogs />}
             </div>
           </>
