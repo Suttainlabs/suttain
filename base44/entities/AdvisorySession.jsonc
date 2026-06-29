@@ -1,0 +1,57 @@
+{
+  "name": "AdvisorySession",
+  "type": "object",
+  "properties": {
+    "farm_id": {
+      "type": "string",
+      "description": "Reference to Farm entity"
+    },
+    "farmer_id": {
+      "type": "string",
+      "description": "Reference to Farmer entity"
+    },
+    "question": {
+      "type": "string",
+      "description": "Farmer's question or prompt"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Optional photo URL"
+    },
+    "ai_response": {
+      "type": "string",
+      "description": "AI-generated advisory response"
+    },
+    "session_type": {
+      "type": "string",
+      "enum": [
+        "chat",
+        "photo",
+        "weather"
+      ],
+      "default": "chat",
+      "description": "Type of advisory session"
+    },
+    "language": {
+      "type": "string",
+      "description": "Language code used for this session"
+    }
+  },
+  "required": [
+    "farm_id",
+    "question",
+    "ai_response"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

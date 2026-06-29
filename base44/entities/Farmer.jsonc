@@ -1,0 +1,52 @@
+{
+  "name": "Farmer",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Farmer's full name"
+    },
+    "phone_number": {
+      "type": "string",
+      "description": "Contact phone number"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "hi",
+        "sw",
+        "es"
+      ],
+      "default": "en",
+      "description": "Preferred language code"
+    },
+    "location_lat": {
+      "type": "number",
+      "description": "Farm latitude"
+    },
+    "location_lng": {
+      "type": "number",
+      "description": "Farm longitude"
+    },
+    "location_name": {
+      "type": "string",
+      "description": "Human-readable location (village, district, region)"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight, Code2 } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight, Code2, Sprout } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -477,6 +477,12 @@ export default function Layout({ children, currentPageName }) {
                       <span className="text-sm font-medium text-slate-700">API Documentation</span>
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("AgroPocket")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
+                      <Sprout className="w-4 h-4 flex-shrink-0" style={{ color: "#4A7C2A" }} />
+                      <span className="text-sm font-medium text-slate-700">AgroPocket</span>
+                    </Link>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </nav>
@@ -669,6 +675,20 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <Terminal className="w-5 h-5" />
                       Business
+                    </Link>
+                  </motion.div>
+
+                  {/* AgroPocket — Mobile */}
+                  <motion.div variants={mobileNavItemVariants}>
+                    <Link
+                      to={createPageUrl("AgroPocket")}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
+                        location.pathname === createPageUrl("AgroPocket") ? "bg-green-100 text-green-700" : "text-suttain-dark hover:bg-green-50"
+                      }`}
+                    >
+                      <Sprout className="w-5 h-5" />
+                      AgroPocket
                     </Link>
                   </motion.div>
 
