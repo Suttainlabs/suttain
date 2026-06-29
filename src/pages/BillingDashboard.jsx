@@ -98,7 +98,7 @@ export default function BillingDashboard() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
         {/* Header */}
         <div className="mb-8">
@@ -119,7 +119,7 @@ export default function BillingDashboard() {
         {isPro && planInfo ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Plan Overview Card */}
-            <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+            <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-5 sm:p-8 shadow-sm">
               <div className="flex items-start justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${planInfo.color} flex items-center justify-center flex-shrink-0`}>
@@ -213,7 +213,7 @@ export default function BillingDashboard() {
             </div>
 
             {/* Quick Stats Card */}
-            <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
+            <div className="bg-white rounded-3xl border border-slate-100 p-5 sm:p-6 shadow-sm">
               <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
                 <Receipt className="w-4 h-4 text-slate-400" />
                 Account Summary
@@ -236,7 +236,7 @@ export default function BillingDashboard() {
           </div>
         ) : (
           /* Free Plan CTA */
-          <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-3xl border-2 border-violet-200 p-8 mb-8 text-center">
+          <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-3xl border-2 border-violet-200 p-5 sm:p-8 mb-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
                 <Crown className="w-6 h-6 text-white" />
@@ -255,28 +255,28 @@ export default function BillingDashboard() {
 
         {/* Cancel Confirmation Modal */}
         {showCancelConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
                   <XCircle className="w-5 h-5 text-red-600" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900">Cancel Subscription?</h3>
               </div>
-              <p className="text-sm text-slate-600 mb-6">
+              <p className="text-sm text-slate-600 mb-6 leading-relaxed">
                 Your subscription will remain active until the end of your current billing period, after which it will not renew. You can resubscribe anytime.
               </p>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   variant="outline"
-                  className="flex-1 font-semibold"
+                  className="w-full sm:flex-1 font-semibold min-h-[44px]"
                   onClick={() => setShowCancelConfirm(false)}
                   disabled={cancelLoading}
                 >
                   Keep My Plan
                 </Button>
                 <Button
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold"
+                  className="w-full sm:flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold min-h-[44px]"
                   onClick={handleCancel}
                   disabled={cancelLoading}
                 >
@@ -290,7 +290,7 @@ export default function BillingDashboard() {
 
         {/* Billing History Section */}
         <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="px-8 py-6 border-b border-slate-100">
+          <div className="px-5 sm:px-8 py-5 sm:py-6 border-b border-slate-100">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <FileText className="w-5 h-5 text-slate-400" />
               Billing History
@@ -299,12 +299,12 @@ export default function BillingDashboard() {
           </div>
 
           {loadingInvoices ? (
-            <div className="px-8 py-12 flex items-center justify-center gap-2 text-slate-400">
+            <div className="px-5 sm:px-8 py-12 flex items-center justify-center gap-2 text-slate-400">
               <Loader2 className="w-5 h-5 animate-spin" />
               <span className="text-sm">Loading invoices...</span>
             </div>
           ) : invoiceError ? (
-            <div className="px-8 py-6 flex items-start gap-3 bg-red-50 border-t border-red-100">
+            <div className="px-5 sm:px-8 py-6 flex items-start gap-3 bg-red-50 border-t border-red-100">
               <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-semibold text-red-700">{invoiceError}</p>
@@ -312,7 +312,7 @@ export default function BillingDashboard() {
               </div>
             </div>
           ) : invoices.length === 0 ? (
-            <div className="px-8 py-12 text-center">
+            <div className="px-5 sm:px-8 py-12 text-center">
               <Receipt className="w-10 h-10 text-slate-200 mx-auto mb-3" />
               <p className="text-sm text-slate-400 font-medium">No invoices yet</p>
               <p className="text-xs text-slate-400 mt-1">When you upgrade, your invoices will appear here.</p>
@@ -325,7 +325,7 @@ export default function BillingDashboard() {
                 });
                 const isPaid = inv.status === 'paid';
                 return (
-                  <div key={inv.id} className="px-8 py-4 hover:bg-slate-50 transition-colors">
+                  <div key={inv.id} className="px-5 sm:px-8 py-4 hover:bg-slate-50 transition-colors">
                     <div className="flex items-center justify-between gap-4 flex-wrap">
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-slate-800">
@@ -378,7 +378,7 @@ export default function BillingDashboard() {
         </div>
 
         {/* Help Footer */}
-        <div className="mt-8 bg-slate-50 rounded-2xl border border-slate-100 p-6 flex items-center justify-between flex-wrap gap-4">
+        <div className="mt-6 sm:mt-8 bg-slate-50 rounded-2xl border border-slate-100 p-5 sm:p-6 flex items-center justify-between flex-wrap gap-4">
           <div>
             <h3 className="text-sm font-semibold text-slate-900">Need help with your billing?</h3>
             <p className="text-xs text-slate-500 mt-1">Our support team is here to assist you.</p>
