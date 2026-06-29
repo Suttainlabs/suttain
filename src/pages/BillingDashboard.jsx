@@ -68,10 +68,19 @@ export default function BillingDashboard() {
   const planInfo = planKey ? PLAN_LABELS[planKey] : null;
 
   const billingLabel = isLifetime ? 'One-time payment (Lifetime)' : isYearly ? 'Annual billing' : 'Monthly billing';
+
+  // The date the current billing period ends (renewal date for active subs, or access-end for canceling subs)
+  const renewalDate = user?.subscription_cancel_at || user?.subscription_end_date;
+  const daysRemaining = renewalDate
+    ? Math.max(0, Math.ceil((new Date(renewalDate) - new Date()) / (1000 * 60 * 60 * 24)))
+    : null;
+
   const nextBillingLabel = isLifetime ? 'Never — lifetime access' :
     (user?.subscription_cancel_at
       ? `Access until ${formatDate(user.subscription_cancel_at)}`
-      : 'Auto-renews at next cycle');
+      : user?.subscription_end_date
+        ? `Renews ${formatDate(user.subscription_end_date)}`
+        : 'Auto-renews at next cycle');
 
   const handleCancel = async () => {
     setCancelLoading(true);
@@ -147,10 +156,12 @@ export default function BillingDashboard() {
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Days Remaining</p>
                   <p className="text-base font-bold text-slate-800">
-                    {user?.subscription_cancel_at
-                      ? Math.max(0, Math.ceil((new Date(user.subscription_cancel_at) - new Date()) / (1000 * 60 * 60 * 24)))
-                      : '∞'
-                    } days
+                    {isLifetime
+                      ? 'Lifetime'
+                      : daysRemaining !== null
+                        ? `${daysRemaining} days`
+                        : '—'
+                    }
                   </p>
                 </div>
               </div>
