@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
 
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
     const now = new Date();
-    const TEN_DAYS_MS = 10 * 24 * 60 * 60 * 1000;
+    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
     // Fetch all pro users
     const allUsers = await base44.asServiceRole.entities.User.list('-created_date', 500);
@@ -47,9 +47,9 @@ Deno.serve(async (req) => {
       const msLeft = endDate - now;
       const daysLeft = Math.ceil(msLeft / (24 * 60 * 60 * 1000));
 
-      // Only email if expiring in exactly 10 days (±1 day window to avoid missing due to run time)
+      // Only email if expiring in 7 days (±1 day window to avoid missing due to run time)
       // Or if manually triggered for a specific user
-      const shouldSend = targetUserId ? true : (daysLeft >= 9 && daysLeft <= 11);
+      const shouldSend = targetUserId ? true : (daysLeft >= 6 && daysLeft <= 8);
       if (!shouldSend) continue;
 
       const firstName = (u.full_name || u.email || 'there').split(' ')[0];

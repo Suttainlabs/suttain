@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   LayoutDashboard, Users, FileText, Power,
-  Menu, X, Briefcase, Megaphone, Crown, Headphones, Mail, BarChart2, Rss, Wifi, Activity
+  Menu, X, Briefcase, Megaphone, Crown, Headphones, Mail, BarChart2, Rss, Wifi, Activity, UserCheck
 } from 'lucide-react';
 import RealTimeTrafficPanel from './RealTimeTrafficPanel';
 import DashboardOverview from './DashboardOverview';
@@ -12,6 +12,7 @@ import SubmissionsManagement from './SubmissionsManagement';
 import JobManagement from './JobManagement';
 import SendUpdateAnnouncement from './SendUpdateAnnouncement';
 import SubscriptionsPanel from './SubscriptionsPanel';
+import SubscribedUsersPanel from './SubscribedUsersPanel';
 import CustomerSupportCRM from './CustomerSupportCRM';
 import SubscriptionEmailPanel from './SubscriptionEmailPanel';
 import UserAnalytics from './UserAnalytics';
@@ -25,6 +26,7 @@ const navItems = [
   { id: 'activity', label: 'Activity Logs', icon: Activity },
   { id: 'support', label: 'Support CRM', icon: Headphones },
   { id: 'subscriptions', label: 'Subscriptions', icon: Crown },
+  { id: 'subscribed-users', label: 'Subscribed Users', icon: UserCheck },
   { id: 'subscription-emails', label: 'Subscription Emails', icon: Mail },
   { id: 'users', label: 'User Management', icon: Users },
   { id: 'blog-broadcast', label: 'Blog Broadcast', icon: Rss },
@@ -61,6 +63,8 @@ export default function AdminLayout() {
         return <CustomerSupportCRM />;
       case 'subscriptions':
         return <SubscriptionsPanel />;
+      case 'subscribed-users':
+        return <SubscribedUsersPanel />;
       case 'subscription-emails':
         return <SubscriptionEmailPanel />;
       case 'users':
