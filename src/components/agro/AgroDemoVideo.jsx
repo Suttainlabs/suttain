@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 
-const VIDEO_URL = 'https://media.base44.com/videos/public/688eaf737ea3b621021f8bac/9b621285f_generated_video.mp4';
+const VIDEO_URL = 'https://media.base44.com/videos/public/688eaf737ea3b621021f8bac/631f4cced_generated_video.mp4';
 const AUDIO_URL = 'https://media.base44.com/files/public/688eaf737ea3b621021f8bac/68af5043b_speech.mp3';
 
 export default function AgroDemoVideo() {
