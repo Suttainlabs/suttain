@@ -52,6 +52,7 @@ export default function AgroDemoVideo() {
         onEnded={handleVideoEnd}
         onError={() => setHasError(true)}
         playsInline
+        muted
         preload="metadata"
       />
 
