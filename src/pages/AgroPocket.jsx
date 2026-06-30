@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { MessageCircle, Camera, CloudSun, History, Settings, Plus, Sprout, MapPin, BarChart3 } from 'lucide-react';
 import { AgroProvider, useAgro } from '@/components/agro/AgroContext';
 import AgroHeader from '@/components/agro/AgroHeader';
+import AgroDashboardCharts from '@/components/agro/AgroDashboardCharts';
 
 function HubContent() {
   const { t, loading, farmers, farms, activeFarmer, activeFarm, selectFarmer, selectFarm } = useAgro();
@@ -95,6 +96,8 @@ function HubContent() {
               </div>
             </div>
           )}
+
+          {farms.length > 0 && <AgroDashboardCharts farms={farms} />}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             {features.map(f => {
