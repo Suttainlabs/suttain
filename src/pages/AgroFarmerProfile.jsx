@@ -20,7 +20,7 @@ const SOIL_TYPES = [
 ];
 
 function ProfileContent() {
-  const { t, language, setLanguage, activeFarmer, activeFarm, loadData, selectFarm } = useAgro();
+  const { t, language, setLanguage, activeFarmer, activeFarm, loadData, selectFarm, loading } = useAgro();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -147,6 +147,18 @@ function ProfileContent() {
       setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
+        <AgroHeader title={t('edit_profile')} />
+        <div className="bg-white rounded-2xl border border-[#D4C5B0] p-12 text-center">
+          <div className="w-8 h-8 border-4 border-[#D4C5B0] border-t-[#4A7C2A] rounded-full animate-spin mx-auto" />
+          <p className="text-[#5B7553] text-sm mt-3">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
