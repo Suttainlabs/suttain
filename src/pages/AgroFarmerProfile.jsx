@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { AgroProvider, useAgro } from '@/components/agro/AgroContext';
 import AgroHeader from '@/components/agro/AgroHeader';
 import LocationMap from '@/components/agro/LocationMap';
+import PhoneInputWithValidation from '@/components/agro/PhoneInputWithValidation';
 import { LANGUAGES } from '@/components/agro/translations';
 
 const COMMON_CROPS = ['Maize', 'Rice', 'Wheat', 'Tomatoes', 'Potatoes', 'Beans', 'Cassava', 'Bananas', 'Sorghum', 'Millet'];
@@ -24,6 +25,8 @@ function ProfileContent() {
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [phoneValid, setPhoneValid] = useState(true);
   const [lang, setLang] = useState(language);
   const [lat, setLat] = useState(null);
   const [lng, setLng] = useState(null);
@@ -41,6 +44,7 @@ function ProfileContent() {
     if (activeFarmer) {
       setName(activeFarmer.name || '');
       setPhone(activeFarmer.phone_number || '');
+      setPostalCode(activeFarmer.postal_code || '');
       setLang(activeFarmer.language || 'en');
       setLat(activeFarmer.location_lat ?? null);
       setLng(activeFarmer.location_lng ?? null);
@@ -102,6 +106,7 @@ function ProfileContent() {
       const farmerData = {
         name: name.trim(),
         phone_number: phone.trim(),
+        postal_code: postalCode.trim(),
         language: lang,
         location_lat: lat,
         location_lng: lng,
@@ -165,13 +170,23 @@ function ProfileContent() {
               />
             </div>
             <div>
-              <label className="text-sm font-semibold text-[#2D5016] mb-1 block">{t('phone_number')}</label>
+              <label className="text-sm font-semibold text-[#2D5016] mb-1 block">Postal / Zip Code</label>
               <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                type="text"
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-[#D4C5B0] text-[#2D5016] focus:outline-none focus:ring-2 focus:ring-[#4A7C2A] min-h-[44px]"
-                placeholder={t('phone_number')}
+                placeholder="e.g. 10001, 110001, SW1A1AA"
+              />
+              <p className="mt-1 text-xs text-[#8B9D85]">Used to auto-detect your country code for phone validation.</p>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-[#2D5016] mb-1 block">{t('phone_number')}</label>
+              <PhoneInputWithValidation
+                phone={phone}
+                onPhoneChange={setPhone}
+                postalCode={postalCode}
+                onValidityChange={setPhoneValid}
               />
             </div>
             <div>
@@ -315,7 +330,7 @@ function ProfileContent() {
 
         <button
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || !phoneValid}
           className="w-full flex items-center justify-center gap-2 bg-[#4A7C2A] text-white font-semibold py-3.5 rounded-xl hover:bg-[#2D5016] transition-colors disabled:opacity-50 min-h-[44px]"
         >
           <Save className="w-5 h-5" />

@@ -10,6 +10,10 @@
       "type": "string",
       "description": "Contact phone number"
     },
+    "postal_code": {
+      "type": "string",
+      "description": "Postal or zip code for country detection and phone validation"
+    },
     "language": {
       "type": "string",
       "enum": [
