@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, Camera, CloudSun, History, Settings, Plus, Sprout, MapPin } from 'lucide-react';
+import { MessageCircle, Camera, CloudSun, History, Settings, Plus, Sprout, MapPin, BarChart3 } from 'lucide-react';
 import { AgroProvider, useAgro } from '@/components/agro/AgroContext';
 import AgroHeader from '@/components/agro/AgroHeader';
 
@@ -20,6 +20,7 @@ function HubContent() {
     { to: '/AgroPhotoDiagnosis', icon: Camera, title: t('feature_photo'), desc: t('feature_photo_desc'), color: '#8B6F47' },
     { to: '/AgroWeather', icon: CloudSun, title: t('feature_weather'), desc: t('feature_weather_desc'), color: '#D4A017' },
     { to: '/AgroHistory', icon: History, title: t('feature_history'), desc: t('feature_history_desc'), color: '#5B7553' },
+    { to: '/AgroReports', icon: BarChart3, title: t('feature_reports'), desc: t('feature_reports_desc'), color: '#2D5016' },
   ];
 
   return (
