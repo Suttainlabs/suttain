@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sprout, MessageCircle, Camera, CloudSun, ArrowRight, Play, MapPin, Phone, Sun } from 'lucide-react';
-import AgroDemoIllustration from '@/components/agro/AgroDemoIllustration';
+import AgroDemoVideo from '@/components/agro/AgroDemoVideo';
 
 const steps = [
   {
@@ -152,7 +152,7 @@ export default function AgroPocketLanding() {
           A farmer chats with the AI agronomist, gets a crop diagnosis, and tracks yield — all from a phone.
         </p>
         <div className="rounded-2xl overflow-hidden shadow-xl border border-[#D4C5B0] bg-[#F5F1E8]">
-          <AgroDemoIllustration />
+          <AgroDemoVideo />
         </div>
       </section>
 
