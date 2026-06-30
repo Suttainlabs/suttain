@@ -119,7 +119,8 @@ export default function PhoneInputWithValidation({
     }
 
     // National format — requires detected country
-    if (!detectedCountry) return { state: 'no-country', valid: false };
+    // If no country detected yet, don't block saving (phone is optional)
+    if (!detectedCountry) return { state: 'no-country', valid: true };
 
     try {
       const valid = isValidPhoneNumber(trimmedPhone, detectedCountry);
