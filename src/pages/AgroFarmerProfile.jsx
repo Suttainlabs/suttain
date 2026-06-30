@@ -139,7 +139,7 @@ function ProfileContent() {
       }
 
       await loadData();
-      navigate('/AgroPocket');
+      navigate('/AgroDashboard');
     } catch (err) {
       console.error('Save failed:', err);
       alert('Failed to save. Please try again.');

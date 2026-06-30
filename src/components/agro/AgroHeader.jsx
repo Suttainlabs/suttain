@@ -12,7 +12,7 @@ export default function AgroHeader({ title, showBack = true }) {
     <div className="mb-6">
       {showBack && (
         <button
-          onClick={() => navigate('/AgroPocket')}
+          onClick={() => navigate('/AgroDashboard')}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-[#5B7553] hover:text-[#2D5016] mb-3 transition-colors min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4" />
