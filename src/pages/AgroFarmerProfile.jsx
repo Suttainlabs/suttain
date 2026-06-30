@@ -4,6 +4,7 @@ import { MapPin, Plus, X, Save, Sprout } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { AgroProvider, useAgro } from '@/components/agro/AgroContext';
 import AgroHeader from '@/components/agro/AgroHeader';
+import LocationMap from '@/components/agro/LocationMap';
 import { LANGUAGES } from '@/components/agro/translations';
 
 const COMMON_CROPS = ['Maize', 'Rice', 'Wheat', 'Tomatoes', 'Potatoes', 'Beans', 'Cassava', 'Bananas', 'Sorghum', 'Millet'];
@@ -64,9 +65,15 @@ function ProfileContent() {
       },
       () => {
         setGettingLocation(false);
-        alert('Could not get your location. Please enter it manually.');
+        alert('Could not get your location. Please search for your location on the map.');
       }
     );
+  };
+
+  const handlePositionChange = (newLat, newLng, newLocationName = null) => {
+    setLat(newLat);
+    setLng(newLng);
+    if (newLocationName) setLocationName(newLocationName);
   };
 
   const addCrop = (crop) => {
@@ -194,9 +201,14 @@ function ProfileContent() {
               <MapPin className="w-5 h-5" />
               {gettingLocation ? t('getting_location') : t('use_gps')}
             </button>
-            {lat != null && lng != null && (
-              <p className="text-sm text-[#5B7553]">GPS: {lat.toFixed(4)}, {lng.toFixed(4)}</p>
-            )}
+
+            <LocationMap
+              lat={lat}
+              lng={lng}
+              onPositionChange={handlePositionChange}
+              t={t}
+            />
+
             <div>
               <label className="text-sm font-semibold text-[#2D5016] mb-1 block">{t('location_name')}</label>
               <input
