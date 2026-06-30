@@ -20,6 +20,16 @@ const farmIcon = L.divIcon({
   iconAnchor: [14, 28],
 });
 
+// Helper: ensure map panes are sized correctly on mount to prevent _leaflet_pos errors
+function MapReady({ onReady }) {
+  const map = useMap();
+  useEffect(() => {
+    map.invalidateSize();
+    if (onReady) onReady(map);
+  }, [map]);
+  return null;
+}
+
 // Helper: recenter map when position changes externally
 function MapRecenter({ position, zoom = 13 }) {
   const map = useMap();
@@ -211,6 +221,7 @@ export default function LocationMap({ lat, lng, onPositionChange, t }) {
           {position && (
             <Marker position={position} icon={farmIcon} />
           )}
+          <MapReady />
           <MapRecenter position={position} zoom={13} />
           <MapClickHandler onMapClick={hasPosition ? (newLat, newLng) => onPositionChange(newLat, newLng) : null} />
         </MapContainer>
