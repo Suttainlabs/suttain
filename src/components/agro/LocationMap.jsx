@@ -47,16 +47,71 @@ export default function LocationMap({ lat, lng, onPositionChange, t }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const mapRef = useRef(null);
+  const debounceRef = useRef(null);
+  const blurTimerRef = useRef(null);
 
   const hasPosition = lat != null && lng != null;
   const position = hasPosition ? [lat, lng] : null;
   const defaultCenter = [20, 0]; // Default world view if no position
 
+  // Debounced autocomplete using Nominatim
+  useEffect(() => {
+    const query = searchQuery.trim();
+    if (query.length < 3) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(async () => {
+      setSearching(true);
+      setSearchError(null);
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+        const data = await res.json();
+        if (data && data.length > 0) {
+          setSuggestions(data);
+          setShowSuggestions(true);
+        } else {
+          setSuggestions([]);
+          setShowSuggestions(false);
+        }
+      } catch (err) {
+        console.error('Autocomplete error:', err);
+      } finally {
+        setSearching(false);
+      }
+    }, 300);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [searchQuery]);
+
+  const handleSuggestionClick = (result) => {
+    onPositionChange(parseFloat(result.lat), parseFloat(result.lon), result.display_name);
+    setSearchQuery('');
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
   const handleSearch = async (e) => {
     e?.preventDefault();
     const query = searchQuery.trim();
     if (!query) return;
+    // If suggestions exist, use the first one
+    if (suggestions.length > 0) {
+      handleSuggestionClick(suggestions[0]);
+      return;
+    }
     setSearching(true);
     setSearchError(null);
     try {
@@ -66,9 +121,7 @@ export default function LocationMap({ lat, lng, onPositionChange, t }) {
       );
       const data = await res.json();
       if (data && data.length > 0) {
-        const result = data[0];
-        onPositionChange(parseFloat(result.lat), parseFloat(result.lon), result.display_name);
-        setSearchQuery('');
+        handleSuggestionClick(data[0]);
       } else {
         setSearchError(t('error'));
       }
@@ -80,25 +133,64 @@ export default function LocationMap({ lat, lng, onPositionChange, t }) {
     }
   };
 
+  const handleInputFocus = () => {
+    if (suggestions.length > 0) setShowSuggestions(true);
+  };
+
+  const handleInputBlur = () => {
+    // Delay hiding so click events on suggestions fire first
+    blurTimerRef.current = setTimeout(() => setShowSuggestions(false), 200);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
+    };
+  }, []);
+
   return (
     <div className="space-y-4">
-      {/* Search bar */}
-      <form onSubmit={handleSearch} className="flex gap-2">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 px-3 py-2.5 rounded-lg border border-[#D4C5B0] text-[#2D5016] focus:outline-none focus:ring-2 focus:ring-[#4A7C2A] min-h-[44px]"
-          placeholder="Search city, zip, or region..."
-        />
-        <button
-          type="submit"
-          disabled={searching}
-          className="px-4 bg-[#4A7C2A] text-white rounded-lg hover:bg-[#2D5016] transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
-        >
-          {searching ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-        </button>
-      </form>
+      {/* Search bar with autocomplete */}
+      <div className="relative">
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            autoComplete="off"
+            className="flex-1 px-3 py-2.5 rounded-lg border border-[#D4C5B0] text-[#2D5016] focus:outline-none focus:ring-2 focus:ring-[#4A7C2A] min-h-[44px]"
+            placeholder="Search city, zip, or region..."
+          />
+          <button
+            type="submit"
+            disabled={searching}
+            className="px-4 bg-[#4A7C2A] text-white rounded-lg hover:bg-[#2D5016] transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+          >
+            {searching ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+          </button>
+        </form>
+
+        {/* Suggestions dropdown */}
+        {showSuggestions && suggestions.length > 0 && (
+          <ul className="absolute z-[1000] left-0 right-12 mt-1 bg-white border border-[#D4C5B0] rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            {suggestions.map((result) => (
+              <li
+                key={result.place_id}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  handleSuggestionClick(result);
+                }}
+                className="px-3 py-2.5 text-sm text-[#2D5016] hover:bg-[#F0EBE0] cursor-pointer border-b border-[#E5DDD0] last:border-b-0 flex items-start gap-2"
+              >
+                <MapPin className="w-4 h-4 text-[#4A7C2A] flex-shrink-0 mt-0.5" />
+                <span className="leading-snug">{result.display_name}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       {searchError && (
         <p className="text-sm text-red-600">{searchError}</p>
