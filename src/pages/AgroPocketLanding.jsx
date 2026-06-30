@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sprout, MessageCircle, Camera, CloudSun, ArrowRight, Play, MapPin, Phone, Sun } from 'lucide-react';
+import AgroDemoIllustration from '@/components/agro/AgroDemoIllustration';
 
 const steps = [
   {
@@ -144,26 +145,14 @@ export default function AgroPocketLanding() {
         </div>
       </section>
 
-      {/* Demo Video Section */}
+      {/* Demo Illustration Section */}
       <section id="demo" className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <h2 className="text-2xl sm:text-3xl font-bold text-[#2D5016] text-center mb-3">See AgroPocket in Action</h2>
         <p className="text-center text-[#5B7553] mb-8 max-w-2xl mx-auto">
-          Watch how a farmer uses AgroPocket to diagnose a crop issue and plan the week ahead.
+          A farmer chats with the AI agronomist, gets a crop diagnosis, and tracks yield — all from a phone.
         </p>
-        <div className="relative rounded-2xl overflow-hidden shadow-xl border border-[#D4C5B0] bg-[#2D5016] aspect-video">
-          <img
-            src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=1200&q=80"
-            alt="AgroPocket demo preview"
-            className="w-full h-full object-cover opacity-60"
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <button className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
-              <Play className="w-8 h-8 text-[#4A7C2A] ml-1" />
-            </button>
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-            <p className="text-white font-semibold text-sm">AgroPocket Demo — Full Walkthrough (2:30)</p>
-          </div>
+        <div className="rounded-2xl overflow-hidden shadow-xl border border-[#D4C5B0] bg-[#F5F1E8]">
+          <AgroDemoIllustration />
         </div>
       </section>
 
