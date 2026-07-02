@@ -8,7 +8,7 @@ const BLOG_URL = 'https://suttain.com/Blog';
 function getMonthlyNewsletterHtml(firstName, updates, monthLabel) {
   const updatesHtml = updates.length > 0
     ? updates.map(u => `
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:14px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
                 <tr>
                   <td width="28" valign="top" style="padding-top:2px;">
                     <div style="width:22px;height:22px;background:#00B478;border-radius:50%;display:flex;align-items:center;justify-content:center;">
@@ -22,7 +22,7 @@ function getMonthlyNewsletterHtml(firstName, updates, monthLabel) {
                   </td>
                 </tr>
               </table>`).join('')
-    : `<p style="color:#464646;font-size:14px;line-height:1.6;margin:0;">We are working behind the scenes on new capabilities. Stay tuned for exciting updates next month.</p>`;
+    : `<p style="color:#464646;font-size:14px;line-height:1.6;margin:0;">No new updates were published this month. Explore our existing tools and features on the Suttain platform.</p>`;
 
   return `
 <!DOCTYPE html>
@@ -51,7 +51,7 @@ function getMonthlyNewsletterHtml(firstName, updates, monthLabel) {
             <td style="padding:32px 32px 16px;">
               <p style="color:#00281E;font-size:16px;margin:0 0 8px;font-weight:600;">Hi ${firstName},</p>
               <p style="color:#464646;font-size:15px;line-height:1.7;margin:0;">
-                Here is a look at the new features, tools, and improvements we shipped on Suttain this month. We are constantly working to make your formulation and chemical safety experience better.
+                Here are the latest features, tools, and improvements shipped on Suttain this month.
               </p>
             </td>
           </tr>
@@ -84,16 +84,16 @@ function getMonthlyNewsletterHtml(firstName, updates, monthLabel) {
             <td style="padding:16px 32px 24px;">
               <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FAF5;border-radius:12px;border:1px solid #D9EDE5;">
                 <tr>
-                  <td style="padding:20px 24px;text-align:center;">
+                  <td style="padding:24px 28px;text-align:center;">
                     <h3 style="color:#00281E;font-size:15px;font-weight:700;margin:0 0 6px;">Follow Suttain</h3>
-                    <p style="color:#464646;font-size:13px;margin:0 0 16px;">Stay up to date with the latest news, tips, and updates.</p>
-                    <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                    <p style="color:#464646;font-size:13px;margin:0 0 18px;">Stay up to date with the latest news, tips, and updates.</p>
+                    <table cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;">
                       <tr>
-                        <td style="padding:0 6px;"><a href="https://www.linkedin.com/company/suttainlabs/" style="display:inline-block;background:#0077B5;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">LinkedIn</a></td>
-                        <td style="padding:0 6px;"><a href="https://www.instagram.com/suttainlabs/" style="display:inline-block;background:#E1306C;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">Instagram</a></td>
-                        <td style="padding:0 6px;"><a href="https://www.youtube.com/channel/UCOgVoog8K35lkY9VCsNWqAg" style="display:inline-block;background:#FF0000;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">YouTube</a></td>
-                        <td style="padding:0 6px;"><a href="https://x.com/suttain" style="display:inline-block;background:#000000;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">X (Twitter)</a></td>
-                        <td style="padding:0 6px;"><a href="https://www.tiktok.com/@suttainlabs" style="display:inline-block;background:#010101;color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:6px;text-decoration:none;">TikTok</a></td>
+                        <td style="padding:0 4px;"><a href="https://www.linkedin.com/company/suttainlabs/" style="display:inline-block;background:#ffffff;color:#007850;font-size:13px;font-weight:700;padding:10px 18px;border-radius:24px;text-decoration:none;border:1px solid #D9EDE5;">LinkedIn</a></td>
+                        <td style="padding:0 4px;"><a href="https://www.instagram.com/suttainlabs/" style="display:inline-block;background:#ffffff;color:#007850;font-size:13px;font-weight:700;padding:10px 18px;border-radius:24px;text-decoration:none;border:1px solid #D9EDE5;">Instagram</a></td>
+                        <td style="padding:0 4px;"><a href="https://www.youtube.com/channel/UCOgVoog8K35lkY9VCsNWqAg" style="display:inline-block;background:#ffffff;color:#007850;font-size:13px;font-weight:700;padding:10px 18px;border-radius:24px;text-decoration:none;border:1px solid #D9EDE5;">YouTube</a></td>
+                        <td style="padding:0 4px;"><a href="https://x.com/suttain" style="display:inline-block;background:#ffffff;color:#007850;font-size:13px;font-weight:700;padding:10px 18px;border-radius:24px;text-decoration:none;border:1px solid #D9EDE5;">X</a></td>
+                        <td style="padding:0 4px;"><a href="https://www.tiktok.com/@suttainlabs" style="display:inline-block;background:#ffffff;color:#007850;font-size:13px;font-weight:700;padding:10px 18px;border-radius:24px;text-decoration:none;border:1px solid #D9EDE5;">TikTok</a></td>
                       </tr>
                     </table>
                   </td>
@@ -143,22 +143,20 @@ Deno.serve(async (req) => {
 
     console.log(`Total users fetched: ${users.length}`);
 
-    // Fetch real-time platform updates from the last 30 days
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const cutoffIso = thirtyDaysAgo.toISOString();
-
+    // Fetch the most recent published platform updates (no date cutoff —
+    // always show concrete updates rather than a vague placeholder)
     let updates = [];
     try {
-      const allUpdates = await base44.asServiceRole.entities.PlatformUpdate.list('-created_date', 200);
+      const allUpdates = await base44.asServiceRole.entities.PlatformUpdate.list('-created_date', 50);
       updates = (allUpdates || [])
-        .filter(u => u.is_published !== false && u.created_date && new Date(u.created_date) >= new Date(cutoffIso))
+        .filter(u => u.is_published !== false)
+        .slice(0, 6)
         .map(u => ({ title: u.title, description: u.description, url: u.url || '' }));
     } catch (err) {
       console.error('Failed to fetch PlatformUpdate records:', err.message);
     }
 
-    console.log(`Platform updates found (last 30 days): ${updates.length}`);
+    console.log(`Platform updates found: ${updates.length}`);
 
     let sent = 0;
     let failed = 0;
