@@ -84,6 +84,13 @@ const CONSUMER_TOOLS = [
     href: "ComparativeImpactReport",
     color: "#6366f1",
   },
+  {
+    icon: BarChart3,
+    label: "Carbon Tax Simulator",
+    desc: "Simulate carbon tax exposure and find greener alternatives with ROI.",
+    href: "CarbonTaxSimulator",
+    color: "#6366f1",
+  },
 ];
 
 
