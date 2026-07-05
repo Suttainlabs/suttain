@@ -4,7 +4,7 @@ import {
   ArrowRight, FlaskConical, Sparkles, ShieldCheck,
   Leaf, BarChart3, Zap, TestTube, QrCode, Droplets,
   Database, Star, Users,
-  Microscope, Search, Loader2
+  Microscope, Search, Loader2, Sprout
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -256,6 +256,37 @@ export default function HomePage() {
               ))}
             </div>
           </motion.div>
+      </Section>
+
+      {/* ── AgroPocket Feature ── */}
+      <Section spacing="default" width="default" className="bg-slate-50">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <motion.div {...fadeIn()}>
+            <span className="inline-flex items-center gap-2 border border-[#4A7C2A]/25 bg-[#4A7C2A]/6 text-[#4A7C2A] text-sm font-semibold px-4 py-1.5 rounded-full">
+              <Sprout className="w-3.5 h-3.5" />
+              New: AgroPocket
+            </span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mt-4 mb-3">
+              Sustainable Agriculture, AI-Powered
+            </h2>
+            <p className="text-sm sm:text-lg text-slate-500 leading-relaxed mb-6">
+              Real-time crop disease diagnosis and soil advisory for farmers.
+            </p>
+            <Link to="/AgroPocket">
+              <Button size="lg" className="bg-[#4A7C2A] hover:bg-[#3d6b22]">
+                Learn about AgroPocket
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </motion.div>
+          <motion.div {...fadeIn(0.15)} className="relative">
+            <img
+              src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80"
+              alt="Farmer using AI-powered crop advisory on mobile device"
+              className="rounded-2xl shadow-lg w-full h-auto object-cover"
+            />
+          </motion.div>
+        </div>
       </Section>
 
       {/* ── Pillar strip ── */}
