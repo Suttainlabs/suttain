@@ -4,6 +4,7 @@ import { MessageCircle, Camera, CloudSun, History, Settings, Plus, Sprout, MapPi
 import { AgroProvider, useAgro } from '@/components/agro/AgroContext';
 import AgroHeader from '@/components/agro/AgroHeader';
 import AgroDashboardCharts from '@/components/agro/AgroDashboardCharts';
+import FarmStatsSummary from '@/components/agro/FarmStatsSummary';
 
 function HubContent() {
   const { t, loading, farmers, farms, activeFarmer, activeFarm, setActiveFarmId } = useAgro();
@@ -72,6 +73,8 @@ function HubContent() {
               </div>
             </div>
           )}
+
+          {activeFarm && <FarmStatsSummary farmId={activeFarm.id} />}
 
           {farms.length > 0 && <AgroDashboardCharts farms={activeFarm ? [activeFarm] : farms} />}
 
