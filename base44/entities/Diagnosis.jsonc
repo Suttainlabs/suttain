@@ -34,6 +34,17 @@
     "crop": {
       "type": "string",
       "description": "Crop identified in the photo"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "hi",
+        "sw",
+        "es"
+      ],
+      "default": "en",
+      "description": "Language code in which the diagnosis was generated"
     }
   },
   "required": [

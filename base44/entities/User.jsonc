@@ -112,6 +112,17 @@
     "last_active_date": {
       "type": "string",
       "format": "date-time"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "hi",
+        "sw",
+        "es"
+      ],
+      "default": "en",
+      "description": "User's preferred UI language code"
     }
   },
   "required": []

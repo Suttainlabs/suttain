@@ -15,6 +15,8 @@ import {
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import AuthContext from './components/auth/AuthContext';
+import { LanguageProvider, useI18n } from '@/components/i18n/LanguageContext';
+import LanguageSwitcher from '@/components/i18n/LanguageSwitcher';
 import NotificationCenter from './components/notifications/NotificationCenter';
 import BottomNavBar from './components/navigation/BottomNavBar';
 import GlobalSearch from './components/navigation/GlobalSearch';
@@ -81,6 +83,7 @@ const SimplifiedOnboarding = React.lazy(() => import("./components/auth/Simplifi
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t, syncLanguageFromUser } = useI18n();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProductSuiteOpen, setIsProductSuiteOpen] = useState(false); // Renamed and combined
   const [isResearchSuiteOpen, setIsResearchSuiteOpen] = useState(false);
@@ -123,6 +126,11 @@ export default function Layout({ children, currentPageName }) {
       const currentUser = await User.me();
       setUser(currentUser);
       setCurrentGreeting(getGreetingText(currentUser));
+
+      // Sync language preference from user entity
+      if (currentUser?.language) {
+        syncLanguageFromUser(currentUser.language);
+      }
 
       // Returning researcher — redirect straight to research dashboard
       if (currentUser && currentUser.first_login === false && currentUser.profile_type === 'researcher') {
@@ -398,13 +406,13 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Desktop: minimal link row + menu trigger */}
             <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap min-w-0">
-              <Link to="/" className={getLinkClasses("Home")}>Home</Link>
+              <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Tools dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
-                    <span>Tools</span>
+                    <span>{t('nav_tools')}</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-72 p-2">
@@ -430,7 +438,7 @@ export default function Layout({ children, currentPageName }) {
                       ? "bg-violet-100 text-violet-600"
                       : "text-slate-600 hover:bg-slate-100"
                   }`}>
-                    <span>Research</span>
+                    <span>{t('nav_research')}</span>
                     <ChevronDown className="w-3 h-3" />
                   </button>
                 </DropdownMenuTrigger>
@@ -450,7 +458,7 @@ export default function Layout({ children, currentPageName }) {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>Pricing</Link>
+              <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
               {/* Enterprise API — standalone */}
               <DropdownMenu>
@@ -461,7 +469,7 @@ export default function Layout({ children, currentPageName }) {
                       : "text-slate-600 hover:bg-slate-100"
                   }`}>
                     <Terminal className="w-3.5 h-3.5" />
-                    <span>Business</span>
+                    <span>{t('nav_business')}</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 p-2">
@@ -487,8 +495,9 @@ export default function Layout({ children, currentPageName }) {
               </DropdownMenu>
             </nav>
 
-            {/* Right side: auth */}
+            {/* Right side: language + auth */}
             <div className="flex items-center gap-2 justify-self-end min-w-0">
+              <LanguageSwitcher />
               {!isAuthLoading && user && (
                 <div className="hidden md:flex items-center gap-2">
                   <TrialBadge trialStatus={trialStatus} />
@@ -526,25 +535,25 @@ export default function Layout({ children, currentPageName }) {
                         <p className="font-semibold text-sm">{user.display_name || user.full_name}</p>
                         <p className="text-xs text-slate-500">{user.email}</p>
                       </div>
-                      <DropdownMenuItem asChild><Link to="/Dashboard" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />My Dashboard</Link></DropdownMenuItem>
-                      <DropdownMenuItem asChild><Link to={createPageUrl("BillingDashboard")} className="cursor-pointer"><CreditCard className="w-4 h-4 mr-2" />Billing & Payments</Link></DropdownMenuItem>
-                      <DropdownMenuItem asChild><Link to={createPageUrl("Workspace")} className="cursor-pointer"><FolderOpen className="w-4 h-4 mr-2" />My Workspace</Link></DropdownMenuItem>
+                      <DropdownMenuItem asChild><Link to="/Dashboard" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />{t('menu_my_dashboard')}</Link></DropdownMenuItem>
+                      <DropdownMenuItem asChild><Link to={createPageUrl("BillingDashboard")} className="cursor-pointer"><CreditCard className="w-4 h-4 mr-2" />{t('menu_billing')}</Link></DropdownMenuItem>
+                      <DropdownMenuItem asChild><Link to={createPageUrl("Workspace")} className="cursor-pointer"><FolderOpen className="w-4 h-4 mr-2" />{t('menu_workspace')}</Link></DropdownMenuItem>
                       {user.role === 'admin' && (
                         <DropdownMenuItem asChild><Link to={createPageUrl("AdminDashboard")} className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Admin Dashboard</Link></DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500 focus:bg-red-50 cursor-pointer">
-                        <LogOut className="w-4 h-4 mr-2" />Logout
+                        <LogOut className="w-4 h-4 mr-2" />{t('auth_logout')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
                   <div className="hidden md:flex items-center gap-2">
                     <Button variant="outline" size="sm" onClick={() => openAuthModal("login")}>
-                      Sign In
+                      {t('auth_sign_in')}
                     </Button>
                     <Button size="sm" onClick={() => openAuthModal("signup")}>
-                      Get Started
+                      {t('auth_get_started')}
                     </Button>
                   </div>
                 )
@@ -637,7 +646,7 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <div className="flex items-center gap-4">
                         <TestTube className="w-5 h-5" />
-                        Tools
+                        {t('mobile_tools')}
                       </div>
                       <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isProductSuiteOpen ? 'rotate-180' : ''}`} />
                     </button>
@@ -674,7 +683,7 @@ export default function Layout({ children, currentPageName }) {
                       }`}
                     >
                       <Terminal className="w-5 h-5" />
-                      Business
+                      {t('nav_business')}
                     </Link>
                   </motion.div>
 
@@ -702,7 +711,7 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <div className="flex items-center gap-4">
                         <Microscope className="w-5 h-5" />
-                        Research Tools
+                        {t('mobile_research_tools')}
                       </div>
                       <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isResearchSuiteOpen ? 'rotate-180' : ''}`} />
                     </button>
@@ -746,7 +755,7 @@ export default function Layout({ children, currentPageName }) {
                           className="w-full justify-start text-base font-semibold flex items-center gap-4 px-4 py-3 text-suttain-dark hover:bg-slate-100 rounded-lg"
                         >
                           <LayoutDashboard className="w-5 h-5" />
-                          My Dashboard
+                          {t('menu_my_dashboard')}
                         </Link>
                         <Link
                           to={createPageUrl("BillingDashboard")}
@@ -754,7 +763,7 @@ export default function Layout({ children, currentPageName }) {
                           className="w-full justify-start text-base font-semibold flex items-center gap-4 px-4 py-3 text-suttain-dark hover:bg-slate-100 rounded-lg"
                         >
                           <CreditCard className="w-5 h-5" />
-                          Billing & Payments
+                          {t('menu_billing')}
                         </Link>
                         {user.role === 'admin' && (
                           <Link
@@ -763,7 +772,7 @@ export default function Layout({ children, currentPageName }) {
                             className="w-full justify-start text-base font-semibold flex items-center gap-4 px-4 py-3 text-suttain-dark hover:bg-slate-100 rounded-lg"
                           >
                             <LayoutDashboard className="w-5 h-5" />
-                            Admin Dashboard
+                            {t('menu_admin')}
                           </Link>
                         )}
                         <Button
@@ -772,11 +781,15 @@ export default function Layout({ children, currentPageName }) {
                           className="w-full justify-start text-base font-semibold flex items-center gap-4 px-4 py-3 text-suttain-dark hover:bg-slate-100"
                         >
                           <LogOut className="w-5 h-5" />
-                          Logout
+                          {t('auth_logout')}
                         </Button>
                       </motion.div>
                     ) : (
                       <motion.div variants={mobileNavItemVariants} className="space-y-2">
+                        <div className="flex items-center justify-between px-4 py-2">
+                          <span className="text-sm font-semibold text-slate-600">{t('language_label')}</span>
+                          <LanguageSwitcher />
+                        </div>
                         <Button
                           variant="outline"
                           size="lg"
@@ -787,7 +800,7 @@ export default function Layout({ children, currentPageName }) {
                           className="w-full"
                         >
                           <LogIn className="w-5 h-5 mr-2" />
-                          Login
+                          {t('auth_login')}
                         </Button>
                         <Button
                           size="lg"
@@ -798,7 +811,7 @@ export default function Layout({ children, currentPageName }) {
                           className="w-full"
                         >
                           <Sparkles className="w-5 h-5 mr-2" />
-                          Sign Up Free
+                          {t('auth_sign_up_free')}
                         </Button>
                       </motion.div>
                     )
