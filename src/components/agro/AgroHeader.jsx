@@ -40,10 +40,10 @@ export default function AgroHeader({ title, showBack = true }) {
             </div>
           )}
 
-          {/* Add Farm shortcut */}
+          {/* Add Farm shortcut — always creates a new farm */}
           {farms.length > 0 && (
             <Link
-              to="/AgroFarmerProfile"
+              to="/AgroFarmerProfile?new=1"
               className="inline-flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium rounded-lg border border-[#4A7C2A] text-[#4A7C2A] hover:bg-[#4A7C2A] hover:text-white transition-colors min-h-[44px]"
               title={t('add_farm') || 'Add Farm'}
             >

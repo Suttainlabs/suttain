@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { MapPin, Plus, X, Save, Sprout } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { AgroProvider, useAgro } from '@/components/agro/AgroContext';
@@ -22,6 +22,8 @@ const SOIL_TYPES = [
 function ProfileContent() {
   const { t, language, setLanguage, activeFarmer, activeFarm, loadData, selectFarm, loading } = useAgro();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isNewFarm = searchParams.get('new') === '1';
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -50,14 +52,15 @@ function ProfileContent() {
       setLng(activeFarmer.location_lng ?? null);
       setLocationName(activeFarmer.location_name || '');
     }
-    if (activeFarm) {
+    // Only pre-fill farm fields when editing the existing active farm — not when creating a new one
+    if (activeFarm && !isNewFarm) {
       setFarmName(activeFarm.farm_name || '');
       setSize(activeFarm.size_acres?.toString() || '');
       setCrops(activeFarm.crops || []);
       setPrimaryCrop(activeFarm.primary_crop || '');
       setSoilType(activeFarm.soil_type || 'unknown');
     }
-  }, [activeFarmer, activeFarm]);
+  }, [activeFarmer, activeFarm, isNewFarm]);
 
   const handleGPS = () => {
     setGettingLocation(true);
@@ -130,7 +133,8 @@ function ProfileContent() {
         soil_type: soilType
       };
 
-      if (activeFarm && activeFarm.farmer_id === farmerId) {
+      // When "Add Farm" was clicked, always create a new farm record
+      if (activeFarm && activeFarm.farmer_id === farmerId && !isNewFarm) {
         const updated = await base44.entities.Farm.update(activeFarm.id, farmData);
         selectFarm({ ...activeFarm, ...updated });
       } else {
@@ -162,7 +166,7 @@ function ProfileContent() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
-      <AgroHeader title={activeFarmer ? t('edit_profile') : t('create_profile')} />
+      <AgroHeader title={isNewFarm ? (t('add_farm') || 'Add Farm') : (activeFarmer ? t('edit_profile') : t('create_profile'))} />
 
       <div className="space-y-6">
         <div className="bg-white rounded-2xl border border-[#D4C5B0] p-5 sm:p-6">
