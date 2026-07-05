@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { translations } from './translations';
 
@@ -8,7 +8,7 @@ export const useAgro = () => useContext(AgroContext);
 export function AgroProvider({ children }) {
   const [language, setLanguageState] = useState(() => localStorage.getItem('agro_language') || 'en');
   const [activeFarmer, setActiveFarmerState] = useState(null);
-  const [activeFarm, setActiveFarmState] = useState(null);
+  const [activeFarmId, setActiveFarmIdState] = useState(() => localStorage.getItem('agro_active_farm'));
   const [farmers, setFarmers] = useState([]);
   const [farms, setFarms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,19 +54,21 @@ export function AgroProvider({ children }) {
         }
       }
 
+      const activeFarmerId = restoredFarmer?.id || farmerList[0]?.id;
       const savedFarmId = localStorage.getItem('agro_active_farm');
-      let restoredFarm = null;
-      if (savedFarmId) {
-        restoredFarm = farmList.find(f => f.id === savedFarmId);
-        if (restoredFarm) setActiveFarmState(restoredFarm);
-      }
-      if (!restoredFarm && farmList.length > 0) {
-        const activeFarmerId = restoredFarmer?.id || farmerList[0]?.id;
+      let farmIdToActivate = null;
+      if (savedFarmId && farmList.some(f => f.id === savedFarmId)) {
+        farmIdToActivate = savedFarmId;
+      } else if (farmList.length > 0) {
         const firstFarm = farmList.find(f => f.farmer_id === activeFarmerId) || farmList[0];
-        if (firstFarm) {
-          setActiveFarmState(firstFarm);
-          localStorage.setItem('agro_active_farm', firstFarm.id);
-        }
+        farmIdToActivate = firstFarm?.id || null;
+      }
+      if (farmIdToActivate) {
+        setActiveFarmIdState(farmIdToActivate);
+        localStorage.setItem('agro_active_farm', farmIdToActivate);
+      } else {
+        setActiveFarmIdState(null);
+        localStorage.removeItem('agro_active_farm');
       }
     } catch (err) {
       console.error('Failed to load agro data:', err);
@@ -85,17 +87,38 @@ export function AgroProvider({ children }) {
     if (farmer.language) setLanguage(farmer.language);
   };
 
-  const selectFarm = (farm) => {
-    setActiveFarmState(farm);
-    localStorage.setItem('agro_active_farm', farm.id);
-  };
+  // Derive activeFarm from activeFarmId + farms array
+  const activeFarm = useMemo(() => {
+    if (!activeFarmId || farms.length === 0) return null;
+    return farms.find(f => f.id === activeFarmId) || null;
+  }, [activeFarmId, farms]);
+
+  // Farms belonging to the active farmer
+  const activeFarmerFarms = useMemo(() => {
+    if (!activeFarmer) return farms;
+    return farms.filter(f => f.farmer_id === activeFarmer.id);
+  }, [farms, activeFarmer]);
+
+  const setActiveFarmId = useCallback((farmId) => {
+    setActiveFarmIdState(farmId);
+    if (farmId) {
+      localStorage.setItem('agro_active_farm', farmId);
+    } else {
+      localStorage.removeItem('agro_active_farm');
+    }
+  }, []);
+
+  // Legacy compat — delegates to setActiveFarmId
+  const selectFarm = useCallback((farm) => {
+    setActiveFarmId(farm?.id || null);
+  }, [setActiveFarmId]);
 
   return (
     <AgroContext.Provider value={{
       language, setLanguage, t,
-      activeFarmer, activeFarm,
-      farmers, farms,
-      selectFarmer, selectFarm,
+      activeFarmer, activeFarm, activeFarmId,
+      farmers, farms, activeFarmerFarms,
+      selectFarmer, selectFarm, setActiveFarmId,
       loadData, loading
     }}>
       {children}

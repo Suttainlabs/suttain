@@ -6,7 +6,7 @@ import AgroHeader from '@/components/agro/AgroHeader';
 import AgroDashboardCharts from '@/components/agro/AgroDashboardCharts';
 
 function HubContent() {
-  const { t, loading, farmers, farms, activeFarmer, activeFarm, selectFarmer, selectFarm } = useAgro();
+  const { t, loading, farmers, farms, activeFarmer, activeFarm, setActiveFarmId } = useAgro();
 
   if (loading) {
     return (
@@ -43,30 +43,6 @@ function HubContent() {
         </div>
       ) : (
         <>
-          {(farmers.length > 1 || farms.length > 1) && (
-            <div className="mb-6 bg-white rounded-xl border border-[#D4C5B0] p-4">
-              <label className="text-sm font-semibold text-[#2D5016] mb-2 block">{t('select_farm')}</label>
-              <select
-                value={activeFarm?.id || ''}
-                onChange={(e) => {
-                  const farm = farms.find(f => f.id === e.target.value);
-                  if (farm) {
-                    selectFarm(farm);
-                    const farmer = farmers.find(f => f.id === farm.farmer_id);
-                    if (farmer) selectFarmer(farmer);
-                  }
-                }}
-                className="w-full px-3 py-2.5 rounded-lg border border-[#D4C5B0] text-[#2D5016] focus:outline-none focus:ring-2 focus:ring-[#4A7C2A] min-h-[44px]"
-              >
-                {farms.map(farm => (
-                  <option key={farm.id} value={farm.id}>
-                    {farm.farm_name || farm.primary_crop || 'Farm'} — {farm.farmer_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
           {activeFarm && (
             <div className="bg-white rounded-2xl border border-[#D4C5B0] p-5 sm:p-6 mb-6">
               <div className="flex items-center gap-2 mb-4">
@@ -97,7 +73,7 @@ function HubContent() {
             </div>
           )}
 
-          {farms.length > 0 && <AgroDashboardCharts farms={farms} />}
+          {farms.length > 0 && <AgroDashboardCharts farms={activeFarm ? [activeFarm] : farms} />}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             {features.map(f => {
