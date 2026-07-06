@@ -5,6 +5,7 @@ import { AgroProvider, useAgro } from '@/components/agro/AgroContext';
 import AgroHeader from '@/components/agro/AgroHeader';
 import AgroDashboardCharts from '@/components/agro/AgroDashboardCharts';
 import FarmStatsSummary from '@/components/agro/FarmStatsSummary';
+import UrgentAlertsCard from '@/components/agro/UrgentAlertsCard';
 
 function HubContent() {
   const { t, loading, farmers, farms, activeFarmer, activeFarm, setActiveFarmId } = useAgro();
@@ -73,6 +74,8 @@ function HubContent() {
               </div>
             </div>
           )}
+
+          {activeFarm && <UrgentAlertsCard farm={activeFarm} farmer={activeFarmer} />}
 
           {activeFarm && <FarmStatsSummary farmId={activeFarm.id} />}
 
