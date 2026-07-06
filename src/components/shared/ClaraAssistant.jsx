@@ -9,6 +9,7 @@ import { cancelSubscription } from '@/functions/cancelSubscription';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AuthContext from '../auth/AuthContext';
+import { useI18n } from '@/components/i18n/LanguageContext';
 
 const CLARA_AVATAR = "https://media.base44.com/images/public/688eaf737ea3b621021f8bac/481a0dd8d_Screenshot2026-06-13at83527PM.png";
 
@@ -136,20 +137,20 @@ const detectIntent = (text) => {
 };
 
 // Action card components
-const CancelActionCard = ({ onConfirm, onDismiss, loading, done }) => (
+const CancelActionCard = ({ onConfirm, onDismiss, loading, done, t }) => (
     <div className="mx-0 p-3 bg-red-50 border border-red-200 rounded-xl">
         {done ? (
             <div className="flex items-center gap-2 text-green-700">
                 <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                <p className="text-xs font-semibold">Subscription cancelled. You keep access until the end of your billing period.</p>
+                <p className="text-xs font-semibold">{t('clara_cancel_done')}</p>
             </div>
         ) : (
             <>
                 <div className="flex items-center gap-2 mb-2">
                     <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                    <p className="text-xs font-semibold text-red-800">Cancel your subscription?</p>
+                    <p className="text-xs font-semibold text-red-800">{t('clara_cancel_title')}</p>
                 </div>
-                <p className="text-xs text-red-700 mb-3">You'll keep Pro access until the end of your current billing period, then revert to the free tier.</p>
+                <p className="text-xs text-red-700 mb-3">{t('clara_cancel_body')}</p>
                 <div className="flex gap-2">
                     <button
                         onClick={onConfirm}
@@ -157,10 +158,10 @@ const CancelActionCard = ({ onConfirm, onDismiss, loading, done }) => (
                         className="flex-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded-lg py-1.5 font-semibold disabled:opacity-50 flex items-center justify-center gap-1"
                     >
                         {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
-                        {loading ? 'Cancelling…' : 'Yes, Cancel'}
+                        {loading ? t('clara_cancel_cancelling') : t('clara_cancel_confirm')}
                     </button>
                     <button onClick={onDismiss} className="flex-1 text-xs bg-white border border-slate-200 text-slate-700 rounded-lg py-1.5 font-semibold hover:bg-slate-50">
-                        Keep Plan
+                        {t('clara_cancel_keep')}
                     </button>
                 </div>
             </>
@@ -168,19 +169,19 @@ const CancelActionCard = ({ onConfirm, onDismiss, loading, done }) => (
     </div>
 );
 
-const UpgradeActionCard = ({ onDismiss }) => (
+const UpgradeActionCard = ({ onDismiss, t }) => (
     <div className="mx-0 p-3 bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 rounded-xl">
         <div className="flex items-center gap-2 mb-2">
             <Crown className="w-4 h-4 text-violet-600 flex-shrink-0" />
-            <p className="text-xs font-semibold text-violet-800">Upgrade to Pro</p>
+            <p className="text-xs font-semibold text-violet-800">{t('clara_upgrade_title')}</p>
         </div>
-        <p className="text-xs text-violet-700 mb-3">Get unlimited access to all features from just $4.99/month. Cancel anytime.</p>
+        <p className="text-xs text-violet-700 mb-3">{t('clara_upgrade_body')}</p>
         <div className="flex gap-2">
             <Link to={createPageUrl('Pricing')} className="flex-1 text-xs bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg py-1.5 font-semibold flex items-center justify-center gap-1 hover:opacity-90">
-                <Crown className="w-3 h-3" /> View Plans <ArrowRight className="w-3 h-3" />
+                <Crown className="w-3 h-3" /> {t('clara_upgrade_view_plans')} <ArrowRight className="w-3 h-3" />
             </Link>
             <button onClick={onDismiss} className="text-xs text-slate-500 hover:text-slate-700 px-2">
-                Later
+                {t('clara_upgrade_later')}
             </button>
         </div>
     </div>
@@ -188,6 +189,7 @@ const UpgradeActionCard = ({ onDismiss }) => (
 
 export default function ClaraAssistant() {
     const { user } = useContext(AuthContext);
+    const { language, t } = useI18n();
     const [isOpen, setIsOpen] = useState(false);
     const [hasGreeted, setHasGreeted] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -213,12 +215,12 @@ export default function ClaraAssistant() {
         if (isOpen && !hasGreeted) {
             const firstName = user?.full_name?.split(' ')[0] || null;
             const greeting = firstName
-                ? `Hi ${firstName}! I'm Clara, your Suttain assistant. How can I help you today?`
-                : `Hi there! I'm Clara, your Suttain assistant. How can I help you today?`;
+                ? t('clara_greeting_named')(firstName)
+                : t('clara_greeting_generic');
             setMessages([{ role: 'assistant', content: greeting }]);
             setHasGreeted(true);
         }
-    }, [isOpen, hasGreeted, user]);
+    }, [isOpen, hasGreeted, user, language]);
 
     // Voice input setup
     const startListening = () => {
@@ -227,7 +229,8 @@ export default function ClaraAssistant() {
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = false;
-        recognition.lang = 'en-US';
+        const voiceLangMap = { en: 'en-US', hi: 'hi-IN', sw: 'sw-KE', es: 'es-ES' };
+        recognition.lang = voiceLangMap[language] || 'en-US';
         recognition.onresult = (e) => {
             const transcript = e.results[0][0].transcript;
             setUserMessage(transcript);
@@ -258,13 +261,13 @@ export default function ClaraAssistant() {
         // Local intent detection first (instant)
         const intent = detectIntent(content);
         if (intent === 'cancel') {
-            setMessages(prev => [...prev, { role: 'assistant', content: 'I can cancel your subscription right now. Please confirm below:' }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: t('clara_cancel_prompt') }]);
             setActionCard('cancel');
             setIsLoading(false);
             return;
         }
         if (intent === 'upgrade') {
-            setMessages(prev => [...prev, { role: 'assistant', content: 'Great choice! Here are the Pro plans available for you:' }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: t('clara_upgrade_prompt') }]);
             setActionCard('upgrade');
             setIsLoading(false);
             return;
@@ -289,18 +292,21 @@ export default function ClaraAssistant() {
                 console.error('Failed to fetch PlatformUpdate records for Clara:', err.message);
             }
 
+            const languageNames = { en: 'English', hi: 'Hindi', sw: 'Swahili', es: 'Spanish' };
+            const languageInstruction = `IMPORTANT: You MUST respond in ${languageNames[language] || 'English'}. Always preserve scientific names, chemical formulas, CAS numbers, SMILES strings, InChI keys, units, and numeric values in their original form. Only translate natural language prose, descriptions, warnings, and recommendations.`;
+
             const response = await base44.integrations.Core.InvokeLLM({
-                prompt: `${SYSTEM_PROMPT}\n\n=== LATEST PLATFORM UPDATES (real-time from PlatformUpdate entity) ===\n${updatesContext}\n\n=== END PLATFORM UPDATES ===\n\nCurrent conversation:\n${conversationHistory}\n\nUser's latest question: ${content}\n\nProvide a helpful, CONCISE response in PLAIN TEXT focused on the Suttain platform. If the user is asking about updates or new features, reference the LATEST PLATFORM UPDATES section above:`,
+                prompt: `${SYSTEM_PROMPT}\n\n${languageInstruction}\n\n=== LATEST PLATFORM UPDATES (real-time from PlatformUpdate entity) ===\n${updatesContext}\n\n=== END PLATFORM UPDATES ===\n\nCurrent conversation:\n${conversationHistory}\n\nUser's latest question: ${content}\n\nProvide a helpful, CONCISE response in PLAIN TEXT focused on the Suttain platform. Respond in ${languageNames[language] || 'English'}. If the user is asking about updates or new features, reference the LATEST PLATFORM UPDATES section above:`,
                 add_context_from_internet: false,
                 model: 'gpt_5_mini'
             });
 
             // Check if LLM detected an action
             if (response.trim() === 'ACTION:CANCEL_SUBSCRIPTION') {
-                setMessages(prev => [...prev, { role: 'assistant', content: 'I can cancel your subscription right now. Please confirm below:' }]);
+                setMessages(prev => [...prev, { role: 'assistant', content: t('clara_cancel_prompt') }]);
                 setActionCard('cancel');
             } else if (response.trim() === 'ACTION:UPGRADE_SUBSCRIPTION') {
-                setMessages(prev => [...prev, { role: 'assistant', content: 'Great choice! Here are the Pro plans available for you:' }]);
+                setMessages(prev => [...prev, { role: 'assistant', content: t('clara_upgrade_prompt') }]);
                 setActionCard('upgrade');
             } else {
                 setMessages(prev => [...prev, { role: 'assistant', content: response }]);
@@ -308,7 +314,7 @@ export default function ClaraAssistant() {
         } catch (error) {
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: "I'm having trouble connecting right now. Please try again or check our FAQ page for help!"
+                content: t('clara_error')
             }]);
         } finally {
             setIsLoading(false);
@@ -321,14 +327,14 @@ export default function ClaraAssistant() {
             const res = await cancelSubscription({});
             if (res.data?.success) {
                 setCancelDone(true);
-                setMessages(prev => [...prev, { role: 'assistant', content: '✅ Done! Your subscription has been cancelled. You keep full Pro access until the end of your current billing period.' }]);
+                setMessages(prev => [...prev, { role: 'assistant', content: t('clara_cancel_done') }]);
                 setTimeout(() => setActionCard(null), 3000);
             } else {
-                setMessages(prev => [...prev, { role: 'assistant', content: 'I was unable to cancel automatically. Please go to Settings > Subscription & Billing, or email contact@suttain.com for help.' }]);
+                setMessages(prev => [...prev, { role: 'assistant', content: t('clara_error') }]);
                 setActionCard(null);
             }
         } catch {
-            setMessages(prev => [...prev, { role: 'assistant', content: 'Something went wrong. Please try cancelling from Settings > Subscription & Billing or email contact@suttain.com.' }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: t('clara_error') }]);
             setActionCard(null);
         } finally {
             setCancelLoading(false);
@@ -383,9 +389,9 @@ export default function ClaraAssistant() {
     };
 
     const suggestions = [
-        "What's new on Suttain?",
-        "Is this ingredient safe to use?",
-        "Help me build a formula",
+        t('clara_suggestion_1'),
+        t('clara_suggestion_2'),
+        t('clara_suggestion_3'),
     ];
 
     const hasSpeechAPI = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
@@ -406,13 +412,13 @@ export default function ClaraAssistant() {
                                 <img src={CLARA_AVATAR} alt="Clara" className="w-full h-full object-cover object-top" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-white text-sm">Clara, your Assistant</h3>
-                                <p className="text-xs text-white/80">Suttain Platform Guide</p>
+                                <h3 className="font-bold text-white text-sm">{t('clara_title')}</h3>
+                                <p className="text-xs text-white/80">{t('clara_subtitle')}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
                             {messages.length > 0 && (
-                                <button onClick={resetChat} className="text-white/80 hover:text-white transition-colors" title="Back to home">
+                                <button onClick={resetChat} className="text-white/80 hover:text-white transition-colors" title={t('clara_back_home')}>
                                     <Home className="w-4 h-4" />
                                 </button>
                             )}
@@ -429,11 +435,11 @@ export default function ClaraAssistant() {
                                 <div className="w-14 h-14 rounded-full overflow-hidden mx-auto mb-3 border-2 border-teal-200">
                                     <img src={CLARA_AVATAR} alt="Clara" className="w-full h-full object-cover object-top" />
                                 </div>
-                                <h4 className="font-semibold text-slate-900 mb-1 text-sm">Ask me anything!</h4>
-                                <p className="text-xs text-slate-500 mb-1">I can help you navigate, subscribe, or cancel.</p>
+                                <h4 className="font-semibold text-slate-900 mb-1 text-sm">{t('clara_ask_anything')}</h4>
+                                <p className="text-xs text-slate-500 mb-1">{t('clara_help_text')}</p>
                                 {hasSpeechAPI && (
                                     <p className="text-xs text-teal-500 mb-3 flex items-center justify-center gap-1">
-                                        <Mic className="w-3 h-3" /> You can also speak to me
+                                        <Mic className="w-3 h-3" /> {t('clara_speak_text')}
                                     </p>
                                 )}
                                 <div className="space-y-1.5">
@@ -467,7 +473,7 @@ export default function ClaraAssistant() {
                             <div className="flex justify-start">
                                 <div className="bg-slate-100 rounded-xl px-3 py-2 flex items-center gap-2">
                                     <Loader2 className="w-3 h-3 animate-spin text-teal-600" />
-                                    <span className="text-xs text-slate-500">Clara is typing…</span>
+                                    <span className="text-xs text-slate-500">{t('clara_typing')}</span>
                                 </div>
                             </div>
                         )}
@@ -479,10 +485,11 @@ export default function ClaraAssistant() {
                                 onDismiss={() => setActionCard(null)}
                                 loading={cancelLoading}
                                 done={cancelDone}
+                                t={t}
                             />
                         )}
                         {actionCard === 'upgrade' && (
-                            <UpgradeActionCard onDismiss={() => setActionCard(null)} />
+                            <UpgradeActionCard onDismiss={() => setActionCard(null)} t={t} />
                         )}
 
                         <div ref={messagesEndRef} />
@@ -491,17 +498,17 @@ export default function ClaraAssistant() {
                     {/* Live Agent Form */}
                     {liveAgentRequested && (
                         <div className="mx-3 mb-2 p-3 bg-teal-50 border border-teal-200 rounded-xl flex-shrink-0">
-                            <p className="text-xs font-semibold text-teal-800 mb-2">Connect to a Live Agent</p>
+                            <p className="text-xs font-semibold text-teal-800 mb-2">{t('clara_live_agent_title')}</p>
                             <input
                                 type="text"
-                                placeholder="Your name"
+                                placeholder={t('clara_live_agent_name')}
                                 value={liveAgentName}
                                 onChange={e => setLiveAgentName(e.target.value)}
                                 className="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 mb-1.5 focus:outline-none focus:ring-1 focus:ring-teal-400"
                             />
                             <input
                                 type="email"
-                                placeholder="Your email"
+                                placeholder={t('clara_live_agent_email')}
                                 value={liveAgentEmail}
                                 onChange={e => setLiveAgentEmail(e.target.value)}
                                 className="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 mb-2 focus:outline-none focus:ring-1 focus:ring-teal-400"
@@ -512,10 +519,10 @@ export default function ClaraAssistant() {
                                     disabled={liveAgentLoading || !liveAgentName.trim() || !liveAgentEmail.trim()}
                                     className="flex-1 text-xs bg-gradient-to-r from-[#02988C] to-[#09D2FF] text-white rounded-lg py-1.5 font-semibold disabled:opacity-50"
                                 >
-                                    {liveAgentLoading ? 'Sending...' : 'Submit'}
+                                    {liveAgentLoading ? t('clara_live_agent_sending') : t('clara_live_agent_submit')}
                                 </button>
                                 <button onClick={() => setLiveAgentRequested(false)} className="text-xs text-slate-500 hover:text-slate-700 px-2">
-                                    Cancel
+                                    {t('cancel')}
                                 </button>
                             </div>
                         </div>
@@ -528,7 +535,7 @@ export default function ClaraAssistant() {
                                 onClick={() => setLiveAgentRequested(true)}
                                 className="w-full text-xs text-teal-600 hover:text-teal-800 font-semibold mb-2 text-center transition-colors"
                             >
-                                💬 Talk to a live agent
+                                {t('clara_live_agent')}
                             </button>
                         )}
                         <div className="flex gap-2">
@@ -552,7 +559,7 @@ export default function ClaraAssistant() {
                                 value={userMessage}
                                 onChange={(e) => setUserMessage(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                placeholder={isListening ? '🎤 Listening…' : 'Ask or say "cancel" / "upgrade"…'}
+                                placeholder={isListening ? t('clara_listening') : t('clara_input_placeholder')}
                                 className="flex-1 text-xs h-8"
                                 disabled={isLoading || isListening}
                             />
