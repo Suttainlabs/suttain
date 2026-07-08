@@ -6,6 +6,10 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const { action, uniprotId, url, gene } = body;
 
+    // Require authentication for all actions to prevent abuse/DoS
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
     if (action === 'prediction') {
       if (!uniprotId) return Response.json({ error: 'uniprotId required' }, { status: 400 });
       const res = await fetch(`https://alphafold.ebi.ac.uk/api/prediction/${encodeURIComponent(uniprotId)}`);
@@ -20,9 +24,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'fetchJson' || action === 'fetchCsv') {
-      // Require authentication to prevent open-proxy / SSRF abuse
-      const user = await base44.auth.me().catch(() => null);
-      if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      // Auth already checked above
 
       if (!url) return Response.json({ error: 'url required' }, { status: 400 });
 
