@@ -79,6 +79,12 @@ Deno.serve(async (req) => {
       }
       // Disable redirect following to prevent DNS-rebinding via redirect to internal IPs
       const res = await fetch(safeUrl, { redirect: 'error' });
+      // Post-fetch DNS re-validation to detect TOCTOU DNS rebinding — discard
+      // response if DNS now resolves to a private/blocked IP.
+      const postFetchIps = await Deno.resolveDns(parsedUrl.hostname, 'A').catch(() => []);
+      if (postFetchIps.length === 0 || postFetchIps.some(isPrivateIp)) {
+        return Response.json({ error: 'DNS validation failed after fetch' }, { status: 403 });
+      }
       if (!res.ok) return Response.json({ error: `Fetch error: ${res.status}` }, { status: res.status });
       if (action === 'fetchJson') {
         const data = await res.json();

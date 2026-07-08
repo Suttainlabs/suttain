@@ -3,7 +3,20 @@ import { Resend } from 'npm:resend@2.0.0';
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-const getBlogNotificationHtml = (articleTitle, articleExcerpt, articleUrl) => `
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+const getBlogNotificationHtml = (articleTitle, articleExcerpt, articleUrl) => {
+  const safeTitle = escapeHtml(articleTitle);
+  const safeExcerpt = escapeHtml(articleExcerpt);
+  const safeUrl = escapeHtml(articleUrl || 'https://suttain.com/Blog');
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,10 +44,10 @@ const getBlogNotificationHtml = (articleTitle, articleExcerpt, articleUrl) => `
     <div class="content">
       <p>We just published a new article we think you'll find valuable:</p>
       <div class="article-card">
-        <h2>${articleTitle}</h2>
-        ${articleExcerpt ? `<p style="margin-bottom: 0;">${articleExcerpt}</p>` : ''}
+        <h2>${safeTitle}</h2>
+        ${safeExcerpt ? `<p style="margin-bottom: 0;">${safeExcerpt}</p>` : ''}
       </div>
-      <a href="${articleUrl || 'https://suttain.com/Blog'}" class="cta">Read the Article</a>
+      <a href="${safeUrl}" class="cta">Read the Article</a>
       <p style="font-size: 13px; color: #94a3b8;">You're receiving this because you subscribed to Suttain blog updates.</p>
     </div>
     <div class="footer">
@@ -44,6 +57,7 @@ const getBlogNotificationHtml = (articleTitle, articleExcerpt, articleUrl) => `
 </body>
 </html>
 `;
+};
 
 const getSubscribeConfirmationHtml = (email) => `
 <!DOCTYPE html>

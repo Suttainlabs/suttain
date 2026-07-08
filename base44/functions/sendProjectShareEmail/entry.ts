@@ -15,10 +15,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields: to, project_name, project_id, invite_link' }, { status: 400 });
     }
 
-    // Verify the calling user owns the project being shared
+    // Verify the calling user owns the project — filter by created_by_id at the
+    // database level rather than relying on .get() + in-code comparison (IDOR).
     try {
-      const project = await base44.entities.ChemicalProject.get(project_id);
-      if (!project || project.created_by_id !== user.id) {
+      const projects = await base44.asServiceRole.entities.ChemicalProject.filter({
+        id: project_id,
+        created_by_id: user.id
+      });
+      if (!projects || projects.length === 0) {
         return Response.json({ error: 'You do not have permission to share this project' }, { status: 403 });
       }
     } catch {
