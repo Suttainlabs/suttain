@@ -289,6 +289,10 @@ Deno.serve(async (req) => {
               subscription_cancel_at: subscription.cancel_at_period_end && subscription.current_period_end
                 ? new Date(subscription.current_period_end * 1000).toISOString()
                 : null,
+              // Always sync the current period end so renewal dates stay fresh
+              ...(subscription.current_period_end && {
+                subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString()
+              }),
             };
             await base44.asServiceRole.entities.User.update(users[0].id, updateData);
             console.log(`Updated subscription status for user ${users[0].id} to ${newStatus}`);

@@ -1,5 +1,5 @@
 import StripeLib from 'npm:stripe@17.7.0';
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 Deno.serve(async (req) => {
   try {
@@ -20,12 +20,20 @@ Deno.serve(async (req) => {
     for (const u of proUsers) {
       try {
         const sub = await stripe.subscriptions.retrieve(u.stripe_subscription_id);
+        const updateData = {};
+
         if (sub.current_period_end) {
-          const endDate = new Date(sub.current_period_end * 1000).toISOString();
-          await base44.asServiceRole.entities.User.update(u.id, {
-            subscription_end_date: endDate,
-          });
-          console.log(`Synced ${u.email}: ends ${endDate}`);
+          updateData.subscription_end_date = new Date(sub.current_period_end * 1000).toISOString();
+        }
+
+        // Also sync subscription_status from Stripe
+        if (sub.status) {
+          updateData.subscription_status = sub.cancel_at_period_end ? 'canceling' : sub.status;
+        }
+
+        if (Object.keys(updateData).length > 0) {
+          await base44.asServiceRole.entities.User.update(u.id, updateData);
+          console.log(`Synced ${u.email}: ${JSON.stringify(updateData)}`);
           results.updated++;
         } else {
           results.skipped++;

@@ -78,11 +78,21 @@ export default function SubscriptionsPanel() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const allUsers = await base44.entities.User.list('-created_date', 500);
+      // Use getAdminUsers which syncs stale subscription data from Stripe
+      const res = await base44.functions.invoke('getAdminUsers', {});
+      const allUsers = res?.users || res?.data?.users || [];
       setUsers(allUsers);
       setLastRefreshed(new Date());
     } catch (e) {
       console.error('Failed to fetch users:', e);
+      // Fallback to direct entity fetch
+      try {
+        const allUsers = await base44.entities.User.list('-created_date', 500);
+        setUsers(allUsers);
+        setLastRefreshed(new Date());
+      } catch (e2) {
+        console.error('Fallback fetch also failed:', e2);
+      }
     } finally {
       setLoading(false);
     }
@@ -90,8 +100,8 @@ export default function SubscriptionsPanel() {
 
   useEffect(() => {
     fetchUsers();
-    // Auto-refresh every 15 seconds for near-real-time updates
-    const interval = setInterval(fetchUsers, 15000);
+    // Auto-refresh every 60 seconds (getAdminUsers syncs stale data from Stripe)
+    const interval = setInterval(fetchUsers, 60000);
 
     // Real-time subscription to user changes
     const unsubscribe = base44.entities.User.subscribe((event) => {
@@ -246,7 +256,7 @@ export default function SubscriptionsPanel() {
         </div>
       </div>
       {lastRefreshed && (
-        <p className="text-xs text-slate-400">Last refreshed: {lastRefreshed.toLocaleTimeString()} · Auto-refreshes every 15s · Real-time updates active</p>
+        <p className="text-xs text-slate-400">Last refreshed: {lastRefreshed.toLocaleTimeString()} · Auto-refreshes every 60s · Stripe data synced on load</p>
       )}
 
       {/* User Table */}

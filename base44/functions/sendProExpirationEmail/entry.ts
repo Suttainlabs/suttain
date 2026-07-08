@@ -47,10 +47,31 @@ Deno.serve(async (req) => {
       const msLeft = endDate - now;
       const daysLeft = Math.ceil(msLeft / (24 * 60 * 60 * 1000));
 
-      // Only email if expiring in 7 days (±1 day window to avoid missing due to run time)
+      // Only email if expiring within 3 days (1-3 day window)
       // Or if manually triggered for a specific user
-      const shouldSend = targetUserId ? true : (daysLeft >= 6 && daysLeft <= 8);
+      const shouldSend = targetUserId ? true : (daysLeft >= 1 && daysLeft <= 3);
       if (!shouldSend) continue;
+
+      // Deduplication: skip if we already sent a renewal reminder today
+      if (!targetUserId) {
+        try {
+          const todayKey = new Date().toISOString().split('T')[0];
+          const existing = await base44.asServiceRole.entities.Notification.filter(
+            { target_user: u.email, type: 'subscription' },
+            '-created_date',
+            5
+          );
+          const alreadySentToday = existing.find(n =>
+            n.metadata?.renewal_reminder === true && n.metadata?.reminder_date === todayKey
+          );
+          if (alreadySentToday) {
+            console.log(`Skipping ${u.email} — reminder already sent today`);
+            continue;
+          }
+        } catch (dedupErr) {
+          console.error(`Dedup check failed for ${u.email}:`, dedupErr.message);
+        }
+      }
 
       const firstName = (u.full_name || u.email || 'there').split(' ')[0];
       const expiryStr = endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -159,6 +180,19 @@ Deno.serve(async (req) => {
         results.push({ email: u.email, status: 'failed', error: emailError.message });
       } else {
         console.log(`Pro expiration reminder sent to ${u.email} (${daysLeft} days left)`);
+        // Record the reminder so we don't duplicate
+        try {
+          const todayKey = new Date().toISOString().split('T')[0];
+          await base44.asServiceRole.entities.Notification.create({
+            title: 'Renewal reminder sent',
+            message: `Renewal reminder emailed to ${u.email} (${daysLeft} days left).`,
+            type: 'subscription',
+            target_user: u.email,
+            metadata: { renewal_reminder: true, reminder_date: todayKey, days_left: daysLeft }
+          });
+        } catch (notifErr) {
+          console.error(`Failed to record reminder notification for ${u.email}:`, notifErr.message);
+        }
         results.push({ email: u.email, status: 'sent', daysLeft });
       }
     }
