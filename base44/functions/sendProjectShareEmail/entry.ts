@@ -3,16 +3,40 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const body = await req.json();
-    const { to, project_name, permission, invite_link, message, inviter_name } = body;
-
-    if (!to || !project_name || !invite_link) {
-      return Response.json({ error: 'Missing required fields: to, project_name, invite_link' }, { status: 400 });
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const body = await req.json();
+    const { to, project_name, project_id, permission, invite_link, message, inviter_name } = body;
+
+    if (!to || !project_name || !invite_link || !project_id) {
+      return Response.json({ error: 'Missing required fields: to, project_name, project_id, invite_link' }, { status: 400 });
+    }
+
+    // Verify the calling user owns the project being shared
+    try {
+      const project = await base44.entities.ChemicalProject.get(project_id);
+      if (!project || project.created_by_id !== user.id) {
+        return Response.json({ error: 'You do not have permission to share this project' }, { status: 403 });
+      }
+    } catch {
+      return Response.json({ error: 'Project not found or access denied' }, { status: 403 });
+    }
+
+    // HTML-escape all user-controlled values to prevent email XSS
+    const escapeHtml = (str) => String(str || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const safeProjectName = escapeHtml(project_name);
+    const safeInviterName = escapeHtml(inviter_name || user.full_name || user.email || 'A Suttain researcher');
+    const safeMessage = escapeHtml(message);
+    const safeInviteLink = escapeHtml(invite_link);
+
     const permissionLabel = permission === 'edit' ? 'edit (full collaboration)' : 'view (read-only)';
-    const messageBlock = message
-      ? `<div style="margin:20px 0;padding:12px 16px;background:#F0FAF5;border-left:3px solid #007850;border-radius:6px;font-size:14px;color:#464646;"><strong>Message from ${inviter_name}:</strong><br/>${message}</div>`
+    const messageBlock = safeMessage
+      ? `<div style="margin:20px 0;padding:12px 16px;background:#F0FAF5;border-left:3px solid #007850;border-radius:6px;font-size:14px;color:#464646;"><strong>Message from ${safeInviterName}:</strong><br/>${safeMessage}</div>`
       : '';
 
     const html = `
@@ -23,35 +47,35 @@ Deno.serve(async (req) => {
         </div>
         <div style="padding:28px 32px;">
           <p style="margin:0 0 16px;color:#464646;font-size:15px;line-height:1.6;">
-            <strong>${inviter_name}</strong> has invited you to collaborate on the research project
-            <strong style="color:#007850;">${project_name}</strong>.
+            <strong>${safeInviterName}</strong> has invited you to collaborate on the research project
+            <strong style="color:#007850;">${safeProjectName}</strong>.
           </p>
           <p style="margin:0 0 16px;color:#464646;font-size:14px;line-height:1.6;">
             Permission level: <strong>${permissionLabel}</strong>
           </p>
           ${messageBlock}
-          <a href="${invite_link}" style="display:inline-block;background:#007850;color:#FFFFFF;text-decoration:none;padding:12px 28px;border-radius:999px;font-size:14px;font-weight:600;margin-top:8px;">
+          <a href="${safeInviteLink}" style="display:inline-block;background:#007850;color:#FFFFFF;text-decoration:none;padding:12px 28px;border-radius:999px;font-size:14px;font-weight:600;margin-top:8px;">
             Open Project
           </a>
           <p style="margin:24px 0 0;color:#828282;font-size:12px;line-height:1.5;">
             If the button doesn't work, copy and paste this link into your browser:<br/>
-            <span style="color:#007850;word-break:break-all;">${invite_link}</span>
+            <span style="color:#007850;word-break:break-all;">${safeInviteLink}</span>
           </p>
         </div>
         <div style="background:#EDF7F2;padding:16px 32px;text-align:center;">
-          <p style="margin:0;color:#828282;font-size:11px;">© ${new Date().getFullYear()} Suttain. This invitation was sent by ${inviter_name}.</p>
+          <p style="margin:0;color:#828282;font-size:11px;">© ${new Date().getFullYear()} Suttain. This invitation was sent by ${safeInviterName}.</p>
         </div>
       </div>
     `;
 
-    const text = `${inviter_name} invited you to collaborate on "${project_name}" with ${permissionLabel} permission.\n\n${message ? 'Message: ' + message + '\n\n' : ''}Open the project: ${invite_link}`;
+    const text = `${safeInviterName} invited you to collaborate on "${safeProjectName}" with ${permissionLabel} permission.\n\n${safeMessage ? 'Message: ' + safeMessage + '\n\n' : ''}Open the project: ${safeInviteLink}`;
 
     let emailSent = false;
     let emailError = null;
     try {
       await base44.integrations.Core.SendEmail({
         to,
-        subject: `${inviter_name} shared "${project_name}" with you on Suttain`,
+        subject: `${safeInviterName} shared "${safeProjectName}" with you on Suttain`,
         body: html
       });
       emailSent = true;
@@ -59,7 +83,7 @@ Deno.serve(async (req) => {
       try {
         await base44.integrations.Core.SendEmail({
           to: 'contact@suttain.com',
-          subject: `[CC] ${inviter_name} shared "${project_name}" on Suttain`,
+          subject: `[CC] ${safeInviterName} shared "${safeProjectName}" on Suttain`,
           body: html
         });
       } catch (ccErr) {

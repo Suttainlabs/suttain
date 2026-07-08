@@ -77,6 +77,7 @@ export default function ShareProjectModal({ project, isOpen, onClose }) {
         const inviteLink = `${origin}/research?share=${token}`;
         const res = await base44.functions.invoke('sendProjectShareEmail', {
           to: normalized,
+          project_id: project.id,
           project_name: project.name,
           permission,
           invite_link: inviteLink,
