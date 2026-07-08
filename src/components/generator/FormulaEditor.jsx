@@ -265,7 +265,9 @@ export default function FormulaEditor({
   const [ingredientSuggestions, setIngredientSuggestions] = useState([]);
   const [isSearchingIngredients, setIsSearchingIngredients] = useState(false);
   const [showIngredientSuggestions, setShowIngredientSuggestions] = useState(false);
+  const [highlightedSuggestionIndex, setHighlightedSuggestionIndex] = useState(-1);
   const ingredientSearchRef = useRef(null);
+  const ingredientInputRef = useRef(null);
   
   const debouncedIngredientSearch = useDebounce(ingredientSearchTerm, 300);
 
@@ -278,6 +280,11 @@ export default function FormulaEditor({
       setShowIngredientSuggestions(false);
     }
   }, [debouncedIngredientSearch]);
+
+  // Reset highlight when suggestions change
+  useEffect(() => {
+    setHighlightedSuggestionIndex(-1);
+  }, [ingredientSuggestions]);
 
   const searchIngredients = async (query) => {
     setIsSearchingIngredients(true);
@@ -317,6 +324,42 @@ export default function FormulaEditor({
     setIngredientSearchTerm("");
     setIngredientSuggestions([]);
     setShowIngredientSuggestions(false);
+    setHighlightedSuggestionIndex(-1);
+  };
+
+  // Keyboard navigation for ingredient suggestions
+  const handleIngredientSearchKeyDown = (e) => {
+    if (!showIngredientSuggestions || ingredientSuggestions.length === 0) {
+      // If Enter pressed with no suggestions open, add the typed text as a custom ingredient
+      if (e.key === 'Enter' && ingredientSearchTerm.trim()) {
+        e.preventDefault();
+        addIngredientFromSearch({ name: ingredientSearchTerm.trim(), function_description: "Custom ingredient" });
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightedSuggestionIndex(prev =>
+        prev < ingredientSuggestions.length - 1 ? prev + 1 : 0
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightedSuggestionIndex(prev =>
+        prev > 0 ? prev - 1 : ingredientSuggestions.length - 1
+      );
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (highlightedSuggestionIndex >= 0 && highlightedSuggestionIndex < ingredientSuggestions.length) {
+        addIngredientFromSearch(ingredientSuggestions[highlightedSuggestionIndex]);
+      } else if (ingredientSearchTerm.trim()) {
+        addIngredientFromSearch({ name: ingredientSearchTerm.trim(), function_description: "Custom ingredient" });
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setShowIngredientSuggestions(false);
+      setHighlightedSuggestionIndex(-1);
+    }
   };
 
   // Close suggestions when clicking outside
@@ -885,9 +928,12 @@ export default function FormulaEditor({
                       <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <Input
+                          ref={ingredientInputRef}
                           placeholder="Search to add ingredients..."
                           value={ingredientSearchTerm}
                           onChange={(e) => setIngredientSearchTerm(e.target.value)}
+                          onKeyDown={handleIngredientSearchKeyDown}
+                          onFocus={() => { if (ingredientSuggestions.length > 0) setShowIngredientSuggestions(true); }}
                           className="pl-10 h-11"
                         />
                         {isSearchingIngredients && <Loader2 className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${modeColors.loaderIcon} animate-spin`} />}
@@ -913,8 +959,12 @@ export default function FormulaEditor({
                           {ingredientSuggestions.map((ingredient, index) => (
                             <div
                               key={ingredient.name + index}
-                              className="p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-b-0 transition-colors"
+                              ref={highlightedSuggestionIndex === index ? (el) => { if (el) el.scrollIntoView({ block: 'nearest' }); } : null}
+                              className={`p-3 cursor-pointer border-b border-slate-100 last:border-b-0 transition-colors ${
+                                highlightedSuggestionIndex === index ? 'bg-teal-50' : 'hover:bg-slate-50'
+                              }`}
                               onClick={() => addIngredientFromSearch(ingredient)}
+                              onMouseEnter={() => setHighlightedSuggestionIndex(index)}
                             >
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex-1 min-w-0">
