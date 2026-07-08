@@ -51,6 +51,30 @@ Deno.serve(async (req) => {
       }
       // Reconstruct URL from validated components to prevent parsing tricks
       const safeUrl = `https://${parsedUrl.hostname}${parsedUrl.pathname}${parsedUrl.search}`;
+      // Resolve DNS and reject private/loopback/link-local IPs to prevent DNS rebinding SSRF
+      let resolvedIps;
+      try {
+        resolvedIps = await Deno.resolveDns(parsedUrl.hostname, 'A');
+      } catch {
+        return Response.json({ error: 'DNS resolution failed' }, { status: 400 });
+      }
+      const isPrivateIp = (ip) => {
+        const parts = ip.split('.').map(Number);
+        if (parts.length !== 4) return true;
+        const [a, b] = parts;
+        return (
+          a === 10 ||
+          (a === 172 && b >= 16 && b <= 31) ||
+          (a === 192 && b === 168) ||
+          a === 127 ||
+          (a === 169 && b === 254) ||
+          a === 0 ||
+          (a === 100 && b >= 64 && b <= 127)
+        );
+      };
+      if (resolvedIps.length === 0 || resolvedIps.some(isPrivateIp)) {
+        return Response.json({ error: 'Resolved IP is blocked' }, { status: 403 });
+      }
       // Disable redirect following to prevent DNS-rebinding via redirect to internal IPs
       const res = await fetch(safeUrl, { redirect: 'error' });
       if (!res.ok) return Response.json({ error: `Fetch error: ${res.status}` }, { status: res.status });
