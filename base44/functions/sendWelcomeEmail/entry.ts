@@ -24,6 +24,15 @@ const FEATURE_REGISTRY = {
   ],
 };
 
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function renderFeatureSection(title, color, items) {
   const rows = items.map(f => `
     <tr>
@@ -54,7 +63,9 @@ Deno.serve(async (req) => {
     const userData = body.data || body;
     const email = userData.email;
     const fullName = userData.full_name || '';
-    const firstName = fullName.split(' ')[0] || 'there';
+    const firstName = escapeHtml(fullName.split(' ')[0] || 'there');
+    const safeFullName = escapeHtml(fullName);
+    const safeEmail = escapeHtml(email);
 
     if (!email) {
       console.error('No email found in payload:', JSON.stringify(body));
@@ -86,6 +97,7 @@ Deno.serve(async (req) => {
           <td style="background-color:#007850;border-radius:12px 12px 0 0;padding:40px 40px 32px;text-align:center;">
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:48px;width:auto;margin-bottom:16px;display:block;"/>
             <h1 style="color:#ffffff;font-size:26px;font-weight:700;margin:0 0 8px;">Welcome to Suttain, ${firstName}!</h1>
+            <!-- firstName is HTML-escaped above -->
             <p style="color:#ffffff;font-size:15px;margin:0;">Your free account is ready — ${totalTools} tools and features waiting for you.</p>
           </td>
         </tr>
@@ -153,8 +165,8 @@ Deno.serve(async (req) => {
   </td></tr>
   <tr><td style="padding:28px 32px;">
     <table width="100%" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
-      <tr><td style="padding:12px 16px;border-bottom:1px solid #f1f5f9;background:#f8fafc;width:120px;font-size:13px;font-weight:700;color:#475569;">Name</td><td style="padding:12px 16px;font-size:14px;color:#1e293b;">${fullName || 'N/A'}</td></tr>
-      <tr><td style="padding:12px 16px;border-bottom:1px solid #f1f5f9;background:#f8fafc;font-size:13px;font-weight:700;color:#475569;">Email</td><td style="padding:12px 16px;font-size:14px;color:#1e293b;">${email}</td></tr>
+      <tr><td style="padding:12px 16px;border-bottom:1px solid #f1f5f9;background:#f8fafc;width:120px;font-size:13px;font-weight:700;color:#475569;">Name</td><td style="padding:12px 16px;font-size:14px;color:#1e293b;">${safeFullName || 'N/A'}</td></tr>
+      <tr><td style="padding:12px 16px;border-bottom:1px solid #f1f5f9;background:#f8fafc;font-size:13px;font-weight:700;color:#475569;">Email</td><td style="padding:12px 16px;font-size:14px;color:#1e293b;">${safeEmail}</td></tr>
       <tr><td style="padding:12px 16px;background:#f8fafc;font-size:13px;font-weight:700;color:#475569;">Date</td><td style="padding:12px 16px;font-size:14px;color:#1e293b;">${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} (CT)</td></tr>
     </table>
     <div style="text-align:center;margin-top:24px;">

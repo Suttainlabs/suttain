@@ -41,8 +41,18 @@ Deno.serve(async (req) => {
       if (!ALLOWED_DOMAINS.includes(parsedUrl.hostname)) {
         return Response.json({ error: 'Domain not allowed' }, { status: 403 });
       }
-
-      const res = await fetch(parsedUrl.toString());
+      // Enforce HTTPS to prevent protocol-based SSRF
+      if (parsedUrl.protocol !== 'https:') {
+        return Response.json({ error: 'Only HTTPS URLs allowed' }, { status: 403 });
+      }
+      // Reject URLs with embedded credentials
+      if (parsedUrl.username || parsedUrl.password) {
+        return Response.json({ error: 'Credentials in URL not allowed' }, { status: 403 });
+      }
+      // Reconstruct URL from validated components to prevent parsing tricks
+      const safeUrl = `https://${parsedUrl.hostname}${parsedUrl.pathname}${parsedUrl.search}`;
+      // Disable redirect following to prevent DNS-rebinding via redirect to internal IPs
+      const res = await fetch(safeUrl, { redirect: 'error' });
       if (!res.ok) return Response.json({ error: `Fetch error: ${res.status}` }, { status: res.status });
       if (action === 'fetchJson') {
         const data = await res.json();
