@@ -127,12 +127,17 @@ Deno.serve(async (req) => {
     const body = await req.text();
     const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
-    let event;
-    if (webhookSecret && signature) {
-      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
-    } else {
-      event = JSON.parse(body);
+    if (!webhookSecret) {
+      console.error('STRIPE_WEBHOOK_SECRET is not set');
+      return Response.json({ error: 'Webhook secret not configured' }, { status: 500 });
     }
+    if (!signature) {
+      console.error('Missing stripe-signature header');
+      return Response.json({ error: 'Missing stripe-signature header' }, { status: 400 });
+    }
+
+    let event;
+    event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
 
     console.log('Stripe webhook event:', event.type);
 

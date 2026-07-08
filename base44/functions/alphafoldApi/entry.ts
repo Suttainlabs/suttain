@@ -19,18 +19,35 @@ Deno.serve(async (req) => {
       return Response.json(prediction);
     }
 
-    if (action === 'fetchJson') {
-      if (!url) return Response.json({ error: 'url required' }, { status: 400 });
-      const res = await fetch(url);
-      if (!res.ok) return Response.json({ error: `Fetch error: ${res.status}` }, { status: res.status });
-      const data = await res.json();
-      return Response.json(data);
-    }
+    if (action === 'fetchJson' || action === 'fetchCsv') {
+      // Require authentication to prevent open-proxy / SSRF abuse
+      const user = await base44.auth.me().catch(() => null);
+      if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    if (action === 'fetchCsv') {
       if (!url) return Response.json({ error: 'url required' }, { status: 400 });
-      const res = await fetch(url);
+
+      // Strict allowlist of trusted external domains
+      const ALLOWED_DOMAINS = [
+        'alphafold.ebi.ac.uk',
+        'rest.uniprot.org',
+        'www.uniprot.org',
+      ];
+      let parsedUrl;
+      try {
+        parsedUrl = new URL(url);
+      } catch {
+        return Response.json({ error: 'Invalid URL' }, { status: 400 });
+      }
+      if (!ALLOWED_DOMAINS.includes(parsedUrl.hostname)) {
+        return Response.json({ error: 'Domain not allowed' }, { status: 403 });
+      }
+
+      const res = await fetch(parsedUrl.toString());
       if (!res.ok) return Response.json({ error: `Fetch error: ${res.status}` }, { status: res.status });
+      if (action === 'fetchJson') {
+        const data = await res.json();
+        return Response.json(data);
+      }
       const text = await res.text();
       return Response.json({ csv: text });
     }
