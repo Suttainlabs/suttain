@@ -10,7 +10,7 @@ import DashboardOverview from './DashboardOverview';
 import UserManagement from './UserManagement';
 import SubmissionsManagement from './SubmissionsManagement';
 import JobManagement from './JobManagement';
-import SendUpdateAnnouncement from './SendUpdateAnnouncement';
+import AnnouncementPanel from './AnnouncementPanel';
 import SubscriptionsPanel from './SubscriptionsPanel';
 import SubscribedUsersPanel from './SubscribedUsersPanel';
 import CustomerSupportCRM from './CustomerSupportCRM';
@@ -74,7 +74,7 @@ export default function AdminLayout() {
       case 'jobs':
         return <JobManagement />;
       case 'announcements':
-        return <SendUpdateAnnouncement />;
+        return <AnnouncementPanel />;
       default:
         return <DashboardOverview />;
     }
