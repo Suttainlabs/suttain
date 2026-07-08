@@ -94,6 +94,9 @@
           "created_by_id": "{{user.id}}"
         },
         {
+          "data.target_user": "{{user.email}}"
+        },
+        {
           "user_condition": {
             "role": "admin"
           }
@@ -101,9 +104,19 @@
       ]
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.target_user": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }
