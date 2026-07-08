@@ -1,12 +1,20 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    
-    // This function should only be called by admins or scheduled automations
-    if (user?.role !== 'admin') {
+
+    // This function runs via scheduled automation (no user context) or direct admin invocation.
+    // If a user IS present (direct call), they must be an admin.
+    // If no user is present, it's a scheduled automation — proceed with service role.
+    let user = null;
+    try {
+      user = await base44.auth.me();
+    } catch {
+      // No user context — scheduled automation, proceed
+    }
+
+    if (user && user.role !== 'admin') {
       return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
