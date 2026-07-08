@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 Deno.serve(async (req) => {
   try {
@@ -11,15 +11,17 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { userId, plan, status, billing } = await req.json();
+    const { userId, plan, status, billing, subscription_end_date } = await req.json();
 
-    await base44.asServiceRole.entities.User.update(userId, {
-      subscription_plan: plan,
-      subscription_status: status,
-      subscription_billing: billing,
-    });
+    const update: Record<string, unknown> = {};
+    if (plan !== undefined) update.subscription_plan = plan;
+    if (status !== undefined) update.subscription_status = status;
+    if (billing !== undefined) update.subscription_billing = billing;
+    if (subscription_end_date !== undefined) update.subscription_end_date = subscription_end_date;
 
-    console.log(`Admin fixed subscription for user ${userId}: ${plan}/${status}/${billing}`);
+    await base44.asServiceRole.entities.User.update(userId, update);
+
+    console.log(`Admin updated subscription for user ${userId}:`, update);
     return Response.json({ success: true });
   } catch (error) {
     console.error('Fix error:', error);
