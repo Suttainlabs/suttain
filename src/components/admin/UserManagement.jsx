@@ -118,8 +118,7 @@ export default function UserManagement() {
   const stats = {
     total: users.length,
     active: users.filter(u => u.subscription_status === 'active' && u.stripe_subscription_id).length,
-    // Users with no subscription_status set are effectively trialing (default, never subscribed)
-    trialing: users.filter(u => !u.subscription_status || u.subscription_status === 'trialing').length,
+    trialing: users.filter(u => u.subscription_status === 'trialing').length,
     pastDue: users.filter(u => u.subscription_status === 'past_due').length,
   };
 
