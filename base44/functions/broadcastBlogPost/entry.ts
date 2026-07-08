@@ -128,6 +128,11 @@ Deno.serve(async (req) => {
                 return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
             }
 
+            // Require explicit confirmation flag — prevents accidental triggers
+            if (body.confirm !== true) {
+                return Response.json({ error: 'Confirmation required' }, { status: 400 });
+            }
+
             const { articleTitle, articleExcerpt, articleUrl } = body;
             if (!articleTitle) {
                 return Response.json({ error: 'articleTitle is required' }, { status: 400 });
@@ -137,7 +142,8 @@ Deno.serve(async (req) => {
             const users = await base44.asServiceRole.entities.User.list();
             const emails = users.map(u => u.email).filter(Boolean);
 
-            console.log(`Broadcasting new blog post "${articleTitle}" to ${emails.length} users`);
+            // Log recipient count BEFORE sending
+            console.log(`Broadcasting new blog post "${articleTitle}" to ${emails.length} users (confirmed)`);
 
             let sent = 0;
             let failed = 0;
@@ -170,7 +176,8 @@ Deno.serve(async (req) => {
                 success: true,
                 message: `Broadcast complete: ${sent} sent, ${failed} failed`,
                 sent,
-                failed
+                failed,
+                recipient_count: emails.length
             });
         }
 

@@ -125,6 +125,42 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
+    // ── Authorization gate ──
+    // This function can be called two ways:
+    //   1. Scheduled automation (service-role, no user context, no body)
+    //   2. Manual HTTP call by an admin
+    // For manual calls, require either admin role OR an explicit `authorized: true` flag.
+    // The scheduler calls with no body, so we default authorized to true when there's no body.
+    let body = {};
+    try {
+      const text = await req.text();
+      if (text) body = JSON.parse(text);
+    } catch {
+      body = {};
+    }
+
+    const hasBody = Object.keys(body).length > 0;
+    const authorized = body.authorized === true;
+
+    if (hasBody) {
+      // Manual HTTP call — require admin auth OR explicit authorized flag
+      let user = null;
+      try {
+        user = await base44.auth.me();
+      } catch {
+        user = null;
+      }
+      const isAdmin = user?.role === 'admin';
+      if (!isAdmin && !authorized) {
+        return Response.json(
+          { error: 'Forbidden: Admin authorization required to manually trigger the newsletter.' },
+          { status: 403 }
+        );
+      }
+      console.log('Newsletter triggered manually — authorization verified');
+    }
+    // If no body (scheduled automation), proceed as service-role
+
     // Fetch ALL users via pagination (default list() only returns 50)
     let users = [];
     let page = 0;
