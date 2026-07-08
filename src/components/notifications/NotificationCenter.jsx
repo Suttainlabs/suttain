@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, AlertTriangle, Info, Shield, Sparkles, ExternalLink, Clock, UserPlus, FlaskConical } from 'lucide-react';
+import { Bell, X, AlertTriangle, Info, Shield, Sparkles, ExternalLink, Clock, UserPlus, FlaskConical, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -25,7 +25,7 @@ const NotificationIcon = ({ type, severity }) => {
   }
 };
 
-const NotificationItem = ({ notification, onMarkRead, onSnooze, onClose }) => {
+const NotificationItem = ({ notification, onMarkRead, onSnooze, onDelete, onClose }) => {
   const navigate = useNavigate();
   
   const handleClick = async () => {
@@ -49,6 +49,11 @@ const NotificationItem = ({ notification, onMarkRead, onSnooze, onClose }) => {
   const handleSnooze = (e, duration) => {
     e.stopPropagation();
     onSnooze(notification.id, duration);
+  };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    onDelete(notification.id);
   };
 
   return (
@@ -94,29 +99,40 @@ const NotificationItem = ({ notification, onMarkRead, onSnooze, onClose }) => {
                 </>
               )}
             </div>
-            {!notification.is_snoozed && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                  <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-slate-500 hover:text-slate-700">
-                    <Clock className="w-3 h-3 mr-1" /> Snooze
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={(e) => handleSnooze(e, '1h')}>
-                    1 hour
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={(e) => handleSnooze(e, '4h')}>
-                    4 hours
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={(e) => handleSnooze(e, '1d')}>
-                    1 day
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={(e) => handleSnooze(e, '1w')}>
-                    1 week
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            <div className="flex items-center gap-1">
+              {!notification.is_snoozed && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-slate-500 hover:text-slate-700">
+                      <Clock className="w-3 h-3 mr-1" /> Snooze
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={(e) => handleSnooze(e, '1h')}>
+                      1 hour
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={(e) => handleSnooze(e, '4h')}>
+                      4 hours
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={(e) => handleSnooze(e, '1d')}>
+                      1 day
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={(e) => handleSnooze(e, '1w')}>
+                      1 week
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDelete}
+                className="h-6 w-6 p-0 text-slate-500 hover:text-red-600"
+                title="Clear"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -181,6 +197,16 @@ export default function NotificationCenter({ isOpen, onClose }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
       queryClient.invalidateQueries({ queryKey: ['notifications-count'] });
+      toast.success('All notifications marked as read');
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Notification.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-count'] });
+      toast.success('Notification cleared');
     }
   });
 
@@ -226,9 +252,10 @@ export default function NotificationCenter({ isOpen, onClose }) {
                     variant="ghost"
                     size="sm"
                     onClick={() => markAllReadMutation.mutate()}
+                    disabled={markAllReadMutation.isPending}
                     className="text-xs"
                   >
-                    Mark all read
+                    {markAllReadMutation.isPending ? 'Marking...' : 'Mark all read'}
                   </Button>
                 )}
                 <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8 w-8 p-0" title="Refresh">
@@ -266,6 +293,7 @@ export default function NotificationCenter({ isOpen, onClose }) {
                         notification={notification}
                         onMarkRead={markReadMutation.mutate}
                         onSnooze={(id, duration) => snoozeMutation.mutate({ id, duration })}
+                        onDelete={deleteMutation.mutate}
                         onClose={onClose}
                       />
                     ))}
