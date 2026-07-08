@@ -22,6 +22,8 @@ import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';
 import ShareButton from '../shared/ShareButton';
 import { triggerSafetyAlertIfNeeded } from '@/utils/twilioAlertTrigger';
 import RiskExplanationModal from './RiskExplanationModal';
+import useDoseAnalysis from './useDoseAnalysis';
+import WhyThisScore from './WhyThisScore';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -96,7 +98,7 @@ const ProLock = ({ label }) => (
 );
 
 // ── Ingredient item (enhanced with full good/bad ratings) ──────────────────
-const IngredientItem = ({ ingredient }) => {
+const IngredientItem = ({ ingredient, doseAnalysis, onLoadDose, doseLoading, doseError }) => {
   const safety = ingredient.safety ?? 50;
   const sustainability = ingredient.sustainability ?? 50;
   const { label: safetyLabel, color: safetyColor } = getRatingLabel(safety);
@@ -146,13 +148,13 @@ const IngredientItem = ({ ingredient }) => {
           </div>
         </div>
 
-        {/* Peer-reviewed science note */}
-        <div className="flex items-start gap-2 p-2 bg-blue-50 rounded-lg">
-          <Info className="w-3.5 h-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
-          <p className="text-[11px] text-blue-700 leading-snug">
-            Scores are based on peer-reviewed scientific literature including PubChem, EWG, and EU regulatory databases.
-          </p>
-        </div>
+        <WhyThisScore
+          ingredientName={ingredient.name}
+          doseAnalysis={doseAnalysis}
+          onLoad={onLoadDose}
+          loading={doseLoading}
+          error={doseError}
+        />
 
         {ingredient.notes && <p className="text-xs text-slate-500 italic">{ingredient.notes}</p>}
       </AccordionContent>
@@ -351,6 +353,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
   const [isLoadingHealth, setIsLoadingHealth] = useState(false);
   const [showRiskModal, setShowRiskModal] = useState(false);
   const navigate = useNavigate();
+  const doseAnalysis = useDoseAnalysis(product);
 
   const isPro = user?.subscription_plan === 'pro' || user?.subscription_plan === 'enterprise'
     || user?.subscription_plan === 'lifetime' || user?.is_lifetime === true
@@ -790,6 +793,12 @@ export default function ProductAnalysis({ product, onClear, user }) {
                 </Card>
               )}
 
+              {/* Dose-aware positioning copy */}
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-teal-50 rounded-xl border border-teal-200">
+                <FlaskConical className="w-4 h-4 text-[var(--suttain-teal)] flex-shrink-0" />
+                <p className="text-xs text-teal-800 font-medium">We weigh the amount, not just the presence.</p>
+              </div>
+
               {/* Stats bar */}
               {product.ingredients?.length > 0 && (() => {
                 const good = product.ingredients.filter(i => (i.safety ?? 50) >= 70).length;
@@ -823,7 +832,16 @@ export default function ProductAnalysis({ product, onClear, user }) {
                 <CardContent>
                   {product.ingredients?.length > 0 ? (
                     <Accordion type="single" collapsible className="w-full">
-                      {product.ingredients.map((ing, i) => <IngredientItem key={i} ingredient={ing} />)}
+                      {product.ingredients.map((ing, i) => (
+                        <IngredientItem
+                          key={i}
+                          ingredient={ing}
+                          doseAnalysis={doseAnalysis.getAnalysis(ing.name)}
+                          onLoadDose={doseAnalysis.load}
+                          doseLoading={doseAnalysis.loading}
+                          doseError={doseAnalysis.error}
+                        />
+                      ))}
                     </Accordion>
                   ) : (
                     <p className="text-slate-500 text-center py-8">Ingredient information not available from this source.</p>
