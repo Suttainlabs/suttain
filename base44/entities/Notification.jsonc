@@ -84,7 +84,7 @@
           "created_by_id": "{{user.id}}"
         },
         {
-          "target_user": "{{user.email}}"
+          "data.target_user": "{{user.email}}"
         }
       ]
     },

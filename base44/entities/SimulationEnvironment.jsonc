@@ -125,7 +125,7 @@
           "created_by_id": "{{user.id}}"
         },
         {
-          "is_template": true
+          "data.is_template": true
         },
         {
           "user_condition": {

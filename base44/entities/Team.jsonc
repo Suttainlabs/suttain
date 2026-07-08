@@ -61,32 +61,15 @@
     "name"
   ],
   "rls": {
-    "create": {
-      "members.email": "{{user.email}}"
-    },
+    "create": null,
     "read": {
-      "members.email": "{{user.email}}"
+      "data.members.email": "{{user.email}}"
     },
     "update": {
-      "members": {
-        "$elemMatch": {
-          "email": "{{user.email}}",
-          "role": {
-            "$in": [
-              "owner",
-              "admin"
-            ]
-          }
-        }
-      }
+      "created_by_id": "{{user.id}}"
     },
     "delete": {
-      "members": {
-        "$elemMatch": {
-          "email": "{{user.email}}",
-          "role": "owner"
-        }
-      }
+      "created_by_id": "{{user.id}}"
     }
   }
 }
