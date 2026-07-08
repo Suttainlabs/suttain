@@ -127,6 +127,14 @@ Deno.serve(async (req) => {
     const body = await req.text();
     const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
+    // Reject any request bearing a user Authorization header — webhooks must
+    // only be accepted from Stripe via signature-validated, unauthenticated calls.
+    const authHeader = req.headers.get('authorization') || req.headers.get('Authorization');
+    if (authHeader) {
+      console.error('Webhook called with Authorization header — rejecting');
+      return Response.json({ error: 'Webhook endpoint does not accept authenticated requests' }, { status: 401 });
+    }
+
     if (!webhookSecret) {
       console.error('STRIPE_WEBHOOK_SECRET is not set');
       return Response.json({ error: 'Webhook secret not configured' }, { status: 500 });
@@ -136,8 +144,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing stripe-signature header' }, { status: 400 });
     }
 
+    // Enforce Stripe signature validation on every request — no bypass path.
     let event;
-    event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
+    try {
+      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
+    } catch (verifyError) {
+      console.error('Stripe signature verification failed:', verifyError.message);
+      return Response.json({ error: 'Invalid signature' }, { status: 400 });
+    }
 
     console.log('Stripe webhook event:', event.type);
 
