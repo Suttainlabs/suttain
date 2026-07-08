@@ -128,9 +128,12 @@ Deno.serve(async (req) => {
                 return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
             }
 
-            const { articleTitle, articleExcerpt, articleUrl } = body;
+            const { articleTitle, articleExcerpt, articleUrl, confirm } = body;
             if (!articleTitle) {
                 return Response.json({ error: 'articleTitle is required' }, { status: 400 });
+            }
+            if (confirm !== true) {
+                return Response.json({ error: 'Confirmation required — pass confirm: true to proceed' }, { status: 400 });
             }
 
             // Fetch all registered users

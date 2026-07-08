@@ -125,6 +125,30 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
+    // Authorization gate: scheduled runs have no user context (service-role).
+    // Manual HTTP calls require admin auth + authorized: true in the body.
+    let isScheduledRun = false;
+    let body = {};
+    try {
+      body = await req.json();
+    } catch {
+      // No JSON body — this is a scheduled automation call (service-role)
+      isScheduledRun = true;
+    }
+
+    if (!isScheduledRun) {
+      const user = await base44.auth.me().catch(() => null);
+      if (!user) {
+        return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      if (user.role !== 'admin') {
+        return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+      }
+      if (body.authorized !== true) {
+        return Response.json({ error: 'Authorization required — pass authorized: true to proceed' }, { status: 400 });
+      }
+    }
+
     // Fetch ALL users via pagination (default list() only returns 50)
     let users = [];
     let page = 0;
