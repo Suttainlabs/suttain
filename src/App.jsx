@@ -74,6 +74,7 @@ const AgroHistory = lazy(() => import('./pages/AgroHistory'));
 const AgroReports = lazy(() => import('./pages/AgroReports'));
 const MySafetyProfile = lazy(() => import('./pages/MySafetyProfile'));
 const BatchRecords = lazy(() => import('./pages/BatchRecords'));
+const InteractionVisualization = lazy(() => import('./pages/InteractionVisualization'));
 // Import auth pages directly (not from pagesConfig which may not have them)
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -247,6 +248,7 @@ const AuthenticatedApp = () => {
       <Route path="/HydrationProgress" element={<LayoutWrapper currentPageName="HydrationProgress"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationProgress /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BillingDashboard" element={<LayoutWrapper currentPageName="BillingDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BillingDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BatchRecords" element={<LayoutWrapper currentPageName="BatchRecords"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BatchRecords /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/InteractionVisualization" element={<LayoutWrapper currentPageName="InteractionVisualization"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><InteractionVisualization /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>
