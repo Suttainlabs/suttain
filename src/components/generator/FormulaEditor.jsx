@@ -62,6 +62,7 @@ import SupplierVerificationPanel from "../suppliers/SupplierVerificationPanel";
 import ShareModal from "../shared/ShareModal";
 import CostProductionPanel from "./CostProductionPanel";
 import SupplierSourcingPanel from "./SupplierSourcingPanel";
+import BatchManagementPanel from "./BatchManagementPanel";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -791,6 +792,7 @@ export default function FormulaEditor({
                      { value: 'sustainability', icon: Leaf, label: 'Impact' },
                      { value: 'compliance', icon: AlertTriangle, label: 'Comply' },
                      { value: 'cost', icon: Calculator, label: 'Cost' },
+                     { value: 'batch', icon: Boxes, label: 'Batch' },
                      { value: 'sourcing', icon: Boxes, label: 'Sourcing & Suppliers' },
                      { value: 'suppliers', icon: DollarSign, label: 'Suppliers' },
                    ].map(({ value, icon: Icon, label }) => (
@@ -1333,6 +1335,14 @@ export default function FormulaEditor({
                         console.error("Failed to save costing data:", e);
                       }
                     }}
+                  />
+                </TabsContent>
+
+                <TabsContent value="batch" className="mt-0 space-y-6">
+                  <BatchManagementPanel
+                    formula={formula}
+                    batchSize={batchSize}
+                    batchUnit={batchUnit}
                   />
                 </TabsContent>
 

@@ -1,0 +1,172 @@
+{
+  "name": "BatchRecord",
+  "type": "object",
+  "properties": {
+    "batch_number": {
+      "type": "string",
+      "description": "Auto-generated unique batch number for traceability (e.g. BAT-20260709-001)"
+    },
+    "batch_name": {
+      "type": "string",
+      "description": "User-defined name for the batch"
+    },
+    "formula_id": {
+      "type": "string",
+      "description": "Reference to the Formula entity this batch was created from"
+    },
+    "formula_name": {
+      "type": "string",
+      "description": "Denormalized formula name for display"
+    },
+    "batch_size": {
+      "type": "number",
+      "description": "Batch size value"
+    },
+    "batch_unit": {
+      "type": "string",
+      "enum": [
+        "g",
+        "kg",
+        "ml",
+        "L",
+        "lb",
+        "units"
+      ],
+      "default": "g",
+      "description": "Unit of measurement for the batch"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "in_production",
+        "completed",
+        "quarantined",
+        "expired"
+      ],
+      "default": "draft",
+      "description": "Current status of the batch"
+    },
+    "ingredient_lots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ingredient_name": {
+            "type": "string"
+          },
+          "supplier": {
+            "type": "string"
+          },
+          "lot_number": {
+            "type": "string"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "quantity_used": {
+            "type": "number"
+          },
+          "quantity_unit": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Lot tracking data: supplier lot numbers and expiration dates per ingredient"
+    },
+    "compliance_data": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Full compliance scan results: FDA/EU/UK status, allergens, concentration limits, labeling requirements"
+    },
+    "predicted_shelf_life_months": {
+      "type": "number",
+      "description": "AI-predicted shelf life in months based on ingredient interactions"
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Calculated expiration date (earliest of lot expirations or predicted shelf life from creation date)"
+    },
+    "stability_factors": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Factors affecting stability: water content, antioxidant presence, pH, preservative system, predicted months"
+    },
+    "concentration_warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ingredient": {
+            "type": "string"
+          },
+          "current_percentage": {
+            "type": "number"
+          },
+          "safe_range": {
+            "type": "string"
+          },
+          "warning": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Ingredients whose concentration falls outside safe usage ranges"
+    },
+    "total_batch_cost": {
+      "type": "number",
+      "description": "Calculated total cost of the batch"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional batch notes"
+    }
+  },
+  "required": [
+    "batch_number",
+    "batch_name",
+    "batch_size",
+    "batch_unit"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
