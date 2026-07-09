@@ -85,6 +85,11 @@
         "type": "string"
       },
       "description": "Markets this formula targets"
+    },
+    "costing_data": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Saved costing assumptions: ingredient prices, packaging costs, batch size, margin, and supplier price update history"
     }
   },
   "required": [

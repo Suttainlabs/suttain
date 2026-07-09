@@ -60,6 +60,7 @@ import SupplierLinkModal from "../suppliers/SupplierLinkModal";
 import SupplierManager from "../suppliers/SupplierManager";
 import SupplierVerificationPanel from "../suppliers/SupplierVerificationPanel";
 import ShareModal from "../shared/ShareModal";
+import CostProductionPanel from "./CostProductionPanel";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -788,6 +789,7 @@ export default function FormulaEditor({
                      { value: 'safety', icon: ShieldCheck, label: 'Safety' },
                      { value: 'sustainability', icon: Leaf, label: 'Impact' },
                      { value: 'compliance', icon: AlertTriangle, label: 'Comply' },
+                     { value: 'cost', icon: Calculator, label: 'Cost' },
                      { value: 'suppliers', icon: DollarSign, label: 'Suppliers' },
                    ].map(({ value, icon: Icon, label }) => (
                      <TabsTrigger
@@ -1311,6 +1313,27 @@ export default function FormulaEditor({
                    />
                 </TabsContent>
                 
+                <TabsContent value="cost" className="mt-0">
+                  <CostProductionPanel
+                    formula={formula}
+                    batchSize={batchSize}
+                    batchUnit={batchUnit}
+                    costingData={formula.costing_data}
+                    onSaveCosting={async (costingData) => {
+                      try {
+                        if (formula.id) {
+                          await Formula.update(formula.id, { costing_data: costingData });
+                          setFormula(prev => ({ ...prev, costing_data: costingData }));
+                        } else {
+                          setFormula(prev => ({ ...prev, costing_data: costingData }));
+                        }
+                      } catch (e) {
+                        console.error("Failed to save costing data:", e);
+                      }
+                    }}
+                  />
+                </TabsContent>
+
                 <TabsContent value="suppliers" className="mt-0 space-y-6">
                   {/* Supplier Verification — invite suppliers to verify ingredient data */}
                   {formula.id && <SupplierVerificationPanel formula={formula} />}
