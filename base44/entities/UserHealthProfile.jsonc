@@ -12,6 +12,7 @@
         "adolescent",
         "elderly"
       ],
+      "default": "adult",
       "description": "User's current life stage for population-level risk assessment"
     },
     "allergies": {
@@ -41,11 +42,32 @@
         "type": "string"
       },
       "description": "User-flagged sensitivities (e.g. fragrance-sensitive, hormone-sensitive)"
+    },
+    "asthma_sensitive": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user has asthma trigger sensitivity"
+    },
+    "skin_condition": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "sensitive",
+        "eczema",
+        "acne_prone"
+      ],
+      "default": "normal",
+      "description": "User's skin condition for personalized ingredient warnings"
+    },
+    "avoid_ingredients": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Free-text list of ingredients the user avoids (entered one per line)"
     }
   },
-  "required": [
-    "life_stage"
-  ],
+  "required": [],
   "rls": {
     "create": null,
     "read": {

@@ -334,6 +334,11 @@ export default function BarcodeScannerPage() {
                                                         <ArrowRight className="w-4 h-4 ml-auto" />
                                                     </Link>
 
+                                                    <Link to="/MySafetyProfile" className="flex items-center justify-center gap-2 w-full py-2.5 text-sm text-teal-600 hover:text-teal-700 transition-colors font-medium">
+                                                        <ShieldCheck className="w-4 h-4" />
+                                                        My Safety Profile
+                                                    </Link>
+
                                                     {history.length > 0 && (
                                                         <button
                                                             onClick={() => setView('history')}

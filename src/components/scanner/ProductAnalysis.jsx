@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   Shield, Leaf, Beaker, CheckCircle, AlertTriangle, HelpCircle,
@@ -24,6 +24,7 @@ import { triggerSafetyAlertIfNeeded } from '@/utils/twilioAlertTrigger';
 import RiskExplanationModal from './RiskExplanationModal';
 import useDoseAnalysis from './useDoseAnalysis';
 import WhyThisScore from './WhyThisScore';
+import PersonalRiskCard from './PersonalRiskCard';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -352,6 +353,11 @@ export default function ProductAnalysis({ product, onClear, user }) {
   const [healthData, setHealthData] = useState(null);
   const [isLoadingHealth, setIsLoadingHealth] = useState(false);
   const [showRiskModal, setShowRiskModal] = useState(false);
+  const [healthProfile, setHealthProfile] = useState(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [profilePromptDismissed, setProfilePromptDismissed] = useState(
+    typeof localStorage !== 'undefined' && localStorage.getItem('safety_profile_prompt_dismissed') === 'true'
+  );
   const navigate = useNavigate();
   const doseAnalysis = useDoseAnalysis(product);
 
@@ -372,6 +378,34 @@ export default function ProductAnalysis({ product, onClear, user }) {
     setHealthData(null);
     checkSafetyProfile();
   }, [product]);
+
+  // Load user's health profile for personal risk assessment
+  useEffect(() => {
+    let mounted = true;
+    const loadHealthProfile = async () => {
+      if (!user) { setIsLoadingProfile(false); return; }
+      try {
+        const profiles = await base44.entities.UserHealthProfile.filter({});
+        if (mounted) {
+          setHealthProfile(profiles?.[0] || null);
+          setIsLoadingProfile(false);
+        }
+      } catch {
+        if (mounted) setIsLoadingProfile(false);
+      }
+    };
+    loadHealthProfile();
+    return () => { mounted = false; };
+  }, [user]);
+
+  // Determine if profile has meaningful data
+  const hasActiveProfile = healthProfile && (
+    (healthProfile.allergies?.length > 0) ||
+    (healthProfile.avoid_ingredients?.length > 0) ||
+    healthProfile.asthma_sensitive === true ||
+    (healthProfile.skin_condition && healthProfile.skin_condition !== 'normal') ||
+    healthProfile.life_stage === 'pregnant'
+  );
 
   const handleLoadCompliance = async () => {
     if (complianceData || isLoadingCompliance) return;
@@ -652,6 +686,47 @@ export default function ProductAnalysis({ product, onClear, user }) {
                       <h4 className={`font-bold mb-1 ${safetyAlert.severity === 'critical' ? 'text-red-900' : 'text-amber-900'}`}>Personalized Safety Alert</h4>
                       <p className={`text-sm mb-2 ${safetyAlert.severity === 'critical' ? 'text-red-800' : 'text-amber-800'}`}>{safetyAlert.alert_message}</p>
                       <Badge className={`${safetyAlert.severity === 'critical' ? 'bg-red-600' : 'bg-amber-600'} text-white`}>Email sent to {user?.email}</Badge>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Personal Risk Card — shown first if profile is active */}
+              {hasActiveProfile && (
+                <PersonalRiskCard
+                  product={product}
+                  healthProfile={healthProfile}
+                  onFindAlternatives={handleFindSimilar}
+                />
+              )}
+              {/* First-scan prompt — shown if no profile and not dismissed */}
+              {!hasActiveProfile && !isLoadingProfile && !profilePromptDismissed && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-teal-50 border-2 border-teal-300 rounded-2xl"
+                >
+                  <div className="flex items-start gap-3">
+                    <HeartPulse className="w-5 h-5 flex-shrink-0 text-teal-600 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-bold text-teal-900 mb-1">Set up your safety profile</h4>
+                      <p className="text-sm text-teal-700 mb-3">Get personalized warnings based on your allergies, skin condition, and sensitivities.</p>
+                      <div className="flex gap-2">
+                        <Button size="sm" className="bg-teal-600 hover:bg-teal-700 text-white" asChild>
+                          <Link to="/MySafetyProfile">Set Up Profile</Link>
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-teal-300 text-teal-700 hover:bg-teal-50"
+                          onClick={() => {
+                            setProfilePromptDismissed(true);
+                            localStorage.setItem('safety_profile_prompt_dismissed', 'true');
+                          }}
+                        >
+                          Skip
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </motion.div>

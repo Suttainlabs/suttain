@@ -72,6 +72,7 @@ const AgroPhotoDiagnosis = lazy(() => import('./pages/AgroPhotoDiagnosis'));
 const AgroWeather = lazy(() => import('./pages/AgroWeather'));
 const AgroHistory = lazy(() => import('./pages/AgroHistory'));
 const AgroReports = lazy(() => import('./pages/AgroReports'));
+const MySafetyProfile = lazy(() => import('./pages/MySafetyProfile'));
 // Import auth pages directly (not from pagesConfig which may not have them)
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -202,6 +203,7 @@ const AuthenticatedApp = () => {
         <Route path="/AgroWeather" element={<LayoutWrapper currentPageName="AgroWeather"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><AgroWeather /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/AgroHistory" element={<LayoutWrapper currentPageName="AgroHistory"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><AgroHistory /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/AgroReports" element={<LayoutWrapper currentPageName="AgroReports"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><AgroReports /></PageTransition></Suspense></LayoutWrapper>} />
+        <Route path="/MySafetyProfile" element={<LayoutWrapper currentPageName="MySafetyProfile"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MySafetyProfile /></PageTransition></Suspense></LayoutWrapper>} />
       </Route>
       <Route path="/BatchSimulation" element={<LayoutWrapper currentPageName="BatchSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><BatchSimulation /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationComparison" element={<LayoutWrapper currentPageName="SimulationComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationComparison /></PageTransition></Suspense></LayoutWrapper>} />
