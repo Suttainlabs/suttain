@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
       }
       // Reconstruct URL from validated components to prevent parsing tricks
       const safeUrl = `https://${parsedUrl.hostname}${parsedUrl.pathname}${parsedUrl.search}`;
-      // Resolve DNS and reject private/loopback/link-local IPs to prevent DNS rebinding SSRF
+      // Resolve DNS once and reject private/loopback/link-local IPs to prevent SSRF
       let resolvedIps;
       try {
         resolvedIps = await Deno.resolveDns(parsedUrl.hostname, 'A');
@@ -77,15 +77,15 @@ Deno.serve(async (req) => {
       if (resolvedIps.length === 0 || resolvedIps.some(isPrivateIp)) {
         return Response.json({ error: 'Resolved IP is blocked' }, { status: 403 });
       }
-      // Disable redirect following to prevent DNS-rebinding via redirect to internal IPs
-      const res = await fetch(safeUrl, { redirect: 'error' });
-      // Post-fetch DNS re-validation to detect TOCTOU DNS rebinding — discard
-      // response if DNS now resolves to a private/blocked IP.
-      const postFetchIps = await Deno.resolveDns(parsedUrl.hostname, 'A').catch(() => []);
-      if (postFetchIps.length === 0 || postFetchIps.some(isPrivateIp)) {
-        return Response.json({ error: 'DNS validation failed after fetch' }, { status: 403 });
-      }
-      if (!res.ok) return Response.json({ error: `Fetch error: ${res.status}` }, { status: res.status });
+      // Pin the validated IP in the fetch URL to eliminate TOCTOU DNS rebinding.
+      // The Host header preserves the original hostname for the upstream server
+      // and for TLS SNI via Deno's built-in hostname handling.
+      const validatedIp = resolvedIps[0];
+      const pinnedUrl = `https://${validatedIp}${parsedUrl.pathname}${parsedUrl.search}`;
+      const res = await fetch(pinnedUrl, {
+        redirect: 'error',
+        headers: { Host: parsedUrl.hostname }
+      });
       if (action === 'fetchJson') {
         const data = await res.json();
         return Response.json(data);

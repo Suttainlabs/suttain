@@ -15,10 +15,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields: to, project_name, project_id, invite_link' }, { status: 400 });
     }
 
-    // Verify the calling user owns the project — filter by created_by_id at the
-    // database level rather than relying on .get() + in-code comparison (IDOR).
+    // Verify the calling user owns the project — use the user-scoped client
+    // (enforces RLS) AND filter by created_by_id to prevent IDOR.
     try {
-      const projects = await base44.asServiceRole.entities.ChemicalProject.filter({
+      const projects = await base44.entities.ChemicalProject.filter({
         id: project_id,
         created_by_id: user.id
       });
@@ -36,7 +36,18 @@ Deno.serve(async (req) => {
     const safeProjectName = escapeHtml(project_name);
     const safeInviterName = escapeHtml(inviter_name || user.full_name || user.email || 'A Suttain researcher');
     const safeMessage = escapeHtml(message);
-    const safeInviteLink = escapeHtml(invite_link);
+    // Validate invite_link protocol to prevent javascript: URL injection in href
+    let validatedLink;
+    try {
+      const linkUrl = new URL(invite_link);
+      if (linkUrl.protocol !== 'https:' && linkUrl.protocol !== 'http:') {
+        return Response.json({ error: 'Invalid invite link protocol' }, { status: 400 });
+      }
+      validatedLink = linkUrl.href;
+    } catch {
+      return Response.json({ error: 'Invalid invite link' }, { status: 400 });
+    }
+    const safeInviteLink = escapeHtml(validatedLink);
 
     const permissionLabel = permission === 'edit' ? 'edit (full collaboration)' : 'view (read-only)';
     const messageBlock = safeMessage

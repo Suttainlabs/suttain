@@ -59,7 +59,9 @@ const getBlogNotificationHtml = (articleTitle, articleExcerpt, articleUrl) => {
 `;
 };
 
-const getSubscribeConfirmationHtml = (email) => `
+const getSubscribeConfirmationHtml = (email) => {
+  const safeEmail = escapeHtml(email);
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -86,7 +88,7 @@ const getSubscribeConfirmationHtml = (email) => `
       <h2>Welcome to Suttain Blog Updates</h2>
       <p>You'll now receive notifications whenever we publish new articles on chemical safety, sustainable formulation, and industry insights.</p>
       <a href="https://suttain.com/Blog" class="cta">Visit the Blog</a>
-      <p style="font-size: 13px; color: #94a3b8; margin-top: 20px;">Subscribed as: ${email}</p>
+      <p style="font-size: 13px; color: #94a3b8; margin-top: 20px;">Subscribed as: ${safeEmail}</p>
     </div>
     <div class="footer">
       © ${new Date().getFullYear()} Suttain. All rights reserved.
