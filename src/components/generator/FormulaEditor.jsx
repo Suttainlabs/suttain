@@ -791,7 +791,7 @@ export default function FormulaEditor({
                      { value: 'sustainability', icon: Leaf, label: 'Impact' },
                      { value: 'compliance', icon: AlertTriangle, label: 'Comply' },
                      { value: 'cost', icon: Calculator, label: 'Cost' },
-                     { value: 'sourcing', icon: Boxes, label: 'Sourcing' },
+                     { value: 'sourcing', icon: Boxes, label: 'Sourcing & Suppliers' },
                      { value: 'suppliers', icon: DollarSign, label: 'Suppliers' },
                    ].map(({ value, icon: Icon, label }) => (
                      <TabsTrigger
