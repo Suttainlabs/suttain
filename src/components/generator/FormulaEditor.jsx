@@ -12,7 +12,7 @@ import {
   Droplets, Clock, BrainCircuit, History, Save, Loader2, MessageSquare, Star, X,
   Menu, Printer, Search,
   Calculator,
-  Leaf, Sparkles, DollarSign, Share2 // Added icons
+  Leaf, Sparkles, DollarSign, Share2, Boxes // Added icons
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -61,6 +61,7 @@ import SupplierManager from "../suppliers/SupplierManager";
 import SupplierVerificationPanel from "../suppliers/SupplierVerificationPanel";
 import ShareModal from "../shared/ShareModal";
 import CostProductionPanel from "./CostProductionPanel";
+import SupplierSourcingPanel from "./SupplierSourcingPanel";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -790,6 +791,7 @@ export default function FormulaEditor({
                      { value: 'sustainability', icon: Leaf, label: 'Impact' },
                      { value: 'compliance', icon: AlertTriangle, label: 'Comply' },
                      { value: 'cost', icon: Calculator, label: 'Cost' },
+                     { value: 'sourcing', icon: Boxes, label: 'Sourcing' },
                      { value: 'suppliers', icon: DollarSign, label: 'Suppliers' },
                    ].map(({ value, icon: Icon, label }) => (
                      <TabsTrigger
@@ -1331,6 +1333,14 @@ export default function FormulaEditor({
                         console.error("Failed to save costing data:", e);
                       }
                     }}
+                  />
+                </TabsContent>
+
+                <TabsContent value="sourcing" className="mt-0 space-y-6">
+                  <SupplierSourcingPanel
+                    formula={formula}
+                    batchSize={batchSize}
+                    batchUnit={batchUnit}
                   />
                 </TabsContent>
 
