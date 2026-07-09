@@ -36,12 +36,17 @@ Deno.serve(async (req) => {
     const safeProjectName = escapeHtml(project_name);
     const safeInviterName = escapeHtml(inviter_name || user.full_name || user.email || 'A Suttain researcher');
     const safeMessage = escapeHtml(message);
-    // Validate invite_link protocol to prevent javascript: URL injection in href
+    // Validate invite_link — restrict to the app's own domain to prevent open
+    // redirect / phishing via arbitrary external URLs in official emails.
+    const ALLOWED_SHARE_DOMAINS = ['suttain.com', 'app.suttain.com', 'www.suttain.com'];
     let validatedLink;
     try {
       const linkUrl = new URL(invite_link);
-      if (linkUrl.protocol !== 'https:' && linkUrl.protocol !== 'http:') {
-        return Response.json({ error: 'Invalid invite link protocol' }, { status: 400 });
+      if (linkUrl.protocol !== 'https:') {
+        return Response.json({ error: 'Invite link must use HTTPS' }, { status: 400 });
+      }
+      if (!ALLOWED_SHARE_DOMAINS.includes(linkUrl.hostname)) {
+        return Response.json({ error: 'Invite link must point to a Suttain domain' }, { status: 400 });
       }
       validatedLink = linkUrl.href;
     } catch {

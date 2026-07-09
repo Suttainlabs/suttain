@@ -79,9 +79,54 @@ Deno.serve(async (req) => {
     if (delivery.webhook_urls?.length) {
       for (const webhookUrl of delivery.webhook_urls) {
         try {
-          const webhookResponse = await fetch(webhookUrl, {
+          // Validate webhook URL to prevent SSRF — reject private/loopback/link-local IPs
+          let parsedWebhookUrl;
+          try {
+            parsedWebhookUrl = new URL(webhookUrl);
+          } catch {
+            results.webhook.push({ url: webhookUrl, status: 'failed', error: 'Invalid URL' });
+            continue;
+          }
+          if (parsedWebhookUrl.protocol !== 'https:' && parsedWebhookUrl.protocol !== 'http:') {
+            results.webhook.push({ url: webhookUrl, status: 'failed', error: 'Invalid protocol' });
+            continue;
+          }
+          if (parsedWebhookUrl.username || parsedWebhookUrl.password) {
+            results.webhook.push({ url: webhookUrl, status: 'failed', error: 'Credentials in URL not allowed' });
+            continue;
+          }
+          const isPrivateIp = (ip) => {
+            const parts = ip.split('.').map(Number);
+            if (parts.length !== 4) return true;
+            const [a, b] = parts;
+            return (
+              a === 10 ||
+              (a === 172 && b >= 16 && b <= 31) ||
+              (a === 192 && b === 168) ||
+              a === 127 ||
+              (a === 169 && b === 254) ||
+              a === 0 ||
+              (a === 100 && b >= 64 && b <= 127)
+            );
+          };
+          let resolvedIps;
+          try {
+            resolvedIps = await Deno.resolveDns(parsedWebhookUrl.hostname, 'A');
+          } catch {
+            results.webhook.push({ url: webhookUrl, status: 'failed', error: 'DNS resolution failed' });
+            continue;
+          }
+          if (resolvedIps.length === 0 || resolvedIps.some(isPrivateIp)) {
+            results.webhook.push({ url: webhookUrl, status: 'failed', error: 'Resolved IP is blocked' });
+            continue;
+          }
+          const validatedIp = resolvedIps[0];
+          const pinnedUrl = `${parsedWebhookUrl.protocol}//${validatedIp}${parsedWebhookUrl.pathname}${parsedWebhookUrl.search}`;
+
+          const webhookResponse = await fetch(pinnedUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', Host: parsedWebhookUrl.hostname },
+            redirect: 'error',
             body: JSON.stringify({
               event: 'report_generated',
               report: {

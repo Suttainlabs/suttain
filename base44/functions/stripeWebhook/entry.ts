@@ -2,12 +2,30 @@ import StripeLib from 'npm:stripe@17.7.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { Resend } from 'npm:resend@4.0.0';
 
-const stripe = new StripeLib(Deno.env.get('STRIPE_SECRET_KEY'));
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+// Initialize clients lazily inside the handler so that missing secrets
+// cause a controlled 500 response rather than a module-level boot crash.
+let _stripe = null;
+let _resend = null;
+function getStripe() {
+  if (!_stripe) {
+    const key = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
+    _stripe = new StripeLib(key);
+  }
+  return _stripe;
+}
+function getResend() {
+  if (!_resend) {
+    const key = Deno.env.get('RESEND_API_KEY');
+    if (!key) throw new Error('RESEND_API_KEY is not set');
+    _resend = new Resend(key);
+  }
+  return _resend;
+}
 
 async function sendEmailViaResend(to, subject, html) {
   try {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: 'Suttain <contact@suttain.com>',
       to,
       cc: 'contact@suttain.com',
@@ -123,9 +141,6 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const signature = req.headers.get('stripe-signature');
-    const body = await req.text();
-    const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
     // Reject any request bearing a user Authorization header — webhooks must
     // only be accepted from Stripe via signature-validated, unauthenticated calls.
@@ -135,14 +150,21 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Webhook endpoint does not accept authenticated requests' }, { status: 401 });
     }
 
+    const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
     if (!webhookSecret) {
       console.error('STRIPE_WEBHOOK_SECRET is not set');
       return Response.json({ error: 'Webhook secret not configured' }, { status: 500 });
     }
+
+    const signature = req.headers.get('stripe-signature');
     if (!signature) {
       console.error('Missing stripe-signature header');
       return Response.json({ error: 'Missing stripe-signature header' }, { status: 400 });
     }
+
+    const body = await req.text();
+
+    const stripe = getStripe();
 
     // Enforce Stripe signature validation on every request — no bypass path.
     let event;
