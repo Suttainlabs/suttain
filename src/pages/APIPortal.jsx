@@ -1,12 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AuthContext from '../components/auth/AuthContext';
-import { EnterpriseThemeProvider } from '@/components/enterprise/EnterpriseTheme';
 import {
   Code2, ArrowLeft, Copy, CheckCheck, Zap, Shield,
   Globe, Layers, ChevronRight, BookOpen, Terminal, Key,
-  Database, Lock, BarChart2, ArrowRight, CreditCard
+  Database, Lock, BarChart2
 } from 'lucide-react';
 
 const ENDPOINTS = [
@@ -187,8 +186,7 @@ export default function APIPortal() {
   const ep = ENDPOINTS[activeEndpoint];
 
   return (
-    <EnterpriseThemeProvider defaultTheme="dark">
-    <div className="min-h-screen text-white" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#0F172A] text-white">
       {/* Sub-header */}
       <div className="border-b border-slate-700/50 bg-slate-900/60 sticky top-16 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
@@ -198,10 +196,7 @@ export default function APIPortal() {
           <span className="w-px h-4 bg-slate-700" />
           <Code2 className="w-3.5 h-3.5 text-[#8b5cf6]" />
           <span className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Research API</span>
-          <Link to="/EnterpriseAPI" className="ml-auto text-[10px] font-semibold text-[#0D9E8E] hover:underline" style={{ fontFamily: "'Inter', sans-serif" }}>
-            View Pricing &rarr;
-          </Link>
-          <span className="text-[10px] font-mono text-slate-600">v1.0 · REST · JSON</span>
+          <span className="ml-auto text-[10px] font-mono text-slate-600">v1.0 · REST · JSON</span>
         </div>
       </div>
 
@@ -232,12 +227,12 @@ export default function APIPortal() {
                 <Lock className="w-3.5 h-3.5 text-slate-600" />
                 <span className="text-xs font-mono text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>sk_suttain_••••••••••••••••</span>
               </div>
-              <Link
-                to="/EnterpriseAPI#pricing"
+              <button
+                onClick={() => alert('API key generation requires an active Pro Researcher or higher subscription. Contact contact@suttain.com to get access.')}
                 className="px-3 py-2 bg-[#0D9E8E]/10 hover:bg-[#0D9E8E]/20 border border-[#0D9E8E]/30 text-[#0D9E8E] text-xs font-semibold rounded-lg transition-colors"
               >
                 Generate Key
-              </Link>
+              </button>
             </div>
           </div>
           <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-700/40">
@@ -354,22 +349,7 @@ export default function APIPortal() {
           </div>
         </div>
 
-        {/* ── Pricing CTA ── */}
-        <div className="mt-8 rounded-xl border border-slate-700/50 p-5 flex items-center justify-between gap-4 flex-wrap"
-             style={{ backgroundColor: 'rgba(13, 158, 142, 0.05)' }}>
-          <div className="flex items-center gap-3">
-            <CreditCard className="w-5 h-5 text-[#0D9E8E]" />
-            <div>
-              <p className="text-sm font-bold text-white">Need higher limits or SLA?</p>
-              <p className="text-xs text-slate-400">View pricing tiers from $5/mo. Academic access is free with a verified email.</p>
-            </div>
-          </div>
-          <Link to="/EnterpriseAPI#pricing" className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg text-xs font-semibold bg-[#0D9E8E] hover:bg-[#0b8a7d] text-white transition-colors">
-            View Pricing <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
       </div>
     </div>
-    </EnterpriseThemeProvider>
   );
 }

@@ -60,7 +60,6 @@ import Collaboration from './pages/Collaboration';
 import CommunityReviews from './pages/CommunityReviews';
 import ComplianceCoPilot from './pages/ComplianceCoPilot';
 import ComplianceGuide from './pages/ComplianceGuide';
-import EnterpriseAPI from './pages/EnterpriseAPI';
 import ExternalDatabases from './pages/ExternalDatabases';
 import FAQ from './pages/FAQ';
 import Feedback from './pages/Feedback';
@@ -96,7 +95,6 @@ export const PAGES = {
     "CommunityReviews": CommunityReviews,
     "ComplianceCoPilot": ComplianceCoPilot,
     "ComplianceGuide": ComplianceGuide,
-    "EnterpriseAPI": EnterpriseAPI,
     "ExternalDatabases": ExternalDatabases,
     "FAQ": FAQ,
     "Feedback": Feedback,

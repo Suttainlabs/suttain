@@ -474,12 +474,7 @@ export default function Layout({ children, currentPageName }) {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 p-2">
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("EnterpriseAPI")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
-                      <Terminal className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
-                      <span className="text-sm font-medium text-slate-700">Enterprise API</span>
-                    </Link>
-                  </DropdownMenuItem>
+
                   <DropdownMenuItem asChild>
                     <Link to={createPageUrl("APIPortal")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
                       <Code2 className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
@@ -677,7 +672,7 @@ export default function Layout({ children, currentPageName }) {
                   {/* Enterprise API — Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
                     <Link
-                      to={createPageUrl("EnterpriseAPI")}
+                      to={createPageUrl("APIPortal")}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
                         isEnterpriseActive ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
