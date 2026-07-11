@@ -13,6 +13,7 @@ import SEOHead from "../components/shared/SEOHead";
 import { Section, SectionHeader } from "../components/shared/Section";
 import ToolsCarousel from "../components/home/ToolsCarousel";
 import AnalyzeProductModal from "../components/home/AnalyzeProductModal";
+import HeroMoleculeBackground from "../components/home/HeroMoleculeBackground";
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -114,6 +115,7 @@ export default function LandingHub() {
           <>
             <div className="pointer-events-none absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full opacity-[0.07]" style={{ background: "radial-gradient(circle, #007850 0%, transparent 70%)" }} />
             <div className="pointer-events-none absolute -bottom-24 -right-24 w-[400px] h-[400px] rounded-full opacity-[0.06]" style={{ background: "radial-gradient(circle, #6B3FA0 0%, transparent 70%)" }} />
+            <HeroMoleculeBackground />
           </>
         }
       >
