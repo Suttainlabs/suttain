@@ -151,7 +151,7 @@ export default function ProteinStructureExplorer() {
   return (
     <div className="space-y-6">
       {/* Search inputs */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
+      <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5 space-y-4">
         <div>
           <label className="text-xs font-semibold text-slate-600 mb-1.5 block">Enter UniProt Accession ID (e.g. P04637, P03372, P08684)</label>
           <div className="flex gap-2">
@@ -160,7 +160,7 @@ export default function ProteinStructureExplorer() {
               onChange={e => setUniprotId(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSearch()}
               placeholder="P04637"
-              className="bg-slate-50 border-slate-200 text-slate-900"
+              className="bg-white border-slate-300 text-slate-800"
             />
             <Button onClick={() => handleSearch()} disabled={loading} className="bg-[#0D9E8E] hover:bg-[#0b8a7d] text-white">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
@@ -176,7 +176,7 @@ export default function ProteinStructureExplorer() {
               onChange={e => setGeneSearch(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleGeneSearch()}
               placeholder="TP53"
-              className="bg-slate-50 border-slate-200 text-slate-900"
+              className="bg-white border-slate-300 text-slate-800"
             />
             <Button onClick={handleGeneSearch} disabled={geneLoading} variant="outline" className="border-slate-300 text-slate-700">
               {geneLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
@@ -186,7 +186,7 @@ export default function ProteinStructureExplorer() {
           {geneResults && (
             <div className="mt-2 space-y-1">
               {geneResults.length === 0 ? (
-                <p className="text-xs text-slate-500">No reviewed human proteins found for this gene.</p>
+                <p className="text-xs text-slate-400">No reviewed human proteins found for this gene.</p>
               ) : (
                 geneResults.map(r => (
                   <button
@@ -196,7 +196,7 @@ export default function ProteinStructureExplorer() {
                   >
                     <span className="font-mono text-[#0D9E8E] font-semibold">{r.accession}</span>
                     <span className="text-slate-600 ml-2">{r.gene}</span>
-                    {r.description && <span className="text-slate-500 ml-2">— {r.description}</span>}
+                    {r.description && <span className="text-slate-400 ml-2">— {r.description}</span>}
                   </button>
                 ))
               )}
@@ -210,52 +210,52 @@ export default function ProteinStructureExplorer() {
       {prediction && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Protein Identity Card */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-900 mb-4">Protein Identity</h3>
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
+            <h3 className="text-sm font-bold text-slate-800 mb-4">Protein Identity</h3>
             <div className="space-y-3">
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-slate-500">Full Name</p>
-                <p className="text-sm font-semibold text-slate-900">{prediction.uniprotDescription}</p>
+                <p className="text-[10px] uppercase tracking-widest text-slate-400">Full Name</p>
+                <p className="text-sm font-semibold text-slate-800">{prediction.uniprotDescription}</p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Gene Symbol</p>
-                <span className="inline-block px-3 py-1.5 rounded-lg bg-[#0D9E8E]/15 border border-[#0D9E8E]/30 text-[#0D9E8E] text-sm font-bold">
+                <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Gene Symbol</p>
+                <span className="inline-block px-3 py-1.5 rounded-lg bg-[#0D9E8E]/10 border border-[#0D9E8E]/30 text-[#0D9E8E] text-sm font-bold">
                   {prediction.gene}
                 </span>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-slate-500">Organism</p>
+                <p className="text-[10px] uppercase tracking-widest text-slate-400">Organism</p>
                 <p className="text-sm text-slate-700">{prediction.organismScientificName}</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-slate-500">UniProt Accession</p>
-                  <p className="text-sm font-mono text-slate-900">{prediction.uniprotAccession}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400">UniProt Accession</p>
+                  <p className="text-sm font-mono text-slate-800">{prediction.uniprotAccession}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-slate-500">Entry ID</p>
-                  <p className="text-sm font-mono text-slate-700">{prediction.uniprotId}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-slate-500">Sequence Length</p>
-                  <p className="text-sm text-slate-900">{prediction.sequenceEnd - prediction.sequenceStart + 1} aa</p>
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-slate-500">Model Version</p>
-                  <p className="text-sm text-slate-900">v{prediction.latestVersion}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400">Entry ID</p>
+                  <p className="text-sm font-mono text-slate-600">{prediction.uniprotId}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-slate-500">Created</p>
-                  <p className="text-sm text-slate-700">{new Date(prediction.modelCreatedDate).toLocaleDateString()}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400">Sequence Length</p>
+                  <p className="text-sm text-slate-800">{prediction.sequenceEnd - prediction.sequenceStart + 1} aa</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-slate-500">Review Status</p>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400">Model Version</p>
+                  <p className="text-sm text-slate-800">v{prediction.latestVersion}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400">Created</p>
+                  <p className="text-sm text-slate-600">{new Date(prediction.modelCreatedDate).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400">Review Status</p>
                   {prediction.isUniProtReviewed ? (
-                    <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">Reviewed</span>
+                    <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Reviewed</span>
                   ) : (
                     <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200">Unreviewed</span>
                   )}
@@ -265,13 +265,13 @@ export default function ProteinStructureExplorer() {
           </div>
 
           {/* Right: Confidence Score */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-900 mb-4">Model Confidence</h3>
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
+            <h3 className="text-sm font-bold text-slate-800 mb-4">Model Confidence</h3>
             <div className="text-center mb-4">
               <p className="text-5xl font-black" style={{ color: plddtColor(prediction.globalMetricValue) }}>
                 {prediction.globalMetricValue?.toFixed(1)}
               </p>
-              <p className="text-xs text-slate-500 mt-1">Model Confidence (pLDDT)</p>
+              <p className="text-xs text-slate-400 mt-1">Model Confidence (pLDDT)</p>
               <span
                 className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold"
                 style={{ backgroundColor: confidenceLabel(prediction.globalMetricValue).color + '20', color: confidenceLabel(prediction.globalMetricValue).color }}
@@ -301,8 +301,8 @@ export default function ProteinStructureExplorer() {
 
           {/* Per-residue confidence chart */}
           {plddtData && (
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm lg:col-span-2">
-              <h3 className="text-sm font-bold text-slate-900 mb-4">Per-Residue Confidence (pLDDT)</h3>
+            <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5 lg:col-span-2">
+              <h3 className="text-sm font-bold text-slate-800 mb-4">Per-Residue Confidence (pLDDT)</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={plddtData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -321,20 +321,20 @@ export default function ProteinStructureExplorer() {
 
           {/* PAE Heatmap */}
           {prediction.paeImageUrl && (
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-              <h3 className="text-sm font-bold text-slate-900 mb-2">Predicted Aligned Error (PAE)</h3>
-              <p className="text-[11px] text-slate-500 mb-3">Lower values (dark) = high structural confidence</p>
+            <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
+              <h3 className="text-sm font-bold text-slate-800 mb-2">Predicted Aligned Error (PAE)</h3>
+              <p className="text-[11px] text-slate-400 mb-3">Lower values (dark) = high structural confidence</p>
               <img src={prediction.paeImageUrl} alt="PAE Heatmap" className="w-full rounded-lg" />
               {prediction.max_predicted_aligned_error != null && (
-                <p className="text-xs text-slate-600 mt-2">Max PAE: <span className="font-mono text-slate-900">{prediction.max_predicted_aligned_error.toFixed(1)} Å</span></p>
+                <p className="text-xs text-slate-600 mt-2">Max PAE: <span className="font-mono text-slate-800">{prediction.max_predicted_aligned_error.toFixed(1)} A</span></p>
               )}
             </div>
           )}
 
           {/* 3D Structure Viewer */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">3D Structure Viewer</h3>
-            <div ref={containerRef} style={{ width: '100%', height: '400px', backgroundColor: '#ffffff', borderRadius: '8px' }} className="border border-slate-700/50" />
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
+            <h3 className="text-sm font-bold text-slate-800 mb-3">3D Structure Viewer</h3>
+            <div ref={containerRef} style={{ width: '100%', height: '400px', backgroundColor: '#ffffff', borderRadius: '8px' }} className="border border-slate-200" />
             <div className="flex items-center gap-2 mt-3">
               <Button size="sm" variant="outline" onClick={handleRotate} className="border-slate-300 text-slate-700 text-xs">
                 <RotateCw className="w-3 h-3 mr-1" /> Rotate
@@ -352,8 +352,8 @@ export default function ProteinStructureExplorer() {
           </div>
 
           {/* Download links + citation */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm lg:col-span-2">
-            <h3 className="text-sm font-bold text-slate-900 mb-4">Downloads & Citation</h3>
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5 lg:col-span-2">
+            <h3 className="text-sm font-bold text-slate-800 mb-4">Downloads &amp; Citation</h3>
             <div className="flex flex-wrap gap-2 mb-4">
               {prediction.pdbUrl && (
                 <a href={prediction.pdbUrl} download className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors">
@@ -380,19 +380,19 @@ export default function ProteinStructureExplorer() {
               </a>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5">APA Citation</p>
+              <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1.5">APA Citation</p>
               <div className="relative">
                 <textarea
                   readOnly
                   value={citation}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-700 font-mono resize-none"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-xs text-slate-700 font-mono resize-none"
                   rows={3}
                 />
                 <button
                   onClick={copyCitation}
-                  className="absolute top-2 right-2 p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700"
+                  className="absolute top-2 right-2 p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>

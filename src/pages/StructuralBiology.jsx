@@ -127,15 +127,15 @@ export default function StructuralBiology() {
   const ActiveComponent = activeToolObj?.component;
 
   return (
-    <div className="min-h-screen bg-white text-slate-800">
+    <div className="min-h-screen bg-slate-50 text-slate-800">
       {/* Sub-header */}
-      <div className="border-b border-slate-200 bg-slate-50 sticky top-16 z-20">
+      <div className="border-b border-slate-200 bg-white/80 sticky top-16 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
           <Dna className="w-3.5 h-3.5 text-[#2563eb]" />
           <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Structural Biology</span>
           <span className="ml-auto flex items-center gap-1.5 text-[10px] text-slate-400">
-            <span className="px-1.5 py-0.5 rounded bg-[#2563eb]/15 text-[#2563eb] font-bold">AlphaFold DB</span>
-            <span className="px-1.5 py-0.5 rounded bg-[#0D9E8E]/15 text-[#0D9E8E] font-bold">CC BY 4.0</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#2563eb]/10 text-[#2563eb] font-bold">AlphaFold DB</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#0D9E8E]/10 text-[#0D9E8E] font-bold">CC BY 4.0</span>
           </span>
         </div>
       </div>
@@ -143,7 +143,7 @@ export default function StructuralBiology() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Hero */}
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mb-2">Structural Biology Intelligence</h1>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-800 mb-2">Structural Biology Intelligence</h1>
           <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
             Powered by the AlphaFold Protein Structure Database. Explore protein structures, analyze chemical binding risks,
             assess mutation sensitivity, and generate personalized safety profiles — all backed by Google DeepMind's structural predictions.
@@ -162,10 +162,10 @@ export default function StructuralBiology() {
                 onClick={() => handleToolSelect(tool.id)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all border ${
                   isActive
-                    ? 'bg-slate-100 border-slate-300 text-slate-900'
+                    ? 'bg-violet-100 border-violet-300 text-violet-700'
                     : locked
-                      ? 'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
-                      : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                      ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
+                      : 'bg-white border-slate-200 text-slate-600 hover:text-slate-800 hover:border-slate-300'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" style={{ color: isActive ? tool.color : undefined }} />
@@ -178,28 +178,28 @@ export default function StructuralBiology() {
 
         {/* Free tier limit notice for Tool 1 */}
         {activeTool === 'explorer' && !isPro && (
-          <div className="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-xs text-slate-600">
+          <div className="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-xs text-slate-700">
             Free tier: {FREE_DAILY_LIMIT - searchCount} of {FREE_DAILY_LIMIT} daily searches remaining.{' '}
             <Link to="/Pricing" className="text-[#0D9E8E] font-semibold hover:underline">Upgrade to Pro</Link> for unlimited access to all 5 tools.
           </div>
         )}
 
         {/* Active tool */}
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-6">
+        <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 sm:p-6">
           {ActiveComponent && <ActiveComponent />}
         </div>
 
         {/* Tier info */}
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-            <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Free</p>
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
+            <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Free</p>
             <p className="text-xs text-slate-600">Tool 1 only — 3 searches per day</p>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
             <p className="text-[10px] uppercase tracking-widest text-[#0D9E8E] mb-1">Researcher Pro</p>
             <p className="text-xs text-slate-600">All 5 tools — unlimited searches</p>
           </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
             <p className="text-[10px] uppercase tracking-widest text-violet-600 mb-1">Enterprise</p>
             <p className="text-xs text-slate-600">All tools + bulk batch + CSV export</p>
           </div>

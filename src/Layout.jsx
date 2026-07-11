@@ -24,6 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
 import useInactivityTimeout from './hooks/useInactivityTimeout';
 import TrialBadge from './components/trial/TrialBadge';
+import MolecularBackground from './components/shared/MolecularBackground';
 
 // ── Page title formatter (handles camelCase + acronyms) ────────────
 function formatPageTitle(slug) {
@@ -390,6 +391,9 @@ export default function Layout({ children, currentPageName }) {
           background-color: #8125d9;
         }
       `}</style>
+
+      {/* Subtle molecular background texture — behind all content */}
+      <MolecularBackground className="fixed inset-0 z-0" opacity={0.035} />
 
       {/* Floating Nav Bar */}
       <header className="fixed top-3 left-0 right-0 z-50 px-4 pt-[env(safe-area-inset-top)]">
@@ -832,7 +836,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 pb-16 lg:pb-0 pt-20">
+      <main className="flex-1 pb-16 lg:pb-0 pt-20 relative z-10">
         <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: fetchUserAndSetState }}>
           {children}
           {/* Clara AI Assistant */}
