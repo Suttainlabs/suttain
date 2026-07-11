@@ -61,12 +61,17 @@ export default function ProteinStructureExplorer() {
     setPlddtData(null);
     try {
       const { data: res } = await alphafoldApi({ action: 'prediction', uniprotId: cleanId });
-      if (res?.error) throw new Error(res.error);
+      if (res?.error) {
+        console.error('[ProteinStructureExplorer] Prediction error from backend:', res);
+        throw new Error(res.error);
+      }
       setPrediction(res);
       // Fetch pLDDT data
       if (res?.plddtDocUrl) {
         const { data: plddtRes } = await alphafoldApi({ action: 'fetchJson', url: res.plddtDocUrl });
-        if (!plddtRes.error && plddtRes.confidence) {
+        if (plddtRes?.error) {
+          console.error('[ProteinStructureExplorer] pLDDT fetch error from backend:', plddtRes);
+        } else if (plddtRes?.confidence) {
           const chartData = plddtRes.confidence.map((score, i) => ({
             residue: res.sequenceStart + i,
             score,
@@ -76,7 +81,11 @@ export default function ProteinStructureExplorer() {
         }
       }
     } catch (e) {
-      setError(e.message || 'Failed to fetch prediction');
+      console.error('[ProteinStructureExplorer] handleSearch error:', e);
+      const errMsg = e?.response?.data?.error
+        || e?.message
+        || 'Failed to fetch prediction. The AlphaFold or UniProt service may be temporarily unavailable. Check the browser console for details.';
+      setError(errMsg);
     } finally {
       setLoading(false);
     }
@@ -88,10 +97,17 @@ export default function ProteinStructureExplorer() {
     setGeneResults(null);
     try {
       const { data: res } = await alphafoldApi({ action: 'geneSearch', gene: geneSearch.trim() });
-      if (res?.error) throw new Error(res.error);
+      if (res?.error) {
+        console.error('[ProteinStructureExplorer] Gene search error from backend:', res);
+        throw new Error(res.error);
+      }
       setGeneResults(res?.results || []);
     } catch (e) {
-      setError(e.message);
+      console.error('[ProteinStructureExplorer] handleGeneSearch error:', e);
+      const errMsg = e?.response?.data?.error
+        || e?.message
+        || 'Failed to search UniProt. The service may be rate-limiting requests. Check the browser console for details.';
+      setError(errMsg);
     } finally {
       setGeneLoading(false);
     }
