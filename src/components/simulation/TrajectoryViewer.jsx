@@ -54,6 +54,7 @@ export default function TrajectoryViewer({ initialPdbId = null, compact = false 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [loadStatus, setLoadStatus] = useState(null);
 
   // Trajectory state
   const [frameCount, setFrameCount] = useState(0);
@@ -143,6 +144,7 @@ export default function TrajectoryViewer({ initialPdbId = null, compact = false 
     setLoading(true);
     setError(null);
     setLoaded(false);
+    setLoadStatus(null);
     try {
       stageRef.current.removeAllComponents();
       structureCompRef.current = null;
@@ -154,9 +156,12 @@ export default function TrajectoryViewer({ initialPdbId = null, compact = false 
       );
       structureCompRef.current = comp;
       applyRepresentation(comp);
+      const pdbAtomCount = comp.structure?.atomCount || 0;
       setFrameCount(0);
       setCurrentFrame(0);
       setLoaded(true);
+      console.log(`[TrajectoryViewer] PDB loaded: ${pdbIdInput.trim().toUpperCase()} | atoms=${pdbAtomCount}`);
+      setLoadStatus({ type: "info", text: `RCSB structure "${pdbIdInput.trim().toUpperCase()}" loaded (${pdbAtomCount} atoms). No trajectory attached.` });
     } catch (e) {
       setError(`Could not load PDB "${pdbIdInput}": ${e.message}`);
     } finally {
@@ -164,12 +169,38 @@ export default function TrajectoryViewer({ initialPdbId = null, compact = false 
     }
   }, [pdbIdInput, applyRepresentation]);
 
+  // Validate structure + trajectory file pair before loading
+  const validateFilePair = useCallback((structFile, trajFile) => {
+    const validStructExts = ["pdb", "gro", "psf", "mol2", "mmcif", "cif"];
+    const validTrajExts = ["xtc", "dcd", "trr", "nc", "trj", "lammpstrj"];
+    const structExt = structFile.name.split(".").pop().toLowerCase();
+    if (!validStructExts.includes(structExt)) {
+      return { ok: false, message: `Unsupported structure format ".${structExt}". Use PDB, GRO, PSF, MOL2, or CIF.` };
+    }
+    if (trajFile) {
+      const trajExt = trajFile.name.split(".").pop().toLowerCase();
+      if (!validTrajExts.includes(trajExt)) {
+        return { ok: false, message: `Unsupported trajectory format ".${trajExt}". Use XTC, DCD, TRR, or NC.` };
+      }
+    }
+    return { ok: true };
+  }, []);
+
   // Load structure + trajectory files
   const loadTrajectory = useCallback(async () => {
     if (!stageRef.current || !structureFile) return;
+
+    const validation = validateFilePair(structureFile, trajectoryFile);
+    if (!validation.ok) {
+      setError(validation.message);
+      setLoadStatus(null);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setLoaded(false);
+    setLoadStatus(null);
     setIsPlaying(false);
     setCurrentFrame(0);
 
@@ -178,9 +209,9 @@ export default function TrajectoryViewer({ initialPdbId = null, compact = false 
       structureCompRef.current = null;
       trajCompRef.current = null;
 
-      // Load structure (PDB/GRO/PSF)
-      const structBlob = new Blob([await structureFile.arrayBuffer()], { type: "text/plain" });
+      // Load structure as topology — don't force mime type, NGL parses by ext
       const structExt = structureFile.name.split(".").pop().toLowerCase();
+      const structBlob = new Blob([await structureFile.arrayBuffer()]);
       const structComp = await stageRef.current.loadFile(structBlob, {
         ext: structExt,
         defaultRepresentation: false,
@@ -188,28 +219,43 @@ export default function TrajectoryViewer({ initialPdbId = null, compact = false 
       structureCompRef.current = structComp;
       applyRepresentation(structComp);
 
-      if (trajectoryFile) {
-        const trajBlob = new Blob([await trajectoryFile.arrayBuffer()]);
-        const trajExt = trajectoryFile.name.split(".").pop().toLowerCase();
-        // Add trajectory to the structure component
-        const traj = await structComp.addTrajectory(trajBlob, { ext: trajExt });
-        trajCompRef.current = structComp; // NGL adds traj to struct comp
+      const atomCount = structComp.structure?.atomCount || 0;
+      console.log(`[TrajectoryViewer] Topology loaded: "${structureFile.name}" | ext=${structExt} | atoms=${atomCount}`);
 
-        // Get frame count
-        const frames = structComp.trajectory?.frames?.length
-          || structComp.trajList?.[0]?.trajectory?.frames?.length
-          || 0;
+      if (trajectoryFile) {
+        const trajExt = trajectoryFile.name.split(".").pop().toLowerCase();
+        const trajBlob = new Blob([await trajectoryFile.arrayBuffer()]);
+
+        // Explicitly map trajectory onto the structure's coordinate system
+        const trajPlayer = await structComp.addTrajectory(trajBlob, { ext: trajExt });
+        trajCompRef.current = structComp;
+
+        // Retrieve frame count from NGL trajectory object
+        const trajObj = trajPlayer?.trajectory || structComp.trajList?.[0]?.trajectory;
+        const frames = trajObj?.numFrames || trajObj?.frames?.length || 0;
         setFrameCount(frames);
+
+        console.log(`[TrajectoryViewer] Trajectory linked: "${trajectoryFile.name}" | ext=${trajExt} | frames=${frames} | topology atoms=${atomCount}`);
+
+        if (frames === 0) {
+          setLoadStatus({ type: "warning", text: `Topology loaded (${atomCount} atoms), but no frames found in "${trajectoryFile.name}". Check that atom counts match.` });
+        } else {
+          setLoadStatus({ type: "success", text: `Topology: "${structureFile.name}" (${atomCount} atoms) | Trajectory: ${frames} frames from "${trajectoryFile.name}"` });
+        }
+      } else {
+        setFrameCount(0);
+        setLoadStatus({ type: "info", text: `Structure loaded: "${structureFile.name}" (${atomCount} atoms). Upload a trajectory file to animate.` });
       }
 
       stageRef.current.autoView();
       setLoaded(true);
     } catch (e) {
       setError("Failed to load trajectory: " + e.message);
+      setLoadStatus(null);
     } finally {
       setLoading(false);
     }
-  }, [structureFile, trajectoryFile, applyRepresentation]);
+  }, [structureFile, trajectoryFile, applyRepresentation, validateFilePair]);
 
   const handleFrameSlider = (val) => {
     const f = parseInt(val);
@@ -331,6 +377,17 @@ export default function TrajectoryViewer({ initialPdbId = null, compact = false 
           </Button>
         </div>
       </div>
+
+      {/* Load status */}
+      {loadStatus && (
+        <div className={`px-4 py-2 border-b border-slate-700 text-xs flex items-center gap-2 ${
+          loadStatus.type === "success" ? "bg-emerald-900/30 text-emerald-300" :
+          loadStatus.type === "warning" ? "bg-amber-900/30 text-amber-300" :
+          "bg-slate-800 text-slate-300"
+        }`}>
+          {loadStatus.text}
+        </div>
+      )}
 
       {/* 3D viewport */}
       <div className="relative flex-1" style={{ minHeight: compact ? "280px" : "380px" }}>
