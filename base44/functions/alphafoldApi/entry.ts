@@ -139,15 +139,15 @@ Deno.serve(async (req) => {
         console.log(`[alphafoldApi] IP blocked: ${resolvedIps.join(', ')}`);
         return Response.json({ error: 'Resolved IP is blocked' }, { status: 403 });
       }
-      // Pin the validated IP in the fetch URL to eliminate TOCTOU DNS rebinding.
-      const validatedIp = resolvedIps[0];
-      const pinnedUrl = `https://${validatedIp}${parsedUrl.pathname}${parsedUrl.search}`;
-      console.log(`[alphafoldApi] Pinned URL: ${pinnedUrl} (Host: ${parsedUrl.hostname})`);
+      // Fetch using the original hostname URL (not pinned IP) so that TLS SNI
+      // matches the hostname. Cloudflare-fronted services like EBI reject
+      // connections where SNI doesn't match the Host header.
+      // DNS was pre-validated above to block private/loopback IPs (SSRF check).
+      console.log(`[alphafoldApi] Fetching validated URL: ${safeUrl}`);
 
-      const res = await fetchWithRetry(pinnedUrl, {
+      const res = await fetchWithRetry(safeUrl, {
         redirect: 'follow',
         headers: {
-          Host: parsedUrl.hostname,
           'Accept': action === 'fetchJson' ? 'application/json' : 'text/csv',
           'User-Agent': 'Suttain-Research-Platform/1.0 (contact@suttain.com)',
         },
