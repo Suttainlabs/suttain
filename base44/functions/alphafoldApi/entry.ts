@@ -69,8 +69,11 @@ Deno.serve(async (req) => {
         console.log(`[alphafoldApi] Prediction failed: status=${res.status}, body=${errorBody.slice(0, 500)}`);
         const errorMsg = res.status === 404
           ? 'No AlphaFold prediction found for this UniProt ID. Verify the accession is correct and that AlphaFold has a structure for it.'
-          : `AlphaFold API returned status ${res.status}: ${errorBody.slice(0, 300) || res.statusText}`;
-        return Response.json({ error: errorMsg, status: res.status }, { status: res.status });
+          : res.status === 403
+            ? 'The AlphaFold database is temporarily blocking requests from our servers. Please try again in a moment, or search by gene name first to confirm the UniProt accession.'
+            : `AlphaFold API returned status ${res.status}: ${errorBody.slice(0, 300) || res.statusText}`;
+        // Return 200 so the frontend can read the error body without axios throwing
+        return Response.json({ error: errorMsg, status: res.status }, { status: 200 });
       }
 
       const data = await res.json();
@@ -156,7 +159,8 @@ Deno.serve(async (req) => {
       if (!res.ok) {
         const errorBody = await res.text().catch(() => '');
         console.log(`[alphafoldApi] Fetch ${action} failed: status=${res.status}, body=${errorBody.slice(0, 500)}`);
-        return Response.json({ error: `Fetch failed with status ${res.status}: ${errorBody.slice(0, 300) || res.statusText}` }, { status: res.status });
+        // Return 200 so the frontend can read the error body without axios throwing
+        return Response.json({ error: `Fetch failed with status ${res.status}: ${errorBody.slice(0, 300) || res.statusText}` }, { status: 200 });
       }
 
       if (action === 'fetchJson') {
@@ -187,8 +191,11 @@ Deno.serve(async (req) => {
         console.log(`[alphafoldApi] Gene search failed: status=${res.status}, body=${errorBody.slice(0, 500)}`);
         const errorMsg = res.status === 429
           ? 'UniProt is rate-limiting requests. Please wait a moment and try again.'
-          : `UniProt search returned status ${res.status}: ${errorBody.slice(0, 300) || res.statusText}`;
-        return Response.json({ error: errorMsg, status: res.status }, { status: res.status });
+          : res.status === 403
+            ? 'The UniProt database is temporarily blocking requests from our servers. Please try again in a moment.'
+            : `UniProt search returned status ${res.status}: ${errorBody.slice(0, 300) || res.statusText}`;
+        // Return 200 so the frontend can read the error body without axios throwing
+        return Response.json({ error: errorMsg, status: res.status }, { status: 200 });
       }
 
       const data = await res.json();
