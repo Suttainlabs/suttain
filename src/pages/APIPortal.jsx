@@ -1,11 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AuthContext from '../components/auth/AuthContext';
+import { EnterpriseThemeProvider } from '@/components/enterprise/EnterpriseTheme';
 import {
   Code2, ArrowLeft, Copy, CheckCheck, Zap, Shield,
   Globe, Layers, ChevronRight, BookOpen, Terminal, Key,
-  Database, Lock, BarChart2
+  Database, Lock, BarChart2, ArrowRight, CreditCard
 } from 'lucide-react';
 
 const ENDPOINTS = [
@@ -186,7 +187,8 @@ export default function APIPortal() {
   const ep = ENDPOINTS[activeEndpoint];
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-white">
+    <EnterpriseThemeProvider defaultTheme="dark">
+    <div className="min-h-screen text-white" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       {/* Sub-header */}
       <div className="border-b border-slate-700/50 bg-slate-900/60 sticky top-16 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
@@ -196,7 +198,10 @@ export default function APIPortal() {
           <span className="w-px h-4 bg-slate-700" />
           <Code2 className="w-3.5 h-3.5 text-[#8b5cf6]" />
           <span className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Research API</span>
-          <span className="ml-auto text-[10px] font-mono text-slate-600">v1.0 · REST · JSON</span>
+          <Link to="/EnterpriseAPI" className="ml-auto text-[10px] font-semibold text-[#0D9E8E] hover:underline" style={{ fontFamily: "'Inter', sans-serif" }}>
+            View Pricing &rarr;
+          </Link>
+          <span className="text-[10px] font-mono text-slate-600">v1.0 · REST · JSON</span>
         </div>
       </div>
 
@@ -225,14 +230,14 @@ export default function APIPortal() {
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2">
                 <Lock className="w-3.5 h-3.5 text-slate-600" />
-                <span className="text-xs font-mono text-slate-500">sk_suttain_••••••••••••••••</span>
+                <span className="text-xs font-mono text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>sk_suttain_••••••••••••••••</span>
               </div>
-              <button
+              <Link
+                to="/EnterpriseAPI#pricing"
                 className="px-3 py-2 bg-[#0D9E8E]/10 hover:bg-[#0D9E8E]/20 border border-[#0D9E8E]/30 text-[#0D9E8E] text-xs font-semibold rounded-lg transition-colors"
-                onClick={() => alert('API key generation requires an active Pro Researcher or higher subscription. Contact contact@suttain.com to get access.')}
               >
                 Generate Key
-              </button>
+              </Link>
             </div>
           </div>
           <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-700/40">
@@ -269,7 +274,7 @@ export default function APIPortal() {
                 >
                   <MethodBadge method={ep.method} />
                   <div className="min-w-0">
-                    <p className="text-xs font-mono text-slate-400 truncate">{ep.path}</p>
+                    <p className="text-xs font-mono text-slate-400 truncate" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{ep.path}</p>
                     <p className="text-[10px] text-slate-600 truncate">{ep.title}</p>
                   </div>
                 </button>
@@ -282,7 +287,7 @@ export default function APIPortal() {
             <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-1">
                 <MethodBadge method={ep.method} />
-                <span className="text-sm font-mono text-white">{ep.path}</span>
+                <span className="text-sm font-mono text-white" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{ep.path}</span>
               </div>
               <p className="text-xs text-slate-500 mb-5">{ep.description}</p>
 
@@ -291,7 +296,7 @@ export default function APIPortal() {
                 <div className="space-y-2">
                   {ep.params.map((p) => (
                     <div key={p.name} className="flex items-start gap-3 py-2 border-b border-slate-700/30 last:border-0">
-                      <span className="text-xs font-mono text-[#0D9E8E] flex-shrink-0">{p.name}</span>
+                      <span className="text-xs font-mono text-[#0D9E8E] flex-shrink-0" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{p.name}</span>
                       <span className="text-[10px] text-slate-600 flex-shrink-0">{p.type}</span>
                       {p.required && <span className="text-[9px] text-red-400 font-bold flex-shrink-0">required</span>}
                       <span className="text-xs text-slate-500">{p.desc}</span>
@@ -305,7 +310,7 @@ export default function APIPortal() {
                   <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Example Response</p>
                   <CopyButton text={ep.response} />
                 </div>
-                <pre className="text-[10px] font-mono text-slate-400 bg-slate-900/80 rounded-lg p-3 overflow-x-auto leading-relaxed">
+                <pre className="text-[10px] font-mono text-slate-400 bg-slate-900/80 rounded-lg p-3 overflow-x-auto leading-relaxed" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   {ep.response}
                 </pre>
               </div>
@@ -335,7 +340,7 @@ export default function APIPortal() {
                 </div>
               </div>
               <div className="relative">
-                <pre className="text-[10px] font-mono text-slate-400 bg-slate-900/80 rounded-lg p-3 overflow-x-auto leading-relaxed">
+                <pre className="text-[10px] font-mono text-slate-400 bg-slate-900/80 rounded-lg p-3 overflow-x-auto leading-relaxed" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   {activeLang === 'python' ? PY_SNIPPET : JS_SNIPPET}
                 </pre>
                 <div className="absolute top-2 right-2">
@@ -343,12 +348,28 @@ export default function APIPortal() {
                 </div>
               </div>
               <p className="text-[10px] text-slate-600 mt-3">
-                SDK packages are in preview. Install via: <span className="font-mono text-slate-500">pip install suttain</span> or <span className="font-mono text-slate-500">npm install @suttain/sdk</span>
+                SDK packages are in preview. Install via: <span className="font-mono text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>pip install suttain</span> or <span className="font-mono text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>npm install @suttain/sdk</span>
               </p>
             </div>
           </div>
         </div>
+
+        {/* ── Pricing CTA ── */}
+        <div className="mt-8 rounded-xl border border-slate-700/50 p-5 flex items-center justify-between gap-4 flex-wrap"
+             style={{ backgroundColor: 'rgba(13, 158, 142, 0.05)' }}>
+          <div className="flex items-center gap-3">
+            <CreditCard className="w-5 h-5 text-[#0D9E8E]" />
+            <div>
+              <p className="text-sm font-bold text-white">Need higher limits or SLA?</p>
+              <p className="text-xs text-slate-400">View pricing tiers from $5/mo. Academic access is free with a verified email.</p>
+            </div>
+          </div>
+          <Link to="/EnterpriseAPI#pricing" className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg text-xs font-semibold bg-[#0D9E8E] hover:bg-[#0b8a7d] text-white transition-colors">
+            View Pricing <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
     </div>
+    </EnterpriseThemeProvider>
   );
 }
