@@ -50,9 +50,9 @@ const SAFETY_COLOR = {
 const PropRow = ({ label, value, unit }) => {
   if (value == null || value === '') return null;
   return (
-    <div className="flex items-baseline justify-between gap-2 py-1.5 border-b border-slate-800 last:border-0">
+    <div className="flex items-baseline justify-between gap-2 py-1.5 border-b border-slate-100 last:border-0">
       <span className="text-[11px] text-slate-500 flex-shrink-0">{label}</span>
-      <span className="text-xs font-mono text-slate-200 text-right">
+      <span className="text-xs font-mono text-slate-700 text-right">
         {value}{unit ? <span className="text-slate-600 ml-1">{unit}</span> : null}
       </span>
     </div>
@@ -89,7 +89,7 @@ function Mol3DViewer({ cid, smiles, name, pdbContent, pdbName }) {
       }
       if (containerRef.current) containerRef.current.innerHTML = '';
 
-      const viewer = window.$3Dmol.createViewer(containerRef.current, { backgroundColor: '#0F172A', antialias: true });
+      const viewer = window.$3Dmol.createViewer(containerRef.current, { backgroundColor: '#f8fafc', antialias: true });
       viewerRef.current = viewer;
 
       if (pdbContent) {
@@ -133,17 +133,17 @@ function Mol3DViewer({ cid, smiles, name, pdbContent, pdbName }) {
   }, [loadStructure]);
 
   return (
-    <div className="relative w-full h-full min-h-0 bg-[#0F172A] rounded-xl overflow-hidden">
+    <div className="relative w-full h-full min-h-0 bg-slate-100 rounded-xl overflow-hidden">
       <div ref={containerRef} className="w-full h-full" style={{ minHeight: 300 }} />
       {status === 'loading' && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#0F172A]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-slate-100">
           <Loader2 className="w-7 h-7 text-[#0D9E8E] animate-spin" />
           <p className="text-xs text-slate-500">Fetching 3D coordinates from PubChem...</p>
         </div>
       )}
       {status === 'error' && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#0F172A] px-6 text-center">
-          <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-slate-100 px-6 text-center">
+          <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">
             <Atom className="w-5 h-5 text-slate-600" />
           </div>
           <p className="text-xs text-slate-500">{message}</p>
@@ -153,7 +153,7 @@ function Mol3DViewer({ cid, smiles, name, pdbContent, pdbName }) {
         </div>
       )}
       {status === 'idle' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#0F172A]">
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
           <p className="text-xs text-slate-600">Select a compound to visualize</p>
         </div>
       )}
@@ -167,7 +167,7 @@ function CompoundRow({ c, selected, onSelect, fromPubchem }) {
   return (
     <button
       onClick={() => onSelect(c)}
-      className={`w-full text-left px-4 py-3 border-b border-slate-800/60 hover:bg-slate-800/60 transition-colors flex items-start gap-3 ${
+      className={`w-full text-left px-4 py-3 border-b border-slate-100 hover:bg-white transition-colors flex items-start gap-3 ${
         selected?.id === c.id ? 'bg-[#0D9E8E]/10 border-l-2 border-l-[#0D9E8E]' : ''
       }`}
     >
@@ -175,7 +175,7 @@ function CompoundRow({ c, selected, onSelect, fromPubchem }) {
         <Atom className="w-3.5 h-3.5" style={{ color }} />
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-semibold text-slate-200 truncate leading-tight">{c.name}</p>
+        <p className="text-xs font-semibold text-slate-700 truncate leading-tight">{c.name}</p>
         {c.molecular_formula && <p className="text-[10px] font-mono text-slate-600 mt-0.5">{c.molecular_formula}</p>}
         {fromPubchem && c.pubchem_cid && <p className="text-[10px] text-slate-700 mt-0.5">CID {c.pubchem_cid}</p>}
         {!fromPubchem && c.cas_number && <p className="text-[10px] text-slate-700 mt-0.5">CAS {c.cas_number}</p>}
@@ -236,7 +236,7 @@ function PropertiesPanel({ selected }) {
       {(selected.smiles || selected.canonical_smiles) && (
         <div>
           <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-2">SMILES</p>
-          <p className="text-[10px] font-mono text-slate-500 break-all leading-relaxed bg-slate-800/60 rounded p-2">
+          <p className="text-[10px] font-mono text-slate-500 break-all leading-relaxed bg-white rounded p-2">
             {selected.canonical_smiles || selected.smiles}
           </p>
         </div>
@@ -432,18 +432,18 @@ export default function MoleculeAnalysis() {
   const hasStructureTarget = !!(selected || prepPdb || (result && (viewerCid || viewerSmiles || viewerName)));
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       {/* Sub-header */}
-      <div className="border-b border-slate-700/50 bg-slate-900/60 sticky top-16 z-20">
+      <div className="border-b border-slate-200 bg-white sticky top-16 z-20">
         <div className="max-w-full mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
-          <button onClick={() => navigate(createPageUrl('ResearchPortal'))} className="text-slate-500 hover:text-slate-300 transition-colors">
+          <button onClick={() => navigate(createPageUrl('ResearchPortal'))} className="text-slate-500 hover:text-slate-600 transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <span className="w-px h-4 bg-slate-700" />
+          <span className="w-px h-4 bg-slate-200" />
           <Atom className="w-3.5 h-3.5 text-[#0D9E8E] flex-shrink-0" />
           <span className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Molecule Analysis</span>
           <span className="hidden sm:flex items-center gap-2 ml-auto text-[10px] text-slate-600 font-mono">
-            <span>PubChem</span><span className="text-slate-800">·</span><span>ChEMBL</span><span className="text-slate-800">·</span><span>EPA CompTox</span>
+            <span>PubChem</span><span className="text-slate-300">·</span><span>ChEMBL</span><span className="text-slate-300">·</span><span>EPA CompTox</span>
           </span>
         </div>
       </div>
@@ -456,8 +456,8 @@ export default function MoleculeAnalysis() {
             <div className="lg:sticky lg:top-28 space-y-3">
 
               {/* Intelligence query */}
-              <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl overflow-hidden">
-                <div className="grid grid-cols-4 border-b border-slate-700/50">
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                <div className="grid grid-cols-4 border-b border-slate-200">
                   {QUERY_TYPES.map(t => {
                     const Icon = t.icon;
                     return (
@@ -467,7 +467,7 @@ export default function MoleculeAnalysis() {
                         className={`flex flex-col items-center justify-center gap-1 py-3 text-[10px] font-semibold transition-colors ${
                           queryType === t.id
                             ? 'bg-[#0D9E8E]/10 text-[#0D9E8E] border-b-2 border-[#0D9E8E] -mb-px'
-                            : 'text-slate-500 hover:text-slate-300'
+                            : 'text-slate-500 hover:text-slate-600'
                         }`}
                       >
                         <Icon className="w-3.5 h-3.5" />
@@ -484,20 +484,20 @@ export default function MoleculeAnalysis() {
                       onChange={e => setQuery(e.target.value)}
                       placeholder={activeType.placeholder}
                       rows={6}
-                      className="w-full bg-slate-900 border border-slate-700 focus:border-[#0D9E8E] focus:ring-1 focus:ring-[#0D9E8E]/40 text-white placeholder-slate-600 text-xs font-mono px-3 py-2.5 rounded-lg outline-none transition-colors resize-none"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#0D9E8E] focus:ring-1 focus:ring-[#0D9E8E]/40 text-slate-900 placeholder-slate-400 text-xs font-mono px-3 py-2.5 rounded-lg outline-none transition-colors resize-none"
                     />
                   ) : (
                     <input
                       value={query}
                       onChange={e => setQuery(e.target.value)}
                       placeholder={activeType?.placeholder}
-                      className="w-full bg-slate-900 border border-slate-700 focus:border-[#0D9E8E] focus:ring-1 focus:ring-[#0D9E8E]/40 text-white placeholder-slate-600 text-sm font-mono px-3 py-2.5 rounded-lg outline-none transition-colors"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#0D9E8E] focus:ring-1 focus:ring-[#0D9E8E]/40 text-slate-900 placeholder-slate-400 text-sm font-mono px-3 py-2.5 rounded-lg outline-none transition-colors"
                     />
                   )}
                   <button
                     type="submit"
                     disabled={!query.trim() || isAnalyzing}
-                    className="w-full mt-3 py-2.5 bg-[#0D9E8E] hover:bg-[#0b8a7b] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
+                    className="w-full mt-3 py-2.5 bg-[#0D9E8E] hover:bg-[#0b8a7b] disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-bold text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
                     {isAnalyzing ? <><Loader2 className="w-4 h-4 animate-spin" />Analyzing...</> : <><Atom className="w-4 h-4" />Analyze Compound</>}
                   </button>
@@ -505,14 +505,14 @@ export default function MoleculeAnalysis() {
               </div>
 
               {/* Examples */}
-              <div className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-4">
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Quick Examples</p>
                 <div className="space-y-1">
                   {EXAMPLES.map(ex => (
                     <button
                       key={ex.label}
                       onClick={() => { setQuery(ex.label); setQueryType(ex.type); runAnalysis(ex.label, ex.type); }}
-                      className="w-full text-left flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-800 transition-colors group"
+                      className="w-full text-left flex items-center justify-between px-2 py-2 rounded-lg hover:bg-slate-50 transition-colors group"
                     >
                       <span className="text-xs font-mono text-slate-400 group-hover:text-[#0D9E8E] truncate">{ex.label}</span>
                       <span className="text-[10px] text-slate-600 ml-2 flex-shrink-0">{ex.note}</span>
@@ -522,8 +522,8 @@ export default function MoleculeAnalysis() {
               </div>
 
               {/* Compound browser */}
-              <div className="bg-slate-800/40 border border-slate-700/40 rounded-xl overflow-hidden">
-                <div className="p-3 border-b border-slate-700/40">
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                <div className="p-3 border-b border-slate-200">
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                     <Database className="w-3 h-3" /> Browse Compounds
                   </p>
@@ -533,10 +533,10 @@ export default function MoleculeAnalysis() {
                       value={search}
                       onChange={e => setSearch(e.target.value)}
                       placeholder="Search name, CAS, formula..."
-                      className="w-full bg-slate-900 border border-slate-700 focus:border-[#0D9E8E] text-white placeholder-slate-600 text-xs pl-8 pr-8 py-2 rounded-lg outline-none transition-colors"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#0D9E8E] text-slate-900 placeholder-slate-400 text-xs pl-8 pr-8 py-2 rounded-lg outline-none transition-colors"
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400">
+                      <button onClick={() => setSearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-600">
                         <X className="w-3 h-3" />
                       </button>
                     )}
@@ -554,7 +554,7 @@ export default function MoleculeAnalysis() {
                       ))}
                       {pubchemResults.length > 0 && (
                         <>
-                          <div className="px-3 py-1.5 bg-slate-800/40 border-y border-slate-700/40">
+                          <div className="px-3 py-1.5 bg-white border-y border-slate-200">
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
                               <Database className="w-2.5 h-2.5" /> PubChem
                             </p>
@@ -582,10 +582,10 @@ export default function MoleculeAnalysis() {
 
               {/* Query history */}
               {queryHistory.length > 0 && (
-                <div className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-4">
+                <div className="bg-white border border-slate-200 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Recent Queries</p>
-                    <button onClick={() => { setQueryHistory([]); localStorage.removeItem('mi_query_history'); }} className="text-slate-600 hover:text-slate-400 transition-colors">
+                    <button onClick={() => { setQueryHistory([]); localStorage.removeItem('mi_query_history'); }} className="text-slate-600 hover:text-slate-600 transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
@@ -594,7 +594,7 @@ export default function MoleculeAnalysis() {
                       <button
                         key={i}
                         onClick={() => { setQuery(h.query); setQueryType(h.type); runAnalysis(h.query, h.type); }}
-                        className="w-full text-left text-xs font-mono text-slate-500 hover:text-slate-200 truncate px-2 py-1.5 rounded hover:bg-slate-800 transition-colors"
+                        className="w-full text-left text-xs font-mono text-slate-500 hover:text-slate-700 truncate px-2 py-1.5 rounded hover:bg-slate-50 transition-colors"
                       >
                         {h.query}
                       </button>
@@ -610,7 +610,7 @@ export default function MoleculeAnalysis() {
             {/* Empty state */}
             {!result && !isAnalyzing && !error && !selected && !prepPdb && (
               <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-center mb-5">
+                <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center mb-5">
                   <Atom className="w-7 h-7 text-slate-600" />
                 </div>
                 <h3 className="text-sm font-semibold text-slate-400 mb-2">Analyze or browse a compound</h3>
@@ -626,18 +626,18 @@ export default function MoleculeAnalysis() {
                 <div className="w-16 h-16 rounded-2xl bg-[#0D9E8E]/10 border border-[#0D9E8E]/30 flex items-center justify-center mb-6">
                   <Atom className="w-7 h-7 text-[#0D9E8E] animate-pulse" />
                 </div>
-                <h3 className="text-sm font-semibold text-slate-300 mb-5">Analyzing compound...</h3>
+                <h3 className="text-sm font-semibold text-slate-600 mb-5">Analyzing compound...</h3>
                 <div className="space-y-2.5 text-left max-w-xs w-full">
                   {LOADING_STEPS.map((step, i) => (
-                    <div key={i} className={`flex items-center gap-2.5 text-xs transition-all duration-500 ${i <= loadingStep ? 'text-slate-300' : 'text-slate-700'}`}>
+                    <div key={i} className={`flex items-center gap-2.5 text-xs transition-all duration-500 ${i <= loadingStep ? 'text-slate-600' : 'text-slate-700'}`}>
                       {i < loadingStep ? (
                         <span className="w-3.5 h-3.5 rounded-full bg-[#0D9E8E] flex items-center justify-center flex-shrink-0">
-                          <span className="text-[8px] text-white font-bold">✓</span>
+                          <span className="text-[8px] text-slate-900 font-bold">✓</span>
                         </span>
                       ) : i === loadingStep ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin text-[#0D9E8E] flex-shrink-0" />
                       ) : (
-                        <span className="w-3.5 h-3.5 rounded-full border border-slate-700 flex-shrink-0" />
+                        <span className="w-3.5 h-3.5 rounded-full border border-slate-200 flex-shrink-0" />
                       )}
                       {step}
                     </div>
@@ -648,11 +648,11 @@ export default function MoleculeAnalysis() {
 
             {/* Error state */}
             {error && !isAnalyzing && (
-              <div className="bg-red-950/40 border border-red-800/50 rounded-xl p-5 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <div className="bg-red-50 border border-red-200 rounded-xl p-5 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-red-300 mb-1">Analysis failed</p>
-                  <p className="text-xs text-red-400/80">{error}</p>
+                  <p className="text-sm font-semibold text-red-700 mb-1">Analysis failed</p>
+                  <p className="text-xs text-red-500">{error}</p>
                 </div>
               </div>
             )}
@@ -661,14 +661,14 @@ export default function MoleculeAnalysis() {
             {(result || selected || prepPdb) && !isAnalyzing && (
               <div className="flex flex-col h-full">
                 {/* Tab bar */}
-                <div className="flex items-center gap-1 border-b border-slate-700/50 mb-4">
+                <div className="flex items-center gap-1 border-b border-slate-200 mb-4">
                   <button
                     onClick={() => setActiveTab('intelligence')}
                     disabled={!result}
                     className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-colors border-b-2 -mb-px ${
                       activeTab === 'intelligence'
                         ? 'text-[#0D9E8E] border-[#0D9E8E]'
-                        : 'text-slate-500 border-transparent hover:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed'
+                        : 'text-slate-500 border-transparent hover:text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed'
                     }`}
                   >
                     <ShieldAlert className="w-4 h-4" />
@@ -680,7 +680,7 @@ export default function MoleculeAnalysis() {
                     className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-colors border-b-2 -mb-px ${
                       activeTab === 'structure'
                         ? 'text-[#0D9E8E] border-[#0D9E8E]'
-                        : 'text-slate-500 border-transparent hover:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed'
+                        : 'text-slate-500 border-transparent hover:text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed'
                     }`}
                   >
                     <Box className="w-4 h-4" />
@@ -698,9 +698,9 @@ export default function MoleculeAnalysis() {
                   <div className="flex flex-col lg:flex-row gap-4">
                     {/* 3D viewer + header */}
                     <div className="flex-1 flex flex-col min-w-0">
-                      <div className="px-4 py-3 border border-slate-700/50 border-b-0 bg-slate-900/40 rounded-t-xl flex items-center gap-3">
+                      <div className="px-4 py-3 border border-slate-200 border-b-0 bg-slate-50 rounded-t-xl flex items-center gap-3">
                         <div className="min-w-0">
-                          <p className="text-sm font-bold text-white leading-tight truncate">
+                          <p className="text-sm font-bold text-slate-900 leading-tight truncate">
                             {prepPdb ? (prepPdbName || 'Prepared structure') : (selected?.name || result?.compound?.name || result?.name || 'Compound')}
                           </p>
                           {prepPdb ? (
@@ -713,7 +713,7 @@ export default function MoleculeAnalysis() {
                         </div>
                         <div className="flex items-center gap-2 ml-auto flex-shrink-0">
                           {prepPdb && (
-                            <button onClick={() => { setPrepPdb(null); setPrepPdbName(''); }} className="text-[10px] text-slate-500 hover:text-slate-300 flex items-center gap-1 transition-colors">
+                            <button onClick={() => { setPrepPdb(null); setPrepPdbName(''); }} className="text-[10px] text-slate-500 hover:text-slate-600 flex items-center gap-1 transition-colors">
                               <X className="w-3 h-3" /> Clear
                             </button>
                           )}
@@ -728,7 +728,7 @@ export default function MoleculeAnalysis() {
                           <button
                             onClick={() => setShowPrep(!showPrep)}
                             className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
-                              showPrep ? 'bg-[#0D9E8E]/15 text-[#0D9E8E]' : 'bg-slate-800 text-slate-500 hover:text-slate-300'
+                              showPrep ? 'bg-[#0D9E8E]/15 text-[#0D9E8E]' : 'bg-slate-100 text-slate-500 hover:text-slate-600'
                             }`}
                           >
                             <Wrench className="w-3 h-3" /> Prep
@@ -737,7 +737,7 @@ export default function MoleculeAnalysis() {
                         </div>
                       </div>
 
-                      <div className="p-4 border border-slate-700/50 border-t-0 rounded-b-xl" style={{ minHeight: 360 }}>
+                      <div className="p-4 border border-slate-200 border-t-0 rounded-b-xl" style={{ minHeight: 360 }}>
                         <Mol3DViewer
                           cid={viewerCid}
                           smiles={viewerSmiles}
@@ -748,7 +748,7 @@ export default function MoleculeAnalysis() {
                       </div>
 
                       {showPrep && (
-                        <div className="mt-4 border border-slate-700/50 bg-slate-900/80 max-h-[45%] overflow-y-auto p-4 rounded-xl">
+                        <div className="mt-4 border border-slate-200 bg-slate-50 max-h-[45%] overflow-y-auto p-4 rounded-xl">
                           <StructurePrepSuite
                             modes={['split', 'merge']}
                             onResult={(pdb, name) => {
@@ -763,8 +763,8 @@ export default function MoleculeAnalysis() {
 
                     {/* Properties panel */}
                     {(selected || result?.compound) && (
-                      <div className="w-full lg:w-64 xl:w-72 flex-shrink-0 bg-slate-900/80 border border-slate-700/50 rounded-xl overflow-y-auto max-h-[600px]">
-                        <div className="p-4 border-b border-slate-700/50">
+                      <div className="w-full lg:w-64 xl:w-72 flex-shrink-0 bg-slate-50 border border-slate-200 rounded-xl overflow-y-auto max-h-[600px]">
+                        <div className="p-4 border-b border-slate-200">
                           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Properties</p>
                         </div>
                         <PropertiesPanel selected={selected || result?.compound} />
