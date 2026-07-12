@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Crown, User, RefreshCw, Search, CheckCircle2, XCircle, Clock, CalendarClock, Mail, AlertTriangle } from 'lucide-react';
+import { Crown, User, RefreshCw, Search, CheckCircle2, XCircle, Clock, CalendarClock, Mail, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +46,23 @@ export default function SubscriptionsPanel() {
   const [reminderSent, setReminderSent] = useState({});
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState(null);
+  const [auditing, setAuditing] = useState(false);
+  const [auditResult, setAuditResult] = useState(null);
+
+  const runAudit = async () => {
+    setAuditing(true);
+    setAuditResult(null);
+    try {
+      const res = await base44.functions.invoke('auditSubscriptions', {});
+      setAuditResult(res);
+      await fetchUsers();
+    } catch (e) {
+      console.error('Audit failed:', e);
+      setAuditResult({ error: e.message });
+    } finally {
+      setAuditing(false);
+    }
+  };
 
   const syncFromStripe = async () => {
     setSyncing(true);
@@ -251,6 +268,27 @@ export default function SubscriptionsPanel() {
           {syncResult && !syncResult.error && (
             <span className="text-xs text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded-lg">
               ✓ Synced {syncResult.updated}/{syncResult.total} users
+            </span>
+          )}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" onClick={runAudit} disabled={auditing} className="text-xs px-3 gap-1.5 text-red-700 border-red-300 hover:bg-red-50">
+                  <ShieldCheck className={`w-3.5 h-3.5 ${auditing ? 'animate-spin' : ''}`} />
+                  {auditing ? 'Auditing...' : 'Audit Subs'}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent><p className="text-xs">Cross-reference all paid users against Stripe and revoke illegitimate access</p></TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {auditResult && !auditResult.error && (
+            <span className="text-xs text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded-lg">
+              ✓ Audited {auditResult.total_users_scanned} users — {auditResult.revoked_users} revoked, {auditResult.legitimate_paid_users} verified
+            </span>
+          )}
+          {auditResult?.error && (
+            <span className="text-xs text-red-700 bg-red-50 border border-red-200 px-2 py-1 rounded-lg">
+              ✗ Audit failed: {auditResult.error}
             </span>
           )}
         </div>

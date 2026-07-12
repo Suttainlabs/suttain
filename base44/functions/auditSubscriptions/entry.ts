@@ -4,7 +4,6 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Admin auth check
     let user;
     try {
       user = await base44.auth.me();
@@ -15,11 +14,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden — admin only' }, { status: 403 });
     }
 
-    // Parse dry_run from query string
     const url = new URL(req.url);
     const dryRun = url.searchParams.get('dry_run') === 'true';
 
-    // Stripe REST API setup
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeKey) {
       return Response.json({ error: 'STRIPE_SECRET_KEY not configured' }, { status: 500 });
@@ -30,10 +27,9 @@ Deno.serve(async (req) => {
       const resp = await fetch('https://api.stripe.com/v1/' + endpoint, {
         headers: { 'Authorization': stripeAuth }
       });
-      return resp.json();
+      return await resp.json();
     }
 
-    // Fetch all users
     const allUsers = await base44.asServiceRole.entities.User.list('-created_date', 500);
 
     const audit = {
@@ -62,12 +58,12 @@ Deno.serve(async (req) => {
       const hasSubId = !!u.stripe_subscription_id;
       const hasCustomerId = !!u.stripe_customer_id;
 
-      // CASE 1: No Stripe records — manually granted, revoke
+      // CASE 1: No Stripe records at all — manually granted, revoke
       if (!hasSubId && !hasCustomerId) {
         audit.revoked.push({
           id: u.id, email: u.email, full_name: u.full_name,
           plan: u.subscription_plan, status: u.subscription_status,
-          reason: 'NO_STRIPE_RECORD — manually granted, no payment proof'
+          reason: 'NO_STRIPE_RECORD'
         });
         updatesToApply.push({
           id: u.id,
@@ -85,49 +81,54 @@ Deno.serve(async (req) => {
       if (hasSubId) {
         try {
           const sub = await stripeGet('subscriptions/' + u.stripe_subscription_id);
-          if (sub.error) throw new Error(sub.error.message || 'Stripe error');
-          const isActive = sub.status === 'active' || sub.status === 'trialing';
-
-          if (isActive) {
-            const updateData = {};
-            if (sub.current_period_end) {
-              updateData.subscription_end_date = new Date(sub.current_period_end * 1000).toISOString();
-            }
-            if (sub.status) {
-              updateData.subscription_status = sub.cancel_at_period_end ? 'canceling' : sub.status;
-            }
-            if (Object.keys(updateData).length > 0 && !dryRun) {
-              await base44.asServiceRole.entities.User.update(u.id, updateData);
-            }
-            audit.legitimate.push({
-              id: u.id, email: u.email, plan: u.subscription_plan,
-              stripe_status: sub.status, cancel_at_period_end: sub.cancel_at_period_end,
-              end_date: updateData.subscription_end_date || u.subscription_end_date
-            });
-          } else {
+          if (sub.error) {
+            // Subscription ID no longer exists in Stripe
             audit.revoked.push({
               id: u.id, email: u.email, full_name: u.full_name,
-              plan: u.subscription_plan, db_status: u.subscription_status,
-              stripe_status: sub.status,
-              reason: 'STRIPE_INACTIVE — subscription status is "' + sub.status + '"'
+              plan: u.subscription_plan, sub_id: u.stripe_subscription_id,
+              reason: 'STRIPE_NOT_FOUND: ' + (sub.error.message || 'unknown')
             });
             updatesToApply.push({
               id: u.id, subscription_plan: 'trial', subscription_status: 'trialing',
               subscription_billing: null, stripe_subscription_id: null,
               subscription_end_date: null, trial_start_date: new Date().toISOString(),
             });
+          } else {
+            const isActive = sub.status === 'active' || sub.status === 'trialing';
+            if (isActive) {
+              const updateData = {};
+              if (sub.current_period_end) {
+                updateData.subscription_end_date = new Date(sub.current_period_end * 1000).toISOString();
+              }
+              if (sub.status) {
+                updateData.subscription_status = sub.cancel_at_period_end ? 'canceling' : sub.status;
+              }
+              if (Object.keys(updateData).length > 0 && !dryRun) {
+                await base44.asServiceRole.entities.User.update(u.id, updateData);
+              }
+              audit.legitimate.push({
+                id: u.id, email: u.email, plan: u.subscription_plan,
+                stripe_status: sub.status, cancel_at_period_end: sub.cancel_at_period_end,
+                end_date: updateData.subscription_end_date || u.subscription_end_date
+              });
+            } else {
+              audit.revoked.push({
+                id: u.id, email: u.email, full_name: u.full_name,
+                plan: u.subscription_plan, db_status: u.subscription_status,
+                stripe_status: sub.status,
+                reason: 'STRIPE_INACTIVE: ' + sub.status
+              });
+              updatesToApply.push({
+                id: u.id, subscription_plan: 'trial', subscription_status: 'trialing',
+                subscription_billing: null, stripe_subscription_id: null,
+                subscription_end_date: null, trial_start_date: new Date().toISOString(),
+              });
+            }
           }
         } catch (stripeErr) {
-          const errMsg = (stripeErr && stripeErr.message) ? stripeErr.message : String(stripeErr);
-          audit.revoked.push({
-            id: u.id, email: u.email, full_name: u.full_name,
-            plan: u.subscription_plan, sub_id: u.stripe_subscription_id,
-            error: errMsg, reason: 'STRIPE_NOT_FOUND — subscription ID no longer exists'
-          });
-          updatesToApply.push({
-            id: u.id, subscription_plan: 'trial', subscription_status: 'trialing',
-            subscription_billing: null, stripe_subscription_id: null,
-            subscription_end_date: null, trial_start_date: new Date().toISOString(),
+          audit.errors.push({
+            id: u.id, email: u.email,
+            error: (stripeErr && stripeErr.message) ? stripeErr.message : String(stripeErr)
           });
         }
         continue;
@@ -144,7 +145,10 @@ Deno.serve(async (req) => {
             if (hasSuccess) {
               audit.legitimate.push({ id: u.id, email: u.email, plan: 'lifetime', reason: 'Verified one-time charge' });
             } else {
-              audit.revoked.push({ id: u.id, email: u.email, plan: u.subscription_plan, reason: 'LIFETIME_NO_CHARGE' });
+              audit.revoked.push({
+                id: u.id, email: u.email, plan: u.subscription_plan,
+                reason: 'LIFETIME_NO_CHARGE'
+              });
               updatesToApply.push({
                 id: u.id, subscription_plan: 'trial', subscription_status: 'trialing',
                 subscription_billing: null, stripe_customer_id: null,
@@ -152,12 +156,15 @@ Deno.serve(async (req) => {
               });
             }
           } catch (chargeErr) {
-            audit.errors.push({ id: u.id, email: u.email, error: String(chargeErr) });
+            audit.errors.push({
+              id: u.id, email: u.email,
+              error: (chargeErr && chargeErr.message) ? chargeErr.message : String(chargeErr)
+            });
           }
         } else {
           audit.revoked.push({
             id: u.id, email: u.email, full_name: u.full_name, plan: u.subscription_plan,
-            reason: 'ORPHANED_CUSTOMER — has customer ID but no active subscription'
+            reason: 'ORPHANED_CUSTOMER'
           });
           updatesToApply.push({
             id: u.id, subscription_plan: 'trial', subscription_status: 'trialing',
@@ -168,9 +175,17 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Apply revocations
-    if (updatesToApply.length > 0 && !dryRun) {
-      await base44.asServiceRole.entities.User.bulkUpdate(updatesToApply);
+    // Apply revocations one by one (bulkUpdate has format issues with User entity)
+    if (!dryRun) {
+      for (const upd of updatesToApply) {
+        try {
+          const { id, ...fields } = upd;
+          await base44.asServiceRole.entities.User.update(id, fields);
+        } catch (updErr) {
+          console.error('Update failed for user:', updErr?.message || String(updErr));
+          audit.errors.push({ id: upd.id, error: 'Update failed: ' + (updErr?.message || String(updErr)) });
+        }
+      }
     }
 
     // Admin notification
@@ -183,7 +198,9 @@ Deno.serve(async (req) => {
           target_user: Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
           metadata: { revoked_emails: audit.revoked.map(function(r) { return r.email; }) }
         });
-      } catch (e) { console.error('Notification failed:', e); }
+      } catch (notifErr) {
+        console.error('Notification failed:', String(notifErr));
+      }
     }
 
     return Response.json({
@@ -200,8 +217,13 @@ Deno.serve(async (req) => {
       error_details: audit.errors,
     });
   } catch (error) {
-    const errMsg = (error && error.message) ? error.message : String(error);
-    console.error('Audit error:', errMsg);
-    return Response.json({ error: errMsg }, { status: 500 });
+    const errorInfo = {
+      message: error?.message || null,
+      name: error?.name || null,
+      string: String(error),
+      json: (() => { try { return JSON.parse(JSON.stringify(error)); } catch { return 'not serializable'; } })()
+    };
+    console.error('Audit error:', JSON.stringify(errorInfo));
+    return Response.json({ error: errorInfo }, { status: 500 });
   }
 });
