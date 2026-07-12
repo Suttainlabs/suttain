@@ -280,13 +280,16 @@ Deno.serve(async (req) => {
           });
           if (users.length > 0) {
             await base44.asServiceRole.entities.User.update(users[0].id, {
-              subscription_plan: null,
-              subscription_status: 'canceled',
+              subscription_plan: 'trial',
+              subscription_status: 'trialing',
               subscription_billing: null,
               stripe_subscription_id: null,
+              stripe_customer_id: null,
+              subscription_end_date: null,
               subscription_cancel_at: null,
+              trial_start_date: new Date().toISOString(),
             });
-            console.log(`Downgraded user ${users[0].id} to free after subscription ended`);
+            console.log(`Reset user ${users[0].id} to trial after subscription ended`);
           }
         } catch (e) {
           console.error('Failed to handle subscription deletion:', e);
