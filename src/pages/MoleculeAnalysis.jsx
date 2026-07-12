@@ -434,7 +434,7 @@ export default function MoleculeAnalysis() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       {/* Sub-header */}
-      <div className="border-b border-slate-200 bg-white sticky top-16 z-20">
+      <div className="border-b border-slate-200 bg-white sticky top-[68px] z-20">
         <div className="max-w-full mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
           <button onClick={() => navigate(createPageUrl('ResearchPortal'))} className="text-slate-500 hover:text-slate-600 transition-colors">
             <ArrowLeft className="w-4 h-4" />

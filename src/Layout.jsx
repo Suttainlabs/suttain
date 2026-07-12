@@ -840,7 +840,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 pb-16 lg:pb-0 pt-20 relative z-10">
+      <main className="flex-1 pb-16 lg:pb-0 pt-24 lg:pt-20 relative z-10">
         <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: fetchUserAndSetState }}>
           {children}
           {/* Clara AI Assistant */}
