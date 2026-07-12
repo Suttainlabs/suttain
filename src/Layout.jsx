@@ -398,7 +398,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Floating Nav Bar */}
       <header className="fixed top-3 left-0 right-0 z-50 px-4 pt-[env(safe-area-inset-top)]">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14 overflow-hidden">
 
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 flex-shrink-0 justify-self-start min-w-0">
@@ -410,7 +410,7 @@ export default function Layout({ children, currentPageName }) {
             </Link>
 
             {/* Desktop: minimal link row + menu trigger */}
-            <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap min-w-0">
+            <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap min-w-0 overflow-hidden">
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Tools dropdown */}
