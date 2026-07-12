@@ -80,7 +80,7 @@ function WeatherContent() {
         return `${dayName}: ${getWeatherInfo(weather.daily.weather_code[i]).label}, ${weather.daily.temperature_2m_min[i]}-${weather.daily.temperature_2m_max[i]}C, Rain: ${weather.daily.precipitation_sum[i]}mm (${weather.daily.precipitation_probability_max[i]}%), Wind: ${weather.daily.wind_speed_10m_max[i]}km/h`;
       }).join('\n');
 
-      const prompt = `You are AgroPocket, an AI weather advisory tool for farmers.
+      const prompt = `You are Suttain Farm, an AI weather advisory tool for farmers.
 
 Farm context:
 - Location: ${activeFarmer?.location_name || 'Not specified'}

@@ -492,9 +492,9 @@ export default function Layout({ children, currentPageName }) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("AgroPocket")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
+                    <Link to={"/SuttainFarm"} className="flex items-center gap-3 px-2 py-2 rounded-lg">
                       <Sprout className="w-4 h-4 flex-shrink-0" style={{ color: "#4A7C2A" }} />
-                      <span className="text-sm font-medium text-slate-700">AgroPocket</span>
+                      <span className="text-sm font-medium text-slate-700">Suttain Farm</span>
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -696,14 +696,14 @@ export default function Layout({ children, currentPageName }) {
                   {/* AgroPocket — Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
                     <Link
-                      to={createPageUrl("AgroPocket")}
+                      to={"/SuttainFarm"}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        location.pathname === createPageUrl("AgroPocket") ? "bg-green-100 text-green-700" : "text-suttain-dark hover:bg-green-50"
+                        location.pathname === "/SuttainFarm" ? "bg-green-100 text-green-700" : "text-suttain-dark hover:bg-green-50"
                       }`}
                     >
                       <Sprout className="w-5 h-5" />
-                      AgroPocket
+                      Suttain Farm
                     </Link>
                   </motion.div>
 

@@ -25,7 +25,7 @@ function ChatContent() {
   }, [messages]);
 
   const buildPrompt = (question) => {
-    return `You are AgroPocket, an AI agronomist assistant for small family farmers.
+    return `You are Suttain Farm, an AI agronomist assistant for small family farmers.
 
 Farmer profile:
 - Name: ${activeFarmer?.name || 'Farmer'}
@@ -49,7 +49,7 @@ Instructions:
   };
 
   const buildImagePrompt = (question) => {
-    return `You are AgroPocket, an AI agronomist assistant for small family farmers.
+    return `You are Suttain Farm, an AI agronomist assistant for small family farmers.
 
 Farmer profile:
 - Name: ${activeFarmer?.name || 'Farmer'}

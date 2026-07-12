@@ -39,7 +39,7 @@ function PhotoContent() {
       const uploadRes = await base44.integrations.Core.UploadFile({ file: photoFile });
       const uploadedUrl = uploadRes.file_url;
 
-      const prompt = `You are AgroPocket, an AI crop diagnostic tool. Analyze this photo and provide a diagnosis.
+      const prompt = `You are Suttain Farm, an AI crop diagnostic tool. Analyze this photo and provide a diagnosis.
 
 Farm context:
 - Crops grown: ${activeFarm?.crops?.join(', ') || 'Not specified'}

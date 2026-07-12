@@ -63,8 +63,8 @@ const StructuralBiology = lazy(() => import('./pages/StructuralBiology'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
-const AgroPocket = lazy(() => import('./pages/AgroPocketLanding'));
-const AgroPocketHub = lazy(() => import('./pages/AgroPocket'));
+const SuttainFarmLanding = lazy(() => import('./pages/SuttainFarmLanding'));
+const SuttainFarmHub = lazy(() => import('./pages/SuttainFarm'));
 const AgroFarmerProfile = lazy(() => import('./pages/AgroFarmerProfile'));
 const AgroChat = lazy(() => import('./pages/AgroChat'));
 const AgroPhotoDiagnosis = lazy(() => import('./pages/AgroPhotoDiagnosis'));
@@ -172,7 +172,8 @@ const AuthenticatedApp = () => {
       <Route path="/enterprise" element={<Navigate to="/APIPortal" replace />} />
       <Route path="/EnterpriseAPI" element={<LayoutWrapper currentPageName="EnterpriseAPI"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><EnterpriseAPI /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/APIPortal" element={<LayoutWrapper currentPageName="APIPortal"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><APIPortal /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/AgroPocket" element={<LayoutWrapper currentPageName="AgroPocket"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><AgroPocket /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/SuttainFarm" element={<LayoutWrapper currentPageName="SuttainFarm"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><SuttainFarmLanding /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/AgroPocket" element={<Navigate to="/SuttainFarm" replace />} />
 
       {/* ── Protected Tools (consumer + research — require login) ── */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
@@ -198,7 +199,7 @@ const AuthenticatedApp = () => {
           }
           return <Route key={path} path={`/${path}`} element={<LayoutWrapper currentPageName={path}><PageTransition><Page /></PageTransition></LayoutWrapper>} />;
         })}
-        <Route path="/AgroDashboard" element={<LayoutWrapper currentPageName="AgroDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><AgroPocketHub /></PageTransition></Suspense></LayoutWrapper>} />
+        <Route path="/AgroDashboard" element={<LayoutWrapper currentPageName="AgroDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><SuttainFarmHub /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/AgroFarmerProfile" element={<LayoutWrapper currentPageName="AgroFarmerProfile"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><AgroFarmerProfile /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/AgroChat" element={<LayoutWrapper currentPageName="AgroChat"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><AgroChat /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/AgroPhotoDiagnosis" element={<LayoutWrapper currentPageName="AgroPhotoDiagnosis"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><AgroPhotoDiagnosis /></PageTransition></Suspense></LayoutWrapper>} />

@@ -14,7 +14,7 @@ export const LANGUAGE_NAMES = {
 
 export const translations = {
   en: {
-    app_title: "AgroPocket",
+    app_title: "Suttain Farm",
     tagline: "Your pocket agronomist",
     back: "Back",
     welcome: "Welcome",
@@ -22,15 +22,15 @@ export const translations = {
     create_first_farm: "Create Your Farm Profile",
     select_farm: "Select a Farm",
     active_farm: "Active Farm",
-    feature_chat: "Ask the Agronomist",
+    feature_chat: "AI Chat Agronomist",
     feature_chat_desc: "Get advice on your crops, soil, and farming questions",
     feature_photo: "Photo Diagnosis",
     feature_photo_desc: "Snap a photo of your crop to identify diseases and pests",
-    feature_weather: "Weather Advisory",
+    feature_weather: "Weather Alerts",
     feature_weather_desc: "Know the best days to irrigate, spray, and harvest",
-    feature_history: "Advisory History",
+    feature_history: "History",
     feature_history_desc: "Review your past questions and recommendations",
-    feature_profile: "Farm Profile",
+    feature_profile: "Farm Management",
     feature_profile_desc: "Update your farm details and preferences",
     farm_summary: "Farm Summary",
     location: "Location",
@@ -155,7 +155,7 @@ export const translations = {
     alert_expected: "expected"
   },
   hi: {
-    app_title: "एग्रोपॉकेट",
+    app_title: "Suttain Farm",
     tagline: "आपकी जेब में कृषि विशेषज्ञ",
     back: "वापस",
     welcome: "स्वागत है",
@@ -296,7 +296,7 @@ export const translations = {
     alert_expected: "अपेक्षित"
   },
   sw: {
-    app_title: "AgroPocket",
+    app_title: "Suttain Farm",
     tagline: "Mtaalamu wako wa kilimo",
     back: "Rudi",
     welcome: "Karibu",
@@ -437,7 +437,7 @@ export const translations = {
     alert_expected: "inatarajiwa"
   },
   es: {
-    app_title: "AgroPocket",
+    app_title: "Suttain Farm",
     tagline: "Tu agrónomo de bolsillo",
     back: "Volver",
     welcome: "Bienvenido",

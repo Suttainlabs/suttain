@@ -4,7 +4,7 @@ const AD_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Agropocket — 30s Ad</title>
+<title>Suttain Farm — 30s Ad</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"><\/script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -204,7 +204,7 @@ const AD_HTML = `<!DOCTYPE html>
   </g>
 
   <g class="scene scene6" id="scene6">
-    <text x="800" y="660" text-anchor="middle" font-family="Space Grotesk" font-size="50" fill="#F6EFDD">Agropocket</text>
+    <text x="800" y="660" text-anchor="middle" font-family="Space Grotesk" font-size="50" fill="#F6EFDD">Suttain Farm</text>
     <text x="800" y="700" text-anchor="middle" font-family="Inter" font-size="18" fill="#D9C48A">Smart farming in your pocket</text>
   </g>
 </svg>
@@ -230,10 +230,10 @@ const replayBtn = document.getElementById('replayBtn');
 const voLines = [
   "Managing a large farm comes with massive challenges.",
   "But the right answers shouldn't be miles away.",
-  "Meet Agropocket. An AI agronomist right in your pocket.",
+  "Meet Suttain Farm. An AI agronomist right in your pocket.",
   "Snap a photo of any diseased leaf, and chat instantly with AI in your own language to get expert solutions.",
   "Track your harvest growth, day by day, right from the field.",
-  "Download Agropocket today, and grow smarter."
+  "Download Suttain Farm today, and grow smarter."
 ];
 
 const languageCycle = ["Apply copper fungicide","Aplicar fungicida de cobre","तांबे का कवकनाशी लगाएं","Appliquer un fongicide au cuivre","Aplicar fungicida de cobre","Apply copper fungicide"];
@@ -375,7 +375,7 @@ export default function AgroDemoAd() {
     <div className="relative w-full bg-[#F9F5EF] rounded-2xl overflow-hidden">
       <iframe
         srcDoc={AD_HTML}
-        title="AgroPocket Demo"
+        title="Suttain Farm Demo"
         className="w-full aspect-video border-0 block"
         allow="autoplay; clipboard-write; encrypted-media"
         style={{ minHeight: '300px' }}

@@ -117,6 +117,6 @@ function HubContent() {
   );
 }
 
-export default function AgroPocket() {
+export default function SuttainFarm() {
   return <AgroProvider><HubContent /></AgroProvider>;
 }

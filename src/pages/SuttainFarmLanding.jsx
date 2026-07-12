@@ -7,7 +7,7 @@ const steps = [
   {
     icon: MapPin,
     title: 'Set Your Location',
-    desc: 'Register your farm location and contact details so AgroPocket can provide localized, weather-aware advice.',
+    desc: 'Register your farm location and contact details so Suttain Farm can provide localized, weather-aware advice.',
     color: '#4A7C2A',
   },
   {
@@ -30,7 +30,7 @@ const steps = [
   },
 ];
 
-export default function AgroPocketLanding() {
+export default function SuttainFarmLanding() {
   return (
     <div className="min-h-screen bg-[#F5F1E8]">
       {/* Hero Section */}
@@ -47,7 +47,7 @@ export default function AgroPocketLanding() {
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-16 sm:pt-32 sm:pb-24 text-center">
           <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6">
             <Sprout className="w-4 h-4 text-[#4A7C2A]" />
-            <span className="text-sm font-semibold text-[#2D5016]">AgroPocket</span>
+            <span className="text-sm font-semibold text-[#2D5016]">Suttain Farm</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold text-white mb-4 leading-tight">
             AI-Powered Farming Advisor<br />in Your Pocket
@@ -76,7 +76,7 @@ export default function AgroPocketLanding() {
 
       {/* What It Does */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[#2D5016] text-center mb-3">What AgroPocket Does</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-[#2D5016] text-center mb-3">What Suttain Farm Does</h2>
         <p className="text-center text-[#5B7553] mb-10 max-w-2xl mx-auto">
           Four powerful tools working together to help you make better farming decisions every day.
         </p>
@@ -147,7 +147,7 @@ export default function AgroPocketLanding() {
 
       {/* Demo Illustration Section */}
       <section id="demo" className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[#2D5016] text-center mb-3">See AgroPocket in Action</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-[#2D5016] text-center mb-3">See Suttain Farm in Action</h2>
         <p className="text-center text-[#5B7553] mb-8 max-w-2xl mx-auto">
           A farmer chats with the AI agronomist, gets a crop diagnosis, and tracks yield — all from a phone.
         </p>

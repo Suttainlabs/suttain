@@ -7,7 +7,7 @@ export default function AgroDemoIllustration() {
       className="w-full h-full"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="AgroPocket workflow illustration showing a farmer using AI advisery tools on a phone"
+      aria-label="Suttain Farm workflow illustration showing a farmer using AI advisery tools on a phone"
     >
       {/* Background */}
       <rect width="600" height="340" fill="#F5F1E8" />

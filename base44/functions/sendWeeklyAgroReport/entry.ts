@@ -37,7 +37,7 @@ const buildReportHtml = (farmerName, sessions, yields, farms) => {
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.08);">
       <div style="background: linear-gradient(135deg, #4A7C2A 0%, #007850 100%); padding: 30px 24px; color: white;">
         <h1 style="margin: 0; font-size: 22px;">Your Weekly Farm Report</h1>
-        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Hi ${farmerName}, here's your AgroPocket summary for the past 7 days.</p>
+        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Hi ${farmerName}, here's your Suttain Farm summary for the past 7 days.</p>
       </div>
       <div style="padding: 24px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px;">
@@ -71,7 +71,7 @@ const buildReportHtml = (farmerName, sessions, yields, farms) => {
             </tr>
           </thead>
           <tbody>${sessionRows}</tbody>
-        </table>` : `<div style="background: #fef9f0; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin-bottom: 24px;"><p style="margin: 0; color: #92400e; font-size: 14px;">No advisory sessions this week. Start a chat or photo diagnosis anytime in AgroPocket.</p></div>`}
+        </table>` : `<div style="background: #fef9f0; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin-bottom: 24px;"><p style="margin: 0; color: #92400e; font-size: 14px;">No advisory sessions this week. Start a chat or photo diagnosis anytime in Suttain Farm.</p></div>`}
 
         ${yields.length > 0 ? `
         <h2 style="color: #1e293b; font-size: 16px; margin-bottom: 8px;">Crop Yield Progress</h2>
@@ -84,12 +84,12 @@ const buildReportHtml = (farmerName, sessions, yields, farms) => {
             </tr>
           </thead>
           <tbody>${yieldRows}</tbody>
-        </table>` : `<div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 16px; margin-bottom: 24px;"><p style="margin: 0; color: #065f46; font-size: 14px;">No harvests logged this week. Record your yields in AgroPocket to track progress.</p></div>`}
+        </table>` : `<div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 16px; margin-bottom: 24px;"><p style="margin: 0; color: #065f46; font-size: 14px;">No harvests logged this week. Record your yields in Suttain Farm to track progress.</p></div>`}
 
         <div style="text-align: center; margin-top: 24px;">
-          <a href="https://suttain.com/AgroDashboard" style="display: inline-block; background: linear-gradient(135deg, #4A7C2A, #007850); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">Open AgroPocket</a>
+          <a href="https://suttain.com/AgroDashboard" style="display: inline-block; background: linear-gradient(135deg, #4A7C2A, #007850); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">Open Suttain Farm</a>
         </div>
-        <p style="font-size: 11px; color: #94a3b8; margin-top: 24px; text-align: center;">You're receiving this because you have an AgroPocket farmer profile. — Suttain AgroPocket</p>
+        <p style="font-size: 11px; color: #94a3b8; margin-top: 24px; text-align: center;">You're receiving this because you have a Suttain Farm farmer profile. — Suttain Farm</p>
       </div>
     </div>
   `;
@@ -149,7 +149,7 @@ Deno.serve(async (req) => {
       const html = buildReportHtml(farmerName, recentSessions, recentYields, farms);
 
       const { error } = await resend.emails.send({
-        from: 'AgroPocket by Suttain <noreply@suttain.com>',
+        from: 'Suttain Farm <noreply@suttain.com>',
         to: email,
         reply_to: 'contact@suttain.com',
         subject: `Your Weekly Farm Report — ${recentSessions.length} sessions, ${recentYields.length} harvests`,

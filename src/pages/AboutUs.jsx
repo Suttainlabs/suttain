@@ -79,7 +79,7 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* Scaling Impact with AgroPocket */}
+      {/* Scaling Impact with Suttain Farm */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 border-y border-slate-200">
         <div className="max-w-5xl mx-auto">
           <motion.div
@@ -91,16 +91,16 @@ export default function AboutUsPage() {
               <div className="w-12 h-12 bg-gradient-to-br from-[#4A7C2A] to-[#007850] rounded-xl flex items-center justify-center">
                 <Sprout className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800">Scaling Impact with AgroPocket</h2>
+              <h2 className="text-2xl font-bold text-slate-800">Scaling Impact with Suttain Farm</h2>
             </div>
             <p className="text-slate-600 leading-relaxed">
               Suttain is applying its existing AI and chemical intelligence expertise to help farmers improve yields and soil health. By extending our platform's analytical rigor—built on PubChem and EPA data foundations—into the field, we are bringing the same safety and sustainability intelligence that powers our formulation tools to agriculture.
             </p>
             <p className="text-slate-600 leading-relaxed">
-              Through AgroPocket, we use real-time weather data and biological analysis to empower sustainable farming. Smallholder farmers can diagnose crop diseases from a photo, receive soil advisory, and access weather-aware guidance—all through a mobile-first, multilingual interface designed for the realities of small family farms.
+              Through Suttain Farm, we use real-time weather data and biological analysis to empower sustainable farming. Smallholder farmers can diagnose crop diseases from a photo, receive soil advisory, and access weather-aware guidance—all through a mobile-first, multilingual interface designed for the realities of small family farms.
             </p>
-            <Link to="/AgroPocket" className="inline-flex items-center gap-2 text-[#4A7C2A] font-semibold hover:underline">
-              Explore AgroPocket <ArrowRight className="w-4 h-4" />
+            <Link to="/SuttainFarm" className="inline-flex items-center gap-2 text-[#4A7C2A] font-semibold hover:underline">
+              Explore Suttain Farm <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
         </div>
