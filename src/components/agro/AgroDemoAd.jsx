@@ -210,10 +210,10 @@ const AD_HTML = `<!DOCTYPE html>
 </svg>
 
 <div id="playOverlay">
-  <div class="btn">Play with sound</div>
-
+  <div class="btn">▶ Play with sound</div>
+  <div class="hint">Narrated with your browser's built-in voice (set to a female voice where available) plus generated music &amp; sound effects — needs a click to start.</div>
 </div>
-<button id="replayBtn">Replay</button>
+<button id="replayBtn">↻ Replay</button>
 </div>
 
 <script>
