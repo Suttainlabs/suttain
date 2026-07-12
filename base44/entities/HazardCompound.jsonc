@@ -1,0 +1,101 @@
+{
+  "name": "HazardCompound",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Compound name"
+    },
+    "smiles": {
+      "type": "string",
+      "description": "SMILES molecular notation"
+    },
+    "cas_number": {
+      "type": "string",
+      "description": "CAS registry number"
+    },
+    "molecular_formula": {
+      "type": "string",
+      "description": "Molecular formula"
+    },
+    "molecular_weight": {
+      "type": "number",
+      "description": "Molecular weight in g/mol"
+    },
+    "hazard_label": {
+      "type": "string",
+      "enum": [
+        "hazardous",
+        "likely_safe"
+      ],
+      "description": "Ground-truth hazard label from regulatory sources"
+    },
+    "hazard_categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Hazard category tags: irritant, corrosive, environmental_toxin, carcinogen_suspect, endocrine_disruptor, sensitizer, none"
+    },
+    "ghs_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "GHS H-statement codes (e.g. H315, H350)"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "database": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Source citations: EPA CompTox, ECHA/REACH, GHS, ChEMBL, PubChem"
+    },
+    "split": {
+      "type": "string",
+      "enum": [
+        "train",
+        "validation",
+        "test"
+      ],
+      "description": "Dataset split assignment for model training and evaluation"
+    },
+    "structural_alerts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Known structural alert flags for this compound"
+    }
+  },
+  "required": [
+    "name",
+    "smiles",
+    "hazard_label"
+  ],
+  "rls": {
+    "create": null,
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
