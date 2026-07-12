@@ -127,9 +127,9 @@ export default function StructuralBiology() {
   const ActiveComponent = activeToolObj?.component;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800">
+    <div className="min-h-screen bg-slate-50 text-slate-800 relative z-10">
       {/* Sub-header */}
-      <div className="border-b border-slate-200 bg-white/80 sticky top-16 z-20">
+      <div className="border-b border-slate-200 bg-white relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
           <Dna className="w-3.5 h-3.5 text-[#2563eb]" />
           <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Structural Biology</span>
@@ -140,7 +140,7 @@ export default function StructuralBiology() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 relative z-10">
         {/* Hero */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-black text-slate-800 mb-2">Structural Biology Intelligence</h1>
@@ -185,7 +185,7 @@ export default function StructuralBiology() {
         )}
 
         {/* Active tool */}
-        <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 sm:p-6">
+        <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 sm:p-6 overflow-hidden relative z-10">
           {ActiveComponent && <ActiveComponent />}
         </div>
 

@@ -334,7 +334,7 @@ export default function ProteinStructureExplorer() {
           {/* 3D Structure Viewer */}
           <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
             <h3 className="text-sm font-bold text-slate-800 mb-3">3D Structure Viewer</h3>
-            <div ref={containerRef} style={{ width: '100%', height: '400px', backgroundColor: '#ffffff', borderRadius: '8px' }} className="border border-slate-200" />
+            <div ref={containerRef} style={{ width: '100%', height: '400px', backgroundColor: '#ffffff', borderRadius: '8px', overflow: 'hidden', position: 'relative' }} className="border border-slate-200" />
             <div className="flex items-center gap-2 mt-3">
               <Button size="sm" variant="outline" onClick={handleRotate} className="border-slate-300 text-slate-700 text-xs">
                 <RotateCw className="w-3 h-3 mr-1" /> Rotate
