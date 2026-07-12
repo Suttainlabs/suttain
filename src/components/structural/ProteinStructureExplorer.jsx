@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, Loader2, Download, ExternalLink, Copy, Check, RotateCw, ZoomIn, ZoomOut } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Search, Loader2, Download, ExternalLink, Copy, Check } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { alphafoldApi } from '@/functions/alphafoldApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AlphaFoldAttribution from './AlphaFoldAttribution';
+import MolecularViewerManager from './MolecularViewerManager';
 
 const CONFIDENCE_COLORS = {
   veryHigh: '#2563eb',
@@ -37,20 +38,6 @@ export default function ProteinStructureExplorer() {
   const [geneLoading, setGeneLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-  const [molReady, setMolReady] = useState(false);
-  const viewerRef = useRef(null);
-  const containerRef = useRef(null);
-
-  // Load 3Dmol.js
-  useEffect(() => {
-    if (window.$3Dmol) { setMolReady(true); return; }
-    const script = document.createElement('script');
-    script.src = 'https://3dmol.org/build/3Dmol-min.js';
-    script.async = true;
-    script.onload = () => setMolReady(true);
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
-  }, []);
 
   const handleSearch = useCallback(async (id) => {
     const cleanId = (id || uniprotId).trim().toUpperCase();
@@ -112,31 +99,6 @@ export default function ProteinStructureExplorer() {
       setGeneLoading(false);
     }
   };
-
-  // Initialize 3Dmol viewer when prediction and molReady are available
-  useEffect(() => {
-    if (!molReady || !prediction?.pdbUrl || !containerRef.current) return;
-    const $3Dmol = window.$3Dmol;
-    // Clear any previous viewer content
-    containerRef.current.innerHTML = '';
-    const viewer = $3Dmol.createViewer(containerRef.current, {
-      backgroundColor: '0xffffff',
-      antialias: true,
-    });
-    viewerRef.current = viewer;
-    fetch(prediction.pdbUrl).then(r => r.text()).then(pdbData => {
-      viewer.addModel(pdbData, 'pdb');
-      viewer.setStyle({}, { cartoon: { color: 'pLDDT' } });
-      viewer.zoomTo();
-      viewer.render();
-    });
-    return () => { if (viewerRef.current) { viewerRef.current.clear(); viewerRef.current = null; } };
-  }, [molReady, prediction]);
-
-  const handleRotate = () => { if (viewerRef.current) viewerRef.current.spin('y', 1); };
-  const handleStopRotate = () => { if (viewerRef.current) viewerRef.current.spin(false); };
-  const handleZoomIn = () => { if (viewerRef.current) viewerRef.current.zoom(0.5, 300); };
-  const handleZoomOut = () => { if (viewerRef.current) viewerRef.current.zoom(-0.5, 300); };
 
   const citation = prediction
     ? `AlphaFold DB. (n.d.). ${prediction.uniprotDescription} (${prediction.gene}). AlphaFold Protein Structure Database. Retrieved from https://alphafold.ebi.ac.uk/entry/${prediction.uniprotAccession}`
@@ -333,22 +295,7 @@ export default function ProteinStructureExplorer() {
 
           {/* 3D Structure Viewer */}
           <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
-            <h3 className="text-sm font-bold text-slate-800 mb-3">3D Structure Viewer</h3>
-            <div ref={containerRef} style={{ width: '100%', height: '400px', backgroundColor: '#ffffff', borderRadius: '8px', overflow: 'hidden', position: 'relative' }} className="border border-slate-200" />
-            <div className="flex items-center gap-2 mt-3">
-              <Button size="sm" variant="outline" onClick={handleRotate} className="border-slate-300 text-slate-700 text-xs">
-                <RotateCw className="w-3 h-3 mr-1" /> Rotate
-              </Button>
-              <Button size="sm" variant="outline" onClick={handleStopRotate} className="border-slate-300 text-slate-700 text-xs">
-                Stop
-              </Button>
-              <Button size="sm" variant="outline" onClick={handleZoomIn} className="border-slate-300 text-slate-700 text-xs">
-                <ZoomIn className="w-3 h-3" />
-              </Button>
-              <Button size="sm" variant="outline" onClick={handleZoomOut} className="border-slate-300 text-slate-700 text-xs">
-                <ZoomOut className="w-3 h-3" />
-              </Button>
-            </div>
+            <MolecularViewerManager pdbUrl={prediction.pdbUrl} />
           </div>
 
           {/* Download links + citation */}

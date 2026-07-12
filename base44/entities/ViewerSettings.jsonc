@@ -1,0 +1,28 @@
+{
+  "name": "ViewerSettings",
+  "type": "object",
+  "properties": {
+    "preferred_engine": {
+      "type": "string",
+      "enum": [
+        "3dmol",
+        "ngl"
+      ],
+      "default": "3dmol",
+      "description": "User's preferred molecular visualization engine, applied across all structure viewers"
+    }
+  },
+  "required": [],
+  "rls": {
+    "create": null,
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
