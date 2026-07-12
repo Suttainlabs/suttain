@@ -114,6 +114,10 @@ Deno.serve(async (req) => {
             subscription_billing: null,
             stripe_subscription_id: null,
             subscription_end_date: null,
+            usage_period_start: null,
+            usage_simulations: 0,
+            usage_formulas: 0,
+            usage_scans: 0,
           });
           continue;
         }
@@ -157,6 +161,10 @@ Deno.serve(async (req) => {
             stripe_subscription_id: null,
             stripe_customer_id: null,
             subscription_end_date: null,
+            usage_period_start: null,
+            usage_simulations: 0,
+            usage_formulas: 0,
+            usage_scans: 0,
           });
           continue;
         }
@@ -195,6 +203,10 @@ Deno.serve(async (req) => {
             subscription_billing: null,
             stripe_subscription_id: null,
             subscription_end_date: null,
+            usage_period_start: null,
+            usage_simulations: 0,
+            usage_formulas: 0,
+            usage_scans: 0,
           });
         }
       } catch (userErr) {
