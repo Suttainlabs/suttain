@@ -96,10 +96,10 @@ export default function HazardEngine() {
             </div>
 
             {/* Enterprise API note */}
-            <div className="hidden lg:block mt-4 bg-slate-900 rounded-xl p-4">
-              <p className="text-xs font-semibold text-white mb-1">Enterprise API</p>
-              <code className="text-xs font-mono text-teal-400">POST /v1/hazard-score</code>
-              <p className="text-xs text-slate-400 mt-2">
+            <div className="hidden lg:block mt-4 bg-white border border-slate-200 rounded-xl p-4">
+              <p className="text-xs font-semibold text-slate-700 mb-1">Enterprise API</p>
+              <code className="text-xs font-mono text-teal-600">POST /v1/hazard-score</code>
+              <p className="text-xs text-slate-500 mt-2">
                 Returns binary result, confidence, categories, and citations.
                 Consistent with the no-black-box API promise.
               </p>

@@ -860,7 +860,7 @@ export default function Layout({ children, currentPageName }) {
       
       {/* Footer - Home page only */}
       {currentPageName === 'Home' && (
-      <footer className="bg-gradient-to-br from-[#1a3a35] via-slate-900 to-slate-900 text-sm pb-[env(safe-area-inset-bottom)]">
+      <footer className="bg-white border-t border-slate-200 text-sm pb-[env(safe-area-inset-bottom)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Column 1: Logo & Tagline */}
@@ -872,7 +872,7 @@ export default function Layout({ children, currentPageName }) {
                   className="h-7 w-auto"
                 />
               </Link>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <p className="text-slate-500 text-sm leading-relaxed">
                 Supporting chemical sustainability through robust analysis, safety evaluation, and formulation tools.
               </p>
               <div className="flex space-x-3">
@@ -897,13 +897,13 @@ export default function Layout({ children, currentPageName }) {
             {/* Column 2: Platform */}
             <div>
               <ul className="space-y-1.5 text-sm">
-                <li><Link to={createPageUrl('Simulator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
-                <li><Link to={createPageUrl('generator')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
-                <li><Link to={createPageUrl("ResearchDashboard")} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
-                <li><Link to="/enterprise" className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
-                <li><Link to={createPageUrl('AboutUs')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
-                <li><Link to={createPageUrl('Careers')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
-                <li><Link to={createPageUrl('Blog')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
+                <li><Link to={createPageUrl('Simulator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
+                <li><Link to={createPageUrl('generator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
+                <li><Link to={createPageUrl("ResearchDashboard")} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
+                <li><Link to="/enterprise" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
+                <li><Link to={createPageUrl('AboutUs')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
+                <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
+                <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
 
                 </ul>
                 </div>
@@ -911,28 +911,28 @@ export default function Layout({ children, currentPageName }) {
                 {/* Column 3: Legal */}
             <div>
               <ul className="space-y-1.5 text-sm">
-                <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Privacy Policy</Link></li>
-                <li><Link to={createPageUrl('TermsOfService')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Terms of Service</Link></li>
-                <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Compliance Guide</Link></li>
-                <li><a href="mailto:contact@suttain.com" className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">contact@suttain.com</a></li>
+                <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Privacy Policy</Link></li>
+                <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Terms of Service</Link></li>
+                <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Compliance Guide</Link></li>
+                <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">contact@suttain.com</a></li>
               </ul>
             </div>
 
             {/* Column 4: Science */}
-            <div className="bg-slate-800 rounded-lg p-4">
-              <h3 className="font-semibold mb-3 text-white text-sm">Science</h3>
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+              <h3 className="font-semibold mb-3 text-slate-800 text-sm">Science</h3>
               <ul className="space-y-1.5 text-sm mb-4">
-                <li><Link to={createPageUrl('APIPortal')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">API Docs</Link></li>
-                <li><Link to={createPageUrl('ExternalDatabases')} className="text-slate-300 hover:text-[var(--suttain-teal)] transition-colors">Publications</Link></li>
+                <li><Link to={createPageUrl('APIPortal')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">API Docs</Link></li>
+                <li><Link to={createPageUrl('ExternalDatabases')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Publications</Link></li>
               </ul>
-              <div className="border-t border-slate-700 pt-3">
-                <p className="text-xs text-slate-400 mb-2">Access the Research API</p>
+              <div className="border-t border-slate-200 pt-3">
+                <p className="text-xs text-slate-500 mb-2">Access the Research API</p>
                 <p className="text-[11px] text-[var(--suttain-teal)] font-medium">Python, JavaScript, and R SDKs available</p>
               </div>
             </div>
             </div>
 
-          <div className="mt-4 pt-4 border-t border-slate-700 text-center text-slate-400 text-sm">
+          <div className="mt-4 pt-4 border-t border-slate-200 text-center text-slate-400 text-sm">
             © {new Date().getFullYear()} Suttain. All rights reserved.
           </div>
         </div>

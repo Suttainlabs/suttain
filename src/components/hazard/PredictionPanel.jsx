@@ -319,11 +319,11 @@ export default function PredictionPanel({ isPro }) {
           )}
 
           {/* Methodology */}
-          <div className="bg-slate-900 rounded-xl p-4">
-            <p className="text-xs font-semibold text-white mb-1">Methodology</p>
-            <p className="text-xs text-slate-400 leading-relaxed">{result.methodology}</p>
+          <div className="bg-white border border-slate-200 rounded-xl p-4">
+            <p className="text-xs font-semibold text-slate-700 mb-1">Methodology</p>
+            <p className="text-xs text-slate-500 leading-relaxed">{result.methodology}</p>
             {result.api_endpoint && (
-              <p className="text-xs text-teal-400 font-mono mt-2">API: POST {result.api_endpoint}</p>
+              <p className="text-xs text-teal-600 font-mono mt-2">API: POST {result.api_endpoint}</p>
             )}
           </div>
         </div>

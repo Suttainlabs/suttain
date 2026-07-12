@@ -4,203 +4,49 @@
 
 :root {
   /* Suttain Brand Colors */
-  --suttain-teal: #02988C;
-  --suttain-blue: #09D2FF;
-  --suttain-violet: #9531F5;
-  
-  /* Light Mode (Default) */
-  --background: 150 20% 98%;
-  --foreground: 210 40% 12%;
-  
+  --suttain-teal: #007850;
+  --suttain-blue: #00A8C8;
+  --suttain-violet: #6B3FA0;
+
+  /* Light Mode (Default — always light) */
+  --background: 150 43% 95%;       /* #EDF7F2 mint */
+  --foreground: 0 0% 8%;           /* #141414 */
+
   --card: 0 0% 100%;
-  --card-foreground: 210 40% 12%;
-  
+  --card-foreground: 0 0% 8%;
+
   --popover: 0 0% 100%;
-  --popover-foreground: 210 40% 12%;
-  
-  --primary: 174 97% 30%;
+  --popover-foreground: 0 0% 8%;
+
+  --primary: 158 85% 33%;          /* #007850 */
   --primary-foreground: 0 0% 100%;
-  
-  --secondary: 270 89% 58%;
-  --secondary-foreground: 0 0% 100%;
-  
-  --muted: 150 10% 95%;
-  --muted-foreground: 215 16% 47%;
-  
-  --accent: 193 100% 52%;
-  --accent-foreground: 210 40% 12%;
-  
-  --destructive: 239 68 68;
-  --destructive-foreground: 255 255 255;
-  
-  --border: 174 20% 88%;
-  --input: 174 20% 88%;
-  --ring: 174 97% 30%;
-  
+
+  --secondary: 148 33% 96%;        /* #F0FAF5 */
+  --secondary-foreground: 160 100% 8%;
+
+  --muted: 148 33% 96%;
+  --muted-foreground: 0 0% 51%;    /* #828282 */
+
+  --accent: 158 100% 24%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 63% 47%;        /* #C42B2B */
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 148 33% 89%;           /* #D9EDE5 */
+  --input: 148 33% 89%;
+  --ring: 158 100% 24%;            /* #007850 */
+
   --radius: 0.75rem;
-  
-  /* Custom App Colors */
-  --app-bg: #f8fafc;
+
+  /* Custom App Colors — light only */
+  --app-bg: #EDF7F2;
   --app-card-bg: #ffffff;
-  --app-text-primary: #1e293b;
-  --app-text-secondary: #475569;
-  --app-text-muted: #94a3b8;
-  --app-border: #e2e8f0;
-  --app-hover: #f1f5f9;
-}
-
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 15 23 42; /* slate-900 */
-    --foreground: 248 250 252; /* slate-50 */
-    
-    --card: 30 41 59; /* slate-800 */
-    --card-foreground: 248 250 252;
-    
-    --popover: 30 41 59;
-    --popover-foreground: 248 250 252;
-    
-    --primary: 9 210 255; /* suttain-blue for better contrast */
-    --primary-foreground: 15 23 42;
-    
-    --secondary: 51 65 85; /* slate-700 */
-    --secondary-foreground: 248 250 252;
-    
-    --muted: 51 65 85;
-    --muted-foreground: 148 163 184; /* slate-400 */
-    
-    --accent: 51 65 85;
-    --accent-foreground: 248 250 252;
-    
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
-    
-    --border: 51 65 85; /* slate-700 */
-    --input: 51 65 85;
-    --ring: 9 210 255;
-    
-    /* Custom App Colors - Dark */
-    --app-bg: #0f172a;
-    --app-card-bg: #1e293b;
-    --app-text-primary: #f8fafc;
-    --app-text-secondary: #cbd5e1;
-    --app-text-muted: #64748b;
-    --app-border: #334155;
-    --app-hover: #334155;
-  }
-  
-  /* Dark mode specific overrides */
-  body {
-    background-color: var(--app-bg);
-    color: var(--app-text-primary);
-  }
-  
-  .bg-white {
-    background-color: var(--app-card-bg) !important;
-  }
-  
-  .bg-slate-50 {
-    background-color: var(--app-bg) !important;
-  }
-  
-  .bg-gray-50 {
-    background-color: var(--app-bg) !important;
-  }
-  
-  .text-slate-900, .text-gray-900 {
-    color: var(--app-text-primary) !important;
-  }
-  
-  .text-slate-800, .text-gray-800 {
-    color: var(--app-text-primary) !important;
-  }
-  
-  .text-slate-700, .text-gray-700 {
-    color: var(--app-text-secondary) !important;
-  }
-  
-  .text-slate-600, .text-gray-600 {
-    color: var(--app-text-secondary) !important;
-  }
-  
-  .text-slate-500, .text-gray-500 {
-    color: var(--app-text-muted) !important;
-  }
-  
-  .border-slate-200, .border-gray-200 {
-    border-color: var(--app-border) !important;
-  }
-  
-  .border-slate-100, .border-gray-100 {
-    border-color: var(--app-border) !important;
-  }
-  
-  /* Card backgrounds */
-  .bg-white\/80 {
-    background-color: rgba(30, 41, 59, 0.8) !important;
-  }
-  
-  .bg-white\/95 {
-    background-color: rgba(30, 41, 59, 0.95) !important;
-  }
-  
-  /* Hover states */
-  .hover\:bg-slate-50:hover {
-    background-color: var(--app-hover) !important;
-  }
-  
-  .hover\:bg-slate-100:hover {
-    background-color: var(--app-hover) !important;
-  }
-  
-  /* Form inputs */
-  input, textarea, select {
-    background-color: var(--app-card-bg);
-    border-color: var(--app-border);
-    color: var(--app-text-primary);
-  }
-  
-  input::placeholder, textarea::placeholder {
-    color: var(--app-text-muted);
-  }
-  
-  /* Dropdown menus */
-  [data-radix-popper-content-wrapper] > div {
-    background-color: var(--app-card-bg) !important;
-    border-color: var(--app-border) !important;
-  }
-  
-  /* Dialog/Modal backgrounds */
-  [role="dialog"] {
-    background-color: var(--app-card-bg);
-  }
-  
-  /* Footer dark mode */
-  footer.bg-slate-900 {
-    background-color: #020617 !important; /* slate-950 for darker footer */
-  }
-}
-
-/* Utility classes for manual dark mode control */
-.dark-bg {
-  background-color: var(--app-bg);
-}
-
-.dark-card {
-  background-color: var(--app-card-bg);
-}
-
-.dark-text {
-  color: var(--app-text-primary);
-}
-
-.dark-text-secondary {
-  color: var(--app-text-secondary);
-}
-
-.dark-border {
-  border-color: var(--app-border);
+  --app-text-primary: #141414;
+  --app-text-secondary: #464646;
+  --app-text-muted: #828282;
+  --app-border: #D9EDE5;
+  --app-hover: #F0FAF5;
 }
 
 /* Safe area insets for mobile */
@@ -208,28 +54,16 @@
   .safe-area-top {
     padding-top: env(safe-area-inset-top);
   }
-  
+
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
-  
+
   .safe-area-left {
     padding-left: env(safe-area-inset-left);
   }
-  
+
   .safe-area-right {
     padding-right: env(safe-area-inset-right);
   }
-}
-
-/* Smooth color transitions for theme changes */
-* {
-  transition-property: background-color, border-color, color;
-  transition-duration: 150ms;
-  transition-timing-function: ease-in-out;
-}
-
-/* Disable transitions on page load */
-.no-transitions * {
-  transition: none !important;
 }
