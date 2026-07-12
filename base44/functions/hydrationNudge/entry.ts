@@ -147,7 +147,7 @@ Deno.serve(async (req) => {
                 title = 'Keep going — you can do this!';
                 message = `You have had ${doneOz} oz so far. Just ${remainingOz} oz left to hit your ${totalOz} oz goal today. You are ${Math.round(pct)}% of the way there.`;
             } else if (style === 'scientific') {
-                title = 'Hydration science reminder';
+                title = 'Your brain needs water';
                 message = `Your brain is 75% water. At ${Math.round(pct)}% of your goal (${doneOz} oz of ${totalOz} oz), a ${100 - Math.round(pct)}% shortfall can reduce cognitive performance. Drink ${remainingOz} oz now.`;
             } else if (style === 'biological') {
                 title = 'Biological hydration alert';
