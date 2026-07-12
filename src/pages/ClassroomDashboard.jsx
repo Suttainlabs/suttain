@@ -4,7 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { GraduationCap, Plus, Users, FlaskConical, Copy, Check, Search, Layers, ExternalLink } from 'lucide-react';
+import { GraduationCap, Plus, Users, FlaskConical, Copy, Check, Search, Layers, ExternalLink, Archive } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 import { base44 } from '@/api/base44Client';
 import CreateClassroomModal from '@/components/classroom/CreateClassroomModal';
 import CreateModuleModal from '@/components/classroom/CreateModuleModal';
@@ -25,6 +26,7 @@ export default function ClassroomDashboard() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [copiedCode, setCopiedCode] = useState(null);
   const [user, setUser] = useState(null);
+  const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -88,9 +90,22 @@ export default function ClassroomDashboard() {
   const archiveModule = async (mod) => {
     try {
       await base44.entities.ExperimentModule.update(mod.id, { status: 'archived' });
+      toast({ title: 'Module archived', description: `"${mod.title}" has been archived.` });
       fetchModules();
     } catch (err) {
       console.error('Failed to archive module:', err);
+      toast({ title: 'Failed to archive', description: err.message, variant: 'destructive' });
+    }
+  };
+
+  const restoreModule = async (mod) => {
+    try {
+      await base44.entities.ExperimentModule.update(mod.id, { status: 'active' });
+      toast({ title: 'Module restored', description: `"${mod.title}" is now active.` });
+      fetchModules();
+    } catch (err) {
+      console.error('Failed to restore module:', err);
+      toast({ title: 'Failed to restore', description: err.message, variant: 'destructive' });
     }
   };
 
@@ -246,13 +261,34 @@ export default function ClassroomDashboard() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid gap-3 md:grid-cols-2">
-                {modules.filter(m => m.status !== 'archived').map((mod, i) => (
-                  <motion.div key={mod.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-                    <ModuleCard module={mod} isTeacher={true} onEdit={archiveModule} />
-                  </motion.div>
-                ))}
-              </div>
+              <>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {modules.filter(m => m.status !== 'archived').map((mod, i) => (
+                    <motion.div key={mod.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
+                      <ModuleCard module={mod} isTeacher={true} onArchive={archiveModule} />
+                    </motion.div>
+                  ))}
+                </div>
+
+                {modules.filter(m => m.status === 'archived').length > 0 && (
+                  <div className="mt-4">
+                    <button
+                      onClick={() => setShowArchived(!showArchived)}
+                      className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-700 mb-2"
+                    >
+                      <Archive className="w-3.5 h-3.5" />
+                      {showArchived ? 'Hide' : 'Show'} Archived ({modules.filter(m => m.status === 'archived').length})
+                    </button>
+                    {showArchived && (
+                      <div className="grid gap-3 md:grid-cols-2">
+                        {modules.filter(m => m.status === 'archived').map((mod) => (
+                          <ModuleCard key={mod.id} module={mod} isTeacher={true} onRestore={restoreModule} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
             {/* All Suttain Tools */}
