@@ -75,8 +75,6 @@ const MySafetyProfile = lazy(() => import('./pages/MySafetyProfile'));
 const BatchRecords = lazy(() => import('./pages/BatchRecords'));
 const InteractionVisualization = lazy(() => import('./pages/InteractionVisualization'));
 const EnterpriseAPI = lazy(() => import('./pages/EnterpriseAPI'));
-const ClassroomDashboard = lazy(() => import('./pages/ClassroomDashboard'));
-const StudentLab = lazy(() => import('./pages/StudentLab'));
 // Import auth pages directly (not from pagesConfig which may not have them)
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -252,8 +250,7 @@ const AuthenticatedApp = () => {
       <Route path="/BillingDashboard" element={<LayoutWrapper currentPageName="BillingDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BillingDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BatchRecords" element={<LayoutWrapper currentPageName="BatchRecords"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BatchRecords /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/InteractionVisualization" element={<LayoutWrapper currentPageName="InteractionVisualization"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><InteractionVisualization /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/ClassroomDashboard" element={<LayoutWrapper currentPageName="ClassroomDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ClassroomDashboard /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/StudentLab" element={<LayoutWrapper currentPageName="StudentLab"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><StudentLab /></PageTransition></Suspense></LayoutWrapper>} />
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </AnimatePresence>

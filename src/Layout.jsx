@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, GraduationCap, BookOpen, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight, Code2, Sprout } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, Cpu, BarChart2, FolderOpen, ShieldCheck, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight, Code2, Sprout } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -497,18 +497,7 @@ export default function Layout({ children, currentPageName }) {
                       <span className="text-sm font-medium text-slate-700">Suttain Farm</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("ClassroomDashboard")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
-                      <GraduationCap className="w-4 h-4 flex-shrink-0" style={{ color: "#007850" }} />
-                      <span className="text-sm font-medium text-slate-700">Classroom Research OS</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("StudentLab")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
-                      <BookOpen className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
-                      <span className="text-sm font-medium text-slate-700">Student Lab</span>
-                    </Link>
-                  </DropdownMenuItem>
+
                 </DropdownMenuContent>
               </DropdownMenu>
             </nav>
@@ -719,33 +708,7 @@ export default function Layout({ children, currentPageName }) {
                     </Link>
                   </motion.div>
 
-                  {/* Classroom — Mobile */}
-                  <motion.div variants={mobileNavItemVariants}>
-                    <Link
-                      to={createPageUrl("ClassroomDashboard")}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        location.pathname === createPageUrl("ClassroomDashboard") ? "bg-teal-100 text-teal-700" : "text-suttain-dark hover:bg-teal-50"
-                      }`}
-                    >
-                      <GraduationCap className="w-5 h-5" />
-                      Classroom Research OS
-                    </Link>
-                  </motion.div>
 
-                  {/* Student Lab — Mobile */}
-                  <motion.div variants={mobileNavItemVariants}>
-                    <Link
-                      to={createPageUrl("StudentLab")}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        location.pathname === createPageUrl("StudentLab") ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
-                      }`}
-                    >
-                      <BookOpen className="w-5 h-5" />
-                      Student Lab
-                    </Link>
-                  </motion.div>
 
                   {/* Research Tools Collapsible - Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
