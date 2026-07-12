@@ -99,6 +99,25 @@ Deno.serve(async (req) => {
         const plan = u.subscription_plan;
         const status = u.subscription_status;
 
+        // Check admin_granted_access — only admins (role check above) should have it.
+        // Non-admin users with admin_granted_access bypass payment — revoke it.
+        if (u.admin_granted_access) {
+          results.revoked.push({
+            id: u.id, email: u.email, full_name: u.full_name,
+            plan: plan || 'none', reason: 'ADMIN_GRANTED_ACCESS_BYPASS'
+          });
+          updatesToApply.push({
+            id: u.id,
+            admin_granted_access: false,
+            subscription_plan: 'free',
+            subscription_status: 'none',
+            subscription_billing: null,
+            stripe_subscription_id: null,
+            subscription_end_date: null,
+          });
+          continue;
+        }
+
         // Already on trial/free — skip
         if (!plan || plan === 'trial' || plan === 'free') {
           results.already_free++;
