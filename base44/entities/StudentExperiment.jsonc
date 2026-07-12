@@ -10,6 +10,14 @@
       "type": "string",
       "description": "Denormalized classroom name for display"
     },
+    "module_id": {
+      "type": "string",
+      "description": "Reference to the ExperimentModule this submission is for"
+    },
+    "module_title": {
+      "type": "string",
+      "description": "Denormalized module title for display"
+    },
     "student_name": {
       "type": "string",
       "description": "Student's display name"
@@ -145,10 +153,15 @@
         "under_review",
         "approved",
         "flagged",
-        "rejected"
+        "rejected",
+        "graded"
       ],
       "default": "submitted",
       "description": "Current review status"
+    },
+    "grade": {
+      "type": "number",
+      "description": "Numerical grade assigned by the teacher (0-100)"
     },
     "teacher_feedback": {
       "type": "string",

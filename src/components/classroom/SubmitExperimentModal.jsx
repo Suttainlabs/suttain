@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,14 +8,21 @@ import { Loader2, FlaskConical, Plus, X, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { evaluateExperiment } from '@/functions/evaluateExperiment';
 
-export default function SubmitExperimentModal({ isOpen, onClose, classroom, onSubmitted }) {
+export default function SubmitExperimentModal({ isOpen, onClose, classroom, modules = [], defaultModuleId = '', onSubmitted }) {
   const [title, setTitle] = useState('');
   const [hypothesis, setHypothesis] = useState('');
+  const [selectedModuleId, setSelectedModuleId] = useState(defaultModuleId);
   const [chemicals, setChemicals] = useState([{ name: '', concentration: '', amount: '' }]);
   const [conditions, setConditions] = useState({ temperature: '', pressure: '', ph: '', solvent: '', duration: '', notes: '' });
   const [submitting, setSubmitting] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedModuleId(defaultModuleId || '');
+    }
+  }, [isOpen, defaultModuleId]);
 
   const addChemical = () => setChemicals([...chemicals, { name: '', concentration: '', amount: '' }]);
   const removeChemical = (i) => setChemicals(chemicals.filter((_, idx) => idx !== i));
@@ -49,9 +56,12 @@ export default function SubmitExperimentModal({ isOpen, onClose, classroom, onSu
         console.error('Evaluation failed:', evalErr);
       }
 
+      const selectedModule = modules.find(m => m.id === selectedModuleId);
       const experiment = await base44.entities.StudentExperiment.create({
         classroom_id: classroom.id,
         classroom_name: classroom.name,
+        module_id: selectedModuleId || null,
+        module_title: selectedModule?.title || null,
         student_name: user?.full_name || 'Student',
         student_email: user?.email || '',
         title: title.trim(),
@@ -71,7 +81,7 @@ export default function SubmitExperimentModal({ isOpen, onClose, classroom, onSu
 
       onSubmitted(experiment);
       onClose();
-      setTitle(''); setHypothesis(''); setChemicals([{ name: '', concentration: '', amount: '' }]);
+      setTitle(''); setHypothesis(''); setSelectedModuleId(defaultModuleId || ''); setChemicals([{ name: '', concentration: '', amount: '' }]);
       setConditions({ temperature: '', pressure: '', ph: '', solvent: '', duration: '', notes: '' });
     } catch (err) {
       setError(err.message || 'Failed to submit experiment');
@@ -97,6 +107,22 @@ export default function SubmitExperimentModal({ isOpen, onClose, classroom, onSu
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
+          {modules.length > 0 && (
+            <div>
+              <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Module</Label>
+              <select
+                value={selectedModuleId}
+                onChange={(e) => setSelectedModuleId(e.target.value)}
+                className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+              >
+                <option value="">General submission (no specific module)</option>
+                {modules.map(m => (
+                  <option key={m.id} value={m.id}>{m.title}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div>
             <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Experiment Title *</Label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Effect of temperature on ascorbic acid degradation" required className="mt-1" />

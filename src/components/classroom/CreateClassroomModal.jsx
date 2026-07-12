@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, GraduationCap } from 'lucide-react';
+import { Loader2, GraduationCap, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { autoGenerateModules } from './suttainTools';
 
 function generateClassCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -48,6 +49,13 @@ export default function CreateClassroomModal({ isOpen, onClose, onCreated }) {
           show_citations: true
         }
       });
+      // Auto-generate default experiment modules for the new classroom
+      try {
+        await autoGenerateModules(classroom);
+      } catch (modErr) {
+        console.error('Failed to auto-generate modules:', modErr);
+      }
+
       onCreated(classroom);
       onClose();
       setName(''); setDescription(''); setResearchFocus('');

@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { CheckCircle, AlertTriangle, Clock, BookOpen, ExternalLink, FlaskConical, Shield, Star, MessageSquare } from 'lucide-react';
+import { CheckCircle, AlertTriangle, Clock, BookOpen, ExternalLink, FlaskConical, Shield, Star, GraduationCap, Layers, MessageSquare } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import GradingModal from './GradingModal';
 
 const LABEL_STYLES = {
   highly_feasible: { color: 'bg-green-100 text-green-700', icon: CheckCircle, label: 'Highly Feasible' },
@@ -20,15 +21,14 @@ const STATUS_STYLES = {
   submitted: 'bg-blue-100 text-blue-700',
   under_review: 'bg-amber-100 text-amber-700',
   approved: 'bg-green-100 text-green-700',
+  graded: 'bg-teal-100 text-teal-700',
   flagged: 'bg-orange-100 text-orange-700',
   rejected: 'bg-red-100 text-red-700'
 };
 
 export default function ExperimentCard({ experiment, isTeacher, onUpdate }) {
   const [expanded, setExpanded] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [feedback, setFeedback] = useState(experiment.teacher_feedback || '');
-  const [rating, setRating] = useState(experiment.teacher_rating || 0);
+  const [showGrading, setShowGrading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const labelStyle = experiment.feasibility_label ? LABEL_STYLES[experiment.feasibility_label] : null;
@@ -49,24 +49,6 @@ export default function ExperimentCard({ experiment, isTeacher, onUpdate }) {
     }
   };
 
-  const submitFeedback = async () => {
-    setSubmitting(true);
-    try {
-      await base44.entities.StudentExperiment.update(experiment.id, {
-        teacher_feedback: feedback,
-        teacher_rating: rating,
-        status: 'under_review',
-        reviewed_date: new Date().toISOString()
-      });
-      setShowFeedback(false);
-      onUpdate();
-    } catch (err) {
-      console.error('Failed to submit feedback:', err);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   return (
     <>
       <Card className="bg-white/90 backdrop-blur-sm border-slate-200 hover:shadow-md transition-shadow">
@@ -76,7 +58,17 @@ export default function ExperimentCard({ experiment, isTeacher, onUpdate }) {
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <h3 className="font-bold text-slate-900 text-sm truncate">{experiment.title}</h3>
                 <Badge className={`${STATUS_STYLES[experiment.status]} text-[10px]`}>{experiment.status.replace(/_/g, ' ')}</Badge>
+                {experiment.grade != null && (
+                  <Badge className="bg-teal-100 text-teal-700 text-[10px] font-bold">
+                    <GraduationCap className="w-2.5 h-2.5 mr-0.5" /> {experiment.grade}/100
+                  </Badge>
+                )}
               </div>
+              {experiment.module_title && (
+                <p className="text-[11px] text-violet-600 font-medium flex items-center gap-1 mb-0.5">
+                  <Layers className="w-2.5 h-2.5" /> {experiment.module_title}
+                </p>
+              )}
               <p className="text-xs text-slate-500">
                 {experiment.student_name} · {experiment.submitted_date ? new Date(experiment.submitted_date).toLocaleDateString() : ''}
               </p>
@@ -117,8 +109,8 @@ export default function ExperimentCard({ experiment, isTeacher, onUpdate }) {
                 <Button size="sm" variant="outline" onClick={() => updateStatus('flagged')} disabled={submitting} className="text-xs h-7 text-orange-600 border-orange-300 hover:bg-orange-50">
                   <AlertTriangle className="w-3 h-3 mr-1" /> Flag
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setShowFeedback(true)} className="text-xs h-7">
-                  <MessageSquare className="w-3 h-3 mr-1" /> Feedback
+                <Button size="sm" variant="outline" onClick={() => setShowGrading(true)} className="text-xs h-7 border-teal-300 text-teal-600 hover:bg-teal-50">
+                  <GraduationCap className="w-3 h-3 mr-1" /> Grade
                 </Button>
               </>
             )}
@@ -248,30 +240,13 @@ export default function ExperimentCard({ experiment, isTeacher, onUpdate }) {
         </DialogContent>
       </Dialog>
 
-      {/* Feedback Dialog */}
-      <Dialog open={showFeedback} onOpenChange={(open) => !open && setShowFeedback(false)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-base font-bold">Give Feedback</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 mb-1">Rating</p>
-              <div className="flex items-center gap-1">
-                {[1,2,3,4,5].map(n => (
-                  <button key={n} type="button" onClick={() => setRating(n)}>
-                    <Star className={`w-6 h-6 ${n <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300 hover:text-yellow-300'}`} />
-                  </button>
-                ))}
-              </div>
-            </div>
-            <Textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Your feedback for the student..." rows={4} />
-            <Button onClick={submitFeedback} disabled={submitting} className="w-full bg-teal-600 hover:bg-teal-700">
-              {submitting ? 'Saving...' : 'Save Feedback'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Grading Modal */}
+      <GradingModal
+        experiment={experiment}
+        isOpen={showGrading}
+        onClose={() => setShowGrading(false)}
+        onGraded={onUpdate}
+      />
     </>
   );
 }
