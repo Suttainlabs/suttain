@@ -60,29 +60,29 @@ Explain in exactly 2 sentences what these metrics tell us about which domains ar
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-5">
-        <label className="text-xs font-semibold text-slate-400 mb-1.5 block">UniProt ID</label>
+      <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
+        <label className="text-xs font-semibold text-slate-600 mb-1.5 block">UniProt ID</label>
         <div className="flex gap-2">
           <Input
             value={uniprotId}
             onChange={e => setUniprotId(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleLoad()}
             placeholder="e.g. P04637"
-            className="bg-slate-900/50 border-slate-700 text-white"
+            className="bg-white border-slate-300 text-slate-800"
           />
-          <Button onClick={handleLoad} disabled={loading} className="bg-[#0D9E8E] hover:bg-[#0b8a7d] text-white">
+          <Button onClick={handleLoad} disabled={loading} className="bg-[#007850] hover:bg-[#00695C] text-white">
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : <Search className="w-4 h-4 mr-1.5" />}
             Load PAE Matrix
           </Button>
         </div>
-        {error && <p className="text-xs text-red-400 mt-2">{error}</p>}
+        {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
       </div>
 
       {prediction && (
         <>
           {/* PAE Image */}
-          <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-5">
-            <h3 className="text-sm font-bold text-white mb-2">Predicted Aligned Error (PAE) Matrix</h3>
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
+            <h3 className="text-sm font-bold text-slate-900 mb-2">Predicted Aligned Error (PAE) Matrix</h3>
             <p className="text-[11px] text-slate-500 mb-3">Dark = high confidence, Light = uncertain</p>
             {prediction.paeImageUrl && (
               <img src={prediction.paeImageUrl} alt="PAE Heatmap" className="w-full rounded-lg" />
@@ -90,26 +90,26 @@ Explain in exactly 2 sentences what these metrics tell us about which domains ar
           </div>
 
           {/* Max PAE stat */}
-          <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-5">
-            <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Maximum Structural Uncertainty</p>
-            <p className="text-3xl font-black text-white">
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
+            <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Maximum Structural Uncertainty</p>
+            <p className="text-3xl font-black text-slate-900">
               {maxPae != null ? maxPae.toFixed(1) : (prediction.max_predicted_aligned_error?.toFixed(1) || '—')}
               <span className="text-sm font-normal text-slate-500 ml-2">Å</span>
             </p>
           </div>
 
           {/* Interpretation card */}
-          <div className="bg-gradient-to-br from-violet-500/10 to-[#0D9E8E]/10 border border-violet-500/30 rounded-xl p-5">
+          <div className="bg-gradient-to-br from-violet-50 to-teal-50 border border-violet-200 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-violet-400" />
-              <h3 className="text-sm font-bold text-white">AI Interpretation</h3>
+              <Sparkles className="w-4 h-4 text-violet-500" />
+              <h3 className="text-sm font-bold text-slate-900">AI Interpretation</h3>
             </div>
             {interpLoading ? (
               <div className="flex items-center gap-2 text-slate-400 text-sm">
                 <Loader2 className="w-4 h-4 animate-spin" /> Generating interpretation...
               </div>
             ) : (
-              <p className="text-sm text-slate-200 leading-relaxed">{interpretation}</p>
+              <p className="text-sm text-slate-700 leading-relaxed">{interpretation}</p>
             )}
           </div>
 

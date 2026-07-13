@@ -12,17 +12,17 @@ const BINDING_COLORS = {
   Confirmed: { bg: '#dc262620', text: '#dc2626' },
   Probable: { bg: '#ea580c20', text: '#ea580c' },
   Possible: { bg: '#f59e0b20', text: '#f59e0b' },
-  Unlikely: { bg: '#0d9e8e20', text: '#0d9e8e' },
+  Unlikely: { bg: '#00785020', text: '#007850' },
   None: { bg: '#16a34a20', text: '#16a34a' },
 };
 
 const RISK_COLORS = {
-  Safe: '#16a34a', Low: '#0d9e8e', Moderate: '#f59e0b', High: '#ea580c', Critical: '#dc2626',
+  Safe: '#16a34a', Low: '#007850', Moderate: '#f59e0b', High: '#ea580c', Critical: '#dc2626',
 };
 
 function plddtDot(score) {
   if (score > 90) return '#2563eb';
-  if (score >= 70) return '#0d9e8e';
+  if (score >= 70) return '#007850';
   if (score >= 50) return '#f59e0b';
   return '#dc2626';
 }

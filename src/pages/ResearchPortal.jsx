@@ -121,7 +121,7 @@ export default function ResearchPortal() {
   return (
     <div className="min-h-screen bg-[#EDF7F2] text-slate-800">
       {/* Sub-header */}
-      <div className="border-b border-slate-200 bg-white/80 sticky top-16 z-20">
+      <div className="border-b border-slate-200 bg-white/80 sticky top-[68px] z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
           <Microscope className="w-3.5 h-3.5 text-[#007850]" />
           <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Research Portal</span>

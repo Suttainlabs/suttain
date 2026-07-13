@@ -174,7 +174,7 @@ export default function ResearchDashboard() {
   return (
     <div className="min-h-screen bg-[#EDF7F2] text-slate-800">
       {/* Sub-header — breadcrumb, no back button */}
-      <div className="border-b border-slate-200 bg-white/80 sticky top-16 z-20">
+      <div className="border-b border-slate-200 bg-white/80 sticky top-[68px] z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-2">
           <Link to={createPageUrl('ResearchPortal')} className="text-[11px] font-semibold text-slate-400 hover:text-[#6B3FA0] transition-colors uppercase tracking-widest">
             Suttain Research
@@ -185,7 +185,7 @@ export default function ResearchDashboard() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
         {/* Greeting */}
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>

@@ -7,7 +7,7 @@ const MODE_META = {
   merge: { label: 'Merger', icon: Layers, color: '#8B5CF6' },
   missing_residues: { label: 'Missing Residues', icon: Search, color: '#F59E0B' },
   renumber: { label: 'Renumber', icon: Hash, color: '#EC4899' },
-  grid_params: { label: 'Grid Generator', icon: LayoutGrid, color: '#0D9E8E' },
+  grid_params: { label: 'Grid Generator', icon: LayoutGrid, color: '#007850' },
   ligand_grid_params: { label: 'Ligand Grid', icon: Target, color: '#EF4444' },
 };
 
@@ -33,8 +33,8 @@ export default function StructurePrepSuite({
               onClick={() => setActiveMode(mode)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all border ${
                 isActive
-                  ? 'bg-slate-700/60 border-slate-600 text-white'
-                  : 'bg-slate-800/40 border-slate-700/50 text-slate-500 hover:text-slate-300 hover:border-slate-600'
+                  ? 'bg-violet-100 border-violet-300 text-violet-700'
+                  : 'bg-white border-slate-200 text-slate-600 hover:text-slate-800 hover:border-slate-300'
               }`}
             >
               <Icon className="w-3 h-3" style={{ color: isActive ? meta.color : undefined }} />

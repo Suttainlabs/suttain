@@ -27,7 +27,7 @@ export default function HazardEngine() {
     user?.admin_granted_access === true;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#EDF7F2]">
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">

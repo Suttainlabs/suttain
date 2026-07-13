@@ -41,7 +41,7 @@ const MODE_CONFIG = {
     title: 'Grid Parameter Generator',
     description: 'Generate AutoDock Vina and AutoDock4 grid parameters from selected residues. Computes center from averaged atom coordinates plus padding.',
     icon: LayoutGrid,
-    color: '#0D9E8E',
+    color: '#007850',
     inputs: ['pdb', 'residues', 'padding'],
   },
   ligand_grid_params: {
@@ -133,8 +133,8 @@ function PdbDropZone({ label, onFile, fileName }) {
       onClick={() => inputRef.current?.click()}
       className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors ${
         dragging
-          ? 'border-[#0D9E8E] bg-[#0D9E8E]/10'
-          : 'border-slate-700 hover:border-slate-600'
+          ? 'border-[#007850] bg-[#007850]/10'
+          : 'border-slate-300 hover:border-slate-600'
       }`}
     >
       <input
@@ -146,12 +146,12 @@ function PdbDropZone({ label, onFile, fileName }) {
       />
       {fileName ? (
         <div className="flex items-center justify-center gap-2">
-          <FileText className="w-4 h-4 text-[#0D9E8E]" />
-          <span className="text-xs font-semibold text-slate-300">{fileName}</span>
+          <FileText className="w-4 h-4 text-[#007850]" />
+          <span className="text-xs font-semibold text-slate-700">{fileName}</span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-1.5">
-          <Upload className="w-5 h-5 text-slate-600" />
+          <Upload className="w-5 h-5 text-slate-400" />
           <p className="text-xs text-slate-500">{label}</p>
           <p className="text-[10px] text-slate-700">Drag & drop or click to browse</p>
         </div>
@@ -172,9 +172,9 @@ function CopyButton({ text, label }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[10px] font-semibold text-slate-400 hover:text-slate-200 transition-colors"
+      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[10px] font-semibold text-slate-400 hover:text-slate-200 transition-colors"
     >
-      {copied ? <Check className="w-3 h-3 text-[#0D9E8E]" /> : <Copy className="w-3 h-3" />}
+      {copied ? <Check className="w-3 h-3 text-[#007850]" /> : <Copy className="w-3 h-3" />}
       {copied ? 'Copied!' : label || 'Copy'}
     </button>
   );
@@ -184,8 +184,8 @@ function CopyButton({ text, label }) {
 
 function CitationFooter() {
   return (
-    <div className="mt-4 pt-3 border-t border-slate-800">
-      <p className="text-[10px] text-slate-600 leading-relaxed">
+    <div className="mt-4 pt-3 border-t border-slate-200">
+      <p className="text-[10px] text-slate-400 leading-relaxed">
         PDB operations powered by Biopython algorithms. Cock et al., 2009,
         Bioinformatics 25(11):1422-3. BSD-3-Clause License — free for commercial use.
       </p>
@@ -321,7 +321,7 @@ export default function StructurePrepPanel({
   const hasShared = sharedPdb.content && !activePdb;
 
   return (
-    <div className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-4">
+    <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <div
@@ -331,7 +331,7 @@ export default function StructurePrepPanel({
           <Icon className="w-4 h-4" style={{ color: config.color }} />
         </div>
         <div className="min-w-0">
-          <h3 className="text-sm font-bold text-white leading-tight">{config.title}</h3>
+          <h3 className="text-sm font-bold text-slate-900 leading-tight">{config.title}</h3>
           <p className="text-[11px] text-slate-500 leading-relaxed mt-0.5">{config.description}</p>
         </div>
       </div>
@@ -342,7 +342,7 @@ export default function StructurePrepPanel({
         {hasShared && (
           <button
             onClick={useSharedPdb}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[#0D9E8E]/10 border border-[#0D9E8E]/30 text-[#0D9E8E] text-xs font-semibold hover:bg-[#0D9E8E]/20 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[#007850]/10 border border-[#007850]/30 text-[#007850] text-xs font-semibold hover:bg-[#007850]/20 transition-colors"
           >
             <FileText className="w-3.5 h-3.5" />
             Use loaded structure: {sharedPdb.name}
@@ -377,7 +377,7 @@ export default function StructurePrepPanel({
               value={residues}
               onChange={(e) => setResidues(e.target.value)}
               placeholder="e.g. 45, 46, 47, 88, 92"
-              className="w-full bg-slate-800 border border-slate-700 focus:border-[#0D9E8E] text-white placeholder-slate-600 text-xs px-3 py-2 rounded-lg outline-none transition-colors"
+              className="w-full bg-white border border-slate-300 focus:border-[#007850] text-slate-900 placeholder-slate-400 text-xs px-3 py-2 rounded-lg outline-none transition-colors"
             />
           </div>
         )}
@@ -393,7 +393,7 @@ export default function StructurePrepPanel({
               step="0.5"
               value={padding}
               onChange={(e) => setPadding(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 focus:border-[#0D9E8E] text-white text-xs px-3 py-2 rounded-lg outline-none transition-colors"
+              className="w-full bg-white border border-slate-300 focus:border-[#007850] text-slate-900 text-xs px-3 py-2 rounded-lg outline-none transition-colors"
             />
           </div>
         )}
@@ -408,7 +408,7 @@ export default function StructurePrepPanel({
               type="number"
               value={startResidue}
               onChange={(e) => setStartResidue(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 focus:border-[#0D9E8E] text-white text-xs px-3 py-2 rounded-lg outline-none transition-colors"
+              className="w-full bg-white border border-slate-300 focus:border-[#007850] text-slate-900 text-xs px-3 py-2 rounded-lg outline-none transition-colors"
             />
           </div>
         )}
@@ -417,7 +417,7 @@ export default function StructurePrepPanel({
         <button
           onClick={handleRun}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#0D9E8E] hover:bg-[#0B8A7E] text-white text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#007850] hover:bg-[#00695C] text-slate-900 text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
         >
           {loading ? (
             <>
@@ -435,9 +435,9 @@ export default function StructurePrepPanel({
 
       {/* Error */}
       {error && (
-        <div className="mt-3 flex items-start gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30">
-          <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
-          <p className="text-[11px] text-red-400 leading-relaxed">{error}</p>
+        <div className="mt-3 flex items-start gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200">
+          <AlertCircle className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
+          <p className="text-[11px] text-red-500 leading-relaxed">{error}</p>
         </div>
       )}
 
@@ -448,21 +448,21 @@ export default function StructurePrepPanel({
           {mode === 'split' && (
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                <Check className="w-3 h-3 text-[#0D9E8E]" />
+                <Check className="w-3 h-3 text-[#007850]" />
                 Protein: {result.proteinAtomCount} atoms · Ligand: {result.ligandAtomCount} atoms
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col gap-1.5">
                   <button
                     onClick={() => downloadFile(result.proteinPdb, 'protein.pdb')}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-slate-300 transition-colors"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 transition-colors"
                   >
                     <Download className="w-3 h-3" /> protein.pdb
                   </button>
                   {onResult && (
                     <button
                       onClick={() => handleViewIn3D(result.proteinPdb, 'protein.pdb')}
-                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#0D9E8E]/10 hover:bg-[#0D9E8E]/20 text-[11px] font-semibold text-[#0D9E8E] transition-colors"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#007850]/10 hover:bg-[#007850]/20 text-[11px] font-semibold text-[#007850] transition-colors"
                     >
                       <Eye className="w-3 h-3" /> View 3D
                     </button>
@@ -473,21 +473,21 @@ export default function StructurePrepPanel({
                     <>
                       <button
                         onClick={() => downloadFile(result.ligandPdb, 'ligand.pdb')}
-                        className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-slate-300 transition-colors"
+                        className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 transition-colors"
                       >
                         <Download className="w-3 h-3" /> ligand.pdb
                       </button>
                       {onResult && (
                         <button
                           onClick={() => handleViewIn3D(result.ligandPdb, 'ligand.pdb')}
-                          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#0D9E8E]/10 hover:bg-[#0D9E8E]/20 text-[11px] font-semibold text-[#0D9E8E] transition-colors"
+                          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#007850]/10 hover:bg-[#007850]/20 text-[11px] font-semibold text-[#007850] transition-colors"
                         >
                           <Eye className="w-3 h-3" /> View 3D
                         </button>
                       )}
                     </>
                   ) : (
-                    <p className="text-[10px] text-slate-600 text-center py-2">No ligand atoms detected</p>
+                    <p className="text-[10px] text-slate-400 text-center py-2">No ligand atoms detected</p>
                   )}
                 </div>
               </div>
@@ -498,20 +498,20 @@ export default function StructurePrepPanel({
           {mode === 'merge' && (
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                <Check className="w-3 h-3 text-[#0D9E8E]" />
+                <Check className="w-3 h-3 text-[#007850]" />
                 Merged complex: {result.totalAtoms} atoms
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => downloadFile(result.mergedPdb, 'complex.pdb')}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-slate-300 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 transition-colors"
                 >
                   <Download className="w-3 h-3" /> complex.pdb
                 </button>
                 {onResult && (
                   <button
                     onClick={() => handleViewIn3D(result.mergedPdb, 'complex.pdb')}
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#0D9E8E]/10 hover:bg-[#0D9E8E]/20 text-[11px] font-semibold text-[#0D9E8E] transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#007850]/10 hover:bg-[#007850]/20 text-[11px] font-semibold text-[#007850] transition-colors"
                   >
                     <Eye className="w-3 h-3" /> View 3D
                   </button>
@@ -527,23 +527,23 @@ export default function StructurePrepPanel({
                 <p className="text-[11px] text-slate-500 text-center py-3">No residue numbering data found.</p>
               ) : (
                 result.chains.map((c) => (
-                  <div key={c.chain} className="bg-slate-800/60 rounded-lg p-3">
+                  <div key={c.chain} className="bg-slate-50 border border-slate-200 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-slate-300">Chain {c.chain}</span>
-                      <span className="text-[10px] text-slate-600">
+                      <span className="text-xs font-bold text-slate-700">Chain {c.chain}</span>
+                      <span className="text-[10px] text-slate-400">
                         {c.observedCount} observed · range {c.range}
                       </span>
                     </div>
                     {c.missing.length === 0 ? (
-                      <p className="text-[10px] text-[#0D9E8E]">No gaps detected</p>
+                      <p className="text-[10px] text-[#007850]">No gaps detected</p>
                     ) : (
                       <div className="space-y-1">
                         {c.missing.map((m, i) => (
                           <div key={i} className="flex items-center gap-2 text-[10px]">
-                            <span className="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 font-mono font-bold">
+                            <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-600 font-mono font-bold">
                               {m.start === m.end ? m.start : `${m.start}-${m.end}`}
                             </span>
-                            <span className="text-slate-600">{m.count} residue{m.count > 1 ? 's' : ''}</span>
+                            <span className="text-slate-400">{m.count} residue{m.count > 1 ? 's' : ''}</span>
                           </div>
                         ))}
                       </div>
@@ -558,20 +558,20 @@ export default function StructurePrepPanel({
           {mode === 'renumber' && (
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                <Check className="w-3 h-3 text-[#0D9E8E]" />
+                <Check className="w-3 h-3 text-[#007850]" />
                 Renumbered from residue {result.startResidue} · chains: {result.chains.join(', ')}
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => downloadFile(result.renumberedPdb, 'renumbered.pdb')}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-slate-300 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-semibold text-slate-700 transition-colors"
                 >
                   <Download className="w-3 h-3" /> renumbered.pdb
                 </button>
                 {onResult && (
                   <button
                     onClick={() => handleViewIn3D(result.renumberedPdb, 'renumbered.pdb')}
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#0D9E8E]/10 hover:bg-[#0D9E8E]/20 text-[11px] font-semibold text-[#0D9E8E] transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#007850]/10 hover:bg-[#007850]/20 text-[11px] font-semibold text-[#007850] transition-colors"
                   >
                     <Eye className="w-3 h-3" /> View 3D
                   </button>
@@ -586,34 +586,34 @@ export default function StructurePrepPanel({
               {/* Ligand info (ligand_grid_params only) */}
               {mode === 'ligand_grid_params' && (
                 <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                  <Check className="w-3 h-3 text-[#0D9E8E]" />
+                  <Check className="w-3 h-3 text-[#007850]" />
                   Ligand: {result.ligandNames.join(', ')} · {result.ligandAtomCount} atoms ·
                   {' '}{result.nearbyResidueCount} residues within 5 Å
                 </div>
               )}
 
               {/* Vina params */}
-              <div className="bg-slate-800/60 rounded-lg p-3">
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     AutoDock Vina
                   </span>
                   <CopyButton text={formatVinaParams(result.vina)} label="Copy Vina" />
                 </div>
-                <pre className="text-[10px] font-mono text-slate-300 leading-relaxed">
+                <pre className="text-[10px] font-mono text-slate-700 leading-relaxed">
 {formatVinaParams(result.vina)}
                 </pre>
               </div>
 
               {/* AutoDock4 params */}
-              <div className="bg-slate-800/60 rounded-lg p-3">
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     AutoDock4
                   </span>
                   <CopyButton text={formatAutodockParams(result.autodock4)} label="Copy AD4" />
                 </div>
-                <pre className="text-[10px] font-mono text-slate-300 leading-relaxed">
+                <pre className="text-[10px] font-mono text-slate-700 leading-relaxed">
 {formatAutodockParams(result.autodock4)}
                 </pre>
               </div>
@@ -621,7 +621,7 @@ export default function StructurePrepPanel({
               {/* Use these params button */}
               <button
                 onClick={handleUseParams}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-[#0D9E8E] to-[#3B82F6] text-white text-xs font-bold transition-colors hover:opacity-90 active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-[#007850] to-[#3B82F6] text-slate-900 text-xs font-bold transition-colors hover:opacity-90 active:scale-[0.98]"
               >
                 <ArrowRight className="w-3.5 h-3.5" />
                 Use these params in docking

@@ -186,56 +186,56 @@ export default function APIPortal() {
   const ep = ENDPOINTS[activeEndpoint];
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-white">
+    <div className="min-h-screen bg-[#EDF7F2] text-slate-800">
       {/* Sub-header */}
-      <div className="border-b border-slate-700/50 bg-slate-900/60 sticky top-16 z-20">
+      <div className="border-b border-slate-200 bg-white/80 sticky top-[68px] z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
-          <button onClick={() => navigate(createPageUrl('ResearchPortal'))} className="text-slate-500 hover:text-slate-300 transition-colors">
+          <button onClick={() => navigate(createPageUrl('ResearchPortal'))} className="text-slate-400 hover:text-slate-600 transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <span className="w-px h-4 bg-slate-700" />
-          <Code2 className="w-3.5 h-3.5 text-[#8b5cf6]" />
-          <span className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">Research API</span>
-          <span className="ml-auto text-[10px] font-mono text-slate-600">v1.0 · REST · JSON</span>
+          <span className="w-px h-4 bg-slate-200" />
+          <Code2 className="w-3.5 h-3.5 text-[#6B3FA0]" />
+          <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Research API</span>
+          <span className="ml-auto text-[10px] font-mono text-slate-400">v1.0 · REST · JSON</span>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
 
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-2xl font-black text-white mb-2">Suttain Research API</h1>
-          <p className="text-sm text-slate-400 max-w-2xl leading-relaxed">
+          <h1 className="text-2xl font-black text-slate-900 mb-2">Suttain Research API</h1>
+          <p className="text-sm text-slate-500 max-w-2xl leading-relaxed">
             Integrate molecular intelligence directly into your workflows. Every response includes source citations and confidence scores on every field — no black box outputs.
           </p>
         </div>
 
         {/* API key management */}
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5 mb-8">
+        <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5 mb-8">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 flex items-center justify-center flex-shrink-0">
-                <Key className="w-4 h-4 text-[#8b5cf6]" />
+              <div className="w-9 h-9 rounded-lg bg-[#6B3FA0]/10 border border-[#6B3FA0]/20 flex items-center justify-center flex-shrink-0">
+                <Key className="w-4 h-4 text-[#6B3FA0]" />
               </div>
               <div>
-                <p className="text-sm font-bold text-white">API Key Management</p>
+                <p className="text-sm font-bold text-slate-900">API Key Management</p>
                 <p className="text-xs text-slate-500">Generate and manage your API keys below.</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2">
-                <Lock className="w-3.5 h-3.5 text-slate-600" />
-                <span className="text-xs font-mono text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>sk_suttain_••••••••••••••••</span>
+              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+                <Lock className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-xs font-mono text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>sk_suttain_••••••••••••••••</span>
               </div>
               <button
                 onClick={() => alert('API key generation requires an active Pro Researcher or higher subscription. Contact contact@suttain.com to get access.')}
-                className="px-3 py-2 bg-[#0D9E8E]/10 hover:bg-[#0D9E8E]/20 border border-[#0D9E8E]/30 text-[#0D9E8E] text-xs font-semibold rounded-lg transition-colors"
+                className="px-3 py-2 bg-[#007850]/10 hover:bg-[#007850]/20 border border-[#007850]/30 text-[#007850] text-xs font-semibold rounded-lg transition-colors"
               >
                 Generate Key
               </button>
             </div>
           </div>
-          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-700/40">
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-200">
             {[
               { label: 'Tier', value: user?.subscription_plan === 'pro' ? 'Pro Researcher' : 'Free Academic' },
               { label: 'Daily Limit', value: user?.subscription_plan === 'pro' ? '10,000 req' : '100 req' },
@@ -243,8 +243,8 @@ export default function APIPortal() {
               { label: 'Status', value: 'Active' },
             ].map(({ label, value }) => (
               <div key={label}>
-                <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wide">{label}</p>
-                <p className="text-xs text-slate-300 font-semibold mt-0.5">{value}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{label}</p>
+                <p className="text-xs text-slate-700 font-semibold mt-0.5">{value}</p>
               </div>
             ))}
           </div>
@@ -263,8 +263,8 @@ export default function APIPortal() {
                   onClick={() => setActiveEndpoint(i)}
                   className={`w-full text-left flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
                     activeEndpoint === i
-                      ? 'bg-[#0D9E8E]/10 border border-[#0D9E8E]/30'
-                      : 'hover:bg-slate-800/50 border border-transparent'
+                      ? 'bg-[#007850]/10 border border-[#007850]/30'
+                      : 'hover:bg-slate-50 border border-transparent'
                   }`}
                 >
                   <MethodBadge method={ep.method} />
@@ -279,10 +279,10 @@ export default function APIPortal() {
 
           {/* Endpoint detail */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
+            <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
               <div className="flex items-center gap-2 mb-1">
                 <MethodBadge method={ep.method} />
-                <span className="text-sm font-mono text-white" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{ep.path}</span>
+                <span className="text-sm font-mono text-slate-900" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{ep.path}</span>
               </div>
               <p className="text-xs text-slate-500 mb-5">{ep.description}</p>
 
@@ -290,10 +290,10 @@ export default function APIPortal() {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Parameters</p>
                 <div className="space-y-2">
                   {ep.params.map((p) => (
-                    <div key={p.name} className="flex items-start gap-3 py-2 border-b border-slate-700/30 last:border-0">
-                      <span className="text-xs font-mono text-[#0D9E8E] flex-shrink-0" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{p.name}</span>
-                      <span className="text-[10px] text-slate-600 flex-shrink-0">{p.type}</span>
-                      {p.required && <span className="text-[9px] text-red-400 font-bold flex-shrink-0">required</span>}
+                    <div key={p.name} className="flex items-start gap-3 py-2 border-b border-slate-100 last:border-0">
+                      <span className="text-xs font-mono text-[#007850] flex-shrink-0" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{p.name}</span>
+                      <span className="text-[10px] text-slate-400 flex-shrink-0">{p.type}</span>
+                      {p.required && <span className="text-[9px] text-red-500 font-bold flex-shrink-0">required</span>}
                       <span className="text-xs text-slate-500">{p.desc}</span>
                     </div>
                   ))}
@@ -305,18 +305,18 @@ export default function APIPortal() {
                   <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Example Response</p>
                   <CopyButton text={ep.response} />
                 </div>
-                <pre className="text-[10px] font-mono text-slate-400 bg-slate-900/80 rounded-lg p-3 overflow-x-auto leading-relaxed" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                <pre className="text-[10px] font-mono text-slate-600 bg-slate-50 border border-slate-200 rounded-lg p-3 overflow-x-auto leading-relaxed" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   {ep.response}
                 </pre>
               </div>
             </div>
 
             {/* SDK snippets */}
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
+            <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Terminal className="w-4 h-4 text-slate-500" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-slate-400">SDK Examples</span>
+                  <Terminal className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-bold uppercase tracking-widest text-slate-500">SDK Examples</span>
                 </div>
                 <div className="flex gap-1">
                   {['python', 'javascript'].map((lang) => (
@@ -325,8 +325,8 @@ export default function APIPortal() {
                       onClick={() => setActiveLang(lang)}
                       className={`text-[10px] font-bold px-2.5 py-1 rounded transition-colors ${
                         activeLang === lang
-                          ? 'bg-[#0D9E8E]/15 text-[#0D9E8E] border border-[#0D9E8E]/30'
-                          : 'text-slate-500 hover:text-slate-300'
+                          ? 'bg-[#007850]/10 text-[#007850] border border-[#007850]/30'
+                          : 'text-slate-400 hover:text-slate-600'
                       }`}
                     >
                       {lang === 'python' ? 'Python' : 'JavaScript'}
@@ -335,14 +335,14 @@ export default function APIPortal() {
                 </div>
               </div>
               <div className="relative">
-                <pre className="text-[10px] font-mono text-slate-400 bg-slate-900/80 rounded-lg p-3 overflow-x-auto leading-relaxed" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                <pre className="text-[10px] font-mono text-slate-600 bg-slate-50 border border-slate-200 rounded-lg p-3 overflow-x-auto leading-relaxed" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   {activeLang === 'python' ? PY_SNIPPET : JS_SNIPPET}
                 </pre>
                 <div className="absolute top-2 right-2">
                   <CopyButton text={activeLang === 'python' ? PY_SNIPPET : JS_SNIPPET} />
                 </div>
               </div>
-              <p className="text-[10px] text-slate-600 mt-3">
+              <p className="text-[10px] text-slate-400 mt-3">
                 SDK packages are in preview. Install via: <span className="font-mono text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>pip install suttain</span> or <span className="font-mono text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>npm install @suttain/sdk</span>
               </p>
             </div>

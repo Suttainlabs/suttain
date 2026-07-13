@@ -96,23 +96,23 @@ export default function MutationSensitivityAnalyzer() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-5 space-y-4">
+      <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5 space-y-4">
         <div className="flex gap-2">
           <Input
             value={uniprotId}
             onChange={e => setUniprotId(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleLoad()}
             placeholder="UniProt ID (e.g. P04637)"
-            className="bg-slate-900/50 border-slate-700 text-white"
+            className="bg-white border-slate-300 text-slate-800"
           />
-          <Button onClick={handleLoad} disabled={loading} className="bg-[#0D9E8E] hover:bg-[#0b8a7d] text-white">
+          <Button onClick={handleLoad} disabled={loading} className="bg-[#007850] hover:bg-[#00695C] text-white">
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : <Search className="w-4 h-4 mr-1.5" />}
             Load AlphaMissense Data
           </Button>
         </div>
         {prediction && (
           <div>
-            <label className="text-xs font-semibold text-slate-400 mb-1.5 block">Filter by residue number (optional — shows ±10 residues around a binding region)</label>
+            <label className="text-xs font-semibold text-slate-600 mb-1.5 block">Filter by residue number (optional — shows ±10 residues around a binding region)</label>
             <div className="flex items-center gap-2">
               <Filter className="w-3.5 h-3.5 text-slate-500" />
               <Input
@@ -120,46 +120,46 @@ export default function MutationSensitivityAnalyzer() {
                 value={residueFilter}
                 onChange={e => setResidueFilter(e.target.value)}
                 placeholder="e.g. 175"
-                className="bg-slate-900/50 border-slate-700 text-white max-w-[200px]"
+                className="bg-white border-slate-300 text-slate-800 max-w-[200px]"
               />
             </div>
           </div>
         )}
-        {error && <p className="text-xs text-red-400">{error}</p>}
+        {error && <p className="text-xs text-red-500">{error}</p>}
       </div>
 
       {variants.length > 0 && (
         <>
           {/* Summary stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4">
+            <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
               <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Total Variants</p>
-              <p className="text-3xl font-black text-white">{stats.total.toLocaleString()}</p>
+              <p className="text-3xl font-black text-slate-900">{stats.total.toLocaleString()}</p>
             </div>
-            <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4">
+            <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
               <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Likely Pathogenic</p>
               <p className="text-3xl font-black" style={{ color: CLASS_COLORS.LPath }}>{stats.lpath.toLocaleString()}</p>
             </div>
-            <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4">
+            <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
               <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Ambiguous</p>
               <p className="text-3xl font-black" style={{ color: CLASS_COLORS.Amb }}>{stats.amb.toLocaleString()}</p>
             </div>
-            <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4">
+            <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
               <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Likely Benign</p>
               <p className="text-3xl font-black" style={{ color: CLASS_COLORS.LBen }}>{stats.lben.toLocaleString()}</p>
             </div>
           </div>
 
           {/* Histogram */}
-          <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-5">
-            <h3 className="text-sm font-bold text-white mb-4">Pathogenicity Score Distribution</h3>
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
+            <h3 className="text-sm font-bold text-slate-900 mb-4">Pathogenicity Score Distribution</h3>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={histogram}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                 <XAxis dataKey="range" stroke="#64748b" fontSize={10} />
                 <YAxis stroke="#64748b" fontSize={10} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #E2E8F0', borderRadius: '8px', fontSize: '12px' }}
                 />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                   {histogram.map((entry, i) => (
@@ -171,21 +171,21 @@ export default function MutationSensitivityAnalyzer() {
           </div>
 
           {/* Insight block */}
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-            <p className="text-sm text-slate-200 leading-relaxed">
-              <span className="font-bold text-red-400">{pathPercent}%</span> of possible mutations in this protein are predicted to be pathogenic — indicating {pathPercent > 20 ? 'high' : pathPercent > 10 ? 'moderate' : 'low'} structural sensitivity to chemical interference.
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+            <p className="text-sm text-slate-700 leading-relaxed">
+              <span className="font-bold text-red-600">{pathPercent}%</span> of possible mutations in this protein are predicted to be pathogenic — indicating {pathPercent > 20 ? 'high' : pathPercent > 10 ? 'moderate' : 'low'} structural sensitivity to chemical interference.
             </p>
           </div>
 
           {/* Filterable table */}
-          <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-5">
-            <h3 className="text-sm font-bold text-white mb-4">
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
+            <h3 className="text-sm font-bold text-slate-900 mb-4">
               Variant Table {residueFilter && <span className="text-xs text-slate-500 font-normal">({filtered.length} filtered)</span>}
             </h3>
             <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
               <table className="w-full text-xs">
-                <thead className="sticky top-0 bg-slate-800">
-                  <tr className="text-left text-[10px] uppercase tracking-widest text-slate-500 border-b border-slate-700/50">
+                <thead className="sticky top-0 bg-slate-50">
+                  <tr className="text-left text-[10px] uppercase tracking-widest text-slate-500 border-b border-slate-200">
                     <th className="py-2 pr-3">Protein Variant</th>
                     <th className="py-2 pr-3">Pathogenicity Score</th>
                     <th className="py-2 pr-3">Classification</th>
@@ -193,9 +193,9 @@ export default function MutationSensitivityAnalyzer() {
                 </thead>
                 <tbody>
                   {filtered.slice(0, 500).map((v, i) => (
-                    <tr key={i} className="border-b border-slate-700/30">
-                      <td className="py-2 pr-3 font-mono text-slate-300">{v.protein_variant}</td>
-                      <td className="py-2 pr-3 font-mono text-slate-300">{v.am_pathogenicity?.toFixed(3)}</td>
+                    <tr key={i} className="border-b border-slate-100">
+                      <td className="py-2 pr-3 font-mono text-slate-700">{v.protein_variant}</td>
+                      <td className="py-2 pr-3 font-mono text-slate-700">{v.am_pathogenicity?.toFixed(3)}</td>
                       <td className="py-2 pr-3">
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: (CLASS_COLORS[v.am_class] || '#64748b') + '20', color: CLASS_COLORS[v.am_class] || '#64748b' }}>
                           {CLASS_LABELS[v.am_class] || v.am_class}

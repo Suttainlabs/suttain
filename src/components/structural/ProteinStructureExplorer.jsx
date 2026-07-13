@@ -9,7 +9,7 @@ import MolecularViewerManager from './MolecularViewerManager';
 
 const CONFIDENCE_COLORS = {
   veryHigh: '#2563eb',
-  confident: '#0d9e8e',
+  confident: '#007850',
   low: '#f59e0b',
   veryLow: '#dc2626',
 };
@@ -124,7 +124,7 @@ export default function ProteinStructureExplorer() {
               placeholder="P04637"
               className="bg-white border-slate-300 text-slate-800"
             />
-            <Button onClick={() => handleSearch()} disabled={loading} className="bg-[#0D9E8E] hover:bg-[#0b8a7d] text-white">
+            <Button onClick={() => handleSearch()} disabled={loading} className="bg-[#007850] hover:bg-[#0b8a7d] text-white">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
               Search
             </Button>
@@ -156,7 +156,7 @@ export default function ProteinStructureExplorer() {
                     onClick={() => { setUniprotId(r.accession); handleSearch(r.accession); }}
                     className="block w-full text-left text-xs px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors"
                   >
-                    <span className="font-mono text-[#0D9E8E] font-semibold">{r.accession}</span>
+                    <span className="font-mono text-[#007850] font-semibold">{r.accession}</span>
                     <span className="text-slate-600 ml-2">{r.gene}</span>
                     {r.description && <span className="text-slate-400 ml-2">— {r.description}</span>}
                   </button>
@@ -181,7 +181,7 @@ export default function ProteinStructureExplorer() {
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Gene Symbol</p>
-                <span className="inline-block px-3 py-1.5 rounded-lg bg-[#0D9E8E]/10 border border-[#0D9E8E]/30 text-[#0D9E8E] text-sm font-bold">
+                <span className="inline-block px-3 py-1.5 rounded-lg bg-[#007850]/10 border border-[#007850]/30 text-[#007850] text-sm font-bold">
                   {prediction.gene}
                 </span>
               </div>
@@ -274,7 +274,7 @@ export default function ProteinStructureExplorer() {
                     contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px' }}
                     labelStyle={{ color: '#475569' }}
                   />
-                  <ReferenceLine y={70} stroke="#0d9e8e" strokeDasharray="5 5" label={{ value: 'Confident threshold', fill: '#0d9e8e', fontSize: 10, position: 'insideTopRight' }} />
+                  <ReferenceLine y={70} stroke="#007850" strokeDasharray="5 5" label={{ value: 'Confident threshold', fill: '#007850', fontSize: 10, position: 'insideTopRight' }} />
                   <Line dataKey="score" stroke="#2563eb" strokeWidth={1.5} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
@@ -321,7 +321,7 @@ export default function ProteinStructureExplorer() {
                 href={`https://alphafold.ebi.ac.uk/entry/${prediction.uniprotAccession}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#0D9E8E]/10 hover:bg-[#0D9E8E]/20 border border-[#0D9E8E]/30 text-[#0D9E8E] text-xs font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#007850]/10 hover:bg-[#007850]/20 border border-[#007850]/30 text-[#007850] text-xs font-semibold transition-colors"
               >
                 <ExternalLink className="w-3.5 h-3.5" /> View on AlphaFold DB
               </a>

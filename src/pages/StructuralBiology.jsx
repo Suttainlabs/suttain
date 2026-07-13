@@ -127,15 +127,15 @@ export default function StructuralBiology() {
   const ActiveComponent = activeToolObj?.component;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 relative z-10">
+    <div className="min-h-screen bg-[#EDF7F2] text-slate-800 relative z-10">
       {/* Sub-header */}
-      <div className="border-b border-slate-200 bg-white relative z-10">
+      <div className="border-b border-slate-200 bg-white/80 sticky top-[68px] z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">
           <Dna className="w-3.5 h-3.5 text-[#2563eb]" />
           <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Structural Biology</span>
           <span className="ml-auto flex items-center gap-1.5 text-[10px] text-slate-400">
             <span className="px-1.5 py-0.5 rounded bg-[#2563eb]/10 text-[#2563eb] font-bold">AlphaFold DB</span>
-            <span className="px-1.5 py-0.5 rounded bg-[#0D9E8E]/10 text-[#0D9E8E] font-bold">CC BY 4.0</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#007850]/10 text-[#007850] font-bold">CC BY 4.0</span>
           </span>
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function StructuralBiology() {
         {activeTool === 'explorer' && !isPro && (
           <div className="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-xs text-slate-700">
             Free tier: {FREE_DAILY_LIMIT - searchCount} of {FREE_DAILY_LIMIT} daily searches remaining.{' '}
-            <Link to="/Pricing" className="text-[#0D9E8E] font-semibold hover:underline">Upgrade to Pro</Link> for unlimited access to all 5 tools.
+            <Link to="/Pricing" className="text-[#007850] font-semibold hover:underline">Upgrade to Pro</Link> for unlimited access to all 5 tools.
           </div>
         )}
 
@@ -196,7 +196,7 @@ export default function StructuralBiology() {
             <p className="text-xs text-slate-600">Tool 1 only — 3 searches per day</p>
           </div>
           <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
-            <p className="text-[10px] uppercase tracking-widest text-[#0D9E8E] mb-1">Researcher Pro</p>
+            <p className="text-[10px] uppercase tracking-widest text-[#007850] mb-1">Researcher Pro</p>
             <p className="text-xs text-slate-600">All 5 tools — unlimited searches</p>
           </div>
           <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
