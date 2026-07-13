@@ -143,8 +143,12 @@ export default function BenchmarkExplorer() {
       {/* Results count */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-slate-500">
-          Showing <span className="font-semibold text-slate-700">{paged.length}</span> of{' '}
-          <span className="font-semibold text-slate-700">{filtered.length}</span> compounds
+          {filtered.length > 0 ? (
+            <>Showing <span className="font-semibold text-slate-700">{page * PAGE_SIZE + 1}-{Math.min((page + 1) * PAGE_SIZE, filtered.length)}</span> of{' '}
+            <span className="font-semibold text-slate-700">{filtered.length}</span> compounds</>
+          ) : (
+            <>No compounds found</>
+          )}
         </p>
       </div>
 
