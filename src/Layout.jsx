@@ -411,7 +411,7 @@ export default function Layout({ children, currentPageName }) {
             </Link>
 
             {/* Desktop: minimal link row + menu trigger */}
-            <nav className="hidden lg:flex items-center gap-0.5 justify-self-center whitespace-nowrap min-w-0 overflow-hidden">
+            <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap flex-shrink-0">
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Tools dropdown */}
@@ -504,8 +504,10 @@ export default function Layout({ children, currentPageName }) {
             </nav>
 
             {/* Right side: language + auth */}
-            <div className="flex items-center gap-1.5 justify-self-end min-w-0 flex-shrink-0">
-              <LanguageSwitcher />
+            <div className="flex items-center gap-2 justify-self-end flex-shrink-0">
+              <div className="flex-shrink-0 border-l border-slate-200 pl-2">
+                <LanguageSwitcher />
+              </div>
               {!isAuthLoading && user && (
                 <div className="hidden md:flex items-center gap-2">
                   <TrialBadge trialStatus={trialStatus} />
