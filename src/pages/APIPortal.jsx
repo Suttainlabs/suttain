@@ -137,16 +137,16 @@ function CopyButton({ text }) {
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <button onClick={handleCopy} className="p-1.5 rounded hover:bg-slate-600 transition-colors text-slate-500 hover:text-slate-300">
-      {copied ? <CheckCheck className="w-3.5 h-3.5 text-[#0D9E8E]" /> : <Copy className="w-3.5 h-3.5" />}
+    <button onClick={handleCopy} className="p-1.5 rounded hover:bg-slate-100 transition-colors text-slate-400 hover:text-slate-600">
+      {copied ? <CheckCheck className="w-3.5 h-3.5 text-[#007850]" /> : <Copy className="w-3.5 h-3.5" />}
     </button>
   );
 }
 
 function MethodBadge({ method }) {
-  const colors = { GET: 'bg-emerald-500/10 text-emerald-400', POST: 'bg-blue-500/10 text-blue-400', DELETE: 'bg-red-500/10 text-red-400' };
+  const colors = { GET: 'bg-emerald-50 text-emerald-600', POST: 'bg-blue-50 text-blue-600', DELETE: 'bg-red-50 text-red-600' };
   return (
-    <span className={`text-[10px] font-bold px-2 py-0.5 rounded font-mono ${colors[method] || 'bg-slate-700 text-slate-400'}`}>
+    <span className={`text-[10px] font-bold px-2 py-0.5 rounded font-mono ${colors[method] || 'bg-slate-100 text-slate-500'}`}>
       {method}
     </span>
   );
