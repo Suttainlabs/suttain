@@ -73,6 +73,7 @@ const PAGE_META_DESCRIPTIONS = {
   LearningSuite: 'Suttain learning center — tutorials and guides on chemical safety, product formulation, and sustainable manufacturing from basics to advanced techniques.',
   ExternalDatabases: 'Explore external chemical databases integrated with Suttain — PubChem, ChEMBL, EPA CompTox, RCSB PDB, and more scientific data sources.',
   BookADemo: 'Book a demo of the Suttain chemical safety and compliance platform. See how our tools can streamline your formulation and regulatory workflows.',
+  ComputationalStudio: 'Suttain Computational Studio: a unified workspace for molecular intelligence, protein structure prediction, materials analysis, and hazard prediction with single run, batch, and pipeline modes.',
 };
 
 // Lazy-loaded components with error boundaries
@@ -288,6 +289,7 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const researchToolItems = [
+    { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction" },
     { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization" },
     { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization" },
     { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets" },
