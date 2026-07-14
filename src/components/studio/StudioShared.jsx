@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, Database, Cpu, FileOutput, Globe } from 'lucide-react';
+import { Lock, Database, Cpu, FileOutput, Globe, ShieldCheck } from 'lucide-react';
 
 export function TrustLabel({ source, type = 'database' }) {
   const icons = { database: Database, computed: Cpu, external: FileOutput, api: Globe };
@@ -43,6 +43,15 @@ export function UpgradePrompt({ feature }) {
       </div>
       <a href="/Pricing" className="text-sm font-semibold text-violet-600 hover:text-violet-700 whitespace-nowrap">Upgrade</a>
     </div>
+  );
+}
+
+export function SourcedBadge({ className = '' }) {
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-teal-50 to-violet-50 border border-teal-200 rounded-full text-xs font-semibold text-[#007850] ${className}`}>
+      <ShieldCheck className="w-3 h-3" />
+      Sourced and confidence-scored
+    </span>
   );
 }
 
