@@ -442,7 +442,9 @@ Deno.serve(async (req) => {
         metadata: {
           title: metadata.struct?.title || 'N/A',
           resolution: metadata.rcsb_entry_info?.resolution_combined?.[0] || null,
-          methods: metadata.rcsb_entry_info?.experimental_method || [],
+          methods: Array.isArray(metadata.rcsb_entry_info?.experimental_method)
+            ? metadata.rcsb_entry_info.experimental_method
+            : (metadata.rcsb_entry_info?.experimental_method ? [metadata.rcsb_entry_info.experimental_method] : []),
           organism: metadata.rcsb_entry_info?.source_organism_taxonomy_names?.[0] || 'N/A',
         },
         pdbText,
