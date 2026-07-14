@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { AgroProvider, useAgro } from '@/components/agro/AgroContext';
 import AgroHeader from '@/components/agro/AgroHeader';
 import { LANGUAGE_NAMES } from '@/components/agro/translations';
+import { WeatherAlertsPanel } from '@/components/agro/FarmPanels';
 
 const WEATHER_CODES = {
   0: { label: 'Clear sky', icon: Sun },
@@ -289,5 +290,12 @@ HARVEST: [advice]`;
 }
 
 export default function AgroWeather() {
-  return <AgroProvider><WeatherContent /></AgroProvider>;
+  return (
+    <AgroProvider>
+      <WeatherContent />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 border-t border-[#D4C5B0] mt-4">
+        <WeatherAlertsPanel />
+      </div>
+    </AgroProvider>
+  );
 }

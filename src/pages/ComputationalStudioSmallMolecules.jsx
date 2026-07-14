@@ -10,6 +10,7 @@ import PipelinePanel from '@/components/studio/PipelinePanel';
 import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
 import { SourcedBadge, TrustLabel, downloadTextFile } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
+import { DescriptorsPanel, ComparePanel, PubChemLookupPanel, ChEMBLLookupPanel } from '@/components/studio/SmallMoleculePanels';
 
 const INPUT_TYPES = [
   { value: 'name', label: 'Compound Name', placeholder: 'e.g. aspirin' },
@@ -450,6 +451,18 @@ export default function ComputationalStudioSmallMolecules() {
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter SMILES' }} isPro={isPro} />}
+
+        <div className="border-t border-slate-200 pt-6">
+          <h2 className="text-lg font-bold text-slate-900 mb-1">Direct Lookup Tools</h2>
+          <p className="text-sm text-slate-500 mb-4">Query live databases with full source transparency. No black box.</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <DescriptorsPanel />
+            <ComparePanel />
+            <PubChemLookupPanel />
+            <ChEMBLLookupPanel />
+          </div>
+        </div>
+
         <ApiCodeBlock code={API_CODE} filename="compound_lookup.py" title="Use via API" description="Query small molecules programmatically" />
       </div>
     </StudioLayout>

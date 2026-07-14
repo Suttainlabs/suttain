@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { AgroProvider, useAgro } from '@/components/agro/AgroContext';
 import AgroHeader from '@/components/agro/AgroHeader';
 import { LANGUAGE_NAMES } from '@/components/agro/translations';
+import { AgronomistChatPanel } from '@/components/agro/FarmPanels';
 
 function ChatContent() {
   const { t, language, activeFarmer, activeFarm } = useAgro();
@@ -282,5 +283,12 @@ Instructions:
 }
 
 export default function AgroChat() {
-  return <AgroProvider><ChatContent /></AgroProvider>;
+  return (
+    <AgroProvider>
+      <ChatContent />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 border-t border-[#D4C5B0] mt-4">
+        <AgronomistChatPanel />
+      </div>
+    </AgroProvider>
+  );
 }

@@ -5,6 +5,7 @@ import BenchmarkExplorer from '@/components/hazard/BenchmarkExplorer';
 import PredictionPanel from '@/components/hazard/PredictionPanel';
 import ValidationDashboard from '@/components/hazard/ValidationDashboard';
 import FeasibilityDemo from '@/components/hazard/FeasibilityDemo';
+import { HazardDataPanel, HazardExplanationPanel } from '@/components/hazard/HazardPanels';
 
 const TABS = [
   { id: 'benchmark', label: 'Benchmark', icon: Database, description: 'Curated gold-standard dataset' },
@@ -131,6 +132,17 @@ export default function HazardEngine() {
             {activeTab === 'predict' && <PredictionPanel isPro={isPro} />}
             {activeTab === 'validation' && <ValidationDashboard isPro={isPro} />}
             {activeTab === 'feasibility' && <FeasibilityDemo isPro={isPro} />}
+
+            {(activeTab === 'predict' || activeTab === 'benchmark') && (
+              <div className="mt-6 pt-6 border-t border-slate-200">
+                <h2 className="text-lg font-bold text-slate-900 mb-1">Chemical Identity and Explanation</h2>
+                <p className="text-sm text-slate-500 mb-4">Look up chemical identity from EPA CompTox + PubChem, and get an AI-powered hazard explanation with full source transparency.</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <HazardDataPanel />
+                  <HazardExplanationPanel />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

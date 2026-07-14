@@ -11,6 +11,7 @@ import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
 import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend } from '@/components/studio/StudioShared';
 import { computeProteinProperties, parsePDBAtoms } from '@/components/studio/proteinUtils';
 import AuthContext from '@/components/auth/AuthContext';
+import { RCSBLookupPanel, AlphaFoldLookupPanel, StructurePrepPanel, ProteinIntelligencePanel } from '@/components/studio/ProteinPanels';
 
 const INPUT_TYPES = [
   { value: 'pdb_id', label: 'PDB ID', placeholder: 'e.g. 1CRN' },
@@ -381,6 +382,22 @@ export default function ComputationalStudioProteins() {
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter PDB ID or UniProt ID' }} isPro={isPro} />}
+
+        <div className="border-t border-slate-200 pt-6">
+          <h2 className="text-lg font-bold text-slate-900 mb-1">Structure Lookup and Prep Tools</h2>
+          <p className="text-sm text-slate-500 mb-4">Query RCSB PDB and AlphaFold DB, run structure preparation utilities, and analyze protein-chemical interactions. Full source transparency.</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <RCSBLookupPanel />
+            <AlphaFoldLookupPanel />
+          </div>
+          <div className="mt-4">
+            <StructurePrepPanel />
+          </div>
+          <div className="mt-4">
+            <ProteinIntelligencePanel />
+          </div>
+        </div>
+
         <ApiCodeBlock code={API_CODE} filename="protein_lookup.py" title="Use via API" description="Query protein structures programmatically" />
       </div>
     </StudioLayout>
