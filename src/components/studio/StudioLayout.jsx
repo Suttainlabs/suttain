@@ -21,7 +21,7 @@ export default function StudioLayout({ children }) {
       <MolecularBackground className="fixed inset-0 z-0" opacity={0.035} />
       <div className="relative z-10">
         {/* Sub-navigation */}
-        <div className="sticky top-20 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div className="sticky top-14 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-center gap-3 h-12">
               <Link to="/ComputationalStudio" className="flex items-center gap-2 flex-shrink-0">
