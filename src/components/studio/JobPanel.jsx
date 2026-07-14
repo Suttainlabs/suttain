@@ -55,16 +55,6 @@ export default function JobPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-          <Briefcase className="w-5 h-5 text-white" />
-        </div>
-        <div>
-          <h3 className="text-xl font-bold text-slate-900">Jobs</h3>
-          <p className="text-sm text-slate-500">All submitted jobs across single run, batch, and pipeline modes</p>
-        </div>
-      </div>
-
       {isLoading ? (
         <div className="flex items-center justify-center h-32">
           <Loader2 className="w-6 h-6 text-slate-300 animate-spin" />
