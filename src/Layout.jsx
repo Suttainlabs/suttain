@@ -25,6 +25,7 @@ import useTrialStatus from './hooks/useTrialStatus';
 import useInactivityTimeout from './hooks/useInactivityTimeout';
 import TrialBadge from './components/trial/TrialBadge';
 import MolecularBackground from './components/shared/MolecularBackground';
+import NavToolCombobox from './components/navigation/NavToolCombobox';
 
 // ── Page title formatter (handles camelCase + acronyms) ────────────
 function formatPageTitle(slug) {
@@ -281,20 +282,20 @@ export default function Layout({ children, currentPageName }) {
   const helpMenuItems = [];
 
   const consumerToolItems = [
-    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in" },
-    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring" },
-    { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive" },
-    { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments" },
-    { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI" },
+    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
+    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", category: "Formulation" },
+    { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
+    { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments", category: "Wellness" },
+    { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety & Analysis" },
   ];
 
   const researchToolItems = [
-    { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction" },
-    { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization" },
-    { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization" },
-    { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets" },
-    { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration" },
-    { href: "HazardEngine", label: "Hazard Prediction Engine", icon: ShieldAlert, description: "Validated chemical hazard classification with confidence scores and full source traceability" },
+    { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction", category: "Workspace" },
+    { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization", category: "Molecular Intelligence" },
+    { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization", category: "Simulation" },
+    { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets", category: "Safety & Compliance" },
+    { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration", category: "Molecular Intelligence" },
+    { href: "HazardEngine", label: "Hazard Prediction Engine", icon: ShieldAlert, description: "Validated chemical hazard classification with confidence scores and full source traceability", category: "Safety & Compliance" },
   ];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
@@ -417,54 +418,10 @@ export default function Layout({ children, currentPageName }) {
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Tools dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
-                    <span>{t('nav_tools')}</span>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-72 p-2">
-                  {consumerToolItems.map((item) => (
-                    <DropdownMenuItem key={item.href} asChild>
-                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 px-3 py-2.5 rounded-lg">
-                        <item.icon className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#007850" }} />
-                        <div>
-                          <span className="text-sm font-semibold text-slate-800 block">{item.label}</span>
-                          <span className="text-xs text-slate-500 leading-snug">{item.description}</span>
-                        </div>
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} />
 
               {/* Research dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                    isResearchActive
-                      ? "bg-violet-100 text-violet-600"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}>
-                    <span>{t('nav_research')}</span>
-                    <ChevronDown className="w-3 h-3" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-72 p-2">
-                  <DropdownMenuLabel className="text-xs font-bold uppercase tracking-widest text-slate-500 px-2 py-1.5">Research Tools</DropdownMenuLabel>
-                  {researchToolItems.map((item) => (
-                    <DropdownMenuItem key={item.href} asChild>
-                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 px-3 py-2.5 rounded-lg">
-                        <item.icon className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#6B3FA0" }} />
-                        <div>
-                          <span className="text-sm font-semibold text-slate-800 block">{item.label}</span>
-                          <span className="text-xs text-slate-500 leading-snug">{item.description}</span>
-                        </div>
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} />
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
