@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Microscope } from 'lucide-react';
+import { Microscope, Download, ExternalLink } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import StudioLayout from '@/components/studio/StudioLayout';
 import Studio3DViewer from '@/components/studio/Studio3DViewer';
@@ -8,130 +8,343 @@ import SingleRunPanel from '@/components/studio/SingleRunPanel';
 import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
 import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
-import { SourcedBadge } from '@/components/studio/StudioShared';
+import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend } from '@/components/studio/StudioShared';
+import { computeProteinProperties, parsePDBAtoms } from '@/components/studio/proteinUtils';
 import AuthContext from '@/components/auth/AuthContext';
 
 const INPUT_TYPES = [
-  { value: 'sequence', label: 'Protein Sequence', placeholder: 'MKTAYIAKQRQISFVKSHF...' },
-  { value: 'uniprot', label: 'UniProt ID', placeholder: 'e.g. P00533' },
   { value: 'pdb_id', label: 'PDB ID', placeholder: 'e.g. 1CRN' },
+  { value: 'uniprot', label: 'UniProt ID', placeholder: 'e.g. P69905' },
+  { value: 'sequence', label: 'Protein Sequence', placeholder: 'MKTAYIAKQRQISFVKSHF...' },
   { value: 'chemical', label: 'Chemical Name or SMILES', placeholder: 'e.g. bisphenol A' },
   { value: 'file', label: 'File Upload', placeholder: '' },
 ];
 
 const d = r => r?.data?.data || r?.data || r;
 
+function ResultShell({ result, children }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="p-5">
+        <div className="flex items-center justify-between mb-4">
+          <SourcedBadge />
+          <TrustLabel source={result.source} type={result.sourceType} />
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function DataTable({ data }) {
+  if (!data || data.length === 0) return null;
+  return (
+    <div className="space-y-1.5">
+      {data.map(([key, value], i) => (
+        <div key={i} className="flex justify-between text-sm gap-2">
+          <span className="text-slate-500">{key}</span>
+          <span className="font-mono text-slate-800 text-right">{value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const TOOLS = [
-  {
-    id: 'alphafold',
-    label: 'AlphaFold Structure Prediction',
-    description: 'Fetch AlphaFold predicted structure from EBI by UniProt accession',
-    source: 'AlphaFold EBI',
-    sourceType: 'external',
-    engine: 'AlphaFold',
-    handler: async ({ input, inputType }) => {
-      const uniprotId = inputType === 'uniprot' ? input.trim() : input.trim();
-      const res = d(await base44.functions.invoke('alphafoldApi', { action: 'prediction', uniprotId }));
-      if (res.error) throw new Error(res.error);
-      const plddt = res.globalMetricValue || res.plddt;
-      return {
-        source: 'AlphaFold EBI', sourceType: 'external',
-        confidence: plddt ? Math.round(parseFloat(plddt)) : null,
-        label: 'Predicted protein structure',
-        data: [
-          ['UniProt ID', res.uniprotAccession || uniprotId],
-          ['Gene', res.gene || 'N/A'],
-          ['Description', res.uniprotDescription || 'N/A'],
-          ['pLDDT', plddt ? `${Math.round(parseFloat(plddt))}%` : 'N/A'],
-          ['Model', res.modelEntityId || 'N/A'],
-        ],
-        raw: res,
-      };
-    },
-  },
   {
     id: 'pdb',
     label: 'RCSB PDB Explorer',
-    description: 'Look up and explore structures from the RCSB Protein Data Bank',
+    description: 'Look up and explore structures from the RCSB Protein Data Bank with real 3D visualization',
     source: 'RCSB PDB', sourceType: 'database',
+    validate: ({ input, inputType }) => {
+      if (inputType !== 'pdb_id') return null;
+      const id = input.trim().toUpperCase();
+      if (!/^[1-9][A-Z0-9]{3}$/.test(id)) return 'PDB ID must be 4 characters, starting with a digit (e.g. 1CRN, 4HHB)';
+      return null;
+    },
     handler: async ({ input }) => {
       const pdbId = input.trim().toUpperCase();
-      const response = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdbId}`);
-      if (!response.ok) throw new Error(`PDB lookup failed: ${response.status}. Check the PDB ID.`);
-      const data = await response.json();
+      const metaRes = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdbId}`);
+      if (!metaRes.ok) throw new Error(`PDB lookup failed: ${metaRes.status}. Check the PDB ID and try again.`);
+      const metadata = await metaRes.json();
+      let atoms = [];
+      let pdbText = '';
+      try {
+        const pdbRes = await fetch(`https://files.rcsb.org/download/${pdbId}.pdb`);
+        if (pdbRes.ok) {
+          pdbText = await pdbRes.text();
+          atoms = parsePDBAtoms(pdbText);
+        }
+      } catch (e) {
+        // 3D structure may not load due to CORS, but metadata still valid
+      }
       return {
         source: 'RCSB PDB', sourceType: 'database', confidence: null,
-        label: 'PDB structure retrieved',
+        label: `Structure ${pdbId} loaded from RCSB`,
+        atoms, pdbText,
         data: [
-          ['PDB ID', data.rcsb_id || pdbId],
-          ['Title', data.struct?.title || 'N/A'],
-          ['Resolution', data.rcsb_entry_info?.resolution_combined?.[0] ? `${data.rcsb_entry_info.resolution_combined[0]} A` : 'N/A'],
-          ['Method', (data.rcsb_entry_info?.experimental_method || []).join(', ') || 'N/A'],
-          ['Organism', data.rcsb_entry_info?.source_organism_taxonomy_names?.[0] || 'N/A'],
+          ['PDB ID', pdbId],
+          ['Title', metadata.struct?.title || 'N/A'],
+          ['Resolution', metadata.rcsb_entry_info?.resolution_combined?.[0]
+            ? `${metadata.rcsb_entry_info.resolution_combined[0]} A` : 'N/A'],
+          ['Method', (metadata.rcsb_entry_info?.experimental_method || []).join(', ') || 'N/A'],
+          ['Organism', metadata.rcsb_entry_info?.source_organism_taxonomy_names?.[0] || 'N/A'],
+          ['Atoms loaded', atoms.length || 'See PDB file'],
         ],
-        raw: data,
+        raw: { pdbId, title: metadata.struct?.title, atomCount: atoms.length },
       };
     },
+    renderResult: (result) => (
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+        <div className="grid md:grid-cols-2">
+          <div className="border-b md:border-b-0 md:border-r border-slate-200" style={{ minHeight: 350 }}>
+            {result.atoms && result.atoms.length > 0
+              ? <Studio3DViewer atoms={result.atoms} height={350} />
+              : <div className="flex items-center justify-center h-[350px] text-sm text-slate-400">3D structure unavailable</div>}
+          </div>
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-3">
+              <SourcedBadge />
+              <TrustLabel source={result.source} type={result.sourceType} />
+            </div>
+            <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+            <DataTable data={result.data} />
+            {result.pdbText && (
+              <button onClick={() => downloadTextFile(`${result.raw.pdbId}.pdb`, result.pdbText, 'chemical/x-pdb')}
+                className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+                <Download className="w-3.5 h-3.5" /> Download PDB file
+              </button>
+            )}
+            <a href={`https://www.rcsb.org/structure/${result.raw.pdbId}`} target="_blank" rel="noopener noreferrer"
+              className="mt-2 ml-2 inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+              <ExternalLink className="w-3.5 h-3.5" /> View on RCSB
+            </a>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'alphafold',
+    label: 'AlphaFold Structure Prediction',
+    description: 'Fetch AlphaFold predicted structure from EBI by UniProt accession with per-residue confidence',
+    source: 'AlphaFold EBI', sourceType: 'external', engine: 'AlphaFold',
+    validate: ({ input, inputType }) => {
+      if (inputType !== 'uniprot') return null;
+      const id = input.trim().toUpperCase();
+      if (!/^[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}$/.test(id)) {
+        return 'Enter a valid UniProt accession (e.g. P69905, P00533)';
+      }
+      return null;
+    },
+    handler: async ({ input }) => {
+      const uniprotId = input.trim().toUpperCase();
+      const res = d(await base44.functions.invoke('alphafoldApi', { action: 'prediction', uniprotId }));
+      if (res.error) throw new Error(res.error);
+      const plddt = res.globalMetricValue || res.plddt;
+      const modelUrl = res.pdbUrl || res.modelUrl || `https://alphafold.ebi.ac.uk/entry/${uniprotId}/AF-${uniprotId}-F1-model_v4.pdb`;
+      let atoms = [];
+      let pdbText = '';
+      try {
+        const pdbRes = await fetch(modelUrl);
+        if (pdbRes.ok) {
+          pdbText = await pdbRes.text();
+          atoms = parsePDBAtoms(pdbText);
+        }
+      } catch (e) {
+        // 3D may not load due to CORS
+      }
+      return {
+        source: 'AlphaFold EBI', sourceType: 'external',
+        confidence: plddt ? Math.round(parseFloat(plddt)) : null,
+        label: `AlphaFold predicted structure for ${uniprotId}`,
+        atoms, pdbText, modelUrl,
+        data: [
+          ['UniProt ID', res.uniprotAccession || uniprotId],
+          ['Description', res.uniprotDescription || 'N/A'],
+          ['Gene', res.gene || 'N/A'],
+          ['Global pLDDT', plddt ? `${Math.round(parseFloat(plddt))}%` : 'N/A'],
+          ['Model URL', modelUrl.slice(0, 60) + '...'],
+          ['Atoms loaded', atoms.length || 'See model file'],
+        ],
+        raw: { uniprotId, plddt, modelUrl },
+      };
+    },
+    renderResult: (result) => (
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+        <div className="grid md:grid-cols-2">
+          <div className="border-b md:border-b-0 md:border-r border-slate-200" style={{ minHeight: 350 }}>
+            {result.atoms && result.atoms.length > 0
+              ? <Studio3DViewer atoms={result.atoms} height={350} />
+              : <div className="flex items-center justify-center h-[350px] text-sm text-slate-400">3D structure unavailable</div>}
+          </div>
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-3">
+              <SourcedBadge />
+              <TrustLabel source={result.source} type={result.sourceType} />
+            </div>
+            {result.confidence != null && (
+              <div className="mb-4">
+                <div className="text-xs text-slate-400 mb-1">Global confidence (pLDDT)</div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${result.confidence}%`, background: 'linear-gradient(90deg, #007850, #6B3FA0)' }} />
+                  </div>
+                  <span className="font-mono font-bold text-sm text-slate-700">{result.confidence}%</span>
+                </div>
+              </div>
+            )}
+            <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+            <DataTable data={result.data} />
+            <PLDDTLegend />
+            {result.pdbText && (
+              <button onClick={() => downloadTextFile(`AF-${result.raw.uniprotId}-model.pdb`, result.pdbText, 'chemical/x-pdb')}
+                className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+                <Download className="w-3.5 h-3.5" /> Download model (PDB)
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     id: 'binding',
-    label: 'Chemical-Protein Binding Profile',
-    description: 'Analyze a chemical binding interactions with 10 toxicology target proteins using AlphaFold structures',
-    source: 'AlphaFold + LLM analysis', sourceType: 'external',
+    label: 'Protein-Ligand Binding Analysis',
+    description: 'Analyze chemical binding interactions with 10 toxicology target proteins using AlphaFold structures',
+    source: 'AlphaFold + LLM analysis', sourceType: 'external', engine: 'AlphaFold',
+    validate: ({ input }) => {
+      if (!input || input.trim().length < 2) return 'Enter a chemical name or SMILES to analyze binding.';
+      return null;
+    },
     handler: async ({ input }) => {
       const res = d(await base44.functions.invoke('proteinStructureIntelligence', { chemical: input, context: 'protein binding analysis' }));
       if (res.error) throw new Error(res.error);
       return {
         source: 'AlphaFold + LLM analysis', sourceType: 'external',
         confidence: res.overall_protein_risk_score ? Math.round(res.overall_protein_risk_score) : null,
-        label: 'Chemical-protein binding profile',
+        label: `Chemical-protein binding profile for ${res.chemical || input}`,
         data: [
           ['Chemical', res.chemical || input],
+          ['Chemical class', res.chemical_class || 'N/A'],
           ['Risk level', res.risk_level || 'N/A'],
           ['Proteins analyzed', res.proteins_queried || 10],
           ['Risk score', res.overall_protein_risk_score ? `${res.overall_protein_risk_score}/100` : 'N/A'],
+          ['Endocrine disruptor', res.endocrine_disruption?.is_potential_disruptor ? 'Yes' : 'No'],
+          ['CYP inhibitor', res.metabolic_interaction?.cyp_enzyme_inhibitor ? 'Yes' : 'No'],
+        ],
+        categories: [
+          ...(res.endocrine_disruption?.is_potential_disruptor ? ['endocrine_disruptor'] : []),
+          ...(res.carcinogenicity?.is_potential_carcinogen ? ['carcinogen_suspect'] : []),
         ],
         raw: res,
       };
     },
+    renderResult: (result) => (
+      <ResultShell result={result}>
+        {result.confidence != null && (
+          <div className="mb-4">
+            <div className="text-xs text-slate-400 mb-1">Overall protein risk score</div>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${result.confidence}%`, background: 'linear-gradient(90deg, #D4900A, #C42B2B)' }} />
+              </div>
+              <span className="font-mono font-bold text-sm text-slate-700">{result.confidence}/100</span>
+            </div>
+          </div>
+        )}
+        <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+        <DataTable data={result.data} />
+        {result.raw?.protein_interactions && result.raw.protein_interactions.length > 0 && (
+          <div className="mt-4 pt-3 border-t border-slate-100">
+            <div className="text-xs text-slate-400 mb-2">Protein interactions</div>
+            <div className="space-y-1.5 max-h-64 overflow-y-auto">
+              {result.raw.protein_interactions.map((pi, i) => (
+                <div key={i} className="text-xs flex items-start gap-2 p-2 bg-slate-50 rounded">
+                  <span className="font-mono font-bold text-slate-700 flex-shrink-0">{pi.gene}</span>
+                  <div>
+                    <span className="text-slate-600">{pi.binding_probability}</span>
+                    {pi.interaction_type && <span className="text-slate-400"> - {pi.interaction_type}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </ResultShell>
+    ),
   },
   {
     id: 'properties',
-    label: 'Protein Properties',
-    description: 'Compute physicochemical properties from an amino acid sequence (in-browser)',
-    source: 'In-browser computation', sourceType: 'computed',
+    label: 'Developability Properties',
+    description: 'Compute real physicochemical properties from an amino acid sequence (in-browser, no API needed)',
+    source: 'Computed in-browser', sourceType: 'computed',
+    validate: ({ input }) => {
+      if (!input || input.trim().length < 5) return 'Enter a protein sequence of at least 5 amino acids.';
+      const seq = input.trim().toUpperCase();
+      const valid = seq.split('').filter(a => 'ARNDCQEGHILKMFPSTWYV'.includes(a));
+      if (valid.length < seq.length * 0.8) return 'Sequence contains too many unrecognized characters. Use single-letter amino acid codes.';
+      return null;
+    },
     handler: async ({ input }) => {
       const seq = input.trim().toUpperCase();
-      const aaW = { A:71.08,R:156.19,N:114.10,D:115.09,C:103.14,E:129.12,Q:128.13,G:57.05,H:137.14,I:113.16,L:113.16,K:128.17,M:131.19,F:147.18,P:97.12,S:87.08,T:101.10,W:186.21,Y:163.18,V:99.13 };
-      const kd = { A:1.8,R:-4.5,N:-3.5,D:-3.5,C:2.5,E:-3.5,Q:-3.5,G:-0.4,H:-3.2,I:4.5,L:3.8,K:-3.9,M:1.9,F:2.8,P:-1.6,S:-0.8,T:-0.7,W:-0.9,Y:-1.3,V:4.2 };
-      let mw = 18.02, gravy = 0, cnt = 0;
-      const counts = {};
-      for (const aa of seq) {
-        if (aaW[aa]) { mw += aaW[aa]; counts[aa] = (counts[aa]||0)+1; }
-        if (kd[aa] !== undefined) { gravy += kd[aa]; cnt++; }
-      }
+      const props = computeProteinProperties(seq);
+      const compositionEntries = Object.entries(props.composition)
+        .sort((a, b) => b[1] - a[1])
+        .map(([aa, count]) => [aa, `${count} (${((count / props.length) * 100).toFixed(1)}%)`]);
       return {
-        source: 'In-browser computation', sourceType: 'computed', confidence: null,
-        label: 'Protein properties computed',
+        source: 'Computed in-browser', sourceType: 'computed', confidence: null,
+        label: 'Protein developability properties computed',
         data: [
-          ['Sequence length', `${seq.length} residues`],
-          ['Molecular weight', `${mw.toFixed(1)} Da`],
-          ['GRAVY score', cnt > 0 ? (gravy/cnt).toFixed(2) : 'N/A'],
-          ['Aromatic residues', `${(counts.F||0)+(counts.W||0)+(counts.Y||0)}`],
-          ['Cysteines', counts.C || 0],
-          ['Prolines', counts.P || 0],
+          ['Sequence length', `${props.length} residues`],
+          ['Valid amino acids', `${props.validAAs} / ${props.length}`],
+          ['Molecular weight', `${props.molecularWeight.toFixed(1)} Da`],
+          ['Theoretical pI', props.pI.toFixed(2)],
+          ['GRAVY hydrophobicity', props.gravy.toFixed(3)],
+          ['Instability index', `${props.instabilityIndex.toFixed(1)} ${props.instabilityIndex > 40 ? '(unstable)' : '(stable)'}`],
+          ['Aromatic residues', `${props.aromaticCount} (${(props.aromaticity * 100).toFixed(1)}%)`],
+          ['Cysteines', props.cysteineCount],
+          ['Prolines', props.prolineCount],
         ],
-        raw: { sequence_length: seq.length, molecular_weight: mw, gravy: cnt > 0 ? gravy/cnt : null },
+        composition: compositionEntries,
+        raw: props,
       };
     },
+    renderResult: (result) => (
+      <ResultShell result={result}>
+        <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+        <DataTable data={result.data} />
+        {result.composition && result.composition.length > 0 && (
+          <div className="mt-4 pt-3 border-t border-slate-100">
+            <div className="text-xs text-slate-400 mb-2">Amino acid composition</div>
+            <div className="grid grid-cols-5 gap-2">
+              {result.composition.slice(0, 20).map(([aa, info]) => {
+                const count = parseInt(info);
+                const pct = parseFloat(info.match(/[\d.]+/g)?.[1] || '0');
+                const barHeight = Math.max(4, Math.min(60, pct * 4));
+                return (
+                  <div key={aa} className="flex flex-col items-center gap-1">
+                    <div className="h-16 flex items-end">
+                      <div className="w-4 rounded-t" style={{ height: barHeight, background: 'linear-gradient(180deg, #6B3FA0, #007850)' }} />
+                    </div>
+                    <span className="font-mono text-xs font-bold text-slate-700">{aa}</span>
+                    <span className="text-[10px] text-slate-400">{count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </ResultShell>
+    ),
   },
 ];
 
 const PIPELINE_STEPS = [
-  { id: 'lookup', label: 'RCSB PDB Lookup', handler: TOOLS[1].handler },
-  { id: 'predict', label: 'AlphaFold Prediction', handler: TOOLS[0].handler },
+  { id: 'pdb', label: 'RCSB PDB Lookup', handler: TOOLS[0].handler },
+  { id: 'alphafold', label: 'AlphaFold Prediction', handler: TOOLS[1].handler },
   { id: 'binding', label: 'Binding Profile', handler: TOOLS[2].handler },
-  { id: 'properties', label: 'Protein Properties', handler: TOOLS[3].handler },
+  { id: 'properties', label: 'Developability Properties', handler: TOOLS[3].handler },
 ];
 
 const API_CODE = `import requests
@@ -168,7 +381,7 @@ export default function ComputationalStudioProteins() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Proteins</h1>
-              <p className="text-sm text-slate-500">AlphaFold prediction, RCSB PDB exploration, binding analysis, and protein properties</p>
+              <p className="text-sm text-slate-500">AlphaFold prediction, RCSB PDB exploration, binding analysis, and developability properties</p>
             </div>
           </div>
           <SourcedBadge />

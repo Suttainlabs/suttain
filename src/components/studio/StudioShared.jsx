@@ -55,6 +55,63 @@ export function SourcedBadge({ className = '' }) {
   );
 }
 
+export function downloadTextFile(filename, content, mimeType = 'text/plain') {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export function ResultShell({ result, children }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="p-5">
+        <div className="flex items-center justify-between mb-4">
+          <SourcedBadge />
+          <TrustLabel source={result.source} type={result.sourceType} />
+        </div>
+        {result.confidence != null && (
+          <div className="mb-4">
+            <div className="text-xs text-slate-400 mb-1">Confidence</div>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${result.confidence}%`, background: 'linear-gradient(90deg, #007850, #6B3FA0)' }} />
+              </div>
+              <span className="font-mono font-bold text-sm text-slate-700">{result.confidence}%</span>
+            </div>
+          </div>
+        )}
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export function PLDDTLegend() {
+  const bands = [
+    { range: 'Very high (pLDDT >= 90)', color: '#0053D6' },
+    { range: 'Confident (90 > pLDDT >= 70)', color: '#65CBF3' },
+    { range: 'Low (70 > pLDDT >= 50)', color: '#FFDB13' },
+    { range: 'Very low (pLDDT < 50)', color: '#FF7D45' },
+  ];
+  return (
+    <div className="mt-3 pt-3 border-t border-slate-100">
+      <div className="text-xs text-slate-400 mb-1.5">Per-residue confidence (pLDDT)</div>
+      <div className="space-y-1">
+        {bands.map(b => (
+          <div key={b.range} className="flex items-center gap-2 text-xs">
+            <span className="w-4 h-4 rounded flex-shrink-0" style={{ backgroundColor: b.color }} />
+            <span className="text-slate-600">{b.range}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function ExecutionTag({ type }) {
   if (type === 'external') {
     return <span className="px-2 py-0.5 bg-amber-50 border border-amber-200 rounded text-xs font-mono text-amber-700">External input file</span>;
