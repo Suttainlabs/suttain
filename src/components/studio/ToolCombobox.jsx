@@ -44,7 +44,7 @@ export default function ToolCombobox({ tools, value, onChange }) {
                     key={tool.id}
                     value={`${tool.label} ${tool.description || ''}`}
                     onSelect={() => { onChange(tool.id); setOpen(false); }}
-                    className="flex items-start gap-2 py-2.5"
+                    className="flex items-start gap-2 py-2.5 data-[selected=true]:bg-slate-100 data-[selected=true]:text-slate-900"
                   >
                     <Check className={cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", value === tool.id ? "opacity-100 text-[#007850]" : "opacity-0")} />
                     <div className="min-w-0 flex-1">
