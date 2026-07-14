@@ -310,10 +310,13 @@ export function ProteinIntelligencePanel() {
         <div className="mt-4 space-y-4">
           <SourceLabel source="Source: AlphaFold + PubChem + AI analysis" />
           {result.overall_protein_risk_score != null && (
-            <ConfidenceBar value={result.overall_protein_risk_score} label="Overall Protein Risk" />
+            <ConfidenceBar value={result.overall_protein_risk_score / 100} label="Overall Protein Risk" />
           )}
           {result.risk_level && (
             <DataRow label="Risk Level" value={result.risk_level} />
+          )}
+          {result.chemical_class && (
+            <DataRow label="Chemical Class" value={result.chemical_class} />
           )}
           {result.plain_english_summary && (
             <div className="p-3 bg-slate-50 rounded-lg">
@@ -329,10 +332,12 @@ export function ProteinIntelligencePanel() {
                   <thead>
                     <tr className="border-b border-slate-200">
                       <th className="text-left py-1.5 px-2 font-semibold text-slate-500">Gene</th>
-                      <th className="text-left py-1.5 px-2 font-semibold text-slate-500">Binding Prob</th>
+                      <th className="text-left py-1.5 px-2 font-semibold text-slate-500">Binding</th>
                       <th className="text-left py-1.5 px-2 font-semibold text-slate-500">Type</th>
                       <th className="text-left py-1.5 px-2 font-semibold text-slate-500">Hazard</th>
+                      <th className="text-left py-1.5 px-2 font-semibold text-slate-500">Consequence</th>
                       <th className="text-left py-1.5 px-2 font-semibold text-slate-500">Evidence</th>
+                      <th className="text-left py-1.5 px-2 font-semibold text-slate-500">pLDDT</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -341,13 +346,52 @@ export function ProteinIntelligencePanel() {
                         <td className="py-1.5 px-2 font-mono text-slate-700">{pi.gene || pi.target}</td>
                         <td className="py-1.5 px-2 text-slate-700">{pi.binding_probability || pi.probability}</td>
                         <td className="py-1.5 px-2 text-slate-700">{pi.interaction_type || pi.type}</td>
-                        <td className="py-1.5 px-2 text-slate-700">{pi.hazard_category || pi.hazard}</td>
+                        <td className="py-1.5 px-2 text-slate-700">{pi.regulatory_concern || pi.hazard_category || pi.hazard || '-'}</td>
+                        <td className="py-1.5 px-2 text-slate-700 max-w-[200px]">{pi.biological_consequence || pi.consequence || '-'}</td>
                         <td className="py-1.5 px-2 text-slate-700">{pi.evidence_strength || pi.evidence}</td>
+                        <td className="py-1.5 px-2 text-slate-700">{pi.alphafold_confidence != null ? pi.alphafold_confidence : '-'}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+          {(result.endocrine_disruption || result.carcinogenicity || result.metabolic_interaction) && (
+            <div className="grid md:grid-cols-3 gap-3">
+              {result.endocrine_disruption && (
+                <div className="p-3 rounded-lg border border-slate-200">
+                  <p className="text-xs font-bold text-slate-700 mb-1">Endocrine Disruption</p>
+                  <div className={`text-xs font-semibold mb-1 ${result.endocrine_disruption.is_potential_disruptor ? 'text-red-600' : 'text-green-600'}`}>
+                    {result.endocrine_disruption.is_potential_disruptor ? 'Potential disruptor' : 'No disruption detected'}
+                  </div>
+                  {result.endocrine_disruption.risk_score != null && <ConfidenceBar value={result.endocrine_disruption.risk_score / 100} label="Risk" />}
+                  {result.endocrine_disruption.affected_hormones && result.endocrine_disruption.affected_hormones.length > 0 && (
+                    <p className="text-xs text-slate-500 mt-1">Hormones: {result.endocrine_disruption.affected_hormones.join(', ')}</p>
+                  )}
+                  {result.endocrine_disruption.mechanism && <p className="text-xs text-slate-500 mt-1">{result.endocrine_disruption.mechanism}</p>}
+                </div>
+              )}
+              {result.carcinogenicity && (
+                <div className="p-3 rounded-lg border border-slate-200">
+                  <p className="text-xs font-bold text-slate-700 mb-1">Carcinogenicity</p>
+                  <div className={`text-xs font-semibold mb-1 ${result.carcinogenicity.is_potential_carcinogen ? 'text-red-600' : 'text-green-600'}`}>
+                    {result.carcinogenicity.is_potential_carcinogen ? 'Potential carcinogen' : 'No carcinogenicity detected'}
+                  </div>
+                  {result.carcinogenicity.risk_score != null && <ConfidenceBar value={result.carcinogenicity.risk_score / 100} label="Risk" />}
+                  {result.carcinogenicity.mechanism && <p className="text-xs text-slate-500 mt-1">{result.carcinogenicity.mechanism}</p>}
+                </div>
+              )}
+              {result.metabolic_interaction && (
+                <div className="p-3 rounded-lg border border-slate-200">
+                  <p className="text-xs font-bold text-slate-700 mb-1">Metabolic Interaction</p>
+                  <div className={`text-xs font-semibold mb-1 ${result.metabolic_interaction.cyp_enzyme_inhibitor ? 'text-red-600' : 'text-green-600'}`}>
+                    {result.metabolic_interaction.cyp_enzyme_inhibitor ? 'CYP inhibitor' : 'No CYP inhibition'}
+                  </div>
+                  {result.metabolic_interaction.risk_score != null && <ConfidenceBar value={result.metabolic_interaction.risk_score / 100} label="Risk" />}
+                  {result.metabolic_interaction.drug_interaction_concern && <p className="text-xs text-slate-500 mt-1">{result.metabolic_interaction.drug_interaction_concern}</p>}
+                </div>
+              )}
             </div>
           )}
           {result.alphafold_insight && (
@@ -356,11 +400,26 @@ export function ProteinIntelligencePanel() {
               <p className="text-sm text-slate-700">{result.alphafold_insight}</p>
             </div>
           )}
-          {result.population_warnings && result.population_warnings.length > 0 && (
+          {result.population_protein_warnings && (
             <div className="p-3 bg-amber-50 rounded-lg">
-              <p className="text-xs font-semibold text-amber-700 mb-1">Population Warnings</p>
+              <p className="text-xs font-semibold text-amber-700 mb-2">Population Warnings</p>
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(result.population_protein_warnings).map(([group, data]) => (
+                  <div key={group} className="text-xs">
+                    <span className={`font-semibold capitalize ${data.status === 'Avoid' ? 'text-red-600' : data.status === 'Caution' ? 'text-amber-600' : 'text-green-600'}`}>
+                      {group.replace(/_/g, ' ')}: {data.status}
+                    </span>
+                    <p className="text-slate-500">{data.reason}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {result.safer_alternatives && result.safer_alternatives.length > 0 && (
+            <div className="p-3 bg-green-50 rounded-lg">
+              <p className="text-xs font-semibold text-green-700 mb-1">Safer Alternatives</p>
               <ul className="text-sm text-slate-700 space-y-1">
-                {result.population_warnings.map((w, i) => <li key={i}>- {w}</li>)}
+                {result.safer_alternatives.map((a, i) => <li key={i}>- {a}</li>)}
               </ul>
             </div>
           )}
