@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Check, Sparkles, Building2, Zap, Loader2, Atom,
-  GraduationCap, Microscope, Table2
+  Microscope, Table2
 } from 'lucide-react';
 import { createCheckoutSession } from '@/functions/createCheckoutSession';
 import { base44 } from '@/api/base44Client';
@@ -69,12 +69,15 @@ const PLANS = [
     priceSuffix: '/month',
     priceNote: 'Cancel anytime',
     priceNoteYearly: 'Billed $479.90/year — save 20%',
-    description: 'Unlimited computational access for professionals.',
+    description: 'The comprehensive choice for researchers, professionals, and academic labs.',
     features: [
       'Everything in Starter',
       'Unlimited simulations (DFT, MD)',
       'Research API access',
       'Citation-ready exports',
+      'Up to 10 team seats',
+      'Priority compute queue',
+      'Lab workspace',
       'Priority support',
     ],
     cta: 'Upgrade to Pro',
@@ -83,28 +86,6 @@ const PLANS = [
     priceKeyYearly: 'pro_yearly',
     color: '#6B3FA0',
     icon: Sparkles,
-  },
-  {
-    id: 'academic',
-    name: 'Academic',
-    priceMonthly: '$199',
-    priceYearly: '$159',
-    priceSuffix: '/month',
-    priceNote: 'Cancel anytime',
-    priceNoteYearly: 'Billed $1,910/year — save 20%',
-    description: 'For research labs and university departments.',
-    features: [
-      'Everything in Pro',
-      'Up to 10 team seats',
-      'Priority compute queue',
-      'Lab workspace',
-      'API included',
-    ],
-    cta: 'Upgrade to Academic',
-    priceKey: 'academic_monthly',
-    priceKeyYearly: 'academic_yearly',
-    color: '#0D9E8E',
-    icon: GraduationCap,
   },
   {
     id: 'lifetime',

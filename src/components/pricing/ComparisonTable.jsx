@@ -2,28 +2,27 @@ import React from 'react';
 import { Check, Minus } from 'lucide-react';
 
 const FEATURES = [
-  { label: 'Molecular queries', tiers: { free: true, starter: true, pro: true, academic: true, lifetime: true } },
-  { label: 'PubChem access', tiers: { free: true, starter: true, pro: true, academic: true, lifetime: true } },
-  { label: 'Product scans (unlimited)', tiers: { free: true, starter: true, pro: true, academic: true, lifetime: true } },
-  { label: 'Ingredient database', tiers: { free: true, starter: true, pro: true, academic: true, lifetime: true } },
-  { label: 'Community support', tiers: { free: true, starter: true, pro: true, academic: true, lifetime: true } },
-  { label: 'Simulations per month', tiers: { free: '3', starter: '10', pro: 'Unlimited', academic: 'Unlimited', lifetime: 'Unlimited' } },
-  { label: 'Formula generations per month', tiers: { free: '5', starter: 'Unlimited', pro: 'Unlimited', academic: 'Unlimited', lifetime: 'Unlimited' } },
-  { label: 'Structural Biology access', tiers: { free: false, starter: true, pro: true, academic: true, lifetime: true } },
-  { label: 'DFT & MD simulations', tiers: { free: false, starter: false, pro: true, academic: true, lifetime: true } },
-  { label: 'Research API', tiers: { free: false, starter: false, pro: true, academic: true, lifetime: true } },
-  { label: 'Citation-ready exports', tiers: { free: false, starter: false, pro: true, academic: true, lifetime: true } },
-  { label: 'Team seats', tiers: { free: '1', starter: '1', pro: '1', academic: 'Up to 10', lifetime: '1' } },
-  { label: 'Priority compute queue', tiers: { free: false, starter: false, pro: false, academic: true, lifetime: false } },
-  { label: 'Lab workspace', tiers: { free: false, starter: false, pro: false, academic: true, lifetime: false } },
-  { label: 'One-time payment (no renewal)', tiers: { free: false, starter: false, pro: false, academic: false, lifetime: true } },
+  { label: 'Molecular queries', tiers: { free: true, starter: true, pro: true, lifetime: true } },
+  { label: 'PubChem access', tiers: { free: true, starter: true, pro: true, lifetime: true } },
+  { label: 'Product scans (unlimited)', tiers: { free: true, starter: true, pro: true, lifetime: true } },
+  { label: 'Ingredient database', tiers: { free: true, starter: true, pro: true, lifetime: true } },
+  { label: 'Community support', tiers: { free: true, starter: true, pro: true, lifetime: true } },
+  { label: 'Simulations per month', tiers: { free: '3', starter: '10', pro: 'Unlimited', lifetime: 'Unlimited' } },
+  { label: 'Formula generations per month', tiers: { free: '5', starter: 'Unlimited', pro: 'Unlimited', lifetime: 'Unlimited' } },
+  { label: 'Structural Biology access', tiers: { free: false, starter: true, pro: true, lifetime: true } },
+  { label: 'DFT & MD simulations', tiers: { free: false, starter: false, pro: true, lifetime: true } },
+  { label: 'Research API', tiers: { free: false, starter: false, pro: true, lifetime: true } },
+  { label: 'Citation-ready exports', tiers: { free: false, starter: false, pro: true, lifetime: true } },
+  { label: 'Team seats', tiers: { free: '1', starter: '1', pro: 'Up to 10', lifetime: '1' } },
+  { label: 'Priority compute queue', tiers: { free: false, starter: false, pro: true, lifetime: false } },
+  { label: 'Lab workspace', tiers: { free: false, starter: false, pro: true, lifetime: false } },
+  { label: 'One-time payment (no renewal)', tiers: { free: false, starter: false, pro: false, lifetime: true } },
 ];
 
 const TIER_COLUMNS = [
   { key: 'free', label: 'Free' },
   { key: 'starter', label: 'Starter' },
   { key: 'pro', label: 'Pro' },
-  { key: 'academic', label: 'Academic' },
   { key: 'lifetime', label: 'Lifetime' },
 ];
 
