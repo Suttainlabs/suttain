@@ -383,7 +383,7 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
-    const { action, file_content, format_in, format_out, build_params } = body;
+    const { action, file_content, format_in, format_out, build_params, pdb_id } = body;
 
     let result = {};
 
@@ -420,8 +420,36 @@ Deno.serve(async (req) => {
         source: `Built: ${build_params.structure_type} structure`,
         method_note: 'Structure built from lattice parameters using Suttain structure tools',
       };
+    } else if (action === 'rcsb_lookup') {
+      const id = (pdb_id || '').trim().toUpperCase();
+      if (!/^[1-9][A-Z0-9]{3}$/.test(id)) {
+        return Response.json({ error: 'Invalid PDB ID. Must be 4 characters starting with a digit (e.g. 1CRN, 4HHB).' }, { status: 400 });
+      }
+      const metaRes = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${id}`);
+      if (!metaRes.ok) {
+        return Response.json({ error: `PDB lookup failed: ${metaRes.status}. Check the PDB ID and try again.` }, { status: 404 });
+      }
+      const metadata = await metaRes.json();
+      let pdbText = '';
+      try {
+        const pdbRes = await fetch(`https://files.rcsb.org/download/${id}.pdb`);
+        if (pdbRes.ok) pdbText = await pdbRes.text();
+      } catch (e) {
+        // PDB file download failed, but metadata is still valid
+      }
+      result = {
+        pdbId: id,
+        metadata: {
+          title: metadata.struct?.title || 'N/A',
+          resolution: metadata.rcsb_entry_info?.resolution_combined?.[0] || null,
+          methods: metadata.rcsb_entry_info?.experimental_method || [],
+          organism: metadata.rcsb_entry_info?.source_organism_taxonomy_names?.[0] || 'N/A',
+        },
+        pdbText,
+        source: 'RCSB PDB',
+      };
     } else {
-      return Response.json({ error: 'Unknown action. Use parse, convert, or build.' }, { status: 400 });
+      return Response.json({ error: 'Unknown action. Use parse, convert, build, or rcsb_lookup.' }, { status: 400 });
     }
 
     return Response.json(result);

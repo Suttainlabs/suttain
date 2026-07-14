@@ -64,34 +64,24 @@ const TOOLS = [
     },
     handler: async ({ input }) => {
       const pdbId = input.trim().toUpperCase();
-      const metaRes = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdbId}`);
-      if (!metaRes.ok) throw new Error(`PDB lookup failed: ${metaRes.status}. Check the PDB ID and try again.`);
-      const metadata = await metaRes.json();
+      const res = d(await base44.functions.invoke('structureTools', { action: 'rcsb_lookup', pdb_id: pdbId }));
+      if (res.error) throw new Error(res.error);
+      const meta = res.metadata || {};
       let atoms = [];
-      let pdbText = '';
-      try {
-        const pdbRes = await fetch(`https://files.rcsb.org/download/${pdbId}.pdb`);
-        if (pdbRes.ok) {
-          pdbText = await pdbRes.text();
-          atoms = parsePDBAtoms(pdbText);
-        }
-      } catch (e) {
-        // 3D structure may not load due to CORS, but metadata still valid
-      }
+      if (res.pdbText) atoms = parsePDBAtoms(res.pdbText);
       return {
         source: 'RCSB PDB', sourceType: 'database', confidence: null,
         label: `Structure ${pdbId} loaded from RCSB`,
-        atoms, pdbText,
+        atoms, pdbText: res.pdbText || '',
         data: [
           ['PDB ID', pdbId],
-          ['Title', metadata.struct?.title || 'N/A'],
-          ['Resolution', metadata.rcsb_entry_info?.resolution_combined?.[0]
-            ? `${metadata.rcsb_entry_info.resolution_combined[0]} A` : 'N/A'],
-          ['Method', (metadata.rcsb_entry_info?.experimental_method || []).join(', ') || 'N/A'],
-          ['Organism', metadata.rcsb_entry_info?.source_organism_taxonomy_names?.[0] || 'N/A'],
+          ['Title', meta.title || 'N/A'],
+          ['Resolution', meta.resolution ? `${meta.resolution} A` : 'N/A'],
+          ['Method', (meta.methods || []).join(', ') || 'N/A'],
+          ['Organism', meta.organism || 'N/A'],
           ['Atoms loaded', atoms.length || 'See PDB file'],
         ],
-        raw: { pdbId, title: metadata.struct?.title, atomCount: atoms.length },
+        raw: { pdbId, title: meta.title, atomCount: atoms.length },
       };
     },
     renderResult: (result) => (
