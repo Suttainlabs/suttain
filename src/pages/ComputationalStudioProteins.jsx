@@ -55,7 +55,7 @@ const TOOLS = [
     id: 'pdb',
     label: 'RCSB PDB Explorer',
     description: 'Look up and explore structures from the RCSB Protein Data Bank with real 3D visualization',
-    source: 'RCSB PDB', sourceType: 'database',
+    source: 'RCSB PDB', sourceType: 'database', category: 'Structure Lookup',
     validate: ({ input, inputType }) => {
       if (inputType !== 'pdb_id') return null;
       const id = input.trim().toUpperCase();
@@ -118,7 +118,7 @@ const TOOLS = [
     id: 'alphafold',
     label: 'AlphaFold Structure Prediction',
     description: 'Fetch AlphaFold predicted structure from EBI by UniProt accession with per-residue confidence',
-    source: 'AlphaFold EBI', sourceType: 'external', engine: 'AlphaFold',
+    source: 'AlphaFold EBI', sourceType: 'external', engine: 'AlphaFold', category: 'Structure Lookup',
     validate: ({ input, inputType }) => {
       if (inputType !== 'uniprot') return null;
       const id = input.trim().toUpperCase();
@@ -202,7 +202,7 @@ const TOOLS = [
     id: 'binding',
     label: 'Protein-Ligand Binding Analysis',
     description: 'Analyze chemical binding interactions with 10 toxicology target proteins using AlphaFold structures',
-    source: 'AlphaFold + LLM analysis', sourceType: 'external', engine: 'AlphaFold',
+    source: 'AlphaFold + LLM analysis', sourceType: 'external', engine: 'AlphaFold', category: 'Analysis',
     validate: ({ input }) => {
       if (!input || input.trim().length < 2) return 'Enter a chemical name or SMILES to analyze binding.';
       return null;
@@ -268,7 +268,7 @@ const TOOLS = [
     id: 'properties',
     label: 'Developability Properties',
     description: 'Compute real physicochemical properties from an amino acid sequence (in-browser, no API needed)',
-    source: 'Computed in-browser', sourceType: 'computed',
+    source: 'Computed in-browser', sourceType: 'computed', category: 'Analysis',
     validate: ({ input }) => {
       if (!input || input.trim().length < 5) return 'Enter a protein sequence of at least 5 amino acids.';
       const seq = input.trim().toUpperCase();

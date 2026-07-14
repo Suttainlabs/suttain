@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Play, Loader2, Download, FileUp, AlertCircle, RotateCcw } from 'lucide-react';
 import Studio3DViewer from './Studio3DViewer';
+import ToolCombobox from './ToolCombobox';
 import { SourcedBadge, TrustLabel, ExecutionTag, downloadTextFile } from './StudioShared';
 
 export default function SingleRunPanel({ config }) {
@@ -109,10 +110,7 @@ export default function SingleRunPanel({ config }) {
           </div>
           <div>
             <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 block">Tool</label>
-            <select value={selectedTool} onChange={e => { setSelectedTool(e.target.value); setResult(null); setError(null); setValidationError(null); }}
-              className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#007850] bg-white">
-              {tools.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-            </select>
+            <ToolCombobox tools={tools} value={selectedTool} onChange={(id) => { setSelectedTool(id); setResult(null); setError(null); setValidationError(null); }} />
           </div>
         </div>
 
