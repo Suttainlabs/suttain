@@ -426,11 +426,11 @@ export default function Layout({ children, currentPageName }) {
                 <DropdownMenuContent align="end" className="w-72 p-2">
                   {consumerToolItems.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
-                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 px-2 py-2 rounded-lg">
+                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 px-3 py-2.5 rounded-lg">
                         <item.icon className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#007850" }} />
                         <div>
-                          <span className="text-sm font-medium text-slate-700 block">{item.label}</span>
-                          <span className="text-xs text-slate-400">{item.description}</span>
+                          <span className="text-sm font-semibold text-slate-800 block">{item.label}</span>
+                          <span className="text-xs text-slate-500 leading-snug">{item.description}</span>
                         </div>
                       </Link>
                     </DropdownMenuItem>
@@ -451,14 +451,14 @@ export default function Layout({ children, currentPageName }) {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-72 p-2">
-                  <DropdownMenuLabel className="text-xs font-bold uppercase tracking-widest text-slate-400 px-2 py-1.5">Research Tools</DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-xs font-bold uppercase tracking-widest text-slate-500 px-2 py-1.5">Research Tools</DropdownMenuLabel>
                   {researchToolItems.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
-                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 px-2 py-2 rounded-lg">
+                      <Link to={createPageUrl(item.href)} className="flex items-start gap-3 px-3 py-2.5 rounded-lg">
                         <item.icon className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#6B3FA0" }} />
                         <div>
-                          <span className="text-sm font-medium text-slate-700 block">{item.label}</span>
-                          <span className="text-xs text-slate-400">{item.description}</span>
+                          <span className="text-sm font-semibold text-slate-800 block">{item.label}</span>
+                          <span className="text-xs text-slate-500 leading-snug">{item.description}</span>
                         </div>
                       </Link>
                     </DropdownMenuItem>
@@ -483,21 +483,21 @@ export default function Layout({ children, currentPageName }) {
                 <DropdownMenuContent align="end" className="w-64 p-2">
 
                   <DropdownMenuItem asChild>
-                    <Link to="/EnterpriseAPI" className="flex items-center gap-3 px-2 py-2 rounded-lg">
+                    <Link to="/EnterpriseAPI" className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
                       <Terminal className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
-                      <span className="text-sm font-medium text-slate-700">Enterprise API</span>
+                      <span className="text-sm font-semibold text-slate-800">Enterprise API</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("APIPortal")} className="flex items-center gap-3 px-2 py-2 rounded-lg">
+                    <Link to={createPageUrl("APIPortal")} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
                       <Code2 className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
-                      <span className="text-sm font-medium text-slate-700">API Documentation</span>
+                      <span className="text-sm font-semibold text-slate-800">API Documentation</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to={"/SuttainFarm"} className="flex items-center gap-3 px-2 py-2 rounded-lg">
+                    <Link to={"/SuttainFarm"} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
                       <Sprout className="w-4 h-4 flex-shrink-0" style={{ color: "#4A7C2A" }} />
-                      <span className="text-sm font-medium text-slate-700">Suttain Farm</span>
+                      <span className="text-sm font-semibold text-slate-800">Suttain Farm</span>
                     </Link>
                   </DropdownMenuItem>
 
@@ -673,8 +673,8 @@ export default function Layout({ children, currentPageName }) {
                         >
                           {consumerToolItems.map(item => (
                             <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
-                                location.pathname === createPageUrl(item.href) ? "bg-cyan-100 text-cyan-600" : "text-suttain-dark hover:bg-cyan-50"
+                              className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                                location.pathname === createPageUrl(item.href) ? "bg-teal-50 text-[#007850]" : "text-slate-700 hover:bg-slate-50"
                               }`}>
                               <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-teal)]" />
                               <span>{item.label}</span>
@@ -740,8 +740,8 @@ export default function Layout({ children, currentPageName }) {
                         >
                           {researchToolItems.map(item => (
                             <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${
-                                location.pathname === createPageUrl(item.href) ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
+                              className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                                location.pathname === createPageUrl(item.href) ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
                               }`}>
                               <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
                               <span>{item.label}</span>

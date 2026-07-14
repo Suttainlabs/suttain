@@ -37,7 +37,7 @@ export default function StudioLayout({ children }) {
                     <Link key={tab.path} to={tab.path}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
                         isActive
-                          ? 'bg-gradient-to-r from-[#007850] to-[#6B3FA0] text-white shadow-sm'
+                          ? 'bg-[#E6F9F3] text-[#007850] border border-teal-200'
                           : 'text-slate-600 hover:bg-slate-100'
                       }`}>
                       <tab.icon className="w-3.5 h-3.5" />
