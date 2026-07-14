@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Zap, History } from 'lucide-react';
+import { Camera, Zap, History, Search } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import NutriScanInput from './NutriScanInput';
 import NutriScanResults from './NutriScanResults';
 import NutriScanDashboard from './NutriScanDashboard';
 import NutriScanHistory from './NutriScanHistory';
+import UsdaNutritionPanel from './UsdaNutritionPanel';
 import { base44 } from '@/api/base44Client';
 
 export default function NutriScanApp({ user, embedded = false }) {
@@ -87,6 +88,9 @@ export default function NutriScanApp({ user, embedded = false }) {
                         <TabsTrigger value="history" className="flex-1 data-[state=active]:bg-[#02988C] data-[state=active]:text-white rounded-lg text-sm">
                             <History className="w-4 h-4 mr-1.5" /> History
                         </TabsTrigger>
+                        <TabsTrigger value="usda" className="flex-1 data-[state=active]:bg-[#02988C] data-[state=active]:text-white rounded-lg text-sm">
+                            <Search className="w-4 h-4 mr-1.5" /> USDA Lookup
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="scan">
@@ -109,6 +113,10 @@ export default function NutriScanApp({ user, embedded = false }) {
 
                     <TabsContent value="history">
                         <NutriScanHistory user={user} />
+                    </TabsContent>
+
+                    <TabsContent value="usda">
+                        <UsdaNutritionPanel />
                     </TabsContent>
                 </Tabs>
             </div>

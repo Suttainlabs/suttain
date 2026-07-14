@@ -6,6 +6,7 @@ import PredictionPanel from '@/components/hazard/PredictionPanel';
 import ValidationDashboard from '@/components/hazard/ValidationDashboard';
 import FeasibilityDemo from '@/components/hazard/FeasibilityDemo';
 import { HazardDataPanel, HazardExplanationPanel } from '@/components/hazard/HazardPanels';
+import RegulatoryPanel from '@/components/hazard/RegulatoryPanel';
 
 const TABS = [
   { id: 'benchmark', label: 'Benchmark', icon: Database, description: 'Curated gold-standard dataset' },
@@ -140,6 +141,9 @@ export default function HazardEngine() {
                 <div className="grid md:grid-cols-2 gap-4">
                   <HazardDataPanel />
                   <HazardExplanationPanel />
+                </div>
+                <div className="mt-4">
+                  <RegulatoryPanel />
                 </div>
               </div>
             )}
