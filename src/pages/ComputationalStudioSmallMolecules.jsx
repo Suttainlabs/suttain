@@ -21,48 +21,96 @@ const INPUT_TYPES = [
 
 const d = r => r?.data?.data || r?.data || r;
 
+function pubchemUrl(input, inputType, endpoint) {
+  const enc = encodeURIComponent(input.trim());
+  if (endpoint === 'properties') {
+    const props = 'MolecularWeight,XLogP,HBondDonorCount,HBondAcceptorCount,TPSA,RotatableBondCount';
+    if (inputType === 'smiles') return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${enc}/property/${props}/JSON`;
+    if (inputType === 'name') return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${enc}/property/${props}/JSON`;
+    if (inputType === 'cid') return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${enc}/property/${props}/JSON`;
+    return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${enc}/property/${props}/JSON`;
+  }
+  if (inputType === 'smiles') return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${enc}/JSON`;
+  if (inputType === 'cid') return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${enc}/JSON`;
+  return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${enc}/JSON`;
+}
+
 const TOOLS = [
   {
     id: 'lookup',
     label: 'PubChem and ChEMBL Lookup',
-    description: 'Search PubChem and ChEMBL for compound identity, synonyms, and bioactivity data',
-    source: 'PubChem + ChEMBL', sourceType: 'database',
+    description: 'Search PubChem for compound identity, synonyms, and structural data',
+    source: 'PubChem', sourceType: 'database',
     handler: async ({ input, inputType }) => {
-      const res = d(await base44.functions.invoke('comprehensiveChemicalSearch', { query: input, query_type: inputType }));
+      const response = await fetch(pubchemUrl(input, inputType, 'full'));
+      if (!response.ok) throw new Error(`PubChem lookup failed: ${response.status}`);
+      const data = await response.json();
+      const compound = data?.PC_Compounds?.[0];
+      if (!compound) throw new Error('No compound found');
+      const props = compound.props || [];
+      const getProp = label => props.find(p => p.urn?.label === label)?.value;
       return {
-        source: 'PubChem + ChEMBL', sourceType: 'database', confidence: null,
+        source: 'PubChem', sourceType: 'database', confidence: null,
         label: 'Compound identified',
-        data: [['Name', res.name || res.iupac_name || input], ['CID', res.cid || res.pubchem_cid || 'N/A'], ['Molecular formula', res.molecular_formula || 'N/A'], ['SMILES', res.smiles || res.canonical_smiles || 'N/A']],
-        raw: res,
+        data: [
+          ['CID', compound.id?.id?.cid || 'N/A'],
+          ['Molecular formula', getProp('Molecular Formula')?.sval || 'N/A'],
+          ['Molecular weight', getProp('Molecular Weight')?.fval || 'N/A'],
+          ['IUPAC name', (getProp('IUPAC Name')?.sval || 'N/A').slice(0, 60)],
+          ['XLogP', getProp('XLogP')?.fval || 'N/A'],
+        ],
+        raw: data,
       };
     },
   },
   {
     id: 'properties',
     label: 'Molecular Properties and Descriptors',
-    description: 'Compute physicochemical properties, drug-likeness, and molecular descriptors',
-    source: 'In-browser computation', sourceType: 'computed',
+    description: 'Compute physicochemical properties and drug-likeness descriptors from PubChem',
+    source: 'PubChem', sourceType: 'database',
     handler: async ({ input, inputType }) => {
-      const res = d(await base44.functions.invoke('getMolecularData', { query: input, query_type: inputType, compute_properties: true }));
+      const response = await fetch(pubchemUrl(input, inputType, 'properties'));
+      if (!response.ok) throw new Error(`PubChem properties failed: ${response.status}`);
+      const data = await response.json();
+      const p = data?.PropertyTable?.Properties?.[0];
+      if (!p) throw new Error('No properties found');
       return {
-        source: 'In-browser computation', sourceType: 'computed', confidence: null,
-        label: 'Properties computed',
-        data: [['MW', res.molecular_weight ? `${res.molecular_weight} g/mol` : 'N/A'], ['LogP', res.logp ?? 'N/A'], ['H-bond donors', res.hbd ?? 'N/A'], ['H-bond acceptors', res.hba ?? 'N/A'], ['TPSA', res.tpsa ? `${res.tpsa} A^2` : 'N/A'], ['Rotatable bonds', res.rotatable_bonds ?? 'N/A']],
-        raw: res,
+        source: 'PubChem', sourceType: 'database', confidence: null,
+        label: 'Molecular properties retrieved',
+        data: [
+          ['CID', p.CID || 'N/A'],
+          ['MW', `${p.MolecularWeight || 'N/A'} g/mol`],
+          ['XLogP', p.XLogP ?? 'N/A'],
+          ['HBD', p.HBondDonorCount ?? 'N/A'],
+          ['HBA', p.HBondAcceptorCount ?? 'N/A'],
+          ['TPSA', p.TPSA ? `${p.TPSA} A^2` : 'N/A'],
+          ['Rotatable bonds', p.RotatableBondCount ?? 'N/A'],
+        ],
+        raw: p,
       };
     },
   },
   {
     id: 'gfn2xtb',
     label: 'GFN2-xTB and PM7 Calculations',
-    description: 'Run semi-empirical quantum chemistry calculations in-browser (GFN2-xTB and PM7)',
+    description: 'Run semi-empirical quantum chemistry calculations (GFN2-xTB, PM7)',
     source: 'In-browser GFN2-xTB', sourceType: 'computed', engine: 'GFN2-xTB',
     handler: async ({ input }) => {
-      const res = d(await base44.functions.invoke('quantumChemistry', { smiles: input, method: 'gfn2xtb' }));
+      const res = d(await base44.functions.invoke('quantumChemistry', { molecule: input, method: 'gfn2xtb' }));
+      if (res.error) throw new Error(res.error);
       return {
-        source: 'In-browser GFN2-xTB', sourceType: 'computed', confidence: res.convergence ? 95 : null,
-        label: 'Semi-empirical calculation complete',
-        data: [['Method', res.method || 'GFN2-xTB'], ['Total energy', res.total_energy ? `${res.total_energy} Eh` : 'N/A'], ['HOMO', res.homo ? `${res.homo} eV` : 'N/A'], ['LUMO', res.lumo ? `${res.lumo} eV` : 'N/A'], ['Dipole', res.dipole ? `${res.dipole} D` : 'N/A']],
+        source: 'In-browser GFN2-xTB', sourceType: 'computed',
+        confidence: res.confidence === 'high' ? 90 : (res.confidence === 'medium' ? 70 : 50),
+        label: 'Quantum chemistry calculation complete',
+        data: [
+          ['Method', res.method_label || 'GFN2-xTB'],
+          ['Ground state energy', res.ground_state_energy ? `${res.ground_state_energy} ${res.energy_unit || 'Eh'}` : 'N/A'],
+          ['Energy (eV)', res.energy_ev ? `${res.energy_ev} eV` : 'N/A'],
+          ['Ansatz', res.ansatz || 'N/A'],
+          ['Basis set', res.basis_set || 'N/A'],
+          ['Qubits', res.n_qubits || 'N/A'],
+          ['Mode', res.mode || 'N/A'],
+        ],
         raw: res,
       };
     },
@@ -70,27 +118,29 @@ const TOOLS = [
   {
     id: 'comparison',
     label: 'Side-by-side Compound Comparison',
-    description: 'Compare two compounds (enter two SMILES, one per line)',
+    description: 'Compare two compounds (enter two SMILES or names, one per line)',
     source: 'PubChem + in-browser', sourceType: 'database',
-    handler: async ({ input }) => {
+    handler: async ({ input, inputType }) => {
       const [s1, s2] = input.split('\n').map(s => s.trim()).filter(Boolean);
       if (!s1 || !s2) throw new Error('Enter two compounds, one per line');
-      const [res1, res2] = await Promise.all([
-        base44.functions.invoke('getMolecularData', { query: s1, query_type: 'smiles', compute_properties: true }),
-        base44.functions.invoke('getMolecularData', { query: s2, query_type: 'smiles', compute_properties: true }),
+      const [r1, r2] = await Promise.all([
+        fetch(pubchemUrl(s1, inputType, 'properties')).then(r => r.json()),
+        fetch(pubchemUrl(s2, inputType, 'properties')).then(r => r.json()),
       ]);
-      const r1 = d(res1);
-      const r2 = d(res2);
+      const p1 = r1?.PropertyTable?.Properties?.[0] || {};
+      const p2 = r2?.PropertyTable?.Properties?.[0] || {};
       return {
         source: 'PubChem + in-browser', sourceType: 'database', confidence: null,
         label: 'Compound comparison',
         data: [
-          ['Compound A', s1], ['Compound B', s2],
-          ['MW A vs B', `${r1.molecular_weight || '?'} vs ${r2.molecular_weight || '?'}`],
-          ['LogP A vs B', `${r1.logp ?? '?'} vs ${r2.logp ?? '?'}`],
-          ['TPSA A vs B', `${r1.tpsa ?? '?'} vs ${r2.tpsa ?? '?'}`],
+          ['CID A vs B', `${p1.CID || '?'} vs ${p2.CID || '?'}`],
+          ['MW A vs B', `${p1.MolecularWeight || '?'} vs ${p2.MolecularWeight || '?'}`],
+          ['XLogP A vs B', `${p1.XLogP ?? '?'} vs ${p2.XLogP ?? '?'}`],
+          ['HBD A vs B', `${p1.HBondDonorCount ?? '?'} vs ${p2.HBondDonorCount ?? '?'}`],
+          ['HBA A vs B', `${p1.HBondAcceptorCount ?? '?'} vs ${p2.HBondAcceptorCount ?? '?'}`],
+          ['TPSA A vs B', `${p1.TPSA ?? '?'} vs ${p2.TPSA ?? '?'}`],
         ],
-        raw: { compound_a: r1, compound_b: r2 },
+        raw: { compound_a: p1, compound_b: p2 },
       };
     },
   },
@@ -125,8 +175,7 @@ export default function ComputationalStudioSmallMolecules() {
   const [activeMode, setActiveMode] = useState('single');
   const { user } = useContext(AuthContext);
   const isPro = user && (['pro', 'lifetime', 'pro_lifetime', 'academic'].includes(user.subscription_tier) || user.role === 'admin');
-
-  const config = { inputTypes: INPUT_TYPES, tools: TOOLS, viewerMode: 'molecule', inputPlaceholder: 'Enter one SMILES per line' };
+  const config = { inputTypes: INPUT_TYPES, tools: TOOLS, viewerMode: 'molecule', inputPlaceholder: 'Enter one SMILES or compound name per line' };
 
   return (
     <StudioLayout>
@@ -138,22 +187,16 @@ export default function ComputationalStudioSmallMolecules() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Small Molecules</h1>
-              <p className="text-sm text-slate-500">PubChem and ChEMBL lookup, molecular properties, in-browser GFN2-xTB and PM7, and compound comparison</p>
+              <p className="text-sm text-slate-500">PubChem lookup, molecular properties, in-browser GFN2-xTB and PM7, and compound comparison</p>
             </div>
           </div>
           <SourcedBadge />
         </div>
-
-        <div className="bg-white border border-slate-200 rounded-2xl p-6">
-          <Studio3DViewer mode="molecule" height={300} />
-        </div>
-
+        <div className="bg-white border border-slate-200 rounded-2xl p-6"><Studio3DViewer mode="molecule" height={300} /></div>
         <RunModeTabs active={activeMode} onChange={setActiveMode} />
-
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter SMILES' }} isPro={isPro} />}
-
         <ApiCodeBlock code={API_CODE} filename="compound_lookup.py" title="Use via API" description="Query small molecules programmatically" />
       </div>
     </StudioLayout>

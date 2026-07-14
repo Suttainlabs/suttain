@@ -25,45 +25,50 @@ const TOOLS = [
     label: 'Hazard Prediction Engine',
     description: 'Run the Hazard Prediction Engine for binary classification with calibrated confidence, hazard categories, and source citations',
     source: 'EPA CompTox + ECHA', sourceType: 'database',
-    handler: async ({ input, inputType }) => {
-      const res = d(await base44.functions.invoke('hazardPrediction', { smiles: input, query: input, query_type: inputType }));
-      const confidence = res.confidence ? Math.round(parseFloat(res.confidence)) : null;
-      const label = res.label || res.prediction || (res.hazard_label === 'hazardous' ? 'Hazardous' : 'Likely safe');
-      const categories = res.categories || res.hazard_categories || [];
-      const sources = res.sources || [];
+    handler: async ({ input }) => {
+      const res = d(await base44.functions.invoke('hazardPrediction', { smiles: input }));
+      if (res.error) throw new Error(res.error);
+      const pred = res.prediction || {};
+      const confidence = pred.confidence ? Math.round(parseFloat(pred.confidence)) : null;
+      const label = pred.binary_result === 'hazardous' ? 'Hazardous' : (pred.binary_result === 'likely_safe' ? 'Likely safe' : (pred.binary_result || 'N/A'));
+      const categories = (pred.hazard_categories || []).map(c => c.category || c);
       return {
         source: 'EPA CompTox + ECHA', sourceType: 'database', confidence,
         label,
         data: [
-          ['Label', label],
-          ['SMILES', res.smiles || input],
-          ['CAS', res.cas_number || 'N/A'],
-          ['GHS codes', (res.ghs_codes || []).join(', ') || 'None'],
+          ['Binary result', label],
+          ['Compound', res.compound?.name || input],
+          ['SMILES', res.compound?.smiles || input],
+          ['Confidence label', pred.confidence_label || 'N/A'],
+          ['GHS codes', (pred.hazard_categories || []).flatMap(c => c.ghs || []).join(', ') || 'See categories'],
         ],
-        categories: Array.isArray(categories) ? categories : [],
-        raw: { ...res, sources },
+        categories,
+        raw: res,
       };
     },
   },
   {
     id: 'comprehensive',
     label: 'Comprehensive Hazard Profile',
-    description: 'Deep hazard profile with regulatory status, environmental fate, and toxicity endpoints from multiple databases',
+    description: 'Deep hazard profile with regulatory status, environmental fate, and toxicity endpoints',
     source: 'EPA CompTox + ECHA + GHS', sourceType: 'database',
-    handler: async ({ input, inputType }) => {
-      const res = d(await base44.functions.invoke('getComprehensiveHazardProfile', { smiles: input, query: input, query_type: inputType }));
-      const confidence = res.confidence ? Math.round(parseFloat(res.confidence)) : null;
-      const categories = res.hazard_categories || res.categories || [];
+    handler: async ({ input }) => {
+      const res = d(await base44.functions.invoke('getComprehensiveHazardProfile', { ingredientName: input }));
+      if (res.error) throw new Error(res.error);
       return {
-        source: 'EPA CompTox + ECHA + GHS', sourceType: 'database', confidence,
+        source: 'EPA CompTox + ECHA + GHS', sourceType: 'database',
+        confidence: null,
         label: 'Comprehensive hazard profile',
         data: [
-          ['Overall label', res.hazard_label || res.label || 'N/A'],
-          ['Regulatory status', res.regulatory_status || 'N/A'],
-          ['Environmental fate', res.environmental_fate || 'N/A'],
-          ['Toxicity endpoints', (res.toxicity_endpoints || []).length || 'N/A'],
+          ['Ingredient', res.ingredientName || input],
+          ['Found', res.found ? 'Yes' : 'No'],
+          ['Risk level', res.riskLevel || 'unknown'],
+          ['CAS', res.casNumber || 'N/A'],
+          ['EPA tracked', res.epa?.isToxicReleaseTracked ? 'Yes' : 'No'],
+          ['ECHA SVHC', res.echa?.isSVHC ? 'Yes' : 'No'],
+          ['Flags', (res.summaryFlags || []).join('; ').slice(0, 80) || 'None'],
         ],
-        categories: Array.isArray(categories) ? categories : [],
+        categories: res.summaryFlags || [],
         raw: res,
       };
     },
@@ -102,7 +107,6 @@ export default function ComputationalStudioHazardSafety() {
   const [activeMode, setActiveMode] = useState('single');
   const { user } = useContext(AuthContext);
   const isPro = user && (['pro', 'lifetime', 'pro_lifetime', 'academic'].includes(user.subscription_tier) || user.role === 'admin');
-
   const config = { inputTypes: INPUT_TYPES, tools: TOOLS, viewerMode: 'hazard', inputPlaceholder: 'Enter one SMILES per line' };
 
   return (
@@ -120,17 +124,11 @@ export default function ComputationalStudioHazardSafety() {
           </div>
           <SourcedBadge />
         </div>
-
-        <div className="bg-white border border-slate-200 rounded-2xl p-6">
-          <Studio3DViewer mode="hazard" height={300} />
-        </div>
-
+        <div className="bg-white border border-slate-200 rounded-2xl p-6"><Studio3DViewer mode="hazard" height={300} /></div>
         <RunModeTabs active={activeMode} onChange={setActiveMode} />
-
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter SMILES' }} isPro={isPro} />}
-
         <ApiCodeBlock code={API_CODE} filename="hazard_prediction.py" title="Use via API" description="Run hazard predictions programmatically" />
       </div>
     </StudioLayout>
