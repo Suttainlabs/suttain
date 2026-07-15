@@ -20,7 +20,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { base44 } from '@/api/base44Client';
 import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';
 import ShareButton from '../shared/ShareButton';
-import { triggerSafetyAlertIfNeeded } from '@/utils/twilioAlertTrigger';
 import RiskExplanationModal from './RiskExplanationModal';
 import useDoseAnalysis from './useDoseAnalysis';
 import WhyThisScore from './WhyThisScore';
@@ -502,15 +501,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
       });
       if (result.shouldWarn) {
         setSafetyAlert(result.alert);
-        // Trigger Twilio SMS/WhatsApp alert if user has it enabled
-        triggerSafetyAlertIfNeeded({
-          user,
-          productName: product.name,
-          riskLevel: result.alert?.severity || 'high',
-          regulatoryAlert: result.alert?.alert_message,
-          flaggedIngredients: result.alert?.flagged_ingredients?.map(f => f.ingredient) || [],
-          reportUrl: `${window.location.origin}/BarcodeScanner`
-        });
+
       }
     } catch {}
   };
