@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
 
-const USDA_API_KEY = 'DEMO_KEY'; // Register USDA_API_KEY in dashboard settings for higher rate limits
+const USDA_API_KEY = Deno.env.get('USDA_API_KEY');
 const USDA_BASE = 'https://api.nal.usda.gov/fdc/v1';
 
 function findNutrient(nutrients, names) {
@@ -20,6 +20,10 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
     const { query, fdc_id } = body;
+
+    if (!USDA_API_KEY) {
+      return Response.json({ error: 'USDA API key not configured. Set USDA_API_KEY in dashboard settings.' }, { status: 500 });
+    }
 
     // Mode 1: Search foods
     if (query && !fdc_id) {

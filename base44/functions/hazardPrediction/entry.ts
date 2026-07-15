@@ -22,19 +22,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Provide smiles, name, or compound_id' }, { status: 400 });
     }
 
-    // Check auth for tier gating of model internals
-    let isPro = false;
-    try {
-      const user = await base44.auth.me();
-      if (user) {
-        isPro = user.role === 'admin' ||
-                user.subscription_tier === 'pro' ||
-                user.subscription_status === 'pro' ||
-                user.admin_granted_access === true;
-      }
-    } catch (e) {
-      // Not authenticated (Enterprise API call)
-    }
+    // Require authentication — prevents unauthorized credit consumption
+    const user = await base44.auth.me();
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const isPro = user.role === 'admin' ||
+            user.subscription_tier === 'pro' ||
+            user.subscription_status === 'pro' ||
+            user.admin_granted_access === true;
 
     // Load benchmark compounds for nearest neighbor matching
     let benchmarkCompounds: any[] = [];
