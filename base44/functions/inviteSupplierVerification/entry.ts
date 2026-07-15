@@ -1,7 +1,16 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
-import { Resend } from 'npm:resend@4.0.0';
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+const APP_URL = 'https://app.suttain.com';
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 Deno.serve(async (req) => {
   try {
@@ -11,25 +20,42 @@ Deno.serve(async (req) => {
 
     const { verificationId, supplierEmail, supplierName, formulaName, ingredients, token } = await req.json();
 
-    const appUrl = req.headers.get('origin') || 'https://app.suttain.com';
-    const verifyUrl = `${appUrl}/SupplierVerify?token=${token}`;
+    // Validate required fields
+    if (!supplierEmail || !token || !verificationId) {
+      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    }
 
-    const ingredientList = ingredients.map(i => `<li style="padding:4px 0;color:#374151;">${i}</li>`).join('');
+    // Validate email format to prevent injection via recipient field
+    const emailRegex = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
+    if (!emailRegex.test(supplierEmail)) {
+      return Response.json({ error: 'Invalid email address' }, { status: 400 });
+    }
 
-    const { error } = await resend.emails.send({
-      from: 'Suttain <noreply@suttain.com>',
-      to: supplierEmail,
-      cc: 'contact@suttain.com',
-      reply_to: 'contact@suttain.com',
-      subject: `Ingredient Verification Request for "${formulaName}" — Suttain`,
-      html: `
+    // Verify the requesting user owns this verification record
+    const verification = await base44.entities.SupplierVerification.get(verificationId);
+    if (!verification || verification.created_by_id !== user.id) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Build verify URL with hardcoded domain — never trust user-controlled origin header
+    const verifyUrl = `${APP_URL}/SupplierVerify?token=${encodeURIComponent(token)}`;
+
+    // Escape all user-supplied content before inserting into HTML
+    const safeSupplierName = escapeHtml(supplierName);
+    const safeFormulaName = escapeHtml(formulaName);
+    const safeIngredients = Array.isArray(ingredients) ? ingredients : [];
+    const ingredientList = safeIngredients
+      .map(i => `<li style="padding:4px 0;color:#374151;">${escapeHtml(i)}</li>`)
+      .join('');
+
+    const html = `
         <div style="font-family:'Source Sans 3',sans-serif;max-width:600px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
           <div style="background:white;border-radius:16px;padding:32px;border:1px solid #e2e8f0;">
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:40px;margin-bottom:24px;" />
-            <h2 style="color:#1e293b;margin:0 0 8px;">Hello${supplierName ? `, ${supplierName}` : ''}!</h2>
+            <h2 style="color:#1e293b;margin:0 0 8px;">Hello${safeSupplierName ? `, ${safeSupplierName}` : ''}!</h2>
             <p style="color:#475569;margin:0 0 20px;line-height:1.6;">
-              <strong>${user.full_name || user.email}</strong> has invited you to verify ingredient data for the formula 
-              <strong>"${formulaName}"</strong> on Suttain — a chemical safety and formulation platform.
+              <strong>${escapeHtml(user.full_name || user.email)}</strong> has invited you to verify ingredient data for the formula 
+              <strong>"${safeFormulaName}"</strong> on Suttain — a chemical safety and formulation platform.
             </p>
             <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px;margin-bottom:24px;">
               <p style="margin:0 0 12px;font-weight:600;color:#166534;">Ingredients to verify:</p>
@@ -51,13 +77,14 @@ Deno.serve(async (req) => {
           </div>
           <p style="color:#94a3b8;font-size:12px;text-align:center;margin-top:16px;">© ${new Date().getFullYear()} Suttain. All rights reserved.</p>
         </div>
-      `
-    });
+      `;
 
-    if (error) {
-      console.error('Resend error:', error);
-      return Response.json({ error: 'Failed to send email' }, { status: 500 });
-    }
+    // Use the platform's restricted SendEmail integration instead of raw Resend client
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: supplierEmail,
+      subject: `Ingredient Verification Request for "${safeFormulaName}" — Suttain`,
+      body: html,
+    });
 
     return Response.json({ success: true });
   } catch (err) {
