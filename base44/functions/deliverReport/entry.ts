@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
           }
           const isPrivateIp = (ip) => {
             const parts = ip.split('.').map(Number);
-            if (parts.length !== 4) return true;
+            if (parts.length !== 4 || parts.some(p => isNaN(p))) return true;
             const [a, b] = parts;
             return (
               a === 10 ||
@@ -106,7 +106,9 @@ Deno.serve(async (req) => {
               a === 127 ||
               (a === 169 && b === 254) ||
               a === 0 ||
-              (a === 100 && b >= 64 && b <= 127)
+              (a === 100 && b >= 64 && b <= 127) ||
+              a >= 224 ||
+              (a === 198 && b >= 18 && b <= 19)
             );
           };
           let resolvedIps;

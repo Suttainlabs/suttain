@@ -156,6 +156,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Webhook secret not configured' }, { status: 500 });
     }
 
+    const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeSecretKey) {
+      console.error('STRIPE_SECRET_KEY is not set');
+      return Response.json({ error: 'Stripe not configured' }, { status: 500 });
+    }
+
     const signature = req.headers.get('stripe-signature');
     if (!signature) {
       console.error('Missing stripe-signature header');
