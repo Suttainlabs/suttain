@@ -97,6 +97,7 @@ const getSubscribeConfirmationHtml = (email) => {
 </body>
 </html>
 `;
+};
 
 Deno.serve(async (req) => {
     try {
@@ -107,17 +108,51 @@ Deno.serve(async (req) => {
         // ── Subscribe a new email ──
         if (action === 'subscribe') {
             const { email } = body;
-            if (!email) {
+            if (!email || typeof email !== 'string') {
                 return Response.json({ error: 'Email is required' }, { status: 400 });
             }
 
-            // Send confirmation email to subscriber
-            await resend.emails.send({
-                from: 'Suttain Blog <noreply@suttain.com>',
-                to: [email],
+            // Validate email format to prevent injection / abuse
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email) || email.length > 254) {
+                return Response.json({ error: 'Invalid email address' }, { status: 400 });
+            }
+
+            // Deduplicate: skip if a subscription confirmation was already sent
+            try {
+                const existing = await base44.asServiceRole.entities.Notification.filter(
+                    { target_user: email, type: 'feature' },
+                    '-created_date',
+                    5
+                );
+                const alreadySubscribed = existing.find(n => n.metadata?.blog_subscription === true);
+                if (alreadySubscribed) {
+                    return Response.json({ success: true, message: 'Already subscribed' });
+                }
+            } catch (e) {
+                console.error('Subscription dedup check failed:', e.message);
+            }
+
+            // Use the platform's restricted email integration (not raw Resend)
+            // to prevent open-relay abuse via the unauthenticated subscribe endpoint.
+            await base44.integrations.Core.SendEmail({
+                to: email,
                 subject: 'You are now subscribed to Suttain Blog updates',
-                html: getSubscribeConfirmationHtml(email)
+                body: getSubscribeConfirmationHtml(email)
             });
+
+            // Record the subscription so we can deduplicate future requests
+            try {
+                await base44.asServiceRole.entities.Notification.create({
+                    title: 'Blog subscription confirmed',
+                    message: `${email} subscribed to blog updates.`,
+                    type: 'feature',
+                    target_user: email,
+                    metadata: { blog_subscription: true }
+                });
+            } catch (e) {
+                console.error('Failed to record subscription:', e.message);
+            }
 
             console.log(`Blog subscription confirmed for: ${email}`);
             return Response.json({ success: true, message: 'Subscription confirmed' });
