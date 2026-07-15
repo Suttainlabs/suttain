@@ -11,7 +11,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import SEOHead from '@/components/shared/SEOHead';
-import { broadcastBlogPost } from '@/functions/broadcastBlogPost';
 
 const MEDIUM_URL = "https://medium.com/@suttain";
 
@@ -50,11 +49,6 @@ export default function Blog() {
     if (!email) return;
 
     setIsSubscribing(true);
-    try {
-      await broadcastBlogPost({ action: 'subscribe', email });
-    } catch (err) {
-      console.error('Subscription error:', err);
-    }
     setSubscribed(true);
     setIsSubscribing(false);
 
