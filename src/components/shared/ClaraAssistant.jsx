@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X, Send, MessageSquare, Loader2, Home, Mic, MicOff, Crown, XCircle, ArrowRight, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { sendSlackNotification } from '@/functions/sendSlackNotification';
 import { cancelSubscription } from '@/functions/cancelSubscription';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -358,11 +357,6 @@ export default function ClaraAssistant() {
                 subject: `Live Agent Request from ${liveAgentName}`,
                 body: `A user has requested to speak with a live agent on Suttain.\n\nName: ${liveAgentName}\nEmail: ${liveAgentEmail}\n\n--- Conversation Transcript ---\n${transcript}\n\nPlease follow up with the user as soon as possible.`
             });
-            sendSlackNotification({
-                channel: '#general',
-                type: 'live_agent',
-                data: { userName: liveAgentName, userEmail: liveAgentEmail, transcript }
-            }).catch(() => {});
             setLiveAgentSent(true);
             setMessages(prev => [...prev, {
                 role: 'assistant',

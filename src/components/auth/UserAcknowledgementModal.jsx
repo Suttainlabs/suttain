@@ -147,15 +147,6 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
     setIsSaving(false);
 
     if (profileType === 'researcher') {
-      // Notify admin, skip consumer quiz, go straight to research portal
-      base44.auth.me().then(currentUser => {
-        base44.functions.invoke('sendSlackNotification', {
-          channel: '#all-suttain',
-          type: 'new_user',
-          data: { userName: currentUser.full_name, userEmail: currentUser.email, role: 'researcher', industry: 'research' }
-        }).catch(() => {});
-      }).catch(() => {});
-
       localStorage.removeItem('suttain_onboarding_progress');
       if (onAccept) onAccept();
       navigate('/research');
@@ -249,12 +240,6 @@ export default function UserAcknowledgementModal({ isOpen, onAccept, onClose }) 
           severity: 'info',
           target_user: 'admin',
           metadata: { user_email: currentUser.email, role: data.role, industry: data.what_you_make, priority: data.priority }
-        }).catch(() => {});
-
-        base44.functions.invoke('sendSlackNotification', {
-          channel: '#all-suttain',
-          type: 'new_user',
-          data: { userName: currentUser.full_name, userEmail: currentUser.email, role: data.role, industry: data.what_you_make }
         }).catch(() => {});
       }).catch(() => {});
 

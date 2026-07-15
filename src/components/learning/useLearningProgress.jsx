@@ -17,14 +17,6 @@ export async function sendLearningCompletionEmail(user, courseName) {
       }
     });
 
-    // Send Slack notification
-    await base44.functions.invoke('sendSlackNotification', {
-      type: 'learning_complete',
-      data: {
-        userName: user.full_name || 'User',
-        courseName
-      }
-    });
   } catch (error) {
     console.error('Failed to send learning completion notification:', error);
   }

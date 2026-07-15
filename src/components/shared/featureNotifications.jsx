@@ -123,17 +123,6 @@ The Suttain Team`
       }
     });
 
-    // Send Slack notification to team
-    await base44.functions.invoke('sendSlackNotification', {
-      channel: '#all-suttain',
-      type: 'feature_usage',
-      data: {
-        userName: user.full_name || 'User',
-        featureType,
-        details
-      }
-    });
-
     // Create in-app notification for simulator, scanner, and generator
     const inAppTemplate = inAppTemplates[featureType];
     if (inAppTemplate) {

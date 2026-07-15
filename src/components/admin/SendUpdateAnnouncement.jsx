@@ -95,25 +95,6 @@ export default function SendUpdateAnnouncement() {
         }
       }
 
-      // Send Slack notification if selected
-      if (sendTo === 'all' || sendTo === 'slack') {
-        if (!slackChannel) {
-          setError('Please enter a Slack channel');
-          setIsSending(false);
-          return;
-        }
-        await base44.functions.invoke('sendSlackNotification', {
-          channel: slackChannel,
-          type: 'update_announcement',
-          data: {
-            updateTitle,
-            updateDescription,
-            features: filteredFeatures,
-            attachmentUrl: uploadedFileUrl || null
-          }
-        });
-      }
-
       setSuccess(true);
       setUpdateTitle('');
       setUpdateDescription('');
