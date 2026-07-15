@@ -4,6 +4,18 @@ import { Resend } from 'npm:resend@2.0.0';
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 const ADMIN_EMAIL = Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com';
 
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+const emailRegex = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
+
 // Email templates
 const getWelcomeEmailHtml = (userName) => `
 <!DOCTYPE html>
@@ -401,228 +413,178 @@ const getSafetyAlertHtml = (userName, alertData) => `
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
-        
         const { type, to, subject, html, text, from, data } = await req.json();
 
-        // Handle different email types
-        if (type === 'welcome') {
-            // New user welcome email
-            const { userName, userEmail, generatorCategory, simulatorCategory } = data;
-            
-            // Send welcome email to user
+        // Public types that only send to ADMIN_EMAIL (no auth required, but HTML-escape everything)
+        const isPublicType = type === 'demo_request' || type === 'contact_form';
+
+        // All other types require authentication
+        let user = null;
+        if (!isPublicType) {
+            user = await base44.auth.me();
+            if (!user) {
+                return Response.json({ error: 'Unauthorized' }, { status: 401 });
+            }
+        }
+
+        // Helper: send a single email via Resend
+        const sendEmail = async (recipient, subjectLine, htmlBody) => {
             await resend.emails.send({
                 from: 'Suttain <noreply@suttain.com>',
-                to: [userEmail],
+                to: [recipient],
                 cc: 'contact@suttain.com',
                 reply_to: 'contact@suttain.com',
-                subject: 'Welcome to Suttain! 🎉',
-                html: getWelcomeEmailHtml(userName)
+                subject: subjectLine,
+                html: htmlBody
             });
-            
-            // Send notification to admin
-            await resend.emails.send({
-                from: 'Suttain <noreply@suttain.com>',
-                to: [ADMIN_EMAIL],
-                subject: `New User Signup: ${userName || userEmail}`,
-                html: getAdminNewUserHtml(userName, userEmail, generatorCategory, simulatorCategory)
-            });
-            
+        };
+
+        if (type === 'welcome') {
+            const userName = escapeHtml(data.userName || user.full_name || 'there');
+            const userEmail = user.email; // pinned to authenticated user
+            const generatorCategory = escapeHtml(data.generatorCategory);
+            const simulatorCategory = escapeHtml(data.simulatorCategory);
+            await sendEmail(userEmail, 'Welcome to Suttain!', getWelcomeEmailHtml(userName));
+            await sendEmail(ADMIN_EMAIL, `New User Signup: ${data.userName || userEmail}`, getAdminNewUserHtml(userName, escapeHtml(userEmail), generatorCategory, simulatorCategory));
             return Response.json({ success: true, message: 'Welcome emails sent' });
         }
-        
+
         if (type === 'feature_usage') {
-            // Feature usage notification
-            const { userName, userEmail, featureType, details } = data;
-            
-            await resend.emails.send({
-                from: 'Suttain <noreply@suttain.com>',
-                to: [userEmail],
-                cc: 'contact@suttain.com',
-                reply_to: 'contact@suttain.com',
-                subject: `Your ${featureType === 'simulation' ? 'Simulation' : featureType === 'formula' ? 'Formula' : 'Scan'} Results - Suttain`,
-                html: getFeatureUsageHtml(userName, featureType, details)
-            });
-            
+            const { featureType, details } = data;
+            const userName = escapeHtml(data.userName || user.full_name || 'User');
+            const safeDetails = {
+                chemicals: Array.isArray(details?.chemicals) ? details.chemicals.map(escapeHtml) : [],
+                riskScore: escapeHtml(details?.riskScore),
+                safetyLevel: escapeHtml(details?.safetyLevel),
+                formulaName: escapeHtml(details?.formulaName),
+                productType: escapeHtml(details?.productType),
+                ingredientCount: escapeHtml(details?.ingredientCount),
+                productName: escapeHtml(details?.productName),
+                brand: escapeHtml(details?.brand),
+                barcode: escapeHtml(details?.barcode)
+            };
+            await sendEmail(user.email, `Your ${featureType === 'simulation' ? 'Simulation' : featureType === 'formula' ? 'Formula' : 'Scan'} Results - Suttain`, getFeatureUsageHtml(userName, escapeHtml(featureType), safeDetails));
             return Response.json({ success: true, message: 'Feature usage email sent' });
         }
-        
+
         if (type === 'learning_complete') {
-            // Learning center completion
-            const { userName, userEmail, courseName } = data;
-            
-            await resend.emails.send({
-                from: 'Suttain <noreply@suttain.com>',
-                to: [userEmail],
-                cc: 'contact@suttain.com',
-                reply_to: 'contact@suttain.com',
-                subject: '🎓 Congratulations on Completing Your Course!',
-                html: getLearningCompleteHtml(userName, courseName)
-            });
-            
+            const userName = escapeHtml(data.userName || user.full_name || 'User');
+            const courseName = escapeHtml(data.courseName);
+            await sendEmail(user.email, 'Congratulations on Completing Your Course!', getLearningCompleteHtml(userName, courseName));
             return Response.json({ success: true, message: 'Learning completion email sent' });
         }
-        
+
         if (type === 'demo_request') {
-            // Demo request notification to admin
-            const { name, email, companyName, role, message } = data;
-            
-            await resend.emails.send({
-                from: 'Suttain <noreply@suttain.com>',
-                to: [ADMIN_EMAIL],
-                subject: `🎯 New Demo Request from ${companyName}`,
-                html: `
-                    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 20px;">
-                        <div style="background: linear-gradient(135deg, #02988C 0%, #09D2FF 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-                            <h1 style="color: white; margin: 0; font-size: 24px;">🎯 New Demo Request</h1>
-                        </div>
-                        <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                            <h2 style="color: #1e293b; margin-top: 0;">Contact Details</h2>
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <tr><td style="padding: 8px 0; color: #64748b;">Name:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${name}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #64748b;">Email:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${email}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #64748b;">Company:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${companyName}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #64748b;">Role:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${role || 'Not specified'}</td></tr>
-                            </table>
-                            ${message ? `<div style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;"><p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">MESSAGE:</p><p style="color: #1e293b; margin: 0;">${message}</p></div>` : ''}
-                            <p style="color: #64748b; font-size: 12px; margin-top: 20px;">Submitted on ${new Date().toLocaleString()}</p>
-                        </div>
+            const name = escapeHtml(data.name);
+            const email = escapeHtml(data.email);
+            const companyName = escapeHtml(data.companyName);
+            const role = escapeHtml(data.role);
+            const message = escapeHtml(data.message);
+            await sendEmail(ADMIN_EMAIL, `New Demo Request from ${data.companyName || 'Unknown'}`, `
+                <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #02988C 0%, #09D2FF 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                        <h1 style="color: white; margin: 0; font-size: 24px;">New Demo Request</h1>
                     </div>
-                `
-            });
-            
+                    <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h2 style="color: #1e293b; margin-top: 0;">Contact Details</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr><td style="padding: 8px 0; color: #64748b;">Name:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${name}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #64748b;">Email:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${email}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #64748b;">Company:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${companyName}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #64748b;">Role:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${role || 'Not specified'}</td></tr>
+                        </table>
+                        ${message ? `<div style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;"><p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">MESSAGE:</p><p style="color: #1e293b; margin: 0;">${message}</p></div>` : ''}
+                        <p style="color: #64748b; font-size: 12px; margin-top: 20px;">Submitted on ${new Date().toLocaleString()}</p>
+                    </div>
+                </div>
+            `);
             return Response.json({ success: true, message: 'Demo request notification sent' });
         }
 
         if (type === 'contact_form') {
-            // Contact form submission notification to admin
-            const { name, email, subject: contactSubject, message } = data;
-            
-            await resend.emails.send({
-                from: 'Suttain <noreply@suttain.com>',
-                to: [ADMIN_EMAIL],
-                subject: `📬 New Contact Form: ${contactSubject}`,
-                html: `
-                    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 20px;">
-                        <div style="background: linear-gradient(135deg, #9531F5 0%, #09D2FF 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-                            <h1 style="color: white; margin: 0; font-size: 24px;">📬 New Contact Form Submission</h1>
-                        </div>
-                        <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                            <h2 style="color: #1e293b; margin-top: 0;">Contact Details</h2>
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <tr><td style="padding: 8px 0; color: #64748b;">Name:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${name}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #64748b;">Email:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${email}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #64748b;">Subject:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${contactSubject}</td></tr>
-                            </table>
-                            <div style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
-                                <p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">MESSAGE:</p>
-                                <p style="color: #1e293b; margin: 0; white-space: pre-wrap;">${message}</p>
-                            </div>
-                            <p style="color: #64748b; font-size: 12px; margin-top: 20px;">Submitted on ${new Date().toLocaleString()}</p>
-                        </div>
+            const name = escapeHtml(data.name);
+            const email = escapeHtml(data.email);
+            const contactSubject = escapeHtml(data.subject);
+            const message = escapeHtml(data.message);
+            await sendEmail(ADMIN_EMAIL, `New Contact Form: ${data.subject || 'No Subject'}`, `
+                <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #9531F5 0%, #09D2FF 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                        <h1 style="color: white; margin: 0; font-size: 24px;">New Contact Form Submission</h1>
                     </div>
-                `
-            });
-            
+                    <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h2 style="color: #1e293b; margin-top: 0;">Contact Details</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr><td style="padding: 8px 0; color: #64748b;">Name:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${name}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #64748b;">Email:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${email}</td></tr>
+                            <tr><td style="padding: 8px 0; color: #64748b;">Subject:</td><td style="padding: 8px 0; color: #1e293b; font-weight: 600;">${contactSubject}</td></tr>
+                        </table>
+                        <div style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
+                            <p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">MESSAGE:</p>
+                            <p style="color: #1e293b; margin: 0; white-space: pre-wrap;">${message}</p>
+                        </div>
+                        <p style="color: #64748b; font-size: 12px; margin-top: 20px;">Submitted on ${new Date().toLocaleString()}</p>
+                    </div>
+                </div>
+            `);
             return Response.json({ success: true, message: 'Contact form notification sent' });
         }
 
         if (type === 'update_announcement') {
-            // Platform update announcement (admin only)
-            const user = await base44.auth.me();
             if (user?.role !== 'admin') {
                 return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
             }
-            
-            const { updateTitle, updateDescription, features, recipients } = data;
-            
-            // Send to all recipients
+            const updateTitle = escapeHtml(data.updateTitle);
+            const updateDescription = escapeHtml(data.updateDescription);
+            const features = Array.isArray(data.features) ? data.features.map(escapeHtml) : [];
+            const recipients = Array.isArray(data.recipients) ? data.recipients.filter(e => emailRegex.test(e)) : [];
             for (const recipient of recipients) {
-                await resend.emails.send({
-                    from: 'Suttain <noreply@suttain.com>',
-                    to: [recipient],
-                    cc: 'contact@suttain.com',
-                    reply_to: 'contact@suttain.com',
-                    subject: `🚀 Suttain Update: ${updateTitle}`,
-                    html: getUpdateAnnouncementHtml(updateTitle, updateDescription, features)
-                });
+                await sendEmail(recipient, `Suttain Update: ${data.updateTitle || ''}`, getUpdateAnnouncementHtml(updateTitle, updateDescription, features));
             }
-            
             return Response.json({ success: true, message: `Update announcement sent to ${recipients.length} users` });
         }
 
         if (type === 'certification') {
-            // Certification earned email
-            const { userName, userEmail, certName, score, earnedDate } = data;
-            
-            await resend.emails.send({
-                from: 'Suttain <noreply@suttain.com>',
-                to: [userEmail],
-                cc: 'contact@suttain.com',
-                reply_to: 'contact@suttain.com',
-                subject: `🏆 Certification Earned: ${certName}`,
-                html: getCertificationHtml(userName, certName, score, earnedDate)
-            });
-            
+            const userName = escapeHtml(data.userName || user.full_name || 'User');
+            const certName = escapeHtml(data.certName);
+            const score = escapeHtml(data.score);
+            const earnedDate = escapeHtml(data.earnedDate);
+            await sendEmail(user.email, `Certification Earned: ${data.certName || ''}`, getCertificationHtml(userName, certName, score, earnedDate));
             return Response.json({ success: true, message: 'Certification email sent' });
         }
 
         if (type === 'download') {
-            // File download notification
-            const { userName, userEmail, downloadType, fileName, fileUrl } = data;
-            
-            await resend.emails.send({
-                from: 'Suttain <noreply@suttain.com>',
-                to: [userEmail],
-                cc: 'contact@suttain.com',
-                reply_to: 'contact@suttain.com',
-                subject: `📥 Your ${downloadType} is Ready - Suttain`,
-                html: getDownloadNotificationHtml(userName, downloadType, fileName, { fileUrl })
-            });
-            
+            const userName = escapeHtml(data.userName || user.full_name || 'User');
+            const downloadType = escapeHtml(data.downloadType);
+            const fileName = escapeHtml(data.fileName);
+            const fileUrl = escapeHtml(data.fileUrl);
+            await sendEmail(user.email, `Your ${data.downloadType || 'File'} is Ready - Suttain`, getDownloadNotificationHtml(userName, downloadType, fileName, { fileUrl }));
             return Response.json({ success: true, message: 'Download notification sent' });
         }
 
         if (type === 'weekly_digest') {
-            // Weekly digest email
-            const { userName, userEmail, stats } = data;
-            
-            await resend.emails.send({
-                from: 'Suttain <noreply@suttain.com>',
-                to: [userEmail],
-                cc: 'contact@suttain.com',
-                reply_to: 'contact@suttain.com',
-                subject: '📊 Your Weekly Suttain Summary',
-                html: getWeeklyDigestHtml(userName, stats)
-            });
-            
+            const userName = escapeHtml(data.userName || user.full_name || 'User');
+            const stats = data.stats || {};
+            await sendEmail(user.email, 'Your Weekly Suttain Summary', getWeeklyDigestHtml(userName, stats));
             return Response.json({ success: true, message: 'Weekly digest sent' });
         }
 
         if (type === 'safety_alert') {
-            // Personalized safety alert
-            const { userName, userEmail, alertData } = data;
-            
-            await resend.emails.send({
-                from: 'Suttain <noreply@suttain.com>',
-                to: [userEmail],
-                cc: 'contact@suttain.com',
-                reply_to: 'contact@suttain.com',
-                subject: `⚠️ Safety Alert: ${alertData?.productName || 'Important Notice'}`,
-                html: getSafetyAlertHtml(userName, alertData)
-            });
-            
+            const userName = escapeHtml(data.userName || user.full_name || 'User');
+            const alertData = data.alertData || {};
+            const safeAlertData = {
+                severity: escapeHtml(alertData.severity),
+                productName: escapeHtml(alertData.productName),
+                message: escapeHtml(alertData.message),
+                flaggedIngredients: Array.isArray(alertData.flaggedIngredients) ? alertData.flaggedIngredients.map(escapeHtml) : []
+            };
+            await sendEmail(user.email, `Safety Alert: ${alertData.productName || 'Important Notice'}`, getSafetyAlertHtml(userName, safeAlertData));
             return Response.json({ success: true, message: 'Safety alert email sent' });
         }
 
-        // Generic email send (requires auth)
-        const user = await base44.auth.me();
-        if (!user) {
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
+        // Generic email send (requires auth — already checked above)
         if (!to || !subject || (!html && !text)) {
-            return Response.json({ 
-                error: 'Missing required fields: to, subject, and either html or text are required' 
+            return Response.json({
+                error: 'Missing required fields: to, subject, and either html or text are required'
             }, { status: 400 });
         }
 
@@ -631,8 +593,8 @@ Deno.serve(async (req) => {
             to: Array.isArray(to) ? to : [to],
             cc: 'contact@suttain.com',
             reply_to: 'contact@suttain.com',
-            subject,
-            html,
+            subject: escapeHtml(subject),
+            html: escapeHtml(html),
             text
         });
 
