@@ -51,6 +51,9 @@ function deriveAlerts(forecast) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
     const body = await req.json();
     const { place, lat, lon } = body;
 
