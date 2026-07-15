@@ -142,14 +142,6 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Reject any request bearing a user Authorization header — webhooks must
-    // only be accepted from Stripe via signature-validated, unauthenticated calls.
-    const authHeader = req.headers.get('authorization') || req.headers.get('Authorization');
-    if (authHeader) {
-      console.error('Webhook called with Authorization header — rejecting');
-      return Response.json({ error: 'Webhook endpoint does not accept authenticated requests' }, { status: 401 });
-    }
-
     const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
     if (!webhookSecret) {
       console.error('STRIPE_WEBHOOK_SECRET is not set');
