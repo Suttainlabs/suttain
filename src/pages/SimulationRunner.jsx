@@ -24,7 +24,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../com
 import {
   Cpu, ChevronLeft, Beaker, Dna, Download, Copy, CheckCircle2,
   Loader2, RotateCcw, BookOpen, Microscope, Activity, AlertTriangle,
-  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info, Atom, Layers, Thermometer, FileCode2, Upload
+  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info, Atom, Layers, Thermometer, FileCode2, Upload, Target
 } from "lucide-react";
 import QuantumSettings from "../components/computational/QuantumSettings";
 import QuantumResults from "../components/computational/QuantumResults";
@@ -34,6 +34,7 @@ import StructureBuilder from "../components/computational/StructureBuilder";
 import CrystalViewer3D from "../components/computational/CrystalViewer3D";
 import SimulationInputFiles from "../components/computational/SimulationInputFiles";
 import ThermoPhaseDiagram from "../components/computational/ThermoPhaseDiagram";
+import StructurePrepSuite from "../components/structural/StructurePrepSuite";
 
 function SelectField({ label, options, value, onChange }) {
   return (
@@ -1158,6 +1159,24 @@ Provide a focused, technical analysis. Return JSON with:
                     </div>
                   </TooltipProvider>
                 </div>
+                )}
+
+                {/* Prepare Docking — MD only */}
+                {typeId === "molecular_dynamics" && (
+                  <div className="mb-7">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0D9E8E] to-[#3B82F6] flex items-center justify-center">
+                        <Target className="w-4 h-4 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm">Prepare Docking</h3>
+                        <p className="text-slate-500 text-xs">Generate AutoDock Vina & AutoDock4 grid parameters from any structure</p>
+                      </div>
+                    </div>
+                    <div className="bg-[#0F172A] rounded-2xl p-5">
+                      <StructurePrepSuite modes={['grid_params', 'ligand_grid_params']} />
+                    </div>
+                  </div>
                 )}
 
                 {/* Custom Forcefield picker — MD only */}

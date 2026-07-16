@@ -6,9 +6,8 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom,
-  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight, Layers, Target, Boxes, Thermometer
+  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight, Layers, Boxes, Thermometer
 } from "lucide-react";
-import StructurePrepSuite from '../components/structural/StructurePrepSuite';
 
 export const SIM_TYPES = [
   {
@@ -419,24 +418,6 @@ export default function ComputationalSimulation() {
             </div>
             <div className="ml-auto text-xs text-slate-400 font-medium hidden sm:block">
               {filteredSims.length} simulation types available
-            </div>
-          </div>
-
-          {/* Prepare Docking */}
-          <div className="mb-10">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0D9E8E] to-[#3B82F6] flex items-center justify-center">
-                <Target className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">Prepare Docking</h2>
-                <p className="text-slate-500 text-xs">Free PDB prep utilities — generate AutoDock Vina & AutoDock4 grid parameters from any structure</p>
-              </div>
-            </div>
-            <div className="bg-[#0F172A] rounded-2xl p-6 mt-4">
-              <StructurePrepSuite
-                modes={['grid_params', 'ligand_grid_params']}
-              />
             </div>
           </div>
 
