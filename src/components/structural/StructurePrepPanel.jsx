@@ -180,15 +180,67 @@ function CopyButton({ text, label }) {
   );
 }
 
-// ── Citation footer ─────────────────────────────────────────────────
+// ── Tool features & attribution ─────────────────────────────────────
 
-function CitationFooter() {
+function ToolFeaturesAttribution() {
+  const features = [
+    {
+      icon: FlaskRound,
+      title: 'Biopython Algorithms',
+      description: 'Core PDB parsing, splitting, merging, and residue analysis powered by Biopython.',
+    },
+    {
+      icon: Target,
+      title: 'AutoDock Vina Support',
+      description: 'Generates Vina-compatible grid parameters with center coordinates and box sizing.',
+    },
+    {
+      icon: LayoutGrid,
+      title: 'AutoDock4 Support',
+      description: 'Produces AD4 grid center, npts, and spacing values for AutoDock4 workflows.',
+    },
+    {
+      icon: Eye,
+      title: '3D Visualization Ready',
+      description: 'Output structures can be viewed in 3D or exported for downstream docking pipelines.',
+    },
+  ];
+
   return (
-    <div className="mt-4 pt-3 border-t border-slate-200">
-      <p className="text-[10px] text-slate-400 leading-relaxed">
-        PDB operations powered by Biopython algorithms. Cock et al., 2009,
-        Bioinformatics 25(11):1422-3. BSD-3-Clause License — free for commercial use.
-      </p>
+    <div className="mt-4 pt-4 border-t border-slate-200">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-6 h-6 rounded-md bg-violet-50 flex items-center justify-center">
+          <Zap className="w-3 h-3 text-violet-600" />
+        </div>
+        <h4 className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+          Tool Features & Attribution
+        </h4>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        {features.map((f, i) => {
+          const FIcon = f.icon;
+          return (
+            <div
+              key={i}
+              className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200"
+            >
+              <div className="w-6 h-6 rounded-md bg-white border border-slate-200 flex items-center justify-center flex-shrink-0">
+                <FIcon className="w-3 h-3 text-slate-600" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold text-slate-700 leading-tight">{f.title}</p>
+                <p className="text-[10px] text-slate-500 leading-relaxed mt-0.5">{f.description}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-3 flex items-start gap-2 px-2.5">
+        <FileText className="w-3 h-3 text-slate-400 flex-shrink-0 mt-0.5" />
+        <p className="text-[10px] text-slate-400 leading-relaxed">
+          Cock et al., 2009, Bioinformatics 25(11):1422-3. BSD-3-Clause License — free for commercial use.
+        </p>
+      </div>
     </div>
   );
 }
@@ -631,7 +683,7 @@ export default function StructurePrepPanel({
         </div>
       )}
 
-      <CitationFooter />
+      <ToolFeaturesAttribution />
     </div>
   );
 }
