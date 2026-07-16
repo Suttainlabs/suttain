@@ -268,13 +268,18 @@ The safer_alternatives must be tailored specifically for a ${persona} user.`;
     });
 
     const riskScore = aiResponse?.risk_assessment?.overall_risk_score || 50;
-    const safetyLevel = aiResponse?.safety_status?.level || 'MODERATE';
+    // Always derive safety level from the numerical score so label and value are consistent
+    const safetyLevel = deriveSafetyLevel(riskScore);
+    const safetyStatus = {
+      level: safetyLevel,
+      warnings: aiResponse?.safety_status?.warnings || []
+    };
 
     return Response.json(buildResponse({
       chemicals,
       persona,
       risk_assessment: aiResponse.risk_assessment,
-      safety_status: aiResponse.safety_status,
+      safety_status: safetyStatus,
       reaction_details: aiResponse.reaction_details,
       energy_profile: aiResponse.energy_profile,
       health_and_safety: buildHealthSafety(riskScore),
@@ -290,6 +295,15 @@ The safer_alternatives must be tailored specifically for a ${persona} user.`;
 });
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function deriveSafetyLevel(riskScore) {
+  if (riskScore >= 90) return 'FATAL';
+  if (riskScore >= 75) return 'CRITICAL';
+  if (riskScore >= 55) return 'DANGEROUS';
+  if (riskScore >= 35) return 'MODERATE';
+  if (riskScore >= 15) return 'LOW';
+  return 'SAFE';
+}
 
 function buildResponse(params) {
   const { chemicals, persona, risk_assessment, safety_status, reaction_details, energy_profile, health_and_safety, safer_alternatives, persona_recommendations, source } = params;
