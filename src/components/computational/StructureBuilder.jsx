@@ -57,7 +57,7 @@ export default function StructureBuilder({ onStructureLoaded }) {
       setOutput(result);
       if (onStructureLoaded) onStructureLoaded(result);
     } catch (e) {
-      setError(e.message || "Failed to parse structure");
+      setError(e.response?.data?.error || e.message || "Failed to parse structure");
     } finally {
       setLoadingAction(null);
     }
@@ -76,7 +76,7 @@ export default function StructureBuilder({ onStructureLoaded }) {
       });
       setOutput(res.data);
     } catch (e) {
-      setError(e.message || "Failed to convert structure");
+      setError(e.response?.data?.error || e.message || "Failed to convert structure");
     } finally {
       setLoadingAction(null);
     }
@@ -118,7 +118,7 @@ export default function StructureBuilder({ onStructureLoaded }) {
       setOutput(result);
       if (onStructureLoaded) onStructureLoaded(result);
     } catch (e) {
-      setError(e.message || "Failed to build structure");
+      setError(e.response?.data?.error || e.message || "Failed to build structure");
     } finally {
       setLoadingAction(null);
     }

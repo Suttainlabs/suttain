@@ -381,7 +381,12 @@ function explainStructure(structure) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
+    let user;
+    try {
+      user = await base44.auth.me();
+    } catch (authErr) {
+      return Response.json({ error: 'Authentication required. Please log in and try again.' }, { status: 401 });
+    }
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
@@ -457,7 +462,7 @@ Deno.serve(async (req) => {
         // PDB file download failed, but metadata is still valid
       }
       const structure = pdbText ? parseStructure(pdbText, 'pdb') : null;
-      const bonds = structure ? computeDistances(structure.atoms) : [];
+      const bonds = structure && structure.atoms.length <= 500 ? computeDistances(structure.atoms) : [];
       result = {
         pdbId: id,
         structure,
