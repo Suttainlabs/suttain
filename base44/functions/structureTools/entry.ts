@@ -169,7 +169,8 @@ function writeXYZ(structure) {
   const { atoms } = structure;
   let out = `${atoms.length}\nConverted by Suttain Structure Tools\n`;
   for (const atom of atoms) {
-    out += `${atom.element} ${atom.position[0].toFixed(6)} ${atom.position[1].toFixed(6)} ${atom.position[2].toFixed(6)}\n`;
+    const el = atom.element || 'C';
+    out += `${el} ${atom.position[0].toFixed(6)} ${atom.position[1].toFixed(6)} ${atom.position[2].toFixed(6)}\n`;
   }
   return out;
 }
@@ -179,7 +180,8 @@ function writePOSCAR(structure) {
   const matrix = latticeToMatrix(lattice) || [[10,0,0],[0,10,0],[0,0,10]];
   const elemMap = {};
   for (const a of atoms) {
-    elemMap[a.element] = (elemMap[a.element] || 0) + 1;
+    const el = a.element || 'C';
+    elemMap[el] = (elemMap[el] || 0) + 1;
   }
   const elements = Object.keys(elemMap);
   const counts = elements.map(e => elemMap[e]);
@@ -223,7 +225,7 @@ function writeCIF(structure) {
       const f = matVec(inv, atom.position);
       x = f[0]; y = f[1]; z = f[2];
     }
-    out += `${atom.element} ${x.toFixed(6)} ${y.toFixed(6)} ${z.toFixed(6)}\n`;
+    out += `${atom.element || 'C'} ${x.toFixed(6)} ${y.toFixed(6)} ${z.toFixed(6)}\n`;
   }
   return out;
 }
@@ -233,7 +235,7 @@ function writePDB(structure) {
   let out = '';
   let i = 1;
   for (const atom of atoms) {
-    const e = atom.element.padEnd(2);
+    const e = (atom.element || 'C').padEnd(2);
     out += `ATOM  ${String(i).padStart(5)}  ${e}   RES A   1    `;
     out += `${atom.position[0].toFixed(3).padStart(8)}${atom.position[1].toFixed(3).padStart(8)}${atom.position[2].toFixed(3).padStart(8)}`;
     out += `  1.00  0.00           ${e}\n`;
@@ -388,8 +390,15 @@ Deno.serve(async (req) => {
     let result = {};
 
     if (action === 'parse') {
+      if (!file_content) {
+        return Response.json({ error: 'No file content provided for parsing.' }, { status: 400 });
+      }
       const structure = parseStructure(file_content, format_in);
-      const bonds = computeDistances(structure.atoms);
+      if (!structure.atoms || structure.atoms.length === 0) {
+        return Response.json({ error: 'No atoms found in the input structure. Check the file content or input format.' }, { status: 422 });
+      }
+      // Skip bond computation for very large structures (>500 atoms) to avoid timeouts
+      const bonds = structure.atoms.length <= 500 ? computeDistances(structure.atoms) : [];
       result = {
         structure,
         bonds,
@@ -399,14 +408,24 @@ Deno.serve(async (req) => {
         method_note: 'Structure parsed using Suttain structure tools (ASE-compatible)',
       };
     } else if (action === 'convert') {
+      if (!file_content) {
+        return Response.json({ error: 'No file content provided for conversion.' }, { status: 400 });
+      }
+      if (!format_out || !['xyz', 'poscar', 'cif', 'pdb'].includes(format_out.toLowerCase())) {
+        return Response.json({ error: `Invalid output format: ${format_out}. Supported: XYZ, POSCAR, CIF, PDB.` }, { status: 400 });
+      }
       const structure = parseStructure(file_content, format_in);
+      if (!structure.atoms || structure.atoms.length === 0) {
+        return Response.json({ error: 'No atoms found in the input structure. Check the file content or input format.' }, { status: 422 });
+      }
       const output = writeStructure(structure, format_out);
+      const inLabel = (format_in || structure.source_format || 'auto').toUpperCase();
       result = {
         structure,
         output_content: output,
         output_format: format_out,
         formula: computeFormula(structure.atoms),
-        source: `Converted from ${format_in.toUpperCase()} to ${format_out.toUpperCase()}`,
+        source: `Converted from ${inLabel} to ${format_out.toUpperCase()}`,
         method_note: 'Format conversion using Suttain structure tools (ASE-compatible)',
       };
     } else if (action === 'build') {
