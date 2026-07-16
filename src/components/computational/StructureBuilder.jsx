@@ -22,7 +22,7 @@ export default function StructureBuilder({ onStructureLoaded }) {
   const [formatIn, setFormatIn] = useState("auto");
   const [formatOut, setFormatOut] = useState("xyz");
   const [output, setOutput] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState(null);
   const [error, setError] = useState(null);
   const [buildType, setBuildType] = useState("diamond");
   const [latticeConstant, setLatticeConstant] = useState("5.43");
@@ -44,48 +44,49 @@ export default function StructureBuilder({ onStructureLoaded }) {
 
   const handleParse = async () => {
     if (!fileContent) return;
-    setIsLoading(true);
+    setLoadingAction("parse");
     setError(null);
     try {
-      const result = await base44.functions.invoke("structureTools", {
+      const res = await base44.functions.invoke("structureTools", {
         action: "parse",
         file_content: fileContent,
         format_in: formatIn === "auto" ? null : formatIn,
       });
+      const result = res.data;
       setOutput(result);
       if (onStructureLoaded) onStructureLoaded(result);
     } catch (e) {
       setError(e.message || "Failed to parse structure");
     } finally {
-      setIsLoading(false);
+      setLoadingAction(null);
     }
   };
 
   const handleConvert = async () => {
     if (!fileContent) return;
-    setIsLoading(true);
+    setLoadingAction("convert");
     setError(null);
     try {
-      const result = await base44.functions.invoke("structureTools", {
+      const res = await base44.functions.invoke("structureTools", {
         action: "convert",
         file_content: fileContent,
         format_in: formatIn === "auto" ? null : formatIn,
         format_out: formatOut,
       });
-      setOutput(result);
+      setOutput(res.data);
     } catch (e) {
       setError(e.message || "Failed to convert structure");
     } finally {
-      setIsLoading(false);
+      setLoadingAction(null);
     }
   };
 
   const handleBuild = async () => {
-    setIsLoading(true);
+    setLoadingAction("build");
     setError(null);
     try {
       const elements = buildType === "nacl" ? [buildElement, buildElement2] : [buildElement];
-      const result = await base44.functions.invoke("structureTools", {
+      const res = await base44.functions.invoke("structureTools", {
         action: "build",
         build_params: {
           structure_type: buildType,
@@ -93,12 +94,13 @@ export default function StructureBuilder({ onStructureLoaded }) {
           elements,
         },
       });
+      const result = res.data;
       setOutput(result);
       if (onStructureLoaded) onStructureLoaded(result);
     } catch (e) {
       setError(e.message || "Failed to build structure");
     } finally {
-      setIsLoading(false);
+      setLoadingAction(null);
     }
   };
 
@@ -182,12 +184,12 @@ export default function StructureBuilder({ onStructureLoaded }) {
 
             {/* Action buttons */}
             <div className="flex gap-2 flex-wrap">
-              <Button onClick={handleParse} disabled={isLoading || !fileContent} size="sm" variant="outline" className="gap-2">
-                {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Atom className="w-3.5 h-3.5" />}
+              <Button onClick={handleParse} disabled={!!loadingAction || !fileContent} size="sm" variant="outline" className="gap-2">
+                {loadingAction === "parse" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Atom className="w-3.5 h-3.5" />}
                 Parse & Visualize
               </Button>
-              <Button onClick={handleConvert} disabled={isLoading || !fileContent} size="sm" className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
-                {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ArrowRight className="w-3.5 h-3.5" />}
+              <Button onClick={handleConvert} disabled={!!loadingAction || !fileContent} size="sm" className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
+                {loadingAction === "convert" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ArrowRight className="w-3.5 h-3.5" />}
                 Convert Format
               </Button>
             </div>
@@ -241,8 +243,8 @@ export default function StructureBuilder({ onStructureLoaded }) {
               )}
             </div>
 
-            <Button onClick={handleBuild} disabled={isLoading} size="sm" className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
-              {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Boxes className="w-3.5 h-3.5" />}
+            <Button onClick={handleBuild} disabled={!!loadingAction} size="sm" className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
+              {loadingAction === "build" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Boxes className="w-3.5 h-3.5" />}
               Build & Visualize
             </Button>
           </CardContent>
