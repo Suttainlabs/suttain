@@ -55,8 +55,8 @@ export default function SupplierOptionsModal({ isOpen, onClose, ingredientName, 
                       <span className="flex items-center gap-0.5">
                         <Boxes className="w-3 h-3" /> MOQ: {s.moq}
                       </span>
-                      {s.url && (
-                        <a href={s.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-0.5 text-teal-600 hover:underline">
+                      {s.productUrl && (
+                        <a href={s.productUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-0.5 text-teal-600 hover:underline">
                           <ExternalLink className="w-3 h-3" /> Visit
                         </a>
                       )}
