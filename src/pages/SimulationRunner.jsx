@@ -461,7 +461,7 @@ Provide a focused, technical analysis. Return JSON with:
       });
 
       const fullResult = {
-        ...searchResponse,
+        ...(searchResponse.data || searchResponse),
         simType: sim,
         engine: 'Materials Project / OPTIMADE',
         domain,
@@ -507,7 +507,7 @@ Provide a focused, technical analysis. Return JSON with:
           await base44.entities.SimulationDraft.update(draftId, { status: 'failed', error: e.message });
         } catch {}
       }
-      setResults({ error: e.message || 'Materials search failed' });
+      setResults({ error: e.response?.data?.error || e.message || 'Materials search failed' });
     } finally {
       setIsRunning(false);
     }
