@@ -464,9 +464,6 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Right side: language + auth */}
             <div className="flex items-center gap-2 justify-self-end flex-shrink-0">
-              <div className="flex-shrink-0 border-l border-slate-200 pl-2">
-                <LanguageSwitcher />
-              </div>
               {!isAuthLoading && user && (
                 <div className="hidden md:flex items-center gap-2">
                   <TrialBadge trialStatus={trialStatus} />
@@ -757,10 +754,6 @@ export default function Layout({ children, currentPageName }) {
                       </motion.div>
                     ) : (
                       <motion.div variants={mobileNavItemVariants} className="space-y-2">
-                        <div className="flex items-center justify-between px-4 py-2">
-                          <span className="text-sm font-semibold text-slate-600">{t('language_label')}</span>
-                          <LanguageSwitcher />
-                        </div>
                         <Button
                           variant="outline"
                           size="lg"
@@ -852,6 +845,10 @@ export default function Layout({ children, currentPageName }) {
                 <a href="https://www.tiktok.com/@suttainlabs" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[var(--suttain-teal)] transition-colors">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.2 8.2 0 0 0 4.79 1.52V6.75a4.85 4.85 0 0 1-1.02-.06z"/></svg>
                 </a>
+              </div>
+              <div className="pt-3 border-t border-slate-200">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{t('language_label')}</p>
+                <LanguageSwitcher />
               </div>
             </div>
 
