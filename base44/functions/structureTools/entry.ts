@@ -437,8 +437,16 @@ Deno.serve(async (req) => {
       } catch (e) {
         // PDB file download failed, but metadata is still valid
       }
+      const structure = pdbText ? parseStructure(pdbText, 'pdb') : null;
+      const bonds = structure ? computeDistances(structure.atoms) : [];
       result = {
         pdbId: id,
+        structure,
+        bonds,
+        formula: structure ? computeFormula(structure.atoms) : 'N/A',
+        plain_language: structure ? explainStructure(structure) : '',
+        output_content: pdbText,
+        output_format: 'pdb',
         metadata: {
           title: metadata.struct?.title || 'N/A',
           resolution: metadata.rcsb_entry_info?.resolution_combined?.[0] || null,
@@ -447,8 +455,8 @@ Deno.serve(async (req) => {
             : (metadata.rcsb_entry_info?.experimental_method ? [metadata.rcsb_entry_info.experimental_method] : []),
           organism: metadata.rcsb_entry_info?.source_organism_taxonomy_names?.[0] || 'N/A',
         },
-        pdbText,
-        source: 'RCSB PDB',
+        source: `RCSB PDB: ${id}`,
+        method_note: 'Fetched from RCSB Protein Data Bank',
       };
     } else {
       return Response.json({ error: 'Unknown action. Use parse, convert, build, or rcsb_lookup.' }, { status: 400 });
