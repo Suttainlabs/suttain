@@ -6,10 +6,10 @@ function ConfidenceBar({ value }) {
   const color = value >= 80 ? 'bg-emerald-500' : value >= 55 ? 'bg-yellow-500' : 'bg-red-500';
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
         <div className={`h-full ${color} rounded-full`} style={{ width: `${value || 0}%` }} />
       </div>
-      <span className="text-[10px] text-slate-500 w-8 text-right">{value || 0}%</span>
+      <span className="text-[10px] text-slate-600 font-semibold w-8 text-right">{value || 0}%</span>
     </div>
   );
 }
@@ -17,18 +17,18 @@ function ConfidenceBar({ value }) {
 function SourceBadge({ source }) {
   if (!source) return null;
   return (
-    <span className="inline-block px-1.5 py-0.5 bg-slate-700/60 text-slate-400 text-[10px] rounded font-mono leading-tight">
+    <span className="inline-block px-1.5 py-0.5 bg-slate-100 text-slate-700 text-[10px] rounded font-mono leading-tight border border-slate-200">
       {source}
     </span>
   );
 }
 
-function Section({ icon: Icon, title, children, color = '#0D9E8E' }) {
+function Section({ icon: Icon, title, children, color = '#007850' }) {
   return (
-    <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
-      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-700/50">
+    <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-200">
         <Icon className="w-4 h-4 flex-shrink-0" style={{ color }} />
-        <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">{title}</span>
+        <span className="text-xs font-bold text-slate-800 uppercase tracking-widest">{title}</span>
       </div>
       {children}
     </div>
@@ -38,10 +38,10 @@ function Section({ icon: Icon, title, children, color = '#0D9E8E' }) {
 function DataRow({ label, value, source, confidence }) {
   if (!value) return null;
   return (
-    <div className="py-2 border-b border-slate-700/30 last:border-0">
+    <div className="py-2 border-b border-slate-100 last:border-0">
       <div className="flex items-start justify-between gap-3 mb-1">
-        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide flex-shrink-0">{label}</span>
-        <span className="text-xs text-slate-300 text-right">{value}</span>
+        <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide flex-shrink-0">{label}</span>
+        <span className="text-xs text-slate-900 font-medium text-right">{value}</span>
       </div>
       {(source || confidence) && (
         <div className="flex items-center justify-between gap-2 mt-1">
@@ -87,17 +87,17 @@ export default function CompoundAnalysisResult({ data, query }) {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5">
+      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h2 className="text-lg font-bold text-white leading-tight">
+            <h2 className="text-lg font-bold text-slate-900 leading-tight">
               {analysis?.compound_name || pubchem?.iupac_name || query}
             </h2>
             {pubchem?.cas_number && (
-              <p className="text-xs text-slate-500 font-mono mt-0.5">CAS {pubchem.cas_number}</p>
+              <p className="text-xs text-slate-600 font-mono mt-0.5">CAS {pubchem.cas_number}</p>
             )}
             {pubchem?.molecular_formula && (
-              <p className="text-sm font-mono text-[#0D9E8E] mt-1">
+              <p className="text-sm font-mono text-[#007850] mt-1 font-semibold">
                 <ChemicalFormula formula={pubchem.molecular_formula} />
               </p>
             )}
@@ -110,16 +110,16 @@ export default function CompoundAnalysisResult({ data, query }) {
               </div>
             )}
             {analysis?.confidence_overall != null && (
-              <div className="text-center px-3 py-2 rounded-lg border border-slate-700 bg-slate-800">
-                <div className="text-xl font-black text-slate-300">{analysis.confidence_overall}</div>
+              <div className="text-center px-3 py-2 rounded-lg border border-slate-200 bg-slate-50">
+                <div className="text-xl font-black text-slate-900">{analysis.confidence_overall}</div>
                 <div className="text-[9px] font-bold uppercase tracking-widest text-slate-500">Confidence</div>
               </div>
             )}
             <div className="flex flex-col gap-1">
-              <button onClick={() => handleExport('json')} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs rounded-lg transition-colors">
+              <button onClick={() => handleExport('json')} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg transition-colors font-semibold">
                 <Download className="w-3 h-3" /> JSON
               </button>
-              <button onClick={() => handleExport('csv')} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs rounded-lg transition-colors">
+              <button onClick={() => handleExport('csv')} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg transition-colors font-semibold">
                 <Download className="w-3 h-3" /> CSV
               </button>
             </div>
@@ -144,8 +144,8 @@ export default function CompoundAnalysisResult({ data, query }) {
               onClick={() => setActiveTab(t.id)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors flex-shrink-0 ${
                 activeTab === t.id
-                  ? 'bg-[#0D9E8E]/15 text-[#0D9E8E] border border-[#0D9E8E]/30'
-                  : 'text-slate-500 hover:text-slate-300 border border-transparent'
+                  ? 'bg-[#007850]/10 text-[#007850] border border-[#007850]/30'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -158,9 +158,9 @@ export default function CompoundAnalysisResult({ data, query }) {
       {/* Tab Content */}
       {activeTab === 'identity' && pubchem && (
         <Section icon={FlaskConical} title="Molecular Identity">
-          <div className="mb-3 py-2 border-b border-slate-700/30">
-            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-1">Molecular Formula</p>
-            <p className="text-base font-mono text-[#0D9E8E]">
+          <div className="mb-3 py-2 border-b border-slate-100">
+            <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide mb-1">Molecular Formula</p>
+            <p className="text-base font-mono text-[#007850] font-semibold">
               <ChemicalFormula formula={pubchem.molecular_formula} />
             </p>
           </div>
@@ -176,23 +176,23 @@ export default function CompoundAnalysisResult({ data, query }) {
             <DataRow label="Complexity" value={pubchem.complexity} />
           </div>
           {pubchem.canonical_smiles && (
-            <div className="mt-3 pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-1">SMILES</p>
-              <p className="text-xs font-mono text-slate-400 break-all bg-slate-900/60 rounded-lg p-2">{pubchem.canonical_smiles}</p>
+            <div className="mt-3 pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide mb-1">SMILES</p>
+              <p className="text-xs font-mono text-slate-800 break-all bg-slate-50 border border-slate-200 rounded-lg p-2">{pubchem.canonical_smiles}</p>
             </div>
           )}
           {pubchem.inchi_key && (
             <div className="mt-2">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-1">InChIKey</p>
-              <p className="text-xs font-mono text-slate-400 break-all bg-slate-900/60 rounded-lg p-2">{pubchem.inchi_key}</p>
+              <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide mb-1">InChIKey</p>
+              <p className="text-xs font-mono text-slate-800 break-all bg-slate-50 border border-slate-200 rounded-lg p-2">{pubchem.inchi_key}</p>
             </div>
           )}
           {pubchem.synonyms?.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Synonyms</p>
+            <div className="mt-3 pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide mb-2">Synonyms</p>
               <div className="flex flex-wrap gap-1.5">
                 {pubchem.synonyms.map((s, i) => (
-                  <span key={i} className="px-2 py-0.5 bg-slate-700/50 text-slate-400 text-[10px] rounded font-mono">{s}</span>
+                  <span key={i} className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] rounded font-mono border border-slate-200">{s}</span>
                 ))}
               </div>
             </div>
@@ -205,11 +205,11 @@ export default function CompoundAnalysisResult({ data, query }) {
           <DataRow label="Signal Word" value={analysis.hazard_classification.signal_word} />
           <DataRow label="Overall Score" value={analysis.hazard_classification.overall_hazard_score} confidence={analysis.hazard_classification.confidence_score} />
           {analysis.hazard_classification.ghs_classes?.length > 0 && (
-            <div className="py-2 border-b border-slate-700/30">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-2">GHS Classifications</p>
+            <div className="py-2 border-b border-slate-100">
+              <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide mb-2">GHS Classifications</p>
               <div className="space-y-1">
                 {analysis.hazard_classification.ghs_classes.map((c, i) => (
-                  <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                  <div key={i} className="flex items-start gap-2 text-xs text-slate-800">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
                     {c}
                   </div>
@@ -219,19 +219,19 @@ export default function CompoundAnalysisResult({ data, query }) {
           )}
           <DataRow label="Source" value={analysis.hazard_classification.source} />
           {analysis.safer_alternatives?.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-2">Safer Alternatives</p>
+            <div className="mt-3 pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide mb-2">Safer Alternatives</p>
               {analysis.safer_alternatives.map((alt, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-slate-700/30 last:border-0">
+                <div key={i} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
                   <div>
-                    <p className="text-xs font-semibold text-slate-300">{alt.name}</p>
+                    <p className="text-xs font-semibold text-slate-900">{alt.name}</p>
                     {alt.cas_number && <p className="text-[10px] font-mono text-slate-600">CAS {alt.cas_number}</p>}
-                    {alt.reason && <p className="text-[10px] text-slate-500 mt-0.5">{alt.reason}</p>}
+                    {alt.reason && <p className="text-[10px] text-slate-600 mt-0.5">{alt.reason}</p>}
                   </div>
                   {alt.comparison_score != null && (
                     <div className="text-right ml-3">
-                      <span className="text-sm font-bold text-emerald-400">{alt.comparison_score}</span>
-                      <p className="text-[9px] text-slate-600">score</p>
+                      <span className="text-sm font-bold text-emerald-600">{alt.comparison_score}</span>
+                      <p className="text-[9px] text-slate-500">score</p>
                     </div>
                   )}
                 </div>
@@ -245,7 +245,7 @@ export default function CompoundAnalysisResult({ data, query }) {
         <Section icon={AlertTriangle} title="Toxicology Profile" color="#f59e0b">
           {analysis.toxicity_profile.acute && (
             <div className="mb-4">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Acute Toxicity</p>
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-2">Acute Toxicity</p>
               <DataRow label="LD50 Oral" value={analysis.toxicity_profile.acute.ld50_oral} />
               <DataRow label="LD50 Dermal" value={analysis.toxicity_profile.acute.ld50_dermal} />
               <DataRow label="LC50 Inhalation" value={analysis.toxicity_profile.acute.lc50_inhalation} />
@@ -253,29 +253,29 @@ export default function CompoundAnalysisResult({ data, query }) {
             </div>
           )}
           {analysis.toxicity_profile.chronic && (
-            <div className="mb-4 pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Chronic Toxicity</p>
+            <div className="mb-4 pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-2">Chronic Toxicity</p>
               <DataRow label="Assessment" value={analysis.toxicity_profile.chronic.assessment} confidence={analysis.toxicity_profile.chronic.confidence} source={analysis.toxicity_profile.chronic.source} />
             </div>
           )}
           {analysis.toxicity_profile.carcinogenicity && (
-            <div className="mb-4 pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Carcinogenicity</p>
+            <div className="mb-4 pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-2">Carcinogenicity</p>
               <DataRow label="IARC Group" value={analysis.toxicity_profile.carcinogenicity.iarc_group} />
               <DataRow label="NTP" value={analysis.toxicity_profile.carcinogenicity.ntp_classification} />
               <DataRow label="Assessment" value={analysis.toxicity_profile.carcinogenicity.assessment} confidence={analysis.toxicity_profile.carcinogenicity.confidence} source={analysis.toxicity_profile.carcinogenicity.source} />
             </div>
           )}
           {analysis.toxicity_profile.endocrine_disruption && (
-            <div className="mb-4 pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Endocrine Disruption</p>
+            <div className="mb-4 pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-2">Endocrine Disruption</p>
               <DataRow label="Status" value={analysis.toxicity_profile.endocrine_disruption.status} />
               <DataRow label="Mechanism" value={analysis.toxicity_profile.endocrine_disruption.mechanism} confidence={analysis.toxicity_profile.endocrine_disruption.confidence} source={analysis.toxicity_profile.endocrine_disruption.source} />
             </div>
           )}
           {analysis.bioavailability && (
-            <div className="pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Bioavailability</p>
+            <div className="pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-2">Bioavailability</p>
               <DataRow label="Oral Estimate" value={analysis.bioavailability.oral_estimate_percent != null ? `${analysis.bioavailability.oral_estimate_percent}%` : null} />
               <DataRow label="Dermal Estimate" value={analysis.bioavailability.dermal_estimate_percent != null ? `${analysis.bioavailability.dermal_estimate_percent}%` : null} />
               <DataRow label="Primary Route" value={analysis.bioavailability.primary_route} confidence={analysis.bioavailability.confidence} source={analysis.bioavailability.source} />
@@ -309,30 +309,30 @@ export default function CompoundAnalysisResult({ data, query }) {
         <Section icon={Globe} title="Regulatory Status" color="#6366f1">
           {analysis.regulatory_status.fda && (
             <div className="mb-3">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">FDA</p>
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-1">FDA</p>
               <DataRow label="Status" value={analysis.regulatory_status.fda.status} />
               <DataRow label="Notes" value={analysis.regulatory_status.fda.notes} />
             </div>
           )}
           {analysis.regulatory_status.epa && (
-            <div className="mb-3 pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">EPA</p>
+            <div className="mb-3 pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-1">EPA</p>
               <DataRow label="Status" value={analysis.regulatory_status.epa.status} />
               <DataRow label="List" value={analysis.regulatory_status.epa.list} />
               <DataRow label="Notes" value={analysis.regulatory_status.epa.notes} />
             </div>
           )}
           {analysis.regulatory_status.reach && (
-            <div className="mb-3 pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">REACH / EU</p>
+            <div className="mb-3 pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-1">REACH / EU</p>
               <DataRow label="Status" value={analysis.regulatory_status.reach.status} />
               <DataRow label="SVHC" value={analysis.regulatory_status.reach.svhc ? 'Yes — Substance of Very High Concern' : 'No'} />
               <DataRow label="Notes" value={analysis.regulatory_status.reach.notes} />
             </div>
           )}
           {analysis.regulatory_status.safe_concentration_range && (
-            <div className="pt-3 border-t border-slate-700/40">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Safe Concentration</p>
+            <div className="pt-3 border-t border-slate-100">
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-1">Safe Concentration</p>
               <DataRow label="Value" value={analysis.regulatory_status.safe_concentration_range.value} />
               <DataRow label="Units" value={analysis.regulatory_status.safe_concentration_range.units} />
               <DataRow label="Application" value={analysis.regulatory_status.safe_concentration_range.application} source={analysis.regulatory_status.safe_concentration_range.source} />
@@ -342,13 +342,13 @@ export default function CompoundAnalysisResult({ data, query }) {
       )}
 
       {activeTab === 'references' && (
-        <Section icon={BookOpen} title="Key Citations" color="#94a3b8">
+        <Section icon={BookOpen} title="Key Citations" color="#64748b">
           {analysis?.key_citations?.length > 0 ? (
             <div className="space-y-2">
               {analysis.key_citations.map((cite, i) => (
-                <div key={i} className="flex gap-2 py-2 border-b border-slate-700/30 last:border-0">
-                  <span className="text-[10px] font-bold text-slate-600 w-5 flex-shrink-0 pt-0.5">[{i + 1}]</span>
-                  <p className="text-xs text-slate-400 leading-relaxed">{cite}</p>
+                <div key={i} className="flex gap-2 py-2 border-b border-slate-100 last:border-0">
+                  <span className="text-[10px] font-bold text-slate-500 w-5 flex-shrink-0 pt-0.5">[{i + 1}]</span>
+                  <p className="text-xs text-slate-700 leading-relaxed">{cite}</p>
                 </div>
               ))}
             </div>
@@ -356,12 +356,12 @@ export default function CompoundAnalysisResult({ data, query }) {
             <p className="text-xs text-slate-600">No citations available.</p>
           )}
           {analysis?.data_gaps?.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-slate-700/40">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Data Gaps</p>
+            <div className="mt-4 pt-4 border-t border-slate-100">
+              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-2">Data Gaps</p>
               <div className="space-y-1">
                 {analysis.data_gaps.map((gap, i) => (
-                  <div key={i} className="flex items-start gap-2 text-xs text-slate-500">
-                    <Info className="w-3 h-3 flex-shrink-0 mt-0.5 text-slate-600" />
+                  <div key={i} className="flex items-start gap-2 text-xs text-slate-700">
+                    <Info className="w-3 h-3 flex-shrink-0 mt-0.5 text-slate-500" />
                     {gap}
                   </div>
                 ))}
