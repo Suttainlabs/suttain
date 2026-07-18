@@ -27,7 +27,7 @@
     /* Text */
     --color-text-primary:   #1a202c;
     --color-text-secondary: #2d3748;
-    --color-text-muted:     #4a5568;
+    --color-text-muted:     #475569;
     --color-text-white:     #FFFFFF;
     --color-text-brand:     #007850;
 
@@ -54,8 +54,8 @@
     --color-btn-market:     #1A1A2E;
 
     /* Shadows */
-    --shadow-card:          0 2px 12px rgba(0, 40, 30, 0.08);
-    --shadow-elevated:      0 8px 32px rgba(0, 40, 30, 0.12);
+    --shadow-card:          0 2px 8px rgba(0, 40, 30, 0.06);
+    --shadow-elevated:      0 2px 8px rgba(0, 40, 30, 0.06);
 
     /* Radii */
     --radius-sm:            6px;
@@ -75,7 +75,7 @@
     --secondary: 148 33% 96%;        /* #F0FAF5 */
     --secondary-foreground: 160 100% 8%;
     --muted: 148 33% 96%;
-    --muted-foreground: 236 82% 66%;  /* #4a5568 */
+    --muted-foreground: 215 19% 35%;  /* #475569 slate-600 */
     --accent: 158 100% 24%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 63% 47%;        /* #C42B2B */
@@ -93,8 +93,8 @@
     --sidebar-foreground: 0 0% 8%;
     --sidebar-primary: 158 100% 24%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 111 76% 71%;
-    --sidebar-accent-foreground: 302 70% 57%;
+    --sidebar-accent: 148 33% 90%;
+    --sidebar-accent-foreground: 0 0% 8%;
     --sidebar-border: 148 33% 89%;
     --sidebar-ring: 158 100% 24%;
   }
@@ -383,3 +383,7 @@
     }
   }
 }
+
+/* Darken slate-400/500 for WCAG 2.1 text contrast */
+.text-slate-400 { color: #64748B; }
+.text-slate-500 { color: #475569; }

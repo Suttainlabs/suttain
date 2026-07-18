@@ -23,7 +23,6 @@ import GlobalSearch from './components/navigation/GlobalSearch';
 import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
-import MolecularBackground from './components/shared/MolecularBackground';
 import NavToolCombobox from './components/navigation/NavToolCombobox';
 
 // ── Page title formatter (handles camelCase + acronyms) ────────────
@@ -378,9 +377,6 @@ export default function Layout({ children, currentPageName }) {
           background-color: #8125d9;
         }
       `}</style>
-
-      {/* Subtle molecular background texture — behind all content */}
-      <MolecularBackground className="fixed inset-0 z-0" opacity={0.035} />
 
       {/* Floating Nav Bar */}
       <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#EDF7F2]">
