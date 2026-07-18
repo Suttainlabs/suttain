@@ -400,7 +400,7 @@ export default function Layout({ children, currentPageName }) {
       <MolecularBackground className="fixed inset-0 z-0" opacity={0.035} />
 
       {/* Floating Nav Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#EDF7F2]">
+      <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#EDF7F2]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14 overflow-hidden">
 
@@ -794,7 +794,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 pb-16 lg:pb-0 pt-20 lg:pt-16 relative z-10">
+      <main className="flex-1 pb-16 lg:pb-0 relative z-10">
         <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: fetchUserAndSetState }}>
           {children}
           {/* Clara AI Assistant */}
