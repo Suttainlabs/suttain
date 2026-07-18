@@ -22,7 +22,6 @@ import BottomNavBar from './components/navigation/BottomNavBar';
 import GlobalSearch from './components/navigation/GlobalSearch';
 import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
-import useInactivityTimeout from './hooks/useInactivityTimeout';
 import TrialBadge from './components/trial/TrialBadge';
 import MolecularBackground from './components/shared/MolecularBackground';
 import NavToolCombobox from './components/navigation/NavToolCombobox';
@@ -209,22 +208,6 @@ export default function Layout({ children, currentPageName }) {
     };
   }, [user, getGreetingText]);
 
-
-  // Auto-logout after inactivity (10 minutes)
-  const handleInactivityLogout = useCallback(async () => {
-    if (!user) return;
-    try {
-      await User.logout();
-    } catch {}
-    setUser(null);
-    setCurrentGreeting('');
-    localStorage.removeItem('suttain_free_simulation_used');
-    // Show a brief message then redirect
-    navigate('/');
-    setTimeout(() => alert('You were signed out due to inactivity.'), 200);
-  }, [user, navigate]);
-
-  useInactivityTimeout(handleInactivityLogout, 10 * 60 * 1000, !!user);
 
   const handleLogout = async () => {
     try {
