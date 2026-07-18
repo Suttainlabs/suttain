@@ -25,9 +25,9 @@
     --color-bg-dark-mid:    #163D2F;
 
     /* Text */
-    --color-text-primary:   #141414;
-    --color-text-secondary: #464646;
-    --color-text-muted:     #828282;
+    --color-text-primary:   #1a202c;
+    --color-text-secondary: #2d3748;
+    --color-text-muted:     #4a5568;
     --color-text-white:     #FFFFFF;
     --color-text-brand:     #007850;
 
@@ -42,7 +42,7 @@
     --color-info-bg:        #EBF4FF;
 
     /* Borders */
-    --color-border:         #D9EDE5;
+    --color-border:         #B8D0C5;
     --color-border-focus:   #007850;
     --color-border-divider: #00B478;
     --color-border-light:   #CCEEDC;
@@ -75,7 +75,7 @@
     --secondary: 148 33% 96%;        /* #F0FAF5 */
     --secondary-foreground: 160 100% 8%;
     --muted: 148 33% 96%;
-    --muted-foreground: 0 0% 51%;    /* #828282 */
+    --muted-foreground: 213 21% 33%;  /* #4a5568 */
     --accent: 158 100% 24%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 63% 47%;        /* #C42B2B */
