@@ -1,0 +1,34 @@
+{
+  "name": "Deduct Chemicals on Simulation Complete",
+  "description": "When a new simulation is created (i.e. completed), deduct each used chemical from the inventory stock.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "Simulation"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "deduct_chemicals_on_simulation_complete",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "deductChemicalInventory",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  }
+}
