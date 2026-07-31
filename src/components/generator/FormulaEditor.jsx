@@ -12,7 +12,7 @@ import {
   Droplets, Clock, BrainCircuit, History, Save, Loader2, MessageSquare, Star, X,
   Menu, Printer, Search,
   Calculator,
-  Leaf, Sparkles, DollarSign, Share2, Boxes // Added icons
+  Leaf, Sparkles, Share2, Boxes // Added icons
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -57,12 +57,10 @@ import IngredientSustainabilityScore from "./IngredientSustainabilityScore";
 import HazardAlternativesPanel from "./HazardAlternativesPanel";
 import RegulatoryScanner from "../compliance/RegulatoryScanner";
 import SupplierLinkModal from "../suppliers/SupplierLinkModal";
-import SupplierManager from "../suppliers/SupplierManager";
-import SupplierVerificationPanel from "../suppliers/SupplierVerificationPanel";
 import ShareModal from "../shared/ShareModal";
 import CostProductionPanel from "./CostProductionPanel";
-import SupplierSourcingPanel from "./SupplierSourcingPanel";
 import BatchManagementPanel from "./BatchManagementPanel";
+import SourcingTab from "./SourcingTab";
 import BusinessLockedTab from "./BusinessLockedTab";
 import ComplianceTracker from "./ComplianceTracker";
 
@@ -796,8 +794,7 @@ export default function FormulaEditor({
                      { value: 'compliance', icon: AlertTriangle, label: 'Comply' },
                      { value: 'cost', icon: Calculator, label: 'Cost' },
                      { value: 'batch', icon: Boxes, label: 'Batch' },
-                     { value: 'sourcing', icon: Boxes, label: 'Sourcing & Suppliers' },
-                     { value: 'suppliers', icon: DollarSign, label: 'Suppliers' },
+                     { value: 'sourcing', icon: Boxes, label: 'Sourcing' },
                    ].map(({ value, icon: Icon, label }) => (
                      <TabsTrigger
                        key={value}
@@ -1368,60 +1365,23 @@ export default function FormulaEditor({
 
                 <TabsContent value="sourcing" className="mt-0 space-y-6">
                   {businessMode ? (
-                    <SupplierSourcingPanel
+                    <SourcingTab
                       formula={formula}
                       batchSize={batchSize}
                       batchUnit={batchUnit}
+                      ingredientAmounts={ingredientAmounts}
+                      onLinkSupplier={(name) => {
+                        setSelectedIngredientForSupplier(name);
+                        setShowSupplierModal(true);
+                      }}
                     />
                   ) : (
                     <BusinessLockedTab
-                      title="Raw material sourcing & procurement"
-                      description="Connect ingredients to verified suppliers, request quotes, and manage procurement for commercial production — available exclusively in Business Mode."
+                      title="Raw material sourcing, procurement & supplier management"
+                      description="Connect ingredients to verified suppliers, request quotes, track procurement, and manage your supplier directory for commercial production — available exclusively in Business Mode."
                     />
                   )}
                 </TabsContent>
-
-                <TabsContent value="suppliers" className="mt-0 space-y-6">
-                  {businessMode ? (
-                    <>
-                  {/* Supplier Verification — invite suppliers to verify ingredient data */}
-                  {formula.id && <SupplierVerificationPanel formula={formula} />}
-
-                  <SupplierManager />
-                  
-                  <Card className="border-slate-200">
-                    <CardHeader>
-                      <CardTitle className="text-base">Ingredient Costs</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      {formula.ingredients.map((ing, idx) => (
-                        <div key={idx} className="p-3 bg-slate-50 rounded-lg flex items-center justify-between border border-slate-200">
-                          <div>
-                            <p className="font-medium text-slate-900">{ing.chemical_name}</p>
-                            <p className="text-xs text-slate-600">{ing.percentage}% | {ingredientAmounts[idx]?.value || '-'} {ingredientAmounts[idx]?.unit || ''}</p>
-                          </div>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedIngredientForSupplier(ing.chemical_name);
-                              setShowSupplierModal(true);
-                            }}
-                          >
-                            Link Suppliers
-                          </Button>
-                        </div>
-                      ))}
-                    </CardContent>
-                    </Card>
-                    </>
-                    ) : (
-                    <BusinessLockedTab
-                     title="Supplier management & verification"
-                     description="Link ingredients to certified suppliers, request COAs, and invite suppliers to verify raw-material data — available exclusively in Business Mode."
-                    />
-                    )}
-                    </TabsContent>
                     </CardContent>
                     </Tabs>
           </Card>
