@@ -100,6 +100,20 @@ export default function CarbonTaxSimulator() {
 
   const removeIngredient = (id) => setIngredients(prev => prev.filter(i => i.id !== id));
   const updateQuantity = (id, qty) => setIngredients(prev => prev.map(i => i.id === id ? { ...i, quantity_kg: qty } : i));
+
+  // Apply a suggested alternative: swap the ingredient in the formula and reset stale analysis
+  const applyAlternative = (alt) => {
+    setIngredients(prev => prev.map(i => {
+      if (i.name.toLowerCase().trim() !== String(alt.replace_ingredient).toLowerCase().trim()) return i;
+      const reduced = alt.carbon_reduction_pct > 0
+        ? Math.max(0.01, i.carbon_intensity * (1 - alt.carbon_reduction_pct / 100))
+        : i.carbon_intensity;
+      return { ...i, name: alt.alternative_ingredient, carbon_intensity: +reduced.toFixed(2) };
+    }));
+    setAlternatives(null);
+    setTaxResults(null);
+    setActiveTab('Footprint');
+  };
   const toggleMarket = (id) => setSelectedMarkets(prev => prev.includes(id) ? prev.filter(m => m !== id) : prev.length < 5 ? [...prev, id] : prev);
 
   const runTaxSimulation = async () => {
@@ -490,7 +504,7 @@ Prioritise by ROI. Return top 5 alternatives.`,
                           </div>
                         )}
                         {alternatives.alternatives?.map((alt, i) => (
-                          <AlternativeCard key={i} alt={alt} index={i} />
+                          <AlternativeCard key={i} alt={alt} index={i} onSwap={() => applyAlternative(alt)} />
                         ))}
                         <button
                           onClick={runAlternatives}

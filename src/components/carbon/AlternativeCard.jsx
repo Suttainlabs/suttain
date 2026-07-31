@@ -9,7 +9,11 @@ export default function AlternativeCard({ alt, index, onSwap }) {
     : 'bg-red-100 text-red-700';
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 hover:border-[#02988C]/40 hover:shadow-md transition-all">
+    <button
+      type="button"
+      onClick={onSwap}
+      className="w-full text-left bg-white rounded-xl border border-slate-200 p-5 hover:border-[#02988C]/40 hover:shadow-md transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-[#02988C] focus-visible:outline-offset-2"
+    >
       <div className="flex items-start gap-3">
         <div className="w-8 h-8 rounded-full bg-[#02988C]/10 text-[#02988C] flex items-center justify-center font-bold text-sm flex-shrink-0">
           {index + 1}
@@ -38,6 +42,6 @@ export default function AlternativeCard({ alt, index, onSwap }) {
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }
