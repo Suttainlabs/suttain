@@ -89,15 +89,31 @@ export function getAccessOption(value) {
   return ACCESS_OPTIONS.find((o) => o.value === value) || ACCESS_OPTIONS[0];
 }
 
-// Builds the post-signup destination. On a suttain.com host we hop to the
-// matching subdomain; anywhere else (preview, custom host) we stay put and
-// just use the path so the redirect never dead-ends.
+// The host each product line lives on.
+export const PRODUCT_HOSTS = {
+  consumer: 'www.suttain.com',
+  research: 'research.suttain.com',
+  api: 'api.suttain.com',
+  farm: 'farm.suttain.com',
+};
+
+// True only on the live suttain.com domains — previews and custom hosts stay
+// on relative paths so nothing dead-ends.
+export function isSuttainHost() {
+  const host = window.location.hostname;
+  return host === 'suttain.com' || host.endsWith('.suttain.com');
+}
+
+// Absolute URL on the product's own subdomain, or the plain path when we are
+// already there (or off-domain).
+export function productUrl(product, path) {
+  const host = PRODUCT_HOSTS[product];
+  if (!host || !isSuttainHost() || host === window.location.hostname) return path;
+  return `https://${host}${path}`;
+}
+
+// Builds the post-signup destination on the matching subdomain.
 export function buildAccessRedirect(value) {
   const option = getAccessOption(value);
-  const host = window.location.hostname;
-  if (host === 'suttain.com' || host.endsWith('.suttain.com')) {
-    const target = option.subdomain ? `${option.subdomain}.suttain.com` : 'suttain.com';
-    return `https://${target}${option.path}`;
-  }
-  return option.path;
+  return productUrl(option.value, option.path);
 }

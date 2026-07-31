@@ -5,8 +5,9 @@ import { createPageUrl } from '@/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
+import { productUrl } from '@/components/auth/productAccess';
 
-export default function NavToolCombobox({ items, label, isActive, accentClass = 'bg-violet-100 text-violet-600' }) {
+export default function NavToolCombobox({ items, label, isActive, product, accentClass = 'bg-violet-100 text-violet-600' }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -41,7 +42,12 @@ export default function NavToolCombobox({ items, label, isActive, accentClass = 
                     value={`${item.label} ${item.description || ''}`}
                     onSelect={() => {
                       setOpen(false);
-                      navigate(item.path || createPageUrl(item.href));
+                      const target = productUrl(product, item.path || createPageUrl(item.href));
+                      if (target.startsWith('http')) {
+                        window.location.href = target;
+                      } else {
+                        navigate(target);
+                      }
                     }}
                     className="data-[selected=true]:bg-slate-100 data-[selected=true]:text-slate-900"
                   >

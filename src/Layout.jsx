@@ -25,7 +25,8 @@ import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
 import NavToolCombobox from './components/navigation/NavToolCombobox';
 import { RESEARCH_TOOLS, FARM_TOOLS } from './components/navigation/domainNav';
-import { hasAccess } from './components/auth/productAccess';
+import { hasAccess, productUrl } from './components/auth/productAccess';
+import DomainLink from './components/navigation/DomainLink';
 import AccessGuard from './components/auth/AccessGuard';
 
 // ── Page title formatter (handles camelCase + acronyms) ────────────
@@ -309,8 +310,6 @@ export default function Layout({ children, currentPageName }) {
     || location.pathname === createPageUrl("ResearchPortal")
     || location.pathname === createPageUrl("MoleculeAnalysis");
 
-  const isEnterpriseActive = location.pathname === '/enterprise' || location.pathname === '/EnterpriseAPI';
-
 
   const mobileMenuVariants = {
     open: {
@@ -397,56 +396,35 @@ export default function Layout({ children, currentPageName }) {
 
               {/* Tools dropdown */}
               {canSee('consumer') && (
-                <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} />
+                <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} product="consumer" />
               )}
 
               {/* Research dropdown */}
               {canSee('research') && (
-                <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} accentClass="bg-research-accent-light text-research-accent" />
+                <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} product="research" accentClass="bg-research-accent-light text-research-accent" />
               )}
 
               {/* Farm dropdown */}
               {canSee('farm') && (
-                <NavToolCombobox items={farmToolItems} label="Farm" isActive={isFarmActive} accentClass="bg-farm-accent-light text-farm-accent" />
+                <NavToolCombobox items={farmToolItems} label="Farm" isActive={isFarmActive} product="farm" accentClass="bg-farm-accent-light text-farm-accent" />
+              )}
+
+              {/* API — api.suttain.com */}
+              {canSee('api') && (
+                <a
+                  href={productUrl('api', '/APIPortal')}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    location.pathname === '/APIPortal'
+                      ? "bg-api-accent-light text-api-accent"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  <Terminal className="w-3.5 h-3.5" />
+                  <span>API</span>
+                </a>
               )}
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
-
-              {/* Enterprise API — standalone */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                    isEnterpriseActive
-                      ? "bg-violet-100 text-violet-600"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}>
-                    <Terminal className="w-3.5 h-3.5" />
-                    <span>{t('nav_business')}</span>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 p-2">
-
-                  <DropdownMenuItem asChild>
-                    <Link to="/EnterpriseAPI" className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-                      <Terminal className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
-                      <span className="text-sm font-semibold text-slate-800">Enterprise API</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("APIPortal")} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-                      <Code2 className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
-                      <span className="text-sm font-semibold text-slate-800">API documentation</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={"/SuttainFarm"} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-                      <Sprout className="w-4 h-4 flex-shrink-0" style={{ color: "#3B6D11" }} />
-                      <span className="text-sm font-semibold text-slate-800">Suttain Farm</span>
-                    </Link>
-                  </DropdownMenuItem>
-
-                </DropdownMenuContent>
-              </DropdownMenu>
             </nav>
 
             {/* Right side: language + auth */}
@@ -614,13 +592,13 @@ export default function Layout({ children, currentPageName }) {
                           className="pl-4 pt-1 pb-1 overflow-hidden"
                         >
                           {consumerToolItems.map(item => (
-                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
+                            <DomainLink key={item.href} product="consumer" to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
                               className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
                                 location.pathname === createPageUrl(item.href) ? "bg-teal-50 text-[#007850]" : "text-slate-700 hover:bg-slate-50"
                               }`}>
                               <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-teal)]" />
                               <span>{item.label}</span>
-                            </Link>
+                            </DomainLink>
                           ))}
                         </motion.div>
                       )}
@@ -628,25 +606,28 @@ export default function Layout({ children, currentPageName }) {
                   </motion.div>
                   )}
 
-                  {/* Enterprise API — Mobile */}
+                  {/* API — api.suttain.com */}
+                  {canSee('api') && (
                   <motion.div variants={mobileNavItemVariants}>
-                    <Link
-                      to="/EnterpriseAPI"
+                    <a
+                      href={productUrl('api', '/APIPortal')}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        isEnterpriseActive ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
+                        location.pathname === '/APIPortal' ? "bg-api-accent-light text-api-accent" : "text-suttain-dark hover:bg-api-accent-light"
                       }`}
                     >
                       <Terminal className="w-5 h-5" />
-                      {t('nav_business')}
-                    </Link>
+                      API
+                    </a>
                   </motion.div>
+                  )}
 
                   {/* Suttain Farm — Mobile */}
                   {canSee('farm') && (
                   <motion.div variants={mobileNavItemVariants}>
-                    <Link
-                      to={"/SuttainFarm"}
+                    <DomainLink
+                      product="farm"
+                      to="/SuttainFarm"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
                         location.pathname === "/SuttainFarm" ? "bg-farm-accent-light text-farm-accent" : "text-suttain-dark hover:bg-farm-accent-light"
@@ -654,16 +635,16 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <Sprout className="w-5 h-5" />
                       Suttain Farm
-                    </Link>
+                    </DomainLink>
                     <div className="pl-4">
                       {farmToolItems.map(item => (
-                        <Link key={item.path} to={item.path} onClick={() => setIsMobileMenuOpen(false)}
+                        <DomainLink key={item.path} product="farm" to={item.path} onClick={() => setIsMobileMenuOpen(false)}
                           className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
                             location.pathname === item.path ? "bg-farm-accent-light text-farm-accent" : "text-slate-700 hover:bg-slate-50"
                           }`}>
                           <item.icon className="w-4 h-4 flex-shrink-0 text-farm-accent" />
                           <span>{item.label}</span>
-                        </Link>
+                        </DomainLink>
                       ))}
                     </div>
                   </motion.div>
@@ -699,13 +680,13 @@ export default function Layout({ children, currentPageName }) {
                             <div key={category} className="mb-2">
                               <p className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">{category}</p>
                               {researchToolItems.filter(i => i.category === category).map(item => (
-                                <Link key={item.path} to={item.path} onClick={() => setIsMobileMenuOpen(false)}
+                                <DomainLink key={item.path} product="research" to={item.path} onClick={() => setIsMobileMenuOpen(false)}
                                   className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
                                     location.pathname === item.path ? "bg-research-accent-light text-research-accent" : "text-slate-700 hover:bg-slate-50"
                                   }`}>
                                   <item.icon className="w-4 h-4 flex-shrink-0 text-research-accent" />
                                   <span>{item.label}</span>
-                                </Link>
+                                </DomainLink>
                               ))}
                             </div>
                           ))}
@@ -865,8 +846,9 @@ export default function Layout({ children, currentPageName }) {
               <ul className="space-y-1.5 text-sm">
                 <li><Link to={createPageUrl('Simulator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Chemical simulator</Link></li>
                 <li><Link to={createPageUrl('generator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Formula generator</Link></li>
-                <li><Link to={createPageUrl("ResearchDashboard")} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research portal</Link></li>
-                <li><Link to="/enterprise" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
+                <li><DomainLink product="research" to={createPageUrl("ResearchDashboard")} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research portal</DomainLink></li>
+                <li><DomainLink product="farm" to="/SuttainFarm" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Suttain Farm</DomainLink></li>
+                <li><DomainLink product="api" to="/APIPortal" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">API</DomainLink></li>
                 <li><Link to={createPageUrl('AboutUs')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">About us</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
                 <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
@@ -888,7 +870,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
               <h3 className="font-semibold mb-3 text-slate-800 text-sm">Science</h3>
               <ul className="space-y-1.5 text-sm mb-4">
-                <li><Link to={createPageUrl('APIPortal')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">API docs</Link></li>
+                <li><DomainLink product="api" to="/APIPortal" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">API docs</DomainLink></li>
                 <li><Link to={createPageUrl('ExternalDatabases')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Publications</Link></li>
               </ul>
               <div className="border-t border-slate-200 pt-3">
