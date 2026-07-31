@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight, Sparkles, ShieldCheck, Leaf, BarChart3,
-  TestTube, QrCode, Droplets, Database, Star, Users,
+  TestTube, QrCode, Database, Star, Users,
   Microscope, Search, Loader2, Cpu, FlaskConical, Atom,
   Layers, FileText, Zap, Beaker, Globe, Code2, TrendingUp,
 } from "lucide-react";
@@ -35,7 +35,6 @@ const CONSUMER_TOOLS = [
   { icon: Database, label: "Ingredient Database", desc: "Explore 250k+ chemicals by toxicity, INCI name, eco-impact, regulatory status, and origin.", href: "IngredientDatabase", color: "#0D9E8E" },
   { icon: Leaf, label: "Sustainability Scoring", desc: "Detailed eco-impact analysis, biodegradability scores, and carbon footprint per formula.", href: "SustainabilityImpact", color: "#007850" },
   { icon: ShieldCheck, label: "AI Compliance Co-Pilot", desc: "Automated regulatory checks across 50+ global regions including EU, FDA, and ASEAN.", href: "ComplianceDashboard", color: "#6366f1" },
-  { icon: Droplets, label: "Hydration Intelligence", desc: "Track daily water intake with biological food-linked adjustments and personalized smart reminders.", href: "HydrationHome", color: "#0D9E8E" },
   { icon: BarChart3, label: "Comparative Impact Report", desc: "Benchmark your formula's environmental score against industry averages with exportable reports.", href: "ComparativeImpactReport", color: "#6366f1" },
 ];
 

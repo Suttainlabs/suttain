@@ -45,10 +45,6 @@ const SimulationRunner = lazy(() => import('./pages/SimulationRunner'));
 const DWSIMIntegration = lazy(() => import('./pages/DWSIMIntegration'));
 const SimulationHistory = lazy(() => import('./pages/SimulationHistory'));
 const SharedSimulationView = lazy(() => import('./pages/SharedSimulationView'));
-const HydrationHome = lazy(() => import('./pages/HydrationHome'));
-const HydrationIntelligence = lazy(() => import('./pages/HydrationIntelligence'));
-const HydrationReminders = lazy(() => import('./pages/HydrationReminders'));
-const HydrationProgress = lazy(() => import('./pages/HydrationProgress'));
 const BillingDashboard = lazy(() => import('./pages/BillingDashboard'));
 const MolecularIntelligence = lazy(() => import('./pages/MolecularIntelligence'));
 const ChemicalDashboard = lazy(() => import('./pages/ChemicalDashboard'));
@@ -184,7 +180,7 @@ const AuthenticatedApp = () => {
 
       {/* ── Protected Tools (consumer + research — require login) ── */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        {['Simulator', 'generator', 'BarcodeScanner', 'HydrationHome', 'HydrationIntelligence', 'HydrationReminders', 'HydrationProgress',
+        {['Simulator', 'generator', 'BarcodeScanner',
           'MolecularIntelligence', 'MoleculeExplorer', 'MoleculeAnalysis', 'ChemicalDashboard', 'InventoryDashboard',
           'ResearchPortal', 'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
           'ComputationalSimulation', 'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology', 'HazardEngine'
@@ -197,8 +193,6 @@ const AuthenticatedApp = () => {
               ComputationalSimulation, SimulationEngine, ChemicalLibrary, StructuralBiology, HazardEngine,
               Simulator: Pages['Simulator'], generator: Pages['generator'],
               BarcodeScanner: Pages['BarcodeScanner'],
-              HydrationHome: Pages['HydrationHome'], HydrationIntelligence: Pages['HydrationIntelligence'],
-              HydrationReminders: Pages['HydrationReminders'], HydrationProgress: Pages['HydrationProgress'],
             };
             const LazyPage = lazyMap[path];
             if (!LazyPage) return null;
@@ -256,10 +250,6 @@ const AuthenticatedApp = () => {
       <Route path="/DWSIMIntegration" element={<LayoutWrapper currentPageName="DWSIMIntegration"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><DWSIMIntegration /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationHistory" element={<LayoutWrapper currentPageName="SimulationHistory"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationHistory /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SharedSimulationView" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><SharedSimulationView /></Suspense>} />
-      <Route path="/HydrationHome" element={<LayoutWrapper currentPageName="HydrationHome"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationHome /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/HydrationIntelligence" element={<LayoutWrapper currentPageName="HydrationIntelligence"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationIntelligence /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/HydrationReminders" element={<LayoutWrapper currentPageName="HydrationReminders"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationReminders /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/HydrationProgress" element={<LayoutWrapper currentPageName="HydrationProgress"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationProgress /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BillingDashboard" element={<LayoutWrapper currentPageName="BillingDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BillingDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BatchRecords" element={<LayoutWrapper currentPageName="BatchRecords"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BatchRecords /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/InteractionVisualization" element={<LayoutWrapper currentPageName="InteractionVisualization"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><InteractionVisualization /></PageTransition></Suspense></LayoutWrapper>} />

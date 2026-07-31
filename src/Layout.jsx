@@ -43,7 +43,6 @@ const PAGE_META_DESCRIPTIONS = {
   Simulator: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations with Suttain chemical interaction simulator.',
   generator: 'Create professional skincare, soap, and cleaning product formulas with AI. Get ingredient recommendations, safety validation, and step-by-step manufacturing instructions.',
   BarcodeScanner: 'Scan any product barcode to instantly analyze ingredients. Get safety ratings, allergen alerts, and healthier alternatives for household and personal care products.',
-  HydrationHome: 'Track your daily water intake with biological intelligence. Personalized hydration goals based on your weight, activity, climate, and food-linked adjustments.',
   TermsOfService: 'Suttain Terms of Service — the terms and conditions governing use of the Suttain chemical safety, formula generation, and research platform.',
   PrivacyPolicy: 'Suttain Privacy Policy — how we collect, use, and protect your data when using our chemical safety analysis, formula generation, and product scanning tools.',
   FAQ: 'Frequently asked questions about Suttain — chemical safety analysis, formula generation, product scanning, pricing, and research API access.',
@@ -267,7 +266,6 @@ export default function Layout({ children, currentPageName }) {
     { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
     { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", category: "Formulation" },
     { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
-    { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments", category: "Wellness" },
     { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety & Analysis" },
   ];
 
