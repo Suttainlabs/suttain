@@ -265,12 +265,22 @@ export default function RecipeGenerator({
     
     try {
       // Updated, more robust prompt
-      const prompt = `You are a world-class cosmetic chemist. Your task is to generate three distinct formulas for a "${safeProductType.replace(/_/g, ' ')}" using these key ingredients: ${userIngredientsList}.
+      const prompt = `You are a world-class formulation chemist. Your task is to generate three distinct formulas for a "${safeProductType.replace(/_/g, ' ')}" using these key ingredients: ${userIngredientsList}.
 
 You MUST return a single JSON object with a root key "recipes". The value of "recipes" must be an array of exactly three formula objects.
 Each formula object must have the following keys: "name", "style" (must be one of "eco", "budget", "professional"), "description", "ingredients", "instructions", "properties", and "safety_precautions".
 The "ingredients" array for each formula must contain objects, each with "chemical_name", "percentage", and "purpose".
 The sum of all "percentage" values within each formula's "ingredients" array MUST be exactly 100.0.
+
+WRITING THE "instructions" FIELD — follow these professional SOP standards strictly:
+- "instructions" is an array of phase objects, each with "phase" (a phase title such as "Phase A: Aqueous Base") and "steps" (an array of sequential, numbered instruction strings).
+- Use precise laboratory-grade terminology. Do NOT use casual phrasing like "gather your materials" or "add carefully". Instead say "sanitize and dry all equipment", "incorporate via slow addition with continuous low-shear agitation".
+- Separate the procedure into logical phases (e.g., Phase A: Aqueous Base, Phase B: Oil Phase, Phase C: Cool-Down / Actives). If the formula has only one phase, still title it clearly (e.g., "Phase A: Single-Stage Mixing").
+- State environmental parameters where relevant: target temperature ranges (e.g., "maintain 70–75°C"), mixing speed (low-shear vs. high-shear), and hold-times for homogeneity (e.g., "hold for 10 minutes with continuous stirring").
+- Specify exact quantities in the step text using the ingredient percentages (e.g., "Charge 15.0% of the total batch as [ingredient name]"). The frontend will scale these to the user's batch size, so reference ingredients by name and percentage, not fixed gram values.
+- Define the correct order of addition, addition technique (sprinkle, stream, pre-disperse in glycerin, etc.), and any required pre-mix or slurry steps.
+- Include in-line quality-assurance checkpoints within steps where appropriate (e.g., "Verify pH is within 5.5–6.5 before proceeding", "Confirm uniform emulsion with no phase separation", "Visually inspect for homogeneity").
+- Keep tone objective, instructional, and concise — no conversational filler, no marketing language.
 
 Do not include any text or markdown formatting outside of the main JSON object.`;
       
