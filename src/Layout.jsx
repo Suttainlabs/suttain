@@ -257,27 +257,27 @@ export default function Layout({ children, currentPageName }) {
   // Consumer nav only — Research is accessible but not promoted
 
   const companyMenuItems = [
-    { href: "AboutUs", label: "About Us", icon: Building2, description: "Learn about our mission and team" },
+    { href: "AboutUs", label: "About us", icon: Building2, description: "Learn about our mission and team" },
     { href: "Careers", label: "Careers", icon: Briefcase, description: "View open positions and join us" },
   ];
 
   const helpMenuItems = [];
 
   const consumerToolItems = [
-    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
-    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", category: "Formulation" },
-    { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
-    { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments", category: "Wellness" },
-    { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety & Analysis" },
+    { href: "Simulator", label: "Chemical simulator", icon: TestTube, description: "Safety analysis, compliance and sustainability built in", category: "Safety and analysis" },
+    { href: "generator", label: "Formula generator", icon: Atom, description: "Create formulas with safety, compliance and eco scoring", category: "Formulation" },
+    { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product for toxicity, sustainability and ingredient detail", category: "Safety and analysis" },
+    { href: "HydrationHome", label: "Hydration intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments", category: "Wellness" },
+    { href: "CarbonTaxSimulator", label: "Carbon tax simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety and analysis" },
   ];
 
   const researchToolItems = [
-    { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction", category: "Workspace" },
-    { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization", category: "Molecular Intelligence" },
-    { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization", category: "Simulation" },
-    { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets", category: "Safety & Compliance" },
-    { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration", category: "Molecular Intelligence" },
-    { href: "HazardEngine", label: "Hazard Prediction Engine", icon: ShieldAlert, description: "Validated chemical hazard classification with confidence scores and full source traceability", category: "Safety & Compliance" },
+    { href: "ComputationalStudio", label: "Computational studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials and hazard prediction", category: "Workspace" },
+    { href: "MoleculeAnalysis", label: "Molecule analysis", icon: Atom, description: "Query compounds for hazard intelligence and 3D structure visualization", category: "Molecular intelligence" },
+    { href: "ComputationalSimulation", label: "Computational simulation", icon: Cpu, description: "DFT and semi-empirical simulations with 3D visualization", category: "Simulation" },
+    { href: "SDSAnalyzer", label: "SDS analyzer", icon: FileText, description: "Extract hazard data and GHS classifications from SDS sheets", category: "Safety and compliance" },
+    { href: "StructuralBiology", label: "Structural biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis and exploration", category: "Molecular intelligence" },
+    { href: "HazardEngine", label: "Hazard prediction engine", icon: ShieldAlert, description: "Validated chemical hazard classification with confidence scores and full source traceability", category: "Safety and compliance" },
   ];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
@@ -326,60 +326,58 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F7F6F2' }}>
       <style>{`
         :root {
-          --suttain-teal: #007850;
+          --suttain-teal: #0F6E56;
           --suttain-blue: #00A8C8;
-          --suttain-violet: #6B3FA0;
-          --suttain-dark: #00281E;
-          --suttain-text: #464646;
-          --light-background: #EDF7F2;
-          --warning-orange: #D4900A;
-          --success-green: #00B478;
+          --suttain-violet: #534AB7;
+          --suttain-dark: #2C2C2A;
+          --suttain-text: #45453F;
+          --light-background: #F7F6F2;
+          --warning-orange: #993C1D;
+          --success-green: #3B6D11;
         }
 
         body {
-          font-family: var(--font-gilroy, 'Inter', sans-serif);
-          background-color: var(--color-bg-page, #EDF7F2);
-          color: var(--color-text-secondary, #464646);
+          font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
+          background-color: var(--color-page-bg, #F7F6F2);
+          color: var(--color-page-text, #2C2C2A);
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
-        
+
         h1, h2, h3, h4, h5, h6, .font-heading {
-          font-family: var(--font-gilroy, 'Inter', sans-serif);
-          font-weight: 700;
-          color: var(--color-brand-dark, #00281E);
+          font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
+          font-weight: 500;
+          color: var(--color-page-text, #2C2C2A);
         }
 
         .gradient-text {
-          background: linear-gradient(135deg, var(--suttain-violet) 0%, var(--suttain-blue) 50%, var(--suttain-teal) 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: var(--core-accent, #0F6E56);
+          -webkit-text-fill-color: currentColor;
         }
 
         .btn-primary {
-          background: linear-gradient(135deg, var(--suttain-teal), var(--suttain-blue));
+          background: var(--core-accent, #0F6E56);
           color: white;
-          transition: all 0.3s ease;
+          transition: all 0.2s ease;
         }
         .btn-primary:hover {
-          box-shadow: 0 4px 15px 0 rgba(2, 152, 140, 0.4);
+          background: #0C5A47;
         }
 
         .btn-secondary {
-          background-color: var(--suttain-violet);
+          background-color: var(--research-accent, #534AB7);
           color: white;
         }
         .btn-secondary:hover {
-          background-color: #8125d9;
+          background-color: #453DA0;
         }
       `}</style>
 
       {/* Floating Nav Bar */}
-      <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#EDF7F2]">
+      <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#F7F6F2]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14 overflow-hidden">
 
@@ -427,7 +425,7 @@ export default function Layout({ children, currentPageName }) {
                   <DropdownMenuItem asChild>
                     <Link to={createPageUrl("APIPortal")} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
                       <Code2 className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
-                      <span className="text-sm font-semibold text-slate-800">API Documentation</span>
+                      <span className="text-sm font-semibold text-slate-800">API documentation</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -484,7 +482,7 @@ export default function Layout({ children, currentPageName }) {
                       <DropdownMenuItem asChild><Link to={createPageUrl("BillingDashboard")} className="cursor-pointer"><CreditCard className="w-4 h-4 mr-2" />{t('menu_billing')}</Link></DropdownMenuItem>
                       <DropdownMenuItem asChild><Link to={createPageUrl("Workspace")} className="cursor-pointer"><FolderOpen className="w-4 h-4 mr-2" />{t('menu_workspace')}</Link></DropdownMenuItem>
                       {user.role === 'admin' && (
-                        <DropdownMenuItem asChild><Link to={createPageUrl("AdminDashboard")} className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Admin Dashboard</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link to={createPageUrl("AdminDashboard")} className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Admin dashboard</Link></DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500 focus:bg-red-50 cursor-pointer">
@@ -834,11 +832,11 @@ export default function Layout({ children, currentPageName }) {
             {/* Column 2: Platform */}
             <div>
               <ul className="space-y-1.5 text-sm">
-                <li><Link to={createPageUrl('Simulator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
-                <li><Link to={createPageUrl('generator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
-                <li><Link to={createPageUrl("ResearchDashboard")} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
+                <li><Link to={createPageUrl('Simulator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Chemical simulator</Link></li>
+                <li><Link to={createPageUrl('generator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Formula generator</Link></li>
+                <li><Link to={createPageUrl("ResearchDashboard")} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research portal</Link></li>
                 <li><Link to="/enterprise" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
-                <li><Link to={createPageUrl('AboutUs')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
+                <li><Link to={createPageUrl('AboutUs')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">About us</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
                 <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
 
@@ -848,9 +846,9 @@ export default function Layout({ children, currentPageName }) {
                 {/* Column 3: Legal */}
             <div>
               <ul className="space-y-1.5 text-sm">
-                <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Privacy Policy</Link></li>
-                <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Terms of Service</Link></li>
-                <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Compliance Guide</Link></li>
+                <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Privacy policy</Link></li>
+                <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Terms of service</Link></li>
+                <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Compliance guide</Link></li>
                 <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">contact@suttain.com</a></li>
               </ul>
             </div>
@@ -859,7 +857,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
               <h3 className="font-semibold mb-3 text-slate-800 text-sm">Science</h3>
               <ul className="space-y-1.5 text-sm mb-4">
-                <li><Link to={createPageUrl('APIPortal')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">API Docs</Link></li>
+                <li><Link to={createPageUrl('APIPortal')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">API docs</Link></li>
                 <li><Link to={createPageUrl('ExternalDatabases')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Publications</Link></li>
               </ul>
               <div className="border-t border-slate-200 pt-3">

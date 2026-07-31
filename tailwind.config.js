@@ -5,6 +5,8 @@ module.exports = {
   theme: {
   	extend: {
   		fontFamily: {
+  			inter: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+  			sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
   			gilroy: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
   			mono: ['JetBrains Mono', 'ui-monospace', 'Menlo', 'monospace'],
   		},
@@ -21,6 +23,15 @@ module.exports = {
   			'brand-mid':   '#007850',
   			'brand-light': '#00B478',
   			'brand-mint':  '#00C896',
+  			/* Per-domain accent tokens */
+  			'core-accent':           '#0F6E56',
+  			'core-accent-light':     '#E1F5EE',
+  			'research-accent':       '#534AB7',
+  			'research-accent-light': '#EEEDFE',
+  			'api-accent':            '#993C1D',
+  			'api-accent-light':      '#FAECE7',
+  			'farm-accent':           '#3B6D11',
+  			'farm-accent-light':     '#EAF3DE',
   			/* Legacy aliases kept for backward compat */
   			'suttain-teal':   '#007850',
   			'suttain-purple': '#6B3FA0',
