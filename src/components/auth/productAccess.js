@@ -107,7 +107,7 @@ export function isSuttainHost() {
 // already there (or off-domain).
 export function productUrl(product, path) {
   const host = PRODUCT_HOSTS[product];
-  if (!host || !isSuttainHost() || host === window.location.hostname) return path;
+  if (!host || host === window.location.hostname) return path;
   return `https://${host}${path}`;
 }
 

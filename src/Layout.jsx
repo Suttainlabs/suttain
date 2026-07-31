@@ -394,17 +394,6 @@ export default function Layout({ children, currentPageName }) {
             <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap flex-shrink-0">
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
-              {/* Tools — plain link */}
-              {canSee('consumer') && (
-                <Link to="/tools" className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
-                  location.pathname === '/tools' || isConsumerToolsActive
-                    ? 'bg-core-accent-light text-core-accent'
-                    : 'text-slate-700 hover:bg-core-accent-light hover:text-core-accent'
-                }`}>
-                  {t('nav_tools')}
-                </Link>
-              )}
-
               {/* Research — research.suttain.com */}
               {canSee('research') && (
                 <DomainLink product="research" to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm text-slate-700 hover:bg-research-accent-light hover:text-research-accent">
@@ -569,21 +558,6 @@ export default function Layout({ children, currentPageName }) {
 
 
 
-                  {/* Tools — plain link */}
-                  {canSee('consumer') && (
-                  <motion.div variants={mobileNavItemVariants}>
-                    <Link
-                      to="/tools"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        location.pathname === '/tools' ? 'bg-core-accent-light text-core-accent' : 'text-suttain-dark hover:bg-core-accent-light'
-                      }`}
-                    >
-                      <TestTube className="w-5 h-5" />
-                      {t('mobile_tools')}
-                    </Link>
-                  </motion.div>
-                  )}
 
                   {/* API — api.suttain.com */}
                   {canSee('api') && (
