@@ -401,19 +401,25 @@ export default function Layout({ children, currentPageName }) {
                 <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} product="consumer" />
               )}
 
-              {/* Research dropdown */}
+              {/* Research — research.suttain.com */}
               {canSee('research') && (
-                <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} product="research" accentClass="bg-research-accent-light text-research-accent" />
+                <DomainLink product="research" to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm text-slate-700 hover:bg-research-accent-light hover:text-research-accent">
+                  {t('nav_research')}
+                </DomainLink>
               )}
 
-              {/* Farm dropdown */}
+              {/* Farm — farm.suttain.com */}
               {canSee('farm') && (
-                <NavToolCombobox items={farmToolItems} label="Farm" isActive={isFarmActive} product="farm" accentClass="bg-farm-accent-light text-farm-accent" />
+                <DomainLink product="farm" to="/SuttainFarm" className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm text-slate-700 hover:bg-farm-accent-light hover:text-farm-accent">
+                  Farm
+                </DomainLink>
               )}
 
               {/* API — api.suttain.com */}
               {canSee('api') && (
-                <NavToolCombobox items={apiToolItems} label="API" isActive={isApiActive} product="api" accentClass="bg-api-accent-light text-api-accent" />
+                <DomainLink product="api" to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm text-slate-700 hover:bg-api-accent-light hover:text-api-accent">
+                  API
+                </DomainLink>
               )}
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
@@ -601,21 +607,11 @@ export default function Layout({ children, currentPageName }) {
                   {/* API — api.suttain.com */}
                   {canSee('api') && (
                   <motion.div variants={mobileNavItemVariants}>
-                    <div className="flex items-center gap-4 px-4 py-3 text-base font-semibold text-suttain-dark">
+                    <DomainLink product="api" to="/" onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-api-accent-light">
                       <Terminal className="w-5 h-5" />
                       API
-                    </div>
-                    <div className="pl-4">
-                      {apiToolItems.map(item => (
-                        <DomainLink key={item.path} product="api" to={item.path} onClick={() => setIsMobileMenuOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                            location.pathname === item.path ? "bg-api-accent-light text-api-accent" : "text-slate-700 hover:bg-slate-50"
-                          }`}>
-                          <item.icon className="w-4 h-4 flex-shrink-0 text-api-accent" />
-                          <span>{item.label}</span>
-                        </DomainLink>
-                      ))}
-                    </div>
+                    </DomainLink>
                   </motion.div>
                   )}
 
@@ -633,17 +629,6 @@ export default function Layout({ children, currentPageName }) {
                       <Sprout className="w-5 h-5" />
                       Suttain Farm
                     </DomainLink>
-                    <div className="pl-4">
-                      {farmToolItems.map(item => (
-                        <DomainLink key={item.path} product="farm" to={item.path} onClick={() => setIsMobileMenuOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                            location.pathname === item.path ? "bg-farm-accent-light text-farm-accent" : "text-slate-700 hover:bg-slate-50"
-                          }`}>
-                          <item.icon className="w-4 h-4 flex-shrink-0 text-farm-accent" />
-                          <span>{item.label}</span>
-                        </DomainLink>
-                      ))}
-                    </div>
                   </motion.div>
                   )}
 
@@ -652,44 +637,11 @@ export default function Layout({ children, currentPageName }) {
                   {/* Research Tools Collapsible - Mobile */}
                   {canSee('research') && (
                   <motion.div variants={mobileNavItemVariants}>
-                    <button
-                      onClick={() => setIsResearchSuiteOpen(!isResearchSuiteOpen)}
-                      className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-violet-50 ${
-                        isResearchToolsActive ? 'bg-violet-100' : ''
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <Microscope className="w-5 h-5" />
-                        {t('mobile_research_tools')}
-                      </div>
-                      <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isResearchSuiteOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    <AnimatePresence>
-                      {isResearchSuiteOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          className="pl-4 pt-1 pb-1 overflow-hidden"
-                        >
-                          {[...new Set(researchToolItems.map(i => i.category))].map(category => (
-                            <div key={category} className="mb-2">
-                              <p className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">{category}</p>
-                              {researchToolItems.filter(i => i.category === category).map(item => (
-                                <DomainLink key={item.path} product="research" to={item.path} onClick={() => setIsMobileMenuOpen(false)}
-                                  className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                                    location.pathname === item.path ? "bg-research-accent-light text-research-accent" : "text-slate-700 hover:bg-slate-50"
-                                  }`}>
-                                  <item.icon className="w-4 h-4 flex-shrink-0 text-research-accent" />
-                                  <span>{item.label}</span>
-                                </DomainLink>
-                              ))}
-                            </div>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <DomainLink product="research" to="/" onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-research-accent-light">
+                      <Microscope className="w-5 h-5" />
+                      {t('nav_research')}
+                    </DomainLink>
                   </motion.div>
                   )}
 
