@@ -57,15 +57,27 @@ async function rcsbLookup(query) {
 async function alphafoldLookup(query) {
   const accession = query.toUpperCase().trim();
   const url = `https://alphafold.ebi.ac.uk/api/prediction/${accession}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`AlphaFold lookup failed (${res.status}) for UniProt: ${accession}`);
+  const res = await fetch(url, {
+    headers: {
+      'Accept': 'application/json',
+      'User-Agent': 'Suttain-Research-Platform/1.0 (contact@suttain.com)',
+    },
+  });
+  if (!res.ok) {
+    const msg = res.status === 404
+      ? `No AlphaFold prediction found for UniProt ${accession}. Verify the accession is correct.`
+      : res.status === 403
+        ? `AlphaFold DB is temporarily blocking requests. Please try again in a moment.`
+        : `AlphaFold lookup failed (${res.status}) for UniProt: ${accession}`;
+    throw new Error(msg);
+  }
   const data = await res.json();
   const entry = Array.isArray(data) ? data[0] : data;
   return {
     uniprot_accession: entry.uniprotAccession || accession,
     gene: entry.gene || 'N/A',
     organism: entry.organismScientificName || 'N/A',
-    model_version: entry.modelVersion || 'N/A',
+    model_version: entry.latestVersion || entry.modelVersion || 'N/A',
     pdb_download_url: entry.pdbUrl || null,
     cif_download_url: entry.amAnnotationCifUrl || entry.cifUrl || null
   };
@@ -90,6 +102,8 @@ Deno.serve(async (req) => {
 
     return Response.json({ source, query, ...result });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    // Return 200 with error body so the frontend can surface a friendly message
+    // instead of a generic "Request failed with status code 500".
+    return Response.json({ error: error.message }, { status: 200 });
   }
 });
