@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, Download, Loader2, FileText, AlertTriangle, CheckCircle2, Globe } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 const PERSONA_REGULATIONS = {
   manufacturer:  ['REACH', 'GHS/SDS', 'EPA TSCA', 'OSHA HazCom'],
@@ -78,27 +79,19 @@ export default function ComplianceAuditPanel({ chemicals, persona, simulationDat
     setIsGenerating(true);
     setError(null);
     try {
-      // Use fetch directly to receive binary PDF
-      const res = await fetch(`/api/functions/generateComplianceReport`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chemicals,
-          persona,
-          simulationData: simulationData ? {
-            risk_assessment: simulationData.risk_assessment,
-            safety_status: simulationData.safety_status
-          } : null
-        }),
-        credentials: 'include'
+      // Invoke via the SDK so the user's auth token is attached automatically.
+      // A raw fetch with credentials:'include' does not send the Bearer token,
+      // which caused "Authentication required to view users" and no download.
+      const response = await base44.functions.invoke('generateComplianceReport', {
+        chemicals,
+        persona,
+        simulationData: simulationData ? {
+          risk_assessment: simulationData.risk_assessment,
+          safety_status: simulationData.safety_status
+        } : null
       });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `Request failed (${res.status})`);
-      }
-
-      const blob = await res.blob();
+      const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -109,7 +102,8 @@ export default function ComplianceAuditPanel({ chemicals, persona, simulationDat
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Compliance report error:', err);
-      setError(err.message || 'Failed to generate report.');
+      const msg = err?.response?.data?.error || err?.message || 'Failed to generate report.';
+      setError(msg);
     } finally {
       setIsGenerating(false);
     }
