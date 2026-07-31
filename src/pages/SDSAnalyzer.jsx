@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FileText, Sparkles, ShieldCheck, Leaf, FlaskConical, Search, Upload } from "lucide-react";
 import SDSUploader from "../components/sds/SDSUploader";
 import SDSResults from "../components/sds/SDSResults";
 import SDSSearch from "../components/sds/SDSSearch";
+import ResearchAccessGate from "../components/sds/ResearchAccessGate";
+import AuthContext from "../components/auth/AuthContext";
 
 const features = [
   { icon: ShieldCheck, label: "Hazard Identification", desc: "Extracts all GHS hazard classes, H & P statements automatically" },
@@ -17,9 +19,17 @@ const TABS = [
 ];
 
 export default function SDSAnalyzer() {
+  const { user } = useContext(AuthContext);
   const [result, setResult] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [activeTab, setActiveTab] = useState("search");
+
+  const hasResearchAccess =
+    user?.role === "admin" || (user?.product_access || []).includes("research");
+
+  if (!hasResearchAccess) {
+    return <ResearchAccessGate />;
+  }
 
   const handleResult = (data, name) => {
     setResult(data);
