@@ -23,7 +23,7 @@ import GlobalSearch from './components/navigation/GlobalSearch';
 import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
-import NavToolCombobox from './components/navigation/NavToolCombobox';
+import NavToolsDropdown from './components/navigation/NavToolsDropdown';
 import { RESEARCH_TOOLS, FARM_TOOLS, API_TOOLS } from './components/navigation/domainNav';
 import { hasAccess, productUrl } from './components/auth/productAccess';
 import DomainLink from './components/navigation/DomainLink';
@@ -398,7 +398,7 @@ export default function Layout({ children, currentPageName }) {
 
               {/* Tools dropdown */}
               {canSee('consumer') && (
-                <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} product="consumer" />
+                <NavToolsDropdown items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} />
               )}
 
               {/* Research — research.suttain.com */}
