@@ -271,7 +271,6 @@ export default function Layout({ children, currentPageName }) {
     { href: "Simulator", label: "Chemical simulator", icon: TestTube, description: "Safety analysis, compliance and sustainability built in", category: "Safety and analysis" },
     { href: "generator", label: "Formula generator", icon: Atom, description: "Create formulas with safety, compliance and eco scoring", category: "Formulation" },
     { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product for toxicity, sustainability and ingredient detail", category: "Safety and analysis" },
-    { href: "HydrationHome", label: "Hydration intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments", category: "Wellness" },
     { href: "CarbonTaxSimulator", label: "Carbon tax simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety and analysis" },
   ];
 

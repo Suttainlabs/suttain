@@ -44,7 +44,6 @@ export const ACCESS_OPTIONS = [
 export const ACCESS_PATHS = {
   consumer: [
     '/Simulator', '/generator', '/BarcodeScanner', '/NutriScan', '/BulkScan',
-    '/HydrationHome', '/HydrationIntelligence', '/HydrationReminders', '/HydrationProgress',
     '/CarbonImpactSimulator', '/CarbonTaxSimulator', '/CarbonOpportunitySimulator',
     '/FormulaBuilder', '/FormulaResults', '/FormulaPortfolio', '/FormulaComparison',
     '/BatchRecords', '/MySafetyProfile', '/Marketplace', '/IngredientDatabase',
