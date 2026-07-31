@@ -11,6 +11,11 @@
     --font-gilroy: 'Inter', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
 
+    /* Font role tokens — Inter for both headings and body across all pages */
+    --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+
     /* Brand */
     --color-brand-dark:     #00281E;
     --color-brand-mid:      #007850;
@@ -170,7 +175,7 @@
     @apply bg-background text-foreground;
     background-color: #F7F6F2;
     color: #2C2C2A;
-    font-family: var(--font-gilroy);
+    font-family: var(--font-body);
     font-size: 16px;
     font-weight: 400;
     line-height: 1.7;
@@ -194,13 +199,14 @@
   h6 { font-size: 0.9375rem; line-height: 1.45; font-weight: 500; }
 
   /* Crisp heading rendering */
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2, h3, h4, h5, h6, .font-heading, .font-display {
+    font-family: var(--font-heading);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   p, li, span, label, input, textarea, select, button {
-    font-family: var(--font-gilroy);
+    font-family: var(--font-body);
     line-height: 1.7;
   }
 

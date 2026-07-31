@@ -6,6 +6,9 @@ module.exports = {
   	extend: {
   		fontFamily: {
   			gilroy: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+  			heading: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+  			body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+  			display: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
   			mono: ['JetBrains Mono', 'ui-monospace', 'Menlo', 'monospace'],
   		},
   		borderRadius: {
