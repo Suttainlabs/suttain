@@ -185,7 +185,22 @@ Deno.serve(async (req) => {
 
         console.log('Checkout completed:', { userId, priceKey, customerEmail });
 
-        const plan = priceKey?.startsWith('starter') ? 'starter'
+        // Product line purchased (core / research / farm) — unlocks dashboard pages
+        const productLine = session.metadata?.product_line
+          || ['core', 'research', 'farm'].find((p) => priceKey?.startsWith(p))
+          || null;
+
+        // Merge the purchased line into the user's existing product_access list
+        const accessFor = (targetUser) => {
+          if (!productLine) return {};
+          const current = Array.isArray(targetUser?.product_access) ? targetUser.product_access : [];
+          return current.includes(productLine)
+            ? {}
+            : { product_access: [...current, productLine] };
+        };
+
+        const plan = productLine ? 'pro'
+          : priceKey?.startsWith('starter') ? 'starter'
           : priceKey?.startsWith('academic') ? 'academic'
           : priceKey?.startsWith('lifetime') ? 'lifetime'
           : priceKey?.startsWith('enterprise') ? 'enterprise'
@@ -207,7 +222,10 @@ Deno.serve(async (req) => {
 
         if (userId) {
           try {
+            let existingUser = null;
+            try { existingUser = await base44.asServiceRole.entities.User.get(userId); } catch (_) {}
             await base44.asServiceRole.entities.User.update(userId, {
+              ...accessFor(existingUser),
               subscription_plan: plan,
               subscription_status: 'active',
               subscription_billing: billing,
@@ -225,6 +243,7 @@ Deno.serve(async (req) => {
             const users = await base44.asServiceRole.entities.User.filter({ email: customerEmail });
             if (users.length > 0) {
               await base44.asServiceRole.entities.User.update(users[0].id, {
+                ...accessFor(users[0]),
                 subscription_plan: plan,
                 subscription_status: 'active',
                 subscription_billing: billing,
