@@ -137,7 +137,8 @@ export default function Generator() {
   - COMPLETE ingredient list using INCI NOMENCLATURE with:
   * Exact percentages (must total 100%)
   * Function of each ingredient
-  * Include: preservative system, pH adjusters, chelating agents as needed
+  * Include: industrial-grade preservative system (e.g., Phenoxyethanol + Ethylhexylglycerin, or optimal broad-spectrum alternative), pH adjusters, chelating agents as needed
+  * Use professional active concentrations at proven efficacy levels (cite typical use %), not general-purpose ranges
   - Cost level: low/medium/high (with estimated cost per kg)
   - Difficulty: intermediate/advanced/professional
   - Regulatory notes: Any restrictions in EU/US/Asia markets

@@ -63,6 +63,7 @@ import ShareModal from "../shared/ShareModal";
 import CostProductionPanel from "./CostProductionPanel";
 import SupplierSourcingPanel from "./SupplierSourcingPanel";
 import BatchManagementPanel from "./BatchManagementPanel";
+import BusinessLockedTab from "./BusinessLockedTab";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -1318,43 +1319,66 @@ export default function FormulaEditor({
                 </TabsContent>
                 
                 <TabsContent value="cost" className="mt-0">
-                  <CostProductionPanel
-                    formula={formula}
-                    batchSize={batchSize}
-                    batchUnit={batchUnit}
-                    costingData={formula.costing_data}
-                    onSaveCosting={async (costingData) => {
-                      try {
-                        if (formula.id) {
-                          await Formula.update(formula.id, { costing_data: costingData });
-                          setFormula(prev => ({ ...prev, costing_data: costingData }));
-                        } else {
-                          setFormula(prev => ({ ...prev, costing_data: costingData }));
+                  {businessMode ? (
+                    <CostProductionPanel
+                      formula={formula}
+                      batchSize={batchSize}
+                      batchUnit={batchUnit}
+                      costingData={formula.costing_data}
+                      onSaveCosting={async (costingData) => {
+                        try {
+                          if (formula.id) {
+                            await Formula.update(formula.id, { costing_data: costingData });
+                            setFormula(prev => ({ ...prev, costing_data: costingData }));
+                          } else {
+                            setFormula(prev => ({ ...prev, costing_data: costingData }));
+                          }
+                        } catch (e) {
+                          console.error("Failed to save costing data:", e);
                         }
-                      } catch (e) {
-                        console.error("Failed to save costing data:", e);
-                      }
-                    }}
-                  />
+                      }}
+                    />
+                  ) : (
+                    <BusinessLockedTab
+                      title="Commercial cost production"
+                      description="Calculate cost-per-kg, production margins, and batch economics at manufacturing scale — available exclusively in Business Mode."
+                    />
+                  )}
                 </TabsContent>
 
                 <TabsContent value="batch" className="mt-0 space-y-6">
-                  <BatchManagementPanel
-                    formula={formula}
-                    batchSize={batchSize}
-                    batchUnit={batchUnit}
-                  />
+                  {businessMode ? (
+                    <BatchManagementPanel
+                      formula={formula}
+                      batchSize={batchSize}
+                      batchUnit={batchUnit}
+                    />
+                  ) : (
+                    <BusinessLockedTab
+                      title="Scale-up & batch engineering"
+                      description="Industrial batch records, high-shear processing requirements, and batch-loss calculations for commercial manufacturing — available exclusively in Business Mode."
+                    />
+                  )}
                 </TabsContent>
 
                 <TabsContent value="sourcing" className="mt-0 space-y-6">
-                  <SupplierSourcingPanel
-                    formula={formula}
-                    batchSize={batchSize}
-                    batchUnit={batchUnit}
-                  />
+                  {businessMode ? (
+                    <SupplierSourcingPanel
+                      formula={formula}
+                      batchSize={batchSize}
+                      batchUnit={batchUnit}
+                    />
+                  ) : (
+                    <BusinessLockedTab
+                      title="Raw material sourcing & procurement"
+                      description="Connect ingredients to verified suppliers, request quotes, and manage procurement for commercial production — available exclusively in Business Mode."
+                    />
+                  )}
                 </TabsContent>
 
                 <TabsContent value="suppliers" className="mt-0 space-y-6">
+                  {businessMode ? (
+                    <>
                   {/* Supplier Verification — invite suppliers to verify ingredient data */}
                   {formula.id && <SupplierVerificationPanel formula={formula} />}
 
@@ -1384,10 +1408,17 @@ export default function FormulaEditor({
                         </div>
                       ))}
                     </CardContent>
-                  </Card>
-                </TabsContent>
-              </CardContent>
-            </Tabs>
+                    </Card>
+                    </>
+                    ) : (
+                    <BusinessLockedTab
+                     title="Supplier management & verification"
+                     description="Link ingredients to certified suppliers, request COAs, and invite suppliers to verify raw-material data — available exclusively in Business Mode."
+                    />
+                    )}
+                    </TabsContent>
+                    </CardContent>
+                    </Tabs>
           </Card>
         </div>
 
