@@ -72,6 +72,7 @@ const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
 const SuttainFarmLanding = lazy(() => import('./pages/SuttainFarmLanding'));
+const ResearchHome = lazy(() => import('./pages/ResearchHome'));
 const SuttainFarmHub = lazy(() => import('./pages/SuttainFarm'));
 const AgroFarmerProfile = lazy(() => import('./pages/AgroFarmerProfile'));
 const AgroChat = lazy(() => import('./pages/AgroChat'));
@@ -143,10 +144,15 @@ const AuthenticatedApp = () => {
     <AnimatePresence mode="wait">
     <Routes location={location} key={location.pathname}>
       <Route path="/" element={
+        window.location.hostname === 'research.suttain.com' ? (
+          <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchHome /></Suspense>
+        ) : (
         <LayoutWrapper currentPageName="Home">
           <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><LandingHub /></PageTransition></Suspense>
         </LayoutWrapper>
+        )
       } />
+      <Route path="/ResearchHome" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchHome /></Suspense>} />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
