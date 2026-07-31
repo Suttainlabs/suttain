@@ -50,5 +50,12 @@ export const FARM_TOOLS = [
   { path: '/AgroFarmerProfile', label: 'Farmer profile', icon: UserIcon, description: 'Farmer and farm details' },
 ];
 
+// ── api.suttain.com ────────────────────────────────────────────────
+export const API_TOOLS = [
+  { path: '/APIPortal', label: 'API docs', icon: FileText, description: 'REST endpoints, SDKs and code examples' },
+  { path: '/EnterpriseAPI', label: 'Enterprise API', icon: Server, description: 'Custom integrations and dedicated infrastructure' },
+];
+
+export const API_PATHS = API_TOOLS.map(t => t.path);
 export const RESEARCH_PATHS = RESEARCH_TOOLS.map(t => t.path);
 export const FARM_PATHS = FARM_TOOLS.map(t => t.path);

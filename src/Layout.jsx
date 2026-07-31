@@ -24,7 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
 import NavToolCombobox from './components/navigation/NavToolCombobox';
-import { RESEARCH_TOOLS, FARM_TOOLS } from './components/navigation/domainNav';
+import { RESEARCH_TOOLS, FARM_TOOLS, API_TOOLS } from './components/navigation/domainNav';
 import { hasAccess, productUrl } from './components/auth/productAccess';
 import DomainLink from './components/navigation/DomainLink';
 import AccessGuard from './components/auth/AccessGuard';
@@ -277,6 +277,7 @@ export default function Layout({ children, currentPageName }) {
 
   const researchToolItems = RESEARCH_TOOLS;
   const farmToolItems = FARM_TOOLS;
+  const apiToolItems = API_TOOLS;
 
   // Logged-out visitors see everything; signed-in users only see what they picked.
   const canSee = (key) => !user || hasAccess(user, key);
@@ -284,6 +285,7 @@ export default function Layout({ children, currentPageName }) {
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
   const isResearchToolsActive = researchToolItems.some(tool => location.pathname === tool.path);
   const isFarmActive = location.pathname === '/SuttainFarm' || farmToolItems.some(tool => location.pathname === tool.path);
+  const isApiActive = API_TOOLS.some(tool => location.pathname === tool.path);
 
 
   const getLinkClasses = (href) => {
@@ -411,17 +413,7 @@ export default function Layout({ children, currentPageName }) {
 
               {/* API — api.suttain.com */}
               {canSee('api') && (
-                <a
-                  href={productUrl('api', '/APIPortal')}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                    location.pathname === '/APIPortal'
-                      ? "bg-api-accent-light text-api-accent"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}
-                >
-                  <Terminal className="w-3.5 h-3.5" />
-                  <span>API</span>
-                </a>
+                <NavToolCombobox items={apiToolItems} label="API" isActive={isApiActive} product="api" accentClass="bg-api-accent-light text-api-accent" />
               )}
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
@@ -609,16 +601,21 @@ export default function Layout({ children, currentPageName }) {
                   {/* API — api.suttain.com */}
                   {canSee('api') && (
                   <motion.div variants={mobileNavItemVariants}>
-                    <a
-                      href={productUrl('api', '/APIPortal')}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        location.pathname === '/APIPortal' ? "bg-api-accent-light text-api-accent" : "text-suttain-dark hover:bg-api-accent-light"
-                      }`}
-                    >
+                    <div className="flex items-center gap-4 px-4 py-3 text-base font-semibold text-suttain-dark">
                       <Terminal className="w-5 h-5" />
                       API
-                    </a>
+                    </div>
+                    <div className="pl-4">
+                      {apiToolItems.map(item => (
+                        <DomainLink key={item.path} product="api" to={item.path} onClick={() => setIsMobileMenuOpen(false)}
+                          className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                            location.pathname === item.path ? "bg-api-accent-light text-api-accent" : "text-slate-700 hover:bg-slate-50"
+                          }`}>
+                          <item.icon className="w-4 h-4 flex-shrink-0 text-api-accent" />
+                          <span>{item.label}</span>
+                        </DomainLink>
+                      ))}
+                    </div>
                   </motion.div>
                   )}
 
