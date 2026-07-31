@@ -11,7 +11,6 @@ const FEATURES = [
   { label: 'Formula generations per month', tiers: { free: '5', starter: 'Unlimited', pro: 'Unlimited', lifetime: 'Unlimited' } },
   { label: 'Structural Biology access', tiers: { free: false, starter: true, pro: true, lifetime: true } },
   { label: 'DFT & MD simulations', tiers: { free: false, starter: false, pro: true, lifetime: true } },
-  { label: 'Research API', tiers: { free: false, starter: false, pro: true, lifetime: true } },
   { label: 'Citation-ready exports', tiers: { free: false, starter: false, pro: true, lifetime: true } },
   { label: 'Team seats', tiers: { free: '1', starter: '1', pro: 'Up to 10', lifetime: '1' } },
   { label: 'Priority compute queue', tiers: { free: false, starter: false, pro: true, lifetime: false } },

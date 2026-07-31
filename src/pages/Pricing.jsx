@@ -73,7 +73,6 @@ const PLANS = [
     features: [
       'Everything in Starter',
       'Unlimited simulations (DFT, MD)',
-      'Research API access',
       'Citation-ready exports',
       'Up to 10 team seats',
       'Priority compute queue',
@@ -96,7 +95,6 @@ const PLANS = [
     features: [
       'All Pro features forever',
       'Unlimited simulations (DFT, MD)',
-      'Research API access',
       'Citation-ready exports',
       'No recurring payments',
     ],
