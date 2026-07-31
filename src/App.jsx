@@ -56,7 +56,6 @@ const ResearchDashboard = lazy(() => import('./pages/ResearchDashboard'));
 const APIPortal = lazy(() => import('./pages/APIPortal'));
 const ChemicalComparison = lazy(() => import('./pages/ChemicalComparison'));
 const StructuralBiology = lazy(() => import('./pages/StructuralBiology'));
-const HazardEngine = lazy(() => import('./pages/HazardEngine'));
 const ComputationalStudio = lazy(() => import('./pages/ComputationalStudio'));
 const ComputationalStudioProteins = lazy(() => import('./pages/ComputationalStudioProteins'));
 const ComputationalStudioSmallMolecules = lazy(() => import('./pages/ComputationalStudioSmallMolecules'));
@@ -183,14 +182,14 @@ const AuthenticatedApp = () => {
         {['Simulator', 'generator', 'BarcodeScanner',
           'MolecularIntelligence', 'MoleculeExplorer', 'MoleculeAnalysis', 'ChemicalDashboard', 'InventoryDashboard',
           'ResearchPortal', 'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
-          'ComputationalSimulation', 'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology', 'HazardEngine'
+          'ComputationalSimulation', 'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology'
           ].map(path => {
           const Page = Pages[path];
           if (!Page) {
             const lazyMap = {
               MolecularIntelligence, MoleculeExplorer, MoleculeAnalysis, ChemicalDashboard, InventoryDashboard,
               ResearchPortal, ResearchDashboard, ChemicalComparison, SDSAnalyzer,
-              ComputationalSimulation, SimulationEngine, ChemicalLibrary, StructuralBiology, HazardEngine,
+              ComputationalSimulation, SimulationEngine, ChemicalLibrary, StructuralBiology,
               Simulator: Pages['Simulator'], generator: Pages['generator'],
               BarcodeScanner: Pages['BarcodeScanner'],
             };

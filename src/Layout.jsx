@@ -275,7 +275,6 @@ export default function Layout({ children, currentPageName }) {
     { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization", category: "Simulation" },
     { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets", category: "Safety & Compliance" },
     { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration", category: "Molecular Intelligence" },
-    { href: "HazardEngine", label: "Hazard Prediction Engine", icon: ShieldAlert, description: "Validated chemical hazard classification with confidence scores and full source traceability", category: "Safety & Compliance" },
   ];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
