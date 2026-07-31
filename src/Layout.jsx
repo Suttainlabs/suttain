@@ -323,31 +323,31 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F7F6F2' }}>
       <style>{`
         :root {
-          --suttain-teal: #007850;
+          --suttain-teal: #0F6E56;
           --suttain-blue: #00A8C8;
-          --suttain-violet: #6B3FA0;
-          --suttain-dark: #00281E;
-          --suttain-text: #464646;
-          --light-background: #EDF7F2;
+          --suttain-violet: #534AB7;
+          --suttain-dark: #2C2C2A;
+          --suttain-text: #2C2C2A;
+          --light-background: #F7F6F2;
           --warning-orange: #D4900A;
           --success-green: #00B478;
         }
 
         body {
           font-family: var(--font-gilroy, 'Inter', sans-serif);
-          background-color: var(--color-bg-page, #EDF7F2);
-          color: var(--color-text-secondary, #464646);
+          background-color: var(--color-bg-page, #F7F6F2);
+          color: var(--color-text-secondary, #2C2C2A);
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
         
         h1, h2, h3, h4, h5, h6, .font-heading {
           font-family: var(--font-gilroy, 'Inter', sans-serif);
-          font-weight: 700;
-          color: var(--color-brand-dark, #00281E);
+          font-weight: 500;
+          color: var(--color-text-primary, #2C2C2A);
         }
 
         .gradient-text {
@@ -376,7 +376,7 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       {/* Floating Nav Bar */}
-      <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#EDF7F2]">
+      <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#F7F6F2]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14 overflow-hidden">
 

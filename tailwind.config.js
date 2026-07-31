@@ -22,9 +22,18 @@ module.exports = {
   			'brand-light': '#00B478',
   			'brand-mint':  '#00C896',
   			/* Legacy aliases kept for backward compat */
-  			'suttain-teal':   '#007850',
-  			'suttain-purple': '#6B3FA0',
+  			'suttain-teal':   '#0F6E56',
+  			'suttain-purple': '#534AB7',
   			'suttain-blue':   '#00A8C8',
+  			/* Pillar accents */
+  			'pillar-core':          '#0F6E56',
+  			'pillar-core-fill':     '#E1F5EE',
+  			'pillar-research':      '#534AB7',
+  			'pillar-research-fill': '#EEEDFE',
+  			'pillar-api':           '#993C1D',
+  			'pillar-api-fill':      '#FAECE7',
+  			'pillar-farm':          '#3B6D11',
+  			'pillar-farm-fill':     '#EAF3DE',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
