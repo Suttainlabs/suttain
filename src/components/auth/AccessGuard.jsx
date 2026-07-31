@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { accessForPath, hasAccess, getAccessOption, ACCESS_OPTIONS } from './productAccess';
+import DomainLink from '@/components/navigation/DomainLink';
 
 export default function AccessGuard({ user, isAuthLoading, children }) {
   const location = useLocation();
@@ -23,15 +24,18 @@ export default function AccessGuard({ user, isAuthLoading, children }) {
         </div>
         <h1 className="mb-2">This area is not part of your plan</h1>
         <p className="text-muted-foreground mb-6">
-          You chose not to include {blocked.label.toLowerCase()} when you signed up. You can add it any time from your profile.
+          Your account does not include {blocked.label.toLowerCase()}. Add it to your plan to unlock this page.
         </p>
         <div className="flex flex-col gap-2">
+          <Button asChild className="w-full">
+            <DomainLink product="consumer" to="/Pricing">View plans</DomainLink>
+          </Button>
           {allowed.map((option) => (
             <Button key={option.value} asChild variant="outline" className="w-full">
-              <Link to={option.path}>Go to {option.label.toLowerCase()}</Link>
+              <DomainLink product={option.value} to={option.path}>Go to {option.label.toLowerCase()}</DomainLink>
             </Button>
           ))}
-          <Button asChild className="w-full">
+          <Button asChild variant="ghost" className="w-full">
             <Link to="/Profile">Manage my access</Link>
           </Button>
         </div>
