@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +6,7 @@ import { motion } from 'framer-motion';
 import { ShieldCheck, AlertTriangle, Loader2, Scale, Globe, FileText, CheckCircle } from 'lucide-react';
 import { InvokeLLM } from '@/integrations/Core';
 
-export default function ComplianceChecker({ formula }) {
+export default function ComplianceChecker({ formula, onResult }) {
   const [complianceData, setComplianceData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -64,9 +63,11 @@ export default function ComplianceChecker({ formula }) {
         }
       });
       setComplianceData(analysis);
+      if (onResult) onResult(analysis);
     } catch (error) {
       console.error("Compliance check failed:", error);
       setComplianceData({ error: "Failed to generate compliance analysis." });
+      if (onResult) onResult(null);
     }
     setIsLoading(false);
   };

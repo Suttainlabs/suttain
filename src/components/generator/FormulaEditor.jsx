@@ -64,6 +64,7 @@ import CostProductionPanel from "./CostProductionPanel";
 import SupplierSourcingPanel from "./SupplierSourcingPanel";
 import BatchManagementPanel from "./BatchManagementPanel";
 import BusinessLockedTab from "./BusinessLockedTab";
+import ComplianceTracker from "./ComplianceTracker";
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -263,6 +264,7 @@ export default function FormulaEditor({
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [selectedIngredientForSupplier, setSelectedIngredientForSupplier] = useState(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [complianceData, setComplianceData] = useState(null); // lifted for Business Mode tracker
 
   // NEW: Ingredient search states
   const [ingredientSearchTerm, setIngredientSearchTerm] = useState("");
@@ -1309,8 +1311,11 @@ export default function FormulaEditor({
                 </TabsContent>
                 
                 <TabsContent value="compliance" className="mt-0 space-y-6">
+                   {businessMode && (
+                     <ComplianceTracker formula={formula} complianceData={complianceData} />
+                   )}
                    <Suspense fallback={<div className="flex items-center justify-center p-4"><Loader2 className="w-6 h-6 animate-spin mr-2"/>Loading compliance checks...</div>}>
-                     <ComplianceChecker formula={formula} />
+                     <ComplianceChecker formula={formula} onResult={setComplianceData} />
                    </Suspense>
                    <RegulatoryScanner 
                      ingredients={formula.ingredients} 
