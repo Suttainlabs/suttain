@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Microscope, Atom, Boxes, ShieldAlert, Briefcase, ChevronRight, FlaskConical } from 'lucide-react';
+import { Home, Microscope, Atom, Boxes, ShieldAlert, Briefcase, ChevronRight, FlaskConical, Cpu } from 'lucide-react';
 import MolecularBackground from '@/components/shared/MolecularBackground';
 
 const STUDIO_TABS = [
@@ -8,6 +8,7 @@ const STUDIO_TABS = [
   { path: '/ComputationalStudio/Proteins', label: 'Proteins', icon: Microscope },
   { path: '/ComputationalStudio/SmallMolecules', label: 'Small Molecules', icon: Atom },
   { path: '/ComputationalStudio/Materials', label: 'Materials', icon: Boxes },
+  { path: '/ComputationalStudio/Simulations', label: 'Simulations', icon: Cpu },
   { path: '/ComputationalStudio/HazardSafety', label: 'Hazard & Safety', icon: ShieldAlert },
   { path: '/ComputationalStudio/Jobs', label: 'Jobs', icon: Briefcase },
 ];

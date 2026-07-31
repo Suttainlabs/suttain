@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FlaskConical, Microscope, Atom, Boxes, ShieldAlert, Briefcase, ArrowRight, Users } from 'lucide-react';
+import { FlaskConical, Microscope, Atom, Boxes, ShieldAlert, Briefcase, ArrowRight, Users, Cpu } from 'lucide-react';
 import StudioLayout from '@/components/studio/StudioLayout';
 import Studio3DViewer from '@/components/studio/Studio3DViewer';
 import { SourcedBadge } from '@/components/studio/StudioShared';
 
 const TOOL_CARDS = [
+  { path: '/ComputationalStudio/Simulations', title: 'Simulations', description: 'Run DFT, MD, docking, QM, materials, and Monte Carlo simulations across scientific domains', icon: Cpu },
   { path: '/ComputationalStudio/Proteins', title: 'Proteins', description: 'Predict, visualize, and analyze protein structures from sequence to property', icon: Microscope },
   { path: '/ComputationalStudio/SmallMolecules', title: 'Small Molecules', description: 'Look up, compute, and compare molecular properties and descriptors', icon: Atom },
   { path: '/ComputationalStudio/Materials', title: 'Materials', description: 'Build structures and generate inputs for external simulation engines', icon: Boxes },

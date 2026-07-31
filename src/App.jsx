@@ -60,6 +60,7 @@ const ComputationalStudioSmallMolecules = lazy(() => import('./pages/Computation
 const ComputationalStudioMaterials = lazy(() => import('./pages/ComputationalStudioMaterials'));
 const ComputationalStudioHazardSafety = lazy(() => import('./pages/ComputationalStudioHazardSafety'));
 const ComputationalStudioJobs = lazy(() => import('./pages/ComputationalStudioJobs'));
+const ComputationalStudioSimulations = lazy(() => import('./pages/ComputationalStudioSimulations'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
@@ -165,6 +166,7 @@ const AuthenticatedApp = () => {
       <Route path="/Home" element={<Navigate to="/" replace />} />
       <Route path="/MolecularIntelligence" element={<Navigate to="/MoleculeAnalysis" replace />} />
       <Route path="/MoleculeExplorer" element={<Navigate to="/MoleculeAnalysis" replace />} />
+      <Route path="/ComputationalSimulation" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
 
       {/* ── Public marketing pages (no login required) ── */}
       <Route path="/enterprise" element={<Navigate to="/APIPortal" replace />} />
@@ -178,7 +180,7 @@ const AuthenticatedApp = () => {
         {['Simulator', 'generator', 'BarcodeScanner',
           'MolecularIntelligence', 'MoleculeExplorer', 'MoleculeAnalysis', 'ChemicalDashboard', 'InventoryDashboard',
           'ResearchPortal', 'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
-          'ComputationalSimulation', 'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology'
+          'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology'
           ].map(path => {
           const Page = Pages[path];
           if (!Page) {
@@ -204,6 +206,7 @@ const AuthenticatedApp = () => {
         <Route path="/AgroReports" element={<LayoutWrapper currentPageName="AgroReports"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#4A7C2A] rounded-full animate-spin"/></div>}><PageTransition><AgroReports /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/MySafetyProfile" element={<LayoutWrapper currentPageName="MySafetyProfile"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MySafetyProfile /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio" element={<LayoutWrapper currentPageName="ComputationalStudio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudio /></PageTransition></Suspense></LayoutWrapper>} />
+        <Route path="/ComputationalStudio/Simulations" element={<LayoutWrapper currentPageName="ComputationalStudioSimulations"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioSimulations /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Proteins" element={<LayoutWrapper currentPageName="ComputationalStudioProteins"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioProteins /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/SmallMolecules" element={<LayoutWrapper currentPageName="ComputationalStudioSmallMolecules"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioSmallMolecules /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Materials" element={<LayoutWrapper currentPageName="ComputationalStudioMaterials"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioMaterials /></PageTransition></Suspense></LayoutWrapper>} />

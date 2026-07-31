@@ -299,9 +299,9 @@ export const DOMAIN_SIM_MAP = {
   "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "quantum_vqe", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization", "thermo_phase"],
 };
 
-const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
+export const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
 
-const DOMAIN_COLORS = {
+export const DOMAIN_COLORS = {
   "Chemistry": "bg-violet-600 text-white border-violet-600",
   "Biochemistry": "bg-teal-600 text-white border-teal-600",
   "Drug Discovery": "bg-pink-600 text-white border-pink-600",
@@ -312,7 +312,7 @@ const DOMAIN_COLORS = {
   "Biophysics": "bg-cyan-600 text-white border-cyan-600",
 };
 
-const DOMAIN_DESCRIPTIONS = {
+export const DOMAIN_DESCRIPTIONS = {
   "Chemistry": "Quantum chemistry, DFT, reaction mechanisms, spectroscopy and statistical simulations.",
   "Biochemistry": "Protein dynamics, biomolecular interactions, excited states and visualization.",
   "Drug Discovery": "Docking, ADMET, binding affinity, protein modeling and ML-based drug design.",
