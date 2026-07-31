@@ -44,7 +44,7 @@ export default function NavToolCombobox({ items, label, isActive, product, accen
                       setOpen(false);
                       const target = productUrl(product, item.path || createPageUrl(item.href));
                       if (target.startsWith('http')) {
-                        window.location.href = target;
+                        window.open(target, '_blank', 'noopener,noreferrer');
                       } else {
                         navigate(target);
                       }

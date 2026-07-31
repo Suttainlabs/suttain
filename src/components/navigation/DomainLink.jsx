@@ -7,7 +7,7 @@ import { productUrl } from '@/components/auth/productAccess';
 export default function DomainLink({ product, to, children, ...rest }) {
   const url = productUrl(product, to);
   if (url.startsWith('http')) {
-    return <a href={url} {...rest}>{children}</a>;
+    return <a href={url} target="_blank" rel="noopener noreferrer" {...rest}>{children}</a>;
   }
   return <Link to={url} {...rest}>{children}</Link>;
 }
