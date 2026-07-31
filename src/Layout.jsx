@@ -23,7 +23,6 @@ import GlobalSearch from './components/navigation/GlobalSearch';
 import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
-import NavToolsDropdown from './components/navigation/NavToolsDropdown';
 import { RESEARCH_TOOLS, FARM_TOOLS, API_TOOLS } from './components/navigation/domainNav';
 import { hasAccess, productUrl } from './components/auth/productAccess';
 import DomainLink from './components/navigation/DomainLink';
@@ -395,9 +394,15 @@ export default function Layout({ children, currentPageName }) {
             <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap flex-shrink-0">
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
-              {/* Tools dropdown */}
+              {/* Tools — plain link */}
               {canSee('consumer') && (
-                <NavToolsDropdown items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} />
+                <Link to="/tools" className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
+                  location.pathname === '/tools' || isConsumerToolsActive
+                    ? 'bg-core-accent-light text-core-accent'
+                    : 'text-slate-700 hover:bg-core-accent-light hover:text-core-accent'
+                }`}>
+                  {t('nav_tools')}
+                </Link>
               )}
 
               {/* Research — research.suttain.com */}
@@ -564,42 +569,19 @@ export default function Layout({ children, currentPageName }) {
 
 
 
-                  {/* Professional Tools Collapsible */}
+                  {/* Tools — plain link */}
                   {canSee('consumer') && (
                   <motion.div variants={mobileNavItemVariants}>
-                    <button
-                      onClick={() => setIsProductSuiteOpen(!isProductSuiteOpen)}
-                      className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-cyan-50 ${
-                        isConsumerToolsActive ? 'bg-cyan-100' : ''
+                    <Link
+                      to="/tools"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
+                        location.pathname === '/tools' ? 'bg-core-accent-light text-core-accent' : 'text-suttain-dark hover:bg-core-accent-light'
                       }`}
                     >
-                      <div className="flex items-center gap-4">
-                        <TestTube className="w-5 h-5" />
-                        {t('mobile_tools')}
-                      </div>
-                      <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isProductSuiteOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    <AnimatePresence>
-                      {isProductSuiteOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          className="pl-4 pt-1 pb-1 overflow-hidden"
-                        >
-                          {consumerToolItems.map(item => (
-                            <DomainLink key={item.href} product="consumer" to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                                location.pathname === createPageUrl(item.href) ? "bg-teal-50 text-[#007850]" : "text-slate-700 hover:bg-slate-50"
-                              }`}>
-                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-teal)]" />
-                              <span>{item.label}</span>
-                            </DomainLink>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                      <TestTube className="w-5 h-5" />
+                      {t('mobile_tools')}
+                    </Link>
                   </motion.div>
                   )}
 

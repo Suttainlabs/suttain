@@ -70,6 +70,11 @@ const LandingHub = lazy(() => import('./pages/LandingHub'));
 const SuttainFarmLanding = lazy(() => import('./pages/SuttainFarmLanding'));
 const ResearchHome = lazy(() => import('./pages/ResearchHome'));
 const APIHome = lazy(() => import('./pages/APIHome'));
+const Tools = lazy(() => import('./pages/Tools'));
+const ResearchMolecules = lazy(() => import('./pages/ResearchMolecules'));
+const ResearchSimulation = lazy(() => import('./pages/ResearchSimulation'));
+const ResearchCompute = lazy(() => import('./pages/ResearchCompute'));
+const ResearchSafety = lazy(() => import('./pages/ResearchSafety'));
 const SuttainFarmHub = lazy(() => import('./pages/SuttainFarm'));
 const AgroFarmerProfile = lazy(() => import('./pages/AgroFarmerProfile'));
 const AgroChat = lazy(() => import('./pages/AgroChat'));
@@ -152,6 +157,11 @@ const AuthenticatedApp = () => {
         )
       } />
       <Route path="/ResearchHome" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchHome /></Suspense>} />
+      <Route path="/tools" element={<LayoutWrapper currentPageName="Tools"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><Tools /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/ResearchMolecules" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchMolecules /></Suspense>} />
+      <Route path="/ResearchSimulation" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchSimulation /></Suspense>} />
+      <Route path="/ResearchCompute" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchCompute /></Suspense>} />
+      <Route path="/ResearchSafety" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchSafety /></Suspense>} />
       <Route path="/APIHome" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-orange-500 rounded-full animate-spin"/></div>}><APIHome /></Suspense>} />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route

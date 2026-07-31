@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { Atom, Cpu, Server, ShieldAlert, ArrowRight } from "lucide-react";
 
 const CARDS = [
-  { icon: Atom, label: "Molecules and materials", desc: "Query compounds, crystals, and properties from trusted databases.", to: "/MoleculeAnalysis" },
-  { icon: Cpu, label: "Simulation and modeling", desc: "Run DFT, molecular dynamics, and semi-empirical calculations.", to: "/ComputationalSimulation" },
-  { icon: Server, label: "Compute and jobs", desc: "Queue, monitor, and export long-running computational jobs.", to: "/ComputationalStudio/Jobs" },
-  { icon: ShieldAlert, label: "Safety data", desc: "Hazard prediction, GHS classification, and regulatory context.", to: "/HazardEngine" },
+  { icon: Atom, label: "Molecules and materials", desc: "Query compounds, crystals, and properties from trusted databases.", to: "/ResearchMolecules" },
+  { icon: Cpu, label: "Simulation and modeling", desc: "Run DFT, molecular dynamics, and semi-empirical calculations.", to: "/ResearchSimulation" },
+  { icon: Server, label: "Compute and jobs", desc: "Queue, monitor, and export long-running computational jobs.", to: "/ResearchCompute" },
+  { icon: ShieldAlert, label: "Safety data", desc: "Hazard prediction, GHS classification, and regulatory context.", to: "/ResearchSafety" },
 ];
 
 export default function ResearchFeatureCards() {

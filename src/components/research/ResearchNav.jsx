@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export const RESEARCH_NAV_LINKS = [
-  { label: "Molecules", to: "/MoleculeAnalysis" },
-  { label: "Simulation", to: "/ComputationalSimulation" },
-  { label: "Compute", to: "/ComputationalStudio/Jobs" },
-  { label: "Safety data", to: "/HazardEngine" },
+  { label: "Molecules", to: "/ResearchMolecules" },
+  { label: "Simulation", to: "/ResearchSimulation" },
+  { label: "Compute", to: "/ResearchCompute" },
+  { label: "Safety data", to: "/ResearchSafety" },
 ];
 
 export default function ResearchNav() {
