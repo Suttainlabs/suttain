@@ -91,7 +91,7 @@ export function getAccessOption(value) {
 
 // The host each product line lives on.
 export const PRODUCT_HOSTS = {
-  consumer: 'www.suttain.com',
+  consumer: 'suttain.com',
   research: 'research.suttain.com',
   api: 'api.suttain.com',
   farm: 'farm.suttain.com',
