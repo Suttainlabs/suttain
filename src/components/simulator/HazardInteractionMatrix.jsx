@@ -100,12 +100,7 @@ function MatrixCell({ rowChem, colChem, riskData, isLoading, onClick }) {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function HazardInteractionMatrix() {
-  const [chemicals, setChemicals] = useState([
-    "Sodium Hypochlorite (Bleach)",
-    "Ammonia",
-    "Ethanoic Acid (Vinegar)",
-    "Propan-2-ol (Isopropanol)",
-  ]);
+  const [chemicals, setChemicals] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef(null);
