@@ -37,6 +37,54 @@ export const ACCESS_OPTIONS = [
   },
 ];
 
+// Which paths belong to which product. Prefix matched.
+// Public marketing pages (/, /SuttainFarm, /EnterpriseAPI, /Pricing) are
+// deliberately absent so they stay reachable by everyone, and so are the
+// shared account pages (/Dashboard, /Profile, /BillingDashboard, /Workspace).
+export const ACCESS_PATHS = {
+  consumer: [
+    '/Simulator', '/generator', '/BarcodeScanner', '/NutriScan', '/BulkScan',
+    '/HydrationHome', '/HydrationIntelligence', '/HydrationReminders', '/HydrationProgress',
+    '/CarbonImpactSimulator', '/CarbonTaxSimulator', '/CarbonOpportunitySimulator',
+    '/FormulaBuilder', '/FormulaResults', '/FormulaPortfolio', '/FormulaComparison',
+    '/BatchRecords', '/MySafetyProfile', '/Marketplace', '/IngredientDatabase',
+  ],
+  research: [
+    '/ComputationalStudio', '/ComputationalSimulation', '/SimulationRunner',
+    '/SimulationDashboard', '/SimulationSandbox', '/SimulationHistory',
+    '/SimulationComparison', '/SimulationQueueManager', '/SimulationEngine',
+    '/BatchSimulation', '/DWSIMIntegration', '/StructureComparison',
+    '/MolecularVisualization', '/MoleculeAnalysis', '/StructuralBiology',
+    '/HPCJobManagement', '/JobQueueMonitor', '/SDSAnalyzer', '/HazardEngine',
+    '/ChemicalDashboard', '/ChemicalLibrary', '/ChemicalComparison',
+    '/InventoryDashboard', '/ResearchDashboard', '/ResearchPortal',
+  ],
+  api: ['/APIPortal'],
+  farm: [
+    '/AgroDashboard', '/AgroChat', '/AgroPhotoDiagnosis', '/AgroWeather',
+    '/AgroReports', '/AgroHistory', '/AgroFarmerProfile',
+  ],
+};
+
+// Returns the product a path belongs to, or null when it is open to everyone.
+export function accessForPath(pathname) {
+  for (const [key, paths] of Object.entries(ACCESS_PATHS)) {
+    if (paths.some((p) => pathname === p || pathname.startsWith(p + '/'))) return key;
+  }
+  return null;
+}
+
+// Users keep access to what they selected. Admins and users with no selection
+// yet (older accounts) are not restricted.
+export function hasAccess(user, key) {
+  if (!key) return true;
+  if (!user) return false;
+  if (user.role === 'admin') return true;
+  const access = user.product_access;
+  if (!Array.isArray(access) || access.length === 0) return true;
+  return access.includes(key);
+}
+
 export function getAccessOption(value) {
   return ACCESS_OPTIONS.find((o) => o.value === value) || ACCESS_OPTIONS[0];
 }

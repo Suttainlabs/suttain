@@ -25,6 +25,8 @@ import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
 import NavToolCombobox from './components/navigation/NavToolCombobox';
 import { RESEARCH_TOOLS, FARM_TOOLS } from './components/navigation/domainNav';
+import { hasAccess } from './components/auth/productAccess';
+import AccessGuard from './components/auth/AccessGuard';
 
 // ── Page title formatter (handles camelCase + acronyms) ────────────
 function formatPageTitle(slug) {
@@ -275,6 +277,9 @@ export default function Layout({ children, currentPageName }) {
   const researchToolItems = RESEARCH_TOOLS;
   const farmToolItems = FARM_TOOLS;
 
+  // Logged-out visitors see everything; signed-in users only see what they picked.
+  const canSee = (key) => !user || hasAccess(user, key);
+
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
   const isResearchToolsActive = researchToolItems.some(tool => location.pathname === tool.path);
   const isFarmActive = location.pathname === '/SuttainFarm' || farmToolItems.some(tool => location.pathname === tool.path);
@@ -391,13 +396,19 @@ export default function Layout({ children, currentPageName }) {
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Tools dropdown */}
-              <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} />
+              {canSee('consumer') && (
+                <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} />
+              )}
 
               {/* Research dropdown */}
-              <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} accentClass="bg-research-accent-light text-research-accent" />
+              {canSee('research') && (
+                <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} accentClass="bg-research-accent-light text-research-accent" />
+              )}
 
               {/* Farm dropdown */}
-              <NavToolCombobox items={farmToolItems} label="Farm" isActive={isFarmActive} accentClass="bg-farm-accent-light text-farm-accent" />
+              {canSee('farm') && (
+                <NavToolCombobox items={farmToolItems} label="Farm" isActive={isFarmActive} accentClass="bg-farm-accent-light text-farm-accent" />
+              )}
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
@@ -579,6 +590,7 @@ export default function Layout({ children, currentPageName }) {
 
 
                   {/* Professional Tools Collapsible */}
+                  {canSee('consumer') && (
                   <motion.div variants={mobileNavItemVariants}>
                     <button
                       onClick={() => setIsProductSuiteOpen(!isProductSuiteOpen)}
@@ -614,6 +626,7 @@ export default function Layout({ children, currentPageName }) {
                       )}
                     </AnimatePresence>
                   </motion.div>
+                  )}
 
                   {/* Enterprise API — Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
@@ -630,6 +643,7 @@ export default function Layout({ children, currentPageName }) {
                   </motion.div>
 
                   {/* Suttain Farm — Mobile */}
+                  {canSee('farm') && (
                   <motion.div variants={mobileNavItemVariants}>
                     <Link
                       to={"/SuttainFarm"}
@@ -653,10 +667,12 @@ export default function Layout({ children, currentPageName }) {
                       ))}
                     </div>
                   </motion.div>
+                  )}
 
 
 
                   {/* Research Tools Collapsible - Mobile */}
+                  {canSee('research') && (
                   <motion.div variants={mobileNavItemVariants}>
                     <button
                       onClick={() => setIsResearchSuiteOpen(!isResearchSuiteOpen)}
@@ -697,7 +713,7 @@ export default function Layout({ children, currentPageName }) {
                       )}
                     </AnimatePresence>
                   </motion.div>
-
+                  )}
 
                 </nav>
 
@@ -788,7 +804,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Main Content */}
       <main className="flex-1 pb-16 lg:pb-0 relative z-10">
         <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: fetchUserAndSetState }}>
-          {children}
+          <AccessGuard user={user} isAuthLoading={isAuthLoading}>{children}</AccessGuard>
           {/* Clara AI Assistant */}
           <React.Suspense fallback={null}>
             <ClaraAssistant />
