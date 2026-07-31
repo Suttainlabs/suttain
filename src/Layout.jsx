@@ -394,10 +394,10 @@ export default function Layout({ children, currentPageName }) {
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Tools dropdown */}
-              <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} />
+              <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} accent="#0F6E56" />
 
               {/* Research dropdown */}
-              <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} />
+              <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} accent="#534AB7" />
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
