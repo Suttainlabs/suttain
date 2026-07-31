@@ -1,6 +1,7 @@
 import StripeLib from 'npm:stripe@17.7.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { Resend } from 'npm:resend@4.0.0';
+import { accessForPriceKey, mergeProductAccess } from '../../shared/productAccess.ts';
 
 // Initialize clients lazily inside the handler so that missing secrets
 // cause a controlled 500 response rather than a module-level boot crash.
@@ -205,38 +206,42 @@ Deno.serve(async (req) => {
           }
         }
 
-        if (userId) {
+        // Which product line this purchase unlocks (metadata first, price key as fallback)
+        const accessValue = session.metadata?.product_access || accessForPriceKey(priceKey);
+
+        // Resolve the user record once — by id, falling back to email.
+        let targetUser = null;
+        try {
+          if (userId) {
+            const byId = await base44.asServiceRole.entities.User.filter({ id: userId });
+            targetUser = byId[0] || null;
+          }
+          if (!targetUser && customerEmail) {
+            const byEmail = await base44.asServiceRole.entities.User.filter({ email: customerEmail });
+            targetUser = byEmail[0] || null;
+          }
+        } catch (e) {
+          console.error('Failed to look up user for checkout session:', e);
+        }
+
+        if (targetUser) {
+          const mergedAccess = mergeProductAccess(targetUser.product_access, accessValue);
           try {
-            await base44.asServiceRole.entities.User.update(userId, {
+            await base44.asServiceRole.entities.User.update(targetUser.id, {
               subscription_plan: plan,
               subscription_status: 'active',
               subscription_billing: billing,
               stripe_customer_id: session.customer,
               stripe_subscription_id: session.subscription || null,
               ...(periodEnd && { subscription_end_date: periodEnd }),
+              ...(mergedAccess && { product_access: mergedAccess }),
             });
-            console.log(`Updated user ${userId} to ${plan} plan (${billing})`);
+            console.log(`Updated user ${targetUser.id} to ${plan} plan (${billing}); product_access: ${mergedAccess ? mergedAccess.join(',') : 'unchanged'}`);
           } catch (e) {
             console.error('Failed to update user:', e);
           }
-        } else if (customerEmail) {
-          // Try to find user by email
-          try {
-            const users = await base44.asServiceRole.entities.User.filter({ email: customerEmail });
-            if (users.length > 0) {
-              await base44.asServiceRole.entities.User.update(users[0].id, {
-                subscription_plan: plan,
-                subscription_status: 'active',
-                subscription_billing: billing,
-                stripe_customer_id: session.customer,
-                stripe_subscription_id: session.subscription || null,
-                ...(periodEnd && { subscription_end_date: periodEnd }),
-              });
-              console.log(`Updated user by email ${customerEmail} to ${plan} plan`);
-            }
-          } catch (e) {
-            console.error('Failed to find/update user by email:', e);
-          }
+        } else {
+          console.warn('checkout.session.completed: no user found for', userId, customerEmail);
         }
 
         // Send payment confirmation email to customer
