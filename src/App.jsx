@@ -71,6 +71,7 @@ const ComputationalStudioJobs = lazy(() => import('./pages/ComputationalStudioJo
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
+const SuttainHome = lazy(() => import('./pages/SuttainHome'));
 const SuttainFarmLanding = lazy(() => import('./pages/SuttainFarmLanding'));
 const SuttainFarmHub = lazy(() => import('./pages/SuttainFarm'));
 const AgroFarmerProfile = lazy(() => import('./pages/AgroFarmerProfile'));
@@ -143,9 +144,7 @@ const AuthenticatedApp = () => {
     <AnimatePresence mode="wait">
     <Routes location={location} key={location.pathname}>
       <Route path="/" element={
-        <LayoutWrapper currentPageName="Home">
-          <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><LandingHub /></PageTransition></Suspense>
-        </LayoutWrapper>
+        <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><SuttainHome /></PageTransition></Suspense>
       } />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
