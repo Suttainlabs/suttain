@@ -9,8 +9,8 @@
   --suttain-violet: #6B3FA0;
 
   /* Light Mode (Default — always light) */
-  --background: 48 24% 96%;        /* #F7F6F2 */
-  --foreground: 60 2% 17%;         /* #2C2C2A */
+  --background: 150 43% 95%;       /* #EDF7F2 mint */
+  --foreground: 0 0% 8%;           /* #141414 */
 
   --card: 0 0% 100%;
   --card-foreground: 0 0% 8%;
@@ -40,11 +40,11 @@
   --radius: 0.75rem;
 
   /* Custom App Colors — light only */
-  --app-bg: #F7F6F2;
+  --app-bg: #EDF7F2;
   --app-card-bg: #ffffff;
-  --app-text-primary: #2C2C2A;
-  --app-text-secondary: #45453F;
-  --app-text-muted: #6B6B66;
+  --app-text-primary: #141414;
+  --app-text-secondary: #464646;
+  --app-text-muted: #828282;
   --app-border: #D9EDE5;
   --app-hover: #F0FAF5;
 }

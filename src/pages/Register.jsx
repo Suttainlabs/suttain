@@ -4,9 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserPlus, Mail, Lock, Loader2, Compass } from "lucide-react";
-import ProductAccessStep from "@/components/auth/ProductAccessStep";
-import { buildAccessRedirect } from "@/components/auth/productAccess";
+import { UserPlus, Mail, Lock, Loader2 } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
@@ -23,7 +21,6 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
-  const [showAccessStep, setShowAccessStep] = useState(false);
   const redirectParam = new URLSearchParams(window.location.search).get("redirect") || "/";
 
   const handleSubmit = async (e) => {
@@ -57,7 +54,7 @@ export default function Register() {
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
       }
-      setShowAccessStep(true);
+      window.location.href = redirectParam;
     } catch (err) {
       setError(err.message || "Invalid verification code");
     } finally {
@@ -89,30 +86,6 @@ export default function Register() {
   const handleApple = () => {
     base44.auth.loginWithProvider("apple", redirectParam);
   };
-
-  const handleAccessSubmit = async (selected) => {
-    setError("");
-    setLoading(true);
-    try {
-      await base44.auth.updateMe({ product_access: selected });
-      window.location.href = buildAccessRedirect(selected[0]);
-    } catch (err) {
-      setError("Could not save your selection. Please try again.");
-      setLoading(false);
-    }
-  };
-
-  if (showAccessStep) {
-    return (
-      <AuthLayout
-        icon={Compass}
-        title="What are you here for?"
-        subtitle="This sets up the right tools for you"
-      >
-        <ProductAccessStep onSubmit={handleAccessSubmit} loading={loading} error={error} />
-      </AuthLayout>
-    );
-  }
 
   if (showOtp) {
     return (

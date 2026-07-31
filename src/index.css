@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,22 +9,7 @@
 @layer base {
   :root {
     --font-gilroy: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
-
-    /* ── Global surface + text ── */
-    --color-page-bg:        #F7F6F2;
-    --color-page-text:      #2C2C2A;
-
-    /* ── Per-domain accent tokens ── */
-    --core-accent:          #0F6E56;   /* suttain.com */
-    --core-accent-light:    #E1F5EE;
-    --research-accent:      #534AB7;   /* research.suttain.com */
-    --research-accent-light:#EEEDFE;
-    --api-accent:           #993C1D;   /* api.suttain.com */
-    --api-accent-light:     #FAECE7;
-    --farm-accent:          #3B6D11;   /* farm.suttain.com */
-    --farm-accent-light:    #EAF3DE;
 
     /* Brand */
     --color-brand-dark:     #00281E;
@@ -79,8 +64,8 @@
     --radius-pill:          999px;
 
     /* shadcn/ui tokens — mapped to brand */
-    --background: 48 24% 96%;        /* #F7F6F2 */
-    --foreground: 60 2% 17%;         /* #2C2C2A */
+    --background: 150 43% 95%;       /* #EDF7F2 */
+    --foreground: 0 0% 8%;           /* #141414 */
     --card: 0 0% 100%;               /* #FFFFFF */
     --card-foreground: 0 0% 8%;
     --popover: 0 0% 100%;
@@ -173,12 +158,10 @@
 
   body {
     @apply bg-background text-foreground;
-    background-color: var(--color-page-bg);
-    color: var(--color-page-text);
-    font-family: var(--font-inter);
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.7;
+    background-color: #EDF7F2;
+    font-family: var(--font-gilroy);
+    font-size: 1.0625rem;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior: none;
@@ -191,26 +174,12 @@
     user-select: none;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-inter);
-    font-weight: 500;
-    color: var(--color-page-text);
-    letter-spacing: -0.01em;
-  }
-  h1 { font-size: 30px; line-height: 1.25; }
-  h2 { font-size: 22px; line-height: 1.35; }
-  h3 { font-size: 18px; line-height: 1.4; }
-  h4 { font-size: 16px; line-height: 1.5; }
-  h5 { font-size: 16px; line-height: 1.5; }
-  h6 { font-size: 15px; line-height: 1.5; }
-
-  /* Weight 500 is the ceiling for headings — never 600/700/bold */
-  h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
-  h1.font-bold, h2.font-bold, h3.font-bold, h4.font-bold, h5.font-bold, h6.font-bold,
-  h1.font-semibold, h2.font-semibold, h3.font-semibold, h4.font-semibold, h5.font-semibold, h6.font-semibold,
-  h1.font-extrabold, h2.font-extrabold, h3.font-extrabold, h4.font-extrabold {
-    font-weight: 500;
-  }
+  h1 { font-size: clamp(2rem, 5vw, 3.75rem); line-height: 1.05; letter-spacing: -0.02em; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2rem); line-height: 1.15; font-weight: 700; }
+  h3 { font-size: clamp(1.125rem, 2vw, 1.375rem); line-height: 1.3; font-weight: 600; }
+  h4 { font-size: clamp(1rem, 1.5vw, 1.125rem); line-height: 1.35; font-weight: 600; }
+  h5 { font-size: 1rem;  line-height: 1.3; font-weight: 600; }
+  h6 { font-size: 0.9rem; line-height: 1.3; font-weight: 600; }
 
   /* Crisp heading rendering */
   h1, h2, h3, h4, h5, h6 {
@@ -219,8 +188,8 @@
   }
 
   p, li, span, label, input, textarea, select, button {
-    font-family: var(--font-inter);
-    line-height: 1.7;
+    font-family: var(--font-gilroy);
+    line-height: 1.6;
   }
 
   /* Monospace elements — JetBrains Mono */
@@ -229,12 +198,17 @@
   }
 
   /* ── Unified Type Scale ── */
-  .type-hero { font-size: 30px; font-weight: 500; line-height: 1.25; letter-spacing: -0.01em; }
-  .type-section { font-size: 22px; font-weight: 500; line-height: 1.35; }
-  .type-subheading { font-size: 18px; font-weight: 500; line-height: 1.4; }
-  .type-card-title { font-size: 16px; font-weight: 500; line-height: 1.5; }
-  .type-body { font-size: 16px; font-weight: 400; line-height: 1.7; }
-  .type-eyebrow { font-size: 13px; font-weight: 500; letter-spacing: 0.02em; color: var(--color-text-muted, #6B6B66); }
+  .type-hero { font-size: clamp(2rem, 5vw, 3.75rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
+  .type-section { font-size: clamp(1.5rem, 3.5vw, 2rem); font-weight: 700; line-height: 1.15; }
+  .type-subheading { font-size: clamp(1.125rem, 2vw, 1.375rem); font-weight: 600; line-height: 1.3; }
+  .type-card-title { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
+  .type-body { font-size: 1rem; font-weight: 400; line-height: 1.6; }
+  .type-eyebrow { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-text-muted, #828282); }
+
+  @media (max-width: 639px) {
+    body { font-size: 0.9375rem; line-height: 1.55; }
+    p, li { font-size: 0.875rem; line-height: 1.6; }
+  }
 
   /* 44px minimum touch targets on mobile */
   @media (max-width: 1024px) {
@@ -261,11 +235,19 @@
 /* These only affect screens narrower than 640px (sm breakpoint).            */
 /* text-xs / text-sm / text-base are already readable — left untouched.      */
 @layer utilities {
-  /* Display-size utilities are capped to the global heading scale */
-  .text-3xl, .text-4xl, .text-5xl, .text-6xl,
-  .text-7xl, .text-8xl, .text-9xl { font-size: 30px !important; line-height: 1.25 !important; font-weight: 500 !important; }
-  .text-2xl { font-size: 22px !important; line-height: 1.35 !important; font-weight: 500 !important; }
-  .text-xl  { font-size: 18px !important; line-height: 1.4 !important; }
+  @media (max-width: 639px) {
+    /* Tighten all Tailwind text classes on mobile */
+    .text-lg   { font-size: clamp(0.85rem,  3.5vw, 1.125rem) !important; line-height: 1.55 !important; }
+    .text-xl   { font-size: clamp(0.9rem,   4vw,   1.25rem)  !important; line-height: 1.5 !important; }
+    .text-2xl  { font-size: clamp(0.95rem,  5vw,   1.5rem)   !important; line-height: 1.35 !important; }
+    .text-3xl  { font-size: clamp(1rem,     5.5vw, 1.875rem) !important; line-height: 1.3 !important; }
+    .text-4xl  { font-size: clamp(1.05rem,  6vw,   2.25rem)  !important; line-height: 1.25 !important; }
+    .text-5xl  { font-size: clamp(1.15rem,  7vw,   3rem)     !important; line-height: 1.2 !important; }
+    .text-6xl  { font-size: clamp(1.25rem,  8vw,   3.75rem)  !important; line-height: 1.15 !important; }
+    .text-7xl  { font-size: clamp(1.45rem,  9vw,   4.5rem)   !important; line-height: 1.12 !important; }
+    .text-8xl  { font-size: clamp(1.65rem,  10vw,  6rem)     !important; line-height: 1.08 !important; }
+    .text-9xl  { font-size: clamp(1.85rem,  11vw,  8rem)     !important; line-height: 1.08 !important; }
+  }
 }
 
 /* ── Scrollbar hiding utility ── */
@@ -403,9 +385,5 @@
 }
 
 /* Darken slate-400/500 for WCAG 2.1 text contrast */
-.text-slate-400 { color: #6B6B66; }
-.text-slate-500 { color: #55554F; }
-
-/* Warm neutral text to match the global palette */
-.text-slate-900, .text-slate-800, .text-black { color: #2C2C2A; }
-.text-slate-700, .text-slate-600 { color: #45453F; }
+.text-slate-400 { color: #64748B; }
+.text-slate-500 { color: #475569; }

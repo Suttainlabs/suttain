@@ -1,6 +1,5 @@
 import Stripe from 'npm:stripe@17.7.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
-import { accessForPriceKey } from '../../shared/productAccess.ts';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
@@ -13,15 +12,6 @@ const PRICE_MAP = {
   academic_monthly: 'price_1Tn2eSI9tsZ7WvXemMKTBrgC',  // $199.00/month
   academic_yearly: 'price_1Tn2eSI9tsZ7WvXePwoaGUvP',   // $1,910.00/year
   lifetime: 'price_1Tn2eSI9tsZ7WvXe702tFhHX',          // $999.99 one-time
-  // Per-product-line plans
-  consumer_monthly: 'price_1Tz4tdI9tsZ7WvXeTLjCI6Us',  // $4.99/month
-  consumer_yearly: 'price_1Tz4tdI9tsZ7WvXezqEVGeuU',   // $47.88/year
-  research_monthly: 'price_1Tz4tdI9tsZ7WvXeftDZEprF',  // $49.99/month
-  research_yearly: 'price_1Tz4tdI9tsZ7WvXetqVuOYzj',   // $479.90/year
-  api_monthly: 'price_1Tz4tdI9tsZ7WvXelfg0FZ1O',       // $199.00/month
-  api_yearly: 'price_1Tz4tdI9tsZ7WvXeBChhEueQ',        // $1,910.00/year
-  farm_monthly: 'price_1Tz4tdI9tsZ7WvXeOUt3PmIU',      // $9.99/month
-  farm_yearly: 'price_1Tz4tdI9tsZ7WvXeeJcZwTd3',       // $95.88/year
 };
 
 Deno.serve(async (req) => {
@@ -64,7 +54,6 @@ Deno.serve(async (req) => {
         price_key: priceKey,
         user_id: userId || '',
         promo_code: promoCode || '',
-        product_access: accessForPriceKey(priceKey) || '',
       },
       allow_promotion_codes: true,
     };

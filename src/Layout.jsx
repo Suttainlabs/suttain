@@ -23,10 +23,7 @@ import GlobalSearch from './components/navigation/GlobalSearch';
 import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
-import { RESEARCH_TOOLS, FARM_TOOLS, API_TOOLS } from './components/navigation/domainNav';
-import { hasAccess, productUrl } from './components/auth/productAccess';
-import DomainLink from './components/navigation/DomainLink';
-import AccessGuard from './components/auth/AccessGuard';
+import NavToolCombobox from './components/navigation/NavToolCombobox';
 
 // ── Page title formatter (handles camelCase + acronyms) ────────────
 function formatPageTitle(slug) {
@@ -260,30 +257,31 @@ export default function Layout({ children, currentPageName }) {
   // Consumer nav only — Research is accessible but not promoted
 
   const companyMenuItems = [
-    { href: "AboutUs", label: "About us", icon: Building2, description: "Learn about our mission and team" },
+    { href: "AboutUs", label: "About Us", icon: Building2, description: "Learn about our mission and team" },
     { href: "Careers", label: "Careers", icon: Briefcase, description: "View open positions and join us" },
   ];
 
   const helpMenuItems = [];
 
   const consumerToolItems = [
-    { href: "Simulator", label: "Chemical simulator", icon: TestTube, description: "Safety analysis, compliance and sustainability built in", category: "Safety and analysis" },
-    { href: "generator", label: "Formula generator", icon: Atom, description: "Create formulas with safety, compliance and eco scoring", category: "Formulation" },
-    { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product for toxicity, sustainability and ingredient detail", category: "Safety and analysis" },
-    { href: "CarbonTaxSimulator", label: "Carbon tax simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety and analysis" },
+    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
+    { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", category: "Formulation" },
+    { href: "BarcodeScanner", label: "SuttainScan", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
+    { href: "HydrationHome", label: "Hydration Intelligence", icon: Droplets, description: "Track water intake with biological food-linked adjustments", category: "Wellness" },
+    { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety & Analysis" },
   ];
 
-  const researchToolItems = RESEARCH_TOOLS;
-  const farmToolItems = FARM_TOOLS;
-  const apiToolItems = API_TOOLS;
-
-  // Logged-out visitors see everything; signed-in users only see what they picked.
-  const canSee = (key) => !user || hasAccess(user, key);
+  const researchToolItems = [
+    { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction", category: "Workspace" },
+    { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization", category: "Molecular Intelligence" },
+    { href: "ComputationalSimulation", label: "Computational Simulation", icon: Cpu, description: "DFT & semi-empirical simulations with 3D visualization", category: "Simulation" },
+    { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from SDS sheets", category: "Safety & Compliance" },
+    { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration", category: "Molecular Intelligence" },
+    { href: "HazardEngine", label: "Hazard Prediction Engine", icon: ShieldAlert, description: "Validated chemical hazard classification with confidence scores and full source traceability", category: "Safety & Compliance" },
+  ];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
-  const isResearchToolsActive = researchToolItems.some(tool => location.pathname === tool.path);
-  const isFarmActive = location.pathname === '/SuttainFarm' || farmToolItems.some(tool => location.pathname === tool.path);
-  const isApiActive = API_TOOLS.some(tool => location.pathname === tool.path);
+  const isResearchToolsActive = researchToolItems.some(tool => location.pathname === createPageUrl(tool.href));
 
 
   const getLinkClasses = (href) => {
@@ -310,6 +308,8 @@ export default function Layout({ children, currentPageName }) {
     || location.pathname === createPageUrl("ResearchPortal")
     || location.pathname === createPageUrl("MoleculeAnalysis");
 
+  const isEnterpriseActive = location.pathname === '/enterprise' || location.pathname === '/EnterpriseAPI';
+
 
   const mobileMenuVariants = {
     open: {
@@ -326,58 +326,60 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F7F6F2' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
       <style>{`
         :root {
-          --suttain-teal: #0F6E56;
+          --suttain-teal: #007850;
           --suttain-blue: #00A8C8;
-          --suttain-violet: #534AB7;
-          --suttain-dark: #2C2C2A;
-          --suttain-text: #45453F;
-          --light-background: #F7F6F2;
-          --warning-orange: #993C1D;
-          --success-green: #3B6D11;
+          --suttain-violet: #6B3FA0;
+          --suttain-dark: #00281E;
+          --suttain-text: #464646;
+          --light-background: #EDF7F2;
+          --warning-orange: #D4900A;
+          --success-green: #00B478;
         }
 
         body {
-          font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
-          background-color: var(--color-page-bg, #F7F6F2);
-          color: var(--color-page-text, #2C2C2A);
+          font-family: var(--font-gilroy, 'Inter', sans-serif);
+          background-color: var(--color-bg-page, #EDF7F2);
+          color: var(--color-text-secondary, #464646);
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
-
+        
         h1, h2, h3, h4, h5, h6, .font-heading {
-          font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
-          font-weight: 500;
-          color: var(--color-page-text, #2C2C2A);
+          font-family: var(--font-gilroy, 'Inter', sans-serif);
+          font-weight: 700;
+          color: var(--color-brand-dark, #00281E);
         }
 
         .gradient-text {
-          color: var(--core-accent, #0F6E56);
-          -webkit-text-fill-color: currentColor;
+          background: linear-gradient(135deg, var(--suttain-violet) 0%, var(--suttain-blue) 50%, var(--suttain-teal) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .btn-primary {
-          background: var(--core-accent, #0F6E56);
+          background: linear-gradient(135deg, var(--suttain-teal), var(--suttain-blue));
           color: white;
-          transition: all 0.2s ease;
+          transition: all 0.3s ease;
         }
         .btn-primary:hover {
-          background: #0C5A47;
+          box-shadow: 0 4px 15px 0 rgba(2, 152, 140, 0.4);
         }
 
         .btn-secondary {
-          background-color: var(--research-accent, #534AB7);
+          background-color: var(--suttain-violet);
           color: white;
         }
         .btn-secondary:hover {
-          background-color: #453DA0;
+          background-color: #8125d9;
         }
       `}</style>
 
       {/* Floating Nav Bar */}
-      <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#F7F6F2]">
+      <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#EDF7F2]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14 overflow-hidden">
 
@@ -394,28 +396,49 @@ export default function Layout({ children, currentPageName }) {
             <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap flex-shrink-0">
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
-              {/* Research — research.suttain.com */}
-              {canSee('research') && (
-                <DomainLink product="research" to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm text-slate-700 hover:bg-research-accent-light hover:text-research-accent">
-                  {t('nav_research')}
-                </DomainLink>
-              )}
+              {/* Tools dropdown */}
+              <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} />
 
-              {/* Farm — farm.suttain.com */}
-              {canSee('farm') && (
-                <DomainLink product="farm" to="/SuttainFarm" className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm text-slate-700 hover:bg-farm-accent-light hover:text-farm-accent">
-                  Farm
-                </DomainLink>
-              )}
-
-              {/* API — api.suttain.com */}
-              {canSee('api') && (
-                <DomainLink product="api" to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm text-slate-700 hover:bg-api-accent-light hover:text-api-accent">
-                  API
-                </DomainLink>
-              )}
+              {/* Research dropdown */}
+              <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} />
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
+
+              {/* Enterprise API — standalone */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    isEnterpriseActive
+                      ? "bg-violet-100 text-violet-600"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}>
+                    <Terminal className="w-3.5 h-3.5" />
+                    <span>{t('nav_business')}</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-64 p-2">
+
+                  <DropdownMenuItem asChild>
+                    <Link to="/EnterpriseAPI" className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+                      <Terminal className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
+                      <span className="text-sm font-semibold text-slate-800">Enterprise API</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("APIPortal")} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+                      <Code2 className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
+                      <span className="text-sm font-semibold text-slate-800">API Documentation</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={"/SuttainFarm"} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+                      <Sprout className="w-4 h-4 flex-shrink-0" style={{ color: "#4A7C2A" }} />
+                      <span className="text-sm font-semibold text-slate-800">Suttain Farm</span>
+                    </Link>
+                  </DropdownMenuItem>
+
+                </DropdownMenuContent>
+              </DropdownMenu>
             </nav>
 
             {/* Right side: language + auth */}
@@ -461,7 +484,7 @@ export default function Layout({ children, currentPageName }) {
                       <DropdownMenuItem asChild><Link to={createPageUrl("BillingDashboard")} className="cursor-pointer"><CreditCard className="w-4 h-4 mr-2" />{t('menu_billing')}</Link></DropdownMenuItem>
                       <DropdownMenuItem asChild><Link to={createPageUrl("Workspace")} className="cursor-pointer"><FolderOpen className="w-4 h-4 mr-2" />{t('menu_workspace')}</Link></DropdownMenuItem>
                       {user.role === 'admin' && (
-                        <DropdownMenuItem asChild><Link to={createPageUrl("AdminDashboard")} className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Admin dashboard</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link to={createPageUrl("AdminDashboard")} className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Admin Dashboard</Link></DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500 focus:bg-red-50 cursor-pointer">
@@ -558,47 +581,110 @@ export default function Layout({ children, currentPageName }) {
 
 
 
-
-                  {/* API — api.suttain.com */}
-                  {canSee('api') && (
+                  {/* Professional Tools Collapsible */}
                   <motion.div variants={mobileNavItemVariants}>
-                    <DomainLink product="api" to="/" onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-api-accent-light">
-                      <Terminal className="w-5 h-5" />
-                      API
-                    </DomainLink>
+                    <button
+                      onClick={() => setIsProductSuiteOpen(!isProductSuiteOpen)}
+                      className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-cyan-50 ${
+                        isConsumerToolsActive ? 'bg-cyan-100' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <TestTube className="w-5 h-5" />
+                        {t('mobile_tools')}
+                      </div>
+                      <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isProductSuiteOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                      {isProductSuiteOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                          className="pl-4 pt-1 pb-1 overflow-hidden"
+                        >
+                          {consumerToolItems.map(item => (
+                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
+                              className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                                location.pathname === createPageUrl(item.href) ? "bg-teal-50 text-[#007850]" : "text-slate-700 hover:bg-slate-50"
+                              }`}>
+                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-teal)]" />
+                              <span>{item.label}</span>
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </motion.div>
-                  )}
 
-                  {/* Suttain Farm — Mobile */}
-                  {canSee('farm') && (
+                  {/* Enterprise API — Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
-                    <DomainLink
-                      product="farm"
-                      to="/SuttainFarm"
+                    <Link
+                      to="/EnterpriseAPI"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        location.pathname === "/SuttainFarm" ? "bg-farm-accent-light text-farm-accent" : "text-suttain-dark hover:bg-farm-accent-light"
+                        isEnterpriseActive ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
+                      }`}
+                    >
+                      <Terminal className="w-5 h-5" />
+                      {t('nav_business')}
+                    </Link>
+                  </motion.div>
+
+                  {/* AgroPocket — Mobile */}
+                  <motion.div variants={mobileNavItemVariants}>
+                    <Link
+                      to={"/SuttainFarm"}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
+                        location.pathname === "/SuttainFarm" ? "bg-green-100 text-green-700" : "text-suttain-dark hover:bg-green-50"
                       }`}
                     >
                       <Sprout className="w-5 h-5" />
                       Suttain Farm
-                    </DomainLink>
+                    </Link>
                   </motion.div>
-                  )}
 
 
 
                   {/* Research Tools Collapsible - Mobile */}
-                  {canSee('research') && (
                   <motion.div variants={mobileNavItemVariants}>
-                    <DomainLink product="research" to="/" onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-research-accent-light">
-                      <Microscope className="w-5 h-5" />
-                      {t('nav_research')}
-                    </DomainLink>
+                    <button
+                      onClick={() => setIsResearchSuiteOpen(!isResearchSuiteOpen)}
+                      className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-violet-50 ${
+                        isResearchToolsActive ? 'bg-violet-100' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <Microscope className="w-5 h-5" />
+                        {t('mobile_research_tools')}
+                      </div>
+                      <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isResearchSuiteOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                      {isResearchSuiteOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                          className="pl-4 pt-1 pb-1 overflow-hidden"
+                        >
+                          {researchToolItems.map(item => (
+                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
+                              className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                                location.pathname === createPageUrl(item.href) ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
+                              }`}>
+                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
+                              <span>{item.label}</span>
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </motion.div>
-                  )}
+
 
                 </nav>
 
@@ -689,7 +775,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Main Content */}
       <main className="flex-1 pb-16 lg:pb-0 relative z-10">
         <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: fetchUserAndSetState }}>
-          <AccessGuard user={user} isAuthLoading={isAuthLoading}>{children}</AccessGuard>
+          {children}
           {/* Clara AI Assistant */}
           <React.Suspense fallback={null}>
             <ClaraAssistant />
@@ -745,34 +831,41 @@ export default function Layout({ children, currentPageName }) {
               </div>
             </div>
 
-            {/* Column 2: Product */}
+            {/* Column 2: Platform */}
             <div>
-              <h3 className="font-semibold mb-3 text-slate-800 text-sm">Product</h3>
               <ul className="space-y-1.5 text-sm">
-                <li><Link to={createPageUrl('Simulator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Simulator</Link></li>
-                <li><Link to={createPageUrl('generator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Generator</Link></li>
-                <li><Link to={createPageUrl('BarcodeScanner')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Scan</Link></li>
+                <li><Link to={createPageUrl('Simulator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
+                <li><Link to={createPageUrl('generator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
+                <li><Link to={createPageUrl("ResearchDashboard")} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
+                <li><Link to="/enterprise" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
+                <li><Link to={createPageUrl('AboutUs')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
+                <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
+                <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
+
+                </ul>
+                </div>
+
+                {/* Column 3: Legal */}
+            <div>
+              <ul className="space-y-1.5 text-sm">
+                <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Privacy Policy</Link></li>
+                <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Terms of Service</Link></li>
+                <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Compliance Guide</Link></li>
+                <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">contact@suttain.com</a></li>
               </ul>
             </div>
 
-            {/* Column 3: More from Suttain */}
-            <div>
-              <h3 className="font-semibold mb-3 text-slate-800 text-sm">More from Suttain</h3>
-              <ul className="space-y-1.5 text-sm">
-                <li><DomainLink product="research" to={createPageUrl("ResearchDashboard")} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">research.suttain.com</DomainLink></li>
-                <li><DomainLink product="api" to="/APIPortal" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">api.suttain.com</DomainLink></li>
-                <li><DomainLink product="farm" to="/SuttainFarm" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">farm.suttain.com</DomainLink></li>
+            {/* Column 4: Science */}
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+              <h3 className="font-semibold mb-3 text-slate-800 text-sm">Science</h3>
+              <ul className="space-y-1.5 text-sm mb-4">
+                <li><Link to={createPageUrl('APIPortal')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">API Docs</Link></li>
+                <li><Link to={createPageUrl('ExternalDatabases')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Publications</Link></li>
               </ul>
-            </div>
-
-            {/* Column 4: Company */}
-            <div>
-              <h3 className="font-semibold mb-3 text-slate-800 text-sm">Company</h3>
-              <ul className="space-y-1.5 text-sm">
-                <li><Link to={createPageUrl('Pricing')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Pricing</Link></li>
-                <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Contact</a></li>
-                <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Legal</Link></li>
-              </ul>
+              <div className="border-t border-slate-200 pt-3">
+                <p className="text-xs text-slate-500 mb-2">Access the Research API</p>
+                <p className="text-[11px] text-[var(--suttain-teal)] font-medium">Python, JavaScript, and R SDKs available</p>
+              </div>
             </div>
             </div>
 

@@ -40,12 +40,15 @@ const ReportGenerator = lazy(() => import('./pages/ReportGenerator'));
 const Marketplace = lazy(() => import('./pages/Marketplace'));
 const CarbonTaxSimulator = lazy(() => import('./pages/CarbonTaxSimulator'));
 const CarbonOpportunitySimulator = lazy(() => import('./pages/CarbonOpportunitySimulator'));
-const CarbonImpactSimulator = lazy(() => import('./pages/CarbonImpactSimulator'));
 const FormulaPortfolio = lazy(() => import('./pages/FormulaPortfolio'));
 const SimulationRunner = lazy(() => import('./pages/SimulationRunner'));
 const DWSIMIntegration = lazy(() => import('./pages/DWSIMIntegration'));
 const SimulationHistory = lazy(() => import('./pages/SimulationHistory'));
 const SharedSimulationView = lazy(() => import('./pages/SharedSimulationView'));
+const HydrationHome = lazy(() => import('./pages/HydrationHome'));
+const HydrationIntelligence = lazy(() => import('./pages/HydrationIntelligence'));
+const HydrationReminders = lazy(() => import('./pages/HydrationReminders'));
+const HydrationProgress = lazy(() => import('./pages/HydrationProgress'));
 const BillingDashboard = lazy(() => import('./pages/BillingDashboard'));
 const MolecularIntelligence = lazy(() => import('./pages/MolecularIntelligence'));
 const ChemicalDashboard = lazy(() => import('./pages/ChemicalDashboard'));
@@ -68,12 +71,6 @@ const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
 const SuttainFarmLanding = lazy(() => import('./pages/SuttainFarmLanding'));
-const ResearchHome = lazy(() => import('./pages/ResearchHome'));
-const APIHome = lazy(() => import('./pages/APIHome'));
-const ResearchMolecules = lazy(() => import('./pages/ResearchMolecules'));
-const ResearchSimulation = lazy(() => import('./pages/ResearchSimulation'));
-const ResearchCompute = lazy(() => import('./pages/ResearchCompute'));
-const ResearchSafety = lazy(() => import('./pages/ResearchSafety'));
 const SuttainFarmHub = lazy(() => import('./pages/SuttainFarm'));
 const AgroFarmerProfile = lazy(() => import('./pages/AgroFarmerProfile'));
 const AgroChat = lazy(() => import('./pages/AgroChat'));
@@ -145,22 +142,10 @@ const AuthenticatedApp = () => {
     <AnimatePresence mode="wait">
     <Routes location={location} key={location.pathname}>
       <Route path="/" element={
-        window.location.hostname === 'research.suttain.com' ? (
-          <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchHome /></Suspense>
-        ) : window.location.hostname === 'api.suttain.com' ? (
-          <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-orange-500 rounded-full animate-spin"/></div>}><APIHome /></Suspense>
-        ) : (
         <LayoutWrapper currentPageName="Home">
           <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><LandingHub /></PageTransition></Suspense>
         </LayoutWrapper>
-        )
       } />
-      <Route path="/ResearchHome" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchHome /></Suspense>} />
-      <Route path="/ResearchMolecules" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchMolecules /></Suspense>} />
-      <Route path="/ResearchSimulation" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchSimulation /></Suspense>} />
-      <Route path="/ResearchCompute" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchCompute /></Suspense>} />
-      <Route path="/ResearchSafety" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchSafety /></Suspense>} />
-      <Route path="/APIHome" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-orange-500 rounded-full animate-spin"/></div>}><APIHome /></Suspense>} />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
@@ -199,7 +184,7 @@ const AuthenticatedApp = () => {
 
       {/* ── Protected Tools (consumer + research — require login) ── */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        {['Simulator', 'generator', 'BarcodeScanner',
+        {['Simulator', 'generator', 'BarcodeScanner', 'HydrationHome', 'HydrationIntelligence', 'HydrationReminders', 'HydrationProgress',
           'MolecularIntelligence', 'MoleculeExplorer', 'MoleculeAnalysis', 'ChemicalDashboard', 'InventoryDashboard',
           'ResearchPortal', 'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
           'ComputationalSimulation', 'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology', 'HazardEngine'
@@ -212,6 +197,8 @@ const AuthenticatedApp = () => {
               ComputationalSimulation, SimulationEngine, ChemicalLibrary, StructuralBiology, HazardEngine,
               Simulator: Pages['Simulator'], generator: Pages['generator'],
               BarcodeScanner: Pages['BarcodeScanner'],
+              HydrationHome: Pages['HydrationHome'], HydrationIntelligence: Pages['HydrationIntelligence'],
+              HydrationReminders: Pages['HydrationReminders'], HydrationProgress: Pages['HydrationProgress'],
             };
             const LazyPage = lazyMap[path];
             if (!LazyPage) return null;
@@ -232,7 +219,6 @@ const AuthenticatedApp = () => {
         <Route path="/ComputationalStudio/SmallMolecules" element={<LayoutWrapper currentPageName="ComputationalStudioSmallMolecules"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioSmallMolecules /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Materials" element={<LayoutWrapper currentPageName="ComputationalStudioMaterials"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioMaterials /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/HazardSafety" element={<LayoutWrapper currentPageName="ComputationalStudioHazardSafety"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioHazardSafety /></PageTransition></Suspense></LayoutWrapper>} />
-        <Route path="/SimulationSandbox" element={<LayoutWrapper currentPageName="SimulationSandbox"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationSandbox /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Jobs" element={<LayoutWrapper currentPageName="ComputationalStudioJobs"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioJobs /></PageTransition></Suspense></LayoutWrapper>} />
       </Route>
       <Route path="/BatchSimulation" element={<LayoutWrapper currentPageName="BatchSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><BatchSimulation /></PageTransition></Suspense></LayoutWrapper>} />
@@ -254,6 +240,7 @@ const AuthenticatedApp = () => {
       <Route path="/MolecularVisualization" element={<LayoutWrapper currentPageName="MolecularVisualization"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MolecularVisualization /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationQueueManager" element={<LayoutWrapper currentPageName="SimulationQueueManager"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationQueueManager /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationProductivity" element={<LayoutWrapper currentPageName="SimulationProductivity"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-fuchsia-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationProductivity /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/SimulationSandbox" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-950 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><SimulationSandbox /></Suspense>} />
       <Route path="/NutriScan" element={<LayoutWrapper currentPageName="NutriScan"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><NutriScan /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/Dashboard" element={<LayoutWrapper currentPageName="Dashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><Dashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaBuilder" element={<LayoutWrapper currentPageName="FormulaBuilder"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaBuilder /></PageTransition></Suspense></LayoutWrapper>} />
@@ -264,12 +251,15 @@ const AuthenticatedApp = () => {
       <Route path="/Marketplace" element={<LayoutWrapper currentPageName="Marketplace"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><Marketplace /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/CarbonTaxSimulator" element={<LayoutWrapper currentPageName="CarbonTaxSimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonTaxSimulator /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/CarbonOpportunitySimulator" element={<LayoutWrapper currentPageName="CarbonOpportunitySimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonOpportunitySimulator /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/CarbonImpactSimulator" element={<LayoutWrapper currentPageName="CarbonImpactSimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonImpactSimulator /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaPortfolio" element={<LayoutWrapper currentPageName="FormulaPortfolio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaPortfolio /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationRunner" element={<LayoutWrapper currentPageName="SimulationRunner"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationRunner /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/DWSIMIntegration" element={<LayoutWrapper currentPageName="DWSIMIntegration"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><DWSIMIntegration /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationHistory" element={<LayoutWrapper currentPageName="SimulationHistory"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationHistory /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SharedSimulationView" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><SharedSimulationView /></Suspense>} />
+      <Route path="/HydrationHome" element={<LayoutWrapper currentPageName="HydrationHome"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationHome /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/HydrationIntelligence" element={<LayoutWrapper currentPageName="HydrationIntelligence"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationIntelligence /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/HydrationReminders" element={<LayoutWrapper currentPageName="HydrationReminders"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationReminders /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/HydrationProgress" element={<LayoutWrapper currentPageName="HydrationProgress"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><HydrationProgress /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BillingDashboard" element={<LayoutWrapper currentPageName="BillingDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BillingDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BatchRecords" element={<LayoutWrapper currentPageName="BatchRecords"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BatchRecords /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/InteractionVisualization" element={<LayoutWrapper currentPageName="InteractionVisualization"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><InteractionVisualization /></PageTransition></Suspense></LayoutWrapper>} />

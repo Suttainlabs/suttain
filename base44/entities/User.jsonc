@@ -9,22 +9,6 @@
         "user"
       ]
     },
-    "product_access": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "consumer",
-          "research",
-          "api",
-          "farm"
-        ]
-      },
-      "default": [
-        "consumer"
-      ],
-      "description": "Which Suttain products this user can access. Defaults to consumer only for new signups."
-    },
     "display_name": {
       "type": "string"
     },
