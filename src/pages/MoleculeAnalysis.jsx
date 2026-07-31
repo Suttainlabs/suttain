@@ -95,19 +95,33 @@ function Mol3DViewer({ cid, smiles, name, pdbContent, pdbName }) {
       if (pdbContent) {
         viewer.addModel(pdbContent, 'pdb');
       } else {
-        let sdfData = null;
-        if (cid) {
-          const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/SDF?record_type=3d`, { signal: AbortSignal.timeout(8000) });
-          if (res.ok) sdfData = await res.text();
-        }
-        if (!sdfData && name) {
-          const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/SDF?record_type=3d`, { signal: AbortSignal.timeout(8000) });
-          if (res.ok) sdfData = await res.text();
-        }
-        if (!sdfData && smiles) {
-          const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(smiles)}/SDF?record_type=3d`, { signal: AbortSignal.timeout(8000) });
-          if (res.ok) sdfData = await res.text();
-        }
+        // Try to resolve an SDF: 3D coordinates first, then fall back to 2D
+        // (PubChem only generates 3D conformers for a subset of compounds,
+        // but every compound with a CID has 2D coordinates).
+        const fetchSdf = async (recordType) => {
+          if (cid) {
+            try {
+              const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/SDF?record_type=${recordType}`, { signal: AbortSignal.timeout(8000) });
+              if (res.ok) return await res.text();
+            } catch {}
+          }
+          if (name) {
+            try {
+              const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/SDF?record_type=${recordType}`, { signal: AbortSignal.timeout(8000) });
+              if (res.ok) return await res.text();
+            } catch {}
+          }
+          if (smiles) {
+            try {
+              const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(smiles)}/SDF?record_type=${recordType}`, { signal: AbortSignal.timeout(8000) });
+              if (res.ok) return await res.text();
+            } catch {}
+          }
+          return null;
+        };
+
+        let sdfData = await fetchSdf('3d');
+        if (!sdfData) sdfData = await fetchSdf('2d');
         if (!sdfData) {
           setStatus('error');
           setMessage('3D structure not available for this compound.');
