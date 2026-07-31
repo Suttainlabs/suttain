@@ -46,10 +46,6 @@ const SimulationRunner = lazy(() => import('./pages/SimulationRunner'));
 const DWSIMIntegration = lazy(() => import('./pages/DWSIMIntegration'));
 const SimulationHistory = lazy(() => import('./pages/SimulationHistory'));
 const SharedSimulationView = lazy(() => import('./pages/SharedSimulationView'));
-const HydrationHome = lazy(() => import('./pages/HydrationHome'));
-const HydrationIntelligence = lazy(() => import('./pages/HydrationIntelligence'));
-const HydrationReminders = lazy(() => import('./pages/HydrationReminders'));
-const HydrationProgress = lazy(() => import('./pages/HydrationProgress'));
 const BillingDashboard = lazy(() => import('./pages/BillingDashboard'));
 const MolecularIntelligence = lazy(() => import('./pages/MolecularIntelligence'));
 const ChemicalDashboard = lazy(() => import('./pages/ChemicalDashboard'));
@@ -195,7 +191,7 @@ const AuthenticatedApp = () => {
 
       {/* ── Protected Tools (consumer + research — require login) ── */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        {['Simulator', 'generator', 'BarcodeScanner', 'HydrationHome', 'HydrationIntelligence', 'HydrationReminders', 'HydrationProgress',
+        {['Simulator', 'generator', 'BarcodeScanner',
           'MolecularIntelligence', 'MoleculeExplorer', 'MoleculeAnalysis', 'ChemicalDashboard', 'InventoryDashboard',
           'ResearchPortal', 'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
           'ComputationalSimulation', 'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology', 'HazardEngine'
@@ -208,8 +204,6 @@ const AuthenticatedApp = () => {
               ComputationalSimulation, SimulationEngine, ChemicalLibrary, StructuralBiology, HazardEngine,
               Simulator: Pages['Simulator'], generator: Pages['generator'],
               BarcodeScanner: Pages['BarcodeScanner'],
-              HydrationHome: Pages['HydrationHome'], HydrationIntelligence: Pages['HydrationIntelligence'],
-              HydrationReminders: Pages['HydrationReminders'], HydrationProgress: Pages['HydrationProgress'],
             };
             const LazyPage = lazyMap[path];
             if (!LazyPage) return null;
