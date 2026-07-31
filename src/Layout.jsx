@@ -24,6 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
 import NavToolCombobox from './components/navigation/NavToolCombobox';
+import { RESEARCH_TOOLS, FARM_TOOLS } from './components/navigation/domainNav';
 
 // ── Page title formatter (handles camelCase + acronyms) ────────────
 function formatPageTitle(slug) {
@@ -271,17 +272,12 @@ export default function Layout({ children, currentPageName }) {
     { href: "CarbonTaxSimulator", label: "Carbon tax simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety and analysis" },
   ];
 
-  const researchToolItems = [
-    { href: "ComputationalStudio", label: "Computational studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials and hazard prediction", category: "Workspace" },
-    { href: "MoleculeAnalysis", label: "Molecule analysis", icon: Atom, description: "Query compounds for hazard intelligence and 3D structure visualization", category: "Molecular intelligence" },
-    { href: "ComputationalSimulation", label: "Computational simulation", icon: Cpu, description: "DFT and semi-empirical simulations with 3D visualization", category: "Simulation" },
-    { href: "SDSAnalyzer", label: "SDS analyzer", icon: FileText, description: "Extract hazard data and GHS classifications from SDS sheets", category: "Safety and compliance" },
-    { href: "StructuralBiology", label: "Structural biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis and exploration", category: "Molecular intelligence" },
-    { href: "HazardEngine", label: "Hazard prediction engine", icon: ShieldAlert, description: "Validated chemical hazard classification with confidence scores and full source traceability", category: "Safety and compliance" },
-  ];
+  const researchToolItems = RESEARCH_TOOLS;
+  const farmToolItems = FARM_TOOLS;
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
-  const isResearchToolsActive = researchToolItems.some(tool => location.pathname === createPageUrl(tool.href));
+  const isResearchToolsActive = researchToolItems.some(tool => location.pathname === tool.path);
+  const isFarmActive = location.pathname === '/SuttainFarm' || farmToolItems.some(tool => location.pathname === tool.path);
 
 
   const getLinkClasses = (href) => {
@@ -398,7 +394,10 @@ export default function Layout({ children, currentPageName }) {
               <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} />
 
               {/* Research dropdown */}
-              <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} />
+              <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} accentClass="bg-research-accent-light text-research-accent" />
+
+              {/* Farm dropdown */}
+              <NavToolCombobox items={farmToolItems} label="Farm" isActive={isFarmActive} accentClass="bg-farm-accent-light text-farm-accent" />
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
@@ -430,7 +429,7 @@ export default function Layout({ children, currentPageName }) {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to={"/SuttainFarm"} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-                      <Sprout className="w-4 h-4 flex-shrink-0" style={{ color: "#4A7C2A" }} />
+                      <Sprout className="w-4 h-4 flex-shrink-0" style={{ color: "#3B6D11" }} />
                       <span className="text-sm font-semibold text-slate-800">Suttain Farm</span>
                     </Link>
                   </DropdownMenuItem>
@@ -630,18 +629,29 @@ export default function Layout({ children, currentPageName }) {
                     </Link>
                   </motion.div>
 
-                  {/* AgroPocket — Mobile */}
+                  {/* Suttain Farm — Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
                     <Link
                       to={"/SuttainFarm"}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        location.pathname === "/SuttainFarm" ? "bg-green-100 text-green-700" : "text-suttain-dark hover:bg-green-50"
+                        location.pathname === "/SuttainFarm" ? "bg-farm-accent-light text-farm-accent" : "text-suttain-dark hover:bg-farm-accent-light"
                       }`}
                     >
                       <Sprout className="w-5 h-5" />
                       Suttain Farm
                     </Link>
+                    <div className="pl-4">
+                      {farmToolItems.map(item => (
+                        <Link key={item.path} to={item.path} onClick={() => setIsMobileMenuOpen(false)}
+                          className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                            location.pathname === item.path ? "bg-farm-accent-light text-farm-accent" : "text-slate-700 hover:bg-slate-50"
+                          }`}>
+                          <item.icon className="w-4 h-4 flex-shrink-0 text-farm-accent" />
+                          <span>{item.label}</span>
+                        </Link>
+                      ))}
+                    </div>
                   </motion.div>
 
 
@@ -669,14 +679,19 @@ export default function Layout({ children, currentPageName }) {
                           transition={{ type: "spring", stiffness: 300, damping: 30 }}
                           className="pl-4 pt-1 pb-1 overflow-hidden"
                         >
-                          {researchToolItems.map(item => (
-                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                                location.pathname === createPageUrl(item.href) ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
-                              }`}>
-                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
-                              <span>{item.label}</span>
-                            </Link>
+                          {[...new Set(researchToolItems.map(i => i.category))].map(category => (
+                            <div key={category} className="mb-2">
+                              <p className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">{category}</p>
+                              {researchToolItems.filter(i => i.category === category).map(item => (
+                                <Link key={item.path} to={item.path} onClick={() => setIsMobileMenuOpen(false)}
+                                  className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                                    location.pathname === item.path ? "bg-research-accent-light text-research-accent" : "text-slate-700 hover:bg-slate-50"
+                                  }`}>
+                                  <item.icon className="w-4 h-4 flex-shrink-0 text-research-accent" />
+                                  <span>{item.label}</span>
+                                </Link>
+                              ))}
+                            </div>
                           ))}
                         </motion.div>
                       )}

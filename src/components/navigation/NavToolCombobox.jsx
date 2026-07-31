@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 
-export default function NavToolCombobox({ items, label, isActive }) {
+export default function NavToolCombobox({ items, label, isActive, accentClass = 'bg-violet-100 text-violet-600' }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ export default function NavToolCombobox({ items, label, isActive }) {
       <PopoverTrigger asChild>
         <button className={cn(
           "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all",
-          isActive ? "bg-violet-100 text-violet-600" : "text-slate-600 hover:bg-slate-100"
+          isActive ? accentClass : "text-slate-600 hover:bg-slate-100"
         )}>
           <span>{label}</span>
           <ChevronsUpDown className="w-3 h-3 opacity-50" />
@@ -37,11 +37,11 @@ export default function NavToolCombobox({ items, label, isActive }) {
               <CommandGroup key={category} heading={category}>
                 {categoryItems.map((item) => (
                   <CommandItem
-                    key={item.href}
+                    key={item.path || item.href}
                     value={`${item.label} ${item.description || ''}`}
                     onSelect={() => {
                       setOpen(false);
-                      navigate(createPageUrl(item.href));
+                      navigate(item.path || createPageUrl(item.href));
                     }}
                     className="data-[selected=true]:bg-slate-100 data-[selected=true]:text-slate-900"
                   >
