@@ -4,7 +4,6 @@ import { queryClientInstance } from '@/lib/query-client'
 import { AnimatePresence } from 'framer-motion'
 import PageTransition from './components/shared/PageTransition'
 import { Suspense, lazy } from 'react'
-const IngredientDatabase = lazy(() => import('./pages/IngredientDatabase'));
 const MyAnalytics = lazy(() => import('./pages/MyAnalytics'));
 const ComputationalSimulation = lazy(() => import('./pages/ComputationalSimulation'));
 const FormulaComparison = lazy(() => import('./pages/FormulaComparison'));
@@ -37,7 +36,6 @@ const FormulaResults = lazy(() => import('./pages/FormulaResults'));
 const IngredientSubstitution = lazy(() => import('./pages/IngredientSubstitution'));
 const ComplianceDashboard = lazy(() => import('./pages/ComplianceDashboard'));
 const ReportGenerator = lazy(() => import('./pages/ReportGenerator'));
-const Marketplace = lazy(() => import('./pages/Marketplace'));
 const CarbonTaxSimulator = lazy(() => import('./pages/CarbonTaxSimulator'));
 const CarbonOpportunitySimulator = lazy(() => import('./pages/CarbonOpportunitySimulator'));
 const FormulaPortfolio = lazy(() => import('./pages/FormulaPortfolio'));
@@ -86,7 +84,6 @@ import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-// IngredientDatabase and FormulaComparison are lazy-loaded above
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -153,7 +150,6 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/AboutUs" element={<LayoutWrapper currentPageName="AboutUs"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><AboutUs /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/IngredientDatabase" element={<LayoutWrapper currentPageName="IngredientDatabase"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><IngredientDatabase /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/Generator" element={<Navigate to="/generator" replace />} />
       <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaComparison /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/MyAnalytics" element={<LayoutWrapper currentPageName="MyAnalytics"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MyAnalytics /></PageTransition></Suspense></LayoutWrapper>} />
@@ -241,7 +237,6 @@ const AuthenticatedApp = () => {
       <Route path="/IngredientSubstitution" element={<LayoutWrapper currentPageName="IngredientSubstitution"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><IngredientSubstitution /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/ComplianceDashboard" element={<LayoutWrapper currentPageName="ComplianceDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ComplianceDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/ReportGenerator" element={<LayoutWrapper currentPageName="ReportGenerator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ReportGenerator /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/Marketplace" element={<LayoutWrapper currentPageName="Marketplace"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><Marketplace /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/CarbonTaxSimulator" element={<LayoutWrapper currentPageName="CarbonTaxSimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonTaxSimulator /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/CarbonOpportunitySimulator" element={<LayoutWrapper currentPageName="CarbonOpportunitySimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonOpportunitySimulator /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaPortfolio" element={<LayoutWrapper currentPageName="FormulaPortfolio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaPortfolio /></PageTransition></Suspense></LayoutWrapper>} />

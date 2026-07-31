@@ -58,14 +58,12 @@ import Careers from './pages/Careers';
 import ChemicalImport from './pages/ChemicalImport';
 import Collaboration from './pages/Collaboration';
 import CommunityReviews from './pages/CommunityReviews';
-import ComplianceCoPilot from './pages/ComplianceCoPilot';
 import ComplianceGuide from './pages/ComplianceGuide';
 import ExternalDatabases from './pages/ExternalDatabases';
 import FAQ from './pages/FAQ';
 import Feedback from './pages/Feedback';
 import FormulaHistory from './pages/FormulaHistory';
 import Home from './pages/Home';
-import IngredientTrends from './pages/IngredientTrends';
 import LearningSuite from './pages/LearningSuite';
 import PersonalizedSafety from './pages/PersonalizedSafety';
 import Pricing from './pages/Pricing';
@@ -93,14 +91,12 @@ export const PAGES = {
     "ChemicalImport": ChemicalImport,
     "Collaboration": Collaboration,
     "CommunityReviews": CommunityReviews,
-    "ComplianceCoPilot": ComplianceCoPilot,
     "ComplianceGuide": ComplianceGuide,
     "ExternalDatabases": ExternalDatabases,
     "FAQ": FAQ,
     "Feedback": Feedback,
     "FormulaHistory": FormulaHistory,
     "Home": Home,
-    "IngredientTrends": IngredientTrends,
     "LearningSuite": LearningSuite,
     "PersonalizedSafety": PersonalizedSafety,
     "Pricing": Pricing,
