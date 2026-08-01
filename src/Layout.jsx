@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, Cpu, BarChart2, FolderOpen, ShieldCheck, ShieldAlert, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight, Code2, Sprout } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, Cpu, BarChart2, FolderOpen, ShieldCheck, ShieldAlert, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight, Code2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -426,13 +426,6 @@ export default function Layout({ children, currentPageName }) {
                       <span className="text-sm font-semibold text-slate-800">API Documentation</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={"/SuttainFarm"} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-                      <Sprout className="w-4 h-4 flex-shrink-0" style={{ color: "#4A7C2A" }} />
-                      <span className="text-sm font-semibold text-slate-800">Suttain Farm</span>
-                    </Link>
-                  </DropdownMenuItem>
-
                 </DropdownMenuContent>
               </DropdownMenu>
             </nav>
@@ -628,19 +621,6 @@ export default function Layout({ children, currentPageName }) {
                     </Link>
                   </motion.div>
 
-                  {/* AgroPocket — Mobile */}
-                  <motion.div variants={mobileNavItemVariants}>
-                    <Link
-                      to={"/SuttainFarm"}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        location.pathname === "/SuttainFarm" ? "bg-green-100 text-green-700" : "text-suttain-dark hover:bg-green-50"
-                      }`}
-                    >
-                      <Sprout className="w-5 h-5" />
-                      Suttain Farm
-                    </Link>
-                  </motion.div>
 
 
 
