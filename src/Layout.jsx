@@ -276,8 +276,8 @@ export default function Layout({ children, currentPageName }) {
     { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration", category: "Research" },
   ];
 
-  // Single combined list for the smart Tools dropdown — grouped by persona
-  const allToolItems = [...consumerToolItems, ...researchToolItems];
+  // Tools dropdown — consumer tools only; research tools live in the Research hub
+  const allToolItems = [...consumerToolItems];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
   const isResearchToolsActive = researchToolItems.some(tool => location.pathname === createPageUrl(tool.href));
