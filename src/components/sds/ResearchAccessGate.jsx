@@ -57,7 +57,7 @@ export default function ResearchAccessGate({ title = "SDS Analyzer" }) {
           <div className="flex items-center gap-3 min-w-0">
             <Lock className="w-5 h-5 flex-shrink-0" style={{ color: "#5c4d8e" }} />
             <p className="text-sm font-medium text-slate-700 truncate">
-              {title} is available on Researcher Pro and Institutional plans.
+              {title} is available on Suttain Core and Small business plans.
             </p>
           </div>
           <a

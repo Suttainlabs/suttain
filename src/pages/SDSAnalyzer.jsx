@@ -24,10 +24,10 @@ export default function SDSAnalyzer() {
   const [fileName, setFileName] = useState(null);
   const [activeTab, setActiveTab] = useState("search");
 
-  const hasResearchAccess =
-    user?.role === "admin" || (user?.product_access || []).includes("research");
+  const hasCoreAccess =
+    user?.role === "admin" || (user?.product_access || []).includes("core");
 
-  if (!hasResearchAccess) {
+  if (!hasCoreAccess) {
     return <ResearchAccessGate />;
   }
 

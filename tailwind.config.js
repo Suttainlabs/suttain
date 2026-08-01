@@ -35,8 +35,6 @@ module.exports = {
   			'pillar-research-fill': '#EEEDFE',
   			'pillar-api':           '#993C1D',
   			'pillar-api-fill':      '#FAECE7',
-  			'pillar-farm':          '#3B6D11',
-  			'pillar-farm-fill':     '#EAF3DE',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
