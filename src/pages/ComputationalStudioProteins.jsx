@@ -9,7 +9,7 @@ import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
 import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
 import HazardEngineApiReference from '@/components/studio/HazardEngineApiReference';
-import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend } from '@/components/studio/StudioShared';
+import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend, StudioPageHeader, StudioSectionHeading } from '@/components/studio/StudioShared';
 import { computeProteinProperties, parsePDBAtoms } from '@/components/studio/proteinUtils';
 import AuthContext from '@/components/auth/AuthContext';
 import { RCSBLookupPanel, AlphaFoldLookupPanel, StructurePrepPanel, ProteinIntelligencePanel } from '@/components/studio/ProteinPanels';
@@ -26,7 +26,7 @@ const d = r => r?.data?.data || r?.data || r;
 
 function ResultShell({ result, children }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
       <div className="p-5">
         <div className="flex items-center justify-between mb-4">
           <SourcedBadge />
@@ -87,7 +87,7 @@ const TOOLS = [
       };
     },
     renderResult: (result) => (
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="grid md:grid-cols-2">
           <div className="border-b md:border-b-0 md:border-r border-slate-200" style={{ minHeight: 350 }}>
             {result.atoms && result.atoms.length > 0
@@ -99,7 +99,7 @@ const TOOLS = [
               <SourcedBadge />
               <TrustLabel source={result.source} type={result.sourceType} />
             </div>
-            <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+            <p className="text-sm font-semibold text-slate-800 mb-3">{result.label}</p>
             <DataTable data={result.data} />
             {result.pdbText && (
               <button onClick={() => downloadTextFile(`${result.raw.pdbId}.pdb`, result.pdbText, 'chemical/x-pdb')}
@@ -163,7 +163,7 @@ const TOOLS = [
       };
     },
     renderResult: (result) => (
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="grid md:grid-cols-2">
           <div className="border-b md:border-b-0 md:border-r border-slate-200" style={{ minHeight: 350 }}>
             {result.atoms && result.atoms.length > 0
@@ -180,13 +180,13 @@ const TOOLS = [
                 <div className="text-xs text-slate-400 mb-1">Global confidence (pLDDT)</div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${result.confidence}%`, background: 'linear-gradient(90deg, #007850, #6B3FA0)' }} />
+                    <div className="h-full rounded-full" style={{ width: `${result.confidence}%`, background: '#0F6E56' }} />
                   </div>
-                  <span className="font-mono font-bold text-sm text-slate-700">{result.confidence}%</span>
+                  <span className="font-mono font-semibold text-sm text-slate-700">{result.confidence}%</span>
                 </div>
               </div>
             )}
-            <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+            <p className="text-sm font-semibold text-slate-800 mb-3">{result.label}</p>
             <DataTable data={result.data} />
             <PLDDTLegend />
             {result.pdbText && (
@@ -241,11 +241,11 @@ const TOOLS = [
               <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div className="h-full rounded-full" style={{ width: `${result.confidence}%`, background: 'linear-gradient(90deg, #D4900A, #C42B2B)' }} />
               </div>
-              <span className="font-mono font-bold text-sm text-slate-700">{result.confidence}/100</span>
+              <span className="font-mono font-semibold text-sm text-slate-700">{result.confidence}/100</span>
             </div>
           </div>
         )}
-        <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+        <p className="text-sm font-semibold text-slate-800 mb-3">{result.label}</p>
         <DataTable data={result.data} />
         {result.raw?.protein_interactions && result.raw.protein_interactions.length > 0 && (
           <div className="mt-4 pt-3 border-t border-slate-100">
@@ -253,7 +253,7 @@ const TOOLS = [
             <div className="space-y-1.5 max-h-64 overflow-y-auto">
               {result.raw.protein_interactions.map((pi, i) => (
                 <div key={i} className="text-xs flex items-start gap-2 p-2 bg-slate-50 rounded">
-                  <span className="font-mono font-bold text-slate-700 flex-shrink-0">{pi.gene}</span>
+                  <span className="font-mono font-semibold text-slate-700 flex-shrink-0">{pi.gene}</span>
                   <div>
                     <span className="text-slate-600">{pi.binding_probability}</span>
                     {pi.interaction_type && <span className="text-slate-400"> - {pi.interaction_type}</span>}
@@ -304,7 +304,7 @@ const TOOLS = [
     },
     renderResult: (result) => (
       <ResultShell result={result}>
-        <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+        <p className="text-sm font-semibold text-slate-800 mb-3">{result.label}</p>
         <DataTable data={result.data} />
         {result.composition && result.composition.length > 0 && (
           <div className="mt-4 pt-3 border-t border-slate-100">
@@ -317,9 +317,9 @@ const TOOLS = [
                 return (
                   <div key={aa} className="flex flex-col items-center gap-1">
                     <div className="h-16 flex items-end">
-                      <div className="w-4 rounded-t" style={{ height: barHeight, background: 'linear-gradient(180deg, #6B3FA0, #007850)' }} />
+                      <div className="w-4 rounded-t" style={{ height: barHeight, background: '#0F6E56' }} />
                     </div>
-                    <span className="font-mono text-xs font-bold text-slate-700">{aa}</span>
+                    <span className="font-mono text-xs font-semibold text-slate-700">{aa}</span>
                     <span className="text-[10px] text-slate-400">{count}</span>
                   </div>
                 );
@@ -366,27 +366,15 @@ export default function ComputationalStudioProteins() {
   return (
     <StudioLayout>
       <div className="space-y-6 py-4">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-              <Microscope className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">Proteins</h1>
-              <p className="text-sm text-slate-500">AlphaFold prediction, RCSB PDB exploration, binding analysis, and developability properties</p>
-            </div>
-          </div>
-          <SourcedBadge />
-        </div>
-        <div className="bg-white border border-slate-200 rounded-2xl p-6"><Studio3DViewer mode="protein" height={300} /></div>
+        <StudioPageHeader icon={Microscope} title="Proteins" subtitle="AlphaFold prediction, RCSB PDB exploration, binding analysis, and developability properties" badge={<SourcedBadge />} />
+        <div className="bg-white border border-slate-200 rounded-xl p-6"><Studio3DViewer mode="protein" height={300} /></div>
         <RunModeTabs active={activeMode} onChange={setActiveMode} />
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter PDB ID or UniProt ID' }} isPro={isPro} />}
 
-        <div className="border-t border-slate-200 pt-6">
-          <h2 className="text-lg font-bold text-slate-900 mb-1">Structure Lookup and Prep Tools</h2>
-          <p className="text-sm text-slate-500 mb-4">Query RCSB PDB and AlphaFold DB, run structure preparation utilities, and analyze protein-chemical interactions. Full source transparency.</p>
+        <div className="border-t border-slate-200 pt-6 space-y-4">
+          <StudioSectionHeading title="Structure Lookup and Prep Tools" subtitle="Query RCSB PDB and AlphaFold DB, run structure preparation utilities, and analyze protein-chemical interactions. Full source transparency." />
           <div className="grid md:grid-cols-2 gap-4">
             <RCSBLookupPanel />
             <AlphaFoldLookupPanel />

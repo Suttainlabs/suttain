@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, Database, Cpu, FileOutput, Globe, ShieldCheck } from 'lucide-react';
+import { Lock, Database, Cpu, FileOutput, Globe, ShieldCheck, Loader2 } from 'lucide-react';
 
 export function TrustLabel({ source, type = 'database' }) {
   const icons = { database: Database, computed: Cpu, external: FileOutput, api: Globe };
@@ -117,4 +117,86 @@ export function ExecutionTag({ type }) {
     return <span className="px-2 py-0.5 bg-amber-50 border border-amber-200 rounded text-xs font-mono text-amber-700">External input file</span>;
   }
   return <span className="px-2 py-0.5 bg-teal-50 border border-teal-200 rounded text-xs font-mono text-teal-700">In-browser</span>;
+}
+
+// ── Standardized Computational Studio primitives ───────────────────
+// Clean, professional card + typography system for molecule & protein panels.
+
+export function StudioPanel({ icon: Icon, iconColor = '#0F6E56', title, subtitle, badge, children, bodyClassName = '' }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+      {(title || Icon) && (
+        <div className="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100">
+          <div className="flex items-center gap-2.5 min-w-0">
+            {Icon && (
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#F8FAFC' }}>
+                <Icon className="w-4 h-4" style={{ color: iconColor }} />
+              </div>
+            )}
+            <div className="min-w-0">
+              {title && <h3 className="text-sm font-semibold text-slate-900 leading-tight truncate">{title}</h3>}
+              {subtitle && <p className="text-xs text-slate-500 mt-0.5 truncate">{subtitle}</p>}
+            </div>
+          </div>
+          {badge && <div className="flex-shrink-0">{badge}</div>}
+        </div>
+      )}
+      <div className={`p-5 ${bodyClassName}`}>{children}</div>
+    </div>
+  );
+}
+
+export function StudioButton({ children, onClick, disabled, loading, variant = 'primary', className = '', type = 'button' }) {
+  const variants = {
+    primary: 'bg-[#0F6E56] text-white hover:bg-[#0d5c47]',
+    outline: 'border border-slate-200 text-slate-600 hover:bg-slate-50',
+    dark: 'bg-slate-900 text-white hover:bg-slate-800',
+  };
+  return (
+    <button type={type} onClick={onClick} disabled={disabled || loading}
+      className={`inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 ${variants[variant]} ${className}`}>
+      {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+      {children}
+    </button>
+  );
+}
+
+export function StudioInput({ value, onChange, onKeyDown, placeholder, className = '', mono = false, ...rest }) {
+  return (
+    <input value={value} onChange={onChange} onKeyDown={onKeyDown} placeholder={placeholder} {...rest}
+      className={`px-3 py-2 ${mono ? 'text-xs font-mono' : 'text-sm'} border border-slate-200 rounded-lg focus:outline-none focus:border-[#0F6E56] focus:ring-1 focus:ring-[#0F6E56]/15 ${className}`} />
+  );
+}
+
+export function StudioSectionHeading({ title, subtitle, icon: Icon }) {
+  return (
+    <div className="flex items-start gap-3">
+      {Icon && (
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-slate-50">
+          <Icon className="w-4 h-4 text-slate-700" />
+        </div>
+      )}
+      <div>
+        <h2 className="text-base font-semibold text-slate-900">{title}</h2>
+        {subtitle && <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p>}
+      </div>
+    </div>
+  );
+}
+
+export function StudioPageHeader({ icon: Icon, title, subtitle, badge }) {
+  return (
+    <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-900">
+          <Icon className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
+          {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
+        </div>
+      </div>
+      {badge}
+    </div>
+  );
 }

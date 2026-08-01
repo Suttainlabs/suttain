@@ -8,7 +8,7 @@ import SingleRunPanel from '@/components/studio/SingleRunPanel';
 import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
 import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
-import { SourcedBadge, TrustLabel, downloadTextFile } from '@/components/studio/StudioShared';
+import { SourcedBadge, TrustLabel, downloadTextFile, StudioPageHeader, StudioSectionHeading } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
 import { DescriptorsPanel, ComparePanel, PubChemLookupPanel, ChEMBLLookupPanel } from '@/components/studio/SmallMoleculePanels';
 import XTBQuantumPanel from '@/components/studio/XTBQuantumPanel';
@@ -38,7 +38,7 @@ function pubchemUrl(input, inputType, endpoint) {
 
 function ResultShell({ result, children }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
       <div className="p-5">
         <div className="flex items-center justify-between mb-4">
           <SourcedBadge />
@@ -145,7 +145,7 @@ const TOOLS = [
       };
     },
     renderResult: (result) => (
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="grid md:grid-cols-2">
           <div className="border-b md:border-b-0 md:border-r border-slate-200 p-5 flex items-center justify-center" style={{ minHeight: 350 }}>
             {result.imageUrl
@@ -157,7 +157,7 @@ const TOOLS = [
               <SourcedBadge />
               <TrustLabel source={result.source} type={result.sourceType} />
             </div>
-            <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+            <p className="text-sm font-semibold text-slate-800 mb-3">{result.label}</p>
             <DataTable data={result.data} />
             {result.raw?.cid && (
               <a href={`https://pubchem.ncbi.nlm.nih.gov/compound/${result.raw.cid}`} target="_blank" rel="noopener noreferrer"
@@ -208,7 +208,7 @@ const TOOLS = [
       };
     },
     renderResult: (result) => (
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="grid md:grid-cols-2">
           <div className="border-b md:border-b-0 md:border-r border-slate-200 p-5 flex items-center justify-center" style={{ minHeight: 350 }}>
             {result.imageUrl
@@ -220,7 +220,7 @@ const TOOLS = [
               <SourcedBadge />
               <TrustLabel source={result.source} type={result.sourceType} />
             </div>
-            <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+            <p className="text-sm font-semibold text-slate-800 mb-3">{result.label}</p>
             <DataTable data={result.data} />
           </div>
         </div>
@@ -283,17 +283,17 @@ const TOOLS = [
             Input files for external execution. GFN2-xTB and PM7 cannot run in a browser. Download these files and run them on your own infrastructure with xTB or MOPAC installed.
           </p>
         </div>
-        <p className="text-sm font-bold text-slate-800 mb-3">{result.label}</p>
+        <p className="text-sm font-semibold text-slate-800 mb-3">{result.label}</p>
         <DataTable data={result.data} />
         <div className="mt-4 space-y-2">
           {result.files?.map((file, i) => (
             <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-slate-700">{file.filename}</span>
+                <span className="font-mono text-xs font-semibold text-slate-700">{file.filename}</span>
                 <span className="text-xs text-slate-400">{file.label}</span>
               </div>
               <button onClick={() => downloadTextFile(file.filename, file.content)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: '#0F6E56' }}>
                 <Download className="w-3 h-3" /> Download
               </button>
             </div>
@@ -347,7 +347,7 @@ const TOOLS = [
       };
     },
     renderResult: (result) => (
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="grid md:grid-cols-2">
           <div className="border-b md:border-b-0 md:border-r border-slate-200" style={{ minHeight: 350 }}>
             {result.atoms && result.atoms.length > 0
@@ -359,7 +359,7 @@ const TOOLS = [
               <SourcedBadge />
               <TrustLabel source={result.source} type={result.sourceType} />
             </div>
-            <p className="text-sm font-bold text-slate-800 mb-1">{result.label}</p>
+            <p className="text-sm font-semibold text-slate-800 mb-1">{result.label}</p>
             <p className="text-xs text-slate-500 mb-3">Optimized geometry rendered from the real xTB output.</p>
             <DataTable data={result.data} />
             {result.honestyNote && (
@@ -454,7 +454,7 @@ const TOOLS = [
                     <td className="py-2 px-3 text-slate-500">{label}</td>
                     <td className="py-2 px-3 text-right font-mono text-slate-700">{v1 ?? 'N/A'}{unit}</td>
                     <td className="py-2 px-3 text-right font-mono text-slate-700">{v2 ?? 'N/A'}{unit}</td>
-                    <td className={`py-2 px-3 text-right font-mono ${isDiff ? 'font-bold text-violet-600' : 'text-slate-400'}`}>{delta}{isDiff ? unit : ''}</td>
+                    <td className={`py-2 px-3 text-right font-mono ${isDiff ? 'font-semibold text-violet-600' : 'text-slate-400'}`}>{delta}{isDiff ? unit : ''}</td>
                   </tr>
                 );
               })}
@@ -499,33 +499,20 @@ export default function ComputationalStudioSmallMolecules() {
   return (
     <StudioLayout>
       <div className="space-y-6 py-4">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-              <Atom className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">Small Molecules</h1>
-              <p className="text-sm text-slate-500">PubChem lookup, molecular properties, real GFN2-xTB quantum calculation, xTB/PM7 input files, and compound comparison</p>
-            </div>
-          </div>
-          <SourcedBadge />
-        </div>
-        <div className="bg-white border border-slate-200 rounded-2xl p-6"><Studio3DViewer mode="molecule" height={300} /></div>
+        <StudioPageHeader icon={Atom} title="Small Molecules" subtitle="PubChem lookup, molecular properties, real GFN2-xTB quantum calculation, xTB/PM7 input files, and compound comparison" badge={<SourcedBadge />} />
+        <div className="bg-white border border-slate-200 rounded-xl p-6"><Studio3DViewer mode="molecule" height={300} /></div>
         <RunModeTabs active={activeMode} onChange={setActiveMode} />
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter SMILES' }} isPro={isPro} />}
 
-        <div className="border-t border-slate-200 pt-6">
-          <h2 className="text-lg font-bold text-slate-900 mb-1">Quantum Geometry and Energy</h2>
-          <p className="text-sm text-slate-500 mb-4">Run a real GFN2-xTB semi-empirical optimization on a cloud engine. The browser is the interface; heavy quantum compute runs server-side.</p>
+        <div className="border-t border-slate-200 pt-6 space-y-4">
+          <StudioSectionHeading title="Quantum Geometry and Energy" subtitle="Run a real GFN2-xTB semi-empirical optimization on a cloud engine. The browser is the interface; heavy quantum compute runs server-side." />
           <XTBQuantumPanel />
         </div>
 
-        <div className="border-t border-slate-200 pt-6">
-          <h2 className="text-lg font-bold text-slate-900 mb-1">Direct Lookup Tools</h2>
-          <p className="text-sm text-slate-500 mb-4">Query live databases with full source transparency. No black box.</p>
+        <div className="border-t border-slate-200 pt-6 space-y-4">
+          <StudioSectionHeading title="Direct Lookup Tools" subtitle="Query live databases with full source transparency. No black box." />
           <div className="grid md:grid-cols-2 gap-4">
             <DescriptorsPanel />
             <ComparePanel />

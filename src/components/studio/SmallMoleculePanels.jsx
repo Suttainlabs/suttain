@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Atom, ArrowLeftRight, FlaskConical, Microscope, Download, Copy, Check } from 'lucide-react';
+import { Atom, ArrowLeftRight, FlaskConical, Download, Copy, Check } from 'lucide-react';
 import { suttainCompute } from '@/functions/suttainCompute';
 import { suttainScienceData } from '@/functions/suttainScienceData';
-import { LoadingState, ErrorState, ResultCard, DataRow, SourceLabel, ConfidenceBar } from '@/components/shared/FunctionResult';
+import { LoadingState, ErrorState, DataRow, SourceLabel } from '@/components/shared/FunctionResult';
+import { StudioPanel, StudioButton, StudioInput } from '@/components/studio/StudioShared';
 
 function CopyButton({ text }) {
   const [copied, setCopied] = useState(false);
@@ -22,7 +23,7 @@ function LipinskiCard({ lipinski }) {
   return (
     <div className={`mt-4 p-4 rounded-xl border ${lipinski.passes ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
       <div className="flex items-center gap-2 mb-2">
-        <span className={`text-sm font-bold ${lipinski.passes ? 'text-green-700' : 'text-amber-700'}`}>
+        <span className={`text-sm font-semibold ${lipinski.passes ? 'text-green-700' : 'text-amber-700'}`}>
           Lipinski Rule of Five: {lipinski.passes ? 'PASS' : 'FAIL'}
         </span>
       </div>
@@ -54,34 +55,17 @@ export function DescriptorsPanel() {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <Atom className="w-4 h-4 text-[#007850]" />
-        <h3 className="font-bold text-slate-900 text-sm">Analyze Descriptors</h3>
-      </div>
-      <p className="text-xs text-slate-500 mb-3">Enter a molecule name or SMILES to get full physicochemical descriptors and drug-likeness assessment.</p>
-      <div className="flex gap-2">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && run()}
-          placeholder="e.g. aspirin or CCO"
-          className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]"
-        />
-        <button onClick={run} disabled={loading || !input.trim()}
-          className="px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-          Analyze
-        </button>
+    <StudioPanel icon={Atom} iconColor="#0F6E56" title="Analyze Descriptors" subtitle="Physicochemical descriptors and drug-likeness from PubChem">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <StudioInput value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && run()} placeholder="e.g. aspirin or CCO" className="flex-1" />
+        <StudioButton onClick={run} disabled={!input.trim()} loading={loading}>Analyze</StudioButton>
       </div>
       {loading && <LoadingState label="Fetching descriptors from PubChem..." />}
       {error && <ErrorState message={error} />}
       {result && (
         <div className="mt-4">
-          <div className="flex items-center justify-between mb-3">
-            <SourceLabel source={result.source} />
-          </div>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+          <SourceLabel source={result.source} />
+          <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1">
             <DataRow label="Formula" value={result.formula} />
             <DataRow label="Molecular Weight" value={result.molecular_weight} unit="g/mol" />
             <DataRow label="SMILES" value={result.smiles} />
@@ -97,7 +81,7 @@ export function DescriptorsPanel() {
           <LipinskiCard lipinski={result.lipinski} />
         </div>
       )}
-    </div>
+    </StudioPanel>
   );
 }
 
@@ -127,22 +111,12 @@ export function ComparePanel() {
   ] : [];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <ArrowLeftRight className="w-4 h-4 text-[#6B3FA0]" />
-        <h3 className="font-bold text-slate-900 text-sm">Compare Two Molecules</h3>
-      </div>
+    <StudioPanel icon={ArrowLeftRight} iconColor="#534AB7" title="Compare Two Molecules" subtitle="Side-by-side properties from PubChem">
       <div className="grid grid-cols-2 gap-2 mb-2">
-        <input value={molA} onChange={e => setMolA(e.target.value)} placeholder="Molecule A (name or SMILES)"
-          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
-        <input value={molB} onChange={e => setMolB(e.target.value)} placeholder="Molecule B (name or SMILES)"
-          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+        <StudioInput value={molA} onChange={e => setMolA(e.target.value)} placeholder="Molecule A (name or SMILES)" />
+        <StudioInput value={molB} onChange={e => setMolB(e.target.value)} placeholder="Molecule B (name or SMILES)" />
       </div>
-      <button onClick={run} disabled={loading || !molA.trim() || !molB.trim()}
-        className="w-full px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-        style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-        Compare
-      </button>
+      <StudioButton onClick={run} disabled={!molA.trim() || !molB.trim()} loading={loading} className="w-full">Compare</StudioButton>
       {loading && <LoadingState label="Fetching both compounds from PubChem..." />}
       {error && <ErrorState message={error} />}
       {result && (
@@ -170,7 +144,7 @@ export function ComparePanel() {
           </div>
         </div>
       )}
-    </div>
+    </StudioPanel>
   );
 }
 
@@ -192,20 +166,10 @@ export function PubChemLookupPanel() {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <Atom className="w-4 h-4 text-[#007850]" />
-        <h3 className="font-bold text-slate-900 text-sm">PubChem Molecule Lookup</h3>
-      </div>
-      <div className="flex gap-2">
-        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && run()}
-          placeholder="Compound name or SMILES"
-          className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
-        <button onClick={run} disabled={loading || !input.trim()}
-          className="px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-          Lookup
-        </button>
+    <StudioPanel icon={Atom} iconColor="#0F6E56" title="PubChem Molecule Lookup" subtitle="Identity, synonyms, and structural data">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <StudioInput value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && run()} placeholder="Compound name or SMILES" className="flex-1" />
+        <StudioButton onClick={run} disabled={!input.trim()} loading={loading}>Lookup</StudioButton>
       </div>
       {loading && <LoadingState label="Querying PubChem..." />}
       {error && <ErrorState message={error} />}
@@ -226,7 +190,7 @@ export function PubChemLookupPanel() {
           </div>
         </div>
       )}
-    </div>
+    </StudioPanel>
   );
 }
 
@@ -248,20 +212,10 @@ export function ChEMBLLookupPanel() {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <FlaskConical className="w-4 h-4 text-[#6B3FA0]" />
-        <h3 className="font-bold text-slate-900 text-sm">ChEMBL Lookup</h3>
-      </div>
-      <div className="flex gap-2">
-        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && run()}
-          placeholder="ChEMBL ID or compound name"
-          className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
-        <button onClick={run} disabled={loading || !input.trim()}
-          className="px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-          Lookup
-        </button>
+    <StudioPanel icon={FlaskConical} iconColor="#534AB7" title="ChEMBL Lookup" subtitle="Bioactivity and drug candidate data">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <StudioInput value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && run()} placeholder="ChEMBL ID or compound name" className="flex-1" />
+        <StudioButton onClick={run} disabled={!input.trim()} loading={loading}>Lookup</StudioButton>
       </div>
       {loading && <LoadingState label="Querying ChEMBL..." />}
       {error && <ErrorState message={error} />}
@@ -276,7 +230,7 @@ export function ChEMBLLookupPanel() {
           </div>
         </div>
       )}
-    </div>
+    </StudioPanel>
   );
 }
 
@@ -308,25 +262,16 @@ export function EngineInputPanel() {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <FlaskConical className="w-4 h-4 text-[#007850]" />
-        <h3 className="font-bold text-slate-900 text-sm">Generate Engine Input</h3>
-      </div>
+    <StudioPanel icon={FlaskConical} iconColor="#0F6E56" title="Generate Engine Input" subtitle="GROMACS, Quantum ESPRESSO, or LAMMPS input files">
       <div className="flex flex-col sm:flex-row gap-2 mb-2">
-        <input value={molecule} onChange={e => setMolecule(e.target.value)} placeholder="Molecule name or SMILES"
-          className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+        <StudioInput value={molecule} onChange={e => setMolecule(e.target.value)} placeholder="Molecule name or SMILES" className="flex-1" />
         <select value={engine} onChange={e => setEngine(e.target.value)}
-          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850] bg-white">
+          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#0F6E56] bg-white">
           <option value="gromacs">GROMACS</option>
           <option value="quantum_espresso">Quantum ESPRESSO</option>
           <option value="lammps">LAMMPS</option>
         </select>
-        <button onClick={run} disabled={loading || !molecule.trim()}
-          className="px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-          Generate
-        </button>
+        <StudioButton onClick={run} disabled={!molecule.trim()} loading={loading}>Generate</StudioButton>
       </div>
       {loading && <LoadingState label="Generating input file..." />}
       {error && <ErrorState message={error} />}
@@ -334,11 +279,9 @@ export function EngineInputPanel() {
         <div className="mt-4">
           <div className="flex items-center justify-between mb-2">
             <SourceLabel source={result.source} />
-            <button onClick={download}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg"
-              style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-              <Download className="w-3 h-3" /> Download
-            </button>
+            <StudioButton onClick={download} variant="primary">
+              <Download className="w-3.5 h-3.5" /> Download
+            </StudioButton>
           </div>
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
             <p className="text-xs text-amber-700 font-semibold">{result.honest_note}</p>
@@ -349,6 +292,6 @@ export function EngineInputPanel() {
           </div>
         </div>
       )}
-    </div>
+    </StudioPanel>
   );
 }

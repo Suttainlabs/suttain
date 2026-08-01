@@ -4,6 +4,7 @@ import { suttainScienceData } from '@/functions/suttainScienceData';
 import { structurePrep } from '@/functions/structurePrep';
 import { proteinStructureIntelligence } from '@/functions/proteinStructureIntelligence';
 import { LoadingState, ErrorState, SourceLabel, ConfidenceBar, DataRow } from '@/components/shared/FunctionResult';
+import { StudioPanel, StudioButton, StudioInput } from '@/components/studio/StudioShared';
 
 export function RCSBLookupPanel() {
   const [input, setInput] = useState('');
@@ -23,20 +24,10 @@ export function RCSBLookupPanel() {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <Microscope className="w-4 h-4 text-[#007850]" />
-        <h3 className="font-bold text-slate-900 text-sm">Protein Structure Lookup (RCSB PDB)</h3>
-      </div>
-      <div className="flex gap-2">
-        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && run()}
-          placeholder="PDB ID (e.g. 1UBQ)"
-          className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
-        <button onClick={run} disabled={loading || !input.trim()}
-          className="px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-          Lookup
-        </button>
+    <StudioPanel icon={Microscope} iconColor="#0F6E56" title="Protein Structure Lookup (RCSB PDB)" subtitle="Identity, method, and resolution from the PDB">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <StudioInput value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && run()} placeholder="PDB ID (e.g. 1UBQ)" className="flex-1" />
+        <StudioButton onClick={run} disabled={!input.trim()} loading={loading}>Lookup</StudioButton>
       </div>
       {loading && <LoadingState label="Querying RCSB PDB..." />}
       {error && <ErrorState message={error} />}
@@ -51,13 +42,13 @@ export function RCSBLookupPanel() {
           </div>
           {result.download_url && (
             <a href={result.download_url} target="_blank" rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50">
+              className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
               <Download className="w-4 h-4" /> Download PDB File
             </a>
           )}
         </div>
       )}
-    </div>
+    </StudioPanel>
   );
 }
 
@@ -79,20 +70,10 @@ export function AlphaFoldLookupPanel() {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <FlaskConical className="w-4 h-4 text-[#6B3FA0]" />
-        <h3 className="font-bold text-slate-900 text-sm">AlphaFold Predicted Structure</h3>
-      </div>
-      <div className="flex gap-2">
-        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && run()}
-          placeholder="UniProt accession (e.g. P00533)"
-          className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
-        <button onClick={run} disabled={loading || !input.trim()}
-          className="px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-          Lookup
-        </button>
+    <StudioPanel icon={FlaskConical} iconColor="#534AB7" title="AlphaFold Predicted Structure" subtitle="Predicted model from the AlphaFold DB">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <StudioInput value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && run()} placeholder="UniProt accession (e.g. P00533)" className="flex-1" />
+        <StudioButton onClick={run} disabled={!input.trim()} loading={loading}>Lookup</StudioButton>
       </div>
       {loading && <LoadingState label="Querying AlphaFold DB..." />}
       {error && <ErrorState message={error} />}
@@ -121,7 +102,7 @@ export function AlphaFoldLookupPanel() {
           </div>
         </div>
       )}
-    </div>
+    </StudioPanel>
   );
 }
 
@@ -171,25 +152,18 @@ export function StructurePrepPanel() {
   ];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <Scissors className="w-4 h-4 text-[#007850]" />
-        <h3 className="font-bold text-slate-900 text-sm">Structure Prep Utilities</h3>
-      </div>
+    <StudioPanel icon={Scissors} iconColor="#0F6E56" title="Structure Prep Utilities" subtitle="Grids, splits, and renumbering for docking workflows">
       <textarea
         value={pdbText}
         onChange={e => setPdbText(e.target.value)}
         placeholder="Paste PDB text here..."
         rows={6}
-        className="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850] mb-3"
+        className="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg focus:outline-none focus:border-[#0F6E56] focus:ring-1 focus:ring-[#0F6E56]/15 mb-3"
       />
       <div className="flex gap-2 mb-3 flex-wrap">
-        <input value={residues} onChange={e => setResidues(e.target.value)} placeholder="Residues (comma-sep, optional)"
-          className="flex-1 min-w-[120px] px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
-        <input value={padding} onChange={e => setPadding(e.target.value)} placeholder="Pad (A)"
-          className="w-20 px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
-        <input value={renumberStart} onChange={e => setRenumberStart(e.target.value)} placeholder="Start #"
-          className="w-20 px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+        <StudioInput value={residues} onChange={e => setResidues(e.target.value)} placeholder="Residues (comma-sep, optional)" className="flex-1 min-w-[120px]" mono />
+        <StudioInput value={padding} onChange={e => setPadding(e.target.value)} placeholder="Pad (A)" className="w-20" mono />
+        <StudioInput value={renumberStart} onChange={e => setRenumberStart(e.target.value)} placeholder="Start #" className="w-20" mono />
       </div>
       <div className="flex gap-2 flex-wrap">
         {actions.map(a => (
@@ -241,11 +215,11 @@ export function StructurePrepPanel() {
                 <DataRow label="Ligand Atoms" value={result.ligand_atoms} />
                 <div className="mt-2 flex gap-2">
                   <button onClick={() => downloadText('protein.pdb', result.protein_pdb)}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: '#007850' }}>
+                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: '#0F6E56' }}>
                     <Download className="w-3 h-3" /> protein.pdb
                   </button>
                   <button onClick={() => downloadText('ligand.pdb', result.ligand_pdb)}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: '#6B3FA0' }}>
+                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: '#534AB7' }}>
                     <Download className="w-3 h-3" /> ligand.pdb
                   </button>
                 </div>
@@ -255,7 +229,7 @@ export function StructurePrepPanel() {
               <div>
                 <DataRow label="Start Residue" value={result.start_residue} />
                 <button onClick={() => downloadText('renumbered.pdb', result.pdb_text)}
-                  className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: '#007850' }}>
+                  className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: '#0F6E56' }}>
                   <Download className="w-3 h-3" /> renumbered.pdb
                 </button>
               </div>
@@ -263,7 +237,7 @@ export function StructurePrepPanel() {
           </div>
         </div>
       )}
-    </div>
+    </StudioPanel>
   );
 }
 
@@ -286,24 +260,14 @@ export function ProteinIntelligencePanel() {
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <FlaskConical className="w-4 h-4 text-[#6B3FA0]" />
-        <h3 className="font-bold text-slate-900 text-sm">Protein Structure Intelligence (Premium)</h3>
-        <span className="px-2 py-0.5 bg-violet-100 text-violet-700 text-xs font-semibold rounded-full">Pro</span>
-      </div>
-      <p className="text-xs text-slate-500 mb-3">Requires login. Enter a chemical name or SMILES to analyze protein interactions, endocrine risk, and population-level safety.</p>
+    <StudioPanel icon={FlaskConical} iconColor="#534AB7" title="Protein Structure Intelligence"
+      subtitle="Protein interactions, endocrine risk, and population-level safety"
+      badge={<span className="px-2 py-0.5 bg-violet-100 text-violet-700 text-xs font-semibold rounded-full">Pro</span>}>
       <div className="space-y-2 mb-2">
-        <input value={chemical} onChange={e => setChemical(e.target.value)} placeholder="Chemical name or SMILES"
-          className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
-        <input value={context} onChange={e => setContext(e.target.value)} placeholder="Context (e.g. food, cosmetic) - optional"
-          className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+        <StudioInput value={chemical} onChange={e => setChemical(e.target.value)} placeholder="Chemical name or SMILES" className="w-full" />
+        <StudioInput value={context} onChange={e => setContext(e.target.value)} placeholder="Context (e.g. food, cosmetic) - optional" className="w-full" />
       </div>
-      <button onClick={run} disabled={loading || !chemical.trim()}
-        className="w-full px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-        style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-        Analyze Protein Risk
-      </button>
+      <StudioButton onClick={run} disabled={!chemical.trim()} loading={loading} className="w-full">Analyze Protein Risk</StudioButton>
       {loading && <LoadingState label="Running protein structure intelligence..." />}
       {error && <ErrorState message={error} />}
       {result && (
@@ -361,7 +325,7 @@ export function ProteinIntelligencePanel() {
             <div className="grid md:grid-cols-3 gap-3">
               {result.endocrine_disruption && (
                 <div className="p-3 rounded-lg border border-slate-200">
-                  <p className="text-xs font-bold text-slate-700 mb-1">Endocrine Disruption</p>
+                  <p className="text-xs font-semibold text-slate-700 mb-1">Endocrine Disruption</p>
                   <div className={`text-xs font-semibold mb-1 ${result.endocrine_disruption.is_potential_disruptor ? 'text-red-600' : 'text-green-600'}`}>
                     {result.endocrine_disruption.is_potential_disruptor ? 'Potential disruptor' : 'No disruption detected'}
                   </div>
@@ -374,7 +338,7 @@ export function ProteinIntelligencePanel() {
               )}
               {result.carcinogenicity && (
                 <div className="p-3 rounded-lg border border-slate-200">
-                  <p className="text-xs font-bold text-slate-700 mb-1">Carcinogenicity</p>
+                  <p className="text-xs font-semibold text-slate-700 mb-1">Carcinogenicity</p>
                   <div className={`text-xs font-semibold mb-1 ${result.carcinogenicity.is_potential_carcinogen ? 'text-red-600' : 'text-green-600'}`}>
                     {result.carcinogenicity.is_potential_carcinogen ? 'Potential carcinogen' : 'No carcinogenicity detected'}
                   </div>
@@ -384,7 +348,7 @@ export function ProteinIntelligencePanel() {
               )}
               {result.metabolic_interaction && (
                 <div className="p-3 rounded-lg border border-slate-200">
-                  <p className="text-xs font-bold text-slate-700 mb-1">Metabolic Interaction</p>
+                  <p className="text-xs font-semibold text-slate-700 mb-1">Metabolic Interaction</p>
                   <div className={`text-xs font-semibold mb-1 ${result.metabolic_interaction.cyp_enzyme_inhibitor ? 'text-red-600' : 'text-green-600'}`}>
                     {result.metabolic_interaction.cyp_enzyme_inhibitor ? 'CYP inhibitor' : 'No CYP inhibition'}
                   </div>
@@ -425,6 +389,6 @@ export function ProteinIntelligencePanel() {
           )}
         </div>
       )}
-    </div>
+    </StudioPanel>
   );
 }
