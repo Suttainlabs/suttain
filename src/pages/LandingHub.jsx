@@ -142,7 +142,7 @@ export default function LandingHub() {
           {/* Professional Research pathway */}
           <motion.div {...fade(0.35)}>
             <Link
-              to={createPageUrl("ComputationalStudio")}
+              to="/ResearchLanding"
               className="block bg-white rounded-2xl border border-slate-200 overflow-hidden h-full group hover:shadow-lg hover:border-[#534AB7]/30 transition-all"
             >
               <div className="h-1.5 w-full" style={{ background: "linear-gradient(90deg, #534AB7, #00A8C8)" }} />
@@ -172,7 +172,7 @@ export default function LandingHub() {
                   })}
                 </div>
                 <div className="flex items-center gap-1 mt-6 text-sm font-semibold" style={{ color: "#534AB7" }}>
-                  Enter computational studio
+                  Explore research tools
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
@@ -233,9 +233,9 @@ export default function LandingHub() {
                 Analyze a product
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
-              <Link to={createPageUrl("ComputationalStudio")}>
+              <Link to="/ResearchLanding">
                 <Button variant="outline" size="lg" className="w-full sm:w-auto border-[#534AB7]/30 text-[#534AB7] hover:bg-[#534AB7]/5">
-                  Enter computational studio
+                  Explore research tools
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </Link>

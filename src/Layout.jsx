@@ -271,10 +271,13 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const researchToolItems = [
-    { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction", category: "Workspace" },
-    { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization", category: "Molecular Intelligence" },
-    { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration", category: "Molecular Intelligence" },
+    { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction", category: "Research" },
+    { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization", category: "Research" },
+    { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration", category: "Research" },
   ];
+
+  // Single combined list for the smart Tools dropdown — grouped by persona
+  const allToolItems = [...consumerToolItems, ...researchToolItems];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
   const isResearchToolsActive = researchToolItems.some(tool => location.pathname === createPageUrl(tool.href));
@@ -392,11 +395,10 @@ export default function Layout({ children, currentPageName }) {
             <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap flex-shrink-0">
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
-              {/* Tools dropdown */}
-              <NavToolCombobox items={consumerToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} accent="#0F6E56" />
+              {/* Single smart Tools dropdown — groups Consumer and Research */}
+              <NavToolCombobox items={allToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive || isResearchActive} accent="#0F6E56" />
 
-              {/* Research dropdown */}
-              <NavToolCombobox items={researchToolItems} label={t('nav_research')} isActive={isResearchActive} accent="#534AB7" />
+              <Link to="/ResearchLanding" className={getLinkClasses("ResearchLanding")}>Research</Link>
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
@@ -570,12 +572,12 @@ export default function Layout({ children, currentPageName }) {
 
 
 
-                  {/* Professional Tools Collapsible */}
+                  {/* Single smart Tools collapsible — Consumer + Research grouped */}
                   <motion.div variants={mobileNavItemVariants}>
                     <button
                       onClick={() => setIsProductSuiteOpen(!isProductSuiteOpen)}
                       className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-cyan-50 ${
-                        isConsumerToolsActive ? 'bg-cyan-100' : ''
+                        isConsumerToolsActive || isResearchToolsActive ? 'bg-cyan-100' : ''
                       }`}
                     >
                       <div className="flex items-center gap-4">
@@ -593,12 +595,30 @@ export default function Layout({ children, currentPageName }) {
                           transition={{ type: "spring", stiffness: 300, damping: 30 }}
                           className="pl-4 pt-1 pb-1 overflow-hidden"
                         >
+                          <p className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Consumer</p>
                           {consumerToolItems.map(item => (
                             <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
                               className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
                                 location.pathname === createPageUrl(item.href) ? "bg-teal-50 text-[#007850]" : "text-slate-700 hover:bg-slate-50"
                               }`}>
                               <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-teal)]" />
+                              <span>{item.label}</span>
+                            </Link>
+                          ))}
+                          <p className="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Research</p>
+                          <Link to="/ResearchLanding" onClick={() => setIsMobileMenuOpen(false)}
+                            className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                              location.pathname === "/ResearchLanding" ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
+                            }`}>
+                            <FlaskConical className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
+                            <span>Research hub</span>
+                          </Link>
+                          {researchToolItems.map(item => (
+                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
+                              className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                                location.pathname === createPageUrl(item.href) ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
+                              }`}>
+                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
                               <span>{item.label}</span>
                             </Link>
                           ))}
@@ -619,46 +639,6 @@ export default function Layout({ children, currentPageName }) {
                       <Terminal className="w-5 h-5" />
                       {t('nav_business')}
                     </Link>
-                  </motion.div>
-
-
-
-
-                  {/* Research Tools Collapsible - Mobile */}
-                  <motion.div variants={mobileNavItemVariants}>
-                    <button
-                      onClick={() => setIsResearchSuiteOpen(!isResearchSuiteOpen)}
-                      className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-violet-50 ${
-                        isResearchToolsActive ? 'bg-violet-100' : ''
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <Microscope className="w-5 h-5" />
-                        {t('mobile_research_tools')}
-                      </div>
-                      <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isResearchSuiteOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    <AnimatePresence>
-                      {isResearchSuiteOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          className="pl-4 pt-1 pb-1 overflow-hidden"
-                        >
-                          {researchToolItems.map(item => (
-                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                                location.pathname === createPageUrl(item.href) ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
-                              }`}>
-                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
-                              <span>{item.label}</span>
-                            </Link>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                   </motion.div>
 
 
@@ -812,7 +792,7 @@ export default function Layout({ children, currentPageName }) {
               <ul className="space-y-1.5 text-sm">
                 <li><Link to={createPageUrl('Simulator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
                 <li><Link to={createPageUrl('generator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
-                <li><Link to={createPageUrl("ResearchDashboard")} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
+                <li><Link to="/ResearchLanding" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
                 <li><Link to="/enterprise" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
                 <li><Link to={createPageUrl('AboutUs')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
