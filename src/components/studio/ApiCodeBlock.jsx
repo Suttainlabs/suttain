@@ -3,7 +3,8 @@ import { Copy, Check, FileText } from 'lucide-react';
 
 const DEFAULT_ENDPOINTS = [
   { method: 'POST', path: '/v1/compound', desc: 'Compound lookup and properties' },
-  { method: 'POST', path: '/v1/hazard-score', desc: 'Hazard prediction with confidence' },
+  { method: 'POST', path: '/v1/hazard-classify', desc: 'Hazard classification with calibrated confidence' },
+  { method: 'POST', path: '/v1/hazard-validation', desc: 'Held-out validation metrics and ROC curve' },
   { method: 'POST', path: '/v1/interactions', desc: 'Chemical interaction checking' },
   { method: 'POST', path: '/v1/sustainability', desc: 'Sustainability profiling' },
   { method: 'POST', path: '/v1/formula', desc: 'Formula generation and analysis' },
