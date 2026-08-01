@@ -8,6 +8,7 @@ import SingleRunPanel from '@/components/studio/SingleRunPanel';
 import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
 import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
+import HazardEngineApiReference from '@/components/studio/HazardEngineApiReference';
 import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend } from '@/components/studio/StudioShared';
 import { computeProteinProperties, parsePDBAtoms } from '@/components/studio/proteinUtils';
 import AuthContext from '@/components/auth/AuthContext';
@@ -399,6 +400,10 @@ export default function ComputationalStudioProteins() {
         </div>
 
         <ApiCodeBlock code={API_CODE} filename="protein_lookup.py" title="Use via API" description="Query protein structures programmatically" />
+
+        <div className="border-t border-slate-200 pt-6">
+          <HazardEngineApiReference />
+        </div>
       </div>
     </StudioLayout>
   );
