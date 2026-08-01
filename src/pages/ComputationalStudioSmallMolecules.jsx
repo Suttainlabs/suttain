@@ -11,6 +11,7 @@ import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
 import { SourcedBadge, TrustLabel, downloadTextFile } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
 import { DescriptorsPanel, ComparePanel, PubChemLookupPanel, ChEMBLLookupPanel } from '@/components/studio/SmallMoleculePanels';
+import XTBQuantumPanel from '@/components/studio/XTBQuantumPanel';
 
 const INPUT_TYPES = [
   { value: 'name', label: 'Compound Name', placeholder: 'e.g. aspirin' },
@@ -515,6 +516,12 @@ export default function ComputationalStudioSmallMolecules() {
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter SMILES' }} isPro={isPro} />}
+
+        <div className="border-t border-slate-200 pt-6">
+          <h2 className="text-lg font-bold text-slate-900 mb-1">Quantum Geometry and Energy</h2>
+          <p className="text-sm text-slate-500 mb-4">Run a real GFN2-xTB semi-empirical optimization on a cloud engine. The browser is the interface; heavy quantum compute runs server-side.</p>
+          <XTBQuantumPanel />
+        </div>
 
         <div className="border-t border-slate-200 pt-6">
           <h2 className="text-lg font-bold text-slate-900 mb-1">Direct Lookup Tools</h2>
