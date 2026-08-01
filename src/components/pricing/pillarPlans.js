@@ -59,6 +59,26 @@ export const PLANS_BY_PILLAR = {
       priceKeyYearly: 'core_yearly',
       popular: true,
     },
+    {
+      id: 'core_custom',
+      name: 'Small business',
+      priceMonthly: 'Custom',
+      priceYearly: 'Custom',
+      priceSuffix: '',
+      noteMonthly: 'Volume pricing for teams',
+      noteYearly: 'Volume pricing for teams',
+      description: 'Tailored plans for small businesses with multiple seats.',
+      features: [
+        'Everything in Suttain core',
+        'Multiple team seats',
+        'Shared workspace and projects',
+        'Bulk product scanning',
+        'Priority email support',
+        'Onboarding assistance',
+      ],
+      cta: 'Contact sales',
+      custom: true,
+    },
   ],
   research: [
     {

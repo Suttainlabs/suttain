@@ -7,7 +7,7 @@ export default function PillarPlanCard({ plan, pillar, billingCycle, onUpgrade, 
   const isBusy = checkoutLoading === activeKey;
   const price = isYearly ? plan.priceYearly : plan.priceMonthly;
   const note = isYearly ? plan.noteYearly : plan.noteMonthly;
-  const disabled = plan.free || owned || isBusy;
+  const disabled = plan.free || owned || isBusy || plan.custom;
 
   return (
     <div className="relative flex flex-col rounded-2xl border bg-white p-6 h-full"
@@ -30,22 +30,32 @@ export default function PillarPlanCard({ plan, pillar, billingCycle, onUpgrade, 
         <p className="text-xs mt-1" style={{ color: '#8A8A85' }}>{note}</p>
       </div>
 
-      <button
-        onClick={() => !disabled && onUpgrade(activeKey)}
-        disabled={disabled}
-        className="w-full h-10 rounded-lg text-sm font-medium transition-opacity"
-        style={disabled
-          ? { background: '#F1F0EC', color: '#8A8A85' }
-          : { background: pillar.accent, color: '#FFFFFF' }}
-      >
-        {owned
-          ? 'Active on your account'
-          : plan.free
-            ? plan.cta
-            : isBusy
-              ? <span className="flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Processing</span>
-              : plan.cta}
-      </button>
+      {plan.custom ? (
+        <a
+          href="mailto:contact@suttain.com?subject=Small%20business%20plan%20inquiry"
+          className="w-full h-10 rounded-lg text-sm font-medium transition-opacity flex items-center justify-center"
+          style={{ background: pillar.accent, color: '#FFFFFF' }}
+        >
+          {plan.cta}
+        </a>
+      ) : (
+        <button
+          onClick={() => !disabled && onUpgrade(activeKey)}
+          disabled={disabled}
+          className="w-full h-10 rounded-lg text-sm font-medium transition-opacity"
+          style={disabled
+            ? { background: '#F1F0EC', color: '#8A8A85' }
+            : { background: pillar.accent, color: '#FFFFFF' }}
+        >
+          {owned
+            ? 'Active on your account'
+            : plan.free
+              ? plan.cta
+              : isBusy
+                ? <span className="flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Processing</span>
+                : plan.cta}
+        </button>
+      )}
 
       <ul className="space-y-2 mt-5">
         {plan.features.map((f, i) => (
