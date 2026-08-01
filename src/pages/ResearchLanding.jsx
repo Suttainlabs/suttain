@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SEOHead from "../components/shared/SEOHead";
 import { Section, SectionHeader } from "../components/shared/Section";
+import AnimatedMolecule from "../components/research/AnimatedMolecule";
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -63,6 +64,9 @@ export default function ResearchLanding() {
 
       {/* Hero */}
       <Section spacing="default" width="default" className="hero-offset">
+        <motion.div {...fade(0)} className="w-full h-[260px] sm:h-[320px] mb-6">
+          <AnimatedMolecule className="w-full h-full" />
+        </motion.div>
         <SectionHeader
           as="h1"
           align="center"
