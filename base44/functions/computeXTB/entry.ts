@@ -1,4 +1,6 @@
 // computeXTB — Suttain Computational Studio: REAL GFN2-xTB semi-empirical quantum chemistry.
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+
 const ROWAN_BASE = "https://api.rowansci.com";
 const PC = "https://pubchem.ncbi.nlm.nih.gov/rest/pug";
 const UA = { "User-Agent": "Suttain/1.0 (computeXTB)", Accept: "*/*" };
@@ -99,6 +101,14 @@ Deno.serve(async (req) => {
   };
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   try {
+    // Authenticate the caller before consuming paid Rowan API credits
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...cors, "Content-Type": "application/json" } });
+    }
+
     const key = Deno.env.get("ROWAN_API_KEY");
     if (!key) throw new Error("ROWAN_API_KEY not configured");
     const body = await req.json().catch(() => ({}));

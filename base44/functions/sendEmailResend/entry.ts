@@ -581,7 +581,11 @@ Deno.serve(async (req) => {
             return Response.json({ success: true, message: 'Safety alert email sent' });
         }
 
-        // Generic email send (requires auth — already checked above)
+        // Generic email send — restricted to admins to prevent open relay abuse
+        if (user?.role !== 'admin') {
+            return Response.json({ error: 'Forbidden: Admin access required for generic email send' }, { status: 403 });
+        }
+
         if (!to || !subject || (!html && !text)) {
             return Response.json({
                 error: 'Missing required fields: to, subject, and either html or text are required'
