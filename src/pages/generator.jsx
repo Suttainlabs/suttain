@@ -16,6 +16,8 @@ import ProductDescriptionStep from "../components/generator/ProductDescriptionSt
 import FormulaOptionsStep from "../components/generator/FormulaOptionsStep";
 import FormulaEditor from "../components/generator/FormulaEditor";
 import SmartStartWizard from "../components/generator/SmartStartWizard";
+import AtelierLayout from "../components/generator/AtelierLayout";
+import LabLayout from "../components/generator/LabLayout";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
 
 export default function Generator() {
@@ -474,11 +476,11 @@ export default function Generator() {
     return <TrialExpiredBanner featureName="Formula Generator" />;
   }
 
-  return (
-    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
+  const PersonaLayout = businessMode ? LabLayout : AtelierLayout;
 
-      <div className="py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+  return (
+    <PersonaLayout>
+      <div>
             {/* Mode Indicator Pill — inline above the stepper */}
             {currentStep > 1 && (
               <div className="flex justify-end mb-3">
@@ -653,8 +655,7 @@ export default function Generator() {
                 onResetGenerator={resetGenerator}
               />
             )}
-        </div>
-      </div>
-    </div>
-  );
-}
+            </div>
+            </PersonaLayout>
+            );
+            }
