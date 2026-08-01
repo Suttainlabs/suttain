@@ -35,17 +35,17 @@ export default function ResearchGuard({ children }) {
           <Lock className="w-6 h-6" style={{ color: '#534AB7' }} />
         </div>
         <h1 className="text-2xl font-semibold text-slate-900 mb-2">
-          This tool is part of the Research plan
+          This tool is part of Sustain research
         </h1>
         <p className="text-slate-500 max-w-md mx-auto mb-6">
-          Computational Studio, molecular intelligence, and structural biology require a Suttain Research subscription. Your Core plan covers the consumer safety and formulation tools.
+          Your Research free plan includes molecule analysis, PubChem and ChEMBL lookups, and 3 simulations per month. Computational Studio, structural biology, chemical comparison, and DFT/MD runs require the Sustain research plan.
         </p>
         <Link
           to="/Pricing"
           className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors hover:opacity-90"
           style={{ background: '#534AB7' }}
         >
-          Upgrade to Research <ArrowRight className="w-3.5 h-3.5" />
+          Get research <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>
     </div>

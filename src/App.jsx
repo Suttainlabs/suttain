@@ -178,7 +178,10 @@ const AuthenticatedApp = () => {
           'ResearchPortal', 'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
           'SimulationEngine', 'ChemicalLibrary', 'StructuralBiology'
           ].map(path => {
-          const RESEARCH_PATHS = ['MolecularIntelligence','MoleculeExplorer','MoleculeAnalysis','ChemicalDashboard','InventoryDashboard','ResearchPortal','ResearchDashboard','ChemicalComparison','SimulationEngine','ChemicalLibrary','StructuralBiology'];
+          // Only premium Research features are hard-locked. Free-tier Research
+          // (molecule analysis, explorer, intelligence, portal + dashboard) stays
+          // open to all authenticated users per the "Research free" plan.
+          const RESEARCH_PATHS = ['ChemicalDashboard','InventoryDashboard','ChemicalComparison','SimulationEngine','ChemicalLibrary','StructuralBiology'];
           const isResearch = RESEARCH_PATHS.includes(path);
           const Page = Pages[path];
           if (!Page) {
