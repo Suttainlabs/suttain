@@ -59,8 +59,8 @@ const TOOLS = [
     },
     handler: async ({ input, inputType }) => {
       const isSmiles = inputType === 'smiles';
-      const payload = isSmiles ? { smiles: input.trim() } : { name: input.trim() };
-      const res = d(await base44.functions.invoke('hazardPrediction', payload));
+      const payload = isSmiles ? { smiles: input.trim(), mode: 'balanced' } : { query: input.trim(), mode: 'balanced' };
+      const res = d(await base44.functions.invoke('hazardClassifier', payload));
       if (res.error) throw new Error(res.error);
       const pred = res.prediction || {};
       const confidence = pred.confidence ? Math.round(parseFloat(pred.confidence)) : null;

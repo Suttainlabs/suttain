@@ -1,21 +1,20 @@
 import { base44 } from '@/api/base44Client';
 
 /**
- * Calls the Suttain Hazard Prediction Engine to get a calibrated, source-traceable
- * hazard assessment for a chemical compound.
+ * Calls the real trained `hazardClassifier` (random-forest + isotonic calibration)
+ * to get a calibrated hazard verdict for a chemical compound.
  *
  * @param {string} smiles - SMILES notation of the compound
  * @param {string} name - Compound name (alternative to SMILES)
- * @param {object} options - { include_internals: boolean }
- * @returns {object|null} Prediction result or null on error
+ * @param {object} options - { mode: 'balanced' | 'safety' }
+ * @returns {object|null} Classifier result or null on error
  */
 export async function getHazardScore(smiles, name, options = {}) {
   try {
-    const response = await base44.functions.invoke('hazardPrediction', {
-      smiles,
-      name,
-      include_internals: options.include_internals || false,
-    });
+    const mode = options.mode === 'safety' ? 'safety' : 'balanced';
+    const isSmiles = !!smiles && !name;
+    const body = isSmiles ? { smiles, mode } : { query: (name || smiles || '').trim(), mode };
+    const response = await base44.functions.invoke('hazardClassifier', body);
     const data = response?.data !== undefined ? response.data : response;
     return data;
   } catch (error) {
