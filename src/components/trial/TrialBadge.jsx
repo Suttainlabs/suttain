@@ -7,10 +7,19 @@ export default function TrialBadge({ trialStatus }) {
   if (!trialStatus || trialStatus.plan === 'admin') return null;
 
   if (trialStatus.isPro) {
+    // Purple badge for Research subscribers, green badge for Core subscribers.
+    if (trialStatus.hasResearchAccess && !trialStatus.hasCoreAccess) {
+      return (
+        <div className="flex items-center gap-1.5 bg-violet-50 border border-violet-300 rounded-lg px-3 py-1.5">
+          <Crown className="w-4 h-4 text-violet-600" />
+          <span className="text-violet-800 font-semibold text-sm">Research</span>
+        </div>
+      );
+    }
     return (
-      <div className="flex items-center gap-1.5 bg-gradient-to-r from-violet-100 to-purple-100 border border-violet-300 rounded-lg px-3 py-1.5">
-        <Crown className="w-4 h-4 text-violet-600" />
-        <span className="text-violet-800 font-semibold text-sm capitalize">Pro</span>
+      <div className="flex items-center gap-1.5 bg-teal-50 border border-teal-300 rounded-lg px-3 py-1.5">
+        <Crown className="w-4 h-4 text-teal-600" />
+        <span className="text-teal-800 font-semibold text-sm">Core</span>
       </div>
     );
   }

@@ -109,13 +109,13 @@ export default function StructuralBiology() {
     setSearchCount(getDailySearchCount());
   }, []);
 
-  const tier = useMemo(() => {
-    if (!user) return 'free';
-    if (user.role === 'admin' || user.admin_granted_access) return 'enterprise';
-    return user.subscription_plan || 'free';
+  // Research tools require a paid Research pillar subscription (product_access).
+  // Core-only subscribers are locked out of the Structural Biology suite.
+  const isPro = useMemo(() => {
+    if (!user) return false;
+    if (user.role === 'admin' || user.admin_granted_access) return true;
+    return (user.product_access || []).includes('research');
   }, [user]);
-
-  const isPro = tier === 'pro' || tier === 'enterprise' || tier === 'admin';
 
   const handleToolSelect = (toolId) => {
     const tool = TOOLS.find(t => t.id === toolId);
