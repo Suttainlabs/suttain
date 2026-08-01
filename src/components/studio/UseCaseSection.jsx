@@ -30,7 +30,7 @@ export default function UseCaseSection({ activeTab, onTabChange }) {
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Left: visual */}
-          <div className="md:w-2/5 bg-gradient-to-br from-slate-50 to-[#EDF7F2] flex items-center justify-center p-8 min-h-[280px]">
+          <div className="md:w-2/5 bg-gradient-to-br from-slate-50 to-[#F7F6F2] flex items-center justify-center p-8 min-h-[280px]">
             <img src={useCase.image} alt={useCase.label} className="w-full max-w-sm rounded-xl" />
           </div>
           {/* Right: content */}

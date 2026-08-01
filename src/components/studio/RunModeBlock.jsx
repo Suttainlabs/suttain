@@ -7,7 +7,7 @@ export default function RunModeBlock({ title, description, image, tier, isRevers
     <div className="grid md:grid-cols-2 gap-6 items-center">
       {/* Image side */}
       <div className={isReversed ? 'md:order-2' : 'md:order-1'}>
-        <div className="bg-gradient-to-br from-slate-50 to-[#EDF7F2] border border-slate-200 rounded-2xl p-4 overflow-hidden">
+        <div className="bg-gradient-to-br from-slate-50 to-[#F7F6F2] border border-slate-200 rounded-2xl p-4 overflow-hidden">
           <img src={image} alt={title} className="w-full rounded-xl" />
         </div>
       </div>

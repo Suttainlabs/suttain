@@ -129,7 +129,7 @@ export default function ResearchDashboard() {
 
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-[#EDF7F2] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F7F6F2] flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-[#6B3FA0] rounded-full animate-spin" />
       </div>
     );
@@ -137,7 +137,7 @@ export default function ResearchDashboard() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#EDF7F2] flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-[#F7F6F2] flex items-center justify-center px-4 py-12">
         <div className="max-w-2xl mx-auto text-center bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
           <div className="w-16 h-16 bg-gradient-to-br from-[#6B3FA0] to-[#8B5CF6] rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Lock className="w-8 h-8 text-white" />
