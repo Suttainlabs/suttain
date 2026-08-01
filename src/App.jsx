@@ -59,6 +59,7 @@ const ComputationalStudioProteins = lazy(() => import('./pages/ComputationalStud
 const ComputationalStudioSmallMolecules = lazy(() => import('./pages/ComputationalStudioSmallMolecules'));
 const ComputationalStudioMaterials = lazy(() => import('./pages/ComputationalStudioMaterials'));
 const ComputationalStudioHazardSafety = lazy(() => import('./pages/ComputationalStudioHazardSafety'));
+const HazardEngine = lazy(() => import('./pages/HazardEngine'));
 const ComputationalStudioJobs = lazy(() => import('./pages/ComputationalStudioJobs'));
 const ComputationalStudioSimulations = lazy(() => import('./pages/ComputationalStudioSimulations'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
@@ -211,6 +212,7 @@ const AuthenticatedApp = () => {
         <Route path="/ComputationalStudio/SmallMolecules" element={<LayoutWrapper currentPageName="ComputationalStudioSmallMolecules"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioSmallMolecules /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Materials" element={<LayoutWrapper currentPageName="ComputationalStudioMaterials"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioMaterials /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/HazardSafety" element={<LayoutWrapper currentPageName="ComputationalStudioHazardSafety"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioHazardSafety /></PageTransition></Suspense></LayoutWrapper>} />
+        <Route path="/HazardEngine" element={<LayoutWrapper currentPageName="HazardEngine"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><HazardEngine /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Jobs" element={<LayoutWrapper currentPageName="ComputationalStudioJobs"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ComputationalStudioJobs /></PageTransition></Suspense></LayoutWrapper>} />
       </Route>
       <Route path="/BatchSimulation" element={<LayoutWrapper currentPageName="BatchSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><BatchSimulation /></PageTransition></Suspense></LayoutWrapper>} />
