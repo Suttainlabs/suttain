@@ -243,7 +243,7 @@ export default function LandingHub() {
       <Section spacing="default" width="default" background="muted" className="border-y border-slate-100">
         <motion.div {...fadeIn()}>
           <SectionHeader
-            eyebrow={<a href="https://suttain.com/ResearchPortal" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-[#6B3FA0] hover:underline inline-flex items-center gap-1">research.suttain.com <ArrowRight className="w-3 h-3" /></a>}
+            eyebrow={<Link to={createPageUrl("ResearchPortal")} className="text-xs font-bold uppercase tracking-widest text-[#6B3FA0] hover:underline inline-flex items-center gap-1">research.suttain.com <ArrowRight className="w-3 h-3" /></Link>}
             headingClassName="text-2xl sm:text-4xl font-bold text-slate-900"
             heading="Professional-grade molecular intelligence"
             subtextClassName="text-slate-500 text-sm sm:text-lg"
