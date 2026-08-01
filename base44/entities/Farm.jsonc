@@ -1,0 +1,62 @@
+{
+  "name": "Farm",
+  "type": "object",
+  "properties": {
+    "farmer_id": {
+      "type": "string",
+      "description": "Reference to Farmer entity"
+    },
+    "farmer_name": {
+      "type": "string",
+      "description": "Denormalized farmer name for display"
+    },
+    "farm_name": {
+      "type": "string",
+      "description": "Optional farm name or identifier"
+    },
+    "size_acres": {
+      "type": "number",
+      "description": "Farm size in acres"
+    },
+    "crops": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Crops grown on this farm"
+    },
+    "primary_crop": {
+      "type": "string",
+      "description": "Main crop"
+    },
+    "soil_type": {
+      "type": "string",
+      "enum": [
+        "loam",
+        "clay",
+        "sandy",
+        "silty",
+        "peat",
+        "chalk",
+        "unknown"
+      ],
+      "default": "unknown",
+      "description": "Soil type"
+    }
+  },
+  "required": [
+    "farmer_id"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
