@@ -308,6 +308,70 @@ const TOOLS = [
     ),
   },
   {
+    id: 'xtb_run',
+    label: 'GFN2-xTB Real Quantum Calculation',
+    description: 'Run a real GFN2-xTB optimize and energy job on a remote xTB engine. Returns the optimized 3D geometry, total energy, HOMO-LUMO gap, and dipole.',
+    source: 'Rowan cloud xTB engine', sourceType: 'external', engine: 'GFN2-xTB',
+    validate: ({ input, inputType }) => {
+      if (!input || input.trim().length < 1) return 'Enter a compound name or SMILES to run the calculation.';
+      if (inputType && !['name', 'smiles', 'file'].includes(inputType)) return 'xTB calculation accepts a compound name or SMILES. Use PubChem lookup for CID or CAS.';
+      return null;
+    },
+    handler: async ({ input, inputType }) => {
+      const payload = inputType === 'smiles' ? { smiles: input.trim() } : { query: input.trim() };
+      const res = d(await base44.functions.invoke('computeXTB', payload));
+      if (res.error) throw new Error(res.error);
+      const r = res.result || {};
+      const atoms = (r.optimized_geometry || []).map(a => ({ element: a.element, position: a.position }));
+      return {
+        source: 'Rowan cloud xTB engine', sourceType: 'external', engine: 'GFN2-xTB',
+        confidence: null,
+        label: `Real GFN2-xTB optimization for ${res.query || input.trim()}`,
+        atoms,
+        data: [
+          ['Resolved SMILES', (res.resolved_smiles || 'N/A').slice(0, 50)],
+          ['Method', res.method || 'GFN2-xTB'],
+          ['Mode', res.mode || 'rapid'],
+          ['Atoms optimized', r.n_atoms ?? 'N/A'],
+          ['Total energy', r.total_energy_hartree != null ? `${r.total_energy_hartree.toFixed(6)} Eh` : 'N/A'],
+          ['Total energy', r.total_energy_kcal_mol != null ? `${r.total_energy_kcal_mol} kcal/mol` : 'N/A'],
+          ['HOMO-LUMO gap', r.homo_lumo_gap != null ? `${Number(r.homo_lumo_gap).toFixed(4)} Eh` : 'N/A'],
+          ['Dipole', r.dipole != null ? `${Number(Array.isArray(r.dipole) ? r.dipole[0] : r.dipole).toFixed(3)} D` : 'N/A'],
+          ['Compute location', 'Cloud (server-side xTB engine)'],
+          ['Elapsed', res.provenance?.elapsed_seconds != null ? `${res.provenance.elapsed_seconds} s` : 'N/A'],
+          ['Credits charged', res.provenance?.credits_charged ?? 'N/A'],
+        ],
+        honestyNote: res.honesty_note,
+        raw: res,
+      };
+    },
+    renderResult: (result) => (
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+        <div className="grid md:grid-cols-2">
+          <div className="border-b md:border-b-0 md:border-r border-slate-200" style={{ minHeight: 350 }}>
+            {result.atoms && result.atoms.length > 0
+              ? <Studio3DViewer atoms={result.atoms} height={350} />
+              : <div className="flex items-center justify-center h-[350px] text-sm text-slate-400">Optimized geometry unavailable</div>}
+          </div>
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-3">
+              <SourcedBadge />
+              <TrustLabel source={result.source} type={result.sourceType} />
+            </div>
+            <p className="text-sm font-bold text-slate-800 mb-1">{result.label}</p>
+            <p className="text-xs text-slate-500 mb-3">Optimized geometry rendered from the real xTB output.</p>
+            <DataTable data={result.data} />
+            {result.honestyNote && (
+              <div className="mt-4 bg-violet-50 border border-violet-200 rounded-lg p-3">
+                <p className="text-xs text-violet-700">{result.honestyNote}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
     id: 'comparison',
     label: 'Side-by-side Compound Comparison',
     description: 'Compare two compounds from PubChem with property differences highlighted',
@@ -441,7 +505,7 @@ export default function ComputationalStudioSmallMolecules() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Small Molecules</h1>
-              <p className="text-sm text-slate-500">PubChem lookup, molecular properties, xTB/PM7 input file generation, and compound comparison</p>
+              <p className="text-sm text-slate-500">PubChem lookup, molecular properties, real GFN2-xTB quantum calculation, xTB/PM7 input files, and compound comparison</p>
             </div>
           </div>
           <SourcedBadge />
