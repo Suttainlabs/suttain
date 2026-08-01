@@ -237,7 +237,7 @@ export default function ChemicalComparison() {
   const env = (c) => c?.environmental_data || {};
 
   return (
-    <div className="min-h-screen bg-[#EDF7F2] text-slate-800 flex flex-col">
+    <div className="min-h-screen bg-[#F7F6F2] text-slate-800 flex flex-col">
       {/* Sub-header */}
       <div className="border-b border-slate-200 bg-white/80 sticky top-[68px] z-20">
         <div className="max-w-full mx-auto px-4 sm:px-6 h-10 flex items-center gap-3">

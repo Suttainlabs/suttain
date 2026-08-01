@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Microscope, Atom, Boxes, ShieldAlert, Briefcase, ChevronRight, FlaskConical, Cpu } from 'lucide-react';
-import MolecularBackground from '@/components/shared/MolecularBackground';
 
 const STUDIO_TABS = [
   { path: '/ComputationalStudio', label: 'Hub', icon: Home },
@@ -18,8 +17,7 @@ export default function StudioLayout({ children }) {
   const currentTab = STUDIO_TABS.find(t => t.path === location.pathname);
 
   return (
-    <div className="min-h-screen bg-[#EDF7F2] relative">
-      <MolecularBackground className="fixed inset-0 z-0" opacity={0.035} />
+    <div className="min-h-screen bg-[#F7F6F2] relative">
       <div className="relative z-10">
         {/* Sub-navigation */}
         <div className="sticky top-14 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200">
