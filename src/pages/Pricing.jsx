@@ -82,7 +82,7 @@ export default function Pricing() {
         <div className="text-center mb-8">
           <h1>Pricing</h1>
           <p className="mt-2" style={{ color: '#5F5F5B' }}>
-            Three product lines, priced separately. Start free and upgrade only what you need.
+            Two product lines, priced separately. Start free and upgrade only what you need.
           </p>
         </div>
 
