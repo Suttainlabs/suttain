@@ -9,8 +9,6 @@ import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
 import { SourcedBadge, TrustLabel, downloadTextFile } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
-import { EngineInputPanel } from '@/components/studio/SmallMoleculePanels';
-import MaterialsSearchPanel from '@/components/studio/MaterialsSearchPanel';
 
 const INPUT_TYPES = [
   { value: 'formula', label: 'Chemical Formula', placeholder: 'e.g. Fe2O3 or Si' },
@@ -401,18 +399,6 @@ export default function ComputationalStudioMaterials() {
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter formula' }} isPro={isPro} />}
-
-        <div className="border-t border-slate-200 pt-6">
-          <h2 className="text-lg font-bold text-slate-900 mb-1">Materials Structure Search</h2>
-          <p className="text-sm text-slate-500 mb-4">Search crystallographic databases for crystal structures with CIF downloads and Materials Project properties.</p>
-          <MaterialsSearchPanel />
-        </div>
-
-        <div className="border-t border-slate-200 pt-6">
-          <h2 className="text-lg font-bold text-slate-900 mb-1">Engine Input Generator</h2>
-          <p className="text-sm text-slate-500 mb-4">Generate ready-to-run input files for external HPC engines. Full transparency: these run on your infrastructure, not in the browser.</p>
-          <EngineInputPanel />
-        </div>
       </div>
     </StudioLayout>
   );

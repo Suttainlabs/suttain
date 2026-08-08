@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import usePullToRefresh from '../../hooks/usePullToRefresh';
+import QuickResearchTools from './QuickResearchTools';
 
 function timeAgo(dateStr) {
   if (!dateStr) return '';
@@ -194,6 +195,9 @@ export default function ProfilePage() {
             );
           })}
         </div>
+
+        {/* ── Quick Research Tools (moved from Computational Studio) ── */}
+        <QuickResearchTools />
 
         {/* ── Plan Card ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

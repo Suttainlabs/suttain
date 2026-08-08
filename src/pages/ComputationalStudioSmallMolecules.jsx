@@ -9,7 +9,6 @@ import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
 import { SourcedBadge, TrustLabel, downloadTextFile, StudioPageHeader, StudioSectionHeading } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
-import { DescriptorsPanel, ComparePanel, PubChemLookupPanel, ChEMBLLookupPanel } from '@/components/studio/SmallMoleculePanels';
 import XTBQuantumPanel from '@/components/studio/XTBQuantumPanel';
 
 const INPUT_TYPES = [
@@ -508,16 +507,6 @@ export default function ComputationalStudioSmallMolecules() {
         <div className="border-t border-slate-200 pt-6 space-y-4">
           <StudioSectionHeading title="Quantum Geometry and Energy" subtitle="Run a real GFN2-xTB semi-empirical optimization on a cloud engine. The browser is the interface; heavy quantum compute runs server-side." />
           <XTBQuantumPanel />
-        </div>
-
-        <div className="border-t border-slate-200 pt-6 space-y-4">
-          <StudioSectionHeading title="Direct Lookup Tools" subtitle="Query live databases with full source transparency. No black box." />
-          <div className="grid md:grid-cols-2 gap-4">
-            <DescriptorsPanel />
-            <ComparePanel />
-            <PubChemLookupPanel />
-            <ChEMBLLookupPanel />
-          </div>
         </div>
       </div>
     </StudioLayout>
