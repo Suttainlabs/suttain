@@ -7,7 +7,6 @@ import RunModeTabs from '@/components/studio/RunModeTabs';
 import SingleRunPanel from '@/components/studio/SingleRunPanel';
 import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
-import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
 import { SourcedBadge, TrustLabel, downloadTextFile } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
 
@@ -244,7 +243,6 @@ export default function ComputationalStudioHazardSafety() {
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter SMILES or compound name' }} isPro={isPro} />}
-        <ApiCodeBlock code={API_CODE} filename="hazard_prediction.py" title="Use via API" description="Run hazard predictions programmatically" />
       </div>
     </StudioLayout>
   );

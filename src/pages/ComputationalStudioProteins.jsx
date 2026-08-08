@@ -7,12 +7,9 @@ import RunModeTabs from '@/components/studio/RunModeTabs';
 import SingleRunPanel from '@/components/studio/SingleRunPanel';
 import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
-import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
-import HazardEngineApiReference from '@/components/studio/HazardEngineApiReference';
-import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend, StudioPageHeader, StudioSectionHeading } from '@/components/studio/StudioShared';
+import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend, StudioPageHeader } from '@/components/studio/StudioShared';
 import { computeProteinProperties, parsePDBAtoms } from '@/components/studio/proteinUtils';
 import AuthContext from '@/components/auth/AuthContext';
-import { RCSBLookupPanel, AlphaFoldLookupPanel, StructurePrepPanel, ProteinIntelligencePanel } from '@/components/studio/ProteinPanels';
 
 const INPUT_TYPES = [
   { value: 'pdb_id', label: 'PDB ID', placeholder: 'e.g. 1CRN' },
@@ -372,26 +369,6 @@ export default function ComputationalStudioProteins() {
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter PDB ID or UniProt ID' }} isPro={isPro} />}
-
-        <div className="border-t border-slate-200 pt-6 space-y-4">
-          <StudioSectionHeading title="Structure Lookup and Prep Tools" subtitle="Query RCSB PDB and AlphaFold DB, run structure preparation utilities, and analyze protein-chemical interactions. Full source transparency." />
-          <div className="grid md:grid-cols-2 gap-4">
-            <RCSBLookupPanel />
-            <AlphaFoldLookupPanel />
-          </div>
-          <div className="mt-4">
-            <StructurePrepPanel />
-          </div>
-          <div className="mt-4">
-            <ProteinIntelligencePanel />
-          </div>
-        </div>
-
-        <ApiCodeBlock code={API_CODE} filename="protein_lookup.py" title="Use via API" description="Query protein structures programmatically" />
-
-        <div className="border-t border-slate-200 pt-6">
-          <HazardEngineApiReference />
-        </div>
       </div>
     </StudioLayout>
   );

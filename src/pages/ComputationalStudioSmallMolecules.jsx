@@ -7,7 +7,6 @@ import RunModeTabs from '@/components/studio/RunModeTabs';
 import SingleRunPanel from '@/components/studio/SingleRunPanel';
 import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
-import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
 import { SourcedBadge, TrustLabel, downloadTextFile, StudioPageHeader, StudioSectionHeading } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
 import { DescriptorsPanel, ComparePanel, PubChemLookupPanel, ChEMBLLookupPanel } from '@/components/studio/SmallMoleculePanels';
@@ -520,8 +519,6 @@ export default function ComputationalStudioSmallMolecules() {
             <ChEMBLLookupPanel />
           </div>
         </div>
-
-        <ApiCodeBlock code={API_CODE} filename="compound_lookup.py" title="Use via API" description="Query small molecules programmatically" />
       </div>
     </StudioLayout>
   );

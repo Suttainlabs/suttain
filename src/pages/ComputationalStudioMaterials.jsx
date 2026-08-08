@@ -7,7 +7,6 @@ import RunModeTabs from '@/components/studio/RunModeTabs';
 import SingleRunPanel from '@/components/studio/SingleRunPanel';
 import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
-import ApiCodeBlock from '@/components/studio/ApiCodeBlock';
 import { SourcedBadge, TrustLabel, downloadTextFile } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
 import { EngineInputPanel } from '@/components/studio/SmallMoleculePanels';
@@ -414,8 +413,6 @@ export default function ComputationalStudioMaterials() {
           <p className="text-sm text-slate-500 mb-4">Generate ready-to-run input files for external HPC engines. Full transparency: these run on your infrastructure, not in the browser.</p>
           <EngineInputPanel />
         </div>
-
-        <ApiCodeBlock code={API_CODE} filename="materials_query.py" title="Use via API" description="Query materials programmatically" />
       </div>
     </StudioLayout>
   );
