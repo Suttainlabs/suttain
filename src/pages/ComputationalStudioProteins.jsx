@@ -55,6 +55,7 @@ const TOOLS = [
     label: 'RCSB PDB Explorer',
     description: 'Look up and explore structures from the RCSB Protein Data Bank with real 3D visualization',
     source: 'RCSB PDB', sourceType: 'database', category: 'Structure Lookup',
+    requiredInput: { type: 'pdb_id', hint: 'PDB ID — a 4-character code from the Protein Data Bank (e.g. 1CRN, 4HHB)' },
     validate: ({ input, inputType }) => {
       if (inputType !== 'pdb_id') return null;
       const id = input.trim().toUpperCase();
@@ -118,6 +119,7 @@ const TOOLS = [
     label: 'AlphaFold Structure Prediction',
     description: 'Fetch AlphaFold predicted structure from EBI by UniProt accession with per-residue confidence',
     source: 'AlphaFold EBI', sourceType: 'external', engine: 'AlphaFold', category: 'Structure Lookup',
+    requiredInput: { type: 'uniprot', hint: 'UniProt accession (e.g. P69905, P00533) — fetches the AlphaFold predicted model' },
     validate: ({ input, inputType }) => {
       if (inputType !== 'uniprot') return null;
       const id = input.trim().toUpperCase();
@@ -202,6 +204,7 @@ const TOOLS = [
     label: 'Protein-Ligand Binding Analysis',
     description: 'Analyze chemical binding interactions with 10 toxicology target proteins using AlphaFold structures',
     source: 'AlphaFold + LLM analysis', sourceType: 'external', engine: 'AlphaFold', category: 'Analysis',
+    requiredInput: { type: 'chemical', hint: 'Chemical name or SMILES (e.g. bisphenol A, CCO) to screen against 10 toxicology target proteins' },
     validate: ({ input }) => {
       if (!input || input.trim().length < 2) return 'Enter a chemical name or SMILES to analyze binding.';
       return null;
@@ -268,6 +271,7 @@ const TOOLS = [
     label: 'Developability Properties',
     description: 'Compute real physicochemical properties from an amino acid sequence (in-browser, no API needed)',
     source: 'Computed in-browser', sourceType: 'computed', category: 'Analysis',
+    requiredInput: { type: 'sequence', hint: 'Protein sequence in single-letter amino acid codes (e.g. MKTAYIAKQRQISFVKSHF...)' },
     validate: ({ input }) => {
       if (!input || input.trim().length < 5) return 'Enter a protein sequence of at least 5 amino acids.';
       const seq = input.trim().toUpperCase();

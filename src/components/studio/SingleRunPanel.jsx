@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Play, Loader2, Download, FileUp, AlertCircle, RotateCcw } from 'lucide-react';
+import { Play, Loader2, Download, FileUp, AlertCircle, RotateCcw, Info } from 'lucide-react';
 import Studio3DViewer from './Studio3DViewer';
 import ToolCombobox from './ToolCombobox';
 import { SourcedBadge, TrustLabel, ExecutionTag, downloadTextFile } from './StudioShared';
@@ -110,9 +110,27 @@ export default function SingleRunPanel({ config }) {
           </div>
           <div>
             <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 block">Tool</label>
-            <ToolCombobox tools={tools} value={selectedTool} onChange={(id) => { setSelectedTool(id); setResult(null); setError(null); setValidationError(null); }} />
+            <ToolCombobox tools={tools} value={selectedTool} onChange={(id) => {
+              const tool = tools.find(t => t.id === id);
+              setSelectedTool(id);
+              setResult(null); setError(null); setValidationError(null);
+              if (tool?.requiredInput?.type) {
+                setInputType(tool.requiredInput.type);
+                setInputValue(''); setFileName(''); setFileContent('');
+              }
+            }} />
           </div>
         </div>
+
+        {currentTool?.requiredInput?.hint && (
+          <div className="mt-3 flex items-start gap-2 bg-[#E1F5EE] border border-[#0F6E56]/20 rounded-lg px-3 py-2.5">
+            <Info className="w-3.5 h-3.5 flex-shrink-0 text-[#0F6E56] mt-0.5" />
+            <div className="text-xs leading-snug">
+              <span className="font-semibold text-[#0F6E56]">Required input: </span>
+              <span className="text-slate-700">{currentTool.requiredInput.hint}</span>
+            </div>
+          </div>
+        )}
 
         <div className="mt-4">
           <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 block">Input</label>
