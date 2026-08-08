@@ -113,6 +113,7 @@ const TOOLS = [
     id: 'lookup',
     label: 'PubChem and ChEMBL Lookup',
     description: 'Search PubChem for compound identity, synonyms, and structural data',
+    requiredInput: { type: 'name', hint: 'Compound name, SMILES, PubChem CID, or CAS number (e.g. aspirin, CCO, 702, 64-17-5)' },
     source: 'PubChem', sourceType: 'database',
     validate: ({ input }) => {
       if (!input || input.trim().length < 1) return 'Enter a compound name, SMILES, or CID.';
@@ -172,6 +173,7 @@ const TOOLS = [
     id: 'properties',
     label: 'Molecular Properties and Descriptors',
     description: 'Compute physicochemical properties and drug-likeness descriptors from PubChem',
+    requiredInput: { type: 'name', hint: 'Compound name, SMILES, PubChem CID, or CAS number (e.g. aspirin, CCO, 702, 64-17-5)' },
     source: 'PubChem', sourceType: 'database',
     validate: ({ input }) => {
       if (!input || input.trim().length < 1) return 'Enter a compound name, SMILES, or CID.';
@@ -229,6 +231,7 @@ const TOOLS = [
     id: 'gfn2xtb',
     label: 'GFN2-xTB and PM7 Input File Generation',
     description: 'Generate ready-to-run xTB and MOPAC PM7 input files from PubChem 3D structures for external execution',
+    requiredInput: { type: 'name', hint: 'Compound name or SMILES (e.g. aspirin, CCO) — a 3D structure is fetched from PubChem to build the input files' },
     source: 'External input files (xTB, MOPAC)', sourceType: 'external', engine: 'GFN2-xTB',
     validate: ({ input }) => {
       if (!input || input.trim().length < 1) return 'Enter a compound name or SMILES to generate input files.';
@@ -310,6 +313,7 @@ const TOOLS = [
     id: 'xtb_run',
     label: 'GFN2-xTB Real Quantum Calculation',
     description: 'Run a real GFN2-xTB optimize and energy job on a remote xTB engine. Returns the optimized 3D geometry, total energy, HOMO-LUMO gap, and dipole.',
+    requiredInput: { type: 'name', hint: 'Compound name or SMILES (e.g. aspirin, CCO) — the calculation runs on a remote xTB engine' },
     source: 'Rowan cloud xTB engine', sourceType: 'external', engine: 'GFN2-xTB',
     validate: ({ input, inputType }) => {
       if (!input || input.trim().length < 1) return 'Enter a compound name or SMILES to run the calculation.';
@@ -374,6 +378,7 @@ const TOOLS = [
     id: 'comparison',
     label: 'Side-by-side Compound Comparison',
     description: 'Compare two compounds from PubChem with property differences highlighted',
+    requiredInput: { type: 'name', hint: 'Two compounds, one per line (e.g. aspirin on the first line, ibuprofen on the second)' },
     source: 'PubChem', sourceType: 'database',
     validate: ({ input }) => {
       const lines = input.split('\n').map(s => s.trim()).filter(Boolean);
