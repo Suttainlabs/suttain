@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Eye, RefreshCw, Download, Briefcase, Loader2, FileOutput, Cpu } from 'lucide-react';
+import { Eye, RefreshCw, Download, ListChecks, Loader2, FileOutput, Zap } from 'lucide-react';
 import { ExecutionTag } from './StudioShared';
 
 export default function JobPanel() {
@@ -61,7 +61,7 @@ export default function JobPanel() {
         </div>
       ) : jobs.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center">
-          <Briefcase className="w-8 h-8 text-slate-300 mx-auto mb-3" />
+          <ListChecks className="w-8 h-8 text-slate-300 mx-auto mb-3" />
           <p className="text-sm font-semibold text-slate-600">No jobs yet</p>
           <p className="text-xs text-slate-400 mt-1">Submit a single run, batch workflow, or pipeline to see results here.</p>
         </div>
@@ -109,7 +109,7 @@ export default function JobPanel() {
                       <tr className="bg-slate-50">
                         <td colSpan={6} className="px-4 py-4">
                           <div className="flex items-center gap-2 mb-2">
-                            {isExternal ? <FileOutput className="w-3.5 h-3.5 text-amber-600" /> : <Cpu className="w-3.5 h-3.5 text-teal-600" />}
+                            {isExternal ? <FileOutput className="w-3.5 h-3.5 text-amber-600" /> : <Zap className="w-3.5 h-3.5 text-teal-600" />}
                             <ExecutionTag type={isExternal ? 'external' : 'computed'} />
                             <span className="text-xs text-slate-500">Engine: {job.engine || 'N/A'}</span>
                           </div>
@@ -128,7 +128,7 @@ export default function JobPanel() {
       )}
 
       <div className="flex items-center gap-2 text-xs text-slate-400">
-        <Cpu className="w-3.5 h-3.5" />
+        <Zap className="w-3.5 h-3.5" />
         <span>In-browser jobs compute directly in your browser. External input file jobs generate downloadable files for execution on your own infrastructure.</span>
       </div>
     </div>

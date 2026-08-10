@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Atom, Download, ArrowLeftRight } from 'lucide-react';
+import { Circle, Download, ArrowLeftRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import StudioLayout from '@/components/studio/StudioLayout';
 import Studio3DViewer from '@/components/studio/Studio3DViewer';
@@ -502,7 +502,7 @@ export default function ComputationalStudioSmallMolecules() {
   return (
     <StudioLayout>
       <div className="space-y-6 py-4">
-        <StudioPageHeader icon={Atom} title="Small Molecules" subtitle="PubChem lookup, molecular properties, real GFN2-xTB quantum calculation, xTB/PM7 input files, and compound comparison" badge={<SourcedBadge />} />
+        <StudioPageHeader icon={Circle} title="Small Molecules" subtitle="PubChem lookup, molecular properties, real GFN2-xTB quantum calculation, xTB/PM7 input files, and compound comparison" badge={<SourcedBadge />} />
         <div className="bg-white border border-slate-200 rounded-xl p-6"><Studio3DViewer mode="molecule" height={300} /></div>
         <RunModeTabs active={activeMode} onChange={setActiveMode} />
         {activeMode === 'single' && <SingleRunPanel config={config} />}

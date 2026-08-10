@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Microscope, Download, ExternalLink } from 'lucide-react';
+import { Hexagon, Download, ExternalLink } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import StudioLayout from '@/components/studio/StudioLayout';
 import Studio3DViewer from '@/components/studio/Studio3DViewer';
@@ -367,7 +367,7 @@ export default function ComputationalStudioProteins() {
   return (
     <StudioLayout>
       <div className="space-y-6 py-4">
-        <StudioPageHeader icon={Microscope} title="Proteins" subtitle="AlphaFold prediction, RCSB PDB exploration, binding analysis, and developability properties" badge={<SourcedBadge />} />
+        <StudioPageHeader icon={Hexagon} title="Proteins" subtitle="AlphaFold prediction, RCSB PDB exploration, binding analysis, and developability properties" badge={<SourcedBadge />} />
         <div className="bg-white border border-slate-200 rounded-xl p-6"><Studio3DViewer mode="protein" height={300} /></div>
         <RunModeTabs active={activeMode} onChange={setActiveMode} />
         {activeMode === 'single' && <SingleRunPanel config={config} />}

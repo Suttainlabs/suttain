@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Boxes, Download } from 'lucide-react';
+import { Layers, Download } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import StudioLayout from '@/components/studio/StudioLayout';
 import Studio3DViewer from '@/components/studio/Studio3DViewer';
@@ -206,7 +206,7 @@ const TOOLS = [
             <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
               <span className="font-mono text-xs font-bold text-slate-700">{file.filename}</span>
               <button onClick={() => downloadTextFile(file.filename, file.content)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg bg-[#0F6E56] hover:bg-[#0d5c47]">
                 <Download className="w-3 h-3" /> Download
               </button>
             </div>
@@ -268,7 +268,7 @@ const TOOLS = [
             <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
               <span className="font-mono text-xs font-bold text-slate-700">{file.filename}</span>
               <button onClick={() => downloadTextFile(file.filename, file.content)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg bg-[#0F6E56] hover:bg-[#0d5c47]">
                 <Download className="w-3 h-3" /> Download
               </button>
             </div>
@@ -330,7 +330,7 @@ const TOOLS = [
             <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
               <span className="font-mono text-xs font-bold text-slate-700">{file.filename}</span>
               <button onClick={() => downloadTextFile(file.filename, file.content)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg bg-[#0F6E56] hover:bg-[#0d5c47]">
                 <Download className="w-3 h-3" /> Download
               </button>
             </div>
@@ -384,11 +384,11 @@ export default function ComputationalStudioMaterials() {
       <div className="space-y-6 py-4">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-              <Boxes className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white border border-slate-200">
+              <Layers className="w-5 h-5 text-[#0F6E56]" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Materials</h1>
+              <h1 className="text-2xl font-semibold text-slate-900">Materials</h1>
               <p className="text-sm text-slate-500">Structure building, materials search, and input file generation for LAMMPS, Quantum ESPRESSO, and GROMACS</p>
             </div>
           </div>

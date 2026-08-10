@@ -108,8 +108,7 @@ export default function BatchPanel({ config, isPro }) {
           <div className="flex items-center gap-3">
             <span className="text-xs text-slate-400">{parseInput().length} rows ready</span>
             <button onClick={handleStart} disabled={parseInput().length === 0 || isRunning}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 text-white rounded-lg text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 text-white rounded-lg text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed bg-[#0F6E56] hover:bg-[#0d5c47]">
               {isRunning ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Running batch</> : <><Play className="w-3.5 h-3.5" /> Run all</>}
             </button>
           </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlaskConical, ChevronDown, AlertCircle } from 'lucide-react';
+import { Gauge, ChevronDown, AlertCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import Studio3DViewer from '@/components/studio/Studio3DViewer';
 import { StudioPanel, StudioButton, StudioInput, SourcedBadge, TrustLabel } from '@/components/studio/StudioShared';
@@ -35,7 +35,7 @@ export default function XTBQuantumPanel() {
   const fmt = (val, decimals) => (val != null ? Number(val).toFixed(decimals) : null);
 
   return (
-    <StudioPanel icon={FlaskConical} iconColor="#534AB7"
+    <StudioPanel icon={Gauge} iconColor="#534AB7"
       title="Quantum Geometry and Energy (GFN2-xTB)"
       subtitle="Real semi-empirical optimization on a cloud xTB engine">
       <div className="space-y-3">

@@ -14,7 +14,7 @@ export default function RunModeTabs({ active, onChange }) {
         <button key={mode.id} onClick={() => onChange(mode.id)}
           className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
             active === mode.id
-              ? 'bg-gradient-to-r from-[#007850] to-[#6B3FA0] text-white'
+              ? 'bg-[#0F6E56] text-white'
               : 'text-slate-600 hover:bg-slate-100'
           }`}>
           <mode.icon className="w-3.5 h-3.5" />

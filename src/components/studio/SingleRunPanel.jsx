@@ -163,8 +163,7 @@ export default function SingleRunPanel({ config }) {
             <TrustLabel source={currentTool.source} type={currentTool.sourceType} />
           </div>
           <button onClick={handleRun} disabled={!canRun || isRunning}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 bg-[#0F6E56] hover:bg-[#0d5c47]">
             {isRunning ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Running</> : <><Play className="w-3.5 h-3.5" /> Run</>}
           </button>
         </div>
@@ -219,7 +218,7 @@ function DefaultResultDisplay({ result, viewerMode, onDownload }) {
               <div className="text-xs text-slate-400 mb-1">Confidence</div>
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{ width: `${result.confidence}%`, background: 'linear-gradient(90deg, #007850, #6B3FA0)' }} />
+                  <div className="h-full rounded-full bg-[#0F6E56]" style={{ width: `${result.confidence}%` }} />
                 </div>
                 <span className="font-mono font-bold text-sm text-slate-700">{result.confidence}%</span>
               </div>

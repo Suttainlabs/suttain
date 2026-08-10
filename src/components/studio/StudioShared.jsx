@@ -1,8 +1,8 @@
 import React from 'react';
-import { Lock, Database, Cpu, FileOutput, Globe, ShieldCheck, Loader2 } from 'lucide-react';
+import { Lock, Database, Zap, FileOutput, Globe, Check, Loader2 } from 'lucide-react';
 
 export function TrustLabel({ source, type = 'database' }) {
-  const icons = { database: Database, computed: Cpu, external: FileOutput, api: Globe };
+  const icons = { database: Database, computed: Zap, external: FileOutput, api: Globe };
   const Icon = icons[type] || Database;
   return (
     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-xs font-mono text-slate-600">
@@ -48,8 +48,8 @@ export function UpgradePrompt({ feature }) {
 
 export function SourcedBadge({ className = '' }) {
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-teal-50 to-violet-50 border border-teal-200 rounded-full text-xs font-semibold text-[#007850] ${className}`}>
-      <ShieldCheck className="w-3 h-3" />
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-slate-200 rounded-full text-xs font-medium text-slate-600 ${className}`}>
+      <Check className="w-3 h-3 text-[#0F6E56]" />
       Sourced and confidence-scored
     </span>
   );
@@ -78,7 +78,7 @@ export function ResultShell({ result, children }) {
             <div className="text-xs text-slate-400 mb-1">Confidence</div>
             <div className="flex items-center gap-2">
               <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${result.confidence}%`, background: 'linear-gradient(90deg, #007850, #6B3FA0)' }} />
+                <div className="h-full rounded-full bg-[#0F6E56]" style={{ width: `${result.confidence}%` }} />
               </div>
               <span className="font-mono font-bold text-sm text-slate-700">{result.confidence}%</span>
             </div>
@@ -129,7 +129,7 @@ export function StudioPanel({ icon: Icon, iconColor = '#0F6E56', title, subtitle
         <div className="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100">
           <div className="flex items-center gap-2.5 min-w-0">
             {Icon && (
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#F8FAFC' }}>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#F7F6F2] border border-slate-200">
                 <Icon className="w-4 h-4" style={{ color: iconColor }} />
               </div>
             )}
@@ -188,8 +188,8 @@ export function StudioPageHeader({ icon: Icon, title, subtitle, badge }) {
   return (
     <div className="flex items-start justify-between gap-4 flex-wrap">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-900">
-          <Icon className="w-5 h-5 text-white" />
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white border border-slate-200">
+          <Icon className="w-5 h-5 text-[#0F6E56]" />
         </div>
         <div>
           <h1 className="text-xl font-semibold text-slate-900">{title}</h1>

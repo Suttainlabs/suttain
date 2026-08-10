@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Cpu, ArrowRight, ExternalLink, Eye, Layers, Atom, Boxes, Microscope } from 'lucide-react';
+import { Gauge, ArrowRight, ExternalLink, Eye, Layers, Circle, LayoutGrid, Hexagon } from 'lucide-react';
 import StudioLayout from '@/components/studio/StudioLayout';
 import { SourcedBadge } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
@@ -23,13 +23,13 @@ export default function ComputationalStudioSimulations() {
       <StudioLayout>
         <div className="flex items-center justify-center py-16 px-4">
           <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border border-violet-100 p-8 text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
-              <Cpu className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-[#534AB7] rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <Gauge className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-slate-900 mb-2">Pro feature</h2>
             <p className="text-slate-600 mb-1">Computational simulations require a <span className="font-semibold text-violet-700">Pro subscription</span>.</p>
             <p className="text-slate-500 text-sm mb-6">Run DFT, MD, drug discovery, protein modeling, materials science and more.</p>
-            <Link to={createPageUrl('Pricing')} className="block w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all text-center">
+            <Link to={createPageUrl('Pricing')} className="block w-full bg-[#534AB7] hover:bg-[#4538a0] text-white font-bold py-3 px-6 rounded-xl transition-all text-center">
               Upgrade to Pro
             </Link>
           </div>
@@ -58,11 +58,11 @@ export default function ComputationalStudioSimulations() {
         {/* Header */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-              <Cpu className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white border border-slate-200">
+              <Gauge className="w-5 h-5 text-[#0F6E56]" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Simulations</h1>
+              <h1 className="text-2xl font-semibold text-slate-900">Simulations</h1>
               <p className="text-sm text-slate-500">AI-powered molecular modeling — DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.</p>
             </div>
           </div>
@@ -72,13 +72,13 @@ export default function ComputationalStudioSimulations() {
         {/* Capability badges */}
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200">
-            <Atom className="w-3 h-3" /> Quantum-powered — IBM Qiskit VQE
+            <Circle className="w-3 h-3" /> Quantum-powered — IBM Qiskit VQE
           </span>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200">
             <Layers className="w-3 h-3" /> Materials Informatics — Materials Project & OPTIMADE
           </span>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-100 text-cyan-700 text-xs font-semibold border border-cyan-200">
-            <Boxes className="w-3 h-3" /> Structure Builder — ASE & 3D Crystal Viewer
+            <LayoutGrid className="w-3 h-3" /> Structure Builder — ASE & 3D Crystal Viewer
           </span>
         </div>
 
@@ -101,8 +101,8 @@ export default function ComputationalStudioSimulations() {
 
         {/* Domain description banner */}
         <div className="bg-white border border-slate-200 rounded-2xl px-6 py-4 flex items-center gap-4 shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-            <Microscope className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center flex-shrink-0">
+            <Hexagon className="w-5 h-5 text-[#534AB7]" />
           </div>
           <div>
             <p className="font-semibold text-slate-900 text-sm">{domain}</p>

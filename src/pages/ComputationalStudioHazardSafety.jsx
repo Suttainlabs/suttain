@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { ShieldAlert, Download } from 'lucide-react';
+import { AlertTriangle, Download } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import StudioLayout from '@/components/studio/StudioLayout';
 import Studio3DViewer from '@/components/studio/Studio3DViewer';
@@ -228,11 +228,11 @@ export default function ComputationalStudioHazardSafety() {
       <div className="space-y-6 py-4">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
-              <ShieldAlert className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white border border-slate-200">
+              <AlertTriangle className="w-5 h-5 text-[#0F6E56]" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Hazard and Safety</h1>
+              <h1 className="text-2xl font-semibold text-slate-900">Hazard and Safety</h1>
               <p className="text-sm text-slate-500">Validated hazard classification with calibrated confidence, hazard categories, and full source citations</p>
             </div>
           </div>
