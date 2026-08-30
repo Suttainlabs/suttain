@@ -9,7 +9,6 @@ import AboutUs from './pages/AboutUs';
 import AdminDashboard from './pages/AdminDashboard';
 import BarcodeScanner from './pages/BarcodeScanner';
 import Blog from './pages/Blog';
-import BookADemo from './pages/BookADemo';
 import Careers from './pages/Careers';
 import ComplianceGuide from './pages/ComplianceGuide';
 import ExternalDatabases from './pages/ExternalDatabases';
@@ -30,7 +29,6 @@ export const PAGES = {
     "AdminDashboard": AdminDashboard,
     "BarcodeScanner": BarcodeScanner,
     "Blog": Blog,
-    "BookADemo": BookADemo,
     "Careers": Careers,
     "ComplianceGuide": ComplianceGuide,
     "ExternalDatabases": ExternalDatabases,
