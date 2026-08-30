@@ -11,7 +11,6 @@ import BarcodeScanner from './pages/BarcodeScanner';
 import Blog from './pages/Blog';
 import Careers from './pages/Careers';
 import ComplianceGuide from './pages/ComplianceGuide';
-import ExternalDatabases from './pages/ExternalDatabases';
 import FAQ from './pages/FAQ';
 import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -31,7 +30,6 @@ export const PAGES = {
     "Blog": Blog,
     "Careers": Careers,
     "ComplianceGuide": ComplianceGuide,
-    "ExternalDatabases": ExternalDatabases,
     "FAQ": FAQ,
     "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,

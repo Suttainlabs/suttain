@@ -816,7 +816,6 @@ export default function Layout({ children, currentPageName }) {
               <h3 className="font-semibold mb-3 text-slate-800 text-sm">Science</h3>
               <ul className="space-y-1.5 text-sm mb-4">
                 <li><Link to={createPageUrl('APIPortal')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">API Docs</Link></li>
-                <li><Link to={createPageUrl('ExternalDatabases')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Publications</Link></li>
               </ul>
               <div className="border-t border-slate-200 pt-3">
                 <p className="text-xs text-slate-500 mb-2">Access the Research API</p>
