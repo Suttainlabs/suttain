@@ -1,0 +1,60 @@
+{
+  "name": "CropYield",
+  "type": "object",
+  "properties": {
+    "farm_id": {
+      "type": "string",
+      "description": "Reference to Farm entity"
+    },
+    "farmer_id": {
+      "type": "string",
+      "description": "Reference to Farmer entity"
+    },
+    "crop": {
+      "type": "string",
+      "description": "Crop name harvested"
+    },
+    "yield_amount": {
+      "type": "number",
+      "description": "Harvested quantity"
+    },
+    "yield_unit": {
+      "type": "string",
+      "enum": [
+        "kg",
+        "tons",
+        "bags",
+        "bushels"
+      ],
+      "default": "kg",
+      "description": "Unit of measurement for the yield"
+    },
+    "harvest_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of harvest"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional notes about the harvest"
+    }
+  },
+  "required": [
+    "farm_id",
+    "crop",
+    "yield_amount",
+    "harvest_date"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

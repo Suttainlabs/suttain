@@ -10,7 +10,6 @@ import BarcodeHistory from './BarcodeHistory';
 import RegulatoryScanner from '../compliance/RegulatoryScanner';
 import { base44 } from '@/api/base44Client';
 import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, QrCode, Globe, Smartphone, ArrowRight, Scan, Zap, Leaf, ShieldCheck, Recycle, FlaskConical, ScanLine, BarChart2 } from 'lucide-react';
-import NutriScanApp from '../nutriscan/NutriScanApp';
 import BulkScanDashboard from './BulkScanDashboard';
 import CompareProducts from './CompareProducts';
 import { Link } from 'react-router-dom';
@@ -34,7 +33,6 @@ const BarcodeHint = ({ barcode }) => {
 
 const MODES = [
     { id: 'quick',    label: 'QuickScan', icon: QrCode },
-    { id: 'nutriscan', label: 'FoodAnalysis', icon: Leaf },
 ];
 
 const QUICK_SUB_MODES = [
@@ -191,9 +189,6 @@ export default function BarcodeScannerPage() {
                 </div>
             </div>
 
-            {/* Non-quick modes */}
-            {mode === 'nutriscan' && <NutriScanApp user={user} embedded />}
-
             {/* Quick / SuttainScan mode */}
             {mode === 'quick' && (
                 <div className="max-w-lg mx-auto px-4">
@@ -332,11 +327,6 @@ export default function BarcodeScannerPage() {
                                                         <Smartphone className="w-4 h-4" />
                                                         Open Full-Screen Mobile Scanner
                                                         <ArrowRight className="w-4 h-4 ml-auto" />
-                                                    </Link>
-
-                                                    <Link to="/MySafetyProfile" className="flex items-center justify-center gap-2 w-full py-2.5 text-sm text-teal-600 hover:text-teal-700 transition-colors font-medium">
-                                                        <ShieldCheck className="w-4 h-4" />
-                                                        My Safety Profile
                                                     </Link>
 
                                                     {history.length > 0 && (
