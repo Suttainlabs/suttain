@@ -2,18 +2,16 @@ import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AuthContext from '../components/auth/AuthContext';
-import SafetyProfileManager from '../components/profile/SafetyProfileManager';
 import NotificationPreferences from '../components/notifications/NotificationPreferences';
 import AccountDeletionSection from '../components/settings/AccountDeletionSection';
 import SubscriptionCard from '../components/profile/SubscriptionCard';
 import BillingHistory from '../components/profile/BillingHistory';
 import {
-  ArrowLeft, CreditCard, ShieldCheck, Bell, Trash2, User, ChevronRight, Crown, Check
+  ArrowLeft, CreditCard, Bell, Trash2, User, ChevronRight, Crown, Check
 } from 'lucide-react';
 
 const TABS = [
   { id: 'billing', label: 'Billing & Subscription', icon: CreditCard },
-  { id: 'safety', label: 'Safety Profiles', icon: ShieldCheck },
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'account', label: 'Account', icon: User },
 ];
@@ -37,7 +35,7 @@ export default function Settings() {
             Back to Dashboard
           </Link>
           <h1 className="text-2xl font-bold text-slate-900">Account Settings</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage your subscription, billing, safety profiles and preferences.</p>
+          <p className="text-slate-500 text-sm mt-1">Manage your subscription, billing, and preferences.</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6">
@@ -95,12 +93,6 @@ export default function Settings() {
                 <SubscriptionCard />
                 <BillingInfo user={user} />
                 <BillingHistory />
-              </div>
-            )}
-            {activeTab === 'safety' && (
-              <div className="space-y-5">
-                <SectionHeader title="Safety Profiles" description="Customize ingredient safety screening based on your health needs." />
-                <SafetyProfileManager />
               </div>
             )}
             {activeTab === 'notifications' && (

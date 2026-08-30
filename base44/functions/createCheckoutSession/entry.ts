@@ -10,8 +10,6 @@ const PRICE_MAP = {
   core_yearly: 'price_1Tz4tdI9tsZ7WvXezqEVGeuU',       // $47.88/year
   research_monthly: 'price_1Tz4tdI9tsZ7WvXeftDZEprF',  // $49.99/month
   research_yearly: 'price_1Tz4tdI9tsZ7WvXetqVuOYzj',   // $479.90/year
-  farm_monthly: 'price_1Tz4tdI9tsZ7WvXeOUt3PmIU',      // $9.99/month
-  farm_yearly: 'price_1Tz4tdI9tsZ7WvXeeJcZwTd3',       // $95.88/year
   // Legacy plans
   starter_monthly: 'price_1Tn2eSI9tsZ7WvXe3JMrHrYf',   // $4.99/month
   starter_yearly: 'price_1Tn2eSI9tsZ7WvXeVksFLuTl',     // $47.88/year
@@ -60,7 +58,7 @@ Deno.serve(async (req) => {
       metadata: {
         base44_app_id: Deno.env.get('BASE44_APP_ID'),
         price_key: priceKey,
-        product_line: ['core', 'research', 'farm'].find((p) => priceKey.startsWith(p)) || '',
+        product_line: ['core', 'research'].find((p) => priceKey.startsWith(p)) || '',
         user_id: userId || '',
         promo_code: promoCode || '',
       },

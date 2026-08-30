@@ -4,7 +4,6 @@ import { queryClientInstance } from '@/lib/query-client'
 import { AnimatePresence } from 'framer-motion'
 import PageTransition from './components/shared/PageTransition'
 import { Suspense, lazy } from 'react'
-const MyAnalytics = lazy(() => import('./pages/MyAnalytics'));
 const ComputationalSimulation = lazy(() => import('./pages/ComputationalSimulation'));
 const FormulaComparison = lazy(() => import('./pages/FormulaComparison'));
 const BatchSimulation = lazy(() => import('./pages/BatchSimulation'));
@@ -28,7 +27,6 @@ const MolecularVisualization = lazy(() => import('./pages/MolecularVisualization
 const SimulationQueueManager = lazy(() => import('./pages/SimulationQueueManager'));
 const SimulationProductivity = lazy(() => import('./pages/SimulationProductivity'));
 const SimulationSandbox = lazy(() => import('./pages/SimulationSandbox'));
-const NutriScan = lazy(() => import('./pages/NutriScan'));
 const SDSAnalyzer = lazy(() => import('./pages/SDSAnalyzer'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const FormulaBuilder = lazy(() => import('./pages/FormulaBuilder'));
@@ -67,7 +65,6 @@ const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
 const ResearchLanding = lazy(() => import('./pages/ResearchLanding'));
 
-const MySafetyProfile = lazy(() => import('./pages/MySafetyProfile'));
 const BatchRecords = lazy(() => import('./pages/BatchRecords'));
 const InteractionVisualization = lazy(() => import('./pages/InteractionVisualization'));
 const EnterpriseAPI = lazy(() => import('./pages/EnterpriseAPI'));
@@ -150,7 +147,7 @@ const AuthenticatedApp = () => {
       <Route path="/ResearchLanding" element={<LayoutWrapper currentPageName="ResearchLanding"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ResearchLanding /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/Generator" element={<Navigate to="/generator" replace />} />
       <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaComparison /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/MyAnalytics" element={<LayoutWrapper currentPageName="MyAnalytics"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MyAnalytics /></PageTransition></Suspense></LayoutWrapper>} />
+
       {/* ── Auth Pages (outside Layout) ── */}
       <Route path="/login" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}><Login /></Suspense>} />
       <Route path="/register" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"/></div>}><Register /></Suspense>} />
@@ -159,7 +156,7 @@ const AuthenticatedApp = () => {
 
       {/* ── Redirects for deprecated routes ── */}
       <Route path="/research" element={<Navigate to="/ResearchLanding" replace />} />
-      <Route path="/ResearchLanding" element={<Navigate to="/" replace />} />
+
       <Route path="/Home" element={<Navigate to="/" replace />} />
       <Route path="/MolecularIntelligence" element={<Navigate to="/MoleculeAnalysis" replace />} />
       <Route path="/MoleculeExplorer" element={<Navigate to="/MoleculeAnalysis" replace />} />
@@ -201,7 +198,7 @@ const AuthenticatedApp = () => {
           return <Route key={path} path={`/${path}`} element={<LayoutWrapper currentPageName={path}>{isResearch ? <ResearchGuard>{content}</ResearchGuard> : content}</LayoutWrapper>} />;
         })}
 
-        <Route path="/MySafetyProfile" element={<LayoutWrapper currentPageName="MySafetyProfile"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><MySafetyProfile /></PageTransition></Suspense></LayoutWrapper>} />
+
         <Route path="/ComputationalStudio" element={<LayoutWrapper currentPageName="ComputationalStudio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudio /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Simulations" element={<LayoutWrapper currentPageName="ComputationalStudioSimulations"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioSimulations /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Proteins" element={<LayoutWrapper currentPageName="ComputationalStudioProteins"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioProteins /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
@@ -231,7 +228,7 @@ const AuthenticatedApp = () => {
       <Route path="/SimulationQueueManager" element={<LayoutWrapper currentPageName="SimulationQueueManager"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationQueueManager /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationProductivity" element={<LayoutWrapper currentPageName="SimulationProductivity"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-fuchsia-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationProductivity /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationSandbox" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-950 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-700 border-t-violet-400 rounded-full animate-spin"/></div>}><SimulationSandbox /></Suspense>} />
-      <Route path="/NutriScan" element={<LayoutWrapper currentPageName="NutriScan"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><NutriScan /></PageTransition></Suspense></LayoutWrapper>} />
+
       <Route path="/Dashboard" element={<LayoutWrapper currentPageName="Dashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><Dashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaBuilder" element={<LayoutWrapper currentPageName="FormulaBuilder"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaBuilder /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaResults" element={<LayoutWrapper currentPageName="FormulaResults"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaResults /></PageTransition></Suspense></LayoutWrapper>} />

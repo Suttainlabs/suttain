@@ -268,7 +268,7 @@ export default function ProfilePage() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-slate-700">Account Settings</p>
-                <p className="text-xs text-slate-400">Profile, billing, safety profiles</p>
+                <p className="text-xs text-slate-400">Profile and billing</p>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 transition-colors" />
             </Link>

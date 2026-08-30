@@ -7,14 +7,14 @@ const TABS = [
   { key: 'Home',               label: 'Home',     icon: Home,     root: '/' },
   { key: 'Simulator',          label: 'Simulate', icon: TestTube, root: createPageUrl('Simulator') },
   { key: 'BarcodeScanner',     label: 'Scan',     icon: QrCode,   root: createPageUrl('BarcodeScanner') },
-  { key: 'Profile',            label: 'Profile',  icon: User,     root: createPageUrl('Profile') },
+  { key: 'Profile',            label: 'Profile',  icon: User, root: createPageUrl('Dashboard') },
 ];
 
 // Remember the last visited path per tab across renders (persists for the session)
 const tabHistory = {};
 
 const getActiveTab = (pathname) => {
-  if (pathname === '/' || pathname === '/Home') return 'Home';
+  if (pathname === '/') return 'Home';
   return TABS.find(t => t.key !== 'Home' && pathname.startsWith(t.root))?.key ?? null;
 };
 
