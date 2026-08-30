@@ -15,23 +15,10 @@ export default function PlainLanguageSummary({ results, simLabel, domain }) {
     if (!results) return;
     setLoading(true);
     try {
-      const keyVals = results.predicted_results?.key_values
-        ?.map(kv => `${kv.property}: ${kv.value} ${kv.unit}`)
-        .join(", ") || "";
-
-      const prompt = `You are a science communicator helping a non-specialist understand a computational chemistry result.
-
-Simulation type: ${simLabel}
-Domain: ${domain}
-System overview: ${results.system_overview || ""}
-Key results: ${keyVals}
-Scientific interpretation: ${results.scientific_interpretation || ""}
-
-Write exactly 2-3 plain English sentences (no jargon, no bullet points) explaining what these results mean in practical terms for someone working in product formulation or safety. 
-For example, explain whether the molecule is stable, reactive, safe to use, or how it might behave in a real product. Do NOT repeat the numbers verbatim — translate them into meaning.
-Return just the plain text sentences, nothing else.`;
-
-      const response = await base44.integrations.Core.InvokeLLM({ prompt });
+      const response = (await base44.functions.invoke('runResearchLLM', {
+        operation: 'plainLanguageSummary',
+        data: { simLabel, domain, results }
+      })).data;
       setSummary(typeof response === "string" ? response : response?.text || String(response));
     } catch {
       setSummary("Plain language summary could not be generated for this result.");

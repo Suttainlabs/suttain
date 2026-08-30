@@ -36,19 +36,20 @@ export default function DomainReliabilityHeatmap() {
       }
       // Generate interpretation
       setInterpLoading(true);
-      const interpRes = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a structural biology expert. Given the following AlphaFold protein structure quality metrics, write a 2-sentence plain English explanation of what the domain reliability means for this protein's function. Be specific and practical.
-
-Protein: ${predRes.uniprotDescription} (${predRes.gene})
-Max Predicted Aligned Error (PAE): ${predRes.max_predicted_aligned_error || maxPae || 'unknown'} Angstroms
-Global pLDDT: ${predRes.globalMetricValue}
-Fraction Very High (>90): ${(predRes.fractionPlddtVeryHigh * 100).toFixed(1)}%
-Fraction Confident (70-90): ${(predRes.fractionPlddtConfident * 100).toFixed(1)}%
-Fraction Low (50-70): ${(predRes.fractionPlddtLow * 100).toFixed(1)}%
-Fraction Very Low (<50): ${(predRes.fractionPlddtVeryLow * 100).toFixed(1)}%
-
-Explain in exactly 2 sentences what these metrics tell us about which domains are reliable and what that means for understanding this protein's function and potential drug-binding sites.`,
-      });
+      const interpRes = (await base44.functions.invoke('runResearchLLM', {
+        operation: 'domainReliabilityInterpretation',
+        data: {
+          uniprotDescription: predRes.uniprotDescription,
+          gene: predRes.gene,
+          max_predicted_aligned_error: predRes.max_predicted_aligned_error,
+          maxPae,
+          globalMetricValue: predRes.globalMetricValue,
+          fractionPlddtVeryHigh: predRes.fractionPlddtVeryHigh,
+          fractionPlddtConfident: predRes.fractionPlddtConfident,
+          fractionPlddtLow: predRes.fractionPlddtLow,
+          fractionPlddtVeryLow: predRes.fractionPlddtVeryLow
+        }
+      })).data;
       setInterpretation(typeof interpRes === 'string' ? interpRes : JSON.stringify(interpRes));
     } catch (e) {
       setError(e.message);

@@ -15,34 +15,10 @@ export default function RelatedResearch({ molecule, simType }) {
     if (!molecule) return;
     setLoading(true);
     try {
-      const prompt = `You are a research assistant. For the molecule or system "${molecule}" in the context of ${simType || "computational chemistry"}, return the 3 most relevant real PubMed research abstracts.
-
-Return a JSON array of 3 objects, each with:
-- title: string (real paper title)
-- authors: string (first author et al., year)
-- journal: string (journal name)
-- abstract_snippet: string (1-2 sentence description of what the paper found)
-- pubmed_id: string (real PMID if you know it, otherwise "N/A")
-
-Only include real, plausible papers. Do not fabricate PMIDs.`;
-
-      const resp = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              title: { type: "string" },
-              authors: { type: "string" },
-              journal: { type: "string" },
-              abstract_snippet: { type: "string" },
-              pubmed_id: { type: "string" },
-            }
-          }
-        }
-      });
+      const resp = (await base44.functions.invoke('runResearchLLM', {
+        operation: 'relatedResearch',
+        data: { molecule, simType }
+      })).data;
       setPapers(Array.isArray(resp) ? resp : []);
     } catch {
       setPapers([]);

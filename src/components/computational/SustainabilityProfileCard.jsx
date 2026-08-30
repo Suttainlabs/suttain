@@ -22,30 +22,10 @@ export default function SustainabilityProfileCard({ results, molecule }) {
     setLoading(true);
     try {
       const moleculeName = molecule || results?.inputs?.molecule || results?.inputs?.compound || results?.inputs?.ligand || "the molecule";
-      const prompt = `You are an environmental chemist. Based on what is known about the molecule "${moleculeName}", estimate its sustainability profile.
-
-Return a JSON object with these exact keys:
-- biodegradability_percent: number 0-100 (estimated % biodegradability under aerobic conditions, e.g. 85)
-- persistence: string, one of "Low", "Moderate", "High" (environmental persistence)
-- aquatic_toxicity: string, one of "Low", "Moderate", "High" (estimated aquatic toxicity class)
-- carbon_footprint: string, one of "Low", "Moderate", "High" (relative carbon footprint of production/use)
-- data_available: boolean (true if real data exists, false if estimated)
-- notes: string (1 sentence note, or "Sustainability data limited for this compound. Manual review recommended." if data_available is false)`;
-
-      const resp = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            biodegradability_percent: { type: "number" },
-            persistence: { type: "string" },
-            aquatic_toxicity: { type: "string" },
-            carbon_footprint: { type: "string" },
-            data_available: { type: "boolean" },
-            notes: { type: "string" },
-          }
-        }
-      });
+      const resp = (await base44.functions.invoke('runResearchLLM', {
+        operation: 'sustainabilityProfile',
+        data: { moleculeName }
+      })).data;
       setProfile(resp);
     } catch {
       setProfile(null);

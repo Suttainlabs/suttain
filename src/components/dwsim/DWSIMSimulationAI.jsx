@@ -167,10 +167,10 @@ export default function DWSIMSimulationAI() {
         .map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
         .join('\n\n');
 
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `${SYSTEM_PROMPT}\n\nConversation so far:\n${conversationHistory}\n\nRespond as the assistant:`,
-        model: 'claude_sonnet_4_6',
-      });
+      const result = (await base44.functions.invoke('runResearchLLM', {
+        operation: 'dwsimChat',
+        data: { conversationHistory }
+      })).data;
 
       setMessages(prev => [...prev, { role: 'assistant', content: result }]);
     } catch (err) {

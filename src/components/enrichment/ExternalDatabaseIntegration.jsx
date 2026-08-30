@@ -59,101 +59,10 @@ export default function ExternalDatabaseIntegration({ chemical, onEnrich, compac
     setSearchResults(null);
 
     try {
-      const prompt = `
-        Search for chemical information about "${searchQuery}" from scientific databases.
-        
-        Simulate fetching data from these sources: ${selectedSources.join(', ')}
-        Focus on these categories: ${selectedCategories.join(', ')}
-        
-        Return comprehensive data in this JSON format:
-        {
-          "compound_info": {
-            "name": "string",
-            "iupac_name": "string",
-            "cas_number": "string",
-            "molecular_formula": "string",
-            "molecular_weight": number,
-            "smiles": "string",
-            "inchi": "string",
-            "inchi_key": "string",
-            "pubchem_cid": "string"
-          },
-          "physical_properties": {
-            "melting_point": "string with units",
-            "boiling_point": "string with units",
-            "density": "string with units",
-            "solubility": "string",
-            "vapor_pressure": "string",
-            "log_p": number,
-            "pka": number
-          },
-          "spectral_data": {
-            "ir_peaks": ["array of characteristic peaks"],
-            "nmr_shifts": ["array of NMR shifts"],
-            "mass_spectrum_peaks": ["array of m/z values"],
-            "uv_vis_absorption": "string"
-          },
-          "toxicity_data": {
-            "ld50_oral": "string",
-            "ld50_dermal": "string",
-            "lc50_inhalation": "string",
-            "carcinogenicity": "string",
-            "mutagenicity": "string",
-            "ghs_classification": ["array of classifications"],
-            "exposure_limits": {
-              "osha_pel": "string",
-              "niosh_rel": "string",
-              "acgih_tlv": "string"
-            }
-          },
-          "bioactivity": {
-            "targets": ["array of biological targets"],
-            "mechanisms": ["array of mechanisms"],
-            "therapeutic_uses": ["array of uses"],
-            "side_effects": ["array of side effects"]
-          },
-          "literature": [
-            {
-              "title": "string",
-              "authors": "string",
-              "journal": "string",
-              "year": number,
-              "doi": "string",
-              "abstract_summary": "string",
-              "relevance": "high|medium|low"
-            }
-          ],
-          "synthesis_routes": [
-            {
-              "name": "string",
-              "steps": number,
-              "yield": "string",
-              "conditions": "string"
-            }
-          ],
-          "safety_summary": "string",
-          "data_sources": ["array of sources used"]
-        }
-      `;
-
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            compound_info: { type: "object" },
-            physical_properties: { type: "object" },
-            spectral_data: { type: "object" },
-            toxicity_data: { type: "object" },
-            bioactivity: { type: "object" },
-            literature: { type: "array", items: { type: "object" } },
-            synthesis_routes: { type: "array", items: { type: "object" } },
-            safety_summary: { type: "string" },
-            data_sources: { type: "array", items: { type: "string" } }
-          }
-        }
-      });
+      const response = (await base44.functions.invoke('runResearchLLM', {
+        operation: 'externalDatabaseSearch',
+        data: { searchQuery, selectedSources, selectedCategories }
+      })).data;
 
       setSearchResults(response);
       toast.success('External data retrieved successfully');
@@ -169,40 +78,10 @@ export default function ExternalDatabaseIntegration({ chemical, onEnrich, compac
 
     setIsEnriching(true);
     try {
-      const summaryPrompt = `
-        Analyze and summarize this chemical data for a scientist or formulator:
-        
-        ${JSON.stringify(searchResults, null, 2)}
-        
-        Provide a comprehensive but concise summary in this format:
-        {
-          "executive_summary": "2-3 sentence overview",
-          "key_properties": ["5 most important properties"],
-          "safety_highlights": ["top 3 safety considerations"],
-          "research_insights": ["3 key findings from literature"],
-          "practical_applications": ["3 practical uses or applications"],
-          "recommended_precautions": ["3 recommended precautions"],
-          "interesting_facts": ["2-3 interesting scientific facts"],
-          "confidence_score": 0.0-1.0
-        }
-      `;
-
-      const summary = await base44.integrations.Core.InvokeLLM({
-        prompt: summaryPrompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            executive_summary: { type: "string" },
-            key_properties: { type: "array", items: { type: "string" } },
-            safety_highlights: { type: "array", items: { type: "string" } },
-            research_insights: { type: "array", items: { type: "string" } },
-            practical_applications: { type: "array", items: { type: "string" } },
-            recommended_precautions: { type: "array", items: { type: "string" } },
-            interesting_facts: { type: "array", items: { type: "string" } },
-            confidence_score: { type: "number" }
-          }
-        }
-      });
+      const summary = (await base44.functions.invoke('runResearchLLM', {
+        operation: 'externalDatabaseSummary',
+        data: { searchResults }
+      })).data;
 
       setAiSummary(summary);
       toast.success('AI summary generated');
