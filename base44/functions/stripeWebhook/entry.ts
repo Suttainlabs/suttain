@@ -185,9 +185,9 @@ Deno.serve(async (req) => {
 
         console.log('Checkout completed:', { userId, priceKey, customerEmail });
 
-        // Product line purchased (core / research / farm) — unlocks dashboard pages
+        // Product line purchased (core / research) — unlocks dashboard pages
         const productLine = session.metadata?.product_line
-          || ['core', 'research', 'farm'].find((p) => priceKey?.startsWith(p))
+          || ['core', 'research'].find((p) => priceKey?.startsWith(p))
           || null;
 
         // Merge the purchased line into the user's existing product_access list
