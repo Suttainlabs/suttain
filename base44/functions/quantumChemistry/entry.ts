@@ -138,7 +138,7 @@ Return JSON with:
 14. limitations: string (1-2 sentences about limitations — for larger molecules, note that quantum hardware is impractical and the simulator uses approximate methods)
 15. is_large_molecule: boolean (true if molecule has more than ~20 spin orbitals, making it impractical for current quantum hardware)`;
 
-  const response = await base44.integrations.Core.InvokeLLM({
+  const response = await base44.asServiceRole.integrations.Core.InvokeLLM({
     prompt,
     add_context_from_internet: true,
     response_json_schema: {

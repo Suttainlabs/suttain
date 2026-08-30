@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
     if (results.length === 0) {
       const searchQuery = formula || elements || '';
       try {
-        const llmResponse = await base44.integrations.Core.InvokeLLM({
+        const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
           prompt: `Search for real materials data for: ${searchQuery}. Return real materials from Materials Project, AFLOW, or OPTIMADE databases. For each material include: source database name, formula, formation_energy_per_atom (eV/atom), band_gap (eV), density (g/cm3), crystal_system, and a plain_language explanation of what the material is and its key properties for a student. Return 5-8 materials.`,
           add_context_from_internet: true,
           response_json_schema: {
@@ -143,7 +143,7 @@ Deno.serve(async (req) => {
     const needsExplanation = results.filter(r => !r.plain_language);
     if (needsExplanation.length > 0) {
       try {
-        const explainResponse = await base44.integrations.Core.InvokeLLM({
+        const explainResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
           prompt: `For each material, write a brief plain-language explanation (1-2 sentences) of what it is and what its key properties mean, suitable for a student. Materials: ${JSON.stringify(needsExplanation.map(r => ({ formula: r.formula, band_gap: r.band_gap, formation_energy: r.formation_energy_per_atom, crystal_system: r.crystal_system })))}`,
           response_json_schema: {
             type: "object",

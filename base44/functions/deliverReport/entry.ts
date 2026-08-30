@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     if (delivery.email_recipients?.length) {
       for (const email of delivery.email_recipients) {
         try {
-          await base44.integrations.Core.SendEmail({
+          await base44.asServiceRole.integrations.Core.SendEmail({
             to: email,
             subject: `Report Ready: ${report.title}`,
             body: generateEmailBody(report, reportUrl)

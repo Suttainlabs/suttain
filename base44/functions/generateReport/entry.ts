@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
       }
     `;
 
-    const aiResponse = await base44.integrations.Core.InvokeLLM({
+    const aiResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: aiInsightsPrompt,
       response_json_schema: {
         type: "object",
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
       `;
       
       try {
-        safetyAdvisorData = await base44.integrations.Core.InvokeLLM({
+        safetyAdvisorData = await base44.asServiceRole.integrations.Core.InvokeLLM({
           prompt: safetyPrompt,
           response_json_schema: {
             type: "object",

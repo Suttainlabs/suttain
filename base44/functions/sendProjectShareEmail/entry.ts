@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
     let emailSent = false;
     let emailError = null;
     try {
-      await base44.integrations.Core.SendEmail({
+      await base44.asServiceRole.integrations.Core.SendEmail({
         to,
         subject: `${safeInviterName} shared "${safeProjectName}" with you on Suttain`,
         body: html
@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
       emailSent = true;
       // CC contact@suttain.com
       try {
-        await base44.integrations.Core.SendEmail({
+        await base44.asServiceRole.integrations.Core.SendEmail({
           to: 'contact@suttain.com',
           subject: `[CC] ${safeInviterName} shared "${safeProjectName}" on Suttain`,
           body: html

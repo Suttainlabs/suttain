@@ -47,7 +47,7 @@ Also assess:
 
 Return a comprehensive structured analysis. Be scientifically rigorous. If data is limited for a chemical, use reasonable toxicological inference based on chemical class and known analogs.`;
 
-    const response = await base44.integrations.Core.InvokeLLM({
+    const response = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
         type: 'object',

@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
       `${i + 1}. ${ing.name || 'Unknown'}${ing.purpose ? ` (purpose: ${ing.purpose})` : ''}`
     ).join('\n');
 
-    const result = await base44.integrations.Core.InvokeLLM({
+    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `You are a board-certified toxicologist and regulatory scientist. Analyze each ingredient below for DOSE-AWARE safety.
 
 Product: ${productName}

@@ -69,7 +69,7 @@ Generate scientifically plausible data. Return JSON with:
 
 Make all numerical values realistic and scientifically defensible for the given compound/system.`;
 
-    const response = await base44.integrations.Core.InvokeLLM({
+    const response = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
         type: "object",

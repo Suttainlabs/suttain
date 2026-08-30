@@ -190,7 +190,7 @@ ${dbContext}
 Provide a comprehensive, scientifically accurate analysis. Cite real scientific journals or databases (PubChem, CAS, OSHA) as sources.
 The safer_alternatives must be tailored specifically for a ${persona} user.`;
 
-    const aiResponse = await base44.integrations.Core.InvokeLLM({
+    const aiResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
         type: 'object',

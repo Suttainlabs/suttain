@@ -52,7 +52,7 @@ async function decodeWithZxing(imageBuffer) {
 
 async function decodeWithLLM(base44, file_url) {
     try {
-        const result = await base44.integrations.Core.InvokeLLM({
+        const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
             prompt: `You are a barcode reading specialist. Look at this product image carefully.
             
 Your ONLY task is to find and read the numeric barcode printed on the product packaging (EAN-13, UPC-A, or similar).

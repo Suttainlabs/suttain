@@ -19,13 +19,13 @@ export async function createNotification({ title, message, type, severity = 'inf
     const user = await base44.auth.me();
     const emailEnabled = user.notification_preferences?.email_notifications;
 
-    // Send email for critical notifications if enabled
+    // Send email for critical notifications if enabled (server-side via sendNotificationEmail)
     if (severity === 'critical' && emailEnabled) {
-      await base44.integrations.Core.SendEmail({
-        to: user.email,
-        subject: `🚨 Critical Alert: ${title}`,
-        body: `${message}\n\n${action_url ? `View details: ${window.location.origin}${action_url}` : ''}\n\nThis is an automated notification from Suttain.`
-      });
+      try {
+        await base44.functions.invoke('sendNotificationEmail', { title, message, action_url });
+      } catch (e) {
+        console.error('Failed to send notification email:', e);
+      }
     }
 
     return notification;

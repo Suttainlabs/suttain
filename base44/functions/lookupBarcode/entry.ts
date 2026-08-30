@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
             try {
                 const barcodePrefix = barcode.substring(0, 3);
                 const countryHint = getBarcodeCountryHint(barcodePrefix);
-                const llmResult = await base44.integrations.Core.InvokeLLM({
+                const llmResult = await base44.asServiceRole.integrations.Core.InvokeLLM({
                     prompt: `You are a global product data analyst with expertise in consumer goods, pharmaceuticals, supplements, and medical devices. Find information for EAN/UPC/NDC barcode: "${barcode}".
 
 The barcode prefix "${barcodePrefix}" suggests: ${countryHint}. Search ALL relevant databases including:
@@ -772,7 +772,7 @@ async function lookupPLU(plu, base44) {
     let aiInfo = null;
     if (!known) {
         try {
-            aiInfo = await base44.integrations.Core.InvokeLLM({
+            aiInfo = await base44.asServiceRole.integrations.Core.InvokeLLM({
                 prompt: `Identify the fresh produce or grocery item with PLU code ${plu}. PLU codes are 4-5 digit codes used on fresh fruits, vegetables, and bulk items in grocery stores. Return the product name, any relevant details, and typical characteristics.`,
                 add_context_from_internet: true,
                 response_json_schema: {
