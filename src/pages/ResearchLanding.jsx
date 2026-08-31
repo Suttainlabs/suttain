@@ -9,6 +9,7 @@ import { createPageUrl } from "@/utils";
 import SEOHead from "../components/shared/SEOHead";
 import { Section, SectionHeader } from "../components/shared/Section";
 import AnimatedMolecule from "../components/research/AnimatedMolecule";
+import ResearchPlanner from "../components/research/ResearchPlanner";
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -22,28 +23,28 @@ const RESEARCH_TOOLS = [
     label: "Computational Studio",
     desc: "Unified workspace for molecules, proteins, materials, and hazard prediction.",
     href: "ComputationalStudio",
-    accent: "#534AB7",
+    accent: "#9531F5",
   },
   {
     icon: Atom,
     label: "Molecule Analysis",
     desc: "Query compounds, visualize 3D structure, inspect physical and toxicity properties.",
     href: "MoleculeAnalysis",
-    accent: "#00A8C8",
+    accent: "#09D2FF",
   },
   {
     icon: Microscope,
     label: "Structural Biology",
     desc: "AlphaFold-powered protein structure prediction and binding analysis.",
     href: "StructuralBiology",
-    accent: "#007850",
+    accent: "#02988C",
   },
   {
     icon: Code2,
     label: "Research API",
     desc: "REST endpoints with Python, JavaScript, and R SDKs for programmatic access.",
     href: "APIPortal",
-    accent: "#6B3FA0",
+    accent: "#9531F5",
   },
 ];
 
@@ -56,7 +57,7 @@ const CAPABILITIES = [
 
 export default function ResearchLanding() {
   return (
-    <div className="min-h-screen bg-[#F7F6F2] font-body">
+    <div className="min-h-screen bg-[#FFFFFF] font-body">
       <SEOHead
         title="Suttain Research — Computational Chemistry Platform"
         description="Professional research tools for molecular intelligence, computational simulation, structural biology, and API access."
@@ -80,7 +81,7 @@ export default function ResearchLanding() {
           <Link to={createPageUrl("ComputationalStudio")}>
             <button
               className="px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-              style={{ background: "#534AB7" }}
+              style={{ background: "#9531F5" }}
             >
               <span className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
@@ -152,7 +153,7 @@ export default function ResearchLanding() {
             return (
               <motion.div key={i} {...fade(i * 0.05)}>
                 <div className="bg-white rounded-xl p-5 border border-slate-200 h-full">
-                  <Icon className="w-5 h-5 mb-3" style={{ color: "#534AB7" }} />
+                  <Icon className="w-5 h-5 mb-3" style={{ color: "#9531F5" }} />
                   <h3 className="text-sm font-semibold text-slate-900 mb-1">{cap.label}</h3>
                   <p className="text-xs text-slate-500 leading-relaxed">{cap.desc}</p>
                 </div>
@@ -160,6 +161,11 @@ export default function ResearchLanding() {
             );
           })}
         </div>
+      </Section>
+
+      {/* Plan Your Research */}
+      <Section spacing="default" width="default">
+        <ResearchPlanner />
       </Section>
     </div>
   );

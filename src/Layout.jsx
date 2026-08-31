@@ -287,8 +287,8 @@ export default function Layout({ children, currentPageName }) {
     const isActive = location.pathname === (href === "Home" ? "/" : createPageUrl(href));
     return `flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 font-semibold text-sm ${
       isActive
-        ? "bg-violet-100 text-violet-600"
-        : "text-slate-700 hover:bg-violet-50 hover:text-violet-600"
+        ? "bg-[#02988C]/10 text-[#02988C]"
+        : "text-slate-700 hover:bg-[#02988C]/5 hover:text-[#02988C]"
     }`;
   };
 
@@ -325,31 +325,31 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F7F6F2' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#FFFFFF' }}>
       <style>{`
         :root {
-          --suttain-teal: #0F6E56;
+          --suttain-teal: #02988C;
           --suttain-blue: #00A8C8;
           --suttain-violet: #534AB7;
-          --suttain-dark: #2C2C2A;
-          --suttain-text: #2C2C2A;
-          --light-background: #F7F6F2;
+          --suttain-dark: #0A1F1D;
+          --suttain-text: #0A1F1D;
+          --light-background: #FFFFFF;
           --warning-orange: #D4900A;
           --success-green: #00B478;
         }
 
         body {
-          font-family: var(--font-gilroy, 'Inter', sans-serif);
-          background-color: var(--color-bg-page, #F7F6F2);
-          color: var(--color-text-secondary, #2C2C2A);
+          font-family: var(--font-gilroy, 'Poppins', sans-serif);
+          background-color: var(--color-bg-page, #FFFFFF);
+          color: var(--color-text-secondary, #0A1F1D);
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
         
         h1, h2, h3, h4, h5, h6, .font-heading {
-          font-family: var(--font-gilroy, 'Inter', sans-serif);
+          font-family: var(--font-gilroy, 'Poppins', sans-serif);
           font-weight: 500;
-          color: var(--color-text-primary, #2C2C2A);
+          color: var(--color-text-primary, #0A1F1D);
         }
 
         .gradient-text {
@@ -378,7 +378,7 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       {/* Floating Nav Bar */}
-      <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#F7F6F2]">
+      <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#FFFFFF]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14 overflow-hidden">
 
@@ -396,7 +396,7 @@ export default function Layout({ children, currentPageName }) {
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Single smart Tools dropdown — groups Consumer and Research */}
-              <NavToolCombobox items={allToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive || isResearchActive} accent="#0F6E56" />
+              <NavToolCombobox items={allToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive || isResearchActive} accent="#02988C" />
 
               <Link to="/ResearchLanding" className={getLinkClasses("ResearchLanding")}>Research</Link>
 
@@ -407,7 +407,7 @@ export default function Layout({ children, currentPageName }) {
                 <DropdownMenuTrigger asChild>
                   <button className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                     isEnterpriseActive
-                      ? "bg-violet-100 text-violet-600"
+                      ? "bg-[#02988C]/10 text-[#02988C]"
                       : "text-slate-600 hover:bg-slate-100"
                   }`}>
                     <Terminal className="w-3.5 h-3.5" />
@@ -557,8 +557,8 @@ export default function Layout({ children, currentPageName }) {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
                           location.pathname === (href === "Home" ? "/" : createPageUrl(href))
-                            ? `bg-violet-100 text-violet-600`
-                            : "text-suttain-dark hover:bg-violet-50"
+                            ? `bg-[#02988C]/10 text-[#02988C]`
+                            : "text-suttain-dark hover:bg-[#02988C]/5"
                         }`}
                       >
                         <Icon className="w-5 h-5" />
@@ -633,7 +633,7 @@ export default function Layout({ children, currentPageName }) {
                       to="/EnterpriseAPI"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
-                        isEnterpriseActive ? "bg-violet-100 text-violet-600" : "text-suttain-dark hover:bg-violet-50"
+                        isEnterpriseActive ? "bg-[#02988C]/10 text-[#02988C]" : "text-suttain-dark hover:bg-[#02988C]/5"
                       }`}
                     >
                       <Terminal className="w-5 h-5" />
@@ -748,7 +748,7 @@ export default function Layout({ children, currentPageName }) {
           </main>
       
       {/* Footer - Home page only */}
-      {currentPageName === 'Home' && (
+      {['Home', 'Compliance', 'ContentToolkit', 'BrandIntelligence'].includes(currentPageName) && (
       <footer className="bg-white border-t border-slate-200 text-sm pb-[env(safe-area-inset-bottom)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

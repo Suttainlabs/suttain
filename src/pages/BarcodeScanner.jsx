@@ -5,6 +5,7 @@ import AuthContext from '../components/auth/AuthContext';
 import useTrialStatus from '../hooks/useTrialStatus';
 import TrialExpiredBanner from '../components/trial/TrialExpiredBanner';
 import { ProductDataPanel, IngredientAnalysisPanel, InteractionAnalysisPanel } from '@/components/scanner/ProductPanels';
+import ScanResultsCharts from '@/components/scanner/ScanResultsCharts';
 
 export default function BarcodeScanner() {
     const { user } = useContext(AuthContext);
@@ -34,6 +35,9 @@ export default function BarcodeScanner() {
                 </div>
                 <div className="mt-4">
                     <InteractionAnalysisPanel />
+                </div>
+                <div className="mt-4">
+                    <ScanResultsCharts />
                 </div>
             </div>
         </div>

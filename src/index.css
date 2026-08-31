@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,143 +8,145 @@
 
 @layer base {
   :root {
-    --font-gilroy: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-gilroy: 'Gilroy', 'Poppins', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
 
-    /* Font role tokens — Inter for both headings and body across all pages */
-    --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Gilroy', 'Poppins', system-ui, sans-serif;
+    --font-body: 'Gilroy', 'Poppins', system-ui, sans-serif;
+    --font-display: 'Gilroy', 'Poppins', system-ui, sans-serif;
 
     /* Brand */
-    --color-brand-dark:     #00281E;
-    --color-brand-mid:      #007850;
-    --color-brand-light:    #00B478;
-    --color-brand-mint:     #00C896;
+    --color-brand-primary: #02988C;
+    --color-brand-purple: #9531F5;
+    --color-brand-blue: #09D2FF;
+    --color-brand-dark: #0A1F1D;
+    --color-brand-mid: #02988C;
+    --color-brand-light: #02988C;
+    --color-brand-mint: #09D2FF;
 
     /* Backgrounds */
-    --color-bg-page:        #F7F6F2;
-    --color-bg-card:        #FFFFFF;
-    --color-bg-section:     #F0FAF5;
-    --color-bg-dark:        #0D2B22;
-    --color-bg-dark-mid:    #163D2F;
+    --color-bg-page: #FFFFFF;
+    --color-bg-card: #FFFFFF;
+    --color-bg-section: #F0FDFA;
+    --color-bg-dark: #0A1F1D;
+    --color-bg-dark-mid: #0A1F1D;
 
     /* Text */
-    --color-text-primary:   #2C2C2A;
-    --color-text-secondary: #2C2C2A;
-    --color-text-muted:     #5F5F5B;
-    --color-text-white:     #FFFFFF;
-    --color-text-brand:     #0F6E56;
+    --color-text-primary: #0A1F1D;
+    --color-text-secondary: #0A1F1D;
+    --color-text-muted: #4B5563;
+    --color-text-white: #FFFFFF;
+    --color-text-brand: #02988C;
 
     /* Pillar accents */
-    --pillar-core:          #0F6E56;
-    --pillar-core-fill:     #E1F5EE;
-    --pillar-research:      #534AB7;
-    --pillar-research-fill: #EEEDFE;
-    --pillar-api:           #993C1D;
-    --pillar-api-fill:      #FAECE7;
+    --pillar-core: #02988C;
+    --pillar-core-fill: #F0FDFA;
+    --pillar-research: #9531F5;
+    --pillar-research-fill: #F5EEFF;
+    --pillar-api: #9531F5;
+    --pillar-api-fill: #F5EEFF;
 
     /* Status */
-    --color-safe:           #00B478;
-    --color-safe-bg:        #E6F9F3;
-    --color-warning:        #D4900A;
-    --color-warning-bg:     #FEF6E4;
-    --color-danger:         #C42B2B;
-    --color-danger-bg:      #FDEAEA;
-    --color-info:           #2B6CB0;
-    --color-info-bg:        #EBF4FF;
+    --color-safe: #02988C;
+    --color-safe-bg: #F0FDFA;
+    --color-warning: #D4900A;
+    --color-warning-bg: #FEF6E4;
+    --color-danger: #DC2626;
+    --color-danger-bg: #FEF2F2;
+    --color-info: #09D2FF;
+    --color-info-bg: #F0FDFF;
 
     /* Borders */
-    --color-border:         #B8D0C5;
-    --color-border-focus:   #007850;
-    --color-border-divider: #00B478;
-    --color-border-light:   #CCEEDC;
+    --color-border: #E5E7EB;
+    --color-border-focus: #02988C;
+    --color-border-divider: #02988C;
+    --color-border-light: #E5E7EB;
 
     /* Buttons */
-    --color-btn-scan:       #007850;
-    --color-btn-analyse:    #6B3FA0;
-    --color-btn-simulate:   #00A8C8;
-    --color-btn-market:     #1A1A2E;
+    --color-btn-scan: #02988C;
+    --color-btn-analyse: #9531F5;
+    --color-btn-simulate: #09D2FF;
+    --color-btn-market: #0A1F1D;
 
     /* Shadows */
-    --shadow-card:          0 2px 8px rgba(0, 40, 30, 0.06);
-    --shadow-elevated:      0 2px 8px rgba(0, 40, 30, 0.06);
+    --shadow-card: 0 2px 8px rgba(10, 31, 29, 0.06);
+    --shadow-elevated: 0 2px 8px rgba(10, 31, 29, 0.06);
 
     /* Radii */
-    --radius-sm:            6px;
-    --radius-md:            12px;
-    --radius-lg:            16px;
-    --radius-pill:          999px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-pill: 999px;
 
     /* shadcn/ui tokens — mapped to brand */
-    --background: 45 21% 96%;        /* #F7F6F2 */
-    --foreground: 60 4% 17%;         /* #2C2C2A */
-    --card: 0 0% 100%;               /* #FFFFFF */
-    --card-foreground: 60 4% 17%;
+    --background: 0 0% 100%;
+    --foreground: 174 51% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 174 51% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 60 4% 17%;
-    --primary: 164 76% 25%;         /* #0F6E56 */
+    --popover-foreground: 174 51% 8%;
+    --primary: 175 97% 30%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 148 33% 96%;        /* #F0FAF5 */
-    --secondary-foreground: 160 100% 8%;
-    --muted: 148 33% 96%;
-    --muted-foreground: 215 19% 35%;  /* #475569 slate-600 */
-    --accent: 158 100% 24%;
+    --secondary: 175 60% 95%;
+    --secondary-foreground: 175 97% 15%;
+    --muted: 175 30% 96%;
+    --muted-foreground: 215 14% 33%;
+    --accent: 271 91% 58%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 63% 47%;        /* #C42B2B */
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 148 33% 89%;           /* #D9EDE5 */
-    --input: 148 33% 89%;
-    --ring: 158 100% 24%;            /* #007850 */
-    --chart-1: 158 100% 24%;
-    --chart-2: 270 45% 43%;
-    --chart-3: 194 100% 39%;
+    --border: 220 14% 91%;
+    --input: 220 14% 91%;
+    --ring: 175 97% 30%;
+    --chart-1: 175 97% 30%;
+    --chart-2: 271 91% 58%;
+    --chart-3: 191 100% 52%;
     --chart-4: 40 92% 44%;
-    --chart-5: 0 63% 47%;
-    --radius: 0.75rem;
-    --sidebar-background: 148 38% 95%;
-    --sidebar-foreground: 0 0% 8%;
-    --sidebar-primary: 158 100% 24%;
+    --chart-5: 0 72% 51%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 174 51% 8%;
+    --sidebar-primary: 175 97% 30%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 148 33% 90%;
-    --sidebar-accent-foreground: 0 0% 8%;
-    --sidebar-border: 148 33% 89%;
-    --sidebar-ring: 158 100% 24%;
+    --sidebar-accent: 175 30% 95%;
+    --sidebar-accent-foreground: 174 51% 8%;
+    --sidebar-border: 220 14% 91%;
+    --sidebar-ring: 175 97% 30%;
   }
 
   .dark {
-    --background: 160 100% 7%;       /* #0D2B22 */
+    --background: 174 51% 8%;
     --foreground: 0 0% 98%;
-    --card: 160 47% 16%;             /* #163D2F */
+    --card: 174 35% 15%;
     --card-foreground: 0 0% 98%;
-    --popover: 160 47% 16%;
+    --popover: 174 35% 15%;
     --popover-foreground: 0 0% 98%;
-    --primary: 158 100% 35%;         /* #00B478 */
-    --primary-foreground: 160 100% 8%;
-    --secondary: 160 47% 16%;
+    --primary: 175 97% 40%;
+    --primary-foreground: 174 51% 8%;
+    --secondary: 174 35% 15%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 160 47% 16%;
+    --muted: 174 35% 15%;
     --muted-foreground: 0 0% 60%;
-    --accent: 158 100% 35%;
-    --accent-foreground: 160 100% 8%;
-    --destructive: 0 63% 47%;
+    --accent: 271 91% 68%;
+    --accent-foreground: 174 51% 8%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 160 47% 22%;
-    --input: 160 47% 22%;
-    --ring: 158 100% 35%;
-    --chart-1: 158 100% 35%;
-    --chart-2: 270 45% 55%;
-    --chart-3: 194 100% 39%;
+    --border: 174 35% 20%;
+    --input: 174 35% 20%;
+    --ring: 175 97% 40%;
+    --chart-1: 175 97% 40%;
+    --chart-2: 271 91% 68%;
+    --chart-3: 191 100% 52%;
     --chart-4: 40 92% 55%;
-    --chart-5: 0 63% 55%;
-    --sidebar-background: 160 100% 7%;
+    --chart-5: 0 72% 55%;
+    --sidebar-background: 174 51% 8%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 158 100% 35%;
+    --sidebar-primary: 175 97% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 160 47% 16%;
+    --sidebar-accent: 174 35% 15%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 160 47% 22%;
-    --sidebar-ring: 158 100% 35%;
+    --sidebar-border: 174 35% 20%;
+    --sidebar-ring: 175 97% 40%;
   }
 }
 
@@ -171,8 +173,8 @@
 
   body {
     @apply bg-background text-foreground;
-    background-color: #F7F6F2;
-    color: #2C2C2A;
+    background-color: #FFFFFF;
+    color: #0A1F1D;
     font-family: var(--font-body);
     font-size: 16px;
     font-weight: 400;

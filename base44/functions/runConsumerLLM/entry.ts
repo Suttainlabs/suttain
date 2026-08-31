@@ -383,6 +383,41 @@ Prioritise by ROI. Return top 5 alternatives.`;
         return Response.json(result);
       }
 
+      case 'contentToolkit': {
+        const productName = (data.productName || '').toString().slice(0, 200);
+        const ingredients = (data.ingredients || '').toString().slice(0, 1000);
+        const targetAudience = (data.targetAudience || '').toString().slice(0, 200);
+        const tone = (data.tone || '').toString().slice(0, 100);
+        const safetySummary = (data.safetySummary || '').toString().slice(0, 2000);
+        const prompt = `You are a marketing copywriter for a sustainable, safety-focused product brand.
+Product: ${productName}
+Key Ingredients: ${ingredients}
+Target Audience: ${targetAudience}
+Desired Tone: ${tone}
+
+Safety Context (from ingredient analysis):
+${safetySummary}
+
+Generate 4 pieces of marketing content, each emphasizing ingredient safety, transparency, and sustainability:
+1. SEO-optimized product description (150-200 words, include relevant keywords)
+2. Instagram caption (engaging, with hashtags, 100-150 words)
+3. Blog post outline about the product's safety profile (5-7 section headings with brief descriptions)
+4. Email newsletter draft (subject line + 200-250 word body, focused on transparency and safety)`;
+        const result = await call({
+          prompt,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              seo_description: { type: 'string' },
+              instagram_caption: { type: 'string' },
+              blog_outline: { type: 'string' },
+              email_draft: { type: 'string' }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
       default:
         return Response.json({ error: `Unknown operation: ${operation}` }, { status: 400 });
     }

@@ -30,18 +30,18 @@ export function ProductDataPanel() {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-5">
       <div className="flex items-center gap-2 mb-3">
-        <ScanLine className="w-4 h-4 text-[#007850]" />
+        <ScanLine className="w-4 h-4 text-[#02988C]" />
         <h3 className="font-bold text-slate-900 text-sm">Product Lookup</h3>
       </div>
       <div className="grid grid-cols-2 gap-2 mb-2">
         <input value={barcode} onChange={e => setBarcode(e.target.value)} placeholder="Barcode number"
-          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]" />
         <input value={name} onChange={e => setName(e.target.value)} placeholder="Or product name"
-          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]" />
       </div>
       <button onClick={run} disabled={loading || (!barcode.trim() && !name.trim())}
         className="w-full px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-        style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
+        style={{ background: 'linear-gradient(135deg, #02988C, #9531F5)' }}>
         Lookup Product
       </button>
       {loading && <LoadingState label="Querying Open Food Facts..." />}
@@ -123,18 +123,18 @@ export function IngredientAnalysisPanel() {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-5">
       <div className="flex items-center gap-2 mb-3">
-        <Brain className="w-4 h-4 text-[#6B3FA0]" />
+        <Brain className="w-4 h-4 text-[#9531F5]" />
         <h3 className="font-bold text-slate-900 text-sm">Ingredient Safety Analysis</h3>
       </div>
       <div className="space-y-2 mb-2">
         <input value={input} onChange={e => setInput(e.target.value)} placeholder="Ingredient or product name"
-          className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+          className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]" />
         <input value={context} onChange={e => setContext(e.target.value)} placeholder="Context (optional)"
-          className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+          className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]" />
       </div>
       <button onClick={run} disabled={loading || !input.trim()}
         className="w-full px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-        style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
+        style={{ background: 'linear-gradient(135deg, #02988C, #9531F5)' }}>
         Analyze Safety
       </button>
       {loading && <LoadingState label="Analyzing ingredient safety..." />}
@@ -202,13 +202,13 @@ export function InteractionAnalysisPanel() {
       </div>
       <div className="grid grid-cols-2 gap-2 mb-2">
         <input value={molA} onChange={e => setMolA(e.target.value)} placeholder="Ingredient A"
-          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]" />
         <input value={molB} onChange={e => setMolB(e.target.value)} placeholder="Ingredient B"
-          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#007850]" />
+          className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]" />
       </div>
       <button onClick={run} disabled={loading || !molA.trim() || !molB.trim()}
         className="w-full px-4 py-2 text-sm font-semibold text-white rounded-lg disabled:opacity-50"
-        style={{ background: 'linear-gradient(135deg, #007850, #6B3FA0)' }}>
+        style={{ background: 'linear-gradient(135deg, #02988C, #9531F5)' }}>
         Check Interaction
       </button>
       {loading && <LoadingState label="Analyzing interaction..." />}

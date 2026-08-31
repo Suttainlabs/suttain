@@ -4,49 +4,38 @@
 
 :root {
   /* Suttain Brand Colors */
-  --suttain-teal: #007850;
-  --suttain-blue: #00A8C8;
-  --suttain-violet: #6B3FA0;
+  --suttain-teal: #02988C;
+  --suttain-blue: #09D2FF;
+  --suttain-violet: #9531F5;
 
-  /* Light Mode (Default — always light) */
-  --background: 150 43% 95%;       /* #EDF7F2 mint */
-  --foreground: 0 0% 8%;           /* #141414 */
-
+  --background: 0 0% 100%;
+  --foreground: 174 51% 8%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 8%;
-
+  --card-foreground: 174 51% 8%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 8%;
-
-  --primary: 158 85% 33%;          /* #007850 */
+  --popover-foreground: 174 51% 8%;
+  --primary: 175 97% 30%;
   --primary-foreground: 0 0% 100%;
-
-  --secondary: 148 33% 96%;        /* #F0FAF5 */
-  --secondary-foreground: 160 100% 8%;
-
-  --muted: 148 33% 96%;
-  --muted-foreground: 215 19% 35%;  /* #475569 slate-600 */
-
-  --accent: 158 100% 24%;
+  --secondary: 175 60% 95%;
+  --secondary-foreground: 175 97% 15%;
+  --muted: 175 30% 96%;
+  --muted-foreground: 215 14% 33%;
+  --accent: 271 91% 58%;
   --accent-foreground: 0 0% 100%;
-
-  --destructive: 0 63% 47%;        /* #C42B2B */
+  --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
+  --border: 220 14% 91%;
+  --input: 220 14% 91%;
+  --ring: 175 97% 30%;
+  --radius: 0.5rem;
 
-  --border: 148 33% 89%;           /* #D9EDE5 */
-  --input: 148 33% 89%;
-  --ring: 158 100% 24%;            /* #007850 */
-
-  --radius: 0.75rem;
-
-  /* Custom App Colors — light only */
-  --app-bg: #EDF7F2;
-  --app-card-bg: #ffffff;
-  --app-text-primary: #141414;
-  --app-text-secondary: #464646;
-  --app-text-muted: #828282;
-  --app-border: #D9EDE5;
-  --app-hover: #F0FAF5;
+  --app-bg: #FFFFFF;
+  --app-card-bg: #FFFFFF;
+  --app-text-primary: #0A1F1D;
+  --app-text-secondary: #4B5563;
+  --app-text-muted: #6B7280;
+  --app-border: #E5E7EB;
+  --app-hover: #F0FDFA;
 }
 
 /* Safe area insets for mobile */
