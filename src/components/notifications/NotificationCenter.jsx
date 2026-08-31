@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, AlertTriangle, Info, Shield, Sparkles, ExternalLink, Clock, UserPlus, FlaskConical } from 'lucide-react';
+import { Bell, X, AlertTriangle, Info, Shield, Sparkles, ExternalLink, Clock, UserPlus, FlaskConical, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -210,6 +210,20 @@ export default function NotificationCenter({ isOpen, onClose }) {
     }
   });
 
+  const clearAllMutation = useMutation({
+    mutationFn: async () => {
+      await Promise.all(notifications.map(n => base44.entities.Notification.delete(n.id)));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-count'] });
+      toast.success('All notifications cleared');
+    },
+    onError: (error) => {
+      toast.error('Failed to clear notifications: ' + (error.message || 'Unknown error'));
+    }
+  });
+
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   if (!isOpen) return null;
@@ -256,6 +270,18 @@ export default function NotificationCenter({ isOpen, onClose }) {
                     className="text-xs"
                   >
                     {markAllReadMutation.isPending ? 'Marking...' : 'Mark all read'}
+                  </Button>
+                )}
+                {notifications.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => clearAllMutation.mutate()}
+                    disabled={clearAllMutation.isPending}
+                    className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 mr-1" />
+                    {clearAllMutation.isPending ? 'Clearing...' : 'Clear all'}
                   </Button>
                 )}
                 <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8 w-8 p-0" title="Refresh">
