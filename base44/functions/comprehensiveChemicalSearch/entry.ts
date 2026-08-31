@@ -99,14 +99,38 @@ const BUILTIN_CHEMICALS = [
   { name: 'Vitamin E', scientific_name: 'Tocopherol', molecular_formula: 'C₂₉H₅₀O₂', chemical_type: 'compound', category: 'skincare', safety_level: 'safe', keywords: ['vitamin e', 'tocopherol'] },
 ];
 
+// External databases whose source label should surface on result cards.
+const EXTERNAL_SOURCES = new Set(['PubChem', 'ChEBI', 'ChEMBL', 'ChemSpider']);
+
 const dedupAndPrioritize = (results) => {
   const uniqueMap = new Map();
   results.forEach(chem => {
     const key = (chem.cas_number || chem.scientific_name || chem.name).toLowerCase();
     const existing = uniqueMap.get(key);
-    if (!existing || (!existing.molecular_formula && chem.molecular_formula)) {
-      uniqueMap.set(key, chem);
+    if (!existing) {
+      uniqueMap.set(key, { ...chem });
+      return;
     }
+    // Prefer a curated (built-in / Suttain DB) record as the base so its
+    // curated safety_level and molecular_formula are preserved.
+    const existingExternal = EXTERNAL_SOURCES.has(existing.source_db);
+    const incomingExternal = EXTERNAL_SOURCES.has(chem.source_db);
+    const base = existingExternal && !incomingExternal ? chem : existing;
+    const other = base === existing ? chem : existing;
+    const merged = { ...base };
+    // Carry the external source label onto a built-in (unlabeled) record when
+    // an external database confirmed the same chemical. Suttain DB attribution
+    // is left untouched.
+    if (!merged.source_db) {
+      const ext = EXTERNAL_SOURCES.has(base.source_db) ? base : other;
+      if (ext && EXTERNAL_SOURCES.has(ext.source_db)) {
+        merged.source_db = ext.source_db;
+      }
+    }
+    if (!merged.molecular_formula && other.molecular_formula) {
+      merged.molecular_formula = other.molecular_formula;
+    }
+    uniqueMap.set(key, merged);
   });
   return Array.from(uniqueMap.values());
 };
@@ -326,10 +350,9 @@ Deno.serve(async (req) => {
       c.keywords.some(kw => kw.includes(searchTerm) || searchTerm.includes(kw)) ||
       c.name.toLowerCase().includes(searchTerm) ||
       c.scientific_name.toLowerCase().includes(searchTerm)
-    ).map(c => ({ 
-      ...c, 
-      source: 'builtin', 
-      source_db: 'Built-in',
+    ).map(c => ({
+      ...c,
+      source: 'builtin',
       who_essential: isWHOEssential(c.name) || isWHOEssential(c.scientific_name)
     }));
 
