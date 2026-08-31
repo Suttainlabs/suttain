@@ -9,6 +9,7 @@ import {
   Search, Plus, FolderOpen, Trash2, X, ChevronRight,
   FlaskConical, Calendar, Bookmark, Hash, GripVertical
 } from 'lucide-react';
+import HazardBadge from '../components/shared/HazardBadge';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -432,13 +433,16 @@ export default function ChemicalLibrary() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold text-slate-800 truncate">{chemical.name}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                             {chemical.cas_number && (
                               <span className="text-xs text-slate-400">{chemical.cas_number}</span>
                             )}
                             {chemical.molecular_formula && (
                               <span className="text-xs text-slate-400">{chemical.molecular_formula}</span>
                             )}
+                          </div>
+                          <div className="mt-1.5">
+                            <HazardBadge safetyLevel={chemical.safety_level} dataSource={chemical.data_source} size="xs" />
                           </div>
                         </div>
                         <Plus className="w-4 h-4 text-slate-300 group-hover:text-violet-500 flex-shrink-0" />

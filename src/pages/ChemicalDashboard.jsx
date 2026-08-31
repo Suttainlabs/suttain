@@ -11,6 +11,7 @@ import {
   ArrowLeft, Atom, TrendingUp, ShieldAlert, Leaf, Database,
   BarChart2, Activity, RefreshCw
 } from 'lucide-react';
+import HazardBadge from '../components/shared/HazardBadge';
 
 // ── Color palette ──────────────────────────────────────────────────
 const COLORS = {
@@ -275,6 +276,9 @@ export default function ChemicalDashboard() {
                     />
                   </PieChart>
                 </ResponsiveContainer>
+                <p className="text-[10px] text-slate-400 mt-2 text-center">
+                  Hazard classifications sourced from PubChem GHS, EPA CompTox &amp; curated rules
+                </p>
               </Section>
             </div>
 

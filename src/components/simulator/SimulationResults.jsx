@@ -878,6 +878,15 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                     <p className="text-xs text-slate-400 mt-0.5">
                                         Analyzed {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </p>
+                                    {data?.audit?.attribution && (
+                                        <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
+                                            <Shield className="w-2.5 h-2.5" />
+                                            {data.audit.attribution}
+                                            {data.audit.overridden && (
+                                                <span className="text-amber-600 font-semibold">— safety-corrected</span>
+                                            )}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
