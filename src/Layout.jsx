@@ -750,10 +750,10 @@ export default function Layout({ children, currentPageName }) {
       {/* Footer - Home page only */}
       {['Home', 'ContentToolkit', 'BrandIntelligence'].includes(currentPageName) && (
       <footer className="bg-white border-t border-slate-200 text-sm pb-[env(safe-area-inset-bottom)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Column 1: Logo & Tagline */}
-            <div className="space-y-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            {/* Brand */}
+            <div className="space-y-3">
               <Link to="/" className="flex items-center gap-2">
                 <img
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png"
@@ -761,7 +761,7 @@ export default function Layout({ children, currentPageName }) {
                   className="h-7 w-auto"
                 />
               </Link>
-              <p className="text-slate-500 text-sm leading-relaxed">
+              <p className="text-slate-500 text-sm leading-relaxed max-w-xs">
                 Supporting chemical sustainability through robust analysis, safety evaluation, and formulation tools.
               </p>
               <div className="flex space-x-3">
@@ -781,50 +781,21 @@ export default function Layout({ children, currentPageName }) {
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.2 8.2 0 0 0 4.79 1.52V6.75a4.85 4.85 0 0 1-1.02-.06z"/></svg>
                 </a>
               </div>
-              <div className="pt-3 border-t border-slate-200">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{t('language_label')}</p>
-                <LanguageSwitcher />
-              </div>
             </div>
 
-            {/* Column 2: Platform */}
-            <div>
-              <ul className="space-y-1.5 text-sm">
-                <li><Link to={createPageUrl('Simulator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
-                <li><Link to={createPageUrl('generator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
-                <li><Link to="/ResearchPortal" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
-                <li><Link to="/enterprise" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
-                <li><Link to={createPageUrl('AboutUs')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
-                <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
-                <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
-
-                </ul>
-                </div>
-
-                {/* Column 3: Legal */}
-            <div>
-              <ul className="space-y-1.5 text-sm">
+            {/* Legal + Language */}
+            <div className="flex flex-col gap-4 md:items-end">
+              <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
                 <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Privacy Policy</Link></li>
                 <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Terms of Service</Link></li>
                 <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Compliance Guide</Link></li>
-                <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">contact@suttain.com</a></li>
+                <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Contact</a></li>
               </ul>
+              <LanguageSwitcher />
             </div>
+          </div>
 
-            {/* Column 4: Science */}
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
-              <h3 className="font-semibold mb-3 text-slate-800 text-sm">Science</h3>
-              <ul className="space-y-1.5 text-sm mb-4">
-                <li><Link to={createPageUrl('APIPortal')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">API Docs</Link></li>
-              </ul>
-              <div className="border-t border-slate-200 pt-3">
-                <p className="text-xs text-slate-500 mb-2">Access the Research API</p>
-                <p className="text-[11px] text-[var(--suttain-teal)] font-medium">Python, JavaScript, and R SDKs available</p>
-              </div>
-            </div>
-            </div>
-
-          <div className="mt-4 pt-4 border-t border-slate-200 text-center text-slate-400 text-sm">
+          <div className="mt-6 pt-4 border-t border-slate-200 text-center text-slate-400 text-xs">
             © {new Date().getFullYear()} Suttain. All rights reserved.
           </div>
         </div>
