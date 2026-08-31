@@ -85,6 +85,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ResearchGuard from '@/components/research/ResearchGuard';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
+import DomTranslator from '@/components/i18n/DomTranslator';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -265,6 +266,7 @@ function App() {
   return (
     <AuthProvider>
       <LanguageProvider>
+      <DomTranslator />
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <NavigationTracker />

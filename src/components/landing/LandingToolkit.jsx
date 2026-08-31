@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import ElementCell from "./ElementCell";
-import Tr from "@/components/i18n/Tr";
 
 const TOOLS = [
   { idx: "09", sym: "Sc", variant: "teal", title: "Product scanner", desc: "Scan any product barcode for an instant safety rating and healthier alternatives.", to: "/BarcodeScanner" },
@@ -14,9 +13,9 @@ export default function LandingToolkit() {
   return (
     <section className="px-6 py-24">
       <div className="max-w-[640px] mx-auto mb-12 text-center">
-        <span className="block font-mono text-xs tracking-[0.04em] text-[#027A70] mb-3"><Tr>THE TOOLKIT</Tr></span>
-        <h2 className="font-heading font-semibold text-[clamp(22px,3vw,26px)] mb-3 text-[#0A1F1D]"><Tr>Real tools, not just an engine</Tr></h2>
-        <p className="text-[#3F4651] text-[15px]"><Tr>Four products, one shared chemical intelligence underneath.</Tr></p>
+        <span className="block font-mono text-xs tracking-[0.04em] text-[#027A70] mb-3">THE TOOLKIT</span>
+        <h2 className="font-heading font-semibold text-[clamp(22px,3vw,26px)] mb-3 text-[#0A1F1D]">Real tools, not just an engine</h2>
+        <p className="text-[#3F4651] text-[15px]">Four products, one shared chemical intelligence underneath.</p>
       </div>
       <div className="max-w-[960px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[18px]">
         {TOOLS.map((t) => (
@@ -26,8 +25,8 @@ export default function LandingToolkit() {
             className="block bg-white border border-[#E5E7EB] rounded-[10px] px-5 py-[22px] transition-colors hover:border-[#02988C]"
           >
             <ElementCell index={t.idx} symbol={t.sym} variant={t.variant} />
-            <h4 className="font-medium text-[15px] mt-3.5 mb-1.5 text-[#0A1F1D]"><Tr>{t.title}</Tr></h4>
-            <p className="text-[13px] text-[#3F4651] leading-[1.6]"><Tr>{t.desc}</Tr></p>
+            <h4 className="font-medium text-[15px] mt-3.5 mb-1.5 text-[#0A1F1D]">{t.title}</h4>
+            <p className="text-[13px] text-[#3F4651] leading-[1.6]">{t.desc}</p>
           </Link>
         ))}
       </div>

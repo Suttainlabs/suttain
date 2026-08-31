@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import Tr from "@/components/i18n/Tr";
 
 export default function LandingHero() {
   const navigate = useNavigate();
@@ -19,10 +18,11 @@ export default function LandingHero() {
     <section className="px-6 pt-[88px] pb-16 text-center">
       <div className="max-w-[1080px] mx-auto">
         <h1 className="font-heading font-semibold text-[clamp(26px,4vw,34px)] leading-[1.2] tracking-[-0.01em] text-[#0A1F1D] max-w-[760px] mx-auto mb-4">
-          <Tr>One platform. Two ways to work.</Tr>
+          One platform. Two ways to work.
         </h1>
         <p className="text-[16px] text-[#3F4651] max-w-[640px] mx-auto mb-9 leading-[1.65]">
-          <Tr>Scan, simulate, and formulate safer products, or run molecular research backed by PubChem, ChEMBL, and EPA CompTox. Same engine, either door.</Tr>
+          Scan, simulate, and formulate safer products, or run molecular research backed by
+          PubChem, ChEMBL, and EPA CompTox. Same engine, either door.
         </p>
         <form
           onSubmit={submit}
@@ -42,7 +42,7 @@ export default function LandingHero() {
             disabled={!q.trim() || searching}
             className="bg-[#02988C] text-white rounded-md px-5 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-[#027A70] flex items-center"
           >
-            {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Tr>Search</Tr>}
+            {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : "Search"}
           </button>
         </form>
       </div>

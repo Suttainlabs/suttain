@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import ElementCell from "./ElementCell";
-import Tr from "@/components/i18n/Tr";
 
 const ArrowRight = () => (
   <svg viewBox="0 0 16 16" fill="none" className="w-3.5 h-3.5">
@@ -13,18 +12,18 @@ function Door({ cell, title, blurb, items, href, accent }) {
   return (
     <div className="bg-white border border-[#E5E7EB] rounded-[10px] p-8">
       <ElementCell index={cell.idx} symbol={cell.sym} variant={cell.variant} />
-      <h3 className="font-heading font-semibold text-[18px] mt-4 mb-2 text-[#0A1F1D]"><Tr>{title}</Tr></h3>
-      <p className="text-[14px] text-[#3F4651] mb-4 leading-[1.6]"><Tr>{blurb}</Tr></p>
+      <h3 className="font-heading font-semibold text-[18px] mt-4 mb-2 text-[#0A1F1D]">{title}</h3>
+      <p className="text-[14px] text-[#3F4651] mb-4 leading-[1.6]">{blurb}</p>
       <ul className="grid grid-cols-2 gap-x-3 gap-y-2 mb-5 list-none p-0">
         {items.map((t) => (
           <li key={t} className="text-[13px] text-[#2A3338] pl-4 relative">
             <span className="absolute left-0 top-[7px] w-[5px] h-[5px] rounded-full bg-[#5B6168]" />
-            <Tr>{t}</Tr>
+            {t}
           </li>
         ))}
       </ul>
       <Link to={href} className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline" style={{ color: accent }}>
-        <Tr>Explore {cell.variant === "teal" ? "consumer" : "research"} tools</Tr> <ArrowRight />
+        Explore {cell.variant === "teal" ? "consumer" : "research"} tools <ArrowRight />
       </Link>
     </div>
   );
