@@ -114,7 +114,7 @@ export default function AboutUsPage() {
               },
               {
                 num: '3',
-                title: 'SuttainScan',
+                title: 'Product Scanner',
                 desc: 'Scan any product barcode for a full ingredient breakdown, toxicity profile, and eco-impact score.',
                 icon: Smartphone
               },

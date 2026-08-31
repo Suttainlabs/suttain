@@ -25,7 +25,7 @@ export async function getHazardScore(smiles, name, options = {}) {
 
 /**
  * Formats a hazard prediction result into a compact readout suitable for
- * displaying alongside scan results in SuttainScan, Food Intelligence, etc.
+ * displaying alongside scan results in Product Scanner, Food Intelligence, etc.
  *
  * Replaces plain pass/fail with a calibrated, sourced hazard readout.
  */

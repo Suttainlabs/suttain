@@ -148,7 +148,7 @@ export default function BarcodeScannerPage() {
 
     return (
         <>
-        <ToolFeedbackToast isOpen={showFeedback} onClose={() => setShowFeedback(false)} feature="scanner" featureLabel="SuttainScan" user={user} pointsToAward={0} />
+        <ToolFeedbackToast isOpen={showFeedback} onClose={() => setShowFeedback(false)} feature="scanner" featureLabel="Product Scanner" user={user} pointsToAward={0} />
         <LiveScanner isOpen={isLiveScannerOpen} onClose={() => setIsLiveScannerOpen(false)} onScanSuccess={handleScanSuccess} />
         <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
 
@@ -162,7 +162,7 @@ export default function BarcodeScannerPage() {
                         <Zap className="w-3.5 h-3.5" />
                         Instant Ingredient Analysis
                     </div>
-                    <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 tracking-tight gradient-text">SuttainScan</h1>
+                    <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 tracking-tight gradient-text">Product Scanner</h1>
                     <p className="text-slate-500 text-lg max-w-xl mx-auto">
                         Scan any product barcode to instantly reveal its safety, sustainability, and ingredient profile.
                     </p>
@@ -189,7 +189,7 @@ export default function BarcodeScannerPage() {
                 </div>
             </div>
 
-            {/* Quick / SuttainScan mode */}
+            {/* Quick / Product Scanner mode */}
             {mode === 'quick' && (
                 <div className="max-w-lg mx-auto px-4">
                     {/* Sub-mode tabs */}

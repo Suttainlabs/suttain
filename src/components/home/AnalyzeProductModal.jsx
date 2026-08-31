@@ -13,7 +13,7 @@ import {
 const TOOLS = [
   {
     icon: QrCode,
-    label: "SuttainScan",
+    label: "Product Scanner",
     desc: "Scan any product barcode for a full ingredient breakdown, toxicity profile, and eco-impact score.",
     href: "BarcodeScanner",
     color: "#0D9E8E",

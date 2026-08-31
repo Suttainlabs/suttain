@@ -28,7 +28,7 @@ const faqData = [
   },
   {
     question: "What tools are available on the platform?",
-    answer: "Suttain offers a Chemical Simulator, AI Formula Generator, SuttainScan (barcode product scanner), Computational Simulations, Structural Biology tools, an SDS Analyzer, Carbon Tax Simulator, and an Enterprise API."
+    answer: "Suttain offers a Chemical Simulator, AI Formula Generator, Product Scanner (barcode product scanner), Computational Simulations, Structural Biology tools, an SDS Analyzer, Carbon Tax Simulator, and an Enterprise API."
   },
   {
     question: "Is there an API for my organization?",

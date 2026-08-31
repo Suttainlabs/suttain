@@ -59,7 +59,7 @@ const DEFAULT_RECOMMENDATIONS = {
   items: [
     { label: 'Chemical Simulator', desc: 'Test ingredient combinations for safety', href: 'Simulator', icon: Atom, color: '#02988C' },
     { label: 'Formula Generator', desc: 'Create AI-built, validated formulas', href: 'generator', icon: FlaskConical, color: '#9531F5' },
-    { label: 'SuttainScan', desc: 'Scan any product barcode', href: 'BarcodeScanner', icon: QrCode, color: '#0891b2' },
+    { label: 'Product Scanner', desc: 'Scan any product barcode', href: 'BarcodeScanner', icon: QrCode, color: '#0891b2' },
   ]
 };
 
