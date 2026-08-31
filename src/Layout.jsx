@@ -748,7 +748,7 @@ export default function Layout({ children, currentPageName }) {
           </main>
       
       {/* Footer - Home page only */}
-      {['Home', 'Compliance', 'ContentToolkit', 'BrandIntelligence'].includes(currentPageName) && (
+      {['Home', 'ContentToolkit', 'BrandIntelligence'].includes(currentPageName) && (
       <footer className="bg-white border-t border-slate-200 text-sm pb-[env(safe-area-inset-bottom)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

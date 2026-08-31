@@ -64,7 +64,7 @@ const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
 const ResearchLanding = lazy(() => import('./pages/ResearchLanding'));
-const Compliance = lazy(() => import('./pages/Compliance'));
+
 const ContentToolkit = lazy(() => import('./pages/ContentToolkit'));
 const BrandIntelligence = lazy(() => import('./pages/BrandIntelligence'));
 
@@ -210,7 +210,7 @@ const AuthenticatedApp = () => {
         <Route path="/ComputationalStudio/HazardSafety" element={<LayoutWrapper currentPageName="ComputationalStudioHazardSafety"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioHazardSafety /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/HazardEngine" element={<LayoutWrapper currentPageName="HazardEngine"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><HazardEngine /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Jobs" element={<LayoutWrapper currentPageName="ComputationalStudioJobs"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioJobs /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
-        <Route path="/Compliance" element={<LayoutWrapper currentPageName="Compliance"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#02988C] rounded-full animate-spin"/></div>}><PageTransition><Compliance /></PageTransition></Suspense></LayoutWrapper>} />
+
         <Route path="/ContentToolkit" element={<LayoutWrapper currentPageName="ContentToolkit"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#02988C] rounded-full animate-spin"/></div>}><PageTransition><ContentToolkit /></PageTransition></Suspense></LayoutWrapper>} />
         <Route path="/BrandIntelligence" element={<LayoutWrapper currentPageName="BrandIntelligence"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#02988C] rounded-full animate-spin"/></div>}><PageTransition><BrandIntelligence /></PageTransition></Suspense></LayoutWrapper>} />
       </Route>
