@@ -27,69 +27,9 @@ export default function ProductLookup({ onAnalyze, recentSearches }) {
     setIsAnalyzing(true);
     setError(null);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze the sustainability of this product: "${query}" (category: ${category}).
-
-Provide a detailed sustainability assessment using these 5 weighted metrics (scores 0-100):
-1. Carbon Footprint (30%) - GHG emissions across lifecycle
-2. Water Consumption (20%) - Water usage in sourcing and manufacturing
-3. Packaging Sustainability (20%) - Recyclability, biodegradability, materials
-4. Toxicity & Safety (20%) - Ingredient safety for humans and ecosystems
-5. Ethical Sourcing (10%) - Fair trade, supply chain transparency
-
-Calculate the overall score as a weighted average.
-
-Also provide:
-- Eco badges earned (from: "Low Carbon", "Plastic-Free", "Zero Toxins", "Water Efficient", "Ethically Sourced", "Biodegradable")
-- Key reasons explaining the score
-- 3 greener alternative products with their scores, why they're better, score improvement, and any certifications
-- Specific improvement suggestions with percentage impact on score`,
-        add_context_from_internet: true,
-        model: "gemini_3_flash",
-        response_json_schema: {
-          type: "object",
-          properties: {
-            product_name: { type: "string" },
-            category: { type: "string" },
-            overall_score: { type: "number" },
-            metrics: {
-              type: "object",
-              properties: {
-                carbon_footprint: { type: "number" },
-                water_consumption: { type: "number" },
-                packaging_sustainability: { type: "number" },
-                toxicity_safety: { type: "number" },
-                ethical_sourcing: { type: "number" }
-              }
-            },
-            eco_badges: { type: "array", items: { type: "string" } },
-            score_reasons: { type: "array", items: { type: "string" } },
-            alternatives: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  score: { type: "number" },
-                  reason: { type: "string" },
-                  score_improvement: { type: "number" },
-                  certifications: { type: "array", items: { type: "string" } }
-                }
-              }
-            },
-            improvements: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  suggestion: { type: "string" },
-                  impact_percentage: { type: "number" },
-                  category: { type: "string" }
-                }
-              }
-            }
-          }
-        }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'productLookup',
+        data: { query, category }
       });
       onAnalyze(result);
     } catch (err) {

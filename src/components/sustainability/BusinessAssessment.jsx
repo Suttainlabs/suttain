@@ -19,78 +19,9 @@ export default function BusinessAssessment({ onAnalyze }) {
     if (!productName.trim() || ingredients.filter(i => i.trim()).length === 0) return;
     setIsAnalyzing(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Perform a business-grade sustainability assessment for this product:
-
-Product Name: ${productName}
-Ingredients: ${ingredients.filter(i => i.trim()).join(", ")}
-Manufacturing Method: ${manufacturing || "Not specified"}
-Packaging Materials: ${packaging || "Not specified"}
-Sourcing Origin: ${sourcing || "Not specified"}
-
-Score using these 5 weighted metrics (0-100):
-1. Carbon Footprint (30%) - Based on ingredients, manufacturing, and transport
-2. Water Consumption (20%) - Manufacturing and raw material water usage
-3. Packaging Sustainability (20%) - Material recyclability and biodegradability
-4. Toxicity & Safety (20%) - Ingredient hazard profiles
-5. Ethical Sourcing (10%) - Origin, labor practices, transparency
-
-Calculate weighted overall score. Compare to industry average (typically 45-55).
-
-Provide:
-- Eco badges earned
-- Critical improvement areas flagged
-- Specific ingredient/packaging swaps with % score impact
-- 3 greener product alternatives
-- Industry average comparison`,
-        add_context_from_internet: true,
-        model: "gemini_3_flash",
-        response_json_schema: {
-          type: "object",
-          properties: {
-            product_name: { type: "string" },
-            category: { type: "string" },
-            overall_score: { type: "number" },
-            industry_average: { type: "number" },
-            metrics: {
-              type: "object",
-              properties: {
-                carbon_footprint: { type: "number" },
-                water_consumption: { type: "number" },
-                packaging_sustainability: { type: "number" },
-                toxicity_safety: { type: "number" },
-                ethical_sourcing: { type: "number" }
-              }
-            },
-            eco_badges: { type: "array", items: { type: "string" } },
-            score_reasons: { type: "array", items: { type: "string" } },
-            critical_areas: { type: "array", items: { type: "string" } },
-            alternatives: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  score: { type: "number" },
-                  reason: { type: "string" },
-                  score_improvement: { type: "number" },
-                  certifications: { type: "array", items: { type: "string" } }
-                }
-              }
-            },
-            improvements: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  suggestion: { type: "string" },
-                  impact_percentage: { type: "number" },
-                  category: { type: "string" }
-                }
-              }
-            }
-          }
-        }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'businessAssessment',
+        data: { productName, ingredients, manufacturing, packaging, sourcing }
       });
       onAnalyze(result);
     } catch (error) {

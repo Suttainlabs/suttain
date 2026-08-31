@@ -79,16 +79,9 @@ export default function CarbonTaxSimulator() {
     // Use AI to estimate carbon intensity for unknown ingredients
     setAddLoading(true);
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `Estimate the carbon intensity (kg CO2e per kg of ingredient) for "${newName}" used in cosmetic/cleaning product formulation. Consider production, transport, and processing. Provide a realistic single number based on life cycle assessment data.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            carbon_intensity: { type: 'number' },
-            category: { type: 'string' },
-            confidence: { type: 'string' },
-          }
-        }
+      const res = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'carbonIntensityEstimate',
+        data: { ingredientName: newName }
       });
       setIngredients(prev => [...prev, newIngredient(newName.trim(), 1, res.carbon_intensity || 1)]);
     } catch {
@@ -120,37 +113,9 @@ export default function CarbonTaxSimulator() {
     setLoadingTax(true);
     try {
       const ingredientList = ingredients.map(i => `${i.name} (${i.quantity_kg}kg, ${i.carbon_intensity} kg CO2e/kg)`).join(', ');
-      const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `Carbon tax exposure analysis for a product manufacturer.
-Monthly production: ${unitsPerMonth} units. Batch CO2e: ${totalCO2e.toFixed(1)} kg. Annual CO2e: ${(annualCO2e / 1000).toFixed(1)} tonnes.
-Ingredients: ${ingredientList}.
-Target markets: ${selectedMarkets.join(', ')}.
-Carbon price assumption: $${carbonPrice}/tonne.
-
-For each selected market, provide 3 annual cost scenarios (low/base/high carbon price) and CBAM exposure if EU is selected.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            results: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  market: { type: 'string' },
-                  low: { type: 'number' },
-                  base: { type: 'number' },
-                  high: { type: 'number' },
-                  currency: { type: 'string' },
-                  cbam_exposure: { type: 'number' },
-                  note: { type: 'string' },
-                }
-              }
-            },
-            total_low: { type: 'number' },
-            total_base: { type: 'number' },
-            total_high: { type: 'number' },
-          }
-        }
+      const res = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'carbonTaxSimulation',
+        data: { unitsPerMonth, totalCO2e, annualCO2e, ingredientList, selectedMarkets, carbonPrice }
       });
       setTaxResults(res);
       setActiveTab('Tax Impact');
@@ -162,46 +127,9 @@ For each selected market, provide 3 annual cost scenarios (low/base/high carbon 
     setLoadingAlts(true);
     try {
       const highCarbonIngs = [...ingredients].sort((a, b) => (b.quantity_kg * b.carbon_intensity) - (a.quantity_kg * a.carbon_intensity)).slice(0, 5);
-      const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a green chemistry expert. Suggest greener ingredient alternatives that improve eco-score and carbon footprint.
-
-Current high-impact ingredients:
-${highCarbonIngs.map(i => `- ${i.name}: ${i.carbon_intensity} kg CO2e/kg, quantity ${i.quantity_kg}kg`).join('\n')}
-
-For each, suggest the best greener alternative with:
-- Specific alternative ingredient name
-- Reason (why greener, what it replaces)
-- Carbon reduction percentage
-- Estimated annual cost saving at ${unitsPerMonth} units/month production
-- Eco score gain (1-10 scale)
-- Implementation difficulty (Easy/Medium/Hard)
-- Any compliance or performance tradeoffs
-
-Prioritise by ROI. Return top 5 alternatives.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            alternatives: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  replace_ingredient: { type: 'string' },
-                  alternative_ingredient: { type: 'string' },
-                  reason: { type: 'string' },
-                  carbon_reduction_pct: { type: 'number' },
-                  cost_saving_1yr: { type: 'number' },
-                  cost_saving_5yr: { type: 'number' },
-                  eco_score_gain: { type: 'number' },
-                  difficulty: { type: 'string' },
-                  tradeoffs: { type: 'string' },
-                }
-              }
-            },
-            total_potential_reduction_pct: { type: 'number' },
-            summary: { type: 'string' },
-          }
-        }
+      const res = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'carbonAlternatives',
+        data: { unitsPerMonth, highCarbonIngredients: highCarbonIngs }
       });
       setAlternatives(res);
       setActiveTab('Alternatives');

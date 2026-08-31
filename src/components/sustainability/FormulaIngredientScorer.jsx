@@ -144,50 +144,9 @@ export default function FormulaIngredientScorer() {
     try {
       const ingredientList = valid.map(i => `${i.name.trim()}${i.percentage ? ` (${i.percentage}%)` : ""}`).join(", ");
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an environmental chemist. Analyze the sustainability and eco-impact of these formula ingredients: ${ingredientList}.
-
-For each ingredient, provide:
-- eco_score (0-100, higher = greener)
-- biodegradability (0-100)
-- aquatic_safety (0-100)
-- renewable_sourcing (0-100)
-- summary (one sentence)
-- concerns (array of 1-3 strings about environmental issues)
-- greener_alternative (string or null if already green)
-
-Also provide:
-- overall_score (0-100, weighted average)
-- overall_summary (2-3 sentences about the formula's eco-profile)
-- top_recommendation (single most impactful change to improve sustainability)
-- certifications_possible (array of certifications this formula could achieve, e.g. "ECOCERT", "COSMOS")
-
-Return JSON only.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            overall_score: { type: "number" },
-            overall_summary: { type: "string" },
-            top_recommendation: { type: "string" },
-            certifications_possible: { type: "array", items: { type: "string" } },
-            ingredients: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  eco_score: { type: "number" },
-                  biodegradability: { type: "number" },
-                  aquatic_safety: { type: "number" },
-                  renewable_sourcing: { type: "number" },
-                  summary: { type: "string" },
-                  concerns: { type: "array", items: { type: "string" } },
-                  greener_alternative: { type: "string" }
-                }
-              }
-            }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'formulaIngredientScore',
+        data: { ingredients: valid }
       });
 
       setResult(response);

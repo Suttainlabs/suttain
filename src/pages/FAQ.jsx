@@ -19,10 +19,6 @@ const faqData = [
     answer: "Suttain is a unified AI-powered platform for chemical intelligence. We bridge the gap between consumer product safety (scanning and formulation) and professional-grade research (computational simulation and structural biology). From DIY creators to enterprise R&D teams, Suttain provides the tools to create, test, and innovate with confidence."
   },
   {
-    question: "What is Suttain Farm?",
-    answer: "Suttain Farm (formerly AgroPocket) is our agricultural intelligence tool. It provides smallholder farmers with an AI agronomist for crop diagnosis, weather-aware farming guidance, and yield tracking, all via a mobile-first, multilingual interface designed for the realities of small family farms."
-  },
-  {
     question: "Can I use Suttain for professional research?",
     answer: "Yes. Our Research Portal offers advanced computational tools including DFT and molecular dynamics simulations, AlphaFold-powered protein structure exploration, and a comprehensive Chemical Intelligence API for enterprise-scale integration with PubChem, ChEMBL, and EPA CompTox data."
   },
@@ -32,7 +28,7 @@ const faqData = [
   },
   {
     question: "What tools are available on the platform?",
-    answer: "Suttain offers a Chemical Simulator, AI Formula Generator, SuttainScan (barcode product scanner), Hydration Intelligence, Computational Simulations, Structural Biology tools, an SDS Analyzer, Carbon Tax Simulator, and an Enterprise API. Suttain Farm adds agricultural advisory tools."
+    answer: "Suttain offers a Chemical Simulator, AI Formula Generator, SuttainScan (barcode product scanner), Computational Simulations, Structural Biology tools, an SDS Analyzer, Carbon Tax Simulator, and an Enterprise API."
   },
   {
     question: "Is there an API for my organization?",

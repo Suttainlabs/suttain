@@ -138,40 +138,17 @@ export default function ComparativeImpactReport() {
       .map(([k]) => METRIC_LABELS[k]);
 
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a sustainability expert. A user has a formula named "${selectedFormula.name}" (type: ${selectedFormula.product_type}) with these eco-scores vs industry averages:
-
-${Object.keys(METRIC_LABELS).map(k => `- ${METRIC_LABELS[k]}: ${userScores[k]}/100 (industry avg: ${benchmark[k]})`).join('\n')}
-
-Weak areas below industry average: ${weakAreas.join(', ') || 'None — performing above average!'}
-
-Low-performing ingredients identified: ${lowPerformingIngredients.map(i => i.chemical_name).join(', ') || 'None flagged'}
-
-Ingredients in formula: ${(selectedFormula.ingredients || []).map(i => `${i.chemical_name} (${i.percentage}%)`).join(', ')}
-
-Provide 4-6 concise, specific, actionable recommendations to improve this formula's eco-score. Focus on:
-1. Swapping flagged ingredients for greener alternatives
-2. Addressing the weakest scoring areas
-3. Certifications they could pursue
-Keep each recommendation to 1-2 sentences.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            overall_summary: { type: 'string' },
-            recommendations: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  title: { type: 'string' },
-                  detail: { type: 'string' },
-                  impact: { type: 'string', enum: ['high', 'medium', 'low'] },
-                  category: { type: 'string' },
-                }
-              }
-            },
-            certifications: { type: 'array', items: { type: 'string' } },
-          }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'comparativeImpactAdvice',
+        data: {
+          formulaName: selectedFormula.name,
+          productType: selectedFormula.product_type,
+          metricLabels: METRIC_LABELS,
+          userScores,
+          benchmark,
+          weakAreas,
+          lowPerformingIngredients: lowPerformingIngredients.map(i => i.chemical_name),
+          ingredients: selectedFormula.ingredients || []
         }
       });
       setAdvice(result);
