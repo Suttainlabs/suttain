@@ -41,7 +41,7 @@ export default function DarkNavBar() {
   const isActive = (href) => {
     if (href === "/") return location.pathname === "/" || location.pathname === "/Home";
     if (href === "/enterprise") return location.pathname === "/enterprise" || location.pathname === "/EnterpriseAPI";
-    if (href === "/research") return location.pathname === "/research" || location.pathname === "/ResearchLanding";
+    if (href === "/research") return location.pathname === "/research" || location.pathname === "/ResearchPortal";
     return location.pathname === href;
   };
 

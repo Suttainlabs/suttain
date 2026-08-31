@@ -48,7 +48,7 @@ const PAGE_META_DESCRIPTIONS = {
   FAQ: 'Frequently asked questions about Suttain — chemical safety analysis, formula generation, product scanning, pricing, and research API access.',
   AboutUs: 'Suttain makes chemical safety accessible to everyone. Learn about our mission to democratize chemical knowledge for safer products and formulations.',
   Careers: 'Join Suttain — careers in chemical safety, AI, and sustainable product development. View open positions and help build the future of chemical intelligence.',
-  ResearchLanding: 'Suttain Research Portal — a unified computational chemistry platform integrating PubChem, ChEMBL, and EPA CompTox for molecular intelligence, simulation, and API access.',
+  ResearchPortal: 'Suttain Research Portal — a unified computational chemistry platform integrating PubChem, ChEMBL, and EPA CompTox for molecular intelligence, simulation, and API access.',
   ResearchDashboard: 'Your Suttain research dashboard — monitor activity, manage saved molecular formulas, and access computational chemistry tools.',
   ResearchPortal: 'Suttain Research Portal — molecular intelligence, computational simulation, formula generation, and API access for professional chemists and scientists.',
   APIPortal: 'Suttain Research API documentation — REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. Python and JavaScript SDKs available.',
@@ -398,7 +398,7 @@ export default function Layout({ children, currentPageName }) {
               {/* Single smart Tools dropdown — groups Consumer and Research */}
               <NavToolCombobox items={allToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive || isResearchActive} accent="#02988C" />
 
-              <Link to="/ResearchLanding" className={getLinkClasses("ResearchLanding")}>Research</Link>
+              <Link to="/ResearchPortal" className={getLinkClasses("ResearchPortal")}>Research</Link>
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
@@ -606,9 +606,9 @@ export default function Layout({ children, currentPageName }) {
                             </Link>
                           ))}
                           <p className="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Research</p>
-                          <Link to="/ResearchLanding" onClick={() => setIsMobileMenuOpen(false)}
+                          <Link to="/ResearchPortal" onClick={() => setIsMobileMenuOpen(false)}
                             className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                              location.pathname === "/ResearchLanding" ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
+                              location.pathname === "/ResearchPortal" ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
                             }`}>
                             <FlaskConical className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
                             <span>Research hub</span>
@@ -792,7 +792,7 @@ export default function Layout({ children, currentPageName }) {
               <ul className="space-y-1.5 text-sm">
                 <li><Link to={createPageUrl('Simulator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Chemical Simulator</Link></li>
                 <li><Link to={createPageUrl('generator')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Formula Generator</Link></li>
-                <li><Link to="/ResearchLanding" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
+                <li><Link to="/ResearchPortal" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Research Portal</Link></li>
                 <li><Link to="/enterprise" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Enterprise API</Link></li>
                 <li><Link to={createPageUrl('AboutUs')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">About Us</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
