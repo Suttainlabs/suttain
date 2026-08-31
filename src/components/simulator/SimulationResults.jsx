@@ -111,6 +111,28 @@ const getSafetyStyling = (level) => {
     }
 };
 
+// Per-category results framing — changes only labeling, tone, and default tab
+const PERSONA_FRAMING = {
+    household: {
+        headlinePrefix: 'Is it safe?',
+        recommendationLabel: 'Home safety guidance',
+        whatHappensLabel: 'What this means for you',
+        defaultTab: 'overview',
+    },
+    researcher: {
+        headlinePrefix: 'Scientific summary',
+        recommendationLabel: 'Researcher recommendation',
+        whatHappensLabel: 'Reaction summary',
+        defaultTab: 'reaction',
+    },
+    business: {
+        headlinePrefix: 'Compliance & formulation',
+        recommendationLabel: 'Formulation guidance',
+        whatHappensLabel: 'What this means for your formula',
+        defaultTab: 'overview',
+    },
+};
+
 const RiskMetric = ({ icon, label, value, maxValue = 100, color }) => {
     const percentage = (value / maxValue) * 100;
 
@@ -185,7 +207,8 @@ const ExternalSourcesCard = ({ sources }) => {
 };
 
 export default function SimulationResults({ data, chemicals: chemicalsProp, onViewAlternatives, onStartNew, persona }) {
-    const [activeTab, setActiveTab] = useState('overview');
+    const framing = PERSONA_FRAMING[persona] || PERSONA_FRAMING.household;
+    const [activeTab, setActiveTab] = useState(framing.defaultTab);
     const [isGeneratingReport, setIsGeneratingReport] = useState(false);
     const [showDetails, setShowDetails] = useState(true);
     const [showSignatureModal, setShowSignatureModal] = useState(false);
@@ -529,7 +552,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                         <div>
                             <h4 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
                                 <Info className="w-4 h-4" />
-                                What Happens
+                                {framing.whatHappensLabel}
                             </h4>
                             <p className="text-sm text-slate-600 leading-relaxed">
                                 {reaction_details?.what_happens || 'No detailed description available.'}
@@ -918,13 +941,16 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                 </div>
 
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <h2 className="text-base sm:text-lg font-bold text-slate-900">{safety_status.level}</h2>
-                                        {isAdvanced && (
-                                            <Badge variant="outline" className="text-xs">
-                                                {persona === 'researcher' ? 'Research' : persona === 'business' ? 'Business' : 'Teaching'}
-                                            </Badge>
-                                        )}
+                                    <div className="flex flex-col gap-0.5 mb-1">
+                                        <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">{framing.headlinePrefix}</span>
+                                        <div className="flex items-center gap-2">
+                                            <h2 className="text-base sm:text-lg font-bold text-slate-900">{safety_status.level}</h2>
+                                            {isAdvanced && (
+                                                <Badge variant="outline" className="text-xs">
+                                                    {persona === 'researcher' ? 'Research' : persona === 'business' ? 'Business' : 'Teaching'}
+                                                </Badge>
+                                            )}
+                                        </div>
                                     </div>
                                     <p className="text-xs sm:text-sm text-slate-600 truncate">
                                         {chemicals.map(c => c.scientific_name || c.name).join(' + ')}
@@ -995,9 +1021,10 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                     className={`mt-3 px-3 py-2 ${styling.bg} ${styling.border} border rounded-lg flex items-start gap-2`}
                                 >
                                     <Info className={`w-4 h-4 mt-0.5 flex-shrink-0 ${styling.text}`} />
-                                    <p className={`text-xs ${styling.text} flex-1`}>
+                                    <div className={`text-xs ${styling.text} flex-1`}>
+                                        <span className="font-bold block mb-0.5">{framing.recommendationLabel}</span>
                                         {risk_assessment.recommendation}
-                                    </p>
+                                    </div>
                                     <button
                                         onClick={() => setShowDetails(false)}
                                         className="text-slate-400 hover:text-slate-600 p-0.5 -mr-1"
