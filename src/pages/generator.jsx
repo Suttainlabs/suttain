@@ -42,8 +42,7 @@ export default function Generator() {
     const urlParams = new URLSearchParams(location.search);
     const chemical = urlParams.get("chemical");
     const ingredient = urlParams.get("ingredient");
-    const source = urlParams.get("source");
-    if (source === "sds" && chemical) {
+    if (chemical) {
       setSdsSourceChemical(chemical);
     } else if (ingredient) {
       setSdsSourceChemical(ingredient);

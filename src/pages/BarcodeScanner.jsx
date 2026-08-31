@@ -10,6 +10,7 @@ import ScanResultsCharts from '@/components/scanner/ScanResultsCharts';
 export default function BarcodeScanner() {
     const { user } = useContext(AuthContext);
     const trialStatus = useTrialStatus(user);
+    const initialQuery = new URLSearchParams(window.location.search).get('q') || '';
 
     if (!user) {
         return (
@@ -25,7 +26,7 @@ export default function BarcodeScanner() {
     // Quick Scan is free for all users — no limit gate
     return (
         <div>
-            <BarcodeScannerPage />
+            <BarcodeScannerPage initialQuery={initialQuery} />
             <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 border-t border-slate-200 mt-6">
                 <h2 className="text-lg font-bold text-slate-900 mb-1">Product Data and Safety Analysis</h2>
                 <p className="text-sm text-slate-500 mb-4">Look up any product by barcode or name, analyze ingredient safety, and check interactions. Full source transparency.</p>

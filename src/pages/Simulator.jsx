@@ -535,7 +535,7 @@ export default function Simulator() {
   // the same page still reloads and auto-runs the new chemical.
   React.useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const chemParam = urlParams.get("chemicals");
+    const chemParam = urlParams.get("chemicals") || urlParams.get("chemical");
     const source = urlParams.get("source");
     const sdsProduct = urlParams.get("sds_product");
 

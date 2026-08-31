@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Search, Loader2, FlaskConical, ExternalLink, ChevronRight, AlertTriangle, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,14 +12,21 @@ const POPULAR_CHEMICALS = [
   "Methanol", "Isopropanol", "Acetic Acid", "Sodium Hypochlorite", "Acetonitrile",
 ];
 
-export default function SDSSearch({ onResult }) {
-  const [query, setQuery] = useState("");
+export default function SDSSearch({ onResult, initialQuery }) {
+  const [query, setQuery] = useState(initialQuery || "");
   const [searching, setSearching] = useState(false);
   const [analyzing, setAnalyzing] = useState(null); // cid being analyzed
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [searched, setSearched] = useState(false);
   const inputRef = useRef();
+
+  // Auto-run search when arriving with a pre-filled query (e.g. from landing search)
+  useEffect(() => {
+    if (initialQuery) {
+      handleSearch(initialQuery);
+    }
+  }, []);
 
   const handleSearch = async (q) => {
     const term = (q || query).trim();

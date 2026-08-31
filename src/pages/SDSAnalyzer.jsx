@@ -23,6 +23,7 @@ export default function SDSAnalyzer() {
   const [result, setResult] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [activeTab, setActiveTab] = useState("search");
+  const initialQuery = new URLSearchParams(window.location.search).get('q') || '';
 
   const hasCoreAccess =
     user?.role === "admin" || (user?.product_access || []).includes("core");
@@ -105,7 +106,7 @@ export default function SDSAnalyzer() {
         {/* Tab Content */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
           {activeTab === "search" ? (
-            <SDSSearch onResult={handleResult} />
+            <SDSSearch onResult={handleResult} initialQuery={initialQuery} />
           ) : (
             <SDSUploader onResult={handleResult} />
           )}

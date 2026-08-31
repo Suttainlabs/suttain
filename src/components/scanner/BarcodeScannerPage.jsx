@@ -41,7 +41,7 @@ const QUICK_SUB_MODES = [
     { id: 'compare', label: 'Compare',    icon: BarChart2 },
 ];
 
-export default function BarcodeScannerPage() {
+export default function BarcodeScannerPage({ initialQuery } = {}) {
     const [mode, setMode] = useState('quick');
     const [view, setView] = useState('main');
     const [productInfo, setProductInfo] = useState(null);
@@ -49,7 +49,7 @@ export default function BarcodeScannerPage() {
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState('');
     const [isLiveScannerOpen, setIsLiveScannerOpen] = useState(false);
-    const [barcodeInput, setBarcode] = useState('');
+    const [barcodeInput, setBarcode] = useState(initialQuery || '');
     const [history, setHistory] = useState([]);
     const [showFeedback, setShowFeedback] = useState(false);
     const [showRegulatoryCheck, setShowRegulatoryCheck] = useState(false);
