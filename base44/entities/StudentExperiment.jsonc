@@ -196,7 +196,9 @@
     "chemicals"
   ],
   "rls": {
-    "create": null,
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
     "read": {
       "$or": [
         {
@@ -231,6 +233,9 @@
       "$or": [
         {
           "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.student_email": "{{user.email}}"
         },
         {
           "user_condition": {

@@ -1,0 +1,121 @@
+{
+  "name": "HydrationProfile",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "weight_kg": {
+      "type": "number",
+      "description": "User weight in kilograms"
+    },
+    "activity_level": {
+      "type": "string",
+      "enum": [
+        "sedentary",
+        "light",
+        "moderate",
+        "active",
+        "very_active"
+      ],
+      "description": "User activity level"
+    },
+    "climate": {
+      "type": "string",
+      "enum": [
+        "cool",
+        "moderate",
+        "hot",
+        "humid"
+      ],
+      "description": "Climate the user lives in"
+    },
+    "base_goal_ml": {
+      "type": "number",
+      "description": "Calculated base daily goal in ml"
+    },
+    "biological_mode": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable biological food-linked adjustments"
+    },
+    "smart_reminders": {
+      "type": "boolean",
+      "default": true
+    },
+    "reminder_start": {
+      "type": "string",
+      "default": "07:00"
+    },
+    "reminder_end": {
+      "type": "string",
+      "default": "22:00"
+    },
+    "reminder_frequency": {
+      "type": "string",
+      "enum": [
+        "30min",
+        "45min",
+        "60min",
+        "90min",
+        "120min"
+      ],
+      "default": "60min"
+    },
+    "pace_based_reminders": {
+      "type": "boolean",
+      "default": true
+    },
+    "reminder_style": {
+      "type": "string",
+      "enum": [
+        "gentle",
+        "motivational",
+        "scientific",
+        "biological"
+      ],
+      "default": "gentle"
+    },
+    "timezone": {
+      "type": "string",
+      "description": "IANA timezone identifier for accurate reminder window checks (e.g. America/Chicago)"
+    },
+    "onboarding_complete": {
+      "type": "boolean",
+      "default": false
+    },
+    "current_streak": {
+      "type": "number",
+      "default": 0
+    },
+    "longest_streak": {
+      "type": "number",
+      "default": 0
+    },
+    "last_active_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "weight_kg",
+    "activity_level",
+    "climate"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
