@@ -1,20 +1,27 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { uiTranslations, LANGUAGES } from './translations';
+import { uiTranslations, LANGUAGES, RTL_LANGUAGES } from './translations';
 
 const LanguageContext = createContext();
 
 const STORAGE_KEY = 'suttain_language';
 
 /**
- * Detects a default language from the browser locale.
+ * Detects a default language from the browser locale, restricted to
+ * languages the app actually ships translations for.
  */
 function detectBrowserLanguage() {
-  const browserLang = navigator.language?.toLowerCase() || 'en';
-  if (browserLang.startsWith('hi')) return 'hi';
-  if (browserLang.startsWith('sw')) return 'sw';
-  if (browserLang.startsWith('es')) return 'es';
+  const browserLang = (navigator.language || 'en').toLowerCase();
+  const supported = new Set(LANGUAGES.map(l => l.code));
+  const base = browserLang.split('-')[0];
+  if (supported.has(base)) return base;
   return 'en';
+}
+
+/** Applies the correct text direction for the active language. */
+function applyDirection(lang) {
+  const dir = RTL_LANGUAGES.includes(lang) ? 'rtl' : 'ltr';
+  document.documentElement.dir = dir;
 }
 
 export const LanguageProvider = ({ children }) => {
@@ -28,6 +35,7 @@ export const LanguageProvider = ({ children }) => {
     localStorage.setItem(STORAGE_KEY, lang);
     // Update <html lang="..."> for accessibility / SEO
     document.documentElement.lang = lang;
+    applyDirection(lang);
   }, []);
 
   // Sync language from User entity when auth state changes.
@@ -54,9 +62,10 @@ export const LanguageProvider = ({ children }) => {
     persistLanguageToUser(lang);
   }, [setLanguage, persistLanguageToUser]);
 
-  // Set html lang on mount
+  // Set html lang + direction on mount
   useEffect(() => {
     document.documentElement.lang = language;
+    applyDirection(language);
   }, [language]);
 
   // Translation function: returns the translated string for the current language,

@@ -25,7 +25,7 @@ export default function LanguageSwitcher({ compact = false }) {
           {!compact && <span className="hidden sm:inline">{current.flag}</span>}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-52 max-h-72 overflow-y-auto">
         <DropdownMenuLabel className="text-xs font-bold uppercase tracking-widest text-slate-400">
           {t('language_label')}
         </DropdownMenuLabel>
