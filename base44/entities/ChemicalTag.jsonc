@@ -2,6 +2,11 @@
   "name": "ChemicalTag",
   "type": "object",
   "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "chemical_id": {
       "type": "string",
       "description": "ID or PubChem CID of the tagged chemical"

@@ -2,6 +2,11 @@
   "name": "Diagnosis",
   "type": "object",
   "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "farm_id": {
       "type": "string",
       "description": "Reference to Farm entity"

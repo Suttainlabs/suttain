@@ -2,6 +2,11 @@
   "name": "ViewerSettings",
   "type": "object",
   "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "preferred_engine": {
       "type": "string",
       "enum": [

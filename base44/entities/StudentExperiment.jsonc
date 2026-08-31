@@ -2,6 +2,11 @@
   "name": "StudentExperiment",
   "type": "object",
   "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "classroom_id": {
       "type": "string",
       "description": "Reference to the Classroom entity"

@@ -2,6 +2,11 @@
   "name": "MaterialsSetting",
   "type": "object",
   "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
     "materials_project_api_key": {
       "type": "string",
       "description": "User's Materials Project API key from materialsproject.org for live crystal structure and property queries"
