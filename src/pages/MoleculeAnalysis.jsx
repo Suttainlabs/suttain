@@ -4,6 +4,8 @@ import { createPageUrl } from '@/utils';
 import AuthContext from '../components/auth/AuthContext';
 import CompoundAnalysisResult from '../components/research/CompoundAnalysisResult';
 import { getMolecularData } from '@/functions/getMolecularData';
+import { enrichChemicalMultiSource } from '@/functions/enrichChemicalMultiSource';
+import ExternalDataSourcePanel from '../components/shared/ExternalDataSourcePanel';
 import { base44 } from '@/api/base44Client';
 import StructurePrepSuite from '../components/structural/StructurePrepSuite';
 import {
@@ -298,6 +300,8 @@ export default function MoleculeAnalysis() {
   const [prepPdb, setPrepPdb] = useState(null);
   const [prepPdbName, setPrepPdbName] = useState('');
   const [showPrep, setShowPrep] = useState(false);
+  const [externalEnrichment, setExternalEnrichment] = useState(null);
+  const [enrichmentLoading, setEnrichmentLoading] = useState(false);
 
   // Active tab: 'intelligence' | 'structure'
   const [activeTab, setActiveTab] = useState('intelligence');
@@ -375,6 +379,19 @@ export default function MoleculeAnalysis() {
       }
     }, 500);
   }, [search, chemicals]);
+
+  // Live external-database enrichment when a result is shown
+  useEffect(() => {
+    if (!result) { setExternalEnrichment(null); return; }
+    const queryStr = result?.compound?.name || result?.name || query;
+    if (!queryStr) return;
+    setEnrichmentLoading(true);
+    setExternalEnrichment(null);
+    enrichChemicalMultiSource({ query: queryStr })
+      .then(res => setExternalEnrichment(res.data))
+      .catch(() => setExternalEnrichment(null))
+      .finally(() => setEnrichmentLoading(false));
+  }, [result]);
 
   // Run intelligence analysis
   const runAnalysis = useCallback(async (q, type) => {
@@ -704,7 +721,10 @@ export default function MoleculeAnalysis() {
 
                 {/* Intelligence tab */}
                 {activeTab === 'intelligence' && result && (
-                  <CompoundAnalysisResult data={result} query={query} />
+                  <div className="space-y-4">
+                    <CompoundAnalysisResult data={result} query={query} />
+                    <ExternalDataSourcePanel enrichment={externalEnrichment} loading={enrichmentLoading} />
+                  </div>
                 )}
 
                 {/* 3D Structure tab */}

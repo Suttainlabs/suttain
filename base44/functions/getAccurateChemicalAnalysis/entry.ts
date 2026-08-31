@@ -5,6 +5,10 @@ import {
   deriveSafetyLevelFromScore,
   resolveHazardProfile,
 } from '../../shared/hazardProfiles.ts';
+import {
+  enrichChemicalMultiSource,
+  mergeEnrichmentIntoFloor,
+} from '../../shared/externalDatabaseAdapters.ts';
 
 // ─── Verified hardcoded hazard database (exact known reactions) ───────────────
 // These are the most dangerous, well-documented fatal/dangerous combinations.
@@ -184,8 +188,30 @@ export default async function (req) {
     }
 
     // ── Step 2: Resolve authoritative hazard floor for all chemicals ─────────
-    const floorResult = computeCombinationFloor(chemicals);
-    console.log(`[${appId}] Hazard floor: hasData=${floorResult.hasAuthoritativeData} floor=${floorResult.floor} level=${floorResult.safetyLevel} reasons=${floorResult.triggerReasons.length}`);
+    let floorResult = computeCombinationFloor(chemicals);
+    console.log(`[${appId}] Hazard floor (curated): hasData=${floorResult.hasAuthoritativeData} floor=${floorResult.floor} level=${floorResult.safetyLevel} reasons=${floorResult.triggerReasons.length}`);
+
+    // ── Step 2b: Live external-database enrichment (PubChem GHS, EPA IRIS, EPA SCIL, EPA ECOTOX) ──
+    // Fetches live authoritative data for each chemical and merges it into the
+    // curated floor. Authoritative-data-wins: live regulatory signals can only
+    // RAISE the floor, never lower it.
+    let enrichmentByChemical = [];
+    try {
+      const ACCURACY_ADAPTERS = ['pubchemGHS', 'epaIRIS', 'epaSCIL', 'epaECOTOX'];
+      enrichmentByChemical = await Promise.all(
+        chemicals.map(async (name) => ({
+          chemical: name,
+          enrichment: await enrichChemicalMultiSource(name, { adapters: ACCURACY_ADAPTERS }),
+        }))
+      );
+      const beforeFloor = floorResult.floor;
+      floorResult = mergeEnrichmentIntoFloor(floorResult, enrichmentByChemical);
+      if (floorResult.floor !== beforeFloor) {
+        console.log(`[${appId}] Live enrichment raised floor ${beforeFloor}\u2192${floorResult.floor}, level=${floorResult.safetyLevel}`);
+      }
+    } catch (enrichErr) {
+      console.error(`[${appId}] Live enrichment failed (non-blocking):`, enrichErr.message);
+    }
 
     // ── Step 3: Query Chemical entity database for context ───────────────────
     let dbChemicals = [];
@@ -369,9 +395,19 @@ The safer_alternatives must be tailored specifically for a ${persona} user.`;
       });
     }
 
+    // Flatten the live enrichment sources for the frontend
+    const externalSources = [];
+    for (const item of enrichmentByChemical) {
+      if (item?.enrichment?.sources) {
+        for (const s of item.enrichment.sources) {
+          externalSources.push({ chemical: item.chemical, ...s });
+        }
+      }
+    }
+
     // ── Step 7: Build the final response ─────────────────────────────────────
     const sourceAttribution = floorResult.hasAuthoritativeData
-      ? `Verified against ${auditSources.join(' + ')}`
+      ? `Verified against ${[...auditSources, ...new Set(externalSources.map(s => s.source_db))].join(' + ')}`
       : dbChemicals.length > 0 ? 'Database + AI analysis' : 'AI analysis only';
 
     return Response.json(buildResponse({
@@ -394,6 +430,7 @@ The safer_alternatives must be tailored specifically for a ${persona} user.`;
         authoritative_floor: floorResult.floor,
         hazard_classes: floorResult.hazardClasses,
       },
+      external_sources: externalSources,
     }));
   } catch (error) {
     console.error(`[${appId}] getAccurateChemicalAnalysis error:`, error.message);

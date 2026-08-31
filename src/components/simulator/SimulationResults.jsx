@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     AlertTriangle, CheckCircle, Shield, FlaskConical, Zap, Leaf, Heart,
     Thermometer, BarChart, Beaker, FileText, ChevronRight, CornerUpLeft, BookOpen, Microscope,
-    Download, Calculator, Share2, ClipboardCheck, Loader2, X, ChevronLeft, Atom, TrendingUp, TrendingDown, Info, Sparkles, ArrowRightLeft, Eye
+    Download, Calculator, Share2, ClipboardCheck, Loader2, X, ChevronLeft, Atom, TrendingUp, TrendingDown, Info, Sparkles, ArrowRightLeft, Eye,
+    Database, ExternalLink
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -131,6 +132,54 @@ const RiskMetric = ({ icon, label, value, maxValue = 100, color }) => {
                     style={{ width: `${percentage}%` }}
                 />
             </div>
+        </div>
+    );
+};
+
+const ExternalSourcesCard = ({ sources }) => {
+    const [expanded, setExpanded] = useState(false);
+    const grouped = React.useMemo(() => {
+        const map = {};
+        for (const s of sources) {
+            if (!map[s.source_db]) map[s.source_db] = { source_db: s.source_db, fields: [], retrieved_at: s.retrieved_at };
+            for (const f of (s.fields || [])) map[s.source_db].fields.push(f);
+        }
+        return Object.values(map);
+    }, [sources]);
+    return (
+        <div className="border border-slate-200 rounded-xl overflow-hidden">
+            <button
+                onClick={() => setExpanded(!expanded)}
+                className="w-full flex items-center gap-2 px-4 py-3 bg-slate-50 hover:bg-slate-100 transition-colors"
+            >
+                <Database className="w-4 h-4 text-[#02988C]" />
+                <h4 className="text-sm font-semibold text-slate-800">External data sources</h4>
+                <Badge variant="outline" className="text-[10px] ml-1">{grouped.length} databases</Badge>
+                <ChevronRight className={`w-4 h-4 ml-auto text-slate-400 transition-transform ${expanded ? 'rotate-90' : ''}`} />
+            </button>
+            {expanded && (
+                <div className="p-3 space-y-3 max-h-80 overflow-y-auto">
+                    {grouped.map((src, i) => (
+                        <div key={i} className="border-b border-slate-100 last:border-0 pb-2 last:pb-0">
+                            <p className="text-xs font-bold text-slate-700 mb-1">{src.source_db}</p>
+                            {src.fields.map((f, j) => (
+                                <div key={j} className="flex items-start justify-between gap-2 py-0.5">
+                                    <div className="min-w-0">
+                                        <span className="text-[11px] text-slate-500">{f.field}: </span>
+                                        <span className="text-[11px] text-slate-900 break-words">{String(f.value)}</span>
+                                        {f.units && <span className="text-[10px] text-slate-500 ml-1">{f.units}</span>}
+                                    </div>
+                                    {f.source_url && (
+                                        <a href={f.source_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#02988C] flex-shrink-0">
+                                            <ExternalLink className="w-3 h-3" />
+                                        </a>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
@@ -486,6 +535,11 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                 {reaction_details?.what_happens || 'No detailed description available.'}
                             </p>
                         </div>
+
+                        {/* External data sources (live enrichment) */}
+                        {data?.external_sources?.length > 0 && (
+                            <ExternalSourcesCard sources={data.external_sources} />
+                        )}
 
                         {/* Experimental Conditions Summary */}
                         {isAdvanced && experimentalConditions && Object.keys(experimentalConditions).length > 0 && (
