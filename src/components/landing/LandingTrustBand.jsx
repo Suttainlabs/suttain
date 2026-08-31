@@ -13,7 +13,7 @@ export default function LandingTrustBand() {
           </div>
         </div>
 
-        <p className="text-[15px] text-[#F2FEFC] max-w-[480px] leading-[1.65] m-0">
+        <p className="text-[15px] text-[#F2FEFC] max-w-[520px] leading-[1.65] m-0">
           Powered by trusted scientific databases, the same record whether you're
           checking a shampoo bottle or building a claim on it.
         </p>
