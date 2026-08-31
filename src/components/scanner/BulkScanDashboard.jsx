@@ -274,35 +274,9 @@ export default function BulkScanDashboard({ user }) {
             const p = item.product;
             const ingredients = p.ingredients?.map(i => i.name).join(', ') || 'unknown';
             try {
-                const result = await base44.integrations.Core.InvokeLLM({
-                    prompt: `You are a certified nutritionist. Briefly analyze this product for health insights:\n\nProduct: ${p.name}\nBrand: ${p.brand}\nCategory: ${p.category}\nIngredients: ${ingredients}\n\nProvide an overall health rating, up to 3 high-severity warnings, and up to 2 healthier alternatives.`,
-                    response_json_schema: {
-                        type: 'object',
-                        properties: {
-                            overall_health_rating: { type: 'string', enum: ['Excellent', 'Good', 'Fair', 'Poor'] },
-                            health_warnings: {
-                                type: 'array',
-                                items: {
-                                    type: 'object',
-                                    properties: {
-                                        warning: { type: 'string' },
-                                        severity: { type: 'string', enum: ['low', 'medium', 'high'] },
-                                        affected_groups: { type: 'string' }
-                                    }
-                                }
-                            },
-                            healthier_alternatives: {
-                                type: 'array',
-                                items: {
-                                    type: 'object',
-                                    properties: {
-                                        name: { type: 'string' },
-                                        benefit: { type: 'string' }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                const result = await base44.functions.invoke('runConsumerLLM', {
+                    operation: 'bulkScanHealth',
+                    data: { product: p }
                 });
                 updateItem(item.id, {
                     healthRating: result.overall_health_rating,

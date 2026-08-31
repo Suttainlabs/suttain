@@ -152,33 +152,9 @@ export default function IngredientBrowser({
     
     setIsLoadingAI(true);
     try {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Given these ingredients in a ${productType?.replace(/_/g, ' ') || 'cosmetic'} formula: ${currentIngredients.map(i => i.chemical_name).join(', ')}
-
-Suggest 5 complementary ingredients that would work well with this formula. For each suggestion, provide:
-1. The ingredient name (INCI name)
-2. Why it complements the existing ingredients
-3. Typical usage percentage
-4. Primary benefit/function
-
-Focus on ingredients that enhance efficacy, improve stability, or add beneficial properties without conflicting with existing ingredients.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            suggestions: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  reason: { type: "string" },
-                  percentage: { type: "string" },
-                  function: { type: "string" }
-                }
-              }
-            }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'ingredientBrowserSuggestions',
+        data: { ingredients: currentIngredients, productType }
       });
       
       if (response?.suggestions) {

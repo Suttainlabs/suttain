@@ -41,19 +41,9 @@ export default function ReportGenerator() {
     setProgress(0);
     const interval = setInterval(() => setProgress(p => Math.min(p + 8, 90)), 600);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Generate a professional ${selectedType} report for ${formulaName || 'a cleaning/cosmetic formula'} for the ${market} market.
-Include: executive summary, compliance status, ingredient analysis, safety scores, recommendations.
-Format it as a structured professional document with clear sections.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            title: { type: 'string' },
-            generated_at: { type: 'string' },
-            sections: { type: 'array', items: { type: 'object', properties: { heading: { type: 'string' }, content: { type: 'string' } } } },
-            summary: { type: 'string' },
-          }
-        }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'reportGeneration',
+        data: { selectedType, formulaName, market }
       });
       clearInterval(interval);
       setProgress(100);

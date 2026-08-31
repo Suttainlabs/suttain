@@ -179,17 +179,9 @@ export default function ChemicalImportWizard({ onClose, onImportComplete }) {
         }
       `;
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            mappings: { type: "object", additionalProperties: { type: "string" } },
-            confidence: { type: "object", additionalProperties: { type: "number" } },
-            issues: { type: "array", items: { type: "object" } },
-            unmapped_columns: { type: "array", items: { type: "string" } }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'chemicalImportMapping',
+        data: { headers: columns, sampleRows: sampleData }
       });
 
       setAiMappingSuggestions(response);

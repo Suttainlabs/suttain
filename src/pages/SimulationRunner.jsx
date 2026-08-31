@@ -250,39 +250,9 @@ Provide a focused, technical analysis. Return JSON with:
 9. references: array of 2-3 real paper citations`;
 
     try {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            system_overview: { type: "string" },
-            computational_approach: { type: "string" },
-            predicted_results: {
-              type: "object",
-              properties: {
-                summary: { type: "string" },
-                key_values: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      property: { type: "string" },
-                      value: { type: "string" },
-                      unit: { type: "string" },
-                      interpretation: { type: "string" }
-                    }
-                  }
-                }
-              }
-            },
-            scientific_interpretation: { type: "string" },
-            bash_script: { type: "string" },
-            visualization_commands: { type: "string" },
-            limitations: { type: "string" },
-            next_steps: { type: "array", items: { type: "string" } },
-            references: { type: "array", items: { type: "string" } }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'simulationRunner',
+        data: { selectedEngine, simulationConfig: { ...inputs, ...env }, moleculeInfo: inputSummary }
       });
 
       const fullResult = { ...response, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs }, environmental_params: { ...env }, job_hash: jobHash };

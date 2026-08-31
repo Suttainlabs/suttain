@@ -130,21 +130,9 @@ Return a JSON response with:
 7. hazard_symbols (array: toxic, flammable, corrosive, irritant, environmental)
 8. ai_recommendation (safety text)`;
 
-        const response = await base44.integrations.Core.InvokeLLM({
-          prompt,
-          response_json_schema: {
-            type: 'object',
-            properties: {
-              risk_score: { type: 'number' },
-              reaction_summary: { type: 'string' },
-              health_impact: { type: 'number' },
-              environmental_impact: { type: 'number' },
-              voc_level: { type: 'number' },
-              reactivity: { type: 'number' },
-              hazard_symbols: { type: 'array', items: { type: 'string' } },
-              ai_recommendation: { type: 'string' }
-            }
-          }
+        const response = await base44.functions.invoke('runConsumerLLM', {
+          operation: 'batchSimulation',
+          data: { chemicals: combo.chemicals }
         });
 
         processed[i] = { ...combo, ...response, processing: false };

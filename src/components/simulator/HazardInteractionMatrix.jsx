@@ -127,16 +127,9 @@ Return JSON with:
 - summary: one sentence describing the specific risk or safety of combining these two chemicals.`;
 
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            level: { type: "string" },
-            score: { type: "number" },
-            summary: { type: "string" }
-          }
-        }
+      const res = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'hazardMatrix',
+        data: { chemicalA: a, chemicalB: b }
       });
       const level = (res.level || "UNKNOWN").toUpperCase();
       return { level: RISK_LEVELS[level] ? level : "UNKNOWN", score: res.score || 50, summary: res.summary || "" };

@@ -970,6 +970,284 @@ Return as JSON.`;
         return Response.json(result);
       }
 
+      case 'ingredientBrowserSuggestions': {
+        const productType = (data.productType || 'cosmetic').toString();
+        const ingredientNames = Array.isArray(data.ingredients)
+          ? data.ingredients.map(i => i.chemical_name || i.name || '').filter(Boolean).join(', ')
+          : (data.ingredientNames || '').toString();
+        const result = await call({
+          prompt: `Given these ingredients in a ${productType.replace(/_/g, ' ')} formula: ${ingredientNames}\n\nSuggest 5 complementary ingredients that would work well with this formula. For each suggestion, provide:\n1. The ingredient name (INCI name)\n2. Why it complements the existing ingredients\n3. Typical usage percentage\n4. Primary benefit/function\n\nFocus on ingredients that enhance efficacy, improve stability, or add beneficial properties without conflicting with existing ingredients.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              suggestions: { type: 'array', items: { type: 'object', properties: {
+                name: { type: 'string' }, reason: { type: 'string' }, percentage: { type: 'string' }, function: { type: 'string' }
+              } } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'bulkScanHealth': {
+        const p = data.product || {};
+        const ingredients = Array.isArray(p.ingredients) ? p.ingredients.map(i => i.name).join(', ') : 'unknown';
+        const result = await call({
+          prompt: `You are a certified nutritionist. Briefly analyze this product for health insights:\n\nProduct: ${p.name}\nBrand: ${p.brand}\nCategory: ${p.category}\nIngredients: ${ingredients}\n\nProvide an overall health rating, up to 3 high-severity warnings, and up to 2 healthier alternatives.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_health_rating: { type: 'string', enum: ['Excellent', 'Good', 'Fair', 'Poor'] },
+              health_warnings: { type: 'array', items: { type: 'object', properties: {
+                warning: { type: 'string' }, severity: { type: 'string', enum: ['low', 'medium', 'high'] }, affected_groups: { type: 'string' }
+              } } },
+              healthier_alternatives: { type: 'array', items: { type: 'object', properties: {
+                name: { type: 'string' }, benefit: { type: 'string' }
+              } } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'complianceStatus': {
+        const activeMarkets = Array.isArray(data.activeMarkets) ? data.activeMarkets : [];
+        const result = await call({
+          prompt: `Generate a realistic compliance status for a cosmetic/chemical formula across these markets: ${activeMarkets.join(', ')}.\nFor each market provide:\n- status: one of "pass", "review", or "action"\n- affected_count: number 0-3\n- key_issues: array of specific, actionable regulatory issue strings (empty if pass)\n- affected_ingredients: array of specific ingredient names that are flagged (empty if pass)\nReturn JSON with UPPERCASE market keys matching exactly: ${activeMarkets.join(', ')}.`,
+          response_json_schema: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                status: { type: 'string' },
+                affected_count: { type: 'number' },
+                key_issues: { type: 'array', items: { type: 'string' } },
+                affected_ingredients: { type: 'array', items: { type: 'string' } }
+              }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'ingredientSubstitution': {
+        const ingredientName = (data.ingredientName || '').toString().slice(0, 200);
+        const result = await call({
+          prompt: `For the ingredient "${ingredientName}", provide:\n1. Its current safety profile (score 0-100, key hazards)\n2. Top 5 safer/greener alternatives, each with: name, safety_improvement (%), carbon_reduction (%), cost_delta (% change), reason, availability (in_stock/on_request/lead_time_2w)\n\nReturn JSON.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              original: { type: 'object', properties: { safety_score: { type: 'number' }, hazards: { type: 'array', items: { type: 'string' } }, reason_flagged: { type: 'string' } } },
+              alternatives: { type: 'array', items: { type: 'object', properties: {
+                name: { type: 'string' }, safety_improvement: { type: 'number' }, carbon_reduction: { type: 'number' },
+                cost_delta: { type: 'number' }, reason: { type: 'string' }, availability: { type: 'string' }
+              } } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'reportGeneration': {
+        const selectedType = (data.selectedType || 'compliance').toString();
+        const formulaName = (data.formulaName || 'a cleaning/cosmetic formula').toString();
+        const market = (data.market || 'US').toString();
+        const result = await call({
+          prompt: `Generate a professional ${selectedType} report for ${formulaName} for the ${market} market.\nInclude: executive summary, compliance status, ingredient analysis, safety scores, recommendations.\nFormat it as a structured professional document with clear sections.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              title: { type: 'string' },
+              generated_at: { type: 'string' },
+              sections: { type: 'array', items: { type: 'object', properties: { heading: { type: 'string' }, content: { type: 'string' } } } },
+              summary: { type: 'string' }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'formulaComparison': {
+        const formulaA = data.formulaA || {};
+        const formulaB = data.formulaB || {};
+        const ingA = Array.isArray(formulaA.ingredients) ? formulaA.ingredients.map(i => `${i.chemical_name} ${i.percentage}%`).join(', ') : '';
+        const ingB = Array.isArray(formulaB.ingredients) ? formulaB.ingredients.map(i => `${i.chemical_name} ${i.percentage}%`).join(', ') : '';
+        const result = await call({
+          prompt: `Compare these two cosmetic formulas for eco-friendliness. Return JSON with sustainability scores (0-100) for each.\nFormula A: ${formulaA.name} — ingredients: ${ingA}\nFormula B: ${formulaB.name} — ingredients: ${ingB}`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              formulaA: { type: 'object', properties: { sustainability: { type: 'number' }, biodegradability: { type: 'number' }, renewableSourcing: { type: 'number' }, verdict: { type: 'string' } }, required: ['sustainability', 'biodegradability', 'renewableSourcing', 'verdict'] },
+              formulaB: { type: 'object', properties: { sustainability: { type: 'number' }, biodegradability: { type: 'number' }, renewableSourcing: { type: 'number' }, verdict: { type: 'string' } }, required: ['sustainability', 'biodegradability', 'renewableSourcing', 'verdict'] },
+              winner: { type: 'string', enum: ['A', 'B', 'tie'] },
+              summary: { type: 'string' }
+            },
+            required: ['formulaA', 'formulaB', 'winner', 'summary']
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'hazardMatrix': {
+        const chemicalA = (data.chemicalA || data.a || '').toString().slice(0, 200);
+        const chemicalB = (data.chemicalB || data.b || '').toString().slice(0, 200);
+        const result = await call({
+          prompt: `You are a chemical safety expert. Evaluate the hazard when combining "${chemicalA}" and "${chemicalB}".\nReturn JSON with:\n- level: one of SAFE, LOW, MODERATE, DANGEROUS, FATAL\n- score: integer 0-100 (0=safe, 100=fatal)\n- summary: one sentence describing the specific risk or safety of combining these two chemicals.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              level: { type: 'string' },
+              score: { type: 'number' },
+              summary: { type: 'string' }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'safetyAdvisor': {
+        const chemicals = Array.isArray(data.chemicals) ? data.chemicals : [];
+        const chemList = chemicals.map(c => c.name || c.chemical_name || c).join(', ');
+        const simResults = data.simulationResults || {};
+        const simContext = simResults.risk_score !== undefined
+          ? `\n\nSimulation results available:\n- Risk Score: ${simResults.risk_score || 'N/A'}\n- Health Impact: ${simResults.health_impact || 'N/A'}\n- Environmental Impact: ${simResults.environmental_impact || 'N/A'}\n- Reactivity: ${simResults.reactivity || 'N/A'}\n- Reaction Summary: ${simResults.reaction_summary || 'N/A'}`
+          : '';
+        const result = await call({
+          prompt: `You are a chemical safety expert. Analyze the safety profile of these chemicals: ${chemList}${simContext}\n\nProvide:\n- overall_risk_level: low/moderate/high/critical\n- risk_score: 0-100\n- summary: brief overview\n- identified_hazards: array of hazard objects\n- storage_recommendations: object with temperature, ventilation, segregation, container_type\n- disposal_guidelines: object with method, regulations, warnings\n- additional_notes: array of important safety considerations`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_risk_level: { type: 'string' },
+              risk_score: { type: 'number' },
+              summary: { type: 'string' },
+              identified_hazards: { type: 'array', items: { type: 'object' } },
+              storage_recommendations: { type: 'object' },
+              disposal_guidelines: { type: 'object' },
+              additional_notes: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'batchSimulation': {
+        const chemicals = Array.isArray(data.chemicals) ? data.chemicals.join(', ') : (data.chemicals || '').toString();
+        const result = await call({
+          prompt: `Analyze the chemical interaction and safety risk of mixing these chemicals: ${chemicals}.\n\nReturn a JSON response with:\n1. risk_score (0-100)\n2. reaction_summary (brief text)\n3. health_impact (0-100)\n4. environmental_impact (0-100)\n5. voc_level (0-100)\n6. reactivity (0-100)\n7. hazard_symbols (array: toxic, flammable, corrosive, irritant, environmental)\n8. ai_recommendation (safety text)`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              risk_score: { type: 'number' },
+              reaction_summary: { type: 'string' },
+              health_impact: { type: 'number' },
+              environmental_impact: { type: 'number' },
+              voc_level: { type: 'number' },
+              reactivity: { type: 'number' },
+              hazard_symbols: { type: 'array', items: { type: 'string' } },
+              ai_recommendation: { type: 'string' }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'experimentation': {
+        const experiment = data.experiment || {};
+        const conditions = data.conditions || {};
+        const moleculeList = Array.isArray(data.molecules) ? data.molecules.join(', ') : (data.molecules || '').toString();
+        const result = await call({
+          prompt: `Experiment: ${experiment.name}\nMolecules: ${moleculeList}\nSimulation Type: ${experiment.simulation_type || 'interaction'}\nConditions: Temperature=${conditions.temperature || '298 K'}, Pressure=${conditions.pressure || '1 atm'}, Solvent=${conditions.solvent || 'water'}, pH=${conditions.ph || '7'}, Time=${conditions.time || '1 ns'}\nDescription: ${experiment.description || 'N/A'}\n\nProvide a realistic simulation result as JSON with:\n- summary: 2-3 sentence overview of what happens in this system\n- key_findings: array of 4-6 objects with {property, value, unit, significance}\n- energy_profile: object with {initial_energy, final_energy, unit, energy_change, interpretation}\n- stability_assessment: string (stable/unstable/metastable with brief explanation)\n- reaction_prediction: string (what reactions or interactions are likely)\n- recommendations: array of 3 strings for follow-up experiments`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              summary: { type: 'string' },
+              key_findings: { type: 'array', items: { type: 'object', properties: {
+                property: { type: 'string' }, value: { type: 'string' }, unit: { type: 'string' }, significance: { type: 'string' }
+              } } },
+              energy_profile: { type: 'object', properties: {
+                initial_energy: { type: 'string' }, final_energy: { type: 'string' }, unit: { type: 'string' },
+                energy_change: { type: 'string' }, interpretation: { type: 'string' }
+              } },
+              stability_assessment: { type: 'string' },
+              reaction_prediction: { type: 'string' },
+              recommendations: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'chemicalImportMapping': {
+        const headers = Array.isArray(data.headers) ? data.headers : [];
+        const sampleRows = Array.isArray(data.sampleRows) ? data.sampleRows : [];
+        const result = await call({
+          prompt: `Map these CSV column headers to the standard chemical database fields.\n\nHeaders: ${headers.join(', ')}\nSample data rows:\n${sampleRows.slice(0, 3).map(r => JSON.stringify(r)).join('\n')}\n\nReturn JSON with:\n- mappings: object mapping source column names to standard field names\n- confidence: object with confidence scores (0-1) for each mapping\n- issues: array of {column, issue, suggestion}\n- unmapped_columns: array of columns that couldn't be mapped`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              mappings: { type: 'object', additionalProperties: { type: 'string' } },
+              confidence: { type: 'object', additionalProperties: { type: 'number' } },
+              issues: { type: 'array', items: { type: 'object' } },
+              unmapped_columns: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'simulationQueue': {
+        const job = data.job || {};
+        const inputSummary = (data.inputSummary || '').toString();
+        const result = await call({
+          prompt: `You are a computational chemistry expert. Run a ${job.sim_type_label} simulation using ${job.engine}.\n\nParameters:\n${inputSummary}\n\nReturn JSON with:\n1. system_overview: Brief 2-3 sentence description\n2. predicted_results: { summary: string, key_values: [{property, value, unit, interpretation}] }\n3. scientific_interpretation: 2-3 sentence interpretation\n4. bash_script: Complete ready-to-run ${job.engine} input/bash script\n5. next_steps: array of 3 next steps`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              system_overview: { type: 'string' },
+              predicted_results: { type: 'object', properties: {
+                summary: { type: 'string' },
+                key_values: { type: 'array', items: { type: 'object', properties: {
+                  property: { type: 'string' }, value: { type: 'string' }, unit: { type: 'string' }, interpretation: { type: 'string' }
+                } } }
+              } },
+              scientific_interpretation: { type: 'string' },
+              bash_script: { type: 'string' },
+              next_steps: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'simulationRunner': {
+        const selectedEngine = (data.selectedEngine || 'GROMACS').toString();
+        const simulationConfig = data.simulationConfig || {};
+        const moleculeInfo = (data.moleculeInfo || '').toString();
+        const result = await call({
+          prompt: `Run a ${selectedEngine} molecular dynamics simulation.\n\nMolecule: ${moleculeInfo}\nConfiguration: ${JSON.stringify(simulationConfig).slice(0, 2000)}\n\nProvide a focused, technical analysis. Return JSON with:\n1. system_overview: Brief 2-3 sentence description\n2. computational_approach: Method justification (3-4 sentences)\n3. predicted_results: { summary: string, key_values: [{property, value, unit, interpretation}] } — include 4-6 realistic numerical results\n4. scientific_interpretation: What results mean (3-4 sentences)\n5. bash_script: Complete, ready-to-run ${selectedEngine} input file or bash script with comments\n6. visualization_commands: Visualization commands/scripts\n7. limitations: 2-3 sentence limitation note\n8. next_steps: array of 3 concise next steps\n9. references: array of 2-3 real paper citations`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              system_overview: { type: 'string' },
+              computational_approach: { type: 'string' },
+              predicted_results: { type: 'object', properties: {
+                summary: { type: 'string' },
+                key_values: { type: 'array', items: { type: 'object', properties: {
+                  property: { type: 'string' }, value: { type: 'string' }, unit: { type: 'string' }, interpretation: { type: 'string' }
+                } } }
+              } },
+              scientific_interpretation: { type: 'string' },
+              bash_script: { type: 'string' },
+              visualization_commands: { type: 'string' },
+              limitations: { type: 'string' },
+              next_steps: { type: 'array', items: { type: 'string' } },
+              references: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
       default:
         return Response.json({ error: `Unknown operation: ${operation}` }, { status: 400 });
     }

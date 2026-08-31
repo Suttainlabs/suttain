@@ -79,39 +79,9 @@ Provide a realistic simulation result as JSON with:
 - recommendations: array of 3 strings for follow-up experiments`;
 
     try {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            summary: { type: "string" },
-            key_findings: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  property: { type: "string" },
-                  value: { type: "string" },
-                  unit: { type: "string" },
-                  significance: { type: "string" }
-                }
-              }
-            },
-            energy_profile: {
-              type: "object",
-              properties: {
-                initial_energy: { type: "string" },
-                final_energy: { type: "string" },
-                unit: { type: "string" },
-                energy_change: { type: "string" },
-                interpretation: { type: "string" }
-              }
-            },
-            stability_assessment: { type: "string" },
-            reaction_prediction: { type: "string" },
-            recommendations: { type: "array", items: { type: "string" } }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'experimentation',
+        data: { experiment, molecules: moleculeList, conditions: cond }
       });
 
       const updated = {

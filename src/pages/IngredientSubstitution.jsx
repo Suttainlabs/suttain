@@ -23,32 +23,9 @@ export default function IngredientSubstitution() {
   useEffect(() => {
     if (!ingredientName) { setLoading(false); return; }
     setLoading(true);
-    base44.integrations.Core.InvokeLLM({
-      prompt: `For the ingredient "${ingredientName}", provide:
-1. Its current safety profile (score 0-100, key hazards)
-2. Top 5 safer/greener alternatives, each with: name, safety_improvement (%), carbon_reduction (%), cost_delta (% change), reason, availability (in_stock/on_request/lead_time_2w)
-
-Return JSON.`,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          original: { type: 'object', properties: { safety_score: { type: 'number' }, hazards: { type: 'array', items: { type: 'string' } }, reason_flagged: { type: 'string' } } },
-          alternatives: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                name: { type: 'string' },
-                safety_improvement: { type: 'number' },
-                carbon_reduction: { type: 'number' },
-                cost_delta: { type: 'number' },
-                reason: { type: 'string' },
-                availability: { type: 'string' },
-              }
-            }
-          }
-        }
-      }
+    base44.functions.invoke('runConsumerLLM', {
+      operation: 'ingredientSubstitution',
+      data: { ingredientName }
     }).then(res => {
       setOriginal(res.original);
       setAlternatives(res.alternatives || []);

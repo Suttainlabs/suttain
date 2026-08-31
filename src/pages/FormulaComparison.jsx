@@ -277,18 +277,9 @@ export default function FormulaComparison() {
 Formula A: ${formulaA.name} — ingredients: ${(formulaA.ingredients || []).map(i => `${i.chemical_name} ${i.percentage}%`).join(", ")}
 Formula B: ${formulaB.name} — ingredients: ${(formulaB.ingredients || []).map(i => `${i.chemical_name} ${i.percentage}%`).join(", ")}`;
 
-      const res = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            formulaA: { type: "object", properties: { sustainability: { type: "number" }, biodegradability: { type: "number" }, renewableSourcing: { type: "number" }, verdict: { type: "string" } }, required: ["sustainability", "biodegradability", "renewableSourcing", "verdict"] },
-            formulaB: { type: "object", properties: { sustainability: { type: "number" }, biodegradability: { type: "number" }, renewableSourcing: { type: "number" }, verdict: { type: "string" } }, required: ["sustainability", "biodegradability", "renewableSourcing", "verdict"] },
-            winner: { type: "string", enum: ["A", "B", "tie"] },
-            summary: { type: "string" }
-          },
-          required: ["formulaA", "formulaB", "winner", "summary"]
-        }
+      const res = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'formulaComparison',
+        data: { formulaA, formulaB }
       });
       setAiAnalysis(res);
     } catch (e) {

@@ -159,24 +159,9 @@ Provide a detailed safety analysis in the following JSON format:
   "additional_notes": ["<any other important safety considerations>"]
 }`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            overall_risk_level: { type: "string" },
-            risk_score: { type: "number" },
-            summary: { type: "string" },
-            identified_hazards: { type: "array", items: { type: "object" } },
-            unidentified_risks: { type: "array", items: { type: "object" } },
-            required_ppe: { type: "array", items: { type: "object" } },
-            lab_protocols: { type: "array", items: { type: "object" } },
-            emergency_procedures: { type: "array", items: { type: "object" } },
-            storage_recommendations: { type: "object" },
-            disposal_guidelines: { type: "object" },
-            additional_notes: { type: "array", items: { type: "string" } }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'safetyAdvisor',
+        data: { chemicals, simulationResults }
       });
 
       setAnalysis(response);

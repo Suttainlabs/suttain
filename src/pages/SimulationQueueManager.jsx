@@ -106,35 +106,9 @@ Return JSON with:
 5. next_steps: array of 3 next steps`;
 
       try {
-        const result = await base44.integrations.Core.InvokeLLM({
-          prompt,
-          response_json_schema: {
-            type: "object",
-            properties: {
-              system_overview: { type: "string" },
-              predicted_results: {
-                type: "object",
-                properties: {
-                  summary: { type: "string" },
-                  key_values: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        property: { type: "string" },
-                        value: { type: "string" },
-                        unit: { type: "string" },
-                        interpretation: { type: "string" }
-                      }
-                    }
-                  }
-                }
-              },
-              scientific_interpretation: { type: "string" },
-              bash_script: { type: "string" },
-              next_steps: { type: "array", items: { type: "string" } }
-            }
-          }
+        const result = await base44.functions.invoke('runConsumerLLM', {
+          operation: 'simulationQueue',
+          data: { job, inputSummary }
         });
         await base44.entities.SimulationJob.update(job.id, { status: "completed", result });
         completed++;

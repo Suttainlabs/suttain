@@ -162,26 +162,9 @@ export default function ComplianceDashboard() {
   const loadCompliance = async () => {
     setLoading(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Generate a realistic compliance status for a cosmetic/chemical formula across these markets: ${activeMarkets.join(', ')}.
-For each market provide:
-- status: one of "pass", "review", or "action"
-- affected_count: number 0-3
-- key_issues: array of specific, actionable regulatory issue strings (empty if pass)
-- affected_ingredients: array of specific ingredient names that are flagged (empty if pass)
-Return JSON with UPPERCASE market keys matching exactly: ${activeMarkets.join(', ')}.`,
-        response_json_schema: {
-          type: 'object',
-          additionalProperties: {
-            type: 'object',
-            properties: {
-              status: { type: 'string' },
-              affected_count: { type: 'number' },
-              key_issues: { type: 'array', items: { type: 'string' } },
-              affected_ingredients: { type: 'array', items: { type: 'string' } },
-            }
-          }
-        }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'complianceStatus',
+        data: { activeMarkets }
       });
       setComplianceData(result);
       setLastUpdated(new Date());
