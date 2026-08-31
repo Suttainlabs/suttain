@@ -418,6 +418,558 @@ Generate 4 pieces of marketing content, each emphasizing ingredient safety, tran
         return Response.json(result);
       }
 
+      case 'claraChat': {
+        const conversationHistory = (data.conversationHistory || '').slice(0, 16000);
+        const userMessage = (data.userMessage || '').slice(0, 2000);
+        const language = (data.language || 'en').toString().slice(0, 10);
+        const languageNames = { en: 'English', hi: 'Hindi', sw: 'Swahili', es: 'Spanish' };
+        const languageInstruction = `IMPORTANT: You MUST respond in ${languageNames[language] || 'English'}. Always preserve scientific names, chemical formulas, CAS numbers, SMILES strings, InChI keys, units, and numeric values in their original form. Only translate natural language prose, descriptions, warnings, and recommendations.`;
+        let updatesContext = 'No recent updates available.';
+        try {
+          const updates = await base44.asServiceRole.entities.PlatformUpdate.list('-created_date', 10);
+          const published = (updates || []).filter(u => u.is_published !== false);
+          if (published.length > 0) {
+            updatesContext = published.map(u => `- ${u.title}: ${u.description}${u.url ? ` (Link: ${u.url})` : ''}`).join('\n');
+          }
+        } catch {}
+        const SYSTEM_PROMPT = `You are Clara — the expert virtual assistant and core intelligence layer of Suttain (suttain.com), an AI-native platform for chemical safety, sustainable formulation, molecular intelligence, and climate compliance.
+
+RESPONSE FORMATTING RULES:
+- Use PLAIN TEXT ONLY — NO markdown, NO asterisks (**), NO special formatting symbols
+- Keep responses SHORT and CONCISE (3-5 sentences unless a list is genuinely needed)
+- Use simple bullet points with dashes (-) if listing items
+- Speak like a trusted expert, never like software. Translate every technical output into plain language.
+- A score is not just a number — it is a verdict with a reason and a recommendation.
+- A compliance flag is not just a warning — it is a specific action with a deadline and a fix.
+- If you don't know something specific, say "For more details, please email contact@suttain.com"
+- NEVER use emojis in any response
+
+SPECIAL ACTIONS:
+- If the user wants to CANCEL their subscription, respond with exactly: ACTION:CANCEL_SUBSCRIPTION
+- If the user wants to UPGRADE or SUBSCRIBE, respond with exactly: ACTION:UPGRADE_SUBSCRIPTION
+
+EXECUTIVE ASSISTANT BEHAVIOR:
+- Analyze the user's intent before responding. If a request is vague, ask one clarifying question. If a request is complex, break it down into steps.
+- Provide concise, high-value responses that solve the user's problem rather than just listing information.
+- Think step by step internally, then deliver only the final, polished answer.
+- Remember context within the session. Every ingredient mentioned, every formula discussed, every market selected — carry it forward.
+- Personalize outputs by referencing their target markets, allergen or health flags, product type, production volume, and sustainability goals.
+
+OPERATING LOGIC:
+1. IDENTIFY INTENT: Safety → Chemical Simulator; Formulation → Formula Generator; Compliance → AI Compliance Co-Pilot; Carbon → Carbon Tax Simulator; Sourcing → Sustainable Chemistry Marketplace; Ingredient → Ingredient Database; Research → Computational Simulation, Molecule Analysis, Structural Biology; Platform updates → Use LATEST PLATFORM UPDATES from context.
+2. NEVER give a standalone answer. Every answer must connect to a tool output or direct the user to run something on the platform.
+3. CHAIN THE TOOLS automatically in your response.
+4. SURFACE THE NEXT ACTION always. After every answer, suggest the next step within the platform.
+
+SUTTAIN TOOLS: Chemical Simulator, Formula Generator, SuttainScan/Barcode Scanner, Ingredient Database (130M+ chemicals), Formula Simulation Engine, Computational Simulations (DFT, MD, ORCA, GROMACS), AI Compliance Co-Pilot (50+ regulations), Carbon Tax Simulator, Carbon Opportunity Simulator, Comparative Impact Report, Personalized Safety Alerts, Sustainability Scoring, Sustainable Chemistry Marketplace, DWSIM Integration, Molecule Analysis, Structural Biology, SDS Analyzer, Enterprise API.
+
+PRICING: FREE (3 sims/mo, 5 formulas/mo, unlimited scans), STARTER ($4.99/mo), PRO ($49.99/mo — unlimited everything), ACADEMIC ($199/mo), LIFETIME ($999 one-time), PRO LIFETIME ($99.99 one-time), ENTERPRISE (custom).
+
+SCOPE RULES:
+- Answer ALL questions about Suttain
+- For billing issues → "Please email contact@suttain.com"
+- For off-topic questions → redirect warmly back to the platform
+- NEVER make up features, prices, or policies not listed above`;
+        const prompt = `${SYSTEM_PROMPT}\n\n${languageInstruction}\n\n=== LATEST PLATFORM UPDATES (real-time from PlatformUpdate entity) ===\n${updatesContext}\n\n=== END PLATFORM UPDATES ===\n\nCurrent conversation:\n${conversationHistory}\n\nUser's latest question: ${userMessage}\n\nProvide a helpful, CONCISE response in PLAIN TEXT focused on the Suttain platform. Respond in ${languageNames[language] || 'English'}:`;
+        const result = await call({ prompt, add_context_from_internet: false, model: 'gpt_5_mini' });
+        return Response.json(typeof result === 'string' ? result : (result?.text || String(result)));
+      }
+
+      case 'formulaOptions': {
+        const productName = (data.productTypeName || '').toString().slice(0, 200);
+        const description = (data.description || '').toString().slice(0, 2000);
+        const isBusiness = !!data.businessMode;
+        let prompt;
+        if (isBusiness) {
+          prompt = `You are a senior cosmetic formulation chemist with 20+ years experience in commercial product development.
+
+PRODUCT REQUEST: "${productName}" - "${description}"
+
+MODE: COMMERCIAL/BUSINESS FORMULATION
+This formula will be manufactured at scale and sold commercially. All requirements must meet industry standards.
+
+Create 3 DISTINCT commercial-grade formula variants:
+1. MARKET LEADER (Premium positioning) - High-performance actives, premium textures, high-end retail ($30-80)
+2. MASS MARKET (Volume production) - Cost-optimized, proven stable formulations, drugstore/supermarket ($8-20)
+3. CLEAN/SUSTAINABLE (Eco-certification ready) - COSMOS/ECOCERT compliant, biodegradable, palm-free or sustainable palm
+
+FOR EACH VARIANT PROVIDE:
+- Product name (market-ready brand name)
+- Positioning statement (1 sentence)
+- Key marketing claims (3 substantiated claims)
+- COMPLETE ingredient list using INCI NOMENCLATURE with exact percentages (must total 100%), function of each ingredient, industrial-grade preservative system, pH adjusters, chelating agents
+- Cost level: low/medium/high (with estimated cost per kg)
+- Difficulty: intermediate/advanced/professional
+- Regulatory notes: Any restrictions in EU/US/Asia markets
+
+Use proper INCI names. Include CAS numbers for key actives.`;
+        } else {
+          prompt = `You are a friendly DIY cosmetics teacher helping a beginner make their first homemade product.
+
+PRODUCT REQUEST: "${productName}" - "${description}"
+
+MODE: HOME/DIY FORMULATION
+This is for personal use, made in a home kitchen with easily available ingredients.
+
+Create 3 SIMPLE, BEGINNER-FRIENDLY formula variants:
+1. SUPER EASY (First-timer friendly) - Max 5-6 ingredients, no heating if possible, grocery store ingredients, ready in under 15 minutes
+2. NATURAL & GENTLE - Natural recognizable ingredients, plant-based, essential oil scented, good for sensitive skin
+3. BUDGET SAVER - Most affordable, uses pantry staples, best value, bulk-buy friendly
+
+FOR EACH VARIANT PROVIDE:
+- Fun, descriptive name (like "Kitchen Spa Cream")
+- Simple description (1 sentence, no jargon)
+- Benefits in plain English (3 points)
+- SIMPLE ingredient list with common names, percentages that total 100%, where to buy each ingredient
+- Cost level: low/medium/high
+- Difficulty: beginner/intermediate
+- Simple tips for making it at home`;
+        }
+        prompt += `\n\nReturn as JSON with this exact structure:\n{\n"formulas": [\n{\n  "variant": "string",\n  "name": "string",\n  "description": "string",\n  "benefits": ["string", "string", "string"],\n  "ingredients": [{"chemical_name": "string", "percentage": number, "purpose": "string"}],\n  "cost_level": "low|medium|high",\n  "difficulty": "beginner|intermediate|advanced|professional"\n}\n]\n}`;
+        const result = await call({
+          prompt, add_context_from_internet: true,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              formulas: { type: 'array', items: {
+                type: 'object',
+                properties: {
+                  variant: { type: 'string' }, name: { type: 'string' },
+                  description: { type: 'string' }, benefits: { type: 'array', items: { type: 'string' } },
+                  ingredients: { type: 'array', items: { type: 'object', properties: { chemical_name: { type: 'string' }, percentage: { type: 'number' }, purpose: { type: 'string' } } } },
+                  cost_level: { type: 'string' }, difficulty: { type: 'string' }
+                }
+              } }
+            },
+            required: ['formulas']
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'formulaRecipe': {
+        const variant = (data.variant || '').toString().slice(0, 100);
+        const description = (data.description || '').toString().slice(0, 2000);
+        const isBusiness = !!data.businessMode;
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.slice(0, 50) : [];
+        const ingredientLines = ingredients.map(ing => `- ${ing.chemical_name}: ${ing.percentage}% (${ing.purpose})`).join('\n');
+        let prompt;
+        if (isBusiness) {
+          prompt = `You are a senior cosmetic formulation chemist. Expand this ${variant} commercial formula for "${description}" into complete manufacturing documentation.
+
+Ingredients (already defined):
+${ingredientLines}
+
+Provide PROFESSIONAL MANUFACTURING DOCUMENTATION:
+1. MANUFACTURING INSTRUCTIONS (organized by phases A/B/C/D with temperatures, order of addition, mixing speeds)
+2. PRODUCT SPECIFICATIONS (Target pH range, viscosity, specific gravity, appearance, odor, stability)
+3. QUALITY CONTROL (In-process checks, final product testing, microbiological limits)
+4. SAFETY & COMPLIANCE (GHS hazard statements, required PPE, MSDS considerations, regulatory notes)
+5. SUSTAINABILITY METRICS (Biodegradability, carbon footprint, sustainability score 0-100)
+
+Return as JSON.`;
+        } else {
+          prompt = `You are a friendly DIY teacher. Expand this ${variant} homemade recipe for "${description}" into easy-to-follow instructions.
+
+Ingredients (already defined):
+${ingredientLines}
+
+Provide BEGINNER-FRIENDLY INSTRUCTIONS:
+1. SIMPLE STEP-BY-STEP INSTRUCTIONS (plain language, kitchen equipment, timing estimates)
+2. WHAT TO EXPECT (appearance, pH, shelf life, time to make, texture)
+3. SAFETY TIPS (simple precautions, storage, when to discard)
+4. TROUBLESHOOTING (common problems and fixes)
+5. ECO-FRIENDLINESS (sustainability score 0-100, disposal tips)
+
+Return as JSON.`;
+        }
+        prompt += `\n\nUse this JSON structure:\n{\n"instructions": [{"phase": "Phase Name", "steps": ["step 1", "step 2"]}],\n"properties": {"ph_level": "string", "shelf_life": "string", "difficulty": "string", "time_to_make": "string"},\n"safety_precautions": ["string"],\n"sustainability_score": number\n}`;
+        const result = await call({
+          prompt,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              instructions: { type: 'array', items: { type: 'object', properties: { phase: { type: 'string' }, steps: { type: 'array', items: { type: 'string' } } } } },
+              properties: { type: 'object', properties: { ph_level: { type: 'string' }, shelf_life: { type: 'string' }, difficulty: { type: 'string' }, time_to_make: { type: 'string' } } },
+              safety_precautions: { type: 'array', items: { type: 'string' } },
+              sustainability_score: { type: 'number' }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'productCompliance': {
+        const productName = (data.productName || '').toString().slice(0, 200);
+        const category = (data.category || '').toString().slice(0, 100);
+        const ingredients = (data.ingredients || '').toString().slice(0, 4000);
+        const result = await call({
+          prompt: `You are a regulatory compliance expert. Analyze these product ingredients for global regulatory compliance:\n\nProduct: ${productName}\nCategory: ${category}\nIngredients: ${ingredients}\n\nCheck compliance for EU, US FDA, and Canada regulations. Flag any restricted or banned substances.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_status: { type: 'string', enum: ['Compliant', 'Issues Found', 'Requires Review'] },
+              summary: { type: 'string' },
+              flagged_ingredients: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, region: { type: 'string' }, issue: { type: 'string' }, severity: { type: 'string', enum: ['low', 'medium', 'high'] } } } },
+              recommendations: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'productHealth': {
+        const productName = (data.productName || '').toString().slice(0, 200);
+        const brand = (data.brand || '').toString().slice(0, 200);
+        const category = (data.category || '').toString().slice(0, 100);
+        const ingredients = (data.ingredients || '').toString().slice(0, 4000);
+        const nutritionText = (data.nutritionFacts || 'not available').toString().slice(0, 2000);
+        const result = await call({
+          prompt: `You are a certified nutritionist. Analyze this product for health and dietary insights:\n\nProduct: ${productName}\nBrand: ${brand}\nCategory: ${category}\nIngredients: ${ingredients}\nNutritional Info: ${nutritionText}\n\nProvide a comprehensive health analysis.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              health_summary: { type: 'string' },
+              overall_health_rating: { type: 'string', enum: ['Excellent', 'Good', 'Fair', 'Poor'] },
+              dietary_suitability: { type: 'array', items: { type: 'object', properties: { diet: { type: 'string' }, suitable: { type: 'boolean' }, reason: { type: 'string' } } } },
+              health_warnings: { type: 'array', items: { type: 'object', properties: { warning: { type: 'string' }, severity: { type: 'string', enum: ['low', 'medium', 'high'] }, affected_groups: { type: 'string' } } } },
+              nutritional_highlights: { type: 'array', items: { type: 'string' } },
+              healthier_alternatives: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, benefit: { type: 'string' } } } },
+              consumption_tips: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'productSustainability': {
+        const productName = (data.productName || '').toString().slice(0, 200);
+        const category = (data.category || '').toString().slice(0, 100);
+        const ingredients = (data.ingredients || '').toString().slice(0, 4000);
+        const result = await call({
+          prompt: `You are an environmental sustainability expert. Analyze the eco-impact of these product ingredients:\n\nProduct: ${productName}\nCategory: ${category}\nIngredients: ${ingredients}\n\nAssess biodegradability, bioaccumulation, carbon footprint, and overall sustainability.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_score: { type: 'number' },
+              grade: { type: 'string', enum: ['A', 'B', 'C', 'D', 'F'] },
+              biodegradability: { type: 'string' },
+              carbon_footprint: { type: 'string' },
+              summary: { type: 'string' },
+              eco_concerns: { type: 'array', items: { type: 'string' } },
+              green_positives: { type: 'array', items: { type: 'string' } },
+              improvement_tips: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'findSimilarProducts': {
+        const productName = (data.productName || '').toString().slice(0, 200);
+        const category = (data.category || '').toString().slice(0, 100);
+        const brand = (data.brand || '').toString().slice(0, 200);
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.slice(0, 5).join(', ') : '';
+        const result = await call({
+          prompt: `Find 3 real alternative products that serve the EXACT same purpose as "${productName}" (${category} by ${brand}). Prefer more natural, eco-friendly options. Key ingredients: ${ingredients || 'N/A'}.`,
+          add_context_from_internet: true,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              similar_products: { type: 'array', items: {
+                type: 'object',
+                properties: { product_name: { type: 'string' }, brand: { type: 'string' }, main_category: { type: 'string' }, key_attributes: { type: 'string' }, brief_description: { type: 'string' }, url: { type: 'string', nullable: true } }
+              } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'ingredientSearch': {
+        const query = (data.query || '').toString().slice(0, 200);
+        const result = await call({
+          prompt: `List 6 real chemical/ingredient names that match "${query}" for cosmetic/cleaning formulas. Return JSON: {"results": ["name1","name2",...]}`,
+          response_json_schema: { type: 'object', properties: { results: { type: 'array', items: { type: 'string' } } } }
+        });
+        return Response.json(result);
+      }
+
+      case 'extractIngredientsFromImage': {
+        const fileUrl = (data.fileUrl || '').toString().slice(0, 500);
+        if (!fileUrl) return Response.json({ error: 'fileUrl required' }, { status: 400 });
+        const result = await call({
+          prompt: 'Extract the full ingredient list from this product label or SDS document. Return JSON with ingredient names.',
+          file_urls: [fileUrl],
+          response_json_schema: { type: 'object', properties: { ingredients: { type: 'array', items: { type: 'string' } } } }
+        });
+        return Response.json(result);
+      }
+
+      case 'formulaAnalysis': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients : [];
+        const ingredientList = ingredients.map(i => `${i.name}${i.concentration ? ` ${i.concentration}%` : ''}`).join(', ');
+        const result = await call({
+          prompt: `Analyse this formula for safety, compliance (REACH, FDA, GHS), sustainability, and carbon footprint. Ingredients: ${ingredientList}.\nReturn scores 0-100 and brief explanations. Also list any flagged ingredients with severity.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              safety_score: { type: 'number' },
+              compliance_score: { type: 'number' },
+              sustainability_score: { type: 'number' },
+              carbon_score: { type: 'number' },
+              safety_summary: { type: 'string' },
+              flagged_ingredients: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, severity: { type: 'string' }, reason: { type: 'string' }, regulation: { type: 'string' } } } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'extractFileData': {
+        const fileUrl = (data.fileUrl || '').toString().slice(0, 500);
+        if (!fileUrl) return Response.json({ error: 'fileUrl required' }, { status: 400 });
+        const result = await base44.asServiceRole.integrations.Core.ExtractDataFromUploadedFile({
+          file_url: fileUrl,
+          json_schema: {
+            type: 'object',
+            properties: {
+              product_name: { type: 'string' },
+              ingredients: { type: 'array', items: { type: 'string' } },
+              hazard_information: { type: 'string' },
+              regulatory_info: { type: 'string' },
+              cas_numbers: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'complianceAnalysis': {
+        const ingredients = (data.ingredients || '').toString().slice(0, 4000);
+        const documentContext = (data.documentContext || '').toString().slice(0, 8000);
+        const result = await call({
+          prompt: `You are a regulatory compliance expert. Analyze these ingredients for compliance:\n\nIngredients: ${ingredients}\n\nDocument context:\n${documentContext}\n\nCheck EU, US FDA, Canada, and REACH regulations. Flag restricted/banned substances and provide remediation steps.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_status: { type: 'string' },
+              summary: { type: 'string' },
+              flagged_ingredients: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, region: { type: 'string' }, issue: { type: 'string' }, severity: { type: 'string' } } } },
+              recommendations: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'aiSuggestions': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.slice(0, 50) : [];
+        const ingredientDetails = ingredients.map(i => `${i.chemical_name} (${i.percentage}%, ${i.purpose || 'general'})`).join(', ');
+        const productType = (data.productType || 'product').toString().slice(0, 100);
+        const businessMode = !!data.businessMode;
+        const result = await call({
+          prompt: `You are an expert cosmetic/product chemist. Analyze this ${productType} formula and provide intelligent suggestions.\n\nCurrent Ingredients: ${ingredientDetails}\nProduct Type: ${productType}\nContext: ${businessMode ? 'Commercial/B2B production' : 'DIY/Home formulation'}\n\nProvide comprehensive suggestions in JSON format:\n1. complementary_ingredients: 3-5 ingredients that would enhance this formula (name, purpose, suggested_percentage, why_add, safety_notes)\n2. potential_formulations: 2-3 complete formula variations based on current ingredients (name, description, key_changes, benefits)\n3. safety_considerations: Important safety notes for current ingredient combinations\n4. improvement_tips: 3-4 specific tips to improve safety, efficacy, or cost-effectiveness\n5. synergy_notes: How current ingredients work together and any potential issues`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              complementary_ingredients: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, purpose: { type: 'string' }, suggested_percentage: { type: 'number' }, why_add: { type: 'string' }, safety_notes: { type: 'string' } } } },
+              potential_formulations: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, key_changes: { type: 'array', items: { type: 'string' } }, benefits: { type: 'array', items: { type: 'string' } } } } },
+              safety_considerations: { type: 'array', items: { type: 'string' } },
+              improvement_tips: { type: 'array', items: { type: 'string' } },
+              synergy_notes: { type: 'string' }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'batchCompliance': {
+        const ingredientList = (data.ingredientList || '').toString().slice(0, 4000);
+        const productType = (data.productType || 'cosmetic').toString().slice(0, 100);
+        const result = await call({
+          prompt: `You are a regulatory compliance expert. Analyze this ${productType} formula for global regulatory compliance.\n\nIngredients: ${ingredientList}\n\nCheck compliance for US (FDA), EU (Cosmetics Regulation + REACH), and UK (UK Cosmetics Regulation). Flag restricted/banned substances, concentration limits, and allergen declarations.\n\nReturn JSON with: overall_risk, risk_summary, regional_compliance (array with region, status, details, labeling_requirements), restricted_ingredients, concentration_limits, allergen_declarations, labeling_requirements.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_risk: { type: 'string' },
+              risk_summary: { type: 'string' },
+              regional_compliance: { type: 'array', items: { type: 'object', properties: { region: { type: 'string' }, status: { type: 'string' }, details: { type: 'string' }, labeling_requirements: { type: 'array', items: { type: 'string' } } } } },
+              restricted_ingredients: { type: 'array', items: { type: 'object', properties: { ingredient: { type: 'string' }, reason: { type: 'string' }, region: { type: 'string' } } } },
+              concentration_limits: { type: 'array', items: { type: 'object', properties: { ingredient: { type: 'string' }, limit: { type: 'string' }, current: { type: 'string' }, status: { type: 'string' } } } },
+              allergen_declarations: { type: 'array', items: { type: 'string' } },
+              labeling_requirements: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'ingredientCost': {
+        const ingredientName = (data.ingredientName || '').toString().slice(0, 200);
+        const result = await call({
+          prompt: `Estimate the current wholesale purchase price for the cosmetic ingredient "${ingredientName}". Search for prices from major cosmetics ingredient suppliers like MakingCosmetics, lotioncrafter, or similar. Return the price per 100 grams in USD. If you cannot find an exact price, provide a reasonable industry estimate.`,
+          add_context_from_internet: true,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              price_per_100g: { type: 'number' },
+              supplier: { type: 'string' },
+              confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
+              notes: { type: 'string' }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'formulaInsights': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.slice(0, 50) : [];
+        const ingredientList = ingredients.map(i => `${i.chemical_name} (${i.percentage}%)`).join(', ');
+        const productType = (data.productType || 'cosmetic').toString().slice(0, 100);
+        const businessMode = !!data.businessMode;
+        const result = await call({
+          prompt: `Analyze this ${productType} formula and provide comprehensive insights for a ${businessMode ? 'commercial B2B' : 'DIY home formulation'} context:\n\nIngredients: ${ingredientList}\n\nPlease analyze and return JSON with:\n1. properties: { ph_level, viscosity, stability }\n2. warnings: array of critical safety issues, incompatibilities, or missing essential components\n3. suggestions: array of 3-4 actionable improvement recommendations\n4. efficacy_score: number 1-10\n5. safety_score: number 1-10\n\nFocus on practical, formula-specific feedback. Consider ingredient interactions, concentration safety limits, and ${businessMode ? 'regulatory compliance' : 'ease of sourcing ingredients'}.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              properties: { type: 'object', properties: { ph_level: { type: 'string' }, viscosity: { type: 'string' }, stability: { type: 'string' } } },
+              warnings: { type: 'array', items: { type: 'string' } },
+              suggestions: { type: 'array', items: { type: 'string' } },
+              efficacy_score: { type: 'number' },
+              safety_score: { type: 'number' }
+            },
+            required: ['properties', 'warnings', 'suggestions']
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'hazardAlternatives': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.slice(0, 50) : [];
+        const ingredientList = ingredients.map(i => `${i.chemical_name} (${i.percentage}%)`).join(', ');
+        const result = await call({
+          prompt: `Analyze these cosmetic/cleaning product ingredients for potential hazards and suggest safer alternatives:\n\nIngredients: ${ingredientList}\n\nFor each ingredient, assess:\n1. Hazard level (safe, low_concern, moderate_concern, high_concern)\n2. Specific hazard types (skin irritant, allergen, endocrine disruptor, environmental toxin, carcinogen concern, etc.)\n3. Regulatory status (any bans or restrictions globally)\n4. If hazardous or concerning, provide 2-3 safer alternatives with: name, why it's safer, effectiveness compared to original (percentage), any tradeoffs\n\nFocus on scientifically documented concerns, not speculation.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              flagged_count: { type: 'number' },
+              overall_safety: { type: 'string' },
+              ingredients: { type: 'array', items: { type: 'object', properties: {
+                name: { type: 'string' }, hazard_level: { type: 'string' }, hazard_types: { type: 'array', items: { type: 'string' } },
+                regulatory_notes: { type: 'string' },
+                alternatives: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, reason: { type: 'string' }, effectiveness: { type: 'number' }, tradeoffs: { type: 'string' } } } }
+              } } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'ingredientInteractions': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.slice(0, 50) : [];
+        const ingredientList = ingredients.map(i => `${i.chemical_name} (${i.percentage}%)`).join(', ');
+        const productType = (data.productType || 'cosmetic').toString().slice(0, 100);
+        const result = await call({
+          prompt: `Analyze potential chemical interactions and incompatibilities between these ingredients in a ${productType} formula:\n\nIngredients: ${ingredientList}\n\nFor each potential interaction, provide:\n1. Which ingredients are involved\n2. Type of interaction (beneficial, neutral, problematic, or dangerous)\n3. Detailed explanation\n4. Severity level (1-5)\n5. Recommended action if problematic\n\nAlso provide an overall compatibility score (0-100). Focus on pH incompatibilities, oxidation reactions, ingredient deactivation, precipitation, skin sensitization, efficacy interference.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_score: { type: 'number' },
+              overall_assessment: { type: 'string' },
+              interactions: { type: 'array', items: { type: 'object', properties: {
+                ingredients_involved: { type: 'array', items: { type: 'string' } }, interaction_type: { type: 'string' },
+                severity: { type: 'number' }, explanation: { type: 'string' }, recommendation: { type: 'string' }
+              } } },
+              warnings: { type: 'array', items: { type: 'string' } },
+              positive_synergies: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'ingredientSustainabilityScore': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.slice(0, 50) : [];
+        const ingredientList = ingredients.map(i => i.chemical_name).join(', ');
+        const result = await call({
+          prompt: `Analyze the sustainability of these cosmetic/cleaning product ingredients:\n\nIngredients: ${ingredientList}\n\nFor each ingredient, provide: overall sustainability score (0-100), sourcing score (0-100), biodegradability score (0-100), environmental impact score (0-100), sourcing description, biodegradability category (readily/inherently/not biodegradable), key environmental concerns, sustainable alternative suggestion (if score below 60). Also calculate an overall formula sustainability score.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_formula_score: { type: 'number' },
+              overall_assessment: { type: 'string' },
+              ingredients: { type: 'array', items: { type: 'object', properties: {
+                name: { type: 'string' }, overall_score: { type: 'number' }, sourcing_score: { type: 'number' },
+                biodegradability_score: { type: 'number' }, environmental_score: { type: 'number' },
+                sourcing_type: { type: 'string' }, biodegradability_category: { type: 'string' },
+                concerns: { type: 'array', items: { type: 'string' } }, sustainable_alternative: { type: 'string' }
+              } } },
+              recommendations: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'productSuggestions': {
+        const productType = (data.productType || '').toString().slice(0, 200);
+        const query = (data.query || '').toString().slice(0, 200);
+        const result = await call({
+          prompt: `User wants "${productType}". Query: "${query}". Give 8 short, specific product ideas matching this query. Be concise.`,
+          response_json_schema: { type: 'object', properties: { suggestions: { type: 'array', items: { type: 'string' }, maxItems: 8 } }, required: ['suggestions'] }
+        });
+        return Response.json(result);
+      }
+
+      case 'productTypeSuggestions': {
+        const query = (data.query || '').toString().slice(0, 200);
+        const result = await call({
+          prompt: `Given the user input "${query}", suggest 8 specific cosmetic, cleaning, or personal care product types they might want to create. Examples: All-Purpose Cleaner, Facial Moisturizer, Hand Soap, Glass Cleaner, Body Wash, Kitchen Degreaser, Sunscreen, Shampoo. Return a JSON object with a "suggestions" array containing product type names.`,
+          response_json_schema: { type: 'object', properties: { suggestions: { type: 'array', items: { type: 'string' } } }, required: ['suggestions'] }
+        });
+        return Response.json(result);
+      }
+
+      case 'stabilityPrediction': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.slice(0, 50) : [];
+        const ingredientList = ingredients.map(i => `${i.chemical_name} (${i.percentage}%)`).join(', ');
+        const result = await call({
+          prompt: `Predict the shelf life stability for a cosmetic formula with these ingredients: ${ingredientList}.\n\nConsider: water activity and microbial growth risk, oxidation potential, preservative efficacy, pH stability, ingredient interactions, packaging recommendations.\n\nReturn JSON with: predicted_months, confidence, key_factors, degradation_risks (factor, risk, mitigation), packaging_recommendation, storage_conditions.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              predicted_months: { type: 'number' },
+              confidence: { type: 'string' },
+              key_factors: { type: 'array', items: { type: 'string' } },
+              degradation_risks: { type: 'array', items: { type: 'object', properties: { factor: { type: 'string' }, risk: { type: 'string' }, mitigation: { type: 'string' } } } },
+              packaging_recommendation: { type: 'string' },
+              storage_conditions: { type: 'string' }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'supplierSourcing': {
+        const ingredientName = (data.ingredientName || '').toString().slice(0, 200);
+        const result = await call({
+          prompt: `Search the web for REAL product listings for the ingredient "${ingredientName}" from wholesale cosmetic ingredient suppliers, chemical distributors, or bulk suppliers. Focus on: MakingCosmetics, Lotioncrafter, Wholesale Supplies Plus, Nature's Garden, Croda Indie Beauty, Formulator Sample Shop, bulkapothecary, and chemistry supply companies like Sigma-Aldrich or Fisher Scientific.\n\nCRITICAL: Only return suppliers where you found an ACTUAL product page with a visible price. Do NOT estimate or guess prices.\n\nFor each real listing, provide: supplier name, productUrl (direct URL to product page), packageName, packagePrice (USD), pricePer100g, leadTime, moq, confidence (high/medium/low), sourcingScore (0-100).\n\nExclude consumer retail stores. Rank by pricePer100g (lowest first).`,
+          add_context_from_internet: true,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              suppliers: { type: 'array', items: { type: 'object', properties: {
+                supplier: { type: 'string' }, productUrl: { type: 'string' }, packageName: { type: 'string' },
+                packagePrice: { type: 'number' }, pricePer100g: { type: 'number' }, leadTime: { type: 'string' },
+                moq: { type: 'string' }, confidence: { type: 'string', enum: ['high', 'medium', 'low'] }, sourcingScore: { type: 'number' }
+              } } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
       default:
         return Response.json({ error: `Unknown operation: ${operation}` }, { status: 400 });
     }

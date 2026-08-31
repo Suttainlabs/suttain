@@ -55,19 +55,9 @@ export default function ProductDescriptionStep({
     try {
       const prompt = `User wants "${productType.name}". Query: "${query}". Give 8 short, specific product ideas matching this query. Be concise.`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            suggestions: {
-              type: "array",
-              items: { type: "string" },
-              maxItems: 8
-            }
-          },
-          required: ["suggestions"]
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'productSuggestions',
+        data: { productType: productType.name, query }
       });
 
       if (response && Array.isArray(response.suggestions)) {

@@ -238,18 +238,9 @@ export default function ProductTypeSelector({
       
       Return a JSON object with a "suggestions" array containing product type names.`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            suggestions: {
-              type: "array",
-              items: { type: "string" }
-            }
-          },
-          required: ["suggestions"]
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'productTypeSuggestions',
+        data: { query }
       });
 
       if (response && Array.isArray(response.suggestions)) {

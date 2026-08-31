@@ -83,52 +83,9 @@ Return the compliance scan as JSON with this exact structure:
 }`;
 
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            overall_risk: { type: 'string' },
-            risk_summary: { type: 'string' },
-            regional_compliance: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  region: { type: 'string' },
-                  status: { type: 'string' },
-                  details: { type: 'string' },
-                  labeling_requirements: { type: 'array', items: { type: 'string' } },
-                },
-              },
-            },
-            restricted_ingredients: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  ingredient: { type: 'string' },
-                  reason: { type: 'string' },
-                  region: { type: 'string' },
-                },
-              },
-            },
-            concentration_limits: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  ingredient: { type: 'string' },
-                  limit: { type: 'string' },
-                  current: { type: 'string' },
-                  status: { type: 'string' },
-                },
-              },
-            },
-            allergen_declarations: { type: 'array', items: { type: 'string' } },
-            labeling_requirements: { type: 'array', items: { type: 'string' } },
-          },
-        },
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'batchCompliance',
+        data: { ingredientList }
       });
       setComplianceData(result);
       onComplianceResult?.(result);

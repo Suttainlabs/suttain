@@ -21,49 +21,9 @@ export default function IngredientInteractionAnalyzer({ ingredients, productType
     try {
       const ingredientList = ingredients.map(i => `${i.chemical_name} (${i.percentage}%)`).join(', ');
       
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze potential chemical interactions and incompatibilities between these ingredients in a ${productType?.replace(/_/g, ' ') || 'cosmetic'} formula:
-
-Ingredients: ${ingredientList}
-
-For each potential interaction, provide:
-1. Which ingredients are involved
-2. Type of interaction (beneficial, neutral, problematic, or dangerous)
-3. Detailed explanation of what happens when these ingredients mix
-4. Severity level (1-5, with 5 being most severe)
-5. Recommended action if problematic
-
-Also provide an overall compatibility score (0-100) for the formula.
-
-Focus on:
-- pH incompatibilities
-- Oxidation reactions
-- Ingredient deactivation
-- Precipitation or separation
-- Skin sensitization combinations
-- Efficacy interference`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            overall_score: { type: "number" },
-            overall_assessment: { type: "string" },
-            interactions: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  ingredients_involved: { type: "array", items: { type: "string" } },
-                  interaction_type: { type: "string" },
-                  severity: { type: "number" },
-                  explanation: { type: "string" },
-                  recommendation: { type: "string" }
-                }
-              }
-            },
-            warnings: { type: "array", items: { type: "string" } },
-            positive_synergies: { type: "array", items: { type: "string" } }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'ingredientInteractions',
+        data: { ingredients, productType }
       });
       
       setAnalysis(response);

@@ -28,53 +28,9 @@ export default function HazardAlternativesPanel({ ingredients, onReplaceIngredie
     try {
       const ingredientList = ingredients.map(i => `${i.chemical_name} (${i.percentage}%)`).join(', ');
       
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze these cosmetic/cleaning product ingredients for potential hazards and suggest safer alternatives:
-
-Ingredients: ${ingredientList}
-
-For each ingredient, assess:
-1. Hazard level (safe, low_concern, moderate_concern, high_concern)
-2. Specific hazard types (skin irritant, allergen, endocrine disruptor, environmental toxin, carcinogen concern, etc.)
-3. Regulatory status (any bans or restrictions globally)
-4. If hazardous or concerning, provide 2-3 safer alternatives with:
-   - Alternative name
-   - Why it's safer
-   - Effectiveness compared to original (percentage)
-   - Any tradeoffs
-
-Focus on scientifically documented concerns, not speculation.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            flagged_count: { type: "number" },
-            overall_safety: { type: "string" },
-            ingredients: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  hazard_level: { type: "string" },
-                  hazard_types: { type: "array", items: { type: "string" } },
-                  regulatory_notes: { type: "string" },
-                  alternatives: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        name: { type: "string" },
-                        reason: { type: "string" },
-                        effectiveness: { type: "number" },
-                        tradeoffs: { type: "string" }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'hazardAlternatives',
+        data: { ingredients }
       });
       
       setAnalysis(response);

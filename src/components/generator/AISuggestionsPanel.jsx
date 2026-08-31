@@ -77,55 +77,9 @@ Provide comprehensive suggestions in JSON format:
 4. improvement_tips: 3-4 specific tips to improve safety, efficacy, or cost-effectiveness
 5. synergy_notes: How current ingredients work together and any potential issues`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            complementary_ingredients: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  purpose: { type: "string" },
-                  suggested_percentage: { type: "number" },
-                  why_add: { type: "string" },
-                  safety_notes: { type: "string" }
-                }
-              }
-            },
-            potential_formulations: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  description: { type: "string" },
-                  key_changes: { type: "array", items: { type: "string" } },
-                  benefits: { type: "array", items: { type: "string" } }
-                }
-              }
-            },
-            safety_considerations: {
-              type: "array",
-              items: { type: "string" }
-            },
-            improvement_tips: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  category: { type: "string" },
-                  tip: { type: "string" },
-                  impact: { type: "string" }
-                }
-              }
-            },
-            synergy_notes: { type: "string" }
-          },
-          required: ["complementary_ingredients", "safety_considerations", "improvement_tips"]
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'aiSuggestions',
+        data: { ingredients: formula.ingredients, productType, businessMode }
       });
 
       setSuggestions(response);

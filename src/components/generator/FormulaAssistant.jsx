@@ -63,32 +63,9 @@ Please analyze and return JSON with:
 
 Focus on practical, formula-specific feedback. Consider ingredient interactions, concentration safety limits, and ${businessMode ? 'regulatory compliance' : 'ease of sourcing ingredients'}. Keep responses concise and directly actionable.`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            properties: {
-              type: "object",
-              properties: {
-                ph_level: { type: "string" },
-                viscosity: { type: "string" },
-                stability: { type: "string" }
-              }
-            },
-            warnings: {
-              type: "array",
-              items: { type: "string" }
-            },
-            suggestions: {
-              type: "array",
-              items: { type: "string" }
-            },
-            efficacy_score: { type: "number" },
-            safety_score: { type: "number" }
-          },
-          required: ["properties", "warnings", "suggestions"]
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'formulaInsights',
+        data: { ingredients: formula.ingredients, productType, businessMode }
       });
 
       setAnalysis(response);

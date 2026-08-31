@@ -142,18 +142,9 @@ export default function CostProductionPanel({ formula, batchSize, batchUnit, cos
   const handleFetchPrice = async (ingredientName) => {
     setFetchingPrice(ingredientName);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Estimate the current wholesale purchase price for the cosmetic ingredient "${ingredientName}". Search for prices from major cosmetics ingredient suppliers like MakingCosmetics, lotioncrafter, or similar. Return the price per 100 grams in USD. If you cannot find an exact price, provide a reasonable industry estimate.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            price_per_100g: { type: 'number', description: 'Price in USD per 100g' },
-            supplier: { type: 'string', description: 'Supplier name or source' },
-            confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
-            notes: { type: 'string' },
-          },
-        },
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'ingredientCost',
+        data: { ingredientName }
       });
 
       const newEntry = {

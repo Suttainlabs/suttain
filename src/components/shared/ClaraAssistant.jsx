@@ -294,10 +294,9 @@ export default function ClaraAssistant() {
             const languageNames = { en: 'English', hi: 'Hindi', sw: 'Swahili', es: 'Spanish' };
             const languageInstruction = `IMPORTANT: You MUST respond in ${languageNames[language] || 'English'}. Always preserve scientific names, chemical formulas, CAS numbers, SMILES strings, InChI keys, units, and numeric values in their original form. Only translate natural language prose, descriptions, warnings, and recommendations.`;
 
-            const response = await base44.integrations.Core.InvokeLLM({
-                prompt: `${SYSTEM_PROMPT}\n\n${languageInstruction}\n\n=== LATEST PLATFORM UPDATES (real-time from PlatformUpdate entity) ===\n${updatesContext}\n\n=== END PLATFORM UPDATES ===\n\nCurrent conversation:\n${conversationHistory}\n\nUser's latest question: ${content}\n\nProvide a helpful, CONCISE response in PLAIN TEXT focused on the Suttain platform. Respond in ${languageNames[language] || 'English'}. If the user is asking about updates or new features, reference the LATEST PLATFORM UPDATES section above:`,
-                add_context_from_internet: false,
-                model: 'gpt_5_mini'
+            const response = await base44.functions.invoke('runConsumerLLM', {
+                operation: 'claraChat',
+                data: { conversationHistory, userMessage: content, language }
             });
 
             // Check if LLM detected an action
@@ -352,7 +351,7 @@ export default function ClaraAssistant() {
         setLiveAgentLoading(true);
         try {
             const transcript = messages.map(m => `${m.role === 'user' ? 'User' : 'Clara'}: ${m.content}`).join('\n') || 'No prior conversation.';
-            await base44.integrations.Core.SendEmail({
+            await base44.functions.invoke('sendEmailResend', {
                 to: 'contact@suttain.com',
                 subject: `Live Agent Request from ${liveAgentName}`,
                 body: `A user has requested to speak with a live agent on Suttain.\n\nName: ${liveAgentName}\nEmail: ${liveAgentEmail}\n\n--- Conversation Transcript ---\n${transcript}\n\nPlease follow up with the user as soon as possible.`

@@ -52,48 +52,9 @@ function SupplierSourcingPanel({ formula, batchSize, batchUnit }) {
     setSourcingData((prev) => ({ ...prev, [ingredientName]: { ...(prev[ingredientName] || {}), loading: true } }));
 
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Search the web for REAL product listings for the ingredient "${ingredientName}" from wholesale cosmetic ingredient suppliers, chemical distributors, or bulk suppliers. Focus on these platforms first: MakingCosmetics, Lotioncrafter, Wholesale Supplies Plus (formerly Bramble Berry), Nature's Garden, Croda Indie Beauty, Formulator Sample Shop,.bulkapothecary, and chemistry supply companies like Sigma-Aldrich or Fisher Scientific for lab-grade chemicals.
-
-CRITICAL: Only return suppliers where you found an ACTUAL product page with a visible price. Do NOT estimate or guess prices. If you cannot find a real listing, return fewer suppliers rather than making one up.
-
-For each real listing found, provide:
-- supplier name (the actual company/store name)
-- productUrl: the direct URL to the actual product page you found (must be a real URL you visited, not a fabricated search URL)
-- packageName: the exact package size from the listing (e.g. "1 gallon", "500ml", "1kg", "16 oz")
-- packagePrice: the total price in USD shown on the listing (number only, no $ sign)
-- pricePer100g: calculated as (packagePrice / total grams in package) * 100. Convert units: 1 gallon water-based = 3785g, 1 gallon = 3.785L, 1 oz = 28.35g, 1 lb = 453.6g, 1 kg = 1000g
-- leadTime: typical lead time for this supplier (e.g. "2-3 days", "1 week")
-- moq: minimum order quantity shown on the listing (e.g. "100g", "1kg", "No MOQ")
-- confidence: "high" ONLY if you found a real product page with an actual listed price. "medium" if you found the supplier's website but had to estimate the price from a similar product. "low" if you are guessing. Never use "high" unless the URL is a real product page.
-- sourcingScore: 0-100 based on whether the supplier emphasizes natural/organic/sustainable sourcing
-
-Exclude consumer retail stores (CVS, Walmart, Target, Walgreens, Amazon marketplace resellers) unless the ingredient is only available as a consumer product. Prioritize bulk/wholesale suppliers.
-
-Rank suppliers by pricePer100g (lowest first). Return only suppliers with real URLs.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            suppliers: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  supplier: { type: 'string' },
-                  productUrl: { type: 'string' },
-                  packageName: { type: 'string' },
-                  packagePrice: { type: 'number' },
-                  pricePer100g: { type: 'number' },
-                  leadTime: { type: 'string' },
-                  moq: { type: 'string' },
-                  confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
-                  sourcingScore: { type: 'number' },
-                },
-              },
-            },
-          },
-        },
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'supplierSourcing',
+        data: { ingredientName }
       });
 
       const suppliers = (result?.suppliers || []).sort((a, b) => (a.pricePer100g || 0) - (b.pricePer100g || 0));

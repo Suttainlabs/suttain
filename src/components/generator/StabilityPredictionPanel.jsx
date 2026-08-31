@@ -69,47 +69,9 @@ export default function StabilityPredictionPanel({ formula, onStabilityResult })
     const ingredientList = formula.ingredients.map((i) => `${i.chemical_name} (${i.percentage}%)`).join(', ');
 
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Predict the shelf life stability for a cosmetic formula with these ingredients: ${ingredientList}.
-
-Consider:
-- Water activity and microbial growth risk
-- Oxidation potential (oils, unsaturated compounds)
-- Preservative efficacy
-- pH stability
-- Ingredient interactions (e.g. vitamin C + niacinamide, acids + retinol)
-- Packaging recommendations
-
-Return JSON:
-{
-  "predicted_months": number,
-  "confidence": "high" | "medium" | "low",
-  "key_factors": ["string"],
-  "degradation_risks": [{"factor": "string", "risk": "low"|"medium"|"high", "mitigation": "string"}],
-  "packaging_recommendation": "string",
-  "storage_conditions": "string"
-}`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            predicted_months: { type: 'number' },
-            confidence: { type: 'string' },
-            key_factors: { type: 'array', items: { type: 'string' } },
-            degradation_risks: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  factor: { type: 'string' },
-                  risk: { type: 'string' },
-                  mitigation: { type: 'string' },
-                },
-              },
-            },
-            packaging_recommendation: { type: 'string' },
-            storage_conditions: { type: 'string' },
-          },
-        },
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'stabilityPrediction',
+        data: { ingredients: formula.ingredients }
       });
       setPrediction(result);
       onStabilityResult?.({ ...heuristicEstimate, aiPrediction: result });

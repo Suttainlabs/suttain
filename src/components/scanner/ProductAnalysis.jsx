@@ -411,20 +411,9 @@ export default function ProductAnalysis({ product, onClear, user }) {
     setIsLoadingCompliance(true);
     try {
       const ingredients = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a regulatory compliance expert. Analyze these product ingredients for global regulatory compliance:\n\nProduct: ${product.name}\nCategory: ${product.category}\nIngredients: ${ingredients}\n\nCheck compliance for EU, US FDA, and Canada regulations. Flag any restricted or banned substances.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            overall_status: { type: 'string', enum: ['Compliant', 'Issues Found', 'Requires Review'] },
-            summary: { type: 'string' },
-            flagged_ingredients: {
-              type: 'array',
-              items: { type: 'object', properties: { name: { type: 'string' }, region: { type: 'string' }, issue: { type: 'string' }, severity: { type: 'string', enum: ['low', 'medium', 'high'] } } }
-            },
-            recommendations: { type: 'array', items: { type: 'string' } }
-          }
-        }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'productCompliance',
+        data: { productName: product.name, category: product.category, ingredients }
       });
       setComplianceData(result);
     } catch {
@@ -438,20 +427,9 @@ export default function ProductAnalysis({ product, onClear, user }) {
     try {
       const ingredients = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
       const nutritionText = product.nutritionFacts ? JSON.stringify(product.nutritionFacts) : 'not available';
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a certified nutritionist. Analyze this product for health and dietary insights:\n\nProduct: ${product.name}\nBrand: ${product.brand}\nCategory: ${product.category}\nIngredients: ${ingredients}\nNutritional Info: ${nutritionText}\n\nProvide a comprehensive health analysis.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            health_summary: { type: 'string' },
-            overall_health_rating: { type: 'string', enum: ['Excellent', 'Good', 'Fair', 'Poor'] },
-            dietary_suitability: { type: 'array', items: { type: 'object', properties: { diet: { type: 'string' }, suitable: { type: 'boolean' }, reason: { type: 'string' } } } },
-            health_warnings: { type: 'array', items: { type: 'object', properties: { warning: { type: 'string' }, severity: { type: 'string', enum: ['low', 'medium', 'high'] }, affected_groups: { type: 'string' } } } },
-            nutritional_highlights: { type: 'array', items: { type: 'string' } },
-            healthier_alternatives: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, benefit: { type: 'string' } } } },
-            consumption_tips: { type: 'array', items: { type: 'string' } }
-          }
-        }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'productHealth',
+        data: { productName: product.name, brand: product.brand, category: product.category, ingredients, nutritionFacts: nutritionText }
       });
       setHealthData(result);
     } catch {
@@ -464,21 +442,9 @@ export default function ProductAnalysis({ product, onClear, user }) {
     setIsLoadingSustainability(true);
     try {
       const ingredients = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an environmental sustainability expert. Analyze the eco-impact of these product ingredients:\n\nProduct: ${product.name}\nCategory: ${product.category}\nIngredients: ${ingredients}\n\nAssess biodegradability, bioaccumulation, carbon footprint, and overall sustainability.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            overall_score: { type: 'number' },
-            grade: { type: 'string', enum: ['A', 'B', 'C', 'D', 'F'] },
-            biodegradability: { type: 'string' },
-            carbon_footprint: { type: 'string' },
-            summary: { type: 'string' },
-            eco_concerns: { type: 'array', items: { type: 'string' } },
-            green_positives: { type: 'array', items: { type: 'string' } },
-            improvement_tips: { type: 'array', items: { type: 'string' } }
-          }
-        }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'productSustainability',
+        data: { productName: product.name, category: product.category, ingredients }
       });
       setSustainabilityData(result);
     } catch {
@@ -513,25 +479,9 @@ export default function ProductAnalysis({ product, onClear, user }) {
   const handleFindSimilar = async () => {
     setIsFindingSimilar(true); setSimilarProducts(null);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Find 3 real alternative products that serve the EXACT same purpose as "${product.name}" (${product.category} by ${product.brand}). Prefer more natural, eco-friendly options. Key ingredients: ${product.ingredients?.slice(0, 5).map(i => i.name).join(', ') || 'N/A'}.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            similar_products: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  product_name: { type: "string" }, brand: { type: "string" },
-                  main_category: { type: "string" }, key_attributes: { type: "string" },
-                  brief_description: { type: "string" }, url: { type: "string", nullable: true }
-                }
-              }
-            }
-          }
-        }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'findSimilarProducts',
+        data: { productName: product.name, category: product.category, brand: product.brand, ingredients: product.ingredients?.slice(0, 5).map(i => i.name) }
       });
       setSimilarProducts(result?.similar_products || []);
     } catch { setSimilarProducts([]); }

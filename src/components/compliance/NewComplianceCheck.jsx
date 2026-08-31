@@ -245,18 +245,9 @@ const NewComplianceCheck = ({ onBack, onComplete }) => {
         
         // Try to extract data from the file
         try {
-          const extractResult = await base44.integrations.Core.ExtractDataFromUploadedFile({
-            file_url,
-            json_schema: {
-              type: 'object',
-              properties: {
-                product_name: { type: 'string' },
-                ingredients: { type: 'array', items: { type: 'string' } },
-                hazard_information: { type: 'string' },
-                regulatory_info: { type: 'string' },
-                cas_numbers: { type: 'array', items: { type: 'string' } }
-              }
-            }
+          const extractResult = await base44.functions.invoke('runConsumerLLM', {
+            operation: 'extractFileData',
+            data: { fileUrl: file_url }
           });
 
           if (extractResult.status === 'success' && extractResult.output) {
@@ -436,10 +427,9 @@ CRITICAL: Ensure compliance_details array has an entry for EVERY ingredient prov
         required: ['summary', 'checked_regions', 'compliance_details']
       };
 
-      const aiResult = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: responseSchema,
-        add_context_from_internet: true
+      const aiResult = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'complianceAnalysis',
+        data: { ingredients: extractedIngredients.join(', '), documentContext }
       });
 
       const validatedResult = {

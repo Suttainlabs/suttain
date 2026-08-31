@@ -210,40 +210,9 @@ export default function Generator() {
   ]
   }`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            formulas: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  variant: { type: "string" },
-                  name: { type: "string" },
-                  description: { type: "string" },
-                  benefits: { type: "array", items: { type: "string" } },
-                  ingredients: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        chemical_name: { type: "string" },
-                        percentage: { type: "number" },
-                        purpose: { type: "string" }
-                      }
-                    }
-                  },
-                  cost_level: { type: "string" },
-                  difficulty: { type: "string" }
-                }
-              }
-            }
-          },
-          required: ["formulas"]
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'formulaOptions',
+        data: { productTypeName: activeProductType.name, description, businessMode: isBusinessMode }
       });
 
       if (response && response.formulas && response.formulas.length >= 3) {
@@ -367,34 +336,9 @@ export default function Generator() {
   "sustainability_score": number
   }`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            instructions: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  phase: { type: "string" },
-                  steps: { type: "array", items: { type: "string" } }
-                }
-              }
-            },
-            properties: {
-              type: "object",
-              properties: {
-                ph_level: { type: "string" },
-                shelf_life: { type: "string" },
-                difficulty: { type: "string" },
-                time_to_make: { type: "string" }
-              }
-            },
-            safety_precautions: { type: "array", items: { type: "string" } },
-            sustainability_score: { type: "number" }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'formulaRecipe',
+        data: { variant: formula.variant, description: productDescription, businessMode, ingredients: formula.ingredients }
       });
 
       const fullRecipe = {

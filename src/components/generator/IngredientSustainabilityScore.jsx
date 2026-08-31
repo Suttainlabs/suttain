@@ -22,47 +22,9 @@ export default function IngredientSustainabilityScore({ ingredients }) {
     try {
       const ingredientList = ingredients.map(i => i.chemical_name).join(', ');
       
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze the sustainability of these cosmetic/cleaning product ingredients:
-
-Ingredients: ${ingredientList}
-
-For each ingredient, provide a sustainability assessment including:
-1. Overall sustainability score (0-100)
-2. Sourcing score (0-100) - Is it naturally derived, renewable, or synthetic?
-3. Biodegradability score (0-100) - How easily does it break down in the environment?
-4. Environmental impact score (0-100) - Water pollution, ecosystem effects, carbon footprint
-5. Brief sourcing description (natural, synthetic, petroleum-derived, plant-derived, etc.)
-6. Biodegradability category (readily, inherently, not biodegradable)
-7. Key environmental concerns (if any)
-8. Sustainable alternative suggestion (if score is below 60)
-
-Also calculate an overall formula sustainability score.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            overall_formula_score: { type: "number" },
-            overall_assessment: { type: "string" },
-            ingredients: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  overall_score: { type: "number" },
-                  sourcing_score: { type: "number" },
-                  biodegradability_score: { type: "number" },
-                  environmental_score: { type: "number" },
-                  sourcing_type: { type: "string" },
-                  biodegradability_category: { type: "string" },
-                  concerns: { type: "array", items: { type: "string" } },
-                  sustainable_alternative: { type: "string" }
-                }
-              }
-            },
-            recommendations: { type: "array", items: { type: "string" } }
-          }
-        }
+      const response = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'ingredientSustainabilityScore',
+        data: { ingredients }
       });
       
       setScores(response);

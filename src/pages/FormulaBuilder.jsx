@@ -53,9 +53,9 @@ export default function FormulaBuilder() {
     setSearching(true);
     debounceRef.current = setTimeout(async () => {
       try {
-        const res = await base44.integrations.Core.InvokeLLM({
-          prompt: `List 6 real chemical/ingredient names that match "${val}" for cosmetic/cleaning formulas. Return JSON: {"results": ["name1","name2",...]}`,
-          response_json_schema: { type: 'object', properties: { results: { type: 'array', items: { type: 'string' } } } }
+        const res = await base44.functions.invoke('runConsumerLLM', {
+          operation: 'ingredientSearch',
+          data: { query: val }
         });
         setSuggestions(res.results || []);
       } catch { setSuggestions([]); }
@@ -84,10 +84,9 @@ export default function FormulaBuilder() {
     setUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: 'Extract the full ingredient list from this product label or SDS document. Return JSON with ingredient names.',
-        file_urls: [file_url],
-        response_json_schema: { type: 'object', properties: { ingredients: { type: 'array', items: { type: 'string' } } } }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'extractIngredientsFromImage',
+        data: { fileUrl: file_url }
       });
       setIngredients((result.ingredients || []).map(name => ({ name, concentration: '' })));
       setTab('manual');
@@ -103,20 +102,9 @@ export default function FormulaBuilder() {
     }
     setAnalysing(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyse this formula for safety, compliance (REACH, FDA, GHS), sustainability, and carbon footprint. Ingredients: ${ingredients.map(i => i.name + (i.concentration ? ` ${i.concentration}%` : '')).join(', ')}. 
-        Return scores 0-100 and brief explanations. Also list any flagged ingredients with severity.`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            safety_score: { type: 'number' },
-            compliance_score: { type: 'number' },
-            sustainability_score: { type: 'number' },
-            carbon_score: { type: 'number' },
-            safety_summary: { type: 'string' },
-            flagged_ingredients: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, severity: { type: 'string' }, reason: { type: 'string' }, regulation: { type: 'string' } } } },
-          }
-        }
+      const result = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'formulaAnalysis',
+        data: { ingredients }
       });
 
       const savedFormula = {
