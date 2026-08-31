@@ -12,11 +12,11 @@ function Door({ cell, title, blurb, items, href, accent }) {
   return (
     <div className="bg-white border border-[#E5E7EB] rounded-[10px] p-8">
       <ElementCell index={cell.idx} symbol={cell.sym} variant={cell.variant} />
-      <h3 className="font-heading font-semibold text-[19px] mt-4 mb-2 text-[#0A1F1D]">{title}</h3>
-      <p className="text-[14.5px] text-[#4B5563] mb-4 leading-[1.6]">{blurb}</p>
+      <h3 className="font-heading font-semibold text-[18px] mt-4 mb-2 text-[#0A1F1D]">{title}</h3>
+      <p className="text-[14px] text-[#3F4651] mb-4 leading-[1.6]">{blurb}</p>
       <ul className="grid grid-cols-2 gap-x-3 gap-y-2 mb-5 list-none p-0">
         {items.map((t) => (
-          <li key={t} className="text-[13px] text-[#0A1F1D] pl-4 relative">
+          <li key={t} className="text-[13px] text-[#2A3338] pl-4 relative">
             <span className="absolute left-0 top-[7px] w-[5px] h-[5px] rounded-full bg-[#5B6168]" />
             {t}
           </li>

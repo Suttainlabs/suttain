@@ -8,15 +8,15 @@ export default function LandingTrustBand() {
       <div className="max-w-[1080px] mx-auto flex flex-col items-start gap-6">
         <div className="flex items-center gap-12 flex-wrap">
           <div>
-            <div className="font-heading font-bold text-[44px] leading-none whitespace-nowrap">130M+</div>
-            <div className="font-mono text-[13px] text-[#B8B6AD] mt-2">CHEMICALS CATALOGUED</div>
+            <div className="font-heading font-bold text-[36px] leading-none whitespace-nowrap">130M+</div>
+            <div className="font-mono text-[13px] text-[#C9C7BE] mt-2">CHEMICALS CATALOGUED</div>
           </div>
-          <p className="text-[14.5px] text-[#D6D4C9] max-w-[440px] leading-[1.65] m-0">
+          <p className="text-[14px] text-[#DEDDD3] max-w-[440px] leading-[1.65] m-0">
             Powered by trusted scientific databases, the same record whether you're checking a
             shampoo bottle or building a claim on it.
           </p>
         </div>
-        <div className="flex gap-7 flex-wrap font-mono text-[12.5px] text-[#B8B6AD] tracking-[0.02em]">
+        <div className="flex gap-7 flex-wrap font-mono text-[13px] text-[#C9C7BE] tracking-[0.02em]">
           {PARTNERS.map((p) => (
             <span key={p}>{p}</span>
           ))}

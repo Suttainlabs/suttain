@@ -5,8 +5,8 @@ export default function LandingFinalCta() {
   return (
     <div className="bg-[#9531F5] text-white px-6 py-20 text-center">
       <div className="max-w-[1080px] mx-auto">
-        <h2 className="font-heading font-semibold text-[clamp(24px,3.6vw,32px)] text-white mb-3.5">Start with either door</h2>
-        <p className="text-[#D4D2F0] max-w-[480px] mx-auto mb-8 text-[15.5px] leading-[1.6]">
+        <h2 className="font-heading font-semibold text-[clamp(22px,3vw,26px)] text-white mb-3.5">Start with either door</h2>
+        <p className="text-[#E4E2F6] max-w-[480px] mx-auto mb-8 text-[15px] leading-[1.65]">
           Scan something on your shelf, or talk to us about what your team needs from the API.
         </p>
         <div className="flex gap-3 justify-center flex-wrap">

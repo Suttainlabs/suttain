@@ -22,7 +22,7 @@ function FeatureGrid({ items, variant }) {
         <div key={f.idx} className="px-1">
           <ElementCell index={f.idx} symbol={f.sym} variant={variant === "research" ? "purple" : "teal"} />
           <h4 className="font-medium text-[16px] mt-3.5 mb-1.5 text-[#0A1F1D]">{f.title}</h4>
-          <p className="text-[14px] text-[#4B5563] leading-[1.55]">{f.desc}</p>
+          <p className="text-[14px] text-[#3F4651] leading-[1.6]">{f.desc}</p>
         </div>
       ))}
     </div>
@@ -33,7 +33,8 @@ function SecHead({ eyebrow, eyebrowColor, title, sub }) {
   return (
     <div className="max-w-[640px] mx-auto mb-12 text-center">
       <span className="block font-mono text-xs tracking-[0.04em] mb-3" style={{ color: eyebrowColor }}>{eyebrow}</span>
-      <h2 className="font-heading font-semibold text-[clamp(24px,3.4vw,32px)] mb-3 text-[#0A1F1D]">{title}</h2>
+      {/* eyebrow uses a darkened pillar tint for AA contrast on white */}
+      <h2 className="font-heading font-semibold text-[clamp(22px,3vw,26px)] mb-3 text-[#0A1F1D]">{title}</h2>
       <p className="text-[#4B5563] text-[15.5px]">{sub}</p>
     </div>
   );
@@ -43,11 +44,11 @@ export default function LandingFeatures() {
   return (
     <>
       <section className="px-6 py-24">
-        <SecHead eyebrow="FOR EVERYONE" eyebrowColor="#02988C" title="Four ways in, one plain-language answer" sub="However you start, you end up knowing for sure." />
+        <SecHead eyebrow="FOR EVERYONE" eyebrowColor="#027A70" title="Four ways in, one plain-language answer" sub="However you start, you end up knowing for sure." />
         <FeatureGrid items={EVERYONE} variant="consumer" />
       </section>
       <section className="px-6 py-24 bg-[#F7F6F2]">
-        <SecHead eyebrow="FOR RESEARCHERS" eyebrowColor="#9531F5" title="Chemical intelligence, at working depth" sub="The same engine, running at the resolution real chemical work needs." />
+        <SecHead eyebrow="FOR RESEARCHERS" eyebrowColor="#7D26CC" title="Chemical intelligence, at working depth" sub="The same engine, running at the resolution real chemical work needs." />
         <FeatureGrid items={RESEARCH} variant="research" />
       </section>
     </>
