@@ -789,6 +789,8 @@ export default function Layout({ children, currentPageName }) {
                 <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Privacy Policy</Link></li>
                 <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Terms of Service</Link></li>
                 <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Compliance Guide</Link></li>
+                <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
+                <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
                 <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Contact</a></li>
               </ul>
               <LanguageSwitcher />
