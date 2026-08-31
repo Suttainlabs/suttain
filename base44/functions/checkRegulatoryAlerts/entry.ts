@@ -8,8 +8,13 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
-  // Admin-only or scheduled — verify service role is being used
-  // For scheduled automations, no user token is present; use asServiceRole throughout.
+  // Require admin auth — prevents unauthenticated external callers from
+  // triggering system-wide scans that consume LLM credits and send emails.
+  // Scheduled automations must invoke this function with an admin token.
+  const user = await base44.auth.me().catch(() => null);
+  if (!user || user.role !== 'admin') {
+    return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+  }
 
   try {
     // 1. Fetch all formulas (service role so we can see all users' formulas)

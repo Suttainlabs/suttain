@@ -8,6 +8,15 @@ const GENERIC_ERROR  = "Incorrect email or password";
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+
+    // This endpoint records login outcomes and must not be callable by
+    // unauthenticated users — otherwise attackers can lock out arbitrary
+    // accounts by submitting repeated { success: false } payloads.
+    const caller = await base44.auth.me().catch(() => null);
+    if (!caller || caller.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const body = await req.json();
     const { email, success } = body;
 

@@ -44,7 +44,7 @@ export default function Login() {
       // 3. Attempt login
       try {
         await base44.auth.loginViaEmailPassword(sanitizedEmail, password);
-        await recordLoginResult({ email: sanitizedEmail, success: true });
+        try { await recordLoginResult({ email: sanitizedEmail, success: true }); } catch {}
         window.location.href = redirectParam;
       } catch (loginErr) {
         // Record failure for lockout tracking (fire-and-forget)

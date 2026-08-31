@@ -4,17 +4,11 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // This function runs via scheduled automation (no user context) or direct admin invocation.
-    // If a user IS present (direct call), they must be an admin.
-    // If no user is present, it's a scheduled automation — proceed with service role.
-    let user = null;
-    try {
-      user = await base44.auth.me();
-    } catch {
-      // No user context — scheduled automation, proceed
-    }
-
-    if (user && user.role !== 'admin') {
+    // Require admin auth — prevents unauthenticated callers from triggering
+    // batch report generation, LLM calls, and automated emails.
+    // Scheduled automations must invoke this function with an admin token.
+    const user = await base44.auth.me().catch(() => null);
+    if (!user || user.role !== 'admin') {
       return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 

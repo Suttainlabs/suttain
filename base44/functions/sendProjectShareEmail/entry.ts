@@ -29,6 +29,17 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Project not found or access denied' }, { status: 403 });
     }
 
+    // Verify recipient is a registered app user — prevents open mail relay
+    // where authenticated users send arbitrary emails to external addresses.
+    try {
+      const recipientUsers = await base44.asServiceRole.entities.User.filter({ email: to });
+      if (!recipientUsers || recipientUsers.length === 0) {
+        return Response.json({ error: 'Recipient must be a registered Suttain user' }, { status: 403 });
+      }
+    } catch {
+      return Response.json({ error: 'Unable to verify recipient' }, { status: 403 });
+    }
+
     // HTML-escape all user-controlled values to prevent email XSS
     const escapeHtml = (str) => String(str || '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
