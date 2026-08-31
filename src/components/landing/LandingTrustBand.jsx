@@ -1,4 +1,5 @@
 import React from "react";
+import Tr from "@/components/i18n/Tr";
 
 const PARTNERS = ["PubChem", "ChEMBL", "EPA CompTox", "RCSB PDB"];
 
@@ -9,13 +10,12 @@ export default function LandingTrustBand() {
         <div>
           <div className="font-heading font-bold text-[40px] leading-none">130M+</div>
           <div className="font-mono text-[12px] tracking-[0.12em] text-[#D7F5EF] mt-3 uppercase">
-            Chemicals catalogued
+            <Tr>Chemicals catalogued</Tr>
           </div>
         </div>
 
         <p className="text-[15px] text-[#F2FEFC] max-w-[520px] leading-[1.65] m-0">
-          Powered by trusted scientific databases, the same record whether you're
-          checking a shampoo bottle or building a claim on it.
+          <Tr>Powered by trusted scientific databases, the same record whether you're checking a shampoo bottle or building a claim on it.</Tr>
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 border-t border-white/15 w-full max-w-[480px] mt-1 pt-5">

@@ -1,5 +1,6 @@
 import React from "react";
 import ElementCell from "./ElementCell";
+import Tr from "@/components/i18n/Tr";
 
 const EVERYONE = [
   { idx: "03", sym: "Sn", title: "Scan a product", desc: "Point your camera at a barcode or ingredient list for real chemical identification." },
@@ -21,8 +22,8 @@ function FeatureGrid({ items, variant }) {
       {items.map((f) => (
         <div key={f.idx} className="px-1">
           <ElementCell index={f.idx} symbol={f.sym} variant={variant === "research" ? "purple" : "teal"} />
-          <h4 className="font-medium text-[16px] mt-3.5 mb-1.5 text-[#0A1F1D]">{f.title}</h4>
-          <p className="text-[14px] text-[#3F4651] leading-[1.6]">{f.desc}</p>
+          <h4 className="font-medium text-[16px] mt-3.5 mb-1.5 text-[#0A1F1D]"><Tr>{f.title}</Tr></h4>
+          <p className="text-[14px] text-[#3F4651] leading-[1.6]"><Tr>{f.desc}</Tr></p>
         </div>
       ))}
     </div>
@@ -32,10 +33,9 @@ function FeatureGrid({ items, variant }) {
 function SecHead({ eyebrow, eyebrowColor, title, sub }) {
   return (
     <div className="max-w-[640px] mx-auto mb-12 text-center">
-      <span className="block font-mono text-xs tracking-[0.04em] mb-3" style={{ color: eyebrowColor }}>{eyebrow}</span>
-      {/* eyebrow uses a darkened pillar tint for AA contrast on white */}
-      <h2 className="font-heading font-semibold text-[clamp(22px,3vw,26px)] mb-3 text-[#0A1F1D]">{title}</h2>
-      <p className="text-[#4B5563] text-[15.5px]">{sub}</p>
+      <span className="block font-mono text-xs tracking-[0.04em] mb-3" style={{ color: eyebrowColor }}><Tr>{eyebrow}</Tr></span>
+      <h2 className="font-heading font-semibold text-[clamp(22px,3vw,26px)] mb-3 text-[#0A1F1D]"><Tr>{title}</Tr></h2>
+      <p className="text-[#4B5563] text-[15.5px]"><Tr>{sub}</Tr></p>
     </div>
   );
 }

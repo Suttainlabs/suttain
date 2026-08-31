@@ -762,7 +762,7 @@ export default function Layout({ children, currentPageName }) {
                 />
               </Link>
               <p className="text-slate-500 text-sm leading-relaxed max-w-xs">
-                Supporting chemical sustainability through robust analysis, safety evaluation, and formulation tools.
+                {t('footer_tagline')}
               </p>
               <div className="flex space-x-3">
                 <a href="https://www.linkedin.com/company/suttainlabs/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[var(--suttain-teal)] transition-colors">
@@ -786,19 +786,19 @@ export default function Layout({ children, currentPageName }) {
             {/* Legal + Language */}
             <div className="flex flex-col gap-4 md:items-end">
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
-                <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Privacy Policy</Link></li>
-                <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Terms of Service</Link></li>
-                <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Compliance Guide</Link></li>
-                <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Blog</Link></li>
-                <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Careers</Link></li>
-                <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Contact</a></li>
+                <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_privacy')}</Link></li>
+                <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_terms')}</Link></li>
+                <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_compliance_guide')}</Link></li>
+                <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_blog')}</Link></li>
+                <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_careers')}</Link></li>
+                <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_contact')}</a></li>
               </ul>
               <LanguageSwitcher />
             </div>
           </div>
 
           <div className="mt-6 pt-4 border-t border-slate-200 text-center text-slate-400 text-xs">
-            © {new Date().getFullYear()} Suttain. All rights reserved.
+            © {new Date().getFullYear()} Suttain. {t('footer_rights')}
           </div>
         </div>
       </footer>
