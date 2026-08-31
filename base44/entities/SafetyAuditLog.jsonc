@@ -1,0 +1,84 @@
+{
+  "name": "SafetyAuditLog",
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string",
+      "enum": [
+        "simulator",
+        "generator",
+        "scanner"
+      ],
+      "description": "Which surface produced the audited result"
+    },
+    "chemicals_in": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Chemical / ingredient names that were audited"
+    },
+    "draft_safety_level": {
+      "type": "string",
+      "description": "Safety verdict from the original analysis before auditing"
+    },
+    "draft_risk_score": {
+      "type": "number",
+      "description": "Risk score from the original analysis before auditing"
+    },
+    "corrected_safety_level": {
+      "type": "string",
+      "description": "Safety verdict after authoritative cross-check"
+    },
+    "corrected_risk_score": {
+      "type": "number",
+      "description": "Risk score after authoritative cross-check"
+    },
+    "overridden": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the auditor changed the original verdict"
+    },
+    "trigger_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Authoritative reasons that drove a correction"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Authoritative data sources consulted (EPA CompTox, PubChem GHS, curated rules)"
+    }
+  },
+  "required": [
+    "source",
+    "chemicals_in",
+    "overridden"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

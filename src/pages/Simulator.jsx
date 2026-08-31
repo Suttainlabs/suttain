@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { getAccurateChemicalAnalysis } from "@/functions/getAccurateChemicalAnalysis";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -526,10 +527,14 @@ export default function Simulator() {
 
   const [sdsSourceBanner, setSdsSourceBanner] = React.useState(null);
   const autoSimulateRef = React.useRef(false);
+  const location = useLocation();
 
-  // Pre-populate chemicals from URL params (e.g. from SDS Analyzer)
+  // Pre-populate chemicals from URL params (e.g. from SDS Analyzer or the
+  // Safer Alternatives "Simulate This Chemical" action). Re-runs when the
+  // query string changes so navigating to /Simulator?chemicals=... from within
+  // the same page still reloads and auto-runs the new chemical.
   React.useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(location.search);
     const chemParam = urlParams.get("chemicals");
     const source = urlParams.get("source");
     const sdsProduct = urlParams.get("sds_product");
@@ -552,6 +557,10 @@ export default function Simulator() {
         setChemicals(preloaded);
         // Default to researcher persona so they can run immediately
         setPersona("researcher");
+        // Reset the flow so the new chemical is simulated fresh
+        setSimulationData(null);
+        setError(null);
+        setStep(1);
       }
     }
 
@@ -559,7 +568,7 @@ export default function Simulator() {
     if (urlParams.get("auto_simulate") === "true") {
       autoSimulateRef.current = true;
     }
-  }, []);
+  }, [location.search]);
   const [simulationData, setSimulationData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);

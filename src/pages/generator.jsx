@@ -37,15 +37,18 @@ export default function Generator() {
   const [showSmartStart, setShowSmartStart] = useState(false);
   const [sdsSourceChemical, setSdsSourceChemical] = useState(null);
 
-  // Pre-populate from SDS source via URL params
+  // Pre-populate from SDS source or a Safer-Alternatives ingredient via URL params
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(location.search);
     const chemical = urlParams.get("chemical");
+    const ingredient = urlParams.get("ingredient");
     const source = urlParams.get("source");
     if (source === "sds" && chemical) {
       setSdsSourceChemical(chemical);
+    } else if (ingredient) {
+      setSdsSourceChemical(ingredient);
     }
-  }, []);
+  }, [location.search]);
 
   const awardPoints = async (points, reason) => {
     try {
