@@ -1,0 +1,243 @@
+{
+  "name": "StudentExperiment",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "classroom_id": {
+      "type": "string",
+      "description": "Reference to the Classroom entity"
+    },
+    "classroom_name": {
+      "type": "string",
+      "description": "Denormalized classroom name for display"
+    },
+    "module_id": {
+      "type": "string",
+      "description": "Reference to the ExperimentModule this submission is for"
+    },
+    "module_title": {
+      "type": "string",
+      "description": "Denormalized module title for display"
+    },
+    "student_name": {
+      "type": "string",
+      "description": "Student's display name"
+    },
+    "student_email": {
+      "type": "string",
+      "description": "Student's email for identification"
+    },
+    "title": {
+      "type": "string",
+      "description": "Experiment title or research question"
+    },
+    "hypothesis": {
+      "type": "string",
+      "description": "Student's hypothesis: what they predict will happen"
+    },
+    "chemicals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "concentration": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Chemicals involved in the experiment with concentrations"
+    },
+    "conditions": {
+      "type": "object",
+      "properties": {
+        "temperature": {
+          "type": "string"
+        },
+        "pressure": {
+          "type": "string"
+        },
+        "ph": {
+          "type": "string"
+        },
+        "solvent": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "description": "Experimental conditions"
+    },
+    "feasibility_score": {
+      "type": "number",
+      "description": "AI-predicted feasibility score 0-100"
+    },
+    "feasibility_label": {
+      "type": "string",
+      "enum": [
+        "highly_feasible",
+        "feasible",
+        "marginal",
+        "unlikely",
+        "not_recommended"
+      ],
+      "description": "Human-readable feasibility assessment"
+    },
+    "feasibility_reasoning": {
+      "type": "string",
+      "description": "AI explanation of why the experiment would or would not work"
+    },
+    "predicted_outcome": {
+      "type": "string",
+      "description": "AI prediction of what would happen if the experiment were conducted"
+    },
+    "safety_assessment": {
+      "type": "string",
+      "description": "Safety evaluation of the proposed experiment"
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "authors": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "relevance": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Related published research and citations"
+    },
+    "similar_experiments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Similar experiments that have been conducted and published"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "submitted",
+        "under_review",
+        "approved",
+        "flagged",
+        "rejected",
+        "graded"
+      ],
+      "default": "submitted",
+      "description": "Current review status"
+    },
+    "grade": {
+      "type": "number",
+      "description": "Numerical grade assigned by the teacher (0-100)"
+    },
+    "teacher_feedback": {
+      "type": "string",
+      "description": "Teacher's feedback or comments"
+    },
+    "teacher_rating": {
+      "type": "number",
+      "description": "Teacher's rating of the experiment idea (1-5)"
+    },
+    "submitted_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the student submitted the experiment"
+    },
+    "reviewed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the teacher reviewed the experiment"
+    }
+  },
+  "required": [
+    "classroom_id",
+    "student_name",
+    "student_email",
+    "title",
+    "hypothesis",
+    "chemicals"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.student_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.student_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

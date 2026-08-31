@@ -1,0 +1,72 @@
+{
+  "name": "Diagnosis",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "farm_id": {
+      "type": "string",
+      "description": "Reference to Farm entity"
+    },
+    "farmer_id": {
+      "type": "string",
+      "description": "Reference to Farmer entity"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Photo URL of the crop, leaf, or pest"
+    },
+    "diagnosis": {
+      "type": "string",
+      "description": "AI-identified diagnosis (disease, pest, or nutrient deficiency)"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "description": "Confidence level of the diagnosis"
+    },
+    "recommended_action": {
+      "type": "string",
+      "description": "Recommended next step"
+    },
+    "crop": {
+      "type": "string",
+      "description": "Crop identified in the photo"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "hi",
+        "sw",
+        "es"
+      ],
+      "default": "en",
+      "description": "Language code in which the diagnosis was generated"
+    }
+  },
+  "required": [
+    "farm_id",
+    "photo_url",
+    "diagnosis"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
