@@ -19,12 +19,14 @@ import SmartStartWizard from "../components/generator/SmartStartWizard";
 import AtelierLayout from "../components/generator/AtelierLayout";
 import LabLayout from "../components/generator/LabLayout";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Generator() {
   const { user, refreshUser } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [businessMode, setBusinessMode] = useState(false);
@@ -228,7 +230,12 @@ export default function Generator() {
       }
     } catch (error) {
       console.error('Failed to generate formula options:', error);
-      alert('Failed to generate formula options. Please try again.');
+      const reason = error?.message || error?.error || "Something went wrong";
+      toast({
+        title: "Couldn't generate formula options",
+        description: `The request failed (${reason}). Please try again.`,
+        variant: "destructive",
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -390,7 +397,12 @@ export default function Generator() {
       }
     } catch (error) {
       console.error('Failed to generate full formula:', error);
-      alert('Failed to generate full formula details. Please try again.');
+      const reason = error?.message || error?.error || "Something went wrong";
+      toast({
+        title: "Couldn't generate full formula",
+        description: `The request failed (${reason}). Please try again.`,
+        variant: "destructive",
+      });
     } finally {
       setIsGenerating(false);
     }

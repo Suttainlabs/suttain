@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Sparkles, Loader2, Search, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useDebounce } from "../shared/useDebounce";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function ProductDescriptionStep({ 
   businessMode, 
@@ -19,8 +20,10 @@ export default function ProductDescriptionStep({
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionsError, setSuggestionsError] = useState("");
   const searchRef = useRef(null);
   const justSelectedRef = useRef(false);
+  const { toast } = useToast();
   
   const debouncedSearch = useDebounce(searchQuery, 150);
 
@@ -50,24 +53,31 @@ export default function ProductDescriptionStep({
 
   const fetchSuggestions = async (query) => {
     setIsSearching(true);
+    setSuggestionsError("");
     setShowSuggestions(true);
     
     try {
-      const prompt = `User wants "${productType.name}". Query: "${query}". Give 8 short, specific product ideas matching this query. Be concise.`;
-
       const response = await base44.functions.invoke('runConsumerLLM', {
         operation: 'productSuggestions',
         data: { productType: productType.name, query }
       });
 
-      if (response && Array.isArray(response.suggestions)) {
+      if (response && Array.isArray(response.suggestions) && response.suggestions.length > 0) {
         setSuggestions(response.suggestions);
       } else {
         setSuggestions([]);
+        setSuggestionsError("No suggestions found — try rephrasing or click Generate.");
       }
     } catch (error) {
       console.error("Failed to fetch suggestions:", error);
       setSuggestions([]);
+      const reason = error?.message || error?.error || "Connection issue";
+      setSuggestionsError("Suggestions unavailable — check your connection.");
+      toast({
+        title: "Couldn't load suggestions",
+        description: `The suggestion lookup failed (${reason}). You can still type your own description and generate.`,
+        variant: "destructive",
+      });
     } finally {
       setIsSearching(false);
     }
@@ -180,6 +190,10 @@ export default function ProductDescriptionStep({
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {suggestionsError && !isSearching && (
+                <p className="text-xs text-amber-600 mt-1 px-1">{suggestionsError}</p>
+              )}
             </div>
 
             <Button
