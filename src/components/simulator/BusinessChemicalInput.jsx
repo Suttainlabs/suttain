@@ -266,7 +266,10 @@ export default function BusinessChemicalInput({
                 <Input
                   type="number"
                   value={businessParams.batchSize}
-                  onChange={(e) => setBusinessParams({...businessParams, batchSize: Number(e.target.value)})}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/^0+(?=\d)/, '');
+                    setBusinessParams({ ...businessParams, batchSize: raw === '' ? 0 : Number(raw) });
+                  }}
                   className="flex-1"
                 />
                 <Select
