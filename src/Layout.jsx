@@ -396,7 +396,7 @@ export default function Layout({ children, currentPageName }) {
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Single smart Tools dropdown, groups Consumer and Research */}
-              <NavToolCombobox items={allToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive || isResearchActive} accent="#02988C" />
+              <NavToolCombobox items={allToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} accent="#02988C" />
 
               <Link to="/ResearchPortal" className={getLinkClasses("ResearchPortal")}>Research</Link>
 
