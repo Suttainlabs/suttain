@@ -216,8 +216,9 @@ export default function Generator() {
         data: { productTypeName: activeProductType.name, description, businessMode: isBusinessMode }
       });
 
-      if (response && response.formulas && response.formulas.length >= 3) {
-        setFormulaOptions(response.formulas);
+      const formulas = response?.data?.formulas ?? response?.formulas;
+      if (formulas && formulas.length >= 3) {
+        setFormulaOptions(formulas);
         setCurrentStep(4);
         // Increment usage for free tier users
         if (user && trialStatus && !trialStatus.isPro) {
@@ -351,10 +352,10 @@ export default function Generator() {
         name: formula.name,
         description: formula.description,
         ingredients: formula.ingredients,
-        instructions: response.instructions || [],
-        properties: response.properties || {},
-        safety_precautions: response.safety_precautions || [],
-        sustainability_score: response.sustainability_score || 70,
+        instructions: response?.data?.instructions ?? (response.instructions || []),
+        properties: response?.data?.properties ?? (response.properties || {}),
+        safety_precautions: response?.data?.safety_precautions ?? (response.safety_precautions || []),
+        sustainability_score: response?.data?.sustainability_score ?? (response.sustainability_score || 70),
         product_type: selectedProductType.id,
         business_mode: businessMode
       };

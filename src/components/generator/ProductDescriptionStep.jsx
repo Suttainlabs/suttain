@@ -62,8 +62,9 @@ export default function ProductDescriptionStep({
         data: { productType: productType.name, query }
       });
 
-      if (response && Array.isArray(response.suggestions) && response.suggestions.length > 0) {
-        setSuggestions(response.suggestions);
+      const suggestions = response?.data?.suggestions ?? response?.suggestions;
+      if (Array.isArray(suggestions) && suggestions.length > 0) {
+        setSuggestions(suggestions);
       } else {
         setSuggestions([]);
         setSuggestionsError("No suggestions found — try rephrasing or click Generate.");
