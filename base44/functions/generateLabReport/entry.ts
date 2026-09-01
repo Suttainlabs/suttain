@@ -36,13 +36,41 @@ Deno.serve(async (req) => {
             });
         }
 
-        const { simulationData, persona, customization } = body;
+        const { simulationData: bodySimulationData, persona: bodyPersona, customization, approval_token } = body;
 
-        if (!simulationData) {
-            return new Response(JSON.stringify({ error: 'Missing simulation data' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
-            });
+        let simulationData;
+        let persona;
+        let supervisor = null;
+
+        // Email-approved path: load the snapshot from the SupervisorApproval record
+        if (approval_token) {
+            const approvals = await base44.asServiceRole.entities.SupervisorApproval.filter({ token: approval_token });
+            if (!approvals || approvals.length === 0) {
+                return new Response(JSON.stringify({ error: 'Invalid approval token' }), {
+                    status: 404,
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            }
+            const approval = approvals[0];
+            if (approval.status !== 'approved') {
+                return new Response(JSON.stringify({ error: `Supervisor approval is ${approval.status}` }), {
+                    status: 403,
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            }
+            simulationData = approval.simulation_snapshot;
+            persona = approval.persona || bodyPersona;
+            supervisor = { name: approval.supervisor_name, date: approval.decided_date };
+        } else {
+            simulationData = bodySimulationData;
+            persona = bodyPersona;
+            if (!simulationData) {
+                return new Response(JSON.stringify({ error: 'Missing simulation data' }), {
+                    status: 400,
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            }
+            supervisor = simulationData.supervisorSignature;
         }
 
         // Default customization if not provided
@@ -279,7 +307,7 @@ Deno.serve(async (req) => {
         }
 
         // === SUPERVISOR APPROVAL ===
-        const supervisor = simulationData.supervisorSignature;
+        // supervisor resolved earlier (approval token or self-signature path)
         if (options.sections.supervisorApproval) {
             checkNewPage(60);
             doc.setFontSize(14);

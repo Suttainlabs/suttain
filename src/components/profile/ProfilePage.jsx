@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import usePullToRefresh from '../../hooks/usePullToRefresh';
 import QuickResearchTools from './QuickResearchTools';
+import SupervisorApprovalsPanel from '../dashboard/SupervisorApprovalsPanel';
 
 function timeAgo(dateStr) {
   if (!dateStr) return '';
@@ -198,6 +199,9 @@ export default function ProfilePage() {
 
         {/* ── Quick Research Tools (moved from Computational Studio) ── */}
         <QuickResearchTools />
+
+        {/* ── Supervisor Approval Requests ── */}
+        <SupervisorApprovalsPanel />
 
         {/* ── Plan Card ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

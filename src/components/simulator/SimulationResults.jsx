@@ -28,6 +28,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import ReportCustomizationModal from './ReportCustomizationModal';
+import SupervisorApprovalModal from './SupervisorApprovalModal';
+import { createSupervisorApprovalRequest } from '@/functions/createSupervisorApprovalRequest';
 import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';
 import AdvancedAnalysisPanel from './AdvancedAnalysisPanel';
 import SafetyAdvisor from './SafetyAdvisor';
@@ -214,6 +216,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
     const [showSignatureModal, setShowSignatureModal] = useState(false);
     const [supervisorName, setSupervisorName] = useState('');
     const [supervisorSignature, setSupervisorSignature] = useState('');
+    const [isSendingApproval, setIsSendingApproval] = useState(false);
     const tabsContainerRef = useRef(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(false);
@@ -347,19 +350,22 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
         }
     };
 
-    const generateReport = async () => {
+    const generateReport = async (approval = null) => {
         if (!reportOptions) {
             toast.error('Please select report options first');
             return;
         }
 
+        const sName = approval?.name ?? supervisorName;
+        const sSig = approval?.signature ?? supervisorSignature;
+
         setIsGeneratingReport(true);
         try {
             const reportData = {
                 ...data,
-                supervisorSignature: supervisorName ? {
-                    name: supervisorName,
-                    signature: supervisorSignature,
+                supervisorSignature: sName ? {
+                    name: sName,
+                    signature: sSig,
                     date: new Date().toISOString()
                 } : null
             };
@@ -442,6 +448,41 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
             toast.error(`Failed to generate report: ${errorMsg}`);
         } finally {
             setIsGeneratingReport(false);
+        }
+    };
+
+    const handleSendApprovalRequest = async (supervisorName, supervisorEmail) => {
+        setIsSendingApproval(true);
+        try {
+            const snapshot = {
+                ...data,
+                chemicals: chemicals.map(c => ({
+                    name: c.name,
+                    scientific_name: c.scientific_name,
+                    concentration: c.concentration,
+                    concentrationUnit: c.concentrationUnit
+                })),
+                experimentalConditions: data?.experimentalConditions || {}
+            };
+            const result = await createSupervisorApprovalRequest({
+                supervisor_name: supervisorName,
+                supervisor_email: supervisorEmail,
+                simulation_snapshot: snapshot,
+                persona,
+                chemicals_summary: chemicals.map(c => c.name).join(' + ')
+            });
+            const res = result?.data ?? result;
+            if (res?.status === 'success') {
+                toast.success(`Approval request sent to ${supervisorEmail}. You'll be notified when your supervisor responds.`);
+                setShowSignatureModal(false);
+            } else {
+                toast.error(res?.error || 'Failed to send approval request');
+            }
+        } catch (error) {
+            console.error('Send approval request error:', error);
+            toast.error(error.response?.data?.error || error.message || 'Failed to send approval request');
+        } finally {
+            setIsSendingApproval(false);
         }
     };
 
@@ -1246,63 +1287,17 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                 </div>
             </motion.div>
 
-            {/* Supervisor Signature Modal - Only for Researcher and Teacher */}
+            {/* Supervisor Approval Modal - Only for Researcher and Teacher */}
             {requiresSupervisorApproval && (
-                <Dialog open={showSignatureModal} onOpenChange={setShowSignatureModal}>
-                    <DialogContent className="sm:max-w-md">
-                        <DialogHeader>
-                            <DialogTitle>Supervisor Approval Required</DialogTitle>
-                            <DialogDescription>
-                                This experimental simulation requires supervisor approval before generating the lab report.
-                                Please enter your supervisor's details.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4 py-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="supervisor-name">Supervisor Name</Label>
-                                <Input
-                                    id="supervisor-name"
-                                    placeholder="Dr. Jane Smith"
-                                    value={supervisorName}
-                                    onChange={(e) => setSupervisorName(e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="supervisor-signature">Digital Signature</Label>
-                                <Input
-                                    id="supervisor-signature"
-                                    placeholder="Type full name to confirm"
-                                    value={supervisorSignature}
-                                    onChange={(e) => setSupervisorSignature(e.target.value)}
-                                />
-                                <p className="text-xs text-slate-500">
-                                    By typing your name, you confirm that you have reviewed and approved this experimental procedure.
-                                </p>
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <Button
-                                variant="outline"
-                                onClick={() => setShowSignatureModal(false)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={generateReport}
-                                disabled={!supervisorName || !supervisorSignature || isGeneratingReport}
-                            >
-                                {isGeneratingReport ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                        Generating...
-                                    </>
-                                ) : (
-                                    'Approve & Generate Report'
-                                )}
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
+                <SupervisorApprovalModal
+                    isOpen={showSignatureModal}
+                    onClose={() => setShowSignatureModal(false)}
+                    onSelfApprove={(name, signature) => generateReport({ name, signature })}
+                    onSendRequest={handleSendApprovalRequest}
+                    isGenerating={isGeneratingReport}
+                    isSending={isSendingApproval}
+                    persona={persona}
+                />
             )}
 
             {/* Report Customization Modal */}

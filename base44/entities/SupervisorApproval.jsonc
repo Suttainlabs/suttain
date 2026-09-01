@@ -1,0 +1,123 @@
+{
+  "name": "SupervisorApproval",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional short description for search visibility and previews"
+    },
+    "token": {
+      "type": "string",
+      "description": "Unique unguessable signed token used in the public approval link"
+    },
+    "simulation_snapshot": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Full simulation data, chemicals, persona and experimental conditions captured at request time"
+    },
+    "chemicals_summary": {
+      "type": "string",
+      "description": "Denormalized chemical names for quick display on the dashboard"
+    },
+    "persona": {
+      "type": "string",
+      "description": "Simulator persona the request originated from (e.g. researcher, teacher)"
+    },
+    "requester_user_id": {
+      "type": "string",
+      "description": "User id of the requester (denormalized from created_by_id)"
+    },
+    "requester_name": {
+      "type": "string",
+      "description": "Requester display name"
+    },
+    "requester_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Requester email \u2014 receives the approval/rejection notification"
+    },
+    "supervisor_name": {
+      "type": "string",
+      "description": "Supervisor name as entered by the requester"
+    },
+    "supervisor_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Supervisor email \u2014 receives the preview/approve link"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Current approval status"
+    },
+    "supervisor_decision_reason": {
+      "type": "string",
+      "description": "Optional reason supplied by the supervisor when approving or rejecting"
+    },
+    "requested_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the request was created"
+    },
+    "decided_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the supervisor approved or rejected the request"
+    },
+    "simulation_id": {
+      "type": "string",
+      "description": "Optional reference to the originating Simulation entity"
+    }
+  },
+  "required": [
+    "token",
+    "supervisor_name",
+    "supervisor_email",
+    "status"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

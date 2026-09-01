@@ -63,6 +63,7 @@ const ComputationalStudioSimulations = lazy(() => import('./pages/ComputationalS
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
+const ApproveSimulation = lazy(() => import('./pages/ApproveSimulation'));
 
 
 const ContentToolkit = lazy(() => import('./pages/ContentToolkit'));
@@ -103,7 +104,8 @@ const AuthenticatedApp = () => {
   const isPublicRoute = location.pathname === '/'
     || location.pathname === '/enterprise'
     || location.pathname === '/EnterpriseAPI'
-    || location.pathname === '/APIPortal';
+    || location.pathname === '/APIPortal'
+    || location.pathname === '/ApproveSimulation';
 
   // Check if on auth routes — never redirect these
   const isAuthRoute = ['/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname);
@@ -253,6 +255,8 @@ const AuthenticatedApp = () => {
       <Route path="/BillingDashboard" element={<LayoutWrapper currentPageName="BillingDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BillingDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BatchRecords" element={<LayoutWrapper currentPageName="BatchRecords"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BatchRecords /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/InteractionVisualization" element={<LayoutWrapper currentPageName="InteractionVisualization"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><InteractionVisualization /></PageTransition></Suspense></LayoutWrapper>} />
+
+      <Route path="/ApproveSimulation" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#02988C] rounded-full animate-spin"/></div>}><ApproveSimulation /></Suspense>} />
 
       <Route path="*" element={<PageNotFound />} />
     </Routes>
