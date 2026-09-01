@@ -60,6 +60,7 @@ import ShareModal from "../shared/ShareModal";
 import CostProductionPanel from "./CostProductionPanel";
 import BatchManagementPanel from "./BatchManagementPanel";
 import SourcingTab from "./SourcingTab";
+import MixingInstructions from "./MixingInstructions";
 import BusinessLockedTab from "./BusinessLockedTab";
 import ComplianceTracker from "./ComplianceTracker";
 
@@ -1183,40 +1184,15 @@ export default function FormulaEditor({
                 </TabsContent>
 
                 <TabsContent value="instructions" className="mt-0">
-                  <div className="bg-white rounded-lg p-4 sm:p-6 border-2 border-slate-200">
-                      <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                        <Beaker className={`w-5 h-5 ${modeColors.primaryIconClasses}`} />
-                        Mixing Instructions
-                      </h3>
-                      <div className={`mb-4 p-3 ${modeColors.accentCardBg} ${modeColors.accentCardBorder} rounded-lg`}>
-                        <p className={`text-sm ${modeColors.accentCardText}`}>
-                          <strong>Note:</strong> Instructions automatically update based on your batch size ({batchSize} {batchUnit}).
-                        </p>
-                      </div>
-                      {dynamicInstructions && dynamicInstructions.length > 0 ? (
-                        dynamicInstructions.map((phase, i) => (
-                          <div key={i} className="mb-6 p-3 sm:p-4 bg-slate-50 rounded-lg">
-                            <h4 className="font-bold text-slate-900 mb-3 flex items-center gap-2 text-sm sm:text-base">
-                              <span className={`w-6 h-6 ${modeColors.primaryBgClasses} text-white rounded-full flex items-center justify-center text-sm`}>{i + 1}</span>
-                              {phase.phase || `Phase ${i + 1}`}
-                            </h4>
-                            <ul className="list-disc pl-6 sm:pl-8 space-y-2">
-                              {Array.isArray(phase.steps) ? phase.steps.map((step, j) => (
-                                <li key={j} className="text-slate-700 text-sm sm:text-base">{step}</li>
-                              )) : typeof phase.steps === 'string' ? (
-                                <li className="text-slate-700 text-sm sm:text-base">{phase.steps}</li>
-                              ) : null}
-                            </ul>
-                          </div>
-                        ))
-                      ) : formula.instructions && typeof formula.instructions === 'string' && formula.instructions.trim() ? (
-                        <div className="p-4 bg-slate-50 rounded-lg">
-                          <p className="text-slate-700 text-sm whitespace-pre-wrap">{formula.instructions}</p>
-                        </div>
-                      ) : (
-                        <p className="text-slate-500 italic text-sm sm:text-base">No mixing instructions available for this formula.</p>
-                      )}
-                    </div>
+                  <MixingInstructions
+                    instructions={dynamicInstructions}
+                    fallbackInstructions={formula.instructions}
+                    batchSize={batchSize}
+                    batchUnit={batchUnit}
+                    apparatus={formula.apparatus}
+                    reagents={formula.reagents}
+                    wasteDisposal={formula.waste_disposal}
+                  />
                 </TabsContent>
 
                 <TabsContent value="safety" className="mt-0 space-y-6">

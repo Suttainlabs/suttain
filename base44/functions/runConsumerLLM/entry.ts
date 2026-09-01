@@ -555,43 +555,52 @@ FOR EACH VARIANT PROVIDE:
         const ingredientLines = ingredients.map(ing => `- ${ing.chemical_name}: ${ing.percentage}% (${ing.purpose})`).join('\n');
         let prompt;
         if (isBusiness) {
-          prompt = `You are a senior cosmetic formulation chemist. Expand this ${variant} commercial formula for "${description}" into complete manufacturing documentation.
+          prompt = `You are a senior cosmetic formulation chemist following standard ACS/RSC operating procedure conventions. Expand this ${variant} commercial formula for "${description}" into a professional Standard Operating Procedure (SOP).
 
 Ingredients (already defined):
 ${ingredientLines}
 
-Provide PROFESSIONAL MANUFACTURING DOCUMENTATION:
-1. MANUFACTURING INSTRUCTIONS (organized by phases A/B/C/D with temperatures, order of addition, mixing speeds)
-2. PRODUCT SPECIFICATIONS (Target pH range, viscosity, specific gravity, appearance, odor, stability)
-3. QUALITY CONTROL (In-process checks, final product testing, microbiological limits)
-4. SAFETY & COMPLIANCE (GHS hazard statements, required PPE, MSDS considerations, regulatory notes)
-5. SUSTAINABILITY METRICS (Biodegradability, carbon footprint, sustainability score 0-100)
+Produce a PROFESSIONAL SOP with these sections:
 
-Return as JSON.`;
+1. APPARATUS & MATERIALS — List all glassware, equipment, and tools required (e.g. jacketed reactor, overhead stirrer, pH meter, analytical balance).
+2. REAGENTS — For each ingredient provide: INCI name, CAS number (if known), function, and exact quantity scaled to a 100 g batch.
+3. PROCEDURE — Group into numbered phases (e.g. Phase A — Water Phase, Phase B — Oil Phase, Phase C — Actives, Phase D — Adjustments). For each phase list discrete, imperative steps using professional procedural language: "Transfer X g of ...", "Heat to XX C", "Mix at XXX rpm for X min", "Adjust pH to X.X", "Cool to XX C before adding ...". Include specific temperatures, mixing speeds, addition order, and timing for every step.
+4. PRODUCT SPECIFICATIONS — Target pH range, viscosity (cPs), specific gravity, appearance, odour profile, stability/shelf life.
+5. QUALITY CONTROL — In-process checks, final product testing, microbiological limits.
+6. SAFETY PRECAUTIONS — GHS hazard statements, required PPE, MSDS considerations, regulatory notes (EU allergens, FDA restrictions).
+7. WASTE DISPOSAL — Proper disposal methods for waste and residue.
+
+Use proper INCI nomenclature and chemical names throughout. Return as JSON.`;
         } else {
-          prompt = `You are a friendly DIY teacher. Expand this ${variant} homemade recipe for "${description}" into easy-to-follow instructions.
+          prompt = `You are a friendly DIY chemistry teacher following a simplified ACS/RSC operating procedure format. Expand this ${variant} homemade recipe for "${description}" into a clear, step-by-step SOP.
 
 Ingredients (already defined):
 ${ingredientLines}
 
-Provide BEGINNER-FRIENDLY INSTRUCTIONS:
-1. SIMPLE STEP-BY-STEP INSTRUCTIONS (plain language, kitchen equipment, timing estimates)
-2. WHAT TO EXPECT (appearance, pH, shelf life, time to make, texture)
-3. SAFETY TIPS (simple precautions, storage, when to discard)
-4. TROUBLESHOOTING (common problems and fixes)
-5. ECO-FRIENDLINESS (sustainability score 0-100, disposal tips)
+Produce a BEGINNER-FRIENDLY SOP with these sections:
 
-Return as JSON.`;
+1. APPARATUS & MATERIALS — List common kitchen equipment needed (measuring cups, bowls, whisk, funnel, spray bottle, etc.).
+2. REAGENTS — For each ingredient provide: common name, function, and quantity scaled to a 100 g batch.
+3. PROCEDURE — Group into numbered phases (e.g. Phase 1 — Preparation, Phase 2 — Mixing, Phase 3 — Finishing). For each phase list discrete, imperative steps using clear plain language: "Measure XX g of ...", "Combine ... and stir until ...", "Transfer to ...". Include timing estimates and helpful tips for each step.
+4. PRODUCT SPECIFICATIONS — What the final product should look and feel like, approximate pH, shelf life, time to make, texture/consistency.
+5. SAFETY PRECAUTIONS — Simple safety precautions in plain English, storage recommendations, when to discard.
+6. WASTE DISPOSAL — Eco-friendly disposal tips for residue and waste.
+
+Use clear, accessible language with specific measurements. Return as JSON.`;
         }
-        prompt += `\n\nUse this JSON structure:\n{\n"instructions": [{"phase": "Phase Name", "steps": ["step 1", "step 2"]}],\n"properties": {"ph_level": "string", "shelf_life": "string", "difficulty": "string", "time_to_make": "string"},\n"safety_precautions": ["string"],\n"sustainability_score": number\n}`;
+        prompt += `\n\nUse this JSON structure:\n{\n"apparatus": ["string"],\n"reagents": [{"name": "string", "function": "string", "quantity": "string"}],\n"batch_size_note": "string",\n"instructions": [{"phase": "Phase Name", "steps": ["step 1", "step 2"]}],\n"properties": {"ph_level": "string", "shelf_life": "string", "difficulty": "string", "time_to_make": "string"},\n"safety_precautions": ["string"],\n"waste_disposal": ["string"],\n"sustainability_score": number\n}`;
         const result = await call({
           prompt,
           response_json_schema: {
             type: 'object',
             properties: {
+              apparatus: { type: 'array', items: { type: 'string' } },
+              reagents: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, function: { type: 'string' }, quantity: { type: 'string' } } } },
+              batch_size_note: { type: 'string' },
               instructions: { type: 'array', items: { type: 'object', properties: { phase: { type: 'string' }, steps: { type: 'array', items: { type: 'string' } } } } },
               properties: { type: 'object', properties: { ph_level: { type: 'string' }, shelf_life: { type: 'string' }, difficulty: { type: 'string' }, time_to_make: { type: 'string' } } },
               safety_precautions: { type: 'array', items: { type: 'string' } },
+              waste_disposal: { type: 'array', items: { type: 'string' } },
               sustainability_score: { type: 'number' }
             }
           }

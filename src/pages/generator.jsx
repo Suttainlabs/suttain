@@ -356,6 +356,10 @@ export default function Generator() {
         properties: response?.data?.properties ?? (response.properties || {}),
         safety_precautions: response?.data?.safety_precautions ?? (response.safety_precautions || []),
         sustainability_score: response?.data?.sustainability_score ?? (response.sustainability_score || 70),
+        apparatus: response?.data?.apparatus ?? (response.apparatus || []),
+        reagents: response?.data?.reagents ?? (response.reagents || []),
+        batch_size_note: response?.data?.batch_size_note ?? (response.batch_size_note || ''),
+        waste_disposal: response?.data?.waste_disposal ?? (response.waste_disposal || []),
         product_type: selectedProductType.id,
         business_mode: businessMode
       };
