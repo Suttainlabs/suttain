@@ -8,15 +8,7 @@ import IngredientCarbonRow from '@/components/carbon/IngredientCarbonRow';
 import CarbonSummaryPanel from '@/components/carbon/CarbonSummaryPanel';
 import AlternativeCard from '@/components/carbon/AlternativeCard';
 import TaxScenarioPanel from '@/components/carbon/TaxScenarioPanel';
-
-// Default carbon intensity library (kg CO2e per kg ingredient)
-const CARBON_LIBRARY = {
-  'palm oil': 3.5, 'sodium lauryl sulfate': 2.8, 'mineral oil': 1.1,
-  'glycerin': 1.6, 'ethanol': 1.3, 'water': 0.001, 'fragrance': 4.2,
-  'parabens': 3.1, 'titanium dioxide': 5.7, 'dimethicone': 3.9,
-  'petroleum jelly': 1.4, 'propylene glycol': 2.6, 'citric acid': 1.9,
-  'sodium hydroxide': 0.9, 'hydrogen peroxide': 1.2,
-};
+import { CARBON_LIBRARY } from '@/data/carbonLibrary';
 
 const MARKETS = [
   { id: 'eu', name: 'EU', ets: true, cbam: true },
