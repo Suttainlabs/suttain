@@ -66,10 +66,11 @@ export default function SustainabilityAnalyzer({ formula }) {
     setIsLoading(true);
 
     try {
-      const analysis = await base44.functions.invoke('runConsumerLLM', {
+      const response = await base44.functions.invoke('runConsumerLLM', {
         operation: 'formulaSustainabilityScore',
         data: { ingredients: formula.ingredients }
       });
+      const analysis = response?.data ?? response;
       setSustainabilityData(analysis);
     } catch (error) {
       console.error("Sustainability analysis failed:", error);

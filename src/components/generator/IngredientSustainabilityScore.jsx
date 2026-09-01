@@ -22,10 +22,11 @@ export default function IngredientSustainabilityScore({ ingredients }) {
     setIsAnalyzing(true);
     setError(null);
     try {
-      const response = await base44.functions.invoke('runConsumerLLM', {
+      const rawResponse = await base44.functions.invoke('runConsumerLLM', {
         operation: 'ingredientSustainabilityScore',
         data: { ingredients }
       });
+      const response = rawResponse?.data ?? rawResponse;
 
       if (response && typeof response.overall_formula_score === 'number') {
         setScores(response);

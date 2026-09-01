@@ -22,10 +22,11 @@ export default function ComplianceChecker({ formula, onResult }) {
     setIsLoading(true);
 
     try {
-      const analysis = await base44.functions.invoke('runConsumerLLM', {
+      const response = await base44.functions.invoke('runConsumerLLM', {
         operation: 'complianceCheck',
         data: { ingredients: formula.ingredients }
       });
+      const analysis = response?.data ?? response;
       setComplianceData(analysis);
       if (onResult) onResult(analysis);
     } catch (error) {
