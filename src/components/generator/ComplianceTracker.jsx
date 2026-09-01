@@ -69,7 +69,7 @@ function TrackerRow({ icon: Icon, title, subtitle, items, accent }) {
     <Card className="border-slate-200">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0", accent.bg)}>
               <Icon className={cn("w-4 h-4", accent.text)} />
             </div>

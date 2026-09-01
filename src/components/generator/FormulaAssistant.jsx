@@ -68,9 +68,10 @@ Focus on practical, formula-specific feedback. Consider ingredient interactions,
         data: { ingredients: formula.ingredients, productType, businessMode }
       });
 
-      setAnalysis(response);
+      const analysis = response?.data ?? response;
+      setAnalysis(analysis);
       // Expand properties section by default if analysis is successful
-      if (response && response.properties) {
+      if (analysis && analysis.properties) {
         setExpandedSection('properties');
       }
     } catch (error) {
