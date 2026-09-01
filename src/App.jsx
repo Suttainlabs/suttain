@@ -66,6 +66,9 @@ const ApproveSimulation = lazy(() => import('./pages/ApproveSimulation'));
 const BatchRecords = lazy(() => import('./pages/BatchRecords'));
 const InteractionVisualization = lazy(() => import('./pages/InteractionVisualization'));
 const EnterpriseAPI = lazy(() => import('./pages/EnterpriseAPI'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfServicePage = lazy(() => import('./pages/TermsOfService'));
+const ComplianceGuidePage = lazy(() => import('./pages/ComplianceGuide'));
 // Import auth pages directly (not from pagesConfig which may not have them)
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -164,7 +167,11 @@ const AuthenticatedApp = () => {
 
       {/* ── Public marketing pages (no login required) ── */}
       <Route path="/enterprise" element={<Navigate to="/APIPortal" replace />} />
+      <Route path="/API" element={<Navigate to="/EnterpriseAPI" replace />} />
       <Route path="/EnterpriseAPI" element={<LayoutWrapper currentPageName="EnterpriseAPI"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><EnterpriseAPI /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/privacy-policy" element={<LayoutWrapper currentPageName="PrivacyPolicy"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><PrivacyPolicyPage /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/terms-of-service" element={<LayoutWrapper currentPageName="TermsOfService"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><TermsOfServicePage /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/compliance-guide" element={<LayoutWrapper currentPageName="ComplianceGuide"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ComplianceGuidePage /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/APIPortal" element={<LayoutWrapper currentPageName="APIPortal"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><APIPortal /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/ResearchPortal" element={<LayoutWrapper currentPageName="ResearchPortal"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ResearchPortal /></PageTransition></Suspense></LayoutWrapper>} />
 

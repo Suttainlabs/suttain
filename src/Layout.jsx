@@ -786,9 +786,9 @@ export default function Layout({ children, currentPageName }) {
             {/* Legal + Language */}
             <div className="flex flex-col gap-4 md:items-end">
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
-                <li><Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_privacy')}</Link></li>
-                <li><Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_terms')}</Link></li>
-                <li><Link to={createPageUrl('ComplianceGuide')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_compliance_guide')}</Link></li>
+                <li><Link to="/privacy-policy" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_privacy')}</Link></li>
+                <li><Link to="/terms-of-service" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_terms')}</Link></li>
+                <li><Link to="/compliance-guide" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_compliance_guide')}</Link></li>
                 <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_blog')}</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_careers')}</Link></li>
                 <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_contact')}</a></li>
