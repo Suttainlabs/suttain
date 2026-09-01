@@ -1257,6 +1257,97 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
         return Response.json(result);
       }
 
+      case 'formulaSustainabilityScore': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.filter(i => i && (i.chemical_name || i.name)).slice(0, 100) : [];
+        const ingredientList = ingredients.map(i => `${i.chemical_name || i.name}${i.percentage ? ` (${i.percentage}%)` : ''}`).join(', ');
+        const prompt = `You are a sustainability scientist. Analyze the environmental sustainability profile of a cosmetic/cleaning formula with these ingredients: ${ingredientList}.
+
+Provide scores from 0-100 (higher = more sustainable) and brief details for each category:
+- Overall Score: A holistic score considering all factors.
+- Carbon Footprint: Score based on production and transport emissions.
+- Biodegradability: Score based on how easily the components break down.
+- Water Usage: Score related to water consumed in production and use.
+- Packaging Impact: Score based on assumed standard packaging recyclability.
+- Improvement Suggestions: Provide 2-3 actionable suggestions.
+
+Return JSON only in the specified format.`;
+        const result = await call({
+          prompt,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_score: { type: 'number' },
+              summary: { type: 'string' },
+              categories: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string' },
+                    score: { type: 'number' },
+                    details: { type: 'string' }
+                  }
+                }
+              },
+              improvement_suggestions: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
+      case 'ingredientSustainabilityScore': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.filter(i => i && (i.chemical_name || i.name)).slice(0, 100) : [];
+        const ingredientList = ingredients.map(i => `${i.chemical_name || i.name}${i.percentage ? ` (${i.percentage}%)` : ''}`).join(', ');
+        const prompt = `You are an environmental chemist. Analyze the sustainability of these formula ingredients: ${ingredientList}.
+
+For each ingredient, provide:
+- overall_score (0-100, higher = greener)
+- sourcing_score (0-100, renewable vs petroleum-based)
+- biodegradability_score (0-100)
+- environmental_score (0-100, aquatic/eco impact)
+- sourcing_type (one of: "plant-based", "natural mineral", "synthetic", "petroleum-based")
+- biodegradability_category (one of: "readily", "inherently", "poorly")
+- concerns (array of 1-3 strings about environmental issues)
+- sustainable_alternative (string or null if already green)
+
+Also provide:
+- overall_formula_score (0-100, weighted average across all ingredients)
+- overall_assessment (2-3 sentence summary of the formula's eco-profile)
+- recommendations (array of 2-4 actionable sustainability recommendations)
+
+Return JSON only in the specified format.`;
+        const result = await call({
+          prompt,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_formula_score: { type: 'number' },
+              overall_assessment: { type: 'string' },
+              ingredients: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string' },
+                    overall_score: { type: 'number' },
+                    sourcing_score: { type: 'number' },
+                    biodegradability_score: { type: 'number' },
+                    environmental_score: { type: 'number' },
+                    sourcing_type: { type: 'string' },
+                    biodegradability_category: { type: 'string' },
+                    concerns: { type: 'array', items: { type: 'string' } },
+                    sustainable_alternative: { type: 'string' }
+                  }
+                }
+              },
+              recommendations: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
       default:
         return Response.json({ error: `Unknown operation: ${operation}` }, { status: 400 });
     }

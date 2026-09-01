@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -13,27 +13,39 @@ import {
 export default function IngredientSustainabilityScore({ ingredients }) {
   const [scores, setScores] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState(null);
   const [selectedIngredient, setSelectedIngredient] = useState(null);
 
-  const analyzeSustainability = async () => {
+  const analyzeSustainability = useCallback(async () => {
     if (!ingredients || ingredients.length === 0) return;
-    
+
     setIsAnalyzing(true);
+    setError(null);
     try {
-      const ingredientList = ingredients.map(i => i.chemical_name).join(', ');
-      
       const response = await base44.functions.invoke('runConsumerLLM', {
         operation: 'ingredientSustainabilityScore',
         data: { ingredients }
       });
-      
-      setScores(response);
-    } catch (error) {
-      console.error("Sustainability analysis failed:", error);
+
+      if (response && typeof response.overall_formula_score === 'number') {
+        setScores(response);
+      } else {
+        setError('Failed to generate sustainability analysis.');
+      }
+    } catch (err) {
+      console.error("Sustainability analysis failed:", err);
+      setError('Failed to generate sustainability analysis.');
     } finally {
       setIsAnalyzing(false);
     }
-  };
+  }, [ingredients]);
+
+  // Auto-run on mount so scores appear without requiring a manual button click
+  useEffect(() => {
+    if (ingredients && ingredients.length > 0) {
+      analyzeSustainability();
+    }
+  }, [analyzeSustainability]);
 
   const getScoreColor = (score) => {
     if (score >= 80) return 'text-green-600';
@@ -91,6 +103,19 @@ export default function IngredientSustainabilityScore({ ingredients }) {
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-6 h-6 animate-spin text-green-600 mr-2" />
             <span className="text-sm text-slate-600">Analyzing sustainability...</span>
+          </div>
+        ) : error ? (
+          <div className="text-center py-6 space-y-3">
+            <p className="text-sm text-red-600">{error}</p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={analyzeSustainability}
+              className="h-8"
+            >
+              <RefreshCw className="w-3 h-3 mr-1" />
+              Retry
+            </Button>
           </div>
         ) : scores ? (
           <>

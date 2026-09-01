@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { InvokeLLM } from '@/integrations/Core';
+import { base44 } from "@/api/base44Client";
 import { Leaf, Recycle, Droplets, Footprints, Award, Loader2 } from 'lucide-react';
 import {
   Accordion,
@@ -65,44 +64,11 @@ export default function SustainabilityAnalyzer({ formula }) {
 
   const analyzeSustainability = async () => {
     setIsLoading(true);
-    const ingredientList = formula.ingredients.map(i => i.chemical_name).join(', ');
-    const prompt = `
-      Analyze the sustainability profile of a cosmetic formula with these ingredients: ${ingredientList}.
-      Provide scores from 0-100 and brief details for each category.
-      Return a response in the specified JSON format.
-      - Overall Score: A holistic score considering all factors.
-      - Carbon Footprint: Score based on production and transport emissions.
-      - Biodegradability: Score based on how easily the components break down.
-      - Water Usage: Score related to water consumed in production and use.
-      - Packaging Impact: Score based on assumed standard packaging recyclability.
-      - Improvement Suggestions: Provide 2-3 actionable suggestions.
-
-      JSON response format:
-      {
-        "overall_score": number,
-        "summary": "string",
-        "categories": [
-          { "name": "Carbon Footprint", "score": number, "details": "string" },
-          { "name": "Biodegradability", "score": number, "details": "string" },
-          { "name": "Water Usage", "score": number, "details": "string" },
-          { "name": "Packaging Impact", "score": number, "details": "string" }
-        ],
-        "improvement_suggestions": [ "string" ]
-      }
-    `;
 
     try {
-      const analysis = await InvokeLLM({
-        prompt: prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            overall_score: { type: "number" },
-            summary: { type: "string" },
-            categories: { type: "array", items: { type: "object", properties: { name: { type: "string" }, score: { type: "number" }, details: { type: "string" } } } },
-            improvement_suggestions: { type: "array", items: { type: "string" } }
-          }
-        }
+      const analysis = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'formulaSustainabilityScore',
+        data: { ingredients: formula.ingredients }
       });
       setSustainabilityData(analysis);
     } catch (error) {
