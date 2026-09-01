@@ -55,7 +55,6 @@ import IngredientBrowser from "../ingredients/IngredientBrowser";
 import IngredientInteractionAnalyzer from "./IngredientInteractionAnalyzer";
 import IngredientSustainabilityScore from "./IngredientSustainabilityScore";
 import HazardAlternativesPanel from "./HazardAlternativesPanel";
-import RegulatoryScanner from "../compliance/RegulatoryScanner";
 import SupplierLinkModal from "../suppliers/SupplierLinkModal";
 import ShareModal from "../shared/ShareModal";
 import CostProductionPanel from "./CostProductionPanel";
@@ -1314,11 +1313,7 @@ export default function FormulaEditor({
                    <Suspense fallback={<div className="flex items-center justify-center p-4"><Loader2 className="w-6 h-6 animate-spin mr-2"/>Loading compliance checks...</div>}>
                      <ComplianceChecker formula={formula} onResult={setComplianceData} />
                    </Suspense>
-                   <RegulatoryScanner 
-                     ingredients={formula.ingredients} 
-                     onClose={() => setShowRegulatoryCheck(false)} 
-                   />
-                </TabsContent>
+                   </TabsContent>
                 
                 <TabsContent value="cost" className="mt-0">
                   {businessMode ? (

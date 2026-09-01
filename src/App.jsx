@@ -10,7 +10,6 @@ const BatchSimulation = lazy(() => import('./pages/BatchSimulation'));
 const SimulationComparison = lazy(() => import('./pages/SimulationComparison'));
 const Workspace = lazy(() => import('./pages/Workspace'));
 const CompareIngredients = lazy(() => import('./pages/CompareIngredients'));
-const Experimentation = lazy(() => import('./pages/Experimentation'));
 const BulkScan = lazy(() => import('./pages/BulkScan'));
 const SustainabilityImpact = lazy(() => import('./pages/SustainabilityImpact'));
 const ComparativeImpactReport = lazy(() => import('./pages/ComparativeImpactReport'));
@@ -32,7 +31,6 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const FormulaBuilder = lazy(() => import('./pages/FormulaBuilder'));
 const FormulaResults = lazy(() => import('./pages/FormulaResults'));
 const IngredientSubstitution = lazy(() => import('./pages/IngredientSubstitution'));
-const ComplianceDashboard = lazy(() => import('./pages/ComplianceDashboard'));
 const ReportGenerator = lazy(() => import('./pages/ReportGenerator'));
 const CarbonTaxSimulator = lazy(() => import('./pages/CarbonTaxSimulator'));
 const CarbonOpportunitySimulator = lazy(() => import('./pages/CarbonOpportunitySimulator'));
@@ -64,10 +62,6 @@ const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
 const ApproveSimulation = lazy(() => import('./pages/ApproveSimulation'));
-
-
-const ContentToolkit = lazy(() => import('./pages/ContentToolkit'));
-const BrandIntelligence = lazy(() => import('./pages/BrandIntelligence'));
 
 const BatchRecords = lazy(() => import('./pages/BatchRecords'));
 const InteractionVisualization = lazy(() => import('./pages/InteractionVisualization'));
@@ -215,14 +209,11 @@ const AuthenticatedApp = () => {
         <Route path="/HazardEngine" element={<LayoutWrapper currentPageName="HazardEngine"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><HazardEngine /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Jobs" element={<LayoutWrapper currentPageName="ComputationalStudioJobs"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioJobs /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
 
-        <Route path="/ContentToolkit" element={<LayoutWrapper currentPageName="ContentToolkit"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#02988C] rounded-full animate-spin"/></div>}><PageTransition><ContentToolkit /></PageTransition></Suspense></LayoutWrapper>} />
-        <Route path="/BrandIntelligence" element={<LayoutWrapper currentPageName="BrandIntelligence"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#02988C] rounded-full animate-spin"/></div>}><PageTransition><BrandIntelligence /></PageTransition></Suspense></LayoutWrapper>} />
       </Route>
       <Route path="/BatchSimulation" element={<LayoutWrapper currentPageName="BatchSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><BatchSimulation /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationComparison" element={<LayoutWrapper currentPageName="SimulationComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationComparison /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/Workspace" element={<LayoutWrapper currentPageName="Workspace"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><Workspace /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/CompareIngredients" element={<LayoutWrapper currentPageName="CompareIngredients"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><CompareIngredients /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/Experimentation" element={<LayoutWrapper currentPageName="Experimentation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><Experimentation /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BulkScan" element={<LayoutWrapper currentPageName="BulkScan"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><BulkScan /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SustainabilityImpact" element={<LayoutWrapper currentPageName="SustainabilityImpact"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><SustainabilityImpact /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/ComparativeImpactReport" element={<LayoutWrapper currentPageName="ComparativeImpactReport"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ComparativeImpactReport /></PageTransition></Suspense></LayoutWrapper>} />
@@ -243,7 +234,6 @@ const AuthenticatedApp = () => {
       <Route path="/FormulaBuilder" element={<LayoutWrapper currentPageName="FormulaBuilder"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaBuilder /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaResults" element={<LayoutWrapper currentPageName="FormulaResults"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaResults /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/IngredientSubstitution" element={<LayoutWrapper currentPageName="IngredientSubstitution"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><IngredientSubstitution /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/ComplianceDashboard" element={<LayoutWrapper currentPageName="ComplianceDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ComplianceDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/ReportGenerator" element={<LayoutWrapper currentPageName="ReportGenerator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><ReportGenerator /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/CarbonTaxSimulator" element={<LayoutWrapper currentPageName="CarbonTaxSimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonTaxSimulator /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/CarbonOpportunitySimulator" element={<LayoutWrapper currentPageName="CarbonOpportunitySimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonOpportunitySimulator /></PageTransition></Suspense></LayoutWrapper>} />

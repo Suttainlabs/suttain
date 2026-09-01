@@ -7,9 +7,8 @@ import AuthContext from '../auth/AuthContext';
 import LiveScanner from './LiveScanner';
 import BarcodeAnalysis from './ProductAnalysis';
 import BarcodeHistory from './BarcodeHistory';
-import RegulatoryScanner from '../compliance/RegulatoryScanner';
 import { base44 } from '@/api/base44Client';
-import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, QrCode, Globe, Smartphone, ArrowRight, Scan, Zap, Leaf, ShieldCheck, Recycle, FlaskConical, ScanLine, BarChart2 } from 'lucide-react';
+import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, QrCode, Smartphone, ArrowRight, Scan, Zap, Leaf, ShieldCheck, Recycle, FlaskConical, ScanLine, BarChart2 } from 'lucide-react';
 import BulkScanDashboard from './BulkScanDashboard';
 import CompareProducts from './CompareProducts';
 import { Link } from 'react-router-dom';
@@ -52,7 +51,7 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
     const [barcodeInput, setBarcode] = useState(initialQuery || '');
     const [history, setHistory] = useState([]);
     const [showFeedback, setShowFeedback] = useState(false);
-    const [showRegulatoryCheck, setShowRegulatoryCheck] = useState(false);
+    
     const [quickSubMode, setQuickSubMode] = useState('scan');
     const fileInputRef = useRef(null);
 
@@ -226,16 +225,6 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
 
                             <motion.div key="analysis" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="pb-6">
                                 <BarcodeAnalysis product={productInfo} onClear={clearSearch} user={user} />
-                                {showRegulatoryCheck && (
-                                    <div className="mt-4">
-                                        <RegulatoryScanner ingredients={productInfo.ingredients?.map(ing => ({ chemical_name: ing }))} onClose={() => setShowRegulatoryCheck(false)} />
-                                    </div>
-                                )}
-                                {!showRegulatoryCheck && productInfo.ingredients?.length > 0 && (
-                                    <Button onClick={() => setShowRegulatoryCheck(true)} variant="outline" className="w-full mt-3 gap-2">
-                                        <Globe className="w-4 h-4" /> Check Regional Regulations
-                                    </Button>
-                                )}
                             </motion.div>
                         ) : (
                             <motion.div key="scanner" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
