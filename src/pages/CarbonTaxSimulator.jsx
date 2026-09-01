@@ -1,22 +1,16 @@
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import AuthContext from '@/components/auth/AuthContext';
 import AuthGate from '@/components/auth/AuthGate';
 import { base44 } from '@/api/base44Client';
-import { Leaf, Loader2, Plus, Globe, TrendingDown, Download, RefreshCw, ChevronRight, FlaskConical } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { Leaf, Loader2, Plus, Globe, TrendingDown, Download, RefreshCw, FlaskConical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import IngredientCarbonRow from '@/components/carbon/IngredientCarbonRow';
 import CarbonSummaryPanel from '@/components/carbon/CarbonSummaryPanel';
 import AlternativeCard from '@/components/carbon/AlternativeCard';
 import TaxScenarioPanel from '@/components/carbon/TaxScenarioPanel';
 import { CARBON_LIBRARY } from '@/data/carbonLibrary';
-
-const MARKETS = [
-  { id: 'eu', name: 'EU', ets: true, cbam: true },
-  { id: 'uk', name: 'UK', ets: true, cbam: false },
-  { id: 'canada', name: 'Canada', ets: false, cbam: false },
-  { id: 'usa_california', name: 'USA (CA)', ets: true, cbam: false },
-  { id: 'australia', name: 'Australia', ets: false, cbam: false },
-];
+import { CARBON_MARKETS, computeTaxScenarios } from '@/data/carbonMarkets';
 
 const TABS = ['Footprint', 'Tax Impact', 'Alternatives'];
 
@@ -31,31 +25,44 @@ const newIngredient = (name = '', quantity_kg = 1, carbon_intensity = 1) => ({
 
 export default function CarbonTaxSimulator() {
   const { user } = useContext(AuthContext);
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Footprint');
   const [ingredients, setIngredients] = useState([]);
   const [newName, setNewName] = useState('');
   const [unitsPerMonth, setUnitsPerMonth] = useState(10000);
   const [selectedMarkets, setSelectedMarkets] = useState(['eu']);
-  const [carbonPrice, setCarbonPrice] = useState(65); // USD per tonne
+  const [carbonPrice, setCarbonPrice] = useState(89);
 
   const [loadingAlts, setLoadingAlts] = useState(false);
-  const [loadingTax, setLoadingTax] = useState(false);
   const [alternatives, setAlternatives] = useState(null);
-  const [taxResults, setTaxResults] = useState(null);
-
   const [addLoading, setAddLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
 
-  if (!user) return (
-    <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: '#EDF7F2' }}>
-      <AuthGate featureName="Carbon Tax & Opportunity Simulator" featureDescription="Sign in to calculate real-time carbon footprints, forecast tax exposure, and find greener alternatives with ROI." />
-    </div>
+  // ── Deterministic live calculations ──
+  const totalBatchCO2e = useMemo(
+    () => ingredients.reduce((sum, ing) => sum + (ing.quantity_kg * ing.carbon_intensity), 0),
+    [ingredients]
+  );
+  const annualCO2eTonnes = useMemo(
+    () => (totalBatchCO2e * unitsPerMonth * 12) / 1000,
+    [totalBatchCO2e, unitsPerMonth]
+  );
+  const taxExposureKPI = useMemo(
+    () => Math.round(annualCO2eTonnes * carbonPrice),
+    [annualCO2eTonnes, carbonPrice]
+  );
+  const taxScenarios = useMemo(
+    () => computeTaxScenarios(annualCO2eTonnes, selectedMarkets),
+    [annualCO2eTonnes, selectedMarkets]
   );
 
-  // Real-time calculations
-  const totalCO2e = ingredients.reduce((sum, ing) => sum + (ing.quantity_kg * ing.carbon_intensity), 0);
-  const annualCO2e = totalCO2e * 12 * (unitsPerMonth / 1000); // scaled
-  const taxExposure = Math.round((annualCO2e / 1000) * carbonPrice);
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: '#EDF7F2' }}>
+        <AuthGate featureName="Carbon Tax & Opportunity Simulator" featureDescription="Sign in to calculate real-time carbon footprints, forecast tax exposure, and find greener alternatives with ROI." />
+      </div>
+    );
+  }
 
   const addIngredient = async () => {
     if (!newName.trim()) return;
@@ -63,69 +70,74 @@ export default function CarbonTaxSimulator() {
     const knownIntensity = CARBON_LIBRARY[lower];
 
     if (knownIntensity) {
-      setIngredients(prev => [...prev, newIngredient(newName.trim(), 1, knownIntensity)]);
+      setIngredients((prev) => [...prev, newIngredient(newName.trim(), 1, knownIntensity)]);
       setNewName('');
       return;
     }
 
-    // Use AI to estimate carbon intensity for unknown ingredients
     setAddLoading(true);
     try {
       const res = await base44.functions.invoke('runConsumerLLM', {
         operation: 'carbonIntensityEstimate',
-        data: { ingredientName: newName }
+        data: { ingredientName: newName },
       });
-      setIngredients(prev => [...prev, newIngredient(newName.trim(), 1, res.carbon_intensity || 1)]);
-    } catch {
-      setIngredients(prev => [...prev, newIngredient(newName.trim(), 1, 1)]);
+      const data = res.data || res;
+      setIngredients((prev) => [...prev, newIngredient(newName.trim(), 1, data.carbon_intensity || 1)]);
+    } catch (err) {
+      toast({
+        title: 'Could not estimate carbon intensity',
+        description: err.message || 'Using a default value. You can adjust it manually.',
+        variant: 'destructive',
+      });
+      setIngredients((prev) => [...prev, newIngredient(newName.trim(), 1, 1)]);
     }
     setAddLoading(false);
     setNewName('');
   };
 
-  const removeIngredient = (id) => setIngredients(prev => prev.filter(i => i.id !== id));
-  const updateQuantity = (id, qty) => setIngredients(prev => prev.map(i => i.id === id ? { ...i, quantity_kg: qty } : i));
+  const removeIngredient = (id) => setIngredients((prev) => prev.filter((i) => i.id !== id));
+  const updateQuantity = (id, qty) => setIngredients((prev) => prev.map((i) => (i.id === id ? { ...i, quantity_kg: qty } : i)));
 
-  // Apply a suggested alternative: swap the ingredient in the formula and reset stale analysis
   const applyAlternative = (alt) => {
-    setIngredients(prev => prev.map(i => {
-      if (i.name.toLowerCase().trim() !== String(alt.replace_ingredient).toLowerCase().trim()) return i;
-      const reduced = alt.carbon_reduction_pct > 0
-        ? Math.max(0.01, i.carbon_intensity * (1 - alt.carbon_reduction_pct / 100))
-        : i.carbon_intensity;
-      return { ...i, name: alt.alternative_ingredient, carbon_intensity: +reduced.toFixed(2) };
-    }));
+    setIngredients((prev) =>
+      prev.map((i) => {
+        if (i.name.toLowerCase().trim() !== String(alt.replace_ingredient).toLowerCase().trim()) return i;
+        const reduced = alt.carbon_reduction_pct > 0
+          ? Math.max(0.01, i.carbon_intensity * (1 - alt.carbon_reduction_pct / 100))
+          : i.carbon_intensity;
+        return { ...i, name: alt.alternative_ingredient, carbon_intensity: +reduced.toFixed(2) };
+      })
+    );
     setAlternatives(null);
-    setTaxResults(null);
     setActiveTab('Footprint');
+    toast({ title: 'Ingredient swapped', description: `Replaced with ${alt.alternative_ingredient}. KPIs updated.` });
   };
-  const toggleMarket = (id) => setSelectedMarkets(prev => prev.includes(id) ? prev.filter(m => m !== id) : prev.length < 5 ? [...prev, id] : prev);
 
-  const runTaxSimulation = async () => {
-    setLoadingTax(true);
-    try {
-      const ingredientList = ingredients.map(i => `${i.name} (${i.quantity_kg}kg, ${i.carbon_intensity} kg CO2e/kg)`).join(', ');
-      const res = await base44.functions.invoke('runConsumerLLM', {
-        operation: 'carbonTaxSimulation',
-        data: { unitsPerMonth, totalCO2e, annualCO2e, ingredientList, selectedMarkets, carbonPrice }
-      });
-      setTaxResults(res);
-      setActiveTab('Tax Impact');
-    } catch { alert('Tax simulation failed. Please try again.'); }
-    setLoadingTax(false);
-  };
+  const toggleMarket = (id) =>
+    setSelectedMarkets((prev) =>
+      prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id]
+    );
 
   const runAlternatives = async () => {
     setLoadingAlts(true);
     try {
-      const highCarbonIngs = [...ingredients].sort((a, b) => (b.quantity_kg * b.carbon_intensity) - (a.quantity_kg * a.carbon_intensity)).slice(0, 5);
+      const highCarbonIngs = [...ingredients]
+        .sort((a, b) => b.quantity_kg * b.carbon_intensity - a.quantity_kg * a.carbon_intensity)
+        .slice(0, 5);
       const res = await base44.functions.invoke('runConsumerLLM', {
         operation: 'carbonAlternatives',
-        data: { unitsPerMonth, highCarbonIngredients: highCarbonIngs }
+        data: { unitsPerMonth, highCarbonIngredients: highCarbonIngs },
       });
-      setAlternatives(res);
+      const data = res.data || res;
+      setAlternatives(data);
       setActiveTab('Alternatives');
-    } catch { alert('Alternatives analysis failed. Please try again.'); }
+    } catch (err) {
+      toast({
+        title: 'Alternatives analysis failed',
+        description: err.message || 'Please try again.',
+        variant: 'destructive',
+      });
+    }
     setLoadingAlts(false);
   };
 
@@ -135,16 +147,22 @@ export default function CarbonTaxSimulator() {
       `Generated: ${new Date().toLocaleDateString()}`,
       '',
       '--- INGREDIENT FOOTPRINT ---',
-      ...ingredients.map(i => `${i.name}: ${i.quantity_kg}kg × ${i.carbon_intensity} = ${(i.quantity_kg * i.carbon_intensity).toFixed(2)} kg CO2e`),
-      `Total batch CO2e: ${totalCO2e.toFixed(2)} kg`,
-      `Annual CO2e: ${(annualCO2e / 1000).toFixed(1)} tonnes`,
-      `Estimated tax exposure: $${taxExposure}/yr at $${carbonPrice}/tonne`,
+      ...ingredients.map((i) => `${i.name}: ${i.quantity_kg}kg x ${i.carbon_intensity} = ${(i.quantity_kg * i.carbon_intensity).toFixed(2)} kg CO2e`),
+      `Total batch CO2e: ${totalBatchCO2e.toFixed(2)} kg`,
+      `Annual CO2e: ${annualCO2eTonnes.toFixed(1)} tonnes`,
+      `Quick-estimate tax exposure: $${taxExposureKPI.toLocaleString()}/yr at $${carbonPrice}/tonne`,
       '',
     ];
-    if (taxResults) {
-      lines.push('--- TAX SCENARIO ANALYSIS ---');
-      taxResults.results?.forEach(r => {
-        lines.push(`${r.market}: Low $${r.low} / Base $${r.base} / High $${r.high}`);
+    if (taxScenarios.length) {
+      lines.push('--- PER-MARKET TAX SCENARIOS ---');
+      const totalLow = taxScenarios.reduce((s, r) => s + r.low, 0);
+      const totalBase = taxScenarios.reduce((s, r) => s + r.base, 0);
+      const totalHigh = taxScenarios.reduce((s, r) => s + r.high, 0);
+      lines.push(`Combined (all selected markets): Low $${totalLow.toFixed(0)} / Base $${totalBase.toFixed(0)} / High $${totalHigh.toFixed(0)}`);
+      lines.push('');
+      taxScenarios.forEach((r) => {
+        lines.push(`${r.name} (${r.regulation_name}): Low $${r.low.toFixed(0)} / Base $${r.base.toFixed(0)} / High $${r.high.toFixed(0)}`);
+        if (r.cbam_exposure > 0) lines.push(`  CBAM exposure (forward-looking): $${r.cbam_exposure.toFixed(0)}/yr at ${r.cbam_phase_in_pct}% phase-in`);
       });
       lines.push('');
     }
@@ -158,21 +176,22 @@ export default function CarbonTaxSimulator() {
     }
     const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'suttain_carbon_report.txt'; a.click();
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'suttain_carbon_report.txt';
+    a.click();
     URL.revokeObjectURL(url);
   };
 
-  const anyLoading = loadingAlts || loadingTax || addLoading;
+  const anyLoading = loadingAlts || addLoading;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        {/* Header */}
         <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Carbon Tax & Opportunity Simulator</h1>
-            <p className="text-slate-500 mt-1">Build your ingredient list, calculate live carbon footprint, simulate tax exposure, and find greener alternatives with ROI.</p>
+            <p className="text-slate-500 mt-1">Build your ingredient list, see live carbon footprint and tax exposure across 9 markets, and find greener alternatives with ROI.</p>
           </div>
           <button
             onClick={exportReport}
@@ -183,41 +202,32 @@ export default function CarbonTaxSimulator() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
-
-          {/* LEFT: Ingredient Builder */}
+          {/* LEFT: Ingredient Builder + Config */}
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-white rounded-xl border border-slate-200 p-5">
               <h2 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
                 <FlaskConical className="w-4 h-4 text-[#02988C]" /> Ingredients
               </h2>
-
               <div className="divide-y divide-slate-50">
-                {ingredients.map(ing => (
-                  <IngredientCarbonRow
-                    key={ing.id}
-                    ingredient={ing}
-                    onRemove={removeIngredient}
-                    onQuantityChange={updateQuantity}
-                  />
+                {ingredients.map((ing) => (
+                  <IngredientCarbonRow key={ing.id} ingredient={ing} onRemove={removeIngredient} onQuantityChange={updateQuantity} />
                 ))}
               </div>
-
-              {/* Add ingredient */}
               <div className="mt-4 flex gap-2">
                 <div className="flex-1 relative">
                   <input
                     value={newName}
-                    onChange={e => {
+                    onChange={(e) => {
                       const val = e.target.value;
                       setNewName(val);
                       if (val.trim().length >= 2) {
                         const lower = val.toLowerCase();
-                        setSuggestions(Object.keys(CARBON_LIBRARY).filter(k => k.includes(lower)).slice(0, 6));
+                        setSuggestions(Object.keys(CARBON_LIBRARY).filter((k) => k.includes(lower)).slice(0, 6));
                       } else {
                         setSuggestions([]);
                       }
                     }}
-                    onKeyDown={e => {
+                    onKeyDown={(e) => {
                       if (e.key === 'Enter') { setSuggestions([]); addIngredient(); }
                       if (e.key === 'Escape') setSuggestions([]);
                     }}
@@ -228,13 +238,10 @@ export default function CarbonTaxSimulator() {
                   />
                   {suggestions.length > 0 && (
                     <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-20 overflow-hidden">
-                      {suggestions.map(s => (
+                      {suggestions.map((s) => (
                         <button
                           key={s}
-                          onMouseDown={() => {
-                            setNewName(s.replace(/\b\w/g, c => c.toUpperCase()));
-                            setSuggestions([]);
-                          }}
+                          onMouseDown={() => { setNewName(s.replace(/\b\w/g, (c) => c.toUpperCase())); setSuggestions([]); }}
                           className="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-[#F0FAF5] hover:text-[#02988C] flex items-center justify-between group transition-colors"
                         >
                           <span className="capitalize">{s}</span>
@@ -255,7 +262,6 @@ export default function CarbonTaxSimulator() {
               <p className="text-xs text-slate-400 mt-2">Unknown ingredients are estimated via AI automatically.</p>
             </div>
 
-            {/* Config */}
             <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
               <h2 className="font-bold text-slate-800 mb-1">Configuration</h2>
               <div>
@@ -263,27 +269,27 @@ export default function CarbonTaxSimulator() {
                 <input
                   type="number" min="1"
                   value={unitsPerMonth}
-                  onChange={e => setUnitsPerMonth(parseInt(e.target.value) || 1)}
+                  onChange={(e) => setUnitsPerMonth(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#02988C]"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600 block mb-1">Carbon Price ($/tonne)</label>
+                <label className="text-xs font-semibold text-slate-600 block mb-1">Carbon Price ($/tonne, quick estimate)</label>
                 <div className="flex items-center gap-3">
                   <input
-                    type="range" min="10" max="200" step="5"
+                    type="range" min="3" max="120" step="1"
                     value={carbonPrice}
-                    onChange={e => setCarbonPrice(parseInt(e.target.value))}
+                    onChange={(e) => setCarbonPrice(parseInt(e.target.value))}
                     className="flex-1 accent-[#02988C]"
                   />
                   <span className="text-sm font-bold text-slate-700 w-12 text-right">${carbonPrice}</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">EU ETS ~$65 | UK ETS ~$55 | CA ~$45</p>
+                <p className="text-xs text-slate-400 mt-1">Presets: EU ETS ~$89 | UK ETS ~$59 | CA ~$33 | Canada ~$68</p>
               </div>
               <div>
                 <label className="text-xs font-semibold text-slate-600 block mb-2">Target Markets</label>
                 <div className="flex flex-wrap gap-1.5">
-                  {MARKETS.map(m => (
+                  {CARBON_MARKETS.map((m) => (
                     <button
                       key={m.id}
                       onClick={() => toggleMarket(m.id)}
@@ -297,16 +303,7 @@ export default function CarbonTaxSimulator() {
               </div>
             </div>
 
-            {/* Action buttons */}
             <div className="space-y-2">
-              <button
-                onClick={runTaxSimulation}
-                disabled={anyLoading || !ingredients.length || !selectedMarkets.length}
-                className={cn('w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all', !anyLoading && ingredients.length && selectedMarkets.length ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-slate-100 text-slate-400 cursor-not-allowed')}
-              >
-                {loadingTax ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
-                Simulate Tax Impact
-              </button>
               <button
                 onClick={runAlternatives}
                 disabled={anyLoading || !ingredients.length}
@@ -320,93 +317,43 @@ export default function CarbonTaxSimulator() {
 
           {/* RIGHT: Results Panel */}
           <div className="lg:col-span-2 space-y-4">
-
-            {/* Live Summary */}
             <CarbonSummaryPanel
-              totalCO2e={totalCO2e}
-              annualCO2e={annualCO2e}
-              taxExposure={taxExposure}
+              totalCO2e={totalBatchCO2e}
+              annualCO2e={annualCO2eTonnes * 1000}
+              taxExposure={taxExposureKPI}
               unitsPerMonth={unitsPerMonth}
             />
 
-            {/* Tabs */}
             <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
               <div className="flex border-b border-slate-100">
-                {TABS.map(tab => (
+                {TABS.map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={cn('flex-1 py-3 text-sm font-semibold transition-colors', activeTab === tab ? 'text-[#02988C] border-b-2 border-[#02988C] bg-[#F0FAF5]' : 'text-slate-500 hover:text-slate-700')}
                   >
                     {tab}
-                    {tab === 'Tax Impact' && taxResults && <span className="ml-1.5 w-2 h-2 bg-amber-400 rounded-full inline-block" />}
+                    {tab === 'Tax Impact' && taxScenarios.length > 0 && <span className="ml-1.5 w-2 h-2 bg-amber-400 rounded-full inline-block" />}
                     {tab === 'Alternatives' && alternatives && <span className="ml-1.5 w-2 h-2 bg-green-400 rounded-full inline-block" />}
                   </button>
                 ))}
               </div>
 
               <div className="p-5">
-
                 {activeTab === 'Footprint' && (
-                  <div>
-                    <h3 className="font-bold text-slate-800 mb-3 text-sm">Ingredient Carbon Breakdown</h3>
-                    {ingredients.length === 0 ? (
-                      <p className="text-sm text-slate-400 text-center py-8">Add ingredients on the left to see their carbon footprint.</p>
-                    ) : (
-                      <div className="space-y-2">
-                        {[...ingredients]
-                          .sort((a, b) => (b.quantity_kg * b.carbon_intensity) - (a.quantity_kg * a.carbon_intensity))
-                          .map(ing => {
-                            const contribution = totalCO2e > 0 ? ((ing.quantity_kg * ing.carbon_intensity) / totalCO2e * 100) : 0;
-                            return (
-                              <div key={ing.id} className="flex items-center gap-3">
-                                <span className="text-xs text-slate-600 w-32 truncate">{ing.name}</span>
-                                <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
-                                  <div
-                                    className="h-full rounded-full transition-all duration-500"
-                                    style={{
-                                      width: `${contribution}%`,
-                                      background: contribution > 30 ? '#ef4444' : contribution > 15 ? '#f59e0b' : '#02988C'
-                                    }}
-                                  />
-                                </div>
-                                <span className="text-xs font-semibold text-slate-600 w-12 text-right">{contribution.toFixed(1)}%</span>
-                                <span className="text-xs text-slate-400 w-20 text-right">{(ing.quantity_kg * ing.carbon_intensity).toFixed(2)} kg CO2e</span>
-                              </div>
-                            );
-                          })}
-                        <div className="pt-3 border-t border-slate-100 flex justify-between text-sm font-bold text-slate-800">
-                          <span>Total</span>
-                          <span>{totalCO2e.toFixed(2)} kg CO2e per batch</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {ingredients.length > 0 && (
-                      <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                        <p className="text-xs text-blue-700 leading-relaxed">
-                          At {unitsPerMonth.toLocaleString()} units/month, your estimated annual carbon exposure is <strong>{(annualCO2e / 1000).toFixed(1)} tonnes CO2e</strong>, equivalent to a carbon tax liability of <strong>${taxExposure.toLocaleString()}/yr</strong> at ${carbonPrice}/tonne. Run the Tax Impact simulation to see market-by-market breakdown.
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                  <FootprintTab ingredients={ingredients} totalBatchCO2e={totalBatchCO2e} annualCO2eTonnes={annualCO2eTonnes} taxExposureKPI={taxExposureKPI} unitsPerMonth={unitsPerMonth} carbonPrice={carbonPrice} />
                 )}
 
                 {activeTab === 'Tax Impact' && (
                   <div>
-                    {taxResults ? (
-                      <TaxScenarioPanel taxResults={taxResults} />
+                    {taxScenarios.length > 0 ? (
+                      <TaxScenarioPanel scenarios={taxScenarios} annualCO2eTonnes={annualCO2eTonnes} />
                     ) : (
                       <div className="text-center py-10">
                         <Globe className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                        <p className="text-sm text-slate-400 mb-3">Select your target markets and click "Simulate Tax Impact" to see your carbon tax exposure across low, base, and high price scenarios.</p>
-                        <button onClick={runTaxSimulation} disabled={anyLoading || !selectedMarkets.length} className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-700 transition-colors disabled:opacity-50">
-                          {loadingTax ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
-                          Run Now
-                        </button>
+                        <p className="text-sm text-slate-400 mb-3">Select one or more target markets on the left to see your carbon tax exposure across low, base, and high price scenarios.</p>
                       </div>
                     )}
-                    <p className="text-xs text-slate-400 mt-4">Estimates are ranges based on current carbon pricing data. Actual exposure depends on product classification and real-time prices.</p>
                   </div>
                 )}
 
@@ -446,11 +393,51 @@ export default function CarbonTaxSimulator() {
                     )}
                   </div>
                 )}
-
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Footprint sub-tab (kept inline to avoid extra file churn) ──
+function FootprintTab({ ingredients, totalBatchCO2e, annualCO2eTonnes, taxExposureKPI, unitsPerMonth, carbonPrice }) {
+  if (ingredients.length === 0) {
+    return <p className="text-sm text-slate-400 text-center py-8">Add ingredients on the left to see their carbon footprint.</p>;
+  }
+  return (
+    <div>
+      <h3 className="font-bold text-slate-800 mb-3 text-sm">Ingredient Carbon Breakdown</h3>
+      <div className="space-y-2">
+        {[...ingredients]
+          .sort((a, b) => b.quantity_kg * b.carbon_intensity - a.quantity_kg * a.carbon_intensity)
+          .map((ing) => {
+            const contribution = totalBatchCO2e > 0 ? (ing.quantity_kg * ing.carbon_intensity) / totalBatchCO2e * 100 : 0;
+            return (
+              <div key={ing.id} className="!min-h-0 flex items-center gap-3">
+                <span className="text-xs text-slate-600 w-32 truncate">{ing.name}</span>
+                <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${contribution}%`, background: contribution > 30 ? '#ef4444' : contribution > 15 ? '#f59e0b' : '#02988C' }}
+                  />
+                </div>
+                <span className="text-xs font-semibold text-slate-600 w-12 text-right">{contribution.toFixed(1)}%</span>
+                <span className="text-xs text-slate-400 w-20 text-right">{(ing.quantity_kg * ing.carbon_intensity).toFixed(2)} kg CO2e</span>
+              </div>
+            );
+          })}
+        <div className="pt-3 border-t border-slate-100 flex justify-between text-sm font-bold text-slate-800">
+          <span>Total</span>
+          <span>{totalBatchCO2e.toFixed(2)} kg CO2e per batch</span>
+        </div>
+      </div>
+      <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+        <p className="text-xs text-blue-700 leading-relaxed">
+          At {unitsPerMonth.toLocaleString()} units/month, your estimated annual carbon exposure is <strong>{annualCO2eTonnes.toFixed(1)} tonnes CO2e</strong>, equivalent to a carbon tax liability of <strong>${taxExposureKPI.toLocaleString()}/yr</strong> at ${carbonPrice}/tonne. See the Tax Impact tab for per-market breakdowns.
+        </p>
       </div>
     </div>
   );

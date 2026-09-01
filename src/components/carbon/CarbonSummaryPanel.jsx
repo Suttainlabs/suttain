@@ -24,11 +24,11 @@ export default function CarbonSummaryPanel({ totalCO2e, annualCO2e, taxExposure,
         <p className="text-xl font-bold text-slate-900">{(annualCO2e / 1000).toFixed(1)}</p>
         <p className="text-xs text-slate-400">tonnes/year</p>
       </div>
-      <div className={`rounded-xl border p-4 text-center ${taxExposure > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-200'}`}>
-        <DollarSign className={`w-4 h-4 mx-auto mb-1 ${taxExposure > 0 ? 'text-amber-500' : 'text-slate-400'}`} />
-        <p className="text-xs text-slate-400 mb-1">Tax Exposure</p>
-        <p className={`text-xl font-bold ${taxExposure > 0 ? 'text-amber-700' : 'text-slate-900'}`}>${taxExposure.toLocaleString()}</p>
-        <p className="text-xs text-slate-400">est. annual</p>
+      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-center">
+        <DollarSign className="w-4 h-4 mx-auto mb-1 text-amber-500" />
+        <p className="text-xs text-amber-600 mb-1">Tax Exposure</p>
+        <p className="text-xl font-bold text-amber-700">${taxExposure.toLocaleString()}</p>
+        <p className="text-xs text-amber-500">est. annual</p>
       </div>
     </div>
   );
