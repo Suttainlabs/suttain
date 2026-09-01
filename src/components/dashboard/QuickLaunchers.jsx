@@ -1,17 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import {
-  TestTube, Atom, QrCode, FileText, BarChart2, Microscope,
-} from 'lucide-react';
+import { TestTube, FileText } from 'lucide-react';
 
 const TOOLS = [
   { href: 'Simulator', label: 'Chemical Simulator', icon: TestTube, accent: '#02988C' },
-  { href: 'generator', label: 'Formula Generator', icon: Atom, accent: '#02988C' },
-  { href: 'BarcodeScanner', label: 'Product Scanner', icon: QrCode, accent: '#02988C' },
   { href: 'SDSAnalyzer', label: 'SDS Analyzer', icon: FileText, accent: '#02988C' },
-  { href: 'CarbonTaxSimulator', label: 'Carbon Tax', icon: BarChart2, accent: '#02988C' },
-  { href: 'MoleculeAnalysis', label: 'Molecule Analysis', icon: Microscope, accent: '#02988C' },
 ];
 
 export default function QuickLaunchers() {
