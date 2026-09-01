@@ -60,9 +60,8 @@ export default async function (req: Request): Promise<Response> {
       simulation_id: simulation_id || ''
     });
 
-    // Derive the app origin from the request so the link works on any connected domain
-    const origin = req.headers.get('origin') || new URL(req.url).origin || 'https://suttain.base44.app';
-    const approvalUrl = `${origin}/ApproveSimulation?token=${token}`;
+    const APP_ORIGIN = 'https://suttain.com';
+    const approvalUrl = `${APP_ORIGIN}/ApproveSimulation?token=${token}`;
 
     const safeSupervisor = escapeHtml(supervisor_name);
     const safeRequester = escapeHtml(user.full_name || user.email);

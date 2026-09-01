@@ -73,8 +73,8 @@ export default async function (req: Request): Promise<Response> {
       const safeChemicals = escapeHtml(record.chemicals_summary || 'chemical simulation');
       const safeReason = escapeHtml(reason || '');
       const year = new Date().getFullYear();
-      const origin = req.headers.get('origin') || new URL(req.url).origin || 'https://suttain.base44.app';
-      const dashboardUrl = `${origin}/Dashboard`;
+      const APP_ORIGIN = 'https://suttain.com';
+      const dashboardUrl = `${APP_ORIGIN}/Dashboard`;
 
       const isApproved = newStatus === 'approved';
       const headingColor = isApproved ? '#02988C' : '#dc2626';
