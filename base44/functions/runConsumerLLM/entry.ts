@@ -1348,6 +1348,67 @@ Return JSON only in the specified format.`;
         return Response.json(result);
       }
 
+      case 'complianceCheck': {
+        const ingredients = Array.isArray(data.ingredients) ? data.ingredients.filter(i => i && (i.chemical_name || i.name)).slice(0, 100) : [];
+        const ingredientList = ingredients.map(i => `${i.chemical_name || i.name}${i.percentage ? ` (${i.percentage}%)` : ''}`).join(', ');
+        const prompt = `You are a regulatory compliance expert. Perform a detailed regulatory compliance check for a cosmetic/cleaning formula intended for commercial sale in both the US and EU markets.
+
+Formula ingredients: ${ingredientList}.
+
+Analyze the following aspects:
+- Check each ingredient against US (FDA) and EU (Cosing/REACH) restricted/prohibited lists.
+- Identify any ingredients with concentration limits and note them.
+- List common allergens that must be declared.
+- Suggest mandatory labeling requirements (e.g., INCI list, Period After Opening).
+- Provide a summary of the overall compliance risk.
+
+Return JSON only in the specified format.`;
+        const result = await call({
+          prompt,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              overall_risk: { type: 'string', enum: ['low', 'medium', 'high'] },
+              risk_summary: { type: 'string' },
+              regional_compliance: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    region: { type: 'string' },
+                    status: { type: 'string', enum: ['compliant', 'non-compliant', 'restricted'] },
+                    details: { type: 'string' }
+                  }
+                }
+              },
+              restricted_ingredients: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    ingredient: { type: 'string' },
+                    reason: { type: 'string' }
+                  }
+                }
+              },
+              concentration_limits: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    ingredient: { type: 'string' },
+                    limit: { type: 'string' }
+                  }
+                }
+              },
+              allergen_declarations: { type: 'array', items: { type: 'string' } },
+              labeling_requirements: { type: 'array', items: { type: 'string' } }
+            }
+          }
+        });
+        return Response.json(result);
+      }
+
       default:
         return Response.json({ error: `Unknown operation: ${operation}` }, { status: 400 });
     }

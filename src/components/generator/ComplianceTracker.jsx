@@ -74,8 +74,8 @@ function TrackerRow({ icon: Icon, title, subtitle, items, accent }) {
               <Icon className={cn("w-4 h-4", accent.text)} />
             </div>
             <div className="min-w-0">
-              <CardTitle className="text-sm font-semibold text-slate-900 truncate">{title}</CardTitle>
-              <p className="text-xs text-slate-500 truncate">{subtitle}</p>
+              <CardTitle className="text-sm font-semibold text-slate-900">{title}</CardTitle>
+              <p className="text-xs text-slate-500">{subtitle}</p>
             </div>
           </div>
           <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border flex-shrink-0", status.badge)}>

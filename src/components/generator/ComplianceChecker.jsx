@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { motion } from 'framer-motion';
 import { ShieldCheck, AlertTriangle, Loader2, Scale, Globe, FileText, CheckCircle } from 'lucide-react';
-import { InvokeLLM } from '@/integrations/Core';
+import { base44 } from "@/api/base44Client";
 
 export default function ComplianceChecker({ formula, onResult }) {
   const [complianceData, setComplianceData] = useState(null);
@@ -20,47 +20,11 @@ export default function ComplianceChecker({ formula, onResult }) {
 
   const runComplianceCheck = async () => {
     setIsLoading(true);
-    const ingredientList = formula.ingredients.map(i => i.chemical_name).join(', ');
-    const prompt = `
-      Perform a detailed regulatory compliance check for a cosmetic formula intended for commercial sale in both the US and EU markets.
-      The formula's ingredients are: ${ingredientList}.
-      Analyze the following aspects and return a response in the specified JSON format.
-      - Check each ingredient against US (FDA) and EU (Cosing) restricted/prohibited lists.
-      - Identify any ingredients with concentration limits and note them.
-      - List common allergens that must be declared.
-      - Suggest mandatory labeling requirements (e.g., INCI list, Period After Opening).
-      - Provide a summary of the overall compliance risk.
-
-      JSON response format:
-      {
-        "overall_risk": "low" | "medium" | "high",
-        "risk_summary": "string",
-        "regional_compliance": [
-          { "region": "USA (FDA)", "status": "compliant" | "non-compliant" | "restricted", "details": "string" },
-          { "region": "EU (Cosing)", "status": "compliant" | "non-compliant" | "restricted", "details": "string" }
-        ],
-        "restricted_ingredients": [ { "ingredient": "string", "reason": "string" } ],
-        "concentration_limits": [ { "ingredient": "string", "limit": "string" } ],
-        "allergen_declarations": [ "string" ],
-        "labeling_requirements": [ "string" ]
-      }
-    `;
 
     try {
-      const analysis = await InvokeLLM({
-        prompt: prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            overall_risk: { type: "string" },
-            risk_summary: { type: "string" },
-            regional_compliance: { type: "array", items: { type: "object", properties: { region: { type: "string" }, status: { type: "string" }, details: { type: "string" } } } },
-            restricted_ingredients: { type: "array", items: { type: "object", properties: { ingredient: { type: "string" }, reason: { type: "string" } } } },
-            concentration_limits: { type: "array", items: { type: "object", properties: { ingredient: { type: "string" }, limit: { type: "string" } } } },
-            allergen_declarations: { type: "array", items: { type: "string" } },
-            labeling_requirements: { type: "array", items: { type: "string" } }
-          }
-        }
+      const analysis = await base44.functions.invoke('runConsumerLLM', {
+        operation: 'complianceCheck',
+        data: { ingredients: formula.ingredients }
       });
       setComplianceData(analysis);
       if (onResult) onResult(analysis);
