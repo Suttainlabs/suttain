@@ -129,7 +129,7 @@ export default function SaferAlternatives({
                                        <p className="text-xs text-slate-500">Commercial names: {alt.commercial_names?.join(', ') || 'Various'}</p>
                                     </div>
 
-                                    {/* Action buttons — shown when card is clicked */}
+                                    {/* Action buttons: shown when card is clicked */}
                                     {actionPopup === index && (
                                         <motion.div
                                             initial={{ opacity: 0, y: 6 }}

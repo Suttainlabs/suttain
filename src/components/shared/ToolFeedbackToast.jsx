@@ -11,7 +11,7 @@ import { base44 } from "@/api/base44Client";
  *  - feature: string  (e.g. "computational", "scanner", "experimentation")
  *  - featureLabel: string  (human label e.g. "Computational Simulation")
  *  - user: user object
- *  - pointsToAward: number (points already awarded for tool use — shown in toast)
+ *  - pointsToAward: number (points already awarded for tool use, shown in toast)
  */
 export default function ToolFeedbackToast({ isOpen, onClose, feature, featureLabel, user, pointsToAward = 0 }) {
   const [rating, setRating] = useState(0);

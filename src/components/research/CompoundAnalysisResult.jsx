@@ -326,7 +326,7 @@ export default function CompoundAnalysisResult({ data, query }) {
             <div className="mb-3 pt-3 border-t border-slate-100">
               <p className="text-[10px] font-bold text-slate-700 uppercase tracking-widest mb-1">REACH / EU</p>
               <DataRow label="Status" value={analysis.regulatory_status.reach.status} />
-              <DataRow label="SVHC" value={analysis.regulatory_status.reach.svhc ? 'Yes — Substance of Very High Concern' : 'No'} />
+              <DataRow label="SVHC" value={analysis.regulatory_status.reach.svhc ? 'Yes, Substance of Very High Concern' : 'No'} />
               <DataRow label="Notes" value={analysis.regulatory_status.reach.notes} />
             </div>
           )}

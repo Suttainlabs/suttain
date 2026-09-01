@@ -94,7 +94,7 @@ export default function DomainReliabilityHeatmap() {
           <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-5">
             <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Maximum Structural Uncertainty</p>
             <p className="text-3xl font-black text-slate-900">
-              {maxPae != null ? maxPae.toFixed(1) : (prediction.max_predicted_aligned_error?.toFixed(1) || '—')}
+              {maxPae != null ? maxPae.toFixed(1) : (prediction.max_predicted_aligned_error?.toFixed(1) || ':')}
               <span className="text-sm font-normal text-slate-500 ml-2">Å</span>
             </p>
           </div>

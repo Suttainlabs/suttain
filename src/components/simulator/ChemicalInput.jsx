@@ -95,7 +95,7 @@ const PERSONA_PLACEHOLDER = {
   lab:          "e.g., ethidium bromide, acrylamide, phenol...",
 };
 
-// Chemicals known to be hazardous — warn users when added
+// Chemicals known to be hazardous, warn users when added
 const HAZARDOUS_CHEMICALS = new Set([
   'sodium hypochlorite', 'bleach', 'ammonia', 'hydrogen peroxide',
   'hydrochloric acid', 'muriatic acid', 'hydrogen chloride', 'sulfuric acid',
@@ -566,7 +566,7 @@ export default function ChemicalInput({
           </AnimatePresence>
         </div>
 
-        {/* Quick-pick chips — persona-specific */}
+        {/* Quick-pick chips: persona-specific */}
         {PERSONA_QUICK_CHEMICALS[persona] && (
           <div>
             <p className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wide">Quick add for your profile</p>

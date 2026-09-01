@@ -73,8 +73,8 @@ const FORMULA_GROUPS = [
     label: 'Ingredients',
     icon: Leaf,
     fields: [
-      { key: '_ingredient_count', label: 'Ingredient Count', transform: (f) => f.ingredients?.length ?? '—' },
-      { key: '_ingredient_names', label: 'Ingredients', transform: (f) => f.ingredients?.map(i => i.chemical_name).join(', ') || '—' },
+      { key: '_ingredient_count', label: 'Ingredient Count', transform: (f) => f.ingredients?.length ?? ':' },
+      { key: '_ingredient_names', label: 'Ingredients', transform: (f) => f.ingredients?.map(i => i.chemical_name).join(', ') || ':' },
     ],
   },
   {
@@ -93,7 +93,7 @@ function getNestedValue(obj, path) {
 }
 
 function renderValue(val) {
-  if (val == null || val === '' || val === undefined) return <span className="text-slate-300">—</span>;
+  if (val == null || val === '' || val === undefined) return <span className="text-slate-300">:</span>;
   if (typeof val === 'boolean') return val ? '✓' : '✗';
   return String(val);
 }

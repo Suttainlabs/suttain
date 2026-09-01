@@ -90,7 +90,7 @@ export default function ReportGenerator() {
           <div className="bg-green-50 border border-green-200 rounded-xl px-5 py-4 flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-green-600" />
-              <span className="font-semibold text-green-800 text-sm">Report ready — click to download</span>
+              <span className="font-semibold text-green-800 text-sm">Report ready, click to download</span>
             </div>
             <button onClick={handleDownload} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors">
               <Download className="w-4 h-4" /> Download {format}

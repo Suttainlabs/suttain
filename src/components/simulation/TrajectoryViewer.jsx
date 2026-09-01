@@ -209,7 +209,7 @@ export default function TrajectoryViewer({ initialPdbId = null, compact = false 
       structureCompRef.current = null;
       trajCompRef.current = null;
 
-      // Load structure as topology — don't force mime type, NGL parses by ext
+      // Load structure as topology, don't force mime type, NGL parses by ext
       const structExt = structureFile.name.split(".").pop().toLowerCase();
       const structBlob = new Blob([await structureFile.arrayBuffer()]);
       const structComp = await stageRef.current.loadFile(structBlob, {

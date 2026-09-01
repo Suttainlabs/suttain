@@ -96,7 +96,7 @@ export default function Generator() {
     setSelectedProductType(product);
     // Pre-fill description with SDS chemical context if available
     if (sdsSourceChemical && !productDescription) {
-      setProductDescription(`Safer alternative to ${sdsSourceChemical} — looking for a lower-risk, effective replacement`);
+      setProductDescription(`Safer alternative to ${sdsSourceChemical}, looking for a lower-risk, effective replacement`);
     }
     setCurrentStep(3);
   };
@@ -444,7 +444,7 @@ export default function Generator() {
   return (
     <PersonaLayout>
       <div>
-            {/* Mode Indicator Pill — inline above the stepper */}
+            {/* Mode Indicator Pill, inline above the stepper */}
             {currentStep > 1 && (
               <div className="flex justify-end mb-3">
                 <div className={`px-3 py-1.5 rounded-full border flex items-center gap-2 ${
@@ -554,7 +554,7 @@ export default function Generator() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-teal-800">Generating a safer formula for: {sdsSourceChemical}</p>
                   <p className="text-xs text-teal-600 mt-0.5">
-                    Source: SDS Analyzer. Select a product type and describe what you need — the formula will be tailored as a safer alternative to this chemical.
+                    Source: SDS Analyzer. Select a product type and describe what you need, the formula will be tailored as a safer alternative to this chemical.
                   </p>
                 </div>
                 <button onClick={() => setSdsSourceChemical(null)} className="text-teal-400 hover:text-teal-600 flex-shrink-0 mt-0.5">
@@ -592,7 +592,7 @@ export default function Generator() {
                 onBack={() => setCurrentStep(2)}
                 onGenerateOptions={handleGenerateOptions}
                 isGenerating={isGenerating}
-                initialDescription={sdsSourceChemical ? `Safer alternative to ${sdsSourceChemical} — looking for a lower-risk, effective replacement` : ""}
+                initialDescription={sdsSourceChemical ? `Safer alternative to ${sdsSourceChemical}, looking for a lower-risk, effective replacement` : ""}
               />
             )}
 

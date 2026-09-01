@@ -62,7 +62,7 @@ function loadCache(lang) {
 function persistCache(lang) {
   try {
     localStorage.setItem(`suttain_tr_${lang}`, JSON.stringify([...getCache(lang).entries()]));
-  } catch (_) { /* quota — ignore */ }
+  } catch (_) { /* quota, ignore */ }
 }
 
 function shouldSkip(node) {
@@ -164,7 +164,7 @@ function processNode(node) {
     return;
   }
 
-  // New or changed text — treat current value as the English source.
+  // New or changed text, treat current value as the English source.
   const original = v;
   nodeMeta.set(node, { original, appliedLang: null, appliedValue: null });
   const tr = getCache(activeLang).get(original);

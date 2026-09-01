@@ -185,7 +185,7 @@ export default function ComparativeImpactReport() {
               </SelectTrigger>
               <SelectContent>
                 {formulas.map(f => (
-                  <SelectItem key={f.id} value={f.id}>{f.name} — {f.product_type}</SelectItem>
+                  <SelectItem key={f.id} value={f.id}>{f.name}: {f.product_type}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -203,7 +203,7 @@ export default function ComparativeImpactReport() {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <Leaf className="w-4 h-4 text-teal-600" />
-                Eco-Score Radar — <span className="font-normal text-slate-500">{selectedFormula.name}</span>
+                Eco-Score Radar: <span className="font-normal text-slate-500">{selectedFormula.name}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>

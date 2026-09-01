@@ -231,7 +231,7 @@ const TOOLS = [
     id: 'gfn2xtb',
     label: 'GFN2-xTB and PM7 Input File Generation',
     description: 'Generate ready-to-run xTB and MOPAC PM7 input files from PubChem 3D structures for external execution',
-    requiredInput: { type: 'name', hint: 'Compound name or SMILES (e.g. aspirin, CCO) — a 3D structure is fetched from PubChem to build the input files' },
+    requiredInput: { type: 'name', hint: 'Compound name or SMILES (e.g. aspirin, CCO), a 3D structure is fetched from PubChem to build the input files' },
     source: 'External input files (xTB, MOPAC)', sourceType: 'external', engine: 'GFN2-xTB',
     validate: ({ input }) => {
       if (!input || input.trim().length < 1) return 'Enter a compound name or SMILES to generate input files.';
@@ -313,7 +313,7 @@ const TOOLS = [
     id: 'xtb_run',
     label: 'GFN2-xTB Real Quantum Calculation',
     description: 'Run a real GFN2-xTB optimize and energy job on a remote xTB engine. Returns the optimized 3D geometry, total energy, HOMO-LUMO gap, and dipole.',
-    requiredInput: { type: 'name', hint: 'Compound name or SMILES (e.g. aspirin, CCO) — the calculation runs on a remote xTB engine' },
+    requiredInput: { type: 'name', hint: 'Compound name or SMILES (e.g. aspirin, CCO), the calculation runs on a remote xTB engine' },
     source: 'Rowan cloud xTB engine', sourceType: 'external', engine: 'GFN2-xTB',
     validate: ({ input, inputType }) => {
       if (!input || input.trim().length < 1) return 'Enter a compound name or SMILES to run the calculation.';

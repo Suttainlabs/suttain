@@ -75,7 +75,7 @@ export default function BillingDashboard() {
     ? Math.max(0, Math.ceil((new Date(renewalDate) - new Date()) / (1000 * 60 * 60 * 24)))
     : null;
 
-  const nextBillingLabel = isLifetime ? 'Never — lifetime access' :
+  const nextBillingLabel = isLifetime ? 'Never, lifetime access' :
     (user?.subscription_cancel_at
       ? `Access until ${formatDate(user.subscription_cancel_at)}`
       : user?.subscription_end_date
@@ -160,7 +160,7 @@ export default function BillingDashboard() {
                       ? 'Lifetime'
                       : daysRemaining !== null
                         ? `${daysRemaining} days`
-                        : '—'
+                        : ':'
                     }
                   </p>
                 </div>
@@ -199,7 +199,7 @@ export default function BillingDashboard() {
               )}
               {isLifetime && (
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-                  <p className="text-sm font-semibold text-amber-800">Lifetime access — no renewal or cancellation needed.</p>
+                  <p className="text-sm font-semibold text-amber-800">Lifetime access, no renewal or cancellation needed.</p>
                 </div>
               )}
               {isCanceling && (

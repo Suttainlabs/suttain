@@ -1,5 +1,5 @@
 /**
- * MolVisCore — WebGL-based 3D viewer using 3Dmol.js
+ * MolVisCore: WebGL-based 3D viewer using 3Dmol.js
  * Handles: rendering, style switching, measurements, PDB import
  */
 import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';

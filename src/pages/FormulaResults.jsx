@@ -70,7 +70,7 @@ export default function FormulaResults() {
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">{formula.name || 'Formula Analysis'}</h1>
-            <p className="text-sm text-slate-500 mt-0.5">Analysis complete — review your scores and flagged ingredients below.</p>
+            <p className="text-sm text-slate-500 mt-0.5">Analysis complete, review your scores and flagged ingredients below.</p>
           </div>
           <button onClick={() => navigate(-1)} className="text-sm text-slate-500 hover:text-slate-700 font-medium flex items-center gap-1">
             <RefreshCw className="w-3.5 h-3.5" /> Edit Formula
@@ -164,7 +164,7 @@ export default function FormulaResults() {
               <div className="mt-3 pt-3 border-t border-slate-100">
                 <div className="flex items-center gap-1 text-xs text-slate-400">
                   <CheckCircle2 className="w-3 h-3" />
-                  <span>Based on REACH, FDA, GHS, TSCA databases — High confidence</span>
+                  <span>Based on REACH, FDA, GHS, TSCA databases, High confidence</span>
                 </div>
               </div>
             </div>

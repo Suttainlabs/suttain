@@ -29,7 +29,7 @@ export default function ThermoPhaseDiagram({ result }) {
   const transitions = result.phase_transitions || [];
 
   const formatNum = (v) => {
-    if (v == null || isNaN(v)) return "—";
+    if (v == null || isNaN(v)) return ":";
     if (Math.abs(v) >= 1000) return v.toFixed(0);
     if (Math.abs(v) >= 1) return v.toFixed(2);
     return v.toFixed(4);
@@ -62,7 +62,7 @@ export default function ThermoPhaseDiagram({ result }) {
                 Thermodynamic & Phase Diagram Analysis
               </h3>
               <p className="text-sm text-slate-500">
-                {result.compound} — {result.analysis_type?.replace(/_/g, ' ')}
+                {result.compound}: {result.analysis_type?.replace(/_/g, ' ')}
               </p>
             </div>
             <div className="ml-auto flex gap-2">

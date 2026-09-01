@@ -91,7 +91,7 @@ ${pubchemData.data_found ? `PUBCHEM VERIFIED DATA:
 CID: ${pubchemData.cid} | Formula: ${pubchemData.molecular_formula} | MW: ${pubchemData.molecular_weight} g/mol
 IUPAC: ${pubchemData.iupac_name} | CAS: ${pubchemData.cas_number || 'unknown'}
 XLogP: ${pubchemData.xlogp} | HBD: ${pubchemData.hbd_count} | HBA: ${pubchemData.hba_count} | TPSA: ${pubchemData.tpsa}` : 
-'No PubChem data found — use your best scientific knowledge.'}
+'No PubChem data found, use your best scientific knowledge.'}
 
 Return ONLY valid JSON matching this schema (no markdown):
 {

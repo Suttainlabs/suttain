@@ -5,8 +5,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 // to Suttain. The welcome email will automatically include it.
 const FEATURE_REGISTRY = {
   tools: [
-    { name: 'Chemical Simulator', desc: 'Test chemical interactions safely before mixing — hazard analysis, reaction predictions, and GHS safety warnings.', url: 'https://suttain.com/Simulator' },
-    { name: 'Formula Generator', desc: 'Create production-ready formulas with AI — ingredient percentages, mixing instructions, pH targets, and safety validation.', url: 'https://suttain.com/generator' },
+    { name: 'Chemical Simulator', desc: 'Test chemical interactions safely before mixing, hazard analysis, reaction predictions, and GHS safety warnings.', url: 'https://suttain.com/Simulator' },
+    { name: 'Formula Generator', desc: 'Create production-ready formulas with AI, ingredient percentages, mixing instructions, pH targets, and safety validation.', url: 'https://suttain.com/generator' },
     { name: 'SuttainScan', desc: 'Scan any product barcode to instantly analyze ingredients for safety, toxicity, and eco-impact.', url: 'https://suttain.com/BarcodeScanner' },
     { name: 'Hydration Intelligence', desc: 'Track daily water intake with biological, food-linked adjustments tailored to your body.', url: 'https://suttain.com/HydrationHome' },
   ],
@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png" alt="Suttain" style="height:48px;width:auto;margin-bottom:16px;display:block;"/>
             <h1 style="color:#ffffff;font-size:26px;font-weight:700;margin:0 0 8px;">Welcome to Suttain, ${firstName}!</h1>
             <!-- firstName is HTML-escaped above -->
-            <p style="color:#ffffff;font-size:15px;margin:0;">Your free account is ready — ${totalTools} tools and features waiting for you.</p>
+            <p style="color:#ffffff;font-size:15px;margin:0;">Your free account is ready, ${totalTools} tools and features waiting for you.</p>
           </td>
         </tr>
 
@@ -106,7 +106,7 @@ Deno.serve(async (req) => {
         <tr>
           <td style="background:#ffffff;padding:36px 40px;">
             <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 16px;">Hi ${firstName},</p>
-            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 16px;">Welcome to Suttain — the platform for chemical safety analysis, formula generation, computational simulation, and product scanning. We built Suttain to make safer chemistry accessible to everyone, from individuals to global enterprises.</p>
+            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 16px;">Welcome to Suttain, the platform for chemical safety analysis, formula generation, computational simulation, and product scanning. We built Suttain to make safer chemistry accessible to everyone, from individuals to global enterprises.</p>
             <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 24px;">Here is everything currently available on Suttain, organized by category:</p>
 
             ${toolsSection}
@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
               </tr>
             </table>
 
-            <p style="color:#334155;font-size:14px;line-height:1.7;margin:32px 0 0;">If you have any questions, just reply to this email — I read every one.</p>
+            <p style="color:#334155;font-size:14px;line-height:1.7;margin:32px 0 0;">If you have any questions, just reply to this email, I read every one.</p>
 
             <p style="color:#1e293b;font-size:15px;line-height:1.6;margin:24px 0 0;">
               Best,<br/><br/>

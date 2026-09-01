@@ -211,9 +211,9 @@ export default function ImpactDashboard() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard icon={FlaskConical} label="Total Formulas" value={totalFormulas} sub="in your library" color="#02988C" />
-          <StatCard icon={Leaf} label="Avg Green Score" value={avgGreenScore !== null ? `${avgGreenScore}/100` : '—'} sub={hasProfiles ? `${formulasWithProfile.length} scored` : 'No profiles yet'} color="#22c55e" />
-          <StatCard icon={Wind} label="Avg Carbon Score" value={avgCarbonScore !== null ? `${avgCarbonScore}/100` : '—'} sub="lower = better" color="#09D2FF" />
-          <StatCard icon={Recycle} label="Avg Biodegradability" value={avgBioScore !== null ? `${avgBioScore}/100` : '—'} sub="decomposition score" color="#9531F5" />
+          <StatCard icon={Leaf} label="Avg Green Score" value={avgGreenScore !== null ? `${avgGreenScore}/100` : ':'} sub={hasProfiles ? `${formulasWithProfile.length} scored` : 'No profiles yet'} color="#22c55e" />
+          <StatCard icon={Wind} label="Avg Carbon Score" value={avgCarbonScore !== null ? `${avgCarbonScore}/100` : ':'} sub="lower = better" color="#09D2FF" />
+          <StatCard icon={Recycle} label="Avg Biodegradability" value={avgBioScore !== null ? `${avgBioScore}/100` : ':'} sub="decomposition score" color="#9531F5" />
         </motion.div>
 
         {/* Score Rings */}

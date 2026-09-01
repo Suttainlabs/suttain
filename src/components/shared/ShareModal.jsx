@@ -14,9 +14,9 @@ import { toast } from "sonner";
  * Props:
  *  - isOpen: boolean
  *  - onClose: () => void
- *  - title: string — default title for the shared item
+ *  - title: string, default title for the shared item
  *  - shareType: "simulation" | "formula"
- *  - payload: object — data snapshot to persist in SharedSimulation.simulation_data
+ *  - payload: object, data snapshot to persist in SharedSimulation.simulation_data
  */
 export default function ShareModal({ isOpen, onClose, title: defaultTitle, shareType = "simulation", payload }) {
     const [title, setTitle] = useState(defaultTitle || "");

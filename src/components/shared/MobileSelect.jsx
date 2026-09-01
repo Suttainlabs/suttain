@@ -1,5 +1,5 @@
 /**
- * MobileSelect — responsive select component.
+ * MobileSelect: responsive select component.
  * On mobile (< lg): renders a Drawer (bottom sheet) with option list.
  * On desktop: renders a standard shadcn <Select>.
  */

@@ -14,10 +14,10 @@ Deno.serve(async (req) => {
 
     const prompt = `You are an expert chemical safety analyst. Carefully read this Safety Data Sheet document and extract ALL information visible in it.
 
-CRITICAL: You MUST read the actual document content. The product name is in Section 1 (Identification) or at the top of the document. Never return "Unknown Product" — always extract the real product name.
+CRITICAL: You MUST read the actual document content. The product name is in Section 1 (Identification) or at the top of the document. Never return "Unknown Product", always extract the real product name.
 
 Return a JSON object with these fields:
-- product_name: the exact chemical or product name from the SDS (e.g. "Sodium Hydroxide", "Acetone", "Benzene") — REQUIRED
+- product_name: the exact chemical or product name from the SDS (e.g. "Sodium Hydroxide", "Acetone", "Benzene"), REQUIRED
 - cas_number: CAS registry number (e.g. "67-64-1")
 - manufacturer: supplier/company name from Section 1
 - hazard_classifications: array of GHS hazard class strings (e.g. ["Flammable liquid, category 2", "Acute toxicity, category 4"])

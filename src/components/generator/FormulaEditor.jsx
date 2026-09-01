@@ -826,7 +826,7 @@ export default function FormulaEditor({
                      <CardContent className="space-y-4">
                        {/* Container target */}
                        <div>
-                         <p className="text-xs text-slate-500 mb-2 font-medium">Target container volume — auto-scales all ingredient quantities</p>
+                         <p className="text-xs text-slate-500 mb-2 font-medium">Target container volume, auto-scales all ingredient quantities</p>
                          <div className="flex gap-2">
                            <Input
                              type="number"
@@ -1314,7 +1314,7 @@ export default function FormulaEditor({
                   ) : (
                     <BusinessLockedTab
                       title="Commercial cost production"
-                      description="Calculate cost-per-kg, production margins, and batch economics at manufacturing scale — available exclusively in Business Mode."
+                      description="Calculate cost-per-kg, production margins, and batch economics at manufacturing scale, available exclusively in Business Mode."
                     />
                   )}
                 </TabsContent>
@@ -1329,7 +1329,7 @@ export default function FormulaEditor({
                   ) : (
                     <BusinessLockedTab
                       title="Scale-up & batch engineering"
-                      description="Industrial batch records, high-shear processing requirements, and batch-loss calculations for commercial manufacturing — available exclusively in Business Mode."
+                      description="Industrial batch records, high-shear processing requirements, and batch-loss calculations for commercial manufacturing, available exclusively in Business Mode."
                     />
                   )}
                 </TabsContent>
@@ -1349,7 +1349,7 @@ export default function FormulaEditor({
                   ) : (
                     <BusinessLockedTab
                       title="Raw material sourcing, procurement & supplier management"
-                      description="Connect ingredients to verified suppliers, request quotes, track procurement, and manage your supplier directory for commercial production — available exclusively in Business Mode."
+                      description="Connect ingredients to verified suppliers, request quotes, track procurement, and manage your supplier directory for commercial production, available exclusively in Business Mode."
                     />
                   )}
                 </TabsContent>

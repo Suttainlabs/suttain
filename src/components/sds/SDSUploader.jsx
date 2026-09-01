@@ -67,13 +67,13 @@ export default function SDSUploader({ onResult }) {
           </div>
           <div>
             <p className="font-bold text-slate-800 text-lg">Upload your Safety Data Sheet</p>
-            <p className="text-slate-500 text-sm mt-1">Drag & drop or click to browse — PDF or image</p>
+            <p className="text-slate-500 text-sm mt-1">Drag & drop or click to browse, PDF or image</p>
           </div>
           <Button className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-6 rounded-full" onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}>
             <Upload className="w-4 h-4 mr-2" />
             Choose SDS File
           </Button>
-          <p className="text-xs text-slate-400">Supports PDF, PNG, JPG, WEBP — GHS/OSHA/REACH formats</p>
+          <p className="text-xs text-slate-400">Supports PDF, PNG, JPG, WEBP, GHS/OSHA/REACH formats</p>
         </>
       )}
 

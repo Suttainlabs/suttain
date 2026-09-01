@@ -11,7 +11,7 @@ const SDK_TABS = [
 
 client = Client(api_key="sk_live_...")
 
-# Search 115M+ compounds
+# Search 130M+ compounds
 results = client.chemicals.search(
     query="aspirin",
     fields=["name", "cas", "toxicity"]
@@ -34,7 +34,7 @@ print(job.status)  # "queued"`,
 
 const client = new SuttainClient({ apiKey: process.env.SUTTAIN_KEY });
 
-// Search 115M+ compounds
+// Search 130M+ compounds
 const results = await client.chemicals.search({
   query: "aspirin",
   fields: ["name", "cas", "toxicity"],
@@ -57,7 +57,7 @@ console.log(job.status); // "queued"`,
 
 client <- suttain_client(api_key = "sk_live_...")
 
-# Search 115M+ compounds
+# Search 130M+ compounds
 results <- client$chemicals$search(
   query = "aspirin",
   fields = c("name", "cas", "toxicity")
@@ -76,7 +76,7 @@ print(job$status)  # "queued"`,
     badge: "Any",
     accent: "#64748b",
     install: "# No install required",
-    snippet: `# Search 115M+ compounds
+    snippet: `# Search 130M+ compounds
 curl -X POST https://api.suttain.com/v1/chemicals/search \\
   -H "Authorization: Bearer $SUTTAIN_KEY" \\
   -H "Content-Type: application/json" \\

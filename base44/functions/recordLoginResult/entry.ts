@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
 
     // This endpoint records login outcomes and must not be callable by
-    // unauthenticated users — otherwise attackers can lock out arbitrary
+    // unauthenticated users: otherwise attackers can lock out arbitrary
     // accounts by submitting repeated { success: false } payloads.
     const caller = await base44.auth.me().catch(() => null);
     if (!caller || caller.role !== 'admin') {
@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
     const tracker = records[0];
 
     // ══════════════════════════════════════════════════════════════
-    // SUCCESS — reset all counters
+    // SUCCESS: reset all counters
     // ══════════════════════════════════════════════════════════════
     if (success) {
       if (tracker && (tracker.attempt_count > 0 || tracker.locked_until)) {
@@ -46,7 +46,7 @@ Deno.serve(async (req) => {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // FAILURE — increment, apply progressive delay, maybe lock
+    // FAILURE: increment, apply progressive delay, maybe lock
     // ══════════════════════════════════════════════════════════════
     const currentCount = tracker ? (tracker.attempt_count || 0) + 1 : 1;
 
@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
 
     console.log(
       `[recordLoginResult] Failed login #${currentCount} for ${normalizedEmail}` +
-      (lockedUntil ? ' — LOCKED' : ` — delay ${delaySeconds}s`)
+      (lockedUntil ? ': LOCKED' : ` : delay ${delaySeconds}s`)
     );
 
     // ══════════════════════════════════════════════════════════════

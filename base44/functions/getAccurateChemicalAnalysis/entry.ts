@@ -20,7 +20,7 @@ const VERIFIED_HAZARD_DATABASE = {
     critical_warnings: [
       'FATAL: Produces toxic chloramine gas (NH2Cl)',
       'Inhalation can cause immediate respiratory failure and death',
-      'IDLH — Immediately Dangerous to Life and Health',
+      'IDLH: Immediately Dangerous to Life and Health',
     ],
     balanced_equation: 'NaClO + NH3 \u2192 NH2Cl + NaOH',
     reaction_mechanism: 'Hypochlorite oxidizes ammonia in a rapid redox reaction forming chloramines.',
@@ -65,7 +65,7 @@ const VERIFIED_HAZARD_DATABASE = {
     risk_score: 92, health_impact: 95, environmental_impact: 75, reactivity: 90,
     safety_level: 'DANGEROUS',
     critical_warnings: [
-      'DANGER: Forms chloroform (CHCl3) — a carcinogen',
+      'DANGER: Forms chloroform (CHCl3), a carcinogen',
       'Causes liver and kidney damage',
       'Reaction can be violent and unpredictable',
     ],
@@ -150,7 +150,7 @@ export default async function (req) {
       return Response.json({ error: 'At least 2 chemicals are required' }, { status: 400 });
     }
 
-    console.log(`[${appId}] getAccurateChemicalAnalysis — user=${user.email} chemicals=${chemicals.join(', ')} persona=${persona}`);
+    console.log(`[${appId}] getAccurateChemicalAnalysis: user=${user.email} chemicals=${chemicals.join(', ')} persona=${persona}`);
 
     // ── Step 1: Check hardcoded fatal/dangerous combinations ─────────────────
     const hardcoded = checkHardcodedHazards(chemicals);
@@ -327,7 +327,7 @@ The safer_alternatives must be tailored specifically for a ${persona} user.`;
       },
     });
 
-    // ── Step 5: Compliance auditor — authoritative data wins ────────────────
+    // ── Step 5: Compliance auditor, authoritative data wins ────────────────
     let draftRiskScore = aiResponse?.risk_assessment?.overall_risk_score || 50;
     let draftSafetyLevel = aiResponse?.safety_status?.level || deriveSafetyLevelFromScore(draftRiskScore);
     const draftWarnings = aiResponse?.safety_status?.warnings || [];
@@ -352,10 +352,10 @@ The safer_alternatives must be tailored specifically for a ${persona} user.`;
         overridden = true;
         triggerReasons = floorResult.triggerReasons;
         if (needsOverride) {
-          triggerReasons.push(`AI risk score ${originalScore} was below the authoritative floor of ${floorResult.floor} — corrected`);
+          triggerReasons.push(`AI risk score ${originalScore} was below the authoritative floor of ${floorResult.floor}, corrected`);
         }
         if (labelTooLow) {
-          triggerReasons.push(`AI safety label "${originalLevel}" contradicted authoritative hazard data — corrected to "${draftSafetyLevel}"`);
+          triggerReasons.push(`AI safety label "${originalLevel}" contradicted authoritative hazard data, corrected to "${draftSafetyLevel}"`);
         }
         console.log(`[${appId}] COMPLIANCE AUDITOR: overrode score ${originalScore}\u2192${draftRiskScore}, label ${originalLevel}\u2192${draftSafetyLevel}`);
       }
@@ -463,7 +463,7 @@ function buildHealthSafety(riskScore, customEmergency) {
   return {
     toxicology_assessment: {
       acute_toxicity: isHigh
-        ? 'High acute toxicity — immediate danger, highly corrosive, or fatal if inhaled/ingested.'
+        ? 'High acute toxicity, immediate danger, highly corrosive, or fatal if inhaled/ingested.'
         : 'Low to moderate acute toxicity expected under normal handling conditions.',
       chronic_effects: isHigh
         ? 'Potential for severe long-term health effects including organ damage or carcinogenicity.'

@@ -123,7 +123,7 @@ export default function CostProductionPanel({ formula, batchSize, batchUnit, cos
 
   const totalBatchCost = totalIngredientCost + totalPackagingCost;
 
-  // Units per batch — how many finished product units this batch produces
+  // Units per batch, how many finished product units this batch produces
   const effectiveUnits = parseInt(unitsPerBatch) || 1;
   const costPerUnit = totalBatchCost / effectiveUnits;
 

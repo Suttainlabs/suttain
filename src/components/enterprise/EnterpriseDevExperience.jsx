@@ -12,7 +12,7 @@ const CODE_SAMPLE = `from suttain import Client
 
 client = Client(api_key="sk_live_...")
 
-# Search 115M+ compounds
+# Search 130M+ compounds
 results = client.chemicals.search(
     query="aspirin",
     fields=["name", "cas", "toxicity"]

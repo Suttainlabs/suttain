@@ -1,5 +1,5 @@
 /**
- * MolecularEditor3D — Avogadro/ChimeraX-style interactive molecular editor
+ * MolecularEditor3D: Avogadro/ChimeraX-style interactive molecular editor
  * Built on Three.js for full interactive control: add/delete atoms, bonds,
  * cations/anions, water molecules, separate chains, simulate forces.
  */
@@ -307,7 +307,7 @@ export default function MolecularEditor3D() {
           const exists = bondsRef.current.some(b => (b[0]===prev&&b[1]===hitId)||(b[0]===hitId&&b[1]===prev));
           if (!exists) {
             setBonds(pb => [...pb, [prev, hitId]]);
-            pushLog(`Bonded #${prev} — #${hitId}`);
+            pushLog(`Bonded #${prev}: #${hitId}`);
           }
           return null;
         });
@@ -518,7 +518,7 @@ export default function MolecularEditor3D() {
           <select value={addElement} onChange={e => setAddElement(e.target.value)}
             className="bg-[#21262d] border border-[#30363d] text-white rounded px-2 py-1 text-xs">
             {Object.entries(ELEMENTS).map(([sym, el]) => (
-              <option key={sym} value={sym}>{sym} — {el.name}</option>
+              <option key={sym} value={sym}>{sym}: {el.name}</option>
             ))}
           </select>
         )}
@@ -614,7 +614,7 @@ export default function MolecularEditor3D() {
               <p className="text-[#58a6ff] font-bold text-[10px] uppercase tracking-widest mb-1">Selected Atom</p>
               <div className="space-y-0.5 text-[11px] text-[#c9d1d9]">
                 <div>ID: <span className="text-white">{selectedAtom.id}</span></div>
-                <div>Element: <span className="text-white">{selectedAtom.elem} — {ELEMENTS[selectedAtom.elem]?.name}</span></div>
+                <div>Element: <span className="text-white">{selectedAtom.elem}: {ELEMENTS[selectedAtom.elem]?.name}</span></div>
                 <div>Position: <span className="text-[#79c0ff] font-mono">{selectedAtom.x.toFixed(2)}, {selectedAtom.y.toFixed(2)}, {selectedAtom.z.toFixed(2)}</span></div>
                 {selectedAtom.charge !== 0 && <div>Charge: <span className={selectedAtom.charge > 0 ? "text-[#f85149]" : "text-[#79c0ff]"}>{selectedAtom.charge > 0 ? "+" : ""}{selectedAtom.charge}</span></div>}
                 {atomChain[selectedAtom.id] && <div>Chain: <span className="text-[#56d364]">{atomChain[selectedAtom.id]}</span></div>}

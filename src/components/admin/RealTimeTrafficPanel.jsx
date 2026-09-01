@@ -63,7 +63,7 @@ function buildBuckets(logs, range) {
     return keys.map(time => ({ time, visitors: buckets[time] }));
   }
 
-  // 7 days — key by ISO date string (YYYY-MM-DD) for reliable matching
+  // 7 days: key by ISO date string (YYYY-MM-DD) for reliable matching
   const cutoff7 = now - 7 * 86400000;
   const keys = [];
   const keyLabels = {};
@@ -176,7 +176,7 @@ export default function RealTimeTrafficPanel() {
             <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
           </div>
           <h2 className="text-base font-bold text-slate-800">Traffic Analytics</h2>
-          <span className="text-xs text-slate-400 font-medium">— updates every 15s</span>
+          <span className="text-xs text-slate-400 font-medium">: updates every 15s</span>
         </div>
         <div className="flex items-center gap-3">
           {/* Time range selector */}
@@ -258,7 +258,7 @@ export default function RealTimeTrafficPanel() {
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <Activity className="w-4 h-4 text-teal-500" />
-            Visitor Activity — Last {rangeLabels[range]}
+            Visitor Activity: Last {rangeLabels[range]}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -300,7 +300,7 @@ export default function RealTimeTrafficPanel() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
               <Monitor className="w-4 h-4 text-indigo-400" />
-              Top Pages — Last {rangeLabels[range]}
+              Top Pages: Last {rangeLabels[range]}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -335,7 +335,7 @@ export default function RealTimeTrafficPanel() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-2">
               <Globe className="w-4 h-4 text-violet-400" />
-              Top Countries — Last {rangeLabels[range]}
+              Top Countries: Last {rangeLabels[range]}
             </CardTitle>
           </CardHeader>
           <CardContent>

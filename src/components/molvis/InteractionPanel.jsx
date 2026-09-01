@@ -1,5 +1,5 @@
 /**
- * InteractionPanel — Non-covalent interaction detection and display
+ * InteractionPanel: Non-covalent interaction detection and display
  */
 import React, { useState } from 'react';
 import { Eye, EyeOff, Filter } from 'lucide-react';

@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Build verify URL with hardcoded domain — never trust user-controlled origin header
+    // Build verify URL with hardcoded domain, never trust user-controlled origin header
     const verifyUrl = `${APP_URL}/SupplierVerify?token=${encodeURIComponent(token)}`;
 
     // Escape all user-supplied content before inserting into HTML
@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
             <h2 style="color:#1e293b;margin:0 0 8px;">Hello${safeSupplierName ? `, ${safeSupplierName}` : ''}!</h2>
             <p style="color:#475569;margin:0 0 20px;line-height:1.6;">
               <strong>${escapeHtml(user.full_name || user.email)}</strong> has invited you to verify ingredient data for the formula 
-              <strong>"${safeFormulaName}"</strong> on Suttain — a chemical safety and formulation platform.
+              <strong>"${safeFormulaName}"</strong> on Suttain: a chemical safety and formulation platform.
             </p>
             <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px;margin-bottom:24px;">
               <p style="margin:0 0 12px;font-weight:600;color:#166534;">Ingredients to verify:</p>
@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
     // Use the platform's restricted SendEmail integration instead of raw Resend client
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: supplierEmail,
-      subject: `Ingredient Verification Request for "${safeFormulaName}" — Suttain`,
+      subject: `Ingredient Verification Request for "${safeFormulaName}", Suttain`,
       body: html,
     });
 

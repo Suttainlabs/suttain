@@ -17,7 +17,7 @@ const RISK_LEVELS = {
   MODERATE:  { label: "Moderate",  color: "#f59e0b", bg: "#fef3c7", text: "#92400e", border: "#fcd34d", score: 50 },
   DANGEROUS: { label: "Dangerous", color: "#ef4444", bg: "#fee2e2", text: "#991b1b", border: "#fca5a5", score: 80 },
   FATAL:     { label: "Fatal",     color: "#7f1d1d", bg: "#450a0a", text: "#fef2f2", border: "#991b1b", score: 100 },
-  SELF:      { label: "—",         color: "#94a3b8", bg: "#f1f5f9", text: "#64748b", border: "#cbd5e1", score: -1 },
+  SELF:      { label: ":",         color: "#94a3b8", bg: "#f1f5f9", text: "#64748b", border: "#cbd5e1", score: -1 },
   UNKNOWN:   { label: "?",         color: "#a78bfa", bg: "#ede9fe", text: "#4c1d95", border: "#c4b5fd", score: -2 },
 };
 
@@ -134,7 +134,7 @@ Return JSON with:
       const level = (res.level || "UNKNOWN").toUpperCase();
       return { level: RISK_LEVELS[level] ? level : "UNKNOWN", score: res.score || 50, summary: res.summary || "" };
     } catch {
-      return { level: "UNKNOWN", score: 50, summary: "Analysis failed — exercise caution." };
+      return { level: "UNKNOWN", score: 50, summary: "Analysis failed, exercise caution." };
     }
   }, []);
 
@@ -339,7 +339,7 @@ Return JSON with:
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(8);
       doc.setFont("helvetica", "normal");
-      doc.text("Suttain Chemical Safety Platform · suttain.com · For Lab Display Only — Not a Substitute for Professional Safety Training", W / 2, H - 4.5, { align: "center" });
+      doc.text("Suttain Chemical Safety Platform · suttain.com · For Lab Display Only, Not a Substitute for Professional Safety Training", W / 2, H - 4.5, { align: "center" });
 
       doc.save(`suttain-hazard-matrix-${Date.now()}.pdf`);
     } finally {

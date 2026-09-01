@@ -49,7 +49,7 @@ export default function Login() {
       } catch (loginErr) {
         // Record failure for lockout tracking (fire-and-forget)
         try { await recordLoginResult({ email: sanitizedEmail, success: false }); } catch {}
-        // Same generic message — never reveal lockout vs wrong password
+        // Same generic message, never reveal lockout vs wrong password
         setError("Incorrect email or password");
       }
     } catch (err) {

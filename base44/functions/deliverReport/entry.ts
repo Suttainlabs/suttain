@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
     if (delivery.webhook_urls?.length) {
       for (const webhookUrl of delivery.webhook_urls) {
         try {
-          // Validate webhook URL to prevent SSRF — reject private/loopback/link-local IPs
+          // Validate webhook URL to prevent SSRF, reject private/loopback/link-local IPs
           let parsedWebhookUrl;
           try {
             parsedWebhookUrl = new URL(webhookUrl);

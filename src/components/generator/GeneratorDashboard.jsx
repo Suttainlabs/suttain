@@ -143,7 +143,7 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
               Generating a safer formula for: {sdsChemical}
             </p>
             <p className="text-xs text-teal-700 mt-0.5">
-              Source: SDS Analyzer — the description field will be pre-filled with a safer alternative context.
+              Source: SDS Analyzer: the description field will be pre-filled with a safer alternative context.
             </p>
           </div>
         </motion.div>
@@ -163,8 +163,8 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
               This formula was initialized from a Computational Simulation result
             </p>
             <p className="text-xs text-teal-700">
-              {simMolecule && <>Molecule: <span className="font-semibold">{simMolecule}</span> — </>}
-              {simType && <>Simulation type: <span className="font-semibold">{simType}</span>{simStability && ` — Stability: ${simStability}`}</>}
+              {simMolecule && <>Molecule: <span className="font-semibold">{simMolecule}</span>, </>}
+              {simType && <>Simulation type: <span className="font-semibold">{simType}</span>{simStability && `, Stability: ${simStability}`}</>}
             </p>
             <a href="/ComputationalSimulation" className="text-xs text-teal-600 hover:text-teal-800 font-semibold underline mt-1 inline-block">
               Back to Computational Simulations

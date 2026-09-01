@@ -113,7 +113,7 @@ const getSafetyStyling = (level) => {
     }
 };
 
-// Per-category results framing — changes only labeling, tone, and default tab
+// Per-category results framing, changes only labeling, tone, and default tab
 const PERSONA_FRAMING = {
     household: {
         headlinePrefix: 'Is it safe?',
@@ -1004,7 +1004,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                             <Shield className="w-2.5 h-2.5" />
                                             {data.audit.attribution}
                                             {data.audit.overridden && (
-                                                <span className="text-amber-600 font-semibold">— safety-corrected</span>
+                                                <span className="text-amber-600 font-semibold">: safety-corrected</span>
                                             )}
                                         </p>
                                     )}

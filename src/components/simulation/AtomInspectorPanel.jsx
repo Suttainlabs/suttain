@@ -133,46 +133,46 @@ export default function AtomInspectorPanel({ atomData, bondData, onClear }) {
             />
             <PropertyRow
               label="Residue"
-              value={atomData.resn || '—'}
+              value={atomData.resn || ':'}
               icon={Info}
               color="text-blue-400"
             />
             <PropertyRow
               label="Chain"
-              value={atomData.chain || '—'}
+              value={atomData.chain || ':'}
               icon={Activity}
               color="text-green-400"
             />
             <PropertyRow
               label="Atom Serial"
-              value={atomData.serial ?? atomData.index ?? '—'}
+              value={atomData.serial ?? atomData.index ?? ':'}
               icon={Info}
               color="text-slate-400"
             />
             <PropertyRow
               label="vdW Radius"
-              value={VDW_RADII[atomData.elem] ?? '—'}
+              value={VDW_RADII[atomData.elem] ?? ':'}
               unit="Å"
               icon={Circle}
               color="text-orange-400"
             />
             <PropertyRow
               label="Covalent Radius"
-              value={COVALENT_RADII[atomData.elem] ?? '—'}
+              value={COVALENT_RADII[atomData.elem] ?? ':'}
               unit="Å"
               icon={Circle}
               color="text-yellow-400"
             />
             <PropertyRow
               label="Atomic Mass"
-              value={ATOMIC_MASSES[atomData.elem] ?? '—'}
+              value={ATOMIC_MASSES[atomData.elem] ?? ':'}
               unit="g/mol"
               icon={Zap}
               color="text-purple-400"
             />
             <PropertyRow
               label="Electronegativity"
-              value={ELECTRONEGATIVITY[atomData.elem] ?? '—'}
+              value={ELECTRONEGATIVITY[atomData.elem] ?? ':'}
               unit="(Pauling)"
               icon={Zap}
               color="text-pink-400"
@@ -186,21 +186,21 @@ export default function AtomInspectorPanel({ atomData, bondData, onClear }) {
             />
             <PropertyRow
               label="Position X"
-              value={atomData.x != null ? Number(atomData.x).toFixed(3) : '—'}
+              value={atomData.x != null ? Number(atomData.x).toFixed(3) : ':'}
               unit="Å"
               icon={Info}
               color="text-slate-400"
             />
             <PropertyRow
               label="Position Y"
-              value={atomData.y != null ? Number(atomData.y).toFixed(3) : '—'}
+              value={atomData.y != null ? Number(atomData.y).toFixed(3) : ':'}
               unit="Å"
               icon={Info}
               color="text-slate-400"
             />
             <PropertyRow
               label="Position Z"
-              value={atomData.z != null ? Number(atomData.z).toFixed(3) : '—'}
+              value={atomData.z != null ? Number(atomData.z).toFixed(3) : ':'}
               unit="Å"
               icon={Info}
               color="text-slate-400"
@@ -212,7 +212,7 @@ export default function AtomInspectorPanel({ atomData, bondData, onClear }) {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-0.5">
             <PropertyRow
               label="Bond Length"
-              value={calcBondLength(bondData.atom1, bondData.atom2) ?? '—'}
+              value={calcBondLength(bondData.atom1, bondData.atom2) ?? ':'}
               unit="Å"
               icon={Link2}
               color="text-cyan-400"
@@ -220,13 +220,13 @@ export default function AtomInspectorPanel({ atomData, bondData, onClear }) {
             />
             <PropertyRow
               label="Atom 1"
-              value={`${bondData.atom1?.elem || '?'} (${bondData.atom1?.resn || '—'})`}
+              value={`${bondData.atom1?.elem || '?'} (${bondData.atom1?.resn || ':'})`}
               icon={Atom}
               color="text-fuchsia-400"
             />
             <PropertyRow
               label="Atom 2"
-              value={`${bondData.atom2?.elem || '?'} (${bondData.atom2?.resn || '—'})`}
+              value={`${bondData.atom2?.elem || '?'} (${bondData.atom2?.resn || ':'})`}
               icon={Atom}
               color="text-fuchsia-400"
             />
@@ -234,7 +234,7 @@ export default function AtomInspectorPanel({ atomData, bondData, onClear }) {
               label="EN Difference"
               value={bondData.atom1?.elem && bondData.atom2?.elem
                 ? Math.abs((ELECTRONEGATIVITY[bondData.atom1.elem] || 2.5) - (ELECTRONEGATIVITY[bondData.atom2.elem] || 2.5)).toFixed(2)
-                : '—'}
+                : ':'}
               unit="(Pauling)"
               icon={Zap}
               color="text-pink-400"
@@ -242,7 +242,7 @@ export default function AtomInspectorPanel({ atomData, bondData, onClear }) {
             <PropertyRow
               label="Bond Polarity"
               value={(() => {
-                if (!bondData.atom1?.elem || !bondData.atom2?.elem) return '—';
+                if (!bondData.atom1?.elem || !bondData.atom2?.elem) return ':';
                 const diff = Math.abs((ELECTRONEGATIVITY[bondData.atom1.elem] || 2.5) - (ELECTRONEGATIVITY[bondData.atom2.elem] || 2.5));
                 if (diff < 0.4) return 'Nonpolar';
                 if (diff < 1.7) return 'Polar';
@@ -253,7 +253,7 @@ export default function AtomInspectorPanel({ atomData, bondData, onClear }) {
             />
             <PropertyRow
               label="Est. Bond Order"
-              value={bondData.order ?? '—'}
+              value={bondData.order ?? ':'}
               icon={Link2}
               color="text-cyan-400"
             />

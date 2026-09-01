@@ -433,7 +433,7 @@ export default function MoleculeExplorer() {
 
         {/* Center: 3D viewer */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          {/* Header bar — always visible */}
+          {/* Header bar: always visible */}
           <div className="px-4 py-3 border-b border-slate-700/50 bg-slate-900/40 flex items-center gap-3 flex-shrink-0">
             <div className="min-w-0">
               <p className="text-sm font-bold text-white leading-tight truncate">

@@ -4,7 +4,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Require admin auth — prevents unauthenticated callers from triggering
+    // Require admin auth, prevents unauthenticated callers from triggering
     // batch report generation, LLM calls, and automated emails.
     // Scheduled automations must invoke this function with an admin token.
     const user = await base44.auth.me().catch(() => null);

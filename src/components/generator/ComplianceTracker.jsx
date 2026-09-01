@@ -4,7 +4,7 @@ import { ShieldCheck, Globe, FileText, AlertCircle, CheckCircle2, Circle } from 
 import { cn } from "@/lib/utils";
 
 // Documentation checklist per framework.
-// Each item is [label, isComplete] — derived from the formula's available data.
+// Each item is [label, isComplete], derived from the formula's available data.
 function buildChecklists(formula, complianceData) {
   const ings = formula?.ingredients || [];
   const hasIngredients = ings.length > 0;

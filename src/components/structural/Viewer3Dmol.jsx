@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button';
 
 // AlphaFold standard pLDDT confidence colors
 function plddtToColor(b) {
-  if (b > 90) return '#0053D6';   // Very high — blue
-  if (b >= 70) return '#65CBF3';  // Confident — cyan
-  if (b >= 50) return '#FFDB13';  // Low — yellow
-  return '#FF7D45';               // Very low — orange
+  if (b > 90) return '#0053D6';   // Very high, blue
+  if (b >= 70) return '#65CBF3';  // Confident, cyan
+  if (b >= 50) return '#FFDB13';  // Low, yellow
+  return '#FF7D45';               // Very low, orange
 }
 
 export default function Viewer3Dmol({ pdbUrl }) {

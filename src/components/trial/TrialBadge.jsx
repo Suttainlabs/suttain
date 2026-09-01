@@ -24,7 +24,7 @@ export default function TrialBadge({ trialStatus }) {
     );
   }
 
-  // Free tier — show usage summary
+  // Free tier: show usage summary
   const { usage, limits } = trialStatus;
   const anyLimitReached = !trialStatus.canSimulate || !trialStatus.canFormulate || !trialStatus.canScan;
 

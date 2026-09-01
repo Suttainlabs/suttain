@@ -1,4 +1,4 @@
-// computeXTB — Suttain Computational Studio: REAL GFN2-xTB semi-empirical quantum chemistry.
+// computeXTB: Suttain Computational Studio: REAL GFN2-xTB semi-empirical quantum chemistry.
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 const ROWAN_BASE = "https://api.rowansci.com";

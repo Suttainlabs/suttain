@@ -125,17 +125,17 @@ Return JSON with:
 1. ground_state_energy: number (total energy in Hartree, including nuclear repulsion)
 2. energy_unit: "Hartree"
 3. energy_ev: number (energy in eV, 1 Hartree = 27.211 eV)
-4. convergence_history: array of exactly 25 numbers representing the energy at each VQE iteration. The values must CONVERGE to the ground_state_energy — they start higher (less negative), decrease rapidly at first, then plateau near ground_state_energy. The LAST 5 values must all be within 0.01 of ground_state_energy. Example pattern for ground_state_energy = -1.137: [-0.50, -0.80, -0.95, -1.05, -1.10, -1.12, -1.13, -1.135, -1.136, -1.1365, -1.137, -1.137, -1.1371, -1.1372, -1.1372, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373]. Notice how it starts at -0.50, drops quickly, then flattens out at -1.1373. Apply this same pattern using YOUR ground_state_energy value.
+4. convergence_history: array of exactly 25 numbers representing the energy at each VQE iteration. The values must CONVERGE to the ground_state_energy, they start higher (less negative), decrease rapidly at first, then plateau near ground_state_energy. The LAST 5 values must all be within 0.01 of ground_state_energy. Example pattern for ground_state_energy = -1.137: [-0.50, -0.80, -0.95, -1.05, -1.10, -1.12, -1.13, -1.135, -1.136, -1.1365, -1.137, -1.137, -1.1371, -1.1372, -1.1372, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373, -1.1373]. Notice how it starts at -0.50, drops quickly, then flattens out at -1.1373. Apply this same pattern using YOUR ground_state_energy value.
 5. method_label: "VQE, Qiskit statevector simulator"
 6. ansatz: string (ansatz name, e.g., "UCCSD", "Hardware-efficient", "RY-CNOT")
 7. optimizer: string (optimizer name, e.g., "COBYLA", "SPSA")
 8. n_qubits: number (number of qubits in the circuit)
 9. basis_set: string (basis set used, e.g., "STO-3G")
-10. plain_language_explanation: string (2-3 sentences in plain language explaining what the ground state energy means — the lowest possible energy of the molecule's electrons, what it tells us about stability, no jargon)
+10. plain_language_explanation: string (2-3 sentences in plain language explaining what the ground state energy means, the lowest possible energy of the molecule's electrons, what it tells us about stability, no jargon)
 11. molecular_structure: { formula: string, smiles: string (if available), atoms: array of {element: string, x: number, y: number, z: number} (3D coordinates in Angstroms) }
 12. confidence: "high" | "medium" | "low"
 13. source: string (data source, e.g., "Qiskit Nature, STO-3G, FCI reference")
-14. limitations: string (1-2 sentences about limitations — for larger molecules, note that quantum hardware is impractical and the simulator uses approximate methods)
+14. limitations: string (1-2 sentences about limitations, for larger molecules, note that quantum hardware is impractical and the simulator uses approximate methods)
 15. is_large_molecule: boolean (true if molecule has more than ~20 spin orbitals, making it impractical for current quantum hardware)`;
 
   const response = await base44.asServiceRole.integrations.Core.InvokeLLM({
@@ -286,7 +286,7 @@ async function runOnIBMHardware(simResult, ibmToken, backendName, base44) {
         console.error('Polling error:', e);
       }
     }
-    // Timeout — job still queued/running
+    // Timeout: job still queued/running
     return Response.json({
       ...simResult,
       mode: 'hardware',
@@ -297,7 +297,7 @@ async function runOnIBMHardware(simResult, ibmToken, backendName, base44) {
     });
   }
 
-  // Job submission failed — fall back to simulator with clear note
+  // Job submission failed, fall back to simulator with clear note
   return Response.json({
     ...simResult,
     mode: 'simulator',

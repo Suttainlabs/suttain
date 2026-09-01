@@ -1,4 +1,4 @@
-// hazardValidation — Suttain HazardEngine Validation surface
+// hazardValidation: Suttain HazardEngine Validation surface
 const VALIDATION_URL =
   "https://base44.app/api/apps/69fc01e6f35994ca1cf3bc01/files/mp/public/69fc01e6f35994ca1cf3bc01/1f15d043d_validation.json";
 

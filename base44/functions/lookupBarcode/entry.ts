@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
             if (converted.length === 12) barcode = converted;
         }
 
-        // PLU codes are 4-5 digits (fresh produce) — handle separately
+        // PLU codes are 4-5 digits (fresh produce), handle separately
         if (barcode.length >= 4 && barcode.length <= 5) {
             const pluResult = await lookupPLU(barcode, base44);
             return new Response(JSON.stringify(pluResult), { status: 200, headers: { 'Content-Type': 'application/json' } });
@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
 
         let productData = null;
 
-        // 1. Open Food Facts — global, includes African/Asian/European EANs
+        // 1. Open Food Facts, global, includes African/Asian/European EANs
         try {
             const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}`, {
                 headers: { 'User-Agent': 'Suttain/1.0 (contact@suttain.com)' }
@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
             }
         } catch (e) { console.error('OpenFoodFacts failed:', e.message); }
 
-        // 2. Open Beauty Facts — cosmetics globally
+        // 2. Open Beauty Facts, cosmetics globally
         if (!productData) {
             try {
                 const res = await fetch(`https://world.openbeautyfacts.org/api/v2/product/${barcode}`, {
@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
             } catch (e) { console.error('OpenBeautyFacts failed:', e.message); }
         }
 
-        // 3. Open Medicine Facts — medicines, drugs, supplements
+        // 3. Open Medicine Facts, medicines, drugs, supplements
         if (!productData) {
             try {
                 const res = await fetch(`https://world.openmedicinefacts.org/api/v2/product/${barcode}`, {
@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
             } catch (e) { console.error('OpenMedicineFacts failed:', e.message); }
         }
 
-        // 3b. Open Products Facts — broader coverage
+        // 3b. Open Products Facts, broader coverage
         if (!productData) {
             try {
                 const res = await fetch(`https://world.openproductsfacts.org/api/v2/product/${barcode}`, {
@@ -116,7 +116,7 @@ Deno.serve(async (req) => {
             } catch (e) { console.error('OpenProductsFacts failed:', e.message); }
         }
 
-        // 3c. NIH RxNorm / NLM DailyMed — US prescription & OTC drugs
+        // 3c. NIH RxNorm / NLM DailyMed, US prescription & OTC drugs
         if (!productData) {
             try {
                 // Try RxNorm NDC lookup (National Drug Code encoded in some barcodes)
@@ -164,7 +164,7 @@ Deno.serve(async (req) => {
             } catch (e) { console.error('UPC Item DB failed:', e.message); }
         }
 
-        // 5. AI fallback with internet search — handles regional/African/Asian barcodes
+        // 5. AI fallback with internet search, handles regional/African/Asian barcodes
         if (!productData) {
             try {
                 const barcodePrefix = barcode.substring(0, 3);
@@ -257,7 +257,7 @@ function getBarcodeCountryHint(prefix) {
     if (num >= 87 && num <= 87) return 'Netherlands';
     if (num >= 93 && num <= 93) return 'Australia';
     if (num >= 94 && num <= 94) return 'New Zealand';
-    if (num >= 619 && num <= 619) return 'Nigeria — search NAFDAC, Nigerian manufacturers, local consumer goods';
+    if (num >= 619 && num <= 619) return 'Nigeria, search NAFDAC, Nigerian manufacturers, local consumer goods';
     if (num >= 611 && num <= 611) return 'Morocco';
     if (num >= 613 && num <= 613) return 'Algeria';
     if (num >= 615 && num <= 615) return 'Ghana';
@@ -568,15 +568,15 @@ function analyzeMedicineHazards(ingredients, productName) {
     const hazards = [];
     const name = (productName || '').toLowerCase();
     const commonHazards = [
-        { pattern: 'opioid', hazard: 'Opioid — high addiction potential, controlled substance', type: 'controlled' },
-        { pattern: 'morphine', hazard: 'Opioid analgesic — risk of dependence and respiratory depression', type: 'controlled' },
-        { pattern: 'codeine', hazard: 'Opioid — risk of dependence, restricted in many countries', type: 'controlled' },
-        { pattern: 'benzodiazepine', hazard: 'Benzodiazepine — risk of dependence and CNS depression', type: 'controlled' },
-        { pattern: 'diazepam', hazard: 'Benzodiazepine — controlled substance, dependence risk', type: 'controlled' },
-        { pattern: 'warfarin', hazard: 'Anticoagulant — risk of serious bleeding, many drug interactions', type: 'interaction' },
-        { pattern: 'nsaid', hazard: 'NSAID — risk of GI bleeding and cardiovascular events', type: 'warning' },
-        { pattern: 'aspirin', hazard: 'Salicylate — not for children under 16 (Reye syndrome risk)', type: 'warning' },
-        { pattern: 'alcohol', hazard: 'Contains alcohol — avoid with certain medications', type: 'interaction' }
+        { pattern: 'opioid', hazard: 'Opioid, high addiction potential, controlled substance', type: 'controlled' },
+        { pattern: 'morphine', hazard: 'Opioid analgesic, risk of dependence and respiratory depression', type: 'controlled' },
+        { pattern: 'codeine', hazard: 'Opioid, risk of dependence, restricted in many countries', type: 'controlled' },
+        { pattern: 'benzodiazepine', hazard: 'Benzodiazepine, risk of dependence and CNS depression', type: 'controlled' },
+        { pattern: 'diazepam', hazard: 'Benzodiazepine, controlled substance, dependence risk', type: 'controlled' },
+        { pattern: 'warfarin', hazard: 'Anticoagulant, risk of serious bleeding, many drug interactions', type: 'interaction' },
+        { pattern: 'nsaid', hazard: 'NSAID, risk of GI bleeding and cardiovascular events', type: 'warning' },
+        { pattern: 'aspirin', hazard: 'Salicylate, not for children under 16 (Reye syndrome risk)', type: 'warning' },
+        { pattern: 'alcohol', hazard: 'Contains alcohol, avoid with certain medications', type: 'interaction' }
     ];
     for (const { pattern, hazard, type } of commonHazards) {
         if (name.includes(pattern) || ingredients.some(i => (i.name || '').toLowerCase().includes(pattern))) {
@@ -590,10 +590,10 @@ function checkDrugInteractionRisks(ingredients) {
     const names = ingredients.map(i => (i.name || '').toLowerCase());
     const risks = [];
     if (names.some(n => n.includes('warfarin')) && names.some(n => n.includes('aspirin'))) {
-        risks.push('CAUTION: Warfarin + Aspirin — increased bleeding risk');
+        risks.push('CAUTION: Warfarin + Aspirin, increased bleeding risk');
     }
     if (names.some(n => n.includes('maoi')) && names.some(n => n.includes('ssri'))) {
-        risks.push('DANGER: MAOI + SSRI combination — risk of serotonin syndrome');
+        risks.push('DANGER: MAOI + SSRI combination, risk of serotonin syndrome');
     }
     return risks;
 }
@@ -710,7 +710,7 @@ async function transformAIData(aiData, barcode, base44) {
         analysisNotes.push('⚠️ This is a medicine or drug product. Always consult a healthcare professional before use.');
         analysisNotes.push('This analysis is for informational purposes only and does not constitute medical advice.');
         if (aiData.indications) analysisNotes.push(`Indicated for: ${aiData.indications.substring(0, 200)}`);
-        if (aiData.dosage_form) analysisNotes.push(`Dosage form: ${aiData.dosage_form}${aiData.strength ? ' — ' + aiData.strength : ''}`);
+        if (aiData.dosage_form) analysisNotes.push(`Dosage form: ${aiData.dosage_form}${aiData.strength ? ', ' + aiData.strength : ''}`);
         if (aiData.warnings) analysisNotes.push(`Warning: ${aiData.warnings.substring(0, 200)}`);
     } else {
         analysisNotes.push('Always verify details with the physical product packaging.');
@@ -800,7 +800,7 @@ async function lookupPLU(plu, base44) {
         category: finalCategory,
         source: known ? 'PLU Database' : 'AI Lookup',
         imageUrl: getFallbackImageUrl(),
-        ingredientsText: `${finalName}${isOrganic ? ' (Organic)' : ''}. PLU code: ${plu}. Fresh produce item — no processed ingredients.`,
+        ingredientsText: `${finalName}${isOrganic ? ' (Organic)' : ''}. PLU code: ${plu}. Fresh produce item, no processed ingredients.`,
         ingredients: [
             { name: finalName, purpose: 'Whole food', safety: 98, sustainability: 90, notes: isOrganic ? 'Certified organic' : 'Conventionally grown fresh produce' }
         ],

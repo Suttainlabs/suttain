@@ -9,7 +9,7 @@ const METRICS = [
   { key: "carbon_footprint", label: "Carbon Footprint", weight: "30%", icon: Factory, description: "Measures greenhouse gas emissions across the product lifecycle, including raw material extraction, manufacturing, transport, and disposal." },
   { key: "water_consumption", label: "Water Consumption", weight: "20%", icon: Droplets, description: "Evaluates total water usage in sourcing raw materials, manufacturing, and product use phase." },
   { key: "packaging_sustainability", label: "Packaging Sustainability", weight: "20%", icon: Package, description: "Assesses packaging material recyclability, biodegradability, weight efficiency, and use of post-consumer recycled content." },
-  { key: "toxicity_safety", label: "Toxicity & Safety", weight: "20%", icon: ShieldCheck, description: "Rates ingredient safety for humans and ecosystems — considers endocrine disruptors, carcinogens, aquatic toxicity, and biodegradability." },
+  { key: "toxicity_safety", label: "Toxicity & Safety", weight: "20%", icon: ShieldCheck, description: "Rates ingredient safety for humans and ecosystems, considers endocrine disruptors, carcinogens, aquatic toxicity, and biodegradability." },
   { key: "ethical_sourcing", label: "Ethical Sourcing", weight: "10%", icon: Globe, description: "Evaluates fair trade practices, supply chain transparency, deforestation-free sourcing, and labor standards." },
 ];
 

@@ -42,7 +42,7 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
     const molName = currentInputs?.molecule || currentInputs?.system || currentInputs?.compound || currentInputs?.ligand || "Unknown";
     try {
       await base44.entities.DWSIMSimulationHistory.create({
-        title: `${molName} — ${engine}`,
+        title: `${molName}: ${engine}`,
         sim_source: "script_builder",
         prompt: JSON.stringify(currentInputs),
         config: {
@@ -65,11 +65,11 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
 
   const getKeyValue = (config, property) => {
     const kv = config?.key_values?.find(k => k.property?.toLowerCase().includes(property.toLowerCase()));
-    return kv ? `${kv.value} ${kv.unit || ""}`.trim() : "—";
+    return kv ? `${kv.value} ${kv.unit || ""}`.trim() : ":";
   };
 
   const CompareIcon = ({ a, b }) => {
-    if (!a || !b || a === "—" || b === "—") return <Minus className="w-3.5 h-3.5 text-slate-400" />;
+    if (!a || !b || a === ":" || b === ":") return <Minus className="w-3.5 h-3.5 text-slate-400" />;
     const numA = parseFloat(a); const numB = parseFloat(b);
     if (isNaN(numA) || isNaN(numB)) return null;
     if (numA > numB) return <TrendingUp className="w-3.5 h-3.5 text-red-500" />;
@@ -201,8 +201,8 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
                 <tbody>
                   <tr className="border-b border-slate-100">
                     <td className="px-3 py-2 font-medium text-slate-700">Engine</td>
-                    <td className="px-3 py-2 text-slate-600">{configA.engine || "—"}</td>
-                    <td className="px-3 py-2 text-slate-600">{configB.engine || "—"}</td>
+                    <td className="px-3 py-2 text-slate-600">{configA.engine || ":"}</td>
+                    <td className="px-3 py-2 text-slate-600">{configB.engine || ":"}</td>
                   </tr>
                   <tr className="border-b border-slate-100">
                     <td className="px-3 py-2 font-medium text-slate-700">Run Date</td>

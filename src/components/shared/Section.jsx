@@ -22,7 +22,7 @@ const SECTION_BG_CLASS = {
 };
 
 /**
- * <Section> — consistent vertical rhythm wrapper for every page section.
+ * <Section>: consistent vertical rhythm wrapper for every page section.
  *
  * @param {"default"|"compact"|"spacious"} spacing - controls vertical padding
  * @param {"light"|"dark"|"muted"} background - optional surface color
@@ -54,7 +54,7 @@ export function Section({
 }
 
 /**
- * <SectionHeader> — heading + subtext block with fixed internal rhythm.
+ * <SectionHeader>: heading + subtext block with fixed internal rhythm.
  *
  * Rhythm (all token-driven, 8px base):
  *   eyebrow → 24px (--space-3) → heading → 24px (--space-3) → subtext → 40px (--space-5) → CTA row

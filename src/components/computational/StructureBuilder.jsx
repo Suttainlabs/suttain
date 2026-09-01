@@ -233,7 +233,7 @@ export default function StructureBuilder({ onStructureLoaded }) {
                 onChange={(e) => setBuildType(e.target.value)}
                 className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm bg-white"
               >
-                {BUILD_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label} — {t.desc}</option>)}
+                {BUILD_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}, {t.desc}</option>)}
               </select>
             </div>
 

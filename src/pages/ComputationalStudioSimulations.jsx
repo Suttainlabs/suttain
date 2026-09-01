@@ -63,7 +63,7 @@ export default function ComputationalStudioSimulations() {
             </div>
             <div>
               <h1 className="text-2xl font-semibold text-slate-900">Simulations</h1>
-              <p className="text-sm text-slate-500">AI-powered molecular modeling — DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.</p>
+              <p className="text-sm text-slate-500">AI-powered molecular modeling, DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.</p>
             </div>
           </div>
           <SourcedBadge />
@@ -72,13 +72,13 @@ export default function ComputationalStudioSimulations() {
         {/* Capability badges */}
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200">
-            <Circle className="w-3 h-3" /> Quantum-powered — IBM Qiskit VQE
+            <Circle className="w-3 h-3" /> Quantum-powered, IBM Qiskit VQE
           </span>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200">
-            <Layers className="w-3 h-3" /> Materials Informatics — Materials Project & OPTIMADE
+            <Layers className="w-3 h-3" /> Materials Informatics, Materials Project & OPTIMADE
           </span>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-100 text-cyan-700 text-xs font-semibold border border-cyan-200">
-            <LayoutGrid className="w-3 h-3" /> Structure Builder — ASE & 3D Crystal Viewer
+            <LayoutGrid className="w-3 h-3" /> Structure Builder, ASE & 3D Crystal Viewer
           </span>
         </div>
 

@@ -1,5 +1,5 @@
 /**
- * OrbitalPanel — HOMO/LUMO and ESP surface controls for DFT results
+ * OrbitalPanel: HOMO/LUMO and ESP surface controls for DFT results
  */
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';

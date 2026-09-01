@@ -79,7 +79,7 @@ export default async function (req: Request): Promise<Response> {
             <strong>${safeRequester}</strong> has requested your supervisor approval for a chemical simulation${safeChemicals ? ' involving <strong>' + safeChemicals + '</strong>' : ''}.
           </p>
           <p style="margin:0 0 16px;color:#475569;font-size:14px;line-height:1.6;">
-            Please review the simulation details and approve or reject it. No account is required — this secure link is unique to you.
+            Please review the simulation details and approve or reject it. No account is required, this secure link is unique to you.
           </p>
           <a href="${approvalUrl}" style="display:inline-block;background:#02988C;color:#FFFFFF;text-decoration:none;padding:12px 28px;border-radius:999px;font-size:14px;font-weight:600;margin-top:4px;">Review &amp; approve</a>
           <p style="margin:20px 0 0;color:#828282;font-size:12px;line-height:1.5;">

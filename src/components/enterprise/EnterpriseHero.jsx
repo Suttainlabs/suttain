@@ -4,7 +4,7 @@ import { ArrowRight, BookOpen } from "lucide-react";
 import { createPageUrl } from "@/utils";
 
 const STATS = [
-  { value: "115M+", label: "Chemical Records" },
+  { value: "130M+", label: "Chemical Records" },
   { value: "< 200ms", label: "Avg. Response Time" },
   { value: "99.9%", label: "Uptime SLA" },
   { value: "3", label: "Native SDKs" },
@@ -22,7 +22,7 @@ export default function EnterpriseHero() {
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-50 border border-violet-200 mb-6">
           <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
           <span className="text-xs font-bold tracking-widest text-violet-600 uppercase">
-            Enterprise API — Early Access
+            Enterprise API: Early Access
           </span>
         </div>
 
@@ -39,7 +39,7 @@ export default function EnterpriseHero() {
         {/* Paragraph */}
         <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed">
           A production-grade REST API with native SDKs for Python, JavaScript, and R.
-          Access 115M+ chemical records, run computational simulations, and automate
+          Access 130M+ chemical records, run computational simulations, and automate
           safety compliance at scale.
         </p>
 

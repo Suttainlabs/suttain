@@ -21,7 +21,7 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ error: 'Missing approval token' }, { status: 400 });
     }
 
-    // Public read by token — service role bypasses RLS (no login required for the supervisor)
+    // Public read by token, service role bypasses RLS (no login required for the supervisor)
     const records = await base44.asServiceRole.entities.SupervisorApproval.filter({ token });
     if (!records || records.length === 0) {
       return Response.json({ error: 'Invalid or expired approval link' }, { status: 404 });

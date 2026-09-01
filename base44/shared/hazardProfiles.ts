@@ -10,7 +10,7 @@
 // hazard_class values: carcinogen | reproductive_toxin | voc | oxidizer |
 //   corrosive | sensitizer | environmental_toxin | flammable | toxic | none
 // organic: true for any carbon-based compound (solvents, alcohols, aromatics,
-//   hydrocarbons) — used by the oxidizer + organic reaction rule.
+//   hydrocarbons): used by the oxidizer + organic reaction rule.
 
 export const HAZARD_PROFILES = {
   // ── Aromatic solvents / VOCs ──
@@ -343,7 +343,7 @@ export function computeCombinationFloor(chemicalNames) {
     if (p.risk_floor > floor) floor = p.risk_floor;
 
     if (p.hazard_class === 'carcinogen') {
-      triggerReasons.push(`${r.name} is a known carcinogen (${p.primary_hazards[0] || p.hazard_class}) — minimum CRITICAL risk enforced`);
+      triggerReasons.push(`${r.name} is a known carcinogen (${p.primary_hazards[0] || p.hazard_class}), minimum CRITICAL risk enforced`);
     }
     if (p.hazard_class === 'reproductive_toxin') {
       triggerReasons.push(`${r.name} is a suspected reproductive toxin`);
@@ -359,22 +359,22 @@ export function computeCombinationFloor(chemicalNames) {
   // Oxidizer + organic = violent / toxic reaction (bleach + benzene, bleach + alcohol, etc.)
   if (hasOxidizer && hasOrganic) {
     if (floor < 88) floor = 88;
-    triggerReasons.push('Strong oxidizer combined with an organic compound — risk of violent oxidation, fire, or toxic byproduct formation (e.g. chlorine gas, chloroform, phosgene)');
+    triggerReasons.push('Strong oxidizer combined with an organic compound, risk of violent oxidation, fire, or toxic byproduct formation (e.g. chlorine gas, chloroform, phosgene)');
   }
   // Strong acid + strong base = violent exothermic neutralisation
   if (hasAcid && hasBase) {
     if (floor < 80) floor = 80;
-    triggerReasons.push('Strong acid combined with strong base — violent exothermic neutralisation, splashing and boiling risk');
+    triggerReasons.push('Strong acid combined with strong base, violent exothermic neutralisation, splashing and boiling risk');
   }
   // Acid + oxidizer (acidified bleach, peroxide + acid) = toxic gas
   if (hasAcid && hasOxidizer) {
     if (floor < 85) floor = 85;
-    triggerReasons.push('Acid combined with oxidizer — risk of toxic gas release (chlorine, nitrogen dioxide)');
+    triggerReasons.push('Acid combined with oxidizer, risk of toxic gas release (chlorine, nitrogen dioxide)');
   }
 
   const safetyLevel = deriveSafetyLevelFromScore(floor);
 
-  // If nothing matched at all, we have no authoritative floor — return null
+  // If nothing matched at all, we have no authoritative floor, return null
   // so the caller knows to rely on the AI output without clamping.
   if (matched.length === 0) {
     return {

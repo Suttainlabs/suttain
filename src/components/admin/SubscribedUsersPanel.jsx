@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
 function formatDate(dateStr) {
-  if (!dateStr) return '—';
+  if (!dateStr) return ':';
   return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
@@ -57,7 +57,7 @@ export default function SubscribedUsersPanel() {
       u.subscription_plan || u.data?.subscription_plan || '',
       u.subscription_billing || u.data?.subscription_billing || '',
       u.subscription_end_date || u.data?.subscription_end_date || '',
-      getDaysRemaining(u.subscription_end_date || u.data?.subscription_end_date) ?? '—'
+      getDaysRemaining(u.subscription_end_date || u.data?.subscription_end_date) ?? ':'
     ]);
     const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -129,8 +129,8 @@ export default function SubscribedUsersPanel() {
                 </thead>
                 <tbody>
                   {filtered.map((u) => {
-                    const plan = u.subscription_plan || u.data?.subscription_plan || '—';
-                    const billing = u.subscription_billing || u.data?.subscription_billing || '—';
+                    const plan = u.subscription_plan || u.data?.subscription_plan || ':';
+                    const billing = u.subscription_billing || u.data?.subscription_billing || ':';
                     const endDate = u.subscription_end_date || u.data?.subscription_end_date;
                     const cancelAt = u.subscription_cancel_at || u.data?.subscription_cancel_at;
                     const daysLeft = getDaysRemaining(endDate);
@@ -138,7 +138,7 @@ export default function SubscribedUsersPanel() {
 
                     return (
                       <tr key={u.id} className="border-b border-slate-100 hover:bg-slate-50">
-                        <td className="px-4 py-3 font-medium text-slate-800">{u.full_name || '—'}</td>
+                        <td className="px-4 py-3 font-medium text-slate-800">{u.full_name || ':'}</td>
                         <td className="px-4 py-3 text-slate-600">{u.email}</td>
                         <td className="px-4 py-3">
                           <Badge variant="secondary" className="capitalize">{plan}</Badge>
@@ -160,7 +160,7 @@ export default function SubscribedUsersPanel() {
                             <Badge className={daysLeft <= 7 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}>
                               {daysLeft} days
                             </Badge>
-                          ) : '—'}
+                          ) : ':'}
                         </td>
                       </tr>
                     );

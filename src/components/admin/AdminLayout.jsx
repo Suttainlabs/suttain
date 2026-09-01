@@ -46,7 +46,7 @@ export default function AdminLayout() {
           <div className="space-y-2">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Live Traffic</h1>
-              <p className="text-sm text-slate-500 mt-1">Real-time visitor analytics — auto-refreshes every 15 seconds</p>
+              <p className="text-sm text-slate-500 mt-1">Real-time visitor analytics, auto-refreshes every 15 seconds</p>
             </div>
             <RealTimeTrafficPanel />
           </div>

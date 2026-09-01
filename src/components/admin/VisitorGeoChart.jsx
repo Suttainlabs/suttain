@@ -43,7 +43,7 @@ export default function VisitorGeoChart() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Pie Chart — Countries */}
+      {/* Pie Chart: Countries */}
       <Card className="border border-slate-200 shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-semibold text-slate-800 flex items-center gap-2">
@@ -94,7 +94,7 @@ export default function VisitorGeoChart() {
         </CardContent>
       </Card>
 
-      {/* Top Regions — Bar-style list */}
+      {/* Top Regions: Bar-style list */}
       <Card className="border border-slate-200 shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-semibold text-slate-800 flex items-center gap-2">

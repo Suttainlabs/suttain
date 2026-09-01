@@ -66,7 +66,7 @@ export default function InteractionVisualization() {
       y += 7;
       pdf.setFontSize(9);
       ingredients.forEach((ing, i) => {
-        pdf.text(`${i + 1}. ${ing.name} — ${ing.percentage}%`, 25, y);
+        pdf.text(`${i + 1}. ${ing.name}, ${ing.percentage}%`, 25, y);
         y += 6;
       });
       y += 6;

@@ -4,7 +4,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Public endpoint — no auth required (works for unauthenticated users too)
+    // Public endpoint: no auth required (works for unauthenticated users too)
     const body = await req.json();
     const { content, target_language, content_type } = body;
 
@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
     const targetName = languageNames[target_language] || target_language;
 
     const typeContext = content_type
-      ? `This content is of type "${content_type}". Preserve any scientific names, chemical formulas, CAS numbers, SMILES strings, InChI keys, units, and numeric values exactly as they are — do not translate or modify them.`
+      ? `This content is of type "${content_type}". Preserve any scientific names, chemical formulas, CAS numbers, SMILES strings, InChI keys, units, and numeric values exactly as they are, do not translate or modify them.`
       : 'Preserve any scientific names, chemical formulas, CAS numbers, SMILES strings, InChI keys, units, and numeric values exactly as they are.';
 
     // Batch mode: content is an array of strings → return a parallel array of translations.

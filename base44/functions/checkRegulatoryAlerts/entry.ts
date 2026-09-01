@@ -8,7 +8,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
 
-  // Require admin auth — prevents unauthenticated external callers from
+  // Require admin auth, prevents unauthenticated external callers from
   // triggering system-wide scans that consume LLM credits and send emails.
   // Scheduled automations must invoke this function with an admin token.
   const user = await base44.auth.me().catch(() => null);
@@ -102,7 +102,7 @@ Only include ingredients with REAL, KNOWN regulatory changes. Do not fabricate a
     for (const alert of alerts) {
       const affectedFormulas = ingredientMap[alert.ingredient_name] || [];
 
-      // Deduplicate by user email — one notification per user even if multiple formulas affected
+      // Deduplicate by user email, one notification per user even if multiple formulas affected
       const userMap = {};
       for (const f of affectedFormulas) {
         if (!userMap[f.userEmail]) userMap[f.userEmail] = [];

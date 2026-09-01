@@ -120,7 +120,7 @@ export default function SimulationSandbox() {
 
       {/* Main layout */}
       <div className="flex h-[calc(100vh-57px)]">
-        {/* Left panel — controls */}
+        {/* Left panel: controls */}
         <div className="w-56 flex-shrink-0 bg-slate-900 border-r border-slate-800 p-3 overflow-y-auto hidden md:flex flex-col">
           <SandboxControls
             selectedAtom={selectedAtomType}
@@ -198,7 +198,7 @@ export default function SimulationSandbox() {
           </div>
         </div>
 
-        {/* Right panel — info */}
+        {/* Right panel: info */}
         <div className="w-52 flex-shrink-0 bg-slate-900 border-l border-slate-800 p-3 overflow-y-auto hidden lg:block">
           <SandboxInfo
             selectedAtom={highlightedAtom ? highlightedAtom.type : selectedAtomType}

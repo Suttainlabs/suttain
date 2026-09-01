@@ -179,7 +179,7 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
             </div>
             <div>
               <h3 className="font-bold text-slate-900 text-sm">Environmental Parameters</h3>
-              <p className="text-xs text-slate-500">Isolated sandbox conditions — decoupled from saved entities</p>
+              <p className="text-xs text-slate-500">Isolated sandbox conditions, decoupled from saved entities</p>
             </div>
           </div>
           <div className="flex gap-2">

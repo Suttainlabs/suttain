@@ -14,7 +14,7 @@ const features = [
 ];
 
 const TABS = [
-  { id: "search", label: "Search Database", icon: Search, desc: "115M+ compounds via PubChem" },
+  { id: "search", label: "Search Database", icon: Search, desc: "130M+ compounds via PubChem" },
   { id: "upload", label: "Upload SDS File", icon: Upload, desc: "PDF or image" },
 ];
 
@@ -65,7 +65,7 @@ export default function SDSAnalyzer() {
             Safety Data Sheet <span className="gradient-text">Analyzer</span>
           </h1>
           <p className="text-slate-500 text-lg max-w-xl mx-auto">
-            Search 115 million+ chemicals from PubChem or upload your own SDS — get instant AI hazard analysis and one-click simulation.
+            Search 115 million+ chemicals from PubChem or upload your own SDS, get instant AI hazard analysis and one-click simulation.
           </p>
         </div>
 

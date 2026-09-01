@@ -187,7 +187,7 @@ function CitationFooter() {
     <div className="mt-4 pt-3 border-t border-slate-200">
       <p className="text-[10px] text-slate-400 leading-relaxed">
         PDB operations powered by Biopython algorithms. Cock et al., 2009,
-        Bioinformatics 25(11):1422-3. BSD-3-Clause License — free for commercial use.
+        Bioinformatics 25(11):1422-3. BSD-3-Clause License, free for commercial use.
       </p>
     </div>
   );

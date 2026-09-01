@@ -193,7 +193,7 @@ export default function SmartChemicalSearch() {
         </div>
       )}
 
-      {/* Action menu — appears when a chemical is selected */}
+      {/* Action menu: appears when a chemical is selected */}
       {selected && (
         <div className="mt-3 bg-[#F7F6F2] border border-[#E5E7EB] rounded-[9px] p-4">
           <div className="flex items-center justify-between mb-3">

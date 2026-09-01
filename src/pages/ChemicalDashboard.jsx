@@ -327,7 +327,7 @@ export default function ChemicalDashboard() {
               <Section title="Molecular Weight vs. LogP (Lipophilicity)">
                 {stats.scatter.length < 3 ? (
                   <div className="flex items-center justify-center h-48 text-slate-400 text-xs">
-                    Insufficient data — requires molecular_weight and logP values.
+                    Insufficient data: requires molecular_weight and logP values.
                   </div>
                 ) : (
                   <ResponsiveContainer width="100%" height={220}>

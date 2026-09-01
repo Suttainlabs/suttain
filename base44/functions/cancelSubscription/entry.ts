@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'No active subscription found' }, { status: 400 });
     }
 
-    // Cancel at period end — user keeps access until billing cycle ends
+    // Cancel at period end, user keeps access until billing cycle ends
     const subscription = await stripe.subscriptions.update(stripeSubscriptionId, {
       cancel_at_period_end: true,
     });
@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: 'contact@suttain.com',
           from_name: 'Suttain',
-          subject: `[CC] Subscription cancelled — ${user.email}`,
+          subject: `[CC] Subscription cancelled, ${user.email}`,
           body: `<p>Cancellation email sent to ${user.email}.</p><p>Plan: ${planLabel}</p><p>Access until: ${accessUntilFormatted}</p>`
         });
       } catch (ccErr) {

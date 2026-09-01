@@ -84,7 +84,7 @@ export default function LotTrackingPanel({ formula, batchSize, batchUnit, onLots
               {lotAlerts.map((alert, i) => (
                 <li key={i} className="text-xs text-red-700 flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${alert.type === 'expired' ? 'bg-red-500' : 'bg-amber-500'}`} />
-                  <strong>{alert.ingredient}</strong> — {alert.type === 'expired' ? 'EXPIRED' : 'expires within 30 days'} on {alert.date}
+                  <strong>{alert.ingredient}</strong>: {alert.type === 'expired' ? 'EXPIRED' : 'expires within 30 days'} on {alert.date}
                 </li>
               ))}
             </ul>

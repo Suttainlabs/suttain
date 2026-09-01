@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Subtle molecular / hex-line background texture.
  * Renders a faint SVG pattern of outlined hexagons, connecting lines,
- * and small nodes — tinted in Suttain purple/teal at very low opacity.
+ * and small nodes, tinted in Suttain purple/teal at very low opacity.
  *
  * Usage: place inside any container with `relative` positioning.
  * <div className="relative">

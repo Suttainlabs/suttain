@@ -1,5 +1,5 @@
 /**
- * FileImportPanel — File upload supporting PDB, mmCIF, SDF, MOL2, XYZ, VMD, PSE, DCD
+ * FileImportPanel: File upload supporting PDB, mmCIF, SDF, MOL2, XYZ, VMD, PSE, DCD
  */
 import React, { useRef, useState } from 'react';
 import { Upload, FileText } from 'lucide-react';
@@ -27,7 +27,7 @@ export default function FileImportPanel({ onFileLoaded }) {
     if (!fmt) {
       // Handle VMD/PSE/trajectory with a message
       if (['vmd', 'pse', 'dcd', 'xtc', 'trr'].includes(ext)) {
-        setLoadedFile({ name: file.name, ext, note: 'Trajectory/session file detected — loading into trajectory player.' });
+        setLoadedFile({ name: file.name, ext, note: 'Trajectory/session file detected, loading into trajectory player.' });
         onFileLoaded?.({ data: null, format: ext, name: file.name, isTraj: true });
         return;
       }

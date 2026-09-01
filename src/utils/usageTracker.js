@@ -1,6 +1,6 @@
 import { base44 } from '@/api/base44Client';
 
-// Free-tier limits — reset every 7 days (rolling window anchored to usage_period_start)
+// Free-tier limits: reset every 7 days (rolling window anchored to usage_period_start)
 export const FREE_LIMITS = { simulations: 2, formulas: 5, scans: Infinity };
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
@@ -38,7 +38,7 @@ export async function incrementUsage(user, type) {
   const now = new Date().toISOString();
 
   if (!active) {
-    // Window expired (or first use) — start fresh, reset all counters
+    // Window expired (or first use), start fresh, reset all counters
     await base44.auth.updateMe({
       usage_period_start: now,
       usage_simulations: type === 'simulations' ? 1 : 0,
@@ -48,7 +48,7 @@ export async function incrementUsage(user, type) {
     return;
   }
 
-  // Window active — just increment the relevant counter
+  // Window active: just increment the relevant counter
   await base44.auth.updateMe({
     [`usage_${type}`]: (user[`usage_${type}`] || 0) + 1,
   });

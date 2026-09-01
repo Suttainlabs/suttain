@@ -16,7 +16,7 @@ const ENDPOINTS = [
     description: 'Retrieve full compound data by name, SMILES, InChI, or CAS number.',
     params: [
       { name: 'q', type: 'string', required: true, desc: 'Query string (name, SMILES, InChI, or CAS)' },
-      { name: 'type', type: 'enum', required: false, desc: 'name | smiles | inchi | cas — defaults to name' },
+      { name: 'type', type: 'enum', required: false, desc: 'name | smiles | inchi | cas, defaults to name' },
       { name: 'include', type: 'string', required: false, desc: 'Comma-separated: hazard,toxicology,environment,regulatory' },
     ],
     response: `{
@@ -39,7 +39,7 @@ const ENDPOINTS = [
     description: 'Score a compound or ingredient list against GHS, FDA, and EPA CompTox classification databases.',
     params: [
       { name: 'compounds', type: 'array', required: true, desc: 'Array of compound names or SMILES strings' },
-      { name: 'framework', type: 'enum', required: false, desc: 'ghs | epa | reach | all — defaults to all' },
+      { name: 'framework', type: 'enum', required: false, desc: 'ghs | epa | reach | all, defaults to all' },
     ],
     response: `{
   "results": [
@@ -206,7 +206,7 @@ export default function APIPortal() {
         <div className="mb-10">
           <h1 className="text-2xl font-black text-slate-900 mb-2">Suttain Research API</h1>
           <p className="text-sm text-slate-500 max-w-2xl leading-relaxed">
-            Integrate molecular intelligence directly into your workflows. Every response includes source citations and confidence scores on every field — no black box outputs.
+            Integrate molecular intelligence directly into your workflows. Every response includes source citations and confidence scores on every field, no black box outputs.
           </p>
         </div>
 

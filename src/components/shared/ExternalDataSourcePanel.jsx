@@ -78,7 +78,7 @@ export default function ExternalDataSourcePanel({ enrichment, loading, compact =
         {!activeSourceData ? (
           <div className="flex items-center gap-2 text-xs text-slate-500">
             {(() => { const st = STATUS_STYLES[activeStatus] || STATUS_STYLES.no_data; const Icon = st.icon; return <Icon className={`w-3.5 h-3.5 ${st.color}`} />; })()}
-            <span>{(STATUS_STYLES[activeStatus] || STATUS_STYLES.no_data).label} — no data returned from {activeEntry.label} for this compound.</span>
+            <span>{(STATUS_STYLES[activeStatus] || STATUS_STYLES.no_data).label}: no data returned from {activeEntry.label} for this compound.</span>
           </div>
         ) : (
           <div className="space-y-2">

@@ -23,7 +23,7 @@ function getDaysLeft(endDateStr) {
 }
 
 function formatDate(dateStr) {
-  if (!dateStr) return '—';
+  if (!dateStr) return ':';
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
@@ -230,7 +230,7 @@ export default function UserManagement() {
                   const isLoading = actionLoading === user.id + 'delete' || actionLoading === user.id + 'reset' || actionLoading === user.id + 'revoke';
                   return (
                     <tr key={user.id} className="hover:bg-slate-50 transition-colors">
-                      {/* User cell — sticky on mobile scroll */}
+                      {/* User cell: sticky on mobile scroll */}
                       <td className="px-5 py-3 sticky left-0 bg-white z-10 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.06)]">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-400 to-cyan-400 flex items-center justify-center text-xs font-bold text-white flex-shrink-0 overflow-hidden">
@@ -268,7 +268,7 @@ export default function UserManagement() {
                         {user.subscription_billing ? (
                           <span className="text-xs text-slate-600 capitalize">{user.subscription_billing}</span>
                         ) : (
-                          <span className="text-xs text-slate-300">—</span>
+                          <span className="text-xs text-slate-300">:</span>
                         )}
                       </td>
 

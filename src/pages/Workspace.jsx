@@ -180,7 +180,7 @@ export default function Workspace() {
                 <FolderOpen className="w-12 h-12 text-slate-200 mb-3" />
                 <h3 className="text-base font-semibold text-slate-500 mb-1">No sessions yet</h3>
                 <p className="text-sm text-slate-400 max-w-xs">
-                  Run a simulation, formula, or scan — then save it to your workspace.
+                  Run a simulation, formula, or scan, then save it to your workspace.
                 </p>
               </div>
             ) : (

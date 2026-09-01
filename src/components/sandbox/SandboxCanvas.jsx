@@ -184,7 +184,7 @@ const SandboxCanvas = forwardRef(function SandboxCanvas(
         orbitRef.current.lastY = e.clientY;
         return;
       }
-      // Left click — place atom or select
+      // Left click: place atom or select
       getMouseNDC(e);
       raycaster.setFromCamera(mouse, cameraRef.current);
 

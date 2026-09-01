@@ -43,7 +43,7 @@ const TUTORIALS = [
     color: 'bg-orange-100 text-orange-700',
     items: [
       { title: 'Techno-Economic Analysis', desc: 'CAPEX, OPEX, NPV, IRR, payback period.', url: 'https://dwsim.org/tutorials/en/features/tea-techno-economic-analysis.html', tags: ['economics', 'TEA'] },
-      { title: 'Life Cycle Assessment', desc: 'GWP, acidification, eutrophication — LCA inside DWSIM.', url: 'https://dwsim.org/tutorials/en/features/lca-life-cycle-assessment.html', tags: ['LCA', 'sustainability'] },
+      { title: 'Life Cycle Assessment', desc: 'GWP, acidification, eutrophication, LCA inside DWSIM.', url: 'https://dwsim.org/tutorials/en/features/lca-life-cycle-assessment.html', tags: ['LCA', 'sustainability'] },
       { title: 'AI Assistant', desc: 'Natural-language simulation assistance built into DWSIM.', url: 'https://dwsim.org/tutorials/en/features/ai-assistant.html', tags: ['AI'] },
       { title: 'Phase Envelope Tool', desc: 'PT/PH/TS diagrams and lookups.', url: 'https://dwsim.org/tutorials/en/features/phase-envelope.html', tags: ['thermodynamics'] },
     ],

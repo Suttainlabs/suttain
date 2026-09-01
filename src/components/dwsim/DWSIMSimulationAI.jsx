@@ -200,7 +200,7 @@ export default function DWSIMSimulationAI() {
         </div>
         <div className="flex-1">
           <p className="font-bold text-white text-sm">DWSIM AI Simulation Assistant</p>
-          <p className="text-white/60 text-xs">Describe your process — get a complete FluentAPI script</p>
+          <p className="text-white/60 text-xs">Describe your process, get a complete FluentAPI script</p>
         </div>
         <div className="flex items-center gap-2">
           {getLatestScript() && (

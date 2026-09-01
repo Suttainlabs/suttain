@@ -5,7 +5,7 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
 
     // This function is invoked by the platform scheduler (no user context).
-    // Use service role directly — the scheduler is platform-internal.
+    // Use service role directly, the scheduler is platform-internal.
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeKey) {
       return Response.json({ error: 'STRIPE_SECRET_KEY not configured' }, { status: 500 });
@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
 
     for (const u of allUsers) {
       try {
-        // Skip admins — they get access by role
+        // Skip admins: they get access by role
         if (u.role === 'admin') {
           results.skipped_admins.push({ id: u.id, email: u.email });
           continue;
@@ -99,8 +99,8 @@ Deno.serve(async (req) => {
         const plan = u.subscription_plan;
         const status = u.subscription_status;
 
-        // Check admin_granted_access — only admins (role check above) should have it.
-        // Non-admin users with admin_granted_access bypass payment — revoke it.
+        // Check admin_granted_access: only admins (role check above) should have it.
+        // Non-admin users with admin_granted_access bypass payment, revoke it.
         if (u.admin_granted_access) {
           results.revoked.push({
             id: u.id, email: u.email, full_name: u.full_name,
@@ -122,16 +122,16 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        // Already on trial/free — skip
+        // Already on trial/free, skip
         if (!plan || plan === 'trial' || plan === 'free') {
           results.already_free++;
           continue;
         }
 
-        // Lifetime users — verify via successful charge, not subscription
+        // Lifetime users: verify via successful charge, not subscription
         if (plan === 'lifetime') {
           if (u.stripe_customer_id) {
-            // Lifetime is a one-time payment — keep if customer exists in Stripe
+            // Lifetime is a one-time payment, keep if customer exists in Stripe
             if (activeCustomerIds.has(u.stripe_customer_id)) {
               results.verified_pro.push({ id: u.id, email: u.email, plan: 'lifetime', reason: 'active_customer' });
               continue;
@@ -148,7 +148,7 @@ Deno.serve(async (req) => {
               continue;
             }
           }
-          // No valid lifetime purchase found — revoke
+          // No valid lifetime purchase found, revoke
           results.revoked.push({
             id: u.id, email: u.email, full_name: u.full_name,
             plan, reason: 'LIFETIME_NO_VALID_CHARGE'
@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        // Pro / Starter / Academic — must have active subscription
+        // Pro / Starter / Academic, must have active subscription
         const hasActiveSub = u.stripe_subscription_id && activeSubIds.has(u.stripe_subscription_id);
 
         if (hasActiveSub) {
@@ -189,7 +189,7 @@ Deno.serve(async (req) => {
             end_date: updateData.subscription_end_date
           });
         } else {
-          // No active subscription in Stripe — revoke Pro access
+          // No active subscription in Stripe, revoke Pro access
           results.revoked.push({
             id: u.id, email: u.email, full_name: u.full_name,
             plan, db_status: status,

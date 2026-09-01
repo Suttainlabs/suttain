@@ -146,7 +146,7 @@ export default function StructuralBiology() {
           <h1 className="text-2xl sm:text-3xl font-black text-slate-800 mb-2">Structural Biology Intelligence</h1>
           <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
             Powered by the AlphaFold Protein Structure Database. Explore protein structures, analyze chemical binding risks,
-            assess mutation sensitivity, and generate personalized safety profiles — all backed by Google DeepMind's structural predictions.
+            assess mutation sensitivity, and generate personalized safety profiles, all backed by Google DeepMind's structural predictions.
           </p>
         </div>
 
@@ -193,11 +193,11 @@ export default function StructuralBiology() {
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
             <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Free</p>
-            <p className="text-xs text-slate-600">Tool 1 only — 3 searches per day</p>
+            <p className="text-xs text-slate-600">Tool 1 only, 3 searches per day</p>
           </div>
           <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
             <p className="text-[10px] uppercase tracking-widest text-[#007850] mb-1">Researcher Pro</p>
-            <p className="text-xs text-slate-600">All 5 tools — unlimited searches</p>
+            <p className="text-xs text-slate-600">All 5 tools, unlimited searches</p>
           </div>
           <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4">
             <p className="text-[10px] uppercase tracking-widest text-violet-600 mb-1">Enterprise</p>

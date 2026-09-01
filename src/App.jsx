@@ -101,7 +101,7 @@ const AuthenticatedApp = () => {
     || location.pathname === '/APIPortal'
     || location.pathname === '/ApproveSimulation';
 
-  // Check if on auth routes — never redirect these
+  // Check if on auth routes, never redirect these
   const isAuthRoute = ['/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname);
 
   if (!isPublicRoute && !isAuthRoute && (isLoadingPublicSettings || isLoadingAuth)) {
@@ -112,7 +112,7 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors — but never on auth pages
+  // Handle authentication errors, but never on auth pages
   if (authError) {
     if (authError.type === 'user_not_registered' && !isAuthRoute) {
       return <UserNotRegisteredError />;
@@ -169,7 +169,7 @@ const AuthenticatedApp = () => {
       <Route path="/ResearchPortal" element={<LayoutWrapper currentPageName="ResearchPortal"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ResearchPortal /></PageTransition></Suspense></LayoutWrapper>} />
 
 
-      {/* ── Protected Tools (consumer + research — require login) ── */}
+      {/* ── Protected Tools (consumer + research, require login) ── */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         {['Simulator', 'generator', 'BarcodeScanner',
           'MolecularIntelligence', 'MoleculeExplorer', 'MoleculeAnalysis', 'ChemicalDashboard', 'InventoryDashboard',

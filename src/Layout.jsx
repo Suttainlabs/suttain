@@ -43,33 +43,33 @@ const PAGE_META_DESCRIPTIONS = {
   Simulator: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations with Suttain chemical interaction simulator.',
   generator: 'Create professional skincare, soap, and cleaning product formulas with AI. Get ingredient recommendations, safety validation, and step-by-step manufacturing instructions.',
   BarcodeScanner: 'Scan any product barcode to instantly analyze ingredients. Get safety ratings, allergen alerts, and healthier alternatives for household and personal care products.',
-  TermsOfService: 'Suttain Terms of Service — the terms and conditions governing use of the Suttain chemical safety, formula generation, and research platform.',
-  PrivacyPolicy: 'Suttain Privacy Policy — how we collect, use, and protect your data when using our chemical safety analysis, formula generation, and product scanning tools.',
-  FAQ: 'Frequently asked questions about Suttain — chemical safety analysis, formula generation, product scanning, pricing, and research API access.',
+  TermsOfService: 'Suttain Terms of Service, the terms and conditions governing use of the Suttain chemical safety, formula generation, and research platform.',
+  PrivacyPolicy: 'Suttain Privacy Policy, how we collect, use, and protect your data when using our chemical safety analysis, formula generation, and product scanning tools.',
+  FAQ: 'Frequently asked questions about Suttain, chemical safety analysis, formula generation, product scanning, pricing, and research API access.',
   AboutUs: 'Suttain makes chemical safety accessible to everyone. Learn about our mission to democratize chemical knowledge for safer products and formulations.',
-  Careers: 'Join Suttain — careers in chemical safety, AI, and sustainable product development. View open positions and help build the future of chemical intelligence.',
-  ResearchPortal: 'Suttain Research Portal — a unified computational chemistry platform integrating PubChem, ChEMBL, and EPA CompTox for molecular intelligence, simulation, and API access.',
-  ResearchDashboard: 'Your Suttain research dashboard — monitor activity, manage saved molecular formulas, and access computational chemistry tools.',
-  ResearchPortal: 'Suttain Research Portal — molecular intelligence, computational simulation, formula generation, and API access for professional chemists and scientists.',
-  APIPortal: 'Suttain Research API documentation — REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. Python and JavaScript SDKs available.',
+  Careers: 'Join Suttain: careers in chemical safety, AI, and sustainable product development. View open positions and help build the future of chemical intelligence.',
+  ResearchPortal: 'Suttain Research Portal, a unified computational chemistry platform integrating PubChem, ChEMBL, and EPA CompTox for molecular intelligence, simulation, and API access.',
+  ResearchDashboard: 'Your Suttain research dashboard, monitor activity, manage saved molecular formulas, and access computational chemistry tools.',
+  ResearchPortal: 'Suttain Research Portal, molecular intelligence, computational simulation, formula generation, and API access for professional chemists and scientists.',
+  APIPortal: 'Suttain Research API documentation, REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. Python and JavaScript SDKs available.',
   MolecularIntelligence: 'Query any chemical compound for hazard classification, toxicity profiling, environmental fate, and regulatory status. Search by name, SMILES, InChI, or CAS number.',
   MoleculeExplorer: 'Browse and visualize chemical compounds in 3D. Search your database or PubChem, render molecular structures, and view physical, toxicity, and environmental properties.',
-  ChemicalDashboard: 'Comprehensive chemical dashboard — view and manage your chemical database with detailed properties, safety data, and regulatory information.',
+  ChemicalDashboard: 'Comprehensive chemical dashboard, view and manage your chemical database with detailed properties, safety data, and regulatory information.',
   ChemicalComparison: 'Compare any two chemical compounds side-by-side. Contrast molecular structure, physical properties, toxicity, and environmental data with delta highlighting.',
   ChemicalLibrary: 'Browse and manage your chemical library. Search by name, CAS, formula, or safety level. Import and export chemical data.',
   ComputationalSimulation: 'Run semi-empirical and DFT-tier computational chemistry simulations. Upload PDB, SDF, MOL2, or SMILES. 3D WebGL viewer with ESP mapping and trajectory playback.',
-  SimulationEngine: 'Suttain simulation engine — run molecular dynamics, DFT, and quantum mechanics calculations. Configure forcefields, solvation, and analysis parameters.',
+  SimulationEngine: 'Suttain simulation engine, run molecular dynamics, DFT, and quantum mechanics calculations. Configure forcefields, solvation, and analysis parameters.',
   SDSAnalyzer: 'Upload Safety Data Sheets and extract hazard data, GHS classifications, first aid measures, and regulatory information automatically.',
-  EnterpriseAPI: 'Suttain Enterprise API — custom integrations, dedicated infrastructure, and white-label solutions for organizations needing chemical intelligence at scale.',
-  Dashboard: 'Your Suttain dashboard — track your chemical safety analyses, saved formulas, scanned products, and sustainability scores in one place.',
+  EnterpriseAPI: 'Suttain Enterprise API, custom integrations, dedicated infrastructure, and white-label solutions for organizations needing chemical intelligence at scale.',
+  Dashboard: 'Your Suttain dashboard, track your chemical safety analyses, saved formulas, scanned products, and sustainability scores in one place.',
   Profile: 'Manage your Suttain profile, subscription, safety preferences, and account settings.',
   BillingDashboard: 'Manage your Suttain subscription, view billing history, update payment methods, and download invoices.',
-  Workspace: 'Your Suttain workspace — organize simulations, formulas, and research sessions in custom folders.',
-  AdminDashboard: 'Suttain admin dashboard — manage users, subscriptions, blog posts, and platform analytics.',
-  Blog: 'Suttain blog — insights on chemical safety, sustainable formulation, regulatory compliance, and the science behind safer products.',
-  ComplianceGuide: 'Suttain compliance guide — understand FDA, EU, REACH, and global regulatory requirements for cosmetics, cleaning products, and chemical formulations.',
-  LearningSuite: 'Suttain learning center — tutorials and guides on chemical safety, product formulation, and sustainable manufacturing from basics to advanced techniques.',
-  ExternalDatabases: 'Explore external chemical databases integrated with Suttain — PubChem, ChEMBL, EPA CompTox, RCSB PDB, and more scientific data sources.',
+  Workspace: 'Your Suttain workspace, organize simulations, formulas, and research sessions in custom folders.',
+  AdminDashboard: 'Suttain admin dashboard, manage users, subscriptions, blog posts, and platform analytics.',
+  Blog: 'Suttain blog: insights on chemical safety, sustainable formulation, regulatory compliance, and the science behind safer products.',
+  ComplianceGuide: 'Suttain compliance guide, understand FDA, EU, REACH, and global regulatory requirements for cosmetics, cleaning products, and chemical formulations.',
+  LearningSuite: 'Suttain learning center, tutorials and guides on chemical safety, product formulation, and sustainable manufacturing from basics to advanced techniques.',
+  ExternalDatabases: 'Explore external chemical databases integrated with Suttain, PubChem, ChEMBL, EPA CompTox, RCSB PDB, and more scientific data sources.',
   BookADemo: 'Book a demo of the Suttain chemical safety and compliance platform. See how our tools can streamline your formulation and regulatory workflows.',
   ComputationalStudio: 'Suttain Computational Studio: a unified workspace for molecular intelligence, protein structure prediction, materials analysis, and hazard prediction with single run, batch, and pipeline modes.',
 };
@@ -132,7 +132,7 @@ export default function Layout({ children, currentPageName }) {
         syncLanguageFromUser(currentUser.language);
       }
 
-      // Returning researcher — redirect straight to research dashboard
+      // Returning researcher: redirect straight to research dashboard
       if (currentUser && currentUser.first_login === false && currentUser.profile_type === 'researcher') {
         const isOnResearchPage = window.location.pathname === '/enterprise' || window.location.pathname === '/EnterpriseAPI'
           || ['/MolecularIntelligence', '/MoleculeExplorer', '/ChemicalDashboard', '/ResearchPortal',
@@ -253,7 +253,7 @@ export default function Layout({ children, currentPageName }) {
     { href: "Pricing", label: "Pricing", icon: Star },
   ];
 
-  // Consumer nav only — Research is accessible but not promoted
+  // Consumer nav only, Research is accessible but not promoted
 
   const companyMenuItems = [
     { href: "AboutUs", label: "About Us", icon: Building2, description: "Learn about our mission and team" },
@@ -265,7 +265,7 @@ export default function Layout({ children, currentPageName }) {
   const consumerToolItems = [
     { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
     { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", category: "Formulation" },
-    { href: "BarcodeScanner", label: "Product Scanner", icon: QrCode, description: "Scan any product — toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
+    { href: "BarcodeScanner", label: "Product Scanner", icon: QrCode, description: "Scan any product, toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
     { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety & Analysis" },
     { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from safety data sheets", category: "Safety & Analysis" },
   ];
@@ -276,7 +276,7 @@ export default function Layout({ children, currentPageName }) {
     { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration", category: "Research" },
   ];
 
-  // Tools dropdown — consumer tools only; research tools live in the Research hub
+  // Tools dropdown: consumer tools only; research tools live in the Research hub
   const allToolItems = [...consumerToolItems];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
@@ -395,14 +395,14 @@ export default function Layout({ children, currentPageName }) {
             <nav className="hidden lg:flex items-center gap-1 justify-self-center whitespace-nowrap flex-shrink-0">
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
-              {/* Single smart Tools dropdown — groups Consumer and Research */}
+              {/* Single smart Tools dropdown, groups Consumer and Research */}
               <NavToolCombobox items={allToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive || isResearchActive} accent="#02988C" />
 
               <Link to="/ResearchPortal" className={getLinkClasses("ResearchPortal")}>Research</Link>
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
-              {/* Enterprise API — standalone */}
+              {/* Enterprise API: standalone */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
@@ -572,7 +572,7 @@ export default function Layout({ children, currentPageName }) {
 
 
 
-                  {/* Single smart Tools collapsible — Consumer + Research grouped */}
+                  {/* Single smart Tools collapsible, Consumer + Research grouped */}
                   <motion.div variants={mobileNavItemVariants}>
                     <button
                       onClick={() => setIsProductSuiteOpen(!isProductSuiteOpen)}
@@ -627,7 +627,7 @@ export default function Layout({ children, currentPageName }) {
                     </AnimatePresence>
                   </motion.div>
 
-                  {/* Enterprise API — Mobile */}
+                  {/* Enterprise API: Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
                     <Link
                       to="/EnterpriseAPI"

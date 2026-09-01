@@ -37,7 +37,7 @@ const BUILTIN_CHEMICALS = [
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
-    // Public autocomplete — no login required, but we still init the client.
+    // Public autocomplete: no login required, but we still init the client.
     await base44.auth.me().catch(() => null);
 
     const body = await req.json().catch(() => ({}));

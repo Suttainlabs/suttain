@@ -87,7 +87,7 @@ function PropRow({ label, valA, valB, unit, numeric }) {
   const delta = showDelta ? (b - a) : null;
 
   const fmt = (v) => {
-    if (v == null) return <span className="text-slate-300">—</span>;
+    if (v == null) return <span className="text-slate-300">:</span>;
     if (numeric) return <span>{Number(v).toFixed(3)}{unit ? <span className="text-slate-400 ml-1 text-[10px]">{unit}</span> : null}</span>;
     return <span>{v}{unit ? <span className="text-slate-400 ml-1 text-[10px]">{unit}</span> : null}</span>;
   };
@@ -271,7 +271,7 @@ export default function ChemicalComparison() {
             </div>
             <p className="text-sm font-semibold text-slate-500">Select two compounds to compare</p>
             <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-              Search your local database or PubChem's 118M+ compounds to load side-by-side properties, 3D structures, and toxicity data.
+              Search your local database or PubChem's 130M+ compounds to load side-by-side properties, 3D structures, and toxicity data.
             </p>
           </div>
         )}
@@ -378,12 +378,12 @@ export default function ChemicalComparison() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
                     <p className="text-[10px] font-mono text-slate-500 break-all leading-relaxed">
-                      {compA.canonical_smiles || compA.smiles || '—'}
+                      {compA.canonical_smiles || compA.smiles || ':'}
                     </p>
                   </div>
                   <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
                     <p className="text-[10px] font-mono text-slate-500 break-all leading-relaxed">
-                      {compB.canonical_smiles || compB.smiles || '—'}
+                      {compB.canonical_smiles || compB.smiles || ':'}
                     </p>
                   </div>
                 </div>

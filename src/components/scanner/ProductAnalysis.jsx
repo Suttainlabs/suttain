@@ -565,7 +565,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
             </div>
           </div>
 
-          {/* Product hero — single row on mobile */}
+          {/* Product hero: single row on mobile */}
           <div className="flex items-start gap-3 mb-4">
             {/* Image */}
             <div className="flex-shrink-0 w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-xl shadow border border-slate-200/80 flex items-center justify-center p-1.5">
@@ -632,7 +632,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                 </motion.div>
               )}
 
-              {/* Personal Risk Card — shown first if profile is active */}
+              {/* Personal Risk Card, shown first if profile is active */}
               {hasActiveProfile && (
                 <PersonalRiskCard
                   product={product}
@@ -640,7 +640,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                   onFindAlternatives={handleFindSimilar}
                 />
               )}
-              {/* First-scan prompt — shown if no profile and not dismissed */}
+              {/* First-scan prompt: shown if no profile and not dismissed */}
               {!hasActiveProfile && !isLoadingProfile && !profilePromptDismissed && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -725,7 +725,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                       <ul className="text-xs text-blue-700 space-y-0.5 list-disc list-inside">
                         <li>Beauty-specific rating methodology for personal care, household & baby products</li>
                         <li>Peer-reviewed scientific sources cited (PubChem, EWG, EU CosIng, FDA)</li>
-                        <li>Full ratings for every ingredient — good and bad</li>
+                        <li>Full ratings for every ingredient, good and bad</li>
                         <li>Personalized alerts based on your safety profile</li>
                       </ul>
                     </div>
@@ -1129,7 +1129,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                         {healthData.healthier_alternatives.map((alt, i) => (
                           <div key={i} className="flex items-start gap-2 text-sm">
                             <Leaf className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
-                            <div><span className="font-semibold text-teal-800">{alt.name}</span><span className="text-teal-600"> — {alt.benefit}</span></div>
+                            <div><span className="font-semibold text-teal-800">{alt.name}</span><span className="text-teal-600">, {alt.benefit}</span></div>
                           </div>
                         ))}
                       </CardContent>

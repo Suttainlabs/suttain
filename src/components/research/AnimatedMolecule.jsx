@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 
 // Animated ball-and-stick molecule rendered with three.js.
-// Lightweight, self-contained, continuously rotating — eye-catching hero accent.
+// Lightweight, self-contained, continuously rotating, eye-catching hero accent.
 
 const ATOM_COLORS = {
   C: 0x4a4a4a, // dark grey

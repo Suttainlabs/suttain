@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
 
     const res = await base44.asServiceRole.integrations.Core.SendEmail({
       to: email,
-      subject: `Welcome to Suttain Pro — Thank You for Subscribing`,
+      subject: `Welcome to Suttain Pro, Thank You for Subscribing`,
       body: emailContent,
       from_name: 'Suttain'
     });
@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
     try {
       await base44.asServiceRole.integrations.Core.SendEmail({
         to: 'contact@suttain.com',
-        subject: `[CC] Welcome to Suttain Pro — Thank You for Subscribing`,
+        subject: `[CC] Welcome to Suttain Pro, Thank You for Subscribing`,
         body: emailContent,
         from_name: 'Suttain'
       });

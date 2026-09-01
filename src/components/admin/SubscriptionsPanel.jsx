@@ -216,7 +216,7 @@ export default function SubscriptionsPanel() {
                     return isPro && days !== null && days <= 10 && days >= 0;
                   }).map(u => (
                     <span key={u.id} className="text-xs bg-orange-100 text-orange-800 border border-orange-200 rounded-full px-2 py-0.5 font-semibold">
-                      {u.full_name || u.email} — {getDaysLeft(u)}d left
+                      {u.full_name || u.email}: {getDaysLeft(u)}d left
                     </span>
                   ))
                 )}
@@ -283,7 +283,7 @@ export default function SubscriptionsPanel() {
           </TooltipProvider>
           {auditResult && !auditResult.error && (
             <span className="text-xs text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded-lg">
-              ✓ Audited {auditResult.total_users_scanned} users — {auditResult.revoked_users} revoked, {auditResult.legitimate_paid_users} verified
+              ✓ Audited {auditResult.total_users_scanned} users, {auditResult.revoked_users} revoked, {auditResult.legitimate_paid_users} verified
             </span>
           )}
           {auditResult?.error && (
@@ -337,7 +337,7 @@ export default function SubscriptionsPanel() {
                           {(u.full_name || u.email || '?')[0].toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-medium text-slate-900">{u.full_name || '—'}</p>
+                          <p className="font-medium text-slate-900">{u.full_name || ':'}</p>
                           <p className="text-xs text-slate-500">{u.email}</p>
                         </div>
                         {isPro && <Crown className="w-3.5 h-3.5 text-teal-600 flex-shrink-0" />}
@@ -356,11 +356,11 @@ export default function SubscriptionsPanel() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-slate-600 capitalize">
-                      {subBilling || '—'}
+                      {subBilling || ':'}
                     </td>
                     <td className="px-4 py-3">
                       {daysLeft === null ? (
-                        <span className="text-slate-400 text-xs">—</span>
+                        <span className="text-slate-400 text-xs">:</span>
                       ) : isExpired ? (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
                           <XCircle className="w-3 h-3" /> Expired
@@ -376,7 +376,7 @@ export default function SubscriptionsPanel() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-slate-500 text-xs">
-                      {u.created_date ? new Date(u.created_date).toLocaleDateString() : '—'}
+                      {u.created_date ? new Date(u.created_date).toLocaleDateString() : ':'}
                     </td>
                     <td className="px-4 py-3">
                       {isPro && daysLeft !== null ? (
@@ -405,7 +405,7 @@ export default function SubscriptionsPanel() {
                           </Tooltip>
                         </TooltipProvider>
                       ) : (
-                        <span className="text-slate-300 text-xs">—</span>
+                        <span className="text-slate-300 text-xs">:</span>
                       )}
                     </td>
                   </tr>

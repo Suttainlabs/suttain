@@ -38,7 +38,7 @@ export async function resolveChemicalIdentity(query) {
   const isSmiles = /[()=#\[\]\\@]/.test(trimmed);
   const pubchemHeaders = { 'User-Agent': 'Suttain/1.0 (chemical-enrichment)', Accept: 'application/json' };
 
-  // PubChem identity — CID is returned automatically; do NOT request it explicitly.
+  // PubChem identity: CID is returned automatically; do NOT request it explicitly.
   let pubchem = null;
   if (isSmiles) {
     pubchem = await timedFetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(trimmed)}/property/MolecularFormula,MolecularWeight,CanonicalSMILES,IUPACName/JSON`, { headers: pubchemHeaders });
@@ -67,7 +67,7 @@ export async function resolveChemicalIdentity(query) {
     }
   }
 
-  // EPA CompTox Dashboard — DTXSID resolution (best-effort; endpoint availability varies)
+  // EPA CompTox Dashboard, DTXSID resolution (best-effort; endpoint availability varies)
   const compToxQuery = isCas ? trimmed : name;
   if (compToxQuery) {
     const epa = await timedFetch(`https://comptox.epa.gov/dashboard-api/ccdapp2/chemical/search/equal/${encodeURIComponent(compToxQuery)}`, { headers: pubchemHeaders, timeout: 5000 });
@@ -190,7 +190,7 @@ export async function epaIRIS(identity) {
   const res = await timedFetch(url, { headers: { 'User-Agent': 'Suttain/1.0 (chemical-enrichment)' } });
   if (!res.ok || !res.text) return null;
   const html = res.text;
-  // The JS-rendered search shell has no inline results — bail out rather than
+  // The JS-rendered search shell has no inline results, bail out rather than
   // match boilerplate help text (which would produce false positives).
   const hasAssessmentLink = /\/ncea\/iris\/documents\/|reviewstanddoc|iris_documents\/toxicological/i.test(html);
   const hasNoResults = /no records|0 results|no matching|did not match/i.test(html);
@@ -366,7 +366,7 @@ export function mergeEnrichmentIntoFloor(floorResult, enrichmentByChemical) {
     if (carcinogenCodes.length > 0 && !hazardClasses.has('carcinogen')) {
       hazardClasses.add('carcinogen');
       if (floor < 76) { floor = 76; safetyLevel = 'CRITICAL'; }
-      triggerReasons.push(`${chemName}: GHS ${carcinogenCodes.join(', ')} (carcinogenicity) from live PubChem data — floor raised to CRITICAL`);
+      triggerReasons.push(`${chemName}: GHS ${carcinogenCodes.join(', ')} (carcinogenicity) from live PubChem data, floor raised to CRITICAL`);
     }
     // Reproductive toxin (H360/H361)
     const reproCodes = auth.ghs_codes.filter(c => /H36[01]/.test(c));
@@ -379,11 +379,11 @@ export function mergeEnrichmentIntoFloor(floorResult, enrichmentByChemical) {
     if (auth.iris_cancer_slope != null && auth.iris_cancer_slope > 0) {
       hazardClasses.add('carcinogen');
       if (floor < 75) { floor = 75; safetyLevel = safetyLevel || 'CRITICAL'; }
-      triggerReasons.push(`${chemName}: EPA IRIS cancer slope factor reported (${auth.iris_cancer_slope} (mg/kg-day)-1) — carcinogenicity confirmed`);
+      triggerReasons.push(`${chemName}: EPA IRIS cancer slope factor reported (${auth.iris_cancer_slope} (mg/kg-day)-1), carcinogenicity confirmed`);
     }
     // EPA SCIL: chemical is NOT on the safer ingredients list
     if (auth.scil_safer === false) {
-      triggerReasons.push(`${chemName}: not listed on the EPA Safer Chemical Ingredients List (SCIL) — preferred-substitute flag`);
+      triggerReasons.push(`${chemName}: not listed on the EPA Safer Chemical Ingredients List (SCIL), preferred-substitute flag`);
     }
     // ECOTOX aquatic toxicity: LC50 < 1 mg/L = very toxic to aquatic life
     if (auth.ecotox_lc50 != null && auth.ecotox_lc50 < 1) {

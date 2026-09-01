@@ -37,7 +37,7 @@ export default function AboutUsPage() {
             Powerful Tools for Everyone
           </h1>
           <p className="text-xl text-slate-600 leading-relaxed">
-            Suttain brings powerful tools and insights to everyone—making it easy for creators, teams, and businesses to create, test, and innovate with confidence.
+            Suttain brings powerful tools and insights to everyone:making it easy for creators, teams, and businesses to create, test, and innovate with confidence.
           </p>
         </motion.div>
       </section>
@@ -57,7 +57,7 @@ export default function AboutUsPage() {
               <h2 className="text-2xl font-bold text-slate-800">Our Mission</h2>
             </div>
             <p className="text-slate-600 leading-relaxed">
-              Empower individuals, startups, and enterprises with AI tools for creating, testing, and optimizing products—removing barriers to innovation while ensuring safety, compliance, and environmental responsibility.
+              Empower individuals, startups, and enterprises with AI tools for creating, testing, and optimizing products:removing barriers to innovation while ensuring safety, compliance, and environmental responsibility.
             </p>
           </motion.div>
 
@@ -73,7 +73,7 @@ export default function AboutUsPage() {
               <h2 className="text-2xl font-bold text-slate-800">Our Vision</h2>
             </div>
             <p className="text-slate-600 leading-relaxed">
-              A world where powerful tools and safety insights are accessible to everyone—from DIY creators to Fortune 500 companies—accelerating innovation while protecting people and the planet.
+              A world where powerful tools and safety insights are accessible to everyone:from DIY creators to Fortune 500 companies:accelerating innovation while protecting people and the planet.
             </p>
           </motion.div>
         </div>
@@ -94,7 +94,7 @@ export default function AboutUsPage() {
               A Complete Ecosystem for Innovation
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              From quick safety checks to advanced research simulations—all in one platform for everyone.
+              From quick safety checks to advanced research simulations:all in one platform for everyone.
             </p>
           </motion.div>
 

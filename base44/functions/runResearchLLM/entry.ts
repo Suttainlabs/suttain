@@ -26,7 +26,7 @@ Key results: ${keyVals}
 Scientific interpretation: ${results.scientific_interpretation || ''}
 
 Write exactly 2-3 plain English sentences (no jargon, no bullet points) explaining what these results mean in practical terms for someone working in product formulation or safety.
-For example, explain whether the molecule is stable, reactive, safe to use, or how it might behave in a real product. Do NOT repeat the numbers verbatim — translate them into meaning.
+For example, explain whether the molecule is stable, reactive, safe to use, or how it might behave in a real product. Do NOT repeat the numbers verbatim, translate them into meaning.
 Return just the plain text sentences, nothing else.`;
         const response = await call({ prompt });
         return Response.json(typeof response === 'string' ? response : response?.text || String(response));

@@ -1,5 +1,5 @@
 /**
- * SolvationPanel — Water model and ion setup for MD simulations
+ * SolvationPanel: Water model and ion setup for MD simulations
  */
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';

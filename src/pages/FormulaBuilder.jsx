@@ -18,7 +18,7 @@ function ScoreRing({ label, score, color }) {
   return (
     <div className="flex flex-col items-center gap-1">
       <div className={cn('w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white', score !== null ? color : 'bg-slate-200 text-slate-400')}>
-        {score !== null ? score : '—'}
+        {score !== null ? score : ':'}
       </div>
       <span className="text-xs text-slate-500 font-medium text-center leading-tight">{label}</span>
     </div>
@@ -157,7 +157,7 @@ export default function FormulaBuilder() {
               id="formula-name-input"
               value={formulaName}
               onChange={e => setFormulaName(e.target.value)}
-              placeholder="Formula name (e.g. Daily Cleanser v2) — required"
+              placeholder="Formula name (e.g. Daily Cleanser v2), required"
               className={cn("w-full px-4 py-3 rounded-xl border-2 bg-white focus:border-[#02988C] outline-none text-slate-800 font-semibold", !formulaName.trim() && ingredients.length > 0 ? "border-amber-400" : "border-slate-200")}
             />
 
@@ -212,7 +212,7 @@ export default function FormulaBuilder() {
                 {uploading ? (
                   <><Loader2 className="w-8 h-8 text-[#02988C] animate-spin mx-auto mb-2" /><p className="text-sm text-slate-500">Extracting ingredients...</p></>
                 ) : (
-                  <><Upload className="w-8 h-8 text-slate-300 mx-auto mb-2" /><p className="text-sm font-semibold text-slate-600">Drop a product label or SDS here</p><p className="text-xs text-slate-400 mt-1">PDF, JPG, PNG — AI extracts the ingredient list automatically</p></>
+                  <><Upload className="w-8 h-8 text-slate-300 mx-auto mb-2" /><p className="text-sm font-semibold text-slate-600">Drop a product label or SDS here</p><p className="text-xs text-slate-400 mt-1">PDF, JPG, PNG, AI extracts the ingredient list automatically</p></>
                 )}
               </div>
             )}
@@ -258,7 +258,7 @@ export default function FormulaBuilder() {
               </div>
               <ul className="space-y-1.5 text-xs text-slate-500">
                 <li>Add ingredients to your formula</li>
-                <li>Click Analyse — results appear in 15 seconds</li>
+                <li>Click Analyse: results appear in 15 seconds</li>
                 <li>Review flagged ingredients and swap for safer alternatives</li>
                 <li>Generate compliance reports with one click</li>
               </ul>

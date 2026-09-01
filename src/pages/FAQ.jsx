@@ -32,7 +32,7 @@ const faqData = [
   },
   {
     question: "Is there an API for my organization?",
-    answer: "Yes. Suttain offers an Enterprise API that provides programmatic access to our chemical database (115M+ records), simulation engine, and compliance tools with native SDKs for Python, JavaScript, and R. Visit the Enterprise API page to join the waitlist."
+    answer: "Yes. Suttain offers an Enterprise API that provides programmatic access to our chemical database (130M+ records), simulation engine, and compliance tools with native SDKs for Python, JavaScript, and R. Visit the Enterprise API page to join the waitlist."
   },
   {
     question: "Do I need to be a chemist to use Suttain?",

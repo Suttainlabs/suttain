@@ -3,7 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
-// Unified price IDs — must match createCheckoutSession
+// Unified price IDs, must match createCheckoutSession
 const PRICE_MAP = {
   starter_monthly: 'price_1Tn2eSI9tsZ7WvXe3JMrHrYf',
   starter_yearly: 'price_1Tn2eSI9tsZ7WvXeVksFLuTl',
@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
     const targetPlanName = PLAN_NAMES[targetPlan];
     const isUpgrade = (tierRank[targetPlanName] || 0) > (tierRank[currentPlan] || 0);
 
-    // Update subscription to new price — Stripe handles pro-rata credit automatically
+    // Update subscription to new price, Stripe handles pro-rata credit automatically
     const updated = await stripe.subscriptions.update(stripeSubscriptionId, {
       items: [{ id: itemId, price: PRICE_MAP[targetPlan] }],
       proration_behavior: isUpgrade ? 'always_invoice' : 'create_prorations',

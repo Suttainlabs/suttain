@@ -158,7 +158,7 @@ export default function ProteinStructureExplorer() {
                   >
                     <span className="font-mono text-[#007850] font-semibold">{r.accession}</span>
                     <span className="text-slate-600 ml-2">{r.gene}</span>
-                    {r.description && <span className="text-slate-400 ml-2">— {r.description}</span>}
+                    {r.description && <span className="text-slate-400 ml-2">: {r.description}</span>}
                   </button>
                 ))
               )}

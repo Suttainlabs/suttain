@@ -1,5 +1,5 @@
 /**
- * ChainResiduePanel — Lists chains and sequence for a loaded structure
+ * ChainResiduePanel: Lists chains and sequence for a loaded structure
  */
 import React, { useState, useMemo } from 'react';
 import { Eye, EyeOff } from 'lucide-react';

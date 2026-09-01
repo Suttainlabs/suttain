@@ -88,7 +88,7 @@ export default function SDSResults({ data, fileName, onReset }) {
 
   return (
     <div className="space-y-5">
-      {/* Header — Glassmorphism */}
+      {/* Header: Glassmorphism */}
       <div
         className="rounded-2xl p-7 text-white relative overflow-hidden"
         style={{ background: "linear-gradient(135deg, #133a37 0%, #0d4a46 45%, #0a5c52 100%)" }}

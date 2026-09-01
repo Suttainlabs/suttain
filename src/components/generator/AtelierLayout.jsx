@@ -1,6 +1,6 @@
 import React from "react";
 
-// Atelier layout — warm, editorial, high-whitespace experience for individual creators.
+// Atelier layout: warm, editorial, high-whitespace experience for individual creators.
 // Soft off-white background, rounded container, gentle teal accents.
 
 export default function AtelierLayout({ children }) {

@@ -197,7 +197,7 @@ function ConsolidatedDashboard({ items }) {
                                 <Leaf className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
                                 <div>
                                     <span className="font-semibold text-teal-800">{a.name}</span>
-                                    <span className="text-teal-600"> — {a.benefit}</span>
+                                    <span className="text-teal-600">: {a.benefit}</span>
                                     <span className="text-teal-400 text-xs ml-1">(swap for {a.from})</span>
                                 </div>
                             </div>

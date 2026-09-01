@@ -60,7 +60,7 @@ function ParamSection({ title, rows, cols, emptyRow, onChange }) {
             </div>
           )}
           {rows.length === 0 && (
-            <p className="text-xs text-slate-400 text-center py-2">No entries yet — click Add to define parameters.</p>
+            <p className="text-xs text-slate-400 text-center py-2">No entries yet, click Add to define parameters.</p>
           )}
           {rows.map((row, i) => (
             <ParamRow key={i} row={row} cols={cols} onChange={r => update(i, r)} onDelete={() => remove(i)} />

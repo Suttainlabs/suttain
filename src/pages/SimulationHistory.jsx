@@ -217,7 +217,7 @@ export default function SimulationHistory() {
                   Simulation History
                 </h1>
                 <p className="text-slate-500 text-sm mt-0.5">
-                  Your saved DWSIM script generations — view, re-run, or download.
+                  Your saved DWSIM script generations, view, re-run, or download.
                 </p>
               </div>
             </div>

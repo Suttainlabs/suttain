@@ -36,10 +36,10 @@ const BusinessChemicalInput = lazy(() => import("../components/simulator/Busines
 const SDSAnalyzerPanel = lazy(() => import("../pages/SDSAnalyzer"));
 
 // Reaction analysis is now handled by the getAccurateChemicalAnalysis backend skill.
-// Keeping this comment as a marker — the inline DB has been removed.
+// Keeping this comment as a marker, the inline DB has been removed.
 const _LEGACY_PLACEHOLDER = {}; // remove this file line if linter complains
 
-// SCIENTIFICALLY VERIFIED REACTIONS DATABASE WITH ACCURATE PRODUCT FORMATION (LEGACY — kept for reference only)
+// SCIENTIFICALLY VERIFIED REACTIONS DATABASE WITH ACCURATE PRODUCT FORMATION (LEGACY, kept for reference only)
 const VERIFIED_CHEMICAL_REACTIONS = {
   'benzene+water': {
     reaction_classification: 'SAFE_IMMISCIBLE',
@@ -689,10 +689,10 @@ export default function Simulator() {
         })),
         optimization_recommendations: {
           yield_optimization: isHighHazard
-            ? 'DO NOT PROCEED — Severe safety risks. Use safer verified alternatives.'
+            ? 'DO NOT PROCEED, Severe safety risks. Use safer verified alternatives.'
             : 'Optimise temperature, concentration, and catalyst presence for improved yield.',
           safety_optimization: isHighHazard
-            ? 'NEVER MIX THESE CHEMICALS — Use safer, verified alternatives.'
+            ? 'NEVER MIX THESE CHEMICALS, Use safer, verified alternatives.'
             : 'Ensure strict adherence to PPE and operate under a fume hood with adequate ventilation.'
         }
       };

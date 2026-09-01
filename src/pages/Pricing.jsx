@@ -103,7 +103,7 @@ export default function Pricing() {
               className="text-sm font-medium px-5 py-2 rounded-full transition-all"
               style={billingCycle === 'yearly' ? { background: pillar.fill, color: pillar.accent } : { color: '#5F5F5B' }}
             >
-              Annual — save 20%
+              Annual: save 20%
             </button>
           </div>
         </div>

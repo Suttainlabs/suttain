@@ -444,7 +444,7 @@ export default function MoleculeAnalysis() {
     runAnalysis(query, queryType);
   };
 
-  // Select a compound from the explorer list — load into structure tab
+  // Select a compound from the explorer list, load into structure tab
   const handleSelectCompound = useCallback((c) => {
     setSelected(c);
     setPrepPdb(null);

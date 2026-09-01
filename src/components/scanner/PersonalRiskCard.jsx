@@ -76,7 +76,7 @@ function matchIngredients(ingredients, profile) {
     });
   };
 
-  // 1. Allergies — direct user-specified
+  // 1. Allergies: direct user-specified
   if (profile.allergies?.length) {
     profile.allergies.forEach(allergy => {
       const norm = normalize(allergy);
@@ -89,7 +89,7 @@ function matchIngredients(ingredients, profile) {
     });
   }
 
-  // 2. Avoid ingredients — free-text user-specified
+  // 2. Avoid ingredients, free-text user-specified
   if (profile.avoid_ingredients?.length) {
     profile.avoid_ingredients.forEach(avoid => {
       const norm = normalize(avoid);
@@ -185,7 +185,7 @@ export default function PersonalRiskCard({ product, healthProfile, onFindAlterna
           ))}
         </div>
 
-        {/* Action buttons — large, mobile-friendly */}
+        {/* Action buttons: large, mobile-friendly */}
         <div className="flex gap-2 p-3 pt-0">
           <Button
             size="sm"

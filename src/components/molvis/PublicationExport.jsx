@@ -1,5 +1,5 @@
 /**
- * PublicationExport — High-res render settings and citation generator
+ * PublicationExport: High-res render settings and citation generator
  */
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';

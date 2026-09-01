@@ -165,7 +165,7 @@ export default function FormulaIngredientScorer() {
       {!result && (
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
           <h3 className="font-bold text-slate-800 mb-1">Enter Your Formula Ingredients</h3>
-          <p className="text-sm text-slate-500 mb-5">Add the ingredients you're using — we'll score each one for environmental impact.</p>
+          <p className="text-sm text-slate-500 mb-5">Add the ingredients you're using, we'll score each one for environmental impact.</p>
 
           <div className="space-y-3 mb-4">
             {ingredients.map((ing, i) => (

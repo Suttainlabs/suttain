@@ -72,7 +72,7 @@ function ProductSlot({ label, product, onLookup, onClear, isLoading }) {
           </div>
           <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold ${bg} ${color} w-fit`}>
             <Trophy className="w-4 h-4" />
-            Overall: {scores.overall}/100 — {rLabel}
+            Overall: {scores.overall}/100: {rLabel}
           </div>
         </CardHeader>
         <CardContent className="space-y-3 pt-0">

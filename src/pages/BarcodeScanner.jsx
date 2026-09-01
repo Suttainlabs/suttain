@@ -23,7 +23,7 @@ export default function BarcodeScanner() {
         );
     }
 
-    // Quick Scan is free for all users — no limit gate
+    // Quick Scan is free for all users, no limit gate
     return (
         <div>
             <BarcodeScannerPage initialQuery={initialQuery} />

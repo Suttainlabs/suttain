@@ -67,13 +67,13 @@ export default function ProductDescriptionStep({
         setSuggestions(suggestions);
       } else {
         setSuggestions([]);
-        setSuggestionsError("No suggestions found — try rephrasing or click Generate.");
+        setSuggestionsError("No suggestions found: try rephrasing or click Generate.");
       }
     } catch (error) {
       console.error("Failed to fetch suggestions:", error);
       setSuggestions([]);
       const reason = error?.message || error?.error || "Connection issue";
-      setSuggestionsError("Suggestions unavailable — check your connection.");
+      setSuggestionsError("Suggestions unavailable: check your connection.");
       toast({
         title: "Couldn't load suggestions",
         description: `The suggestion lookup failed (${reason}). You can still type your own description and generate.`,

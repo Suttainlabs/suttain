@@ -46,7 +46,7 @@ export default function RelatedResearch({ molecule, simType }) {
             {papers.map((paper, i) => (
               <div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <p className="font-semibold text-slate-800 text-xs leading-snug mb-1">{paper.title}</p>
-                <p className="text-[11px] text-slate-500 mb-1">{paper.authors} — {paper.journal}</p>
+                <p className="text-[11px] text-slate-500 mb-1">{paper.authors}, {paper.journal}</p>
                 <p className="text-xs text-slate-600 leading-relaxed">{paper.abstract_snippet}</p>
                 {paper.pubmed_id && paper.pubmed_id !== "N/A" && (
                   <a

@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
     // ── Generic response on any failure (field details logged only) ──
     if (failedFields.length > 0) {
       console.log(
-        `[validateAuthInput] Validation failed — action=${action || 'unknown'}, ` +
+        `[validateAuthInput] Validation failed: action=${action || 'unknown'}, ` +
         `fields=[${failedFields.join(', ')}]`
       );
       return Response.json(

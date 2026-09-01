@@ -76,7 +76,7 @@ export default function QueueSchedulingTable({ queues, jobs }) {
                     {q.estMinutes >= 60 ? `${(q.estMinutes / 60).toFixed(1)} hr` : `${q.estMinutes} min`}
                   </td>
                   <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">
-                    {q.created_date ? format(new Date(q.created_date), "MMM d, yyyy") : "—"}
+                    {q.created_date ? format(new Date(q.created_date), "MMM d, yyyy") : ":"}
                   </td>
                 </tr>
               );

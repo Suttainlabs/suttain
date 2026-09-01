@@ -51,7 +51,7 @@ export const LanguageProvider = ({ children }) => {
     try {
       await base44.auth.updateMe({ language: lang });
     } catch (err) {
-      // Silently fail — user may not be logged in
+      // Silently fail: user may not be logged in
       console.debug('Could not persist language to user entity:', err.message);
     }
   }, []);

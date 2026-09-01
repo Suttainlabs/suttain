@@ -1,5 +1,5 @@
 /**
- * TrajectoryPlayer — MD trajectory playback with RMSD/RMSF plots
+ * TrajectoryPlayer: MD trajectory playback with RMSD/RMSF plots
  */
 import React, { useState, useRef, useEffect } from 'react';
 import { Play, Pause, Square, SkipBack, SkipForward, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -120,7 +120,7 @@ export default function TrajectoryPlayer({ totalFrames = 100, residueCount = 50,
       {/* RMSD + RMSF plots */}
       <div className="grid grid-cols-2 gap-0 border-t border-slate-700">
         <div className="p-3 border-r border-slate-700">
-          <p className="text-xs text-slate-400 mb-2 font-semibold">RMSD (A) — click to jump</p>
+          <p className="text-xs text-slate-400 mb-2 font-semibold">RMSD (A), click to jump</p>
           <ResponsiveContainer width="100%" height={100}>
             <LineChart data={rmsdData.current} onClick={handleRMSDClick} style={{ cursor: 'pointer' }}>
               <CartesianGrid strokeDasharray="2 2" stroke="#334155" />

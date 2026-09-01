@@ -3,7 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    // Strict server-side auth — role is read from the platform token, never
+    // Strict server-side auth, role is read from the platform token, never
     // from client-supplied input. Let auth errors bubble as 401.
     const user = await base44.auth.me();
     if (!user) {
@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: "Cannot modify another admin's subscription" }, { status: 403 });
     }
 
-    // Strict enum validation — reject any value outside the allowed sets.
+    // Strict enum validation, reject any value outside the allowed sets.
     const ALLOWED_PLANS = ['free', 'starter', 'pro', 'academic', 'lifetime', 'enterprise'];
     const ALLOWED_STATUSES = ['none', 'active', 'canceling', 'canceled', 'past_due', 'trialing', 'paused'];
     const ALLOWED_BILLING = ['monthly', 'yearly', 'lifetime', null];

@@ -27,7 +27,7 @@ export default function ComplianceGuide() {
                 <ul>
                   <li>All real-world product decisions are your responsibility.</li>
                   <li>Users must follow applicable U.S. regulations for ingredients, manufacturing, labeling, and safety.</li>
-                  <li>Simulations are informational — not a replacement for lab testing or legal review.</li>
+                  <li>Simulations are informational: not a replacement for lab testing or legal review.</li>
                 </ul>
               </div>
             </section>
@@ -60,7 +60,7 @@ export default function ComplianceGuide() {
                 <ul>
                   <li>All user data is encrypted and stored securely.</li>
                   <li>We comply with privacy principles under CCPA and general U.S. best practices.</li>
-                  <li>We do not sell, share, or exploit your data — ever!</li>
+                  <li>We do not sell, share, or exploit your data, ever!</li>
                 </ul>
               </div>
             </section>

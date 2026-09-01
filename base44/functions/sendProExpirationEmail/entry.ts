@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
       const user = await base44.auth.me();
       callerIsAdmin = user?.role === 'admin';
     } catch (_) {
-      // Called from automation (no user session) — allow via service role
+      // Called from automation (no user session), allow via service role
     }
 
     const body = await req.json().catch(() => ({}));
@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
             n.metadata?.renewal_reminder === true && n.metadata?.reminder_date === todayKey
           );
           if (alreadySentToday) {
-            console.log(`Skipping ${u.email} — reminder already sent today`);
+            console.log(`Skipping ${u.email}: reminder already sent today`);
             continue;
           }
         } catch (dedupErr) {
@@ -111,11 +111,11 @@ Deno.serve(async (req) => {
                 <p style="color:#166534;font-weight:700;margin:0 0 12px;font-size:14px;">What you'll keep with Pro:</p>
                 ${[
                   ['🔬', 'Unlimited Chemical Simulations'],
-                  ['⚗️', 'AI Formula Generator — unlimited formulas'],
+                  ['⚗️', 'AI Formula Generator, unlimited formulas'],
                   ['📱', 'Barcode Scanner with deep ingredient analysis'],
                   ['🛡️', 'Regulatory Compliance Audit & PDF reports'],
                   ['📊', 'Comparative Impact Reports & sustainability scores'],
-                  ['💾', 'Workspace — save & organize all your work'],
+                  ['💾', 'Workspace: save & organize all your work'],
                 ].map(([icon, text]) => `
                 <p style="color:#15803d;margin:0 0 8px;font-size:13px;">${icon} &nbsp;${text}</p>
                 `).join('')}
@@ -127,7 +127,7 @@ Deno.serve(async (req) => {
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
               ${[
                 ['Monthly', '$4.99/month', 'Full flexibility, cancel anytime'],
-                ['Yearly', '$49.99/year', 'Save 16% — best for regular users (~$4.17/mo)'],
+                ['Yearly', '$49.99/year', 'Save 16%, best for regular users (~$4.17/mo)'],
                 ['Lifetime', '$99.99 once', 'Pay once, use Suttain forever'],
               ].map(([label, price, desc]) => `
               <tr>

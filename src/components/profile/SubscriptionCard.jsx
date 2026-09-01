@@ -75,7 +75,7 @@ export default function SubscriptionCard() {
   const canSwitch = isPro && !isAdmin && !isLifetimePlan && user?.stripe_subscription_id && !isCanceling;
   const isMonthly = billing === 'monthly';
   const switchTarget = isMonthly ? 'pro_yearly' : 'pro_monthly';
-  const switchLabel = isMonthly ? 'Switch to Annual ($49.99/yr — save 17%)' : 'Switch to Monthly ($4.99/mo)';
+  const switchLabel = isMonthly ? 'Switch to Annual ($49.99/yr, save 17%)' : 'Switch to Monthly ($4.99/mo)';
 
   const planDisplay = isAdmin
     ? PLAN_DISPLAY.admin
@@ -166,7 +166,7 @@ export default function SubscriptionCard() {
               <div className="flex items-start gap-3">
                 <PlanIcon className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-teal-900 mb-1">Full Access Granted — {planLabel}</p>
+                  <p className="font-semibold text-teal-900 mb-1">Full Access Granted, {planLabel}</p>
                   <p className="text-xs text-teal-800">
                     You have unlimited access to all features including compliance tools, safety alerts, and sustainability scoring.
                   </p>

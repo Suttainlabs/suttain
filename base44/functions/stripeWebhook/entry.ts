@@ -86,7 +86,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
   const featuresList = planInfo.features.map(f => `<li>${f}</li>`).join('');
   const isLifetime = planInfo.billing === 'lifetime';
   const renewalText = isLifetime
-    ? 'Your lifetime access never expires — no renewal needed.'
+    ? 'Your lifetime access never expires, no renewal needed.'
     : `Your ${planInfo.billing} subscription is active and will renew automatically. You can manage your billing anytime from your dashboard.`;
 
   const body = `
@@ -105,7 +105,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
               <tr>
                 <td style="padding:38px 36px 34px;">
                   <p style="font-size:17px;line-height:1.7;margin:0 0 20px;color:#0f172a;font-weight:600;">Hello ${firstName},</p>
-                  <p style="font-size:16px;line-height:1.75;margin:0 0 22px;color:#475569;">Thank you for subscribing to ${planInfo.name} — we are excited to welcome you to our community.</p>
+                  <p style="font-size:16px;line-height:1.75;margin:0 0 22px;color:#475569;">Thank you for subscribing to ${planInfo.name}, we are excited to welcome you to our community.</p>
                   <p style="font-size:16px;line-height:1.75;margin:0 0 18px;color:#475569;">${renewalText}</p>
                   <p style="font-size:16px;line-height:1.75;margin:0 0 18px;color:#475569;">You now have access to the following features:</p>
                   <div style="background:#f0fdfa;border:1px solid #b2f5ea;border-radius:14px;padding:22px 24px;margin:0 0 30px;">
@@ -135,7 +135,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
     </div>
   `;
 
-  await sendEmailViaResend(email, `Welcome to ${planInfo.name} — Your Subscription is Active`, body);
+  await sendEmailViaResend(email, `Welcome to ${planInfo.name}, Your Subscription is Active`, body);
 }
 
 Deno.serve(async (req) => {
@@ -164,7 +164,7 @@ Deno.serve(async (req) => {
 
     const stripe = getStripe();
 
-    // Enforce Stripe signature validation on every request — no bypass path.
+    // Enforce Stripe signature validation on every request, no bypass path.
     let event;
     try {
       event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
@@ -185,7 +185,7 @@ Deno.serve(async (req) => {
 
         console.log('Checkout completed:', { userId, priceKey, customerEmail });
 
-        // Product line purchased (core / research) — unlocks dashboard pages
+        // Product line purchased (core / research), unlocks dashboard pages
         const productLine = session.metadata?.product_line
           || ['core', 'research'].find((p) => priceKey?.startsWith(p))
           || null;
@@ -266,7 +266,7 @@ Deno.serve(async (req) => {
           await sendEmailViaResend(
             Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
             `New Suttain Purchase: ${customerName || customerEmail}`,
-            `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${customerName || '—'}</li><li><b>Email:</b> ${customerEmail}</li><li><b>Plan:</b> ${priceKey}</li><li><b>Billing:</b> ${billing}</li><li><b>Session ID:</b> ${session.id}</li></ul>`
+            `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${customerName || ':'}</li><li><b>Email:</b> ${customerEmail}</li><li><b>Plan:</b> ${priceKey}</li><li><b>Billing:</b> ${billing}</li><li><b>Session ID:</b> ${session.id}</li></ul>`
           );
 
           // Create in-app admin notification
@@ -356,7 +356,7 @@ Deno.serve(async (req) => {
         const invoiceSubId = invoice.subscription;
 
         if (!invoiceSubId) {
-          // One-time payment — already handled by checkout.session.completed
+          // One-time payment: already handled by checkout.session.completed
           break;
         }
 

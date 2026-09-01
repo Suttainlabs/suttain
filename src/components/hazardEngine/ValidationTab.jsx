@@ -69,7 +69,7 @@ export default function ValidationTab({ mode, setMode }) {
     const doc = new jsPDF();
     let y = 20;
     doc.setFontSize(16); doc.setTextColor(2, 152, 140);
-    doc.text("Suttain HazardEngine — Validation Report", 20, y); y += 10;
+    doc.text("Suttain HazardEngine: Validation Report", 20, y); y += 10;
     doc.setFontSize(10); doc.setTextColor(80, 80, 80);
     doc.text(`Generated: ${new Date().toLocaleString()}`, 20, y); y += 7;
     doc.text(`Model: ${data.model}`, 20, y); y += 7;

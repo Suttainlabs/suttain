@@ -9,7 +9,7 @@ function Stat({ label, value }) {
   return (
     <div className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
       <p className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">{label}</p>
-      <p className="text-sm font-bold text-slate-800 mt-0.5">{value || '—'}</p>
+      <p className="text-sm font-bold text-slate-800 mt-0.5">{value || ':'}</p>
     </div>
   );
 }
@@ -218,7 +218,7 @@ export default function ApproveSimulation() {
               )}
             </div>
 
-            {/* Decision actions — only when pending and not yet submitted */}
+            {/* Decision actions: only when pending and not yet submitted */}
             {!isResolved && !result && (
               <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
                 <div className="flex items-center gap-2">

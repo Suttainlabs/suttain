@@ -1,6 +1,6 @@
 import React from "react";
 
-// Lab layout — high-density, professional lab-grade experience for business users.
+// Lab layout: high-density, professional lab-grade experience for business users.
 // Dark "terminal" chrome frame on top with a light content canvas below, so the
 // existing light-themed step components render correctly while preserving the lab aesthetic.
 
@@ -23,7 +23,7 @@ export default function LabLayout({ children }) {
         </div>
       </div>
 
-      {/* Light content canvas — keeps step components legible */}
+      {/* Light content canvas, keeps step components legible */}
       <div className="py-4 sm:py-8 px-4 sm:px-6 lg:px-8 bg-[#F7F6F2] min-h-[calc(100vh-2.5rem)]">
         <div className="max-w-7xl mx-auto">{children}</div>
       </div>

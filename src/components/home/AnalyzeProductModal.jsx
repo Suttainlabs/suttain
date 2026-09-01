@@ -50,7 +50,7 @@ export default function AnalyzeProductModal({ open, onOpenChange }) {
             Choose a tool to get started
           </DialogTitle>
           <DialogDescription className="text-slate-500">
-            All tools are free to start — no credit card required.
+            All tools are free to start, no credit card required.
           </DialogDescription>
         </DialogHeader>
 

@@ -19,7 +19,7 @@ function getSourceColor(source) {
 }
 
 function formatValue(val, unit) {
-  if (val === null || val === undefined) return '—';
+  if (val === null || val === undefined) return ':';
   if (typeof val === 'number') return `${val.toFixed(4)}${unit ? ` ${unit}` : ''}`;
   return `${val}${unit ? ` ${unit}` : ''}`;
 }

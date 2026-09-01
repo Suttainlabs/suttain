@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
 
     // ── Sync stale subscription data from Stripe ──
     // Only sync users whose subscription_end_date is missing, in the past,
-    // or within 3 days of expiring — avoids excessive Stripe API calls.
+    // or within 3 days of expiring, avoids excessive Stripe API calls.
     const stripe = new StripeLib(Deno.env.get('STRIPE_SECRET_KEY'));
     const now = Date.now();
     const STALE_THRESHOLD_MS = 3 * 24 * 60 * 60 * 1000; // 3 days

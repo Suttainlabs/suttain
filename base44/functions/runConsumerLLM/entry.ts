@@ -115,7 +115,7 @@ Provide:
 
 ${scoreLines}
 
-Weak areas below industry average: ${weakAreas.join(', ') || 'None — performing above average!'}
+Weak areas below industry average: ${weakAreas.join(', ') || 'None, performing above average!'}
 
 Low-performing ingredients identified: ${lowPerforming.join(', ') || 'None flagged'}
 
@@ -432,15 +432,15 @@ Generate 4 pieces of marketing content, each emphasizing ingredient safety, tran
             updatesContext = published.map(u => `- ${u.title}: ${u.description}${u.url ? ` (Link: ${u.url})` : ''}`).join('\n');
           }
         } catch {}
-        const SYSTEM_PROMPT = `You are Clara — the expert virtual assistant and core intelligence layer of Suttain (suttain.com), an AI-native platform for chemical safety, sustainable formulation, molecular intelligence, and climate compliance.
+        const SYSTEM_PROMPT = `You are Clara, the expert virtual assistant and core intelligence layer of Suttain (suttain.com), an AI-native platform for chemical safety, sustainable formulation, molecular intelligence, and climate compliance.
 
 RESPONSE FORMATTING RULES:
-- Use PLAIN TEXT ONLY — NO markdown, NO asterisks (**), NO special formatting symbols
+- Use PLAIN TEXT ONLY, NO markdown, NO asterisks (**), NO special formatting symbols
 - Keep responses SHORT and CONCISE (3-5 sentences unless a list is genuinely needed)
 - Use simple bullet points with dashes (-) if listing items
 - Speak like a trusted expert, never like software. Translate every technical output into plain language.
-- A score is not just a number — it is a verdict with a reason and a recommendation.
-- A compliance flag is not just a warning — it is a specific action with a deadline and a fix.
+- A score is not just a number, it is a verdict with a reason and a recommendation.
+- A compliance flag is not just a warning, it is a specific action with a deadline and a fix.
 - If you don't know something specific, say "For more details, please email contact@suttain.com"
 - NEVER use emojis in any response
 
@@ -452,7 +452,7 @@ EXECUTIVE ASSISTANT BEHAVIOR:
 - Analyze the user's intent before responding. If a request is vague, ask one clarifying question. If a request is complex, break it down into steps.
 - Provide concise, high-value responses that solve the user's problem rather than just listing information.
 - Think step by step internally, then deliver only the final, polished answer.
-- Remember context within the session. Every ingredient mentioned, every formula discussed, every market selected — carry it forward.
+- Remember context within the session. Every ingredient mentioned, every formula discussed, every market selected, carry it forward.
 - Personalize outputs by referencing their target markets, allergen or health flags, product type, production volume, and sustainability goals.
 
 OPERATING LOGIC:
@@ -463,7 +463,7 @@ OPERATING LOGIC:
 
 SUTTAIN TOOLS: Chemical Simulator, Formula Generator, SuttainScan/Barcode Scanner, Ingredient Database (130M+ chemicals), Formula Simulation Engine, Computational Simulations (DFT, MD, ORCA, GROMACS), AI Compliance Co-Pilot (50+ regulations), Carbon Tax Simulator, Carbon Opportunity Simulator, Comparative Impact Report, Personalized Safety Alerts, Sustainability Scoring, Sustainable Chemistry Marketplace, DWSIM Integration, Molecule Analysis, Structural Biology, SDS Analyzer, Enterprise API.
 
-PRICING: FREE (3 sims/mo, 5 formulas/mo, unlimited scans), STARTER ($4.99/mo), PRO ($49.99/mo — unlimited everything), ACADEMIC ($199/mo), LIFETIME ($999 one-time), PRO LIFETIME ($99.99 one-time), ENTERPRISE (custom).
+PRICING: FREE (3 sims/mo, 5 formulas/mo, unlimited scans), STARTER ($4.99/mo), PRO ($49.99/mo, unlimited everything), ACADEMIC ($199/mo), LIFETIME ($999 one-time), PRO LIFETIME ($99.99 one-time), ENTERPRISE (custom).
 
 SCOPE RULES:
 - Answer ALL questions about Suttain
@@ -562,13 +562,13 @@ ${ingredientLines}
 
 Produce a PROFESSIONAL SOP with these sections:
 
-1. APPARATUS & MATERIALS — List all glassware, equipment, and tools required (e.g. jacketed reactor, overhead stirrer, pH meter, analytical balance).
-2. REAGENTS — For each ingredient provide: INCI name, CAS number (if known), function, and exact quantity scaled to a 100 g batch.
-3. PROCEDURE — Group into numbered phases (e.g. Phase A — Water Phase, Phase B — Oil Phase, Phase C — Actives, Phase D — Adjustments). For each phase list discrete, imperative steps using professional procedural language: "Transfer X g of ...", "Heat to XX C", "Mix at XXX rpm for X min", "Adjust pH to X.X", "Cool to XX C before adding ...". Include specific temperatures, mixing speeds, addition order, and timing for every step.
-4. PRODUCT SPECIFICATIONS — Target pH range, viscosity (cPs), specific gravity, appearance, odour profile, stability/shelf life.
-5. QUALITY CONTROL — In-process checks, final product testing, microbiological limits.
-6. SAFETY PRECAUTIONS — GHS hazard statements, required PPE, MSDS considerations, regulatory notes (EU allergens, FDA restrictions).
-7. WASTE DISPOSAL — Proper disposal methods for waste and residue.
+1. APPARATUS & MATERIALS, List all glassware, equipment, and tools required (e.g. jacketed reactor, overhead stirrer, pH meter, analytical balance).
+2. REAGENTS: For each ingredient provide: INCI name, CAS number (if known), function, and exact quantity scaled to a 100 g batch.
+3. PROCEDURE: Group into numbered phases (e.g. Phase A : Water Phase, Phase B : Oil Phase, Phase C : Actives, Phase D : Adjustments). For each phase list discrete, imperative steps using professional procedural language: "Transfer X g of ...", "Heat to XX C", "Mix at XXX rpm for X min", "Adjust pH to X.X", "Cool to XX C before adding ...". Include specific temperatures, mixing speeds, addition order, and timing for every step.
+4. PRODUCT SPECIFICATIONS: Target pH range, viscosity (cPs), specific gravity, appearance, odour profile, stability/shelf life.
+5. QUALITY CONTROL: In-process checks, final product testing, microbiological limits.
+6. SAFETY PRECAUTIONS: GHS hazard statements, required PPE, MSDS considerations, regulatory notes (EU allergens, FDA restrictions).
+7. WASTE DISPOSAL: Proper disposal methods for waste and residue.
 
 Use proper INCI nomenclature and chemical names throughout. Return as JSON.`;
         } else {
@@ -579,12 +579,12 @@ ${ingredientLines}
 
 Produce a BEGINNER-FRIENDLY SOP with these sections:
 
-1. APPARATUS & MATERIALS — List common kitchen equipment needed (measuring cups, bowls, whisk, funnel, spray bottle, etc.).
-2. REAGENTS — For each ingredient provide: common name, function, and quantity scaled to a 100 g batch.
-3. PROCEDURE — Group into numbered phases (e.g. Phase 1 — Preparation, Phase 2 — Mixing, Phase 3 — Finishing). For each phase list discrete, imperative steps using clear plain language: "Measure XX g of ...", "Combine ... and stir until ...", "Transfer to ...". Include timing estimates and helpful tips for each step.
-4. PRODUCT SPECIFICATIONS — What the final product should look and feel like, approximate pH, shelf life, time to make, texture/consistency.
-5. SAFETY PRECAUTIONS — Simple safety precautions in plain English, storage recommendations, when to discard.
-6. WASTE DISPOSAL — Eco-friendly disposal tips for residue and waste.
+1. APPARATUS & MATERIALS, List common kitchen equipment needed (measuring cups, bowls, whisk, funnel, spray bottle, etc.).
+2. REAGENTS: For each ingredient provide: common name, function, and quantity scaled to a 100 g batch.
+3. PROCEDURE: Group into numbered phases (e.g. Phase 1 : Preparation, Phase 2 : Mixing, Phase 3 : Finishing). For each phase list discrete, imperative steps using clear plain language: "Measure XX g of ...", "Combine ... and stir until ...", "Transfer to ...". Include timing estimates and helpful tips for each step.
+4. PRODUCT SPECIFICATIONS: What the final product should look and feel like, approximate pH, shelf life, time to make, texture/consistency.
+5. SAFETY PRECAUTIONS: Simple safety precautions in plain English, storage recommendations, when to discard.
+6. WASTE DISPOSAL: Eco-friendly disposal tips for residue and waste.
 
 Use clear, accessible language with specific measurements. Return as JSON.`;
         }
@@ -1082,7 +1082,7 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
         const ingA = Array.isArray(formulaA.ingredients) ? formulaA.ingredients.map(i => `${i.chemical_name} ${i.percentage}%`).join(', ') : '';
         const ingB = Array.isArray(formulaB.ingredients) ? formulaB.ingredients.map(i => `${i.chemical_name} ${i.percentage}%`).join(', ') : '';
         const result = await call({
-          prompt: `Compare these two cosmetic formulas for eco-friendliness. Return JSON with sustainability scores (0-100) for each.\nFormula A: ${formulaA.name} — ingredients: ${ingA}\nFormula B: ${formulaB.name} — ingredients: ${ingB}`,
+          prompt: `Compare these two cosmetic formulas for eco-friendliness. Return JSON with sustainability scores (0-100) for each.\nFormula A: ${formulaA.name}, ingredients: ${ingA}\nFormula B: ${formulaB.name} : ingredients: ${ingB}`,
           response_json_schema: {
             type: 'object',
             properties: {
@@ -1233,7 +1233,7 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
         const simulationConfig = data.simulationConfig || {};
         const moleculeInfo = (data.moleculeInfo || '').toString();
         const result = await call({
-          prompt: `Run a ${selectedEngine} molecular dynamics simulation.\n\nMolecule: ${moleculeInfo}\nConfiguration: ${JSON.stringify(simulationConfig).slice(0, 2000)}\n\nProvide a focused, technical analysis. Return JSON with:\n1. system_overview: Brief 2-3 sentence description\n2. computational_approach: Method justification (3-4 sentences)\n3. predicted_results: { summary: string, key_values: [{property, value, unit, interpretation}] } — include 4-6 realistic numerical results\n4. scientific_interpretation: What results mean (3-4 sentences)\n5. bash_script: Complete, ready-to-run ${selectedEngine} input file or bash script with comments\n6. visualization_commands: Visualization commands/scripts\n7. limitations: 2-3 sentence limitation note\n8. next_steps: array of 3 concise next steps\n9. references: array of 2-3 real paper citations`,
+          prompt: `Run a ${selectedEngine} molecular dynamics simulation.\n\nMolecule: ${moleculeInfo}\nConfiguration: ${JSON.stringify(simulationConfig).slice(0, 2000)}\n\nProvide a focused, technical analysis. Return JSON with:\n1. system_overview: Brief 2-3 sentence description\n2. computational_approach: Method justification (3-4 sentences)\n3. predicted_results: { summary: string, key_values: [{property, value, unit, interpretation}] }, include 4-6 realistic numerical results\n4. scientific_interpretation: What results mean (3-4 sentences)\n5. bash_script: Complete, ready-to-run ${selectedEngine} input file or bash script with comments\n6. visualization_commands: Visualization commands/scripts\n7. limitations: 2-3 sentence limitation note\n8. next_steps: array of 3 concise next steps\n9. references: array of 2-3 real paper citations`,
           response_json_schema: {
             type: 'object',
             properties: {

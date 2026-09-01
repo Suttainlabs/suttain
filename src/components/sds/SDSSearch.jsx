@@ -107,7 +107,7 @@ export default function SDSSearch({ onResult, initialQuery }) {
       {/* Source Note */}
       <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700">
         <Info className="w-4 h-4 shrink-0 mt-0.5" />
-        <span>Powered by <strong>PubChem</strong> — over 115 million chemical substances. Search any chemical and get AI-powered SDS analysis, hazard classification, and simulation.</span>
+        <span>Powered by <strong>PubChem</strong>: over 115 million chemical substances. Search any chemical and get AI-powered SDS analysis, hazard classification, and simulation.</span>
       </div>
 
       {/* Error */}

@@ -99,7 +99,7 @@ export default function WhyThisScore({ ingredientName, doseAnalysis, onLoad, loa
                 <p className="text-xs text-blue-800 leading-relaxed">{analysis.reasoning}</p>
               </div>
 
-              {/* Source citation — per ingredient, not generic */}
+              {/* Source citation: per ingredient, not generic */}
               {analysis.source_citation && (
                 <div className="flex items-start gap-1.5 text-[11px] text-slate-500">
                   <ExternalLink className="w-3 h-3 flex-shrink-0 mt-0.5" />

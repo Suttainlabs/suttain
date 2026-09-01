@@ -1,4 +1,4 @@
-// hazardClassifier — Suttain HazardEngine v1 (real trained model)
+// hazardClassifier: Suttain HazardEngine v1 (real trained model)
 // Random-forest hazard classifier trained on the public Tox21 benchmark
 // (MoleculeNet, 7,823 compounds; binary hazard = active in >=1 of 12 assays).
 // 15 physicochemical descriptors sourced from PubChem for the query compound.

@@ -131,7 +131,7 @@ export default function CarbonTaxSimulator() {
 
   const exportReport = () => {
     const lines = [
-      'SUTTAIN — CARBON TAX & OPPORTUNITY REPORT',
+      'SUTTAIN: CARBON TAX & OPPORTUNITY REPORT',
       `Generated: ${new Date().toLocaleDateString()}`,
       '',
       '--- INGREDIENT FOOTPRINT ---',
@@ -151,7 +151,7 @@ export default function CarbonTaxSimulator() {
     if (alternatives) {
       lines.push('--- GREEN ALTERNATIVES ---');
       alternatives.alternatives?.forEach((a, i) => {
-        lines.push(`${i + 1}. Replace ${a.replace_ingredient} with ${a.alternative_ingredient} — ${a.carbon_reduction_pct}% less CO2e, $${a.cost_saving_1yr}/yr savings`);
+        lines.push(`${i + 1}. Replace ${a.replace_ingredient} with ${a.alternative_ingredient}, ${a.carbon_reduction_pct}% less CO2e, $${a.cost_saving_1yr}/yr savings`);
       });
       lines.push('');
       if (alternatives.summary) lines.push(alternatives.summary);
@@ -184,7 +184,7 @@ export default function CarbonTaxSimulator() {
 
         <div className="grid lg:grid-cols-3 gap-6">
 
-          {/* LEFT — Ingredient Builder */}
+          {/* LEFT: Ingredient Builder */}
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-white rounded-xl border border-slate-200 p-5">
               <h2 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
@@ -318,7 +318,7 @@ export default function CarbonTaxSimulator() {
             </div>
           </div>
 
-          {/* RIGHT — Results Panel */}
+          {/* RIGHT: Results Panel */}
           <div className="lg:col-span-2 space-y-4">
 
             {/* Live Summary */}
@@ -385,7 +385,7 @@ export default function CarbonTaxSimulator() {
                     {ingredients.length > 0 && (
                       <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
                         <p className="text-xs text-blue-700 leading-relaxed">
-                          At {unitsPerMonth.toLocaleString()} units/month, your estimated annual carbon exposure is <strong>{(annualCO2e / 1000).toFixed(1)} tonnes CO2e</strong> — equivalent to a carbon tax liability of <strong>${taxExposure.toLocaleString()}/yr</strong> at ${carbonPrice}/tonne. Run the Tax Impact simulation to see market-by-market breakdown.
+                          At {unitsPerMonth.toLocaleString()} units/month, your estimated annual carbon exposure is <strong>{(annualCO2e / 1000).toFixed(1)} tonnes CO2e</strong>, equivalent to a carbon tax liability of <strong>${taxExposure.toLocaleString()}/yr</strong> at ${carbonPrice}/tonne. Run the Tax Impact simulation to see market-by-market breakdown.
                         </p>
                       </div>
                     )}

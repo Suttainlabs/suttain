@@ -21,7 +21,7 @@ import SupplierOptionsModal from './SupplierOptionsModal';
 
 const fmt = (n) => (isFinite(n) ? `$${n.toFixed(2)}` : '$0.00');
 
-// Affiliate/partner suppliers — these get tagged with a partner badge
+// Affiliate/partner suppliers: these get tagged with a partner badge
 const PARTNER_SUPPLIERS = ['MakingCosmetics', "Bramble Berry", "Nature's Garden", 'Croda Indie Beauty'];
 
 function isPartnerSupplier(name) {

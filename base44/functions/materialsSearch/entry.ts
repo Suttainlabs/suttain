@@ -199,7 +199,7 @@ Deno.serve(async (req) => {
       has_mp_key: !!mpApiKey,
       sources_queried: sourcesQueried,
       method_note: sourcesQueried.some(s => s.includes('Web search'))
-        ? 'Web search fallback — add a Materials Project API key for live database queries'
+        ? 'Web search fallback, add a Materials Project API key for live database queries'
         : `Live API queries to ${sourcesQueried.join(', ')}`,
       query: { formula, elements, property_filter }
     });

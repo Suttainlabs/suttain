@@ -18,7 +18,7 @@ const modules = [
     icon: Atom,
     color: '#09D2FF',
     badge: 'Live',
-    description: 'Query any compound for hazard classification, toxicity profiling, environmental fate, and regulatory status — then visualize its 3D structure and inspect full physical, toxicity, and environmental properties in one unified workspace.',
+    description: 'Query any compound for hazard classification, toxicity profiling, environmental fate, and regulatory status, then visualize its 3D structure and inspect full physical, toxicity, and environmental properties in one unified workspace.',
     metrics: ['PubChem', 'ChEMBL', 'EPA CompTox', '3Dmol.js'],
     status: 'operational',
   },
@@ -111,7 +111,7 @@ const structuralBiologyTools = [
 ];
 
 const dataSources = [
-  { name: 'PubChem', org: 'NCBI / NIH', records: '118M+', type: 'Compound identity, bioassay, properties' },
+  { name: 'PubChem', org: 'NCBI / NIH', records: '130M+', type: 'Compound identity, bioassay, properties' },
   { name: 'ChEMBL', org: 'EMBL-EBI', records: '2.4M+', type: 'Bioactivity, drug-likeness, target data' },
   { name: 'EPA CompTox', org: 'US EPA', records: '900k+', type: 'Toxicity, environmental fate, regulatory' },
   { name: 'AlphaFold DB', org: 'EMBL-EBI / DeepMind', records: '200k+', type: 'Protein structures, pLDDT, PAE, AlphaMissense' },
@@ -188,7 +188,7 @@ export default function ResearchPortal() {
             className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl mx-auto mb-8"
           >
             Query any compound. Run simulations. Generate and validate formulas. Export publication-ready citations.
-            Powered by PubChem, ChEMBL, and EPA CompTox — every output includes source citation and confidence score.
+            Powered by PubChem, ChEMBL, and EPA CompTox, every output includes source citation and confidence score.
           </motion.p>
 
           <motion.div {...fade(0.25)} className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -274,7 +274,7 @@ export default function ResearchPortal() {
         <div className="mb-14">
           <div className="flex items-center gap-2 mb-5">
             <Dna className="w-3.5 h-3.5 text-[#09D2FF]" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Structural Biology — AlphaFold Integration</span>
+            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Structural Biology, AlphaFold Integration</span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#09D2FF]/10 border border-[#09D2FF]/20 text-[#09D2FF] font-semibold">CC BY 4.0</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

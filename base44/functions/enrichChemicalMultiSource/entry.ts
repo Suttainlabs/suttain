@@ -14,7 +14,7 @@ export default async function (req) {
       return Response.json({ error: 'query (string) is required' }, { status: 400 });
     }
 
-    console.log(`[${appId}] enrichChemicalMultiSource — user=${user.email} query=${query} adapters=${adapters ? adapters.join(',') : 'all'}`);
+    console.log(`[${appId}] enrichChemicalMultiSource: user=${user.email} query=${query} adapters=${adapters ? adapters.join(',') : 'all'}`);
 
     const result = await enrichChemicalMultiSource(query, { adapters });
 

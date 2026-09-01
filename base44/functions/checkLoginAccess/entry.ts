@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
       'unknown';
 
     // ══════════════════════════════════════════════════════════════
-    // 1. IP RATE LIMIT — max 10 requests per IP per minute
+    // 1. IP RATE LIMIT, max 10 requests per IP per minute
     // ══════════════════════════════════════════════════════════════
     const ipRecords = await base44.asServiceRole.entities.LoginSecurity.filter({
       identifier: ip, tracker_type: 'ip_rate'
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
           last_attempt_at: now.toISOString()
         });
       } else {
-        // ── Window expired — reset ──
+        // ── Window expired, reset ──
         await base44.asServiceRole.entities.LoginSecurity.update(ipTracker.id, {
           attempt_count: 1,
           window_start: now.toISOString(),
@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
     }
 
     // ══════════════════════════════════════════════════════════════
-    // 2. ACCOUNT LOCKOUT — 5 consecutive failures → 15-min lock
+    // 2. ACCOUNT LOCKOUT, 5 consecutive failures → 15-min lock
     // ══════════════════════════════════════════════════════════════
     const emailRecords = await base44.asServiceRole.entities.LoginSecurity.filter({
       identifier: normalizedEmail, tracker_type: 'email_lockout'
@@ -79,10 +79,10 @@ Deno.serve(async (req) => {
         const lockedUntil = new Date(emailTracker.locked_until);
         if (lockedUntil > now) {
           console.log(`[checkLoginAccess] Account locked: ${normalizedEmail}`);
-          // Same generic error — never reveal lockout vs wrong password
+          // Same generic error, never reveal lockout vs wrong password
           return Response.json({ allowed: false, error: GENERIC_ERROR }, { status: 429 });
         }
-        // Lockout expired — reset counters
+        // Lockout expired: reset counters
         await base44.asServiceRole.entities.LoginSecurity.update(emailTracker.id, {
           attempt_count: 0,
           locked_until: null,
@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
     return Response.json({ allowed: true });
   } catch (error) {
     console.log(`[checkLoginAccess] Error: ${error.message}`);
-    // Fail open on internal errors — don't block legitimate users
+    // Fail open on internal errors, don't block legitimate users
     return Response.json({ allowed: true });
   }
 });

@@ -64,7 +64,7 @@ Rules:
 - EAN-8 barcodes have exactly 8 digits
 - Return ONLY the digits, no spaces or dashes
 - If you cannot read the barcode digits clearly and with certainty, set barcode to null
-- Do NOT invent or estimate digits — accuracy is critical
+- Do NOT invent or estimate digits, accuracy is critical
 
 Return a JSON with key "barcode" containing the digit string, or null if not clearly readable.`,
             file_urls: [file_url],

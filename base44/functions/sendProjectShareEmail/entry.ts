@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields: to, project_name, project_id, invite_link' }, { status: 400 });
     }
 
-    // Verify the calling user owns the project — use the user-scoped client
+    // Verify the calling user owns the project, use the user-scoped client
     // (enforces RLS) AND filter by created_by_id to prevent IDOR.
     try {
       const projects = await base44.entities.ChemicalProject.filter({
@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Project not found or access denied' }, { status: 403 });
     }
 
-    // Verify recipient is a registered app user — prevents open mail relay
+    // Verify recipient is a registered app user, prevents open mail relay
     // where authenticated users send arbitrary emails to external addresses.
     try {
       const recipientUsers = await base44.asServiceRole.entities.User.filter({ email: to });
@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
     const safeProjectName = escapeHtml(project_name);
     const safeInviterName = escapeHtml(inviter_name || user.full_name || user.email || 'A Suttain researcher');
     const safeMessage = escapeHtml(message);
-    // Validate invite_link — restrict to the app's own domain to prevent open
+    // Validate invite_link: restrict to the app's own domain to prevent open
     // redirect / phishing via arbitrary external URLs in official emails.
     const ALLOWED_SHARE_DOMAINS = ['suttain.com', 'app.suttain.com', 'www.suttain.com'];
     let validatedLink;

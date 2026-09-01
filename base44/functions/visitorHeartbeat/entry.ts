@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
             return Response.json({ success: true, updated: true });
         }
 
-        // Session not tracked yet — create a minimal record (geo data will fill in via trackVisitor)
+        // Session not tracked yet, create a minimal record (geo data will fill in via trackVisitor)
         const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
             || req.headers.get('x-real-ip')
             || '0.0.0.0';

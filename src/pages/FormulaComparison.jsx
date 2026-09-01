@@ -274,8 +274,8 @@ export default function FormulaComparison() {
     setAiAnalysis(null);
     try {
       const prompt = `Compare these two cosmetic formulas for eco-friendliness. Return JSON with sustainability scores (0-100) for each.
-Formula A: ${formulaA.name} — ingredients: ${(formulaA.ingredients || []).map(i => `${i.chemical_name} ${i.percentage}%`).join(", ")}
-Formula B: ${formulaB.name} — ingredients: ${(formulaB.ingredients || []).map(i => `${i.chemical_name} ${i.percentage}%`).join(", ")}`;
+Formula A: ${formulaA.name}: ingredients: ${(formulaA.ingredients || []).map(i => `${i.chemical_name} ${i.percentage}%`).join(", ")}
+Formula B: ${formulaB.name}: ingredients: ${(formulaB.ingredients || []).map(i => `${i.chemical_name} ${i.percentage}%`).join(", ")}`;
 
       const res = await base44.functions.invoke('runConsumerLLM', {
         operation: 'formulaComparison',

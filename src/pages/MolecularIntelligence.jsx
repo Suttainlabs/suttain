@@ -143,7 +143,7 @@ export default function MolecularIntelligence() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         <div className="flex flex-col lg:flex-row gap-5">
 
-          {/* Input Panel — sticky on desktop */}
+          {/* Input Panel: sticky on desktop */}
           <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0">
             <div className="lg:sticky lg:top-28 space-y-3">
 

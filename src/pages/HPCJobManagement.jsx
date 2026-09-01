@@ -309,7 +309,7 @@ export default function HPCJobManagement() {
                               </div>
                               <div>
                                 <p className="text-xs text-slate-600">CPU Hours</p>
-                                <p className="text-sm font-semibold text-slate-900">{job.cpu_hours_used?.toFixed(2) || "—"}</p>
+                                <p className="text-sm font-semibold text-slate-900">{job.cpu_hours_used?.toFixed(2) || ":"}</p>
                               </div>
                             </div>
 

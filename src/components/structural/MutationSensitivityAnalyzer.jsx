@@ -112,7 +112,7 @@ export default function MutationSensitivityAnalyzer() {
         </div>
         {prediction && (
           <div>
-            <label className="text-xs font-semibold text-slate-600 mb-1.5 block">Filter by residue number (optional — shows ±10 residues around a binding region)</label>
+            <label className="text-xs font-semibold text-slate-600 mb-1.5 block">Filter by residue number (optional, shows ±10 residues around a binding region)</label>
             <div className="flex items-center gap-2">
               <Filter className="w-3.5 h-3.5 text-slate-500" />
               <Input
@@ -173,7 +173,7 @@ export default function MutationSensitivityAnalyzer() {
           {/* Insight block */}
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <p className="text-sm text-slate-700 leading-relaxed">
-              <span className="font-bold text-red-600">{pathPercent}%</span> of possible mutations in this protein are predicted to be pathogenic — indicating {pathPercent > 20 ? 'high' : pathPercent > 10 ? 'moderate' : 'low'} structural sensitivity to chemical interference.
+              <span className="font-bold text-red-600">{pathPercent}%</span> of possible mutations in this protein are predicted to be pathogenic, indicating {pathPercent > 20 ? 'high' : pathPercent > 10 ? 'moderate' : 'low'} structural sensitivity to chemical interference.
             </p>
           </div>
 

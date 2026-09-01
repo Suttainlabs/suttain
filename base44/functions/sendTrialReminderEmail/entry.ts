@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
     const isExpiringSoon = daysLeft <= 3;
     const subject = isExpiringSoon
       ? `⚠️ Your Suttain free trial expires in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}!`
-      : `Your Suttain 14-day free trial — ${daysLeft} days remaining`;
+      : `Your Suttain 14-day free trial, ${daysLeft} days remaining`;
 
     const body = isExpiringSoon
       ? `Hi ${firstName},
@@ -26,20 +26,20 @@ Your 14-day free trial of Suttain is ending in just ${daysLeft} day${daysLeft !=
 
 Don't lose access to the tools you've been using:
 
-🔬 Chemical Simulator — Test interactions before mixing
-⚗️ Formula Generator — Build professional formulas in seconds
-📱 Barcode Scanner — Instantly analyze any product's ingredients
-🛡️ AI Compliance Co-Pilot — Stay compliant across 50+ regions
+🔬 Chemical Simulator: Test interactions before mixing
+⚗️ Formula Generator: Build professional formulas in seconds
+📱 Barcode Scanner: Instantly analyze any product's ingredients
+🛡️ AI Compliance Co-Pilot, Stay compliant across 50+ regions
 
 Choose the plan that works for you:
 
-✅ Monthly Plan — $4.99/month
+✅ Monthly Plan: $4.99/month
    Pay month-to-month with full flexibility.
 
-✅ Yearly Plan — $49.99/year (Save 16% vs monthly!)
+✅ Yearly Plan: $49.99/year (Save 16% vs monthly!)
    Best value for regular users. ~$4.17/month.
 
-✅ Lifetime Access — $250 one-time payment
+✅ Lifetime Access: $250 one-time payment
    Pay once. Use Suttain forever. Best long-term value.
 
 👉 Subscribe now: https://suttain.com/Pricing
@@ -59,9 +59,9 @@ We hope you're enjoying:
 
 When you're ready to continue, our plans start at just $4.99/month:
 
-💡 Monthly — $4.99/month
-💡 Yearly — $49.99/year (save 16%!)
-💡 Lifetime — $250 one-time (pay once, use forever)
+💡 Monthly: $4.99/month
+💡 Yearly: $49.99/year (save 16%!)
+💡 Lifetime: $250 one-time (pay once, use forever)
 
 👉 View Plans: https://suttain.com/Pricing
 

@@ -17,14 +17,14 @@ export default async function (req) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
     if (user.role !== 'admin') {
-      return Response.json({ error: 'Forbidden — admin only' }, { status: 403 });
+      return Response.json({ error: 'Forbidden, admin only' }, { status: 403 });
     }
 
     const body = await req.json().catch(() => ({}));
     const limit = body.limit || 500;
     const dryRun = body.dry_run === true;
 
-    console.log(`[${appId}] backfillChemicalHazards — user=${user.email} limit=${limit} dryRun=${dryRun}`);
+    console.log(`[${appId}] backfillChemicalHazards: user=${user.email} limit=${limit} dryRun=${dryRun}`);
 
     // Fetch all chemicals (paginated)
     let allChemicals = [];

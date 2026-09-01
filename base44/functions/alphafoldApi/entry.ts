@@ -19,7 +19,7 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3) {
           await new Promise(resolve => setTimeout(resolve, delayMs));
           continue;
         }
-        // Exhausted retries — return a synthetic error response
+        // Exhausted retries: return a synthetic error response
         return {
  ok: false, status: res.status, statusText: res.statusText,
           json: async () => ({ error: `Server returned ${res.status} after ${maxRetries + 1} attempts. Body: ${bodyText.slice(0, 500)}` }),
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
 
       const data = await res.json();
       console.log(`[alphafoldApi] Prediction success, keys: ${Object.keys(data).join(', ')}`);
-      // AlphaFold prediction endpoint returns an array — extract first entry
+      // AlphaFold prediction endpoint returns an array, extract first entry
       const prediction = Array.isArray(data) ? data[0] : data;
       if (!prediction) return Response.json({ error: 'No prediction found in response' }, { status: 404 });
       return Response.json(prediction);

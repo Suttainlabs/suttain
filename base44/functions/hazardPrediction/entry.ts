@@ -1,4 +1,4 @@
-// hazardPrediction — RETIRED.
+// hazardPrediction: RETIRED.
 // This endpoint previously returned narrative hazard metrics that were not produced by a
 // trained, validated model. It has been retired. Use `hazardClassifier` (real trained
 // random-forest model with held-out validation) and `hazardValidation` (confusion matrix,

@@ -31,7 +31,7 @@ function persistLangCache(lang) {
   try {
     localStorage.setItem(`suttain_tr_${lang}`, JSON.stringify([...loadLangCache(lang).entries()]));
   } catch (_) {
-    /* quota / private mode — ignore */
+    /* quota / private mode, ignore */
   }
 }
 

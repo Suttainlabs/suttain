@@ -373,7 +373,7 @@ export default function CrystalViewer3D({ structure, bonds }) {
           {measurements.map((m, i) => (
             <div key={i} className="flex items-center gap-2 text-sm bg-slate-50 rounded-lg px-3 py-1.5">
               <span className="font-mono text-slate-700">{m.a.element}#{m.a.index + 1}</span>
-              <span className="text-slate-400">—</span>
+              <span className="text-slate-400">:</span>
               <span className="font-mono text-slate-700">{m.b.element}#{m.b.index + 1}</span>
               <Badge className="ml-auto bg-amber-100 text-amber-700 font-mono">{m.distance.toFixed(4)} Å</Badge>
             </div>

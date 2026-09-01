@@ -5,7 +5,7 @@ const CAPABILITIES = [
   {
     icon: Atom,
     title: "Chemical Intelligence API",
-    description: "Query 115M+ compounds with property, toxicity, and regulatory data via a single REST endpoint.",
+    description: "Query 130M+ compounds with property, toxicity, and regulatory data via a single REST endpoint.",
     endpoints: ["GET /v1/chemicals/{cid}", "POST /v1/chemicals/search", "GET /v1/chemicals/batch"],
   },
   {

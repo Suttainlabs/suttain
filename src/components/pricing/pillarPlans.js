@@ -45,7 +45,7 @@ export const PLANS_BY_PILLAR = {
       priceYearly: '$3.99',
       priceSuffix: '/month',
       noteMonthly: 'Cancel anytime',
-      noteYearly: 'Billed $47.88 per year — save 20%',
+      noteYearly: 'Billed $47.88 per year, save 20%',
       description: 'Full access to the safety and formulation tools.',
       features: [
         'Unlimited simulations',
@@ -106,7 +106,7 @@ export const PLANS_BY_PILLAR = {
       priceYearly: '$39.99',
       priceSuffix: '/month',
       noteMonthly: 'Cancel anytime',
-      noteYearly: 'Billed $479.90 per year — save 20%',
+      noteYearly: 'Billed $479.90 per year, save 20%',
       description: 'Computational studio, simulations, and structural biology.',
       features: [
         'Unlimited DFT and MD simulations',

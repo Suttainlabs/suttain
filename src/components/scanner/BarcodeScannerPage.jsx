@@ -26,7 +26,7 @@ const BarcodeHint = ({ barcode }) => {
     else if (len === 13) hint = '✓ Looks like an EAN-13 barcode';
     else if (len === 8) hint = '✓ Looks like a UPC-E / EAN-8 barcode';
     else if (len > 5 && len < 12) hint = 'Keep typing... most barcodes are 12–13 digits';
-    else if (len > 14) hint = 'Too many digits — check the barcode';
+    else if (len > 14) hint = 'Too many digits, check the barcode';
     return <p className="text-xs text-slate-500 text-center mt-1">{hint}</p>;
 };
 
@@ -82,7 +82,7 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
         if (!scannedBarcode) { setError('Please enter a barcode or PLU code.'); return; }
         const len = scannedBarcode.length;
         if (len < 4 || len > 14) { setError('Please enter a valid barcode (4–5 digits for PLU, or 8–14 digits for UPC/EAN).'); return; }
-        // PLU codes are 4-5 digits — always valid, skip further checks
+        // PLU codes are 4-5 digits, always valid, skip further checks
         setIsLoading(true);
         setError('');
         setProductInfo(null);
@@ -168,7 +168,7 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
                 </motion.div>
             </div>
 
-            {/* Mode tabs — floating over the hero */}
+            {/* Mode tabs: floating over the hero */}
             <div className="flex justify-center -mt-5 px-4 z-20 relative mb-6">
                 <div className="inline-flex bg-white border border-slate-200 rounded-2xl p-1.5 shadow-lg gap-1">
                     {MODES.map(({ id, label, icon: Icon }) => (

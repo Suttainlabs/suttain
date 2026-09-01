@@ -1,4 +1,4 @@
-// Carbon intensity library — kg CO2e per kg of ingredient.
+// Carbon intensity library, kg CO2e per kg of ingredient.
 // Values are representative industry estimates for carbon-footprint
 // modelling (plant/water-derived ingredients trend low; petrochemical,
 // animal-derived, and mined materials trend high). Used by the Carbon

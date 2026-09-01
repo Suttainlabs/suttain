@@ -31,7 +31,7 @@ const STEPS = [
   {
     id: "results",
     question: "What results are you looking for?",
-    subtitle: "Select all that apply — we'll tailor the formula accordingly",
+    subtitle: "Select all that apply, we'll tailor the formula accordingly",
     multi: true,
     optionsByGoal: {
       face_cream: [
@@ -111,7 +111,7 @@ const STEPS = [
   {
     id: "preferences",
     question: "Any preferences?",
-    subtitle: "Select all that matter to you (optional — skip if unsure)",
+    subtitle: "Select all that matter to you (optional, skip if unsure)",
     multi: true,
     options: [
       { id: "natural", label: "All Natural / Organic", icon: Leaf },

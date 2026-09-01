@@ -106,11 +106,11 @@ export default function BatchScalingPanel({ formula, batchSize, batchUnit, onBat
       factors: { hasWater, hasAntioxidant, hasPreservative },
       summary: hasWater
         ? !hasPreservative
-          ? 'High water content without preservative — shelf life severely reduced to ~3 months'
+          ? 'High water content without preservative, shelf life severely reduced to ~3 months'
           : !hasAntioxidant
-          ? 'Water + preservative but no antioxidant — shelf life ~6 months (oxidation risk)'
-          : 'Water + preservative + antioxidant — stable shelf life ~12 months'
-        : 'Anhydrous formula — extended shelf life ~18-24 months',
+          ? 'Water + preservative but no antioxidant, shelf life ~6 months (oxidation risk)'
+          : 'Water + preservative + antioxidant, stable shelf life ~12 months'
+        : 'Anhydrous formula: extended shelf life ~18-24 months',
     };
   }, [formula.ingredients]);
 

@@ -144,7 +144,7 @@ export default function SimulationEngine() {
               </SelectTrigger>
               <SelectContent>
                 {formulas.map(f => (
-                  <SelectItem key={f.id} value={f.id}>{f.name} — {f.product_type}</SelectItem>
+                  <SelectItem key={f.id} value={f.id}>{f.name}: {f.product_type}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -177,7 +177,7 @@ export default function SimulationEngine() {
                   {isOver100 ? <AlertTriangle className="w-5 h-5 text-red-500" /> : isUnder100 ? <Info className="w-5 h-5 text-amber-500" /> : <CheckCircle2 className="w-5 h-5 text-green-600" />}
                   <div className={`text-2xl font-black ${isOver100 ? 'text-red-600' : isUnder100 ? 'text-amber-600' : 'text-green-600'}`}>{totalPct.toFixed(1)}%</div>
                   <div className="text-xs font-medium text-center text-slate-600">
-                    {isOver100 ? 'Over 100% — reduce amounts' : isUnder100 ? 'Under 100% — balance needed' : 'Total Balance ✓'}
+                    {isOver100 ? 'Over 100%, reduce amounts' : isUnder100 ? 'Under 100% : balance needed' : 'Total Balance ✓'}
                   </div>
                 </CardContent>
               </Card>

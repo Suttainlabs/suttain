@@ -76,7 +76,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = "signup", onS
                             {/* Floating pill */}
                             <div className="flex items-center justify-center gap-1.5 mt-4">
                                 <Zap className="w-3.5 h-3.5 text-yellow-300" />
-                                <span className="text-xs font-semibold text-white/90">Free to start — no credit card needed</span>
+                                <span className="text-xs font-semibold text-white/90">Free to start, no credit card needed</span>
                             </div>
                         </div>
 

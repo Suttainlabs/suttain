@@ -142,7 +142,7 @@ function BillingInfo({ user }) {
   }
 
   const billingLabel = isLifetime ? 'One-time payment (Lifetime)' : isYearly ? 'Annual billing ($49.99/yr)' : 'Monthly billing ($4.99/mo)';
-  const nextBillingLabel = isLifetime ? 'Never — lifetime access' :
+  const nextBillingLabel = isLifetime ? 'Never, lifetime access' :
     (user?.subscription_cancel_at
       ? `Access until ${new Date(user.subscription_cancel_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
       : 'Auto-renews at next cycle');

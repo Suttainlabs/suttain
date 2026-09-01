@@ -40,7 +40,7 @@ export default function useTrialStatus(user) {
       };
     }
 
-    // Free tier — check weekly (7-day rolling window) usage
+    // Free tier: check weekly (7-day rolling window) usage
     const usage = getCurrentUsage(user);
     return {
       isPro: false,

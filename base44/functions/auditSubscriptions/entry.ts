@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
     if (!user || user.role !== 'admin') {
-      return Response.json({ error: 'Forbidden — admin only' }, { status: 403 });
+      return Response.json({ error: 'Forbidden, admin only' }, { status: 403 });
     }
 
     const url = new URL(req.url);
@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
       const hasSubId = !!u.stripe_subscription_id;
       const hasCustomerId = !!u.stripe_customer_id;
 
-      // CASE 1: No Stripe records at all — manually granted, revoke
+      // CASE 1: No Stripe records at all, manually granted, revoke
       if (!hasSubId && !hasCustomerId) {
         audit.revoked.push({
           id: u.id, email: u.email, full_name: u.full_name,
@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      // CASE 2: Has subscription ID — verify with Stripe
+      // CASE 2: Has subscription ID, verify with Stripe
       if (hasSubId) {
         try {
           const sub = await stripeGet('subscriptions/' + u.stripe_subscription_id);
