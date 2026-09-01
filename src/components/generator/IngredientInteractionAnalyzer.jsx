@@ -26,7 +26,7 @@ export default function IngredientInteractionAnalyzer({ ingredients, productType
         data: { ingredients, productType }
       });
       
-      setAnalysis(response);
+      setAnalysis(response?.data ?? response);
     } catch (error) {
       console.error("Interaction analysis failed:", error);
     } finally {

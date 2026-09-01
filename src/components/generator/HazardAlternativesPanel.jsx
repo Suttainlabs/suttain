@@ -33,7 +33,7 @@ export default function HazardAlternativesPanel({ ingredients, onReplaceIngredie
         data: { ingredients }
       });
       
-      setAnalysis(response);
+      setAnalysis(response?.data ?? response);
     } catch (error) {
       console.error("Hazard analysis failed:", error);
     } finally {
