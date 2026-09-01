@@ -3,12 +3,13 @@ import AuthContext from '@/components/auth/AuthContext';
 import AuthGate from '@/components/auth/AuthGate';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
-import { Leaf, Loader2, Plus, Globe, TrendingDown, Download, RefreshCw, FlaskConical } from 'lucide-react';
+import { Leaf, Loader2, Plus, Globe, TrendingDown, RefreshCw, FlaskConical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import IngredientCarbonRow from '@/components/carbon/IngredientCarbonRow';
 import CarbonSummaryPanel from '@/components/carbon/CarbonSummaryPanel';
 import AlternativeCard from '@/components/carbon/AlternativeCard';
 import TaxScenarioPanel from '@/components/carbon/TaxScenarioPanel';
+import ExportReportMenu from '@/components/carbon/ExportReportMenu';
 import { CARBON_LIBRARY } from '@/data/carbonLibrary';
 import { CARBON_MARKETS, computeTaxScenarios } from '@/data/carbonMarkets';
 
@@ -141,48 +142,6 @@ export default function CarbonTaxSimulator() {
     setLoadingAlts(false);
   };
 
-  const exportReport = () => {
-    const lines = [
-      'SUTTAIN: CARBON TAX & OPPORTUNITY REPORT',
-      `Generated: ${new Date().toLocaleDateString()}`,
-      '',
-      '--- INGREDIENT FOOTPRINT ---',
-      ...ingredients.map((i) => `${i.name}: ${i.quantity_kg}kg x ${i.carbon_intensity} = ${(i.quantity_kg * i.carbon_intensity).toFixed(2)} kg CO2e`),
-      `Total batch CO2e: ${totalBatchCO2e.toFixed(2)} kg`,
-      `Annual CO2e: ${annualCO2eTonnes.toFixed(1)} tonnes`,
-      `Quick-estimate tax exposure: $${taxExposureKPI.toLocaleString()}/yr at $${carbonPrice}/tonne`,
-      '',
-    ];
-    if (taxScenarios.length) {
-      lines.push('--- PER-MARKET TAX SCENARIOS ---');
-      const totalLow = taxScenarios.reduce((s, r) => s + r.low, 0);
-      const totalBase = taxScenarios.reduce((s, r) => s + r.base, 0);
-      const totalHigh = taxScenarios.reduce((s, r) => s + r.high, 0);
-      lines.push(`Combined (all selected markets): Low $${totalLow.toFixed(0)} / Base $${totalBase.toFixed(0)} / High $${totalHigh.toFixed(0)}`);
-      lines.push('');
-      taxScenarios.forEach((r) => {
-        lines.push(`${r.name} (${r.regulation_name}): Low $${r.low.toFixed(0)} / Base $${r.base.toFixed(0)} / High $${r.high.toFixed(0)}`);
-        if (r.cbam_exposure > 0) lines.push(`  CBAM exposure (forward-looking): $${r.cbam_exposure.toFixed(0)}/yr at ${r.cbam_phase_in_pct}% phase-in`);
-      });
-      lines.push('');
-    }
-    if (alternatives) {
-      lines.push('--- GREEN ALTERNATIVES ---');
-      alternatives.alternatives?.forEach((a, i) => {
-        lines.push(`${i + 1}. Replace ${a.replace_ingredient} with ${a.alternative_ingredient}, ${a.carbon_reduction_pct}% less CO2e, $${a.cost_saving_1yr}/yr savings`);
-      });
-      lines.push('');
-      if (alternatives.summary) lines.push(alternatives.summary);
-    }
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'suttain_carbon_report.txt';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   const anyLoading = loadingAlts || addLoading;
 
   return (
@@ -193,12 +152,16 @@ export default function CarbonTaxSimulator() {
             <h1 className="text-3xl font-bold text-slate-900">Carbon Tax & Opportunity Simulator</h1>
             <p className="text-slate-500 mt-1">Build your ingredient list, see live carbon footprint and tax exposure across 9 markets, and find greener alternatives with ROI.</p>
           </div>
-          <button
-            onClick={exportReport}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors flex-shrink-0"
-          >
-            <Download className="w-4 h-4" /> Export Report
-          </button>
+          <ExportReportMenu
+            ingredients={ingredients}
+            totalBatchCO2e={totalBatchCO2e}
+            annualCO2eTonnes={annualCO2eTonnes}
+            taxExposureKPI={taxExposureKPI}
+            carbonPrice={carbonPrice}
+            unitsPerMonth={unitsPerMonth}
+            taxScenarios={taxScenarios}
+            alternatives={alternatives}
+          />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
