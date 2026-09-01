@@ -517,7 +517,7 @@ export default function BusinessChemicalInput({
                               onChange={(e) => {
                                 const val = e.target.value;
                                 if (val === '' || val === '.' || /^\d*\.?\d*$/.test(val)) {
-                                  updateChemical(chemical.id, 'concentration', val === '' ? 0 : val);
+                                  updateChemical(chemical.id, 'concentration', val);
                                 }
                               }}
                               onBlur={(e) => {
@@ -552,11 +552,11 @@ export default function BusinessChemicalInput({
                             <Input
                               type="text"
                               inputMode="decimal"
-                              value={chemical.costPerKg || 0}
+                              value={chemical.costPerKg}
                               onChange={(e) => {
                                 const val = e.target.value;
                                 if (val === '' || val === '.' || /^\d*\.?\d*$/.test(val)) {
-                                  updateChemical(chemical.id, 'costPerKg', val === '' ? 0 : val);
+                                  updateChemical(chemical.id, 'costPerKg', val);
                                 }
                               }}
                               onBlur={(e) => {
