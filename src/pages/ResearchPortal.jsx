@@ -7,7 +7,7 @@ import AnimatedMolecule from '../components/research/AnimatedMolecule';
 import {
   Atom, Cpu, FlaskConical, Leaf, Code2, BarChart2,
   Database, ChevronRight, BookOpen, Shield,
-  Microscope, Layers, GitBranch, FileText, Dna, ArrowRight,
+  Microscope, Layers, GitBranch, Dna, ArrowRight,
 } from 'lucide-react';
 
 const modules = [
@@ -31,28 +31,6 @@ const modules = [
     badge: 'Pro',
     description: 'Semi-empirical and DFT-tier simulations. Upload PDB, SDF, MOL2, or SMILES. 3D WebGL viewer with ESP mapping, NCI detection, and trajectory playback. Run real quantum chemistry with IBM Qiskit, search open materials databases (Materials Project, OPTIMADE), and build/convert crystal structures with ASE-compatible tools and 3D measurement.',
     metrics: ['GFN2-xTB', 'B3LYP/6-31G*', 'OpenMM MD', 'IBM Qiskit VQE', 'Materials Project', 'ASE Structure Tools'],
-    status: 'operational',
-  },
-  {
-    id: 'comparison',
-    label: 'Chemical Comparison',
-    route: 'ChemicalComparison',
-    icon: GitBranch,
-    color: '#02988C',
-    badge: 'Live',
-    description: 'Side-by-side comparison of any two compounds. Contrast molecular structure, physical properties, toxicity, and environmental data with delta highlighting.',
-    metrics: ['3D Structures', 'Property Deltas', 'PubChem Search'],
-    status: 'operational',
-  },
-  {
-    id: 'sds',
-    label: 'SDS Analyzer',
-    route: 'SDSAnalyzer',
-    icon: FileText,
-    color: '#09D2FF',
-    badge: 'Live',
-    description: 'Upload Safety Data Sheets and extract hazard data, GHS classifications, first aid measures, and regulatory information automatically.',
-    metrics: ['PDF Parsing', 'GHS Extraction', 'Regulatory Mapping'],
     status: 'operational',
   },
 ];
