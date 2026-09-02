@@ -7,9 +7,10 @@ import RunModeTabs from '@/components/studio/RunModeTabs';
 import SingleRunPanel from '@/components/studio/SingleRunPanel';
 import BatchPanel from '@/components/studio/BatchPanel';
 import PipelinePanel from '@/components/studio/PipelinePanel';
-import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend, StudioPageHeader } from '@/components/studio/StudioShared';
+import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend, StudioPageHeader, StudioSectionHeading } from '@/components/studio/StudioShared';
 import { computeProteinProperties, parsePDBAtoms } from '@/components/studio/proteinUtils';
 import AuthContext from '@/components/auth/AuthContext';
+import BinderDesignPanel from '@/components/studio/BinderDesignPanel';
 
 const INPUT_TYPES = [
   { value: 'pdb_id', label: 'PDB ID', placeholder: 'e.g. 1CRN' },
@@ -200,6 +201,81 @@ const TOOLS = [
     ),
   },
   {
+    id: 'esmfold',
+    label: 'ESMFold Sequence Prediction',
+    description: 'Predict a protein structure from a raw amino acid sequence using ESMFold, with per-residue pLDDT confidence',
+    source: 'ESMFold (ESM Atlas)', sourceType: 'external', engine: 'ESMFold', category: 'Structure Prediction',
+    requiredInput: { type: 'sequence', hint: 'Amino acid sequence in single-letter codes (min 10, max 1000 residues, e.g. MKTAYIAKQRQISFVKSHF...)' },
+    validate: ({ input }) => {
+      if (!input || input.trim().length < 10) return 'Enter a protein sequence of at least 10 amino acids.';
+      const seq = input.trim().toUpperCase();
+      if (seq.length > 1000) return 'Sequence exceeds 1000 residues. Use a UniProt ID for longer proteins.';
+      const valid = seq.split('').filter(a => 'ARNDCQEGHILKMFPSTWYV'.includes(a));
+      if (valid.length < seq.length * 0.8) return 'Sequence contains too many unrecognized characters. Use single-letter amino acid codes.';
+      return null;
+    },
+    handler: async ({ input }) => {
+      const res = d(await base44.functions.invoke('structurePrediction', { input, inputType: 'sequence' }));
+      if (res.error) throw new Error(res.error);
+      const atoms = res.pdbText ? parsePDBAtoms(res.pdbText) : [];
+      return {
+        source: res.source, sourceType: 'external',
+        confidence: res.confidence,
+        label: `ESMFold predicted structure for ${res.sequence?.length || 0} residues`,
+        atoms, pdbText: res.pdbText || '', modelUrl: null,
+        data: [
+          ['Method', res.method || 'ESMFold'],
+          ['Sequence length', `${res.sequence?.length || 0} residues`],
+          ['Mean pLDDT', res.plddt != null ? `${res.plddt}%` : 'N/A'],
+          ['Atoms loaded', atoms.length || 'See model file'],
+          ['Source', 'ESM Atlas public API'],
+        ],
+        raw: { sequence: res.sequence, plddt: res.plddt },
+      };
+    },
+    renderResult: (result) => (
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="grid md:grid-cols-2">
+          <div className="border-b md:border-b-0 md:border-r border-slate-200" style={{ minHeight: 350 }}>
+            {result.atoms && result.atoms.length > 0
+              ? <Studio3DViewer atoms={result.atoms} height={350} />
+              : <div className="flex items-center justify-center h-[350px] text-sm text-slate-400">3D structure unavailable</div>}
+          </div>
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-3">
+              <SourcedBadge />
+              <TrustLabel source={result.source} type={result.sourceType} />
+            </div>
+            {result.confidence != null && (
+              <div className="mb-4">
+                <div className="text-xs text-slate-400 mb-1">Mean confidence (pLDDT)</div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${result.confidence}%`, background: '#0F6E56' }} />
+                  </div>
+                  <span className="font-mono font-semibold text-sm text-slate-700">{result.confidence}%</span>
+                </div>
+              </div>
+            )}
+            <p className="text-sm font-semibold text-slate-800 mb-3">{result.label}</p>
+            <DataTable data={result.data} />
+            <PLDDTLegend />
+            {result.pdbText && (
+              <button onClick={() => downloadTextFile('esmfold_predicted.pdb', result.pdbText, 'chemical/x-pdb')}
+                className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+                <Download className="w-3.5 h-3.5" /> Download model (PDB)
+              </button>
+            )}
+            <a href="https://esmatlas.com" target="_blank" rel="noopener noreferrer"
+              className="mt-2 ml-2 inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">
+              <ExternalLink className="w-3.5 h-3.5" /> ESM Atlas
+            </a>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
     id: 'binding',
     label: 'Protein-Ligand Binding Analysis',
     description: 'Analyze chemical binding interactions with 10 toxicology target proteins using AlphaFold structures',
@@ -373,6 +449,11 @@ export default function ComputationalStudioProteins() {
         {activeMode === 'single' && <SingleRunPanel config={config} />}
         {activeMode === 'batch' && <BatchPanel config={config} isPro={isPro} />}
         {activeMode === 'pipeline' && <PipelinePanel config={{ steps: PIPELINE_STEPS, inputTypes: INPUT_TYPES, inputPlaceholder: 'Enter PDB ID or UniProt ID' }} isPro={isPro} />}
+
+        <div className="border-t border-slate-200 pt-6 space-y-4">
+          <StudioSectionHeading title="De novo binder design" subtitle="Generate candidate mini-protein or antibody binder sequences against a target antigen. The top candidate is folded with ESMFold and rendered in 3D." />
+          <BinderDesignPanel />
+        </div>
       </div>
     </StudioLayout>
   );
