@@ -12,10 +12,8 @@ const FEATURE_REGISTRY = {
   ],
   research: [
     { name: 'Molecule Analysis', desc: 'Query any compound for hazard classification, toxicity profiling, and 3D structure visualization.', url: 'https://suttain.com/MoleculeAnalysis' },
-    { name: 'Computational Simulation', desc: 'Run DFT and semi-empirical simulations with 3D visualization and ESP mapping.', url: 'https://suttain.com/ComputationalSimulation' },
-    { name: 'SDS Analyzer', desc: 'Upload Safety Data Sheets and extract hazard data and GHS classifications automatically.', url: 'https://suttain.com/SDSAnalyzer' },
+    { name: 'Computational Studio', desc: 'Run simulations, quantum chemistry, and the new molecular design suite: protein structure prediction, binder design, and docking.', url: 'https://suttain.com/ComputationalStudio' },
     { name: 'Structural Biology', desc: 'AlphaFold-powered protein structure analysis and exploration.', url: 'https://suttain.com/StructuralBiology' },
-    { name: 'Chemical Comparison', desc: 'Compare any two chemical compounds side-by-side with delta highlighting.', url: 'https://suttain.com/ChemicalComparison' },
     { name: 'Chemical Library', desc: 'Browse and manage your chemical library with search by name, CAS, formula, or safety level.', url: 'https://suttain.com/ChemicalLibrary' },
   ],
   business: [
@@ -106,14 +104,13 @@ Deno.serve(async (req) => {
         <tr>
           <td style="background:#ffffff;padding:36px 40px;">
             <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 16px;">Hi ${firstName},</p>
-            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 16px;">Welcome to Suttain, the platform for chemical safety analysis, formula generation, computational simulation, and product scanning. We built Suttain to make safer chemistry accessible to everyone, from individuals to global enterprises.</p>
-            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 24px;">Here is everything currently available on Suttain, organized by category:</p>
+            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 20px;">Welcome to Suttain. Your free account is live, here is what you can do today:</p>
 
             ${toolsSection}
             ${researchSection}
             ${businessSection}
 
-            <p style="color:#334155;font-size:15px;line-height:1.7;margin:0 0 24px;">On the free tier, you get 3 simulations, 5 formula generations, and 2 product scans per month at no cost. Upgrade to Starter, Pro, or Lifetime anytime for unlimited access.</p>
+            <p style="color:#334155;font-size:14px;line-height:1.7;margin:0 0 24px;">Free tier includes 3 simulations, 5 formula generations, and 2 product scans per month. Upgrade to Starter, Pro, or Lifetime anytime.</p>
 
             <!-- CTA -->
             <table width="100%" cellpadding="0" cellspacing="0">
