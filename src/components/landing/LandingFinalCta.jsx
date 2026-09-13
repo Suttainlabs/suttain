@@ -17,7 +17,7 @@ export default function LandingFinalCta() {
             Scan a product
           </Link>
           <Link
-            to="/EnterpriseAPI"
+            to="/APIPortal"
             className="inline-flex items-center bg-transparent text-white border-[1.5px] border-white rounded-[7px] px-[18px] py-[9px] text-sm font-medium hover:bg-white hover:text-[#9531F5] transition-colors"
           >
             Talk to us about API access
