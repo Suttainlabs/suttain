@@ -307,7 +307,7 @@ export default function Layout({ children, currentPageName }) {
     || location.pathname === createPageUrl("ResearchPortal")
     || location.pathname === createPageUrl("MoleculeAnalysis");
 
-  const isEnterpriseActive = location.pathname === '/enterprise' || location.pathname === '/EnterpriseAPI';
+  const isEnterpriseActive = location.pathname === '/enterprise' || location.pathname === '/EnterpriseAPI' || location.pathname === '/APIPortal';
 
 
   const mobileMenuVariants = {
@@ -402,34 +402,18 @@ export default function Layout({ children, currentPageName }) {
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
-              {/* Enterprise API: standalone */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                    isEnterpriseActive
-                      ? "bg-[#02988C]/10 text-[#02988C]"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}>
-                    <Terminal className="w-3.5 h-3.5" />
-                    <span>API</span>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 p-2">
-
-                  <DropdownMenuItem asChild>
-                    <Link to="/EnterpriseAPI" className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-                      <Terminal className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
-                      <span className="text-sm font-semibold text-slate-800">Enterprise API</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("APIPortal")} className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-                      <Code2 className="w-4 h-4 flex-shrink-0" style={{ color: "#6B3FA0" }} />
-                      <span className="text-sm font-semibold text-slate-800">API Documentation</span>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {/* API: single consolidated page */}
+              <Link
+                to={createPageUrl("APIPortal")}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  isEnterpriseActive
+                    ? "bg-[#02988C]/10 text-[#02988C]"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <Terminal className="w-3.5 h-3.5" />
+                <span>API</span>
+              </Link>
             </nav>
 
             {/* Right side: language + auth */}
@@ -627,10 +611,10 @@ export default function Layout({ children, currentPageName }) {
                     </AnimatePresence>
                   </motion.div>
 
-                  {/* Enterprise API: Mobile */}
+                  {/* API: Mobile */}
                   <motion.div variants={mobileNavItemVariants}>
                     <Link
-                      to="/EnterpriseAPI"
+                      to={createPageUrl("APIPortal")}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors ${
                         isEnterpriseActive ? "bg-[#02988C]/10 text-[#02988C]" : "text-suttain-dark hover:bg-[#02988C]/5"
