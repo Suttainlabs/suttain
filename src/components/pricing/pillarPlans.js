@@ -5,15 +5,15 @@ export const PILLARS = [
   {
     id: 'core',
     label: 'Core',
-    accent: '#0F6E56',
-    fill: '#E1F5EE',
+    accent: '#02988C',
+    fill: '#F0FDFA',
     tagline: 'Everyday chemical safety, product scanning, and formulation.',
   },
   {
     id: 'research',
     label: 'Research',
-    accent: '#534AB7',
-    fill: '#EEEDFE',
+    accent: '#9531F5',
+    fill: '#F5EEFF',
     tagline: 'Simulation, molecular intelligence, and structural biology.',
   },
 ];
