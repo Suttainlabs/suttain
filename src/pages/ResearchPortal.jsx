@@ -35,14 +35,6 @@ const modules = [
   },
 ];
 
-const structuralBiologyTools = [
-  { id: 'protein-explorer', label: 'Protein Structure Explorer', route: 'StructuralBiology', idx: '03', sym: 'Pe', variant: 'blue', description: 'Search any human protein by UniProt ID or gene. 3D structures, pLDDT confidence, PAE heatmaps.', tags: ['AlphaFold API', '3Dmol.js', 'pLDDT'], tier: 'Free' },
-  { id: 'binding-scanner', label: 'Chemical Binding Risk Scanner', route: 'StructuralBiology', idx: '04', sym: 'Bs', variant: 'purple', description: 'Analyze chemical-protein binding against 10 toxicology target proteins.', tags: ['AlphaFold', 'Toxicology', 'AI'], tier: 'Pro' },
-  { id: 'mutation-analyzer', label: 'Mutation Sensitivity Analyzer', route: 'StructuralBiology', idx: '05', sym: 'Ma', variant: 'purple', description: 'AlphaMissense pathogenicity analysis for amino acid variants.', tags: ['AlphaMissense', 'Pathogenicity'], tier: 'Pro' },
-  { id: 'domain-heatmap', label: 'Domain Reliability Heatmap', route: 'StructuralBiology', idx: '06', sym: 'Dh', variant: 'teal', description: 'Visualize PAE matrix to assess structural domain reliability. AI interpretation.', tags: ['PAE Matrix', 'AI'], tier: 'Pro' },
-  { id: 'population-profiler', label: 'Population Safety Profiler', route: 'StructuralBiology', idx: '07', sym: 'Sp', variant: 'teal', description: 'Personalized ingredient safety warnings from AlphaFold + your health profile.', tags: ['Health Profile', 'Personalized'], tier: 'Pro' },
-];
-
 const dataSources = [
   { name: 'PubChem', org: 'NCBI / NIH', records: '130M+', type: 'Compound identity, bioassay, properties' },
   { name: 'ChEMBL', org: 'EMBL-EBI', records: '2.4M+', type: 'Bioactivity, drug-likeness, target data' },
@@ -148,39 +140,6 @@ export default function ResearchPortal() {
                   <div className="flex flex-wrap gap-1.5">
                     {mod.metrics.map((m) => (
                       <span key={m} className="text-[10px] font-mono px-2 py-0.5 rounded" style={{ background: '#F7F6F2', color: '#5B6168', border: '1px solid #E5E7EB' }}>{m}</span>
-                    ))}
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Structural biology */}
-        <div className="mb-14">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="font-mono text-xs tracking-[0.04em]" style={{ color: '#027A70' }}>STRUCTURAL BIOLOGY — ALPHAFOLD INTEGRATION</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" style={{ background: '#F0FDFF', color: '#0A8AA6' }}>CC BY 4.0</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {structuralBiologyTools.map((tool, i) => (
-              <motion.div key={tool.id} {...fade(i * 0.04)}>
-                <Link
-                  to={createPageUrl(tool.route)}
-                  className="group block bg-white border rounded-[10px] p-5 h-full transition-colors"
-                  style={{ borderColor: '#E5E7EB' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#02988C')}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#E5E7EB')}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <ElementCell index={tool.idx} symbol={tool.sym} variant={tool.variant} />
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded" style={{ background: '#F7F6F2', color: '#5B6168' }}>{tool.tier}</span>
-                  </div>
-                  <h3 className="font-medium text-[14px] mb-1.5" style={{ color: '#0A1F1D' }}>{tool.label}</h3>
-                  <p className="text-[13px] leading-[1.6] mb-3" style={{ color: '#3F4651' }}>{tool.description}</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {tool.tags.map((t) => (
-                      <span key={t} className="text-[10px] font-mono px-2 py-0.5 rounded" style={{ background: '#F7F6F2', color: '#5B6168', border: '1px solid #E5E7EB' }}>{t}</span>
                     ))}
                   </div>
                 </Link>
