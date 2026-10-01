@@ -642,8 +642,9 @@ export default function Simulator() {
       }
   };
 
-  const handleSimulate = async (enhancedData) => {
-    if (chemicals.length < 1) {
+  const handleSimulate = async (enhancedData, chemicalsOverride) => {
+    const runChemicals = chemicalsOverride || chemicals;
+    if (runChemicals.length < 1) {
       setError("Please add at least 1 chemical to run a simulation.");
       return;
     }
@@ -655,7 +656,7 @@ export default function Simulator() {
     try {
       // Delegate entirely to the centralised backend skill
       const skillResponse = await getAccurateChemicalAnalysis({
-        chemicals: chemicals.map(c => c.name || c.scientific_name),
+        chemicals: runChemicals.map(c => c.name || c.scientific_name),
         persona,
         conditions: enhancedData?.experimentalConditions || {}
       });
@@ -665,7 +666,7 @@ export default function Simulator() {
       // Attach the full chemical objects (with concentration, purity etc.) back to the result
       const finalData = {
         ...analysisResult,
-        chemicals,
+        chemicals: runChemicals,
         persona,
       };
 
@@ -713,7 +714,7 @@ export default function Simulator() {
       // Save simulation to database
       try {
         await base44.entities.Simulation.create({
-          chemicals: chemicals.map(c => c.name || c.scientific_name),
+          chemicals: runChemicals.map(c => c.name || c.scientific_name),
           risk_score: finalData.risk_assessment?.overall_risk_score || 0,
           reaction_summary: finalData.reaction_details?.what_happens || finalData.risk_assessment?.recommendation || '',
           health_impact: finalData.risk_assessment?.health_impact_score || 0,
@@ -730,10 +731,10 @@ export default function Simulator() {
         });
         // Auto-save to Workspace
         base44.entities.WorkspaceSession.create({
-          title: `Simulation: ${chemicals.map(c => c.name || c.scientific_name).join(' + ')}`,
+          title: `Simulation: ${runChemicals.map(c => c.name || c.scientific_name).join(' + ')}`,
           type: 'simulation',
           snapshot: {
-            chemicals: chemicals.map(c => c.name || c.scientific_name),
+            chemicals: runChemicals.map(c => c.name || c.scientific_name),
             risk_score: finalData.risk_assessment?.overall_risk_score || 0,
             safety_level: finalData.safety_status?.level,
             persona
@@ -748,7 +749,7 @@ export default function Simulator() {
       // Send email notification
       if (user) {
         sendFeatureUsageEmail(user, 'simulation', {
-          chemicals: chemicals.map(c => c.name || c.scientific_name),
+          chemicals: runChemicals.map(c => c.name || c.scientific_name),
           riskScore: finalData.risk_assessment?.overall_risk_score,
           safetyLevel: finalData.safety_status?.level,
           recommendation: finalData.risk_assessment?.recommendation
@@ -808,6 +809,41 @@ export default function Simulator() {
       handleSimulate();
     }
   }, [chemicals, persona, isLoading, simulationData]);
+
+  // Swap the original chemical for the selected alternative in the current
+  // list, then re-run the simulation from scratch with the new combination.
+  const handleSimulateAlternative = (alt) => {
+    if (!alt?.alternative_chemical) return;
+
+    const altName = String(alt.alternative_chemical).trim();
+    const originalName = String(alt.original_chemical || '').trim().toLowerCase();
+
+    const updatedChemicals = chemicals.map(c => {
+      const currentName = String(c.scientific_name || c.name || '').trim().toLowerCase();
+      if (currentName && (currentName === originalName || currentName.includes(originalName) || originalName.includes(currentName))) {
+        return {
+          ...c,
+          id: Date.now() + Math.random(),
+          name: altName,
+          scientific_name: altName,
+        };
+      }
+      return c;
+    });
+
+    // If no match was found (original was a combo label), fall back to
+    // running the simulation with just the alternative chemical.
+    const hasMatch = updatedChemicals.some(c => (c.scientific_name || c.name) === altName);
+    const finalChemicals = hasMatch ? updatedChemicals : [
+      { id: Date.now(), name: altName, scientific_name: altName, concentration: 0, concentrationUnit: 'M', purity: 99.9 }
+    ];
+
+    setChemicals(finalChemicals);
+    setSimulationData(null);
+    setStep(2);
+    // Run with the swapped list directly to avoid stale-state closures.
+    handleSimulate(null, finalChemicals);
+  };
 
   const viewAlternatives = () => setStep(3);
   const backToAnalysis = () => setStep(2);
@@ -1184,6 +1220,7 @@ export default function Simulator() {
                       riskAssessment={simulationData.risk_assessment}
                       onStartNew={startNewSimulation}
                       onBackToAnalysis={() => setStep(2)}
+                      onSimulateAlternative={handleSimulateAlternative}
                     />
                   </motion.div>
                 )}

@@ -26,7 +26,8 @@ export default function SaferAlternatives({
   chemicals = [],
   riskAssessment = { overall_risk_score: 0 },
   onStartNew,
-  onBackToAnalysis
+  onBackToAnalysis,
+  onSimulateAlternative
 }) {
   const navigate = useNavigate();
   const overallRiskScore = riskAssessment.overall_risk_score || 0;
@@ -40,7 +41,13 @@ export default function SaferAlternatives({
   const hasValidAlternatives = validAlternatives.length > 0;
 
   const handleSimulateAlternative = (alt) => {
-    // Navigate to Simulator with the alternative pre-filled and auto-run enabled
+    // Swap the original chemical for the alternative in the current list,
+    // then re-run the simulation in place. Falls back to the legacy
+    // fresh-page navigation only if no swap handler is provided.
+    if (typeof onSimulateAlternative === 'function') {
+      onSimulateAlternative(alt);
+      return;
+    }
     const params = new URLSearchParams({ chemicals: alt.alternative_chemical, auto_simulate: 'true' });
     navigate(`${createPageUrl('Simulator')}?${params.toString()}`);
   };
