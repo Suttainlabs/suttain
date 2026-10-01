@@ -14,10 +14,10 @@ export const USE_CASES = {
     title: 'Protein Structure and Analysis',
     subtitle: 'Predict, visualize, and characterize protein structures from sequence to property',
     actions: [
-      { label: 'Predict protein structure', detail: 'AlphaFold via EBI', source: 'AlphaFold EBI', sourceType: 'api', tier: 'free', route: '/StructuralBiology' },
+      { label: 'Predict protein structure', detail: 'AlphaFold via EBI', source: 'AlphaFold EBI', sourceType: 'api', tier: 'free', route: '/ComputationalStudio/Proteins' },
       { label: 'Explore and visualize 3D structures', detail: 'RCSB PDB', source: 'RCSB PDB', sourceType: 'database', tier: 'free', route: '/MoleculeAnalysis' },
-      { label: 'Analyze protein-ligand binding potential', detail: 'Binding site detection and docking', source: 'Computed in-browser', sourceType: 'computed', tier: 'free', route: '/StructuralBiology' },
-      { label: 'Assess developability properties', detail: 'Surface charge, hydrophobicity, stability', source: 'Computed in-browser', sourceType: 'computed', tier: 'pro', route: '/StructuralBiology' },
+      { label: 'Analyze protein-ligand binding potential', detail: 'Binding site detection and docking', source: 'Computed in-browser', sourceType: 'computed', tier: 'free', route: '/ComputationalStudio/Proteins' },
+      { label: 'Assess developability properties', detail: 'Surface charge, hydrophobicity, stability', source: 'Computed in-browser', sourceType: 'computed', tier: 'pro', route: '/ComputationalStudio/Proteins' },
     ],
   },
   small_molecules: {

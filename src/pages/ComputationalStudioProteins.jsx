@@ -11,6 +11,10 @@ import { SourcedBadge, TrustLabel, downloadTextFile, PLDDTLegend, StudioPageHead
 import { computeProteinProperties, parsePDBAtoms } from '@/components/studio/proteinUtils';
 import AuthContext from '@/components/auth/AuthContext';
 import BinderDesignPanel from '@/components/studio/BinderDesignPanel';
+import MutationSensitivityAnalyzer from '@/components/structural/MutationSensitivityAnalyzer';
+import DomainReliabilityHeatmap from '@/components/structural/DomainReliabilityHeatmap';
+import PopulationSafetyProfiler from '@/components/structural/PopulationSafetyProfiler';
+import StructurePrepSuite from '@/components/structural/StructurePrepSuite';
 
 const INPUT_TYPES = [
   { value: 'pdb_id', label: 'PDB ID', placeholder: 'e.g. 1CRN' },
@@ -453,6 +457,35 @@ export default function ComputationalStudioProteins() {
         <div className="border-t border-slate-200 pt-6 space-y-4">
           <StudioSectionHeading title="De novo binder design" subtitle="Generate candidate mini-protein or antibody binder sequences against a target antigen. The top candidate is folded with ESMFold and rendered in 3D." />
           <BinderDesignPanel />
+        </div>
+
+        {/* Structural biology intelligence */}
+        <div className="border-t border-slate-200 pt-6 space-y-6">
+          <StudioSectionHeading title="Structural biology intelligence" subtitle="AlphaFold-powered analysis: mutation sensitivity, domain reliability, population safety, and structure preparation utilities." />
+
+          <div className="bg-white border border-slate-200 rounded-xl p-5">
+            <h4 className="text-sm font-semibold text-slate-800 mb-1">Mutation sensitivity analyzer</h4>
+            <p className="text-xs text-slate-500 mb-4">AlphaMissense pathogenicity analysis for amino acid variants by UniProt ID.</p>
+            <MutationSensitivityAnalyzer />
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-xl p-5">
+            <h4 className="text-sm font-semibold text-slate-800 mb-1">Domain reliability heatmap</h4>
+            <p className="text-xs text-slate-500 mb-4">Visualize the PAE matrix to assess structural domain reliability, with interpretation.</p>
+            <DomainReliabilityHeatmap />
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-xl p-5">
+            <h4 className="text-sm font-semibold text-slate-800 mb-1">Population safety profiler</h4>
+            <p className="text-xs text-slate-500 mb-4">Personalized ingredient safety warnings from AlphaFold binding data and your health profile.</p>
+            <PopulationSafetyProfiler />
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-xl p-5">
+            <h4 className="text-sm font-semibold text-slate-800 mb-1">Structure prep utilities</h4>
+            <p className="text-xs text-slate-500 mb-4">Prepare PDB files: split complexes, merge structures, find missing residues, and renumber residues.</p>
+            <StructurePrepSuite modes={['split', 'merge', 'missing_residues', 'renumber']} />
+          </div>
         </div>
       </div>
     </StudioLayout>

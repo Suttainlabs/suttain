@@ -40,7 +40,7 @@ function getRecommendations(answers) {
   const workflow = [];
 
   if (answers.domain === "proteins") {
-    tools.push({ tool: "Structural Biology", href: "StructuralBiology", reason: "AlphaFold-powered protein structure prediction and binding site analysis." });
+    tools.push({ tool: "Proteins", href: "ComputationalStudio/Proteins", reason: "AlphaFold-powered protein structure prediction and binding site analysis." });
     workflow.push("Look up protein structure via AlphaFold", "Analyze binding pockets and domains", "Run molecular docking simulation");
   } else if (answers.domain === "materials") {
     tools.push({ tool: "Computational Studio", href: "ComputationalStudio", reason: "Materials Project integration with DFT simulation and crystal structure analysis." });

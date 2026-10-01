@@ -14,7 +14,7 @@ const TOOLS_MENU = [
   { href: "/MoleculeExplorer", label: "Molecule Explorer", icon: Dna, desc: "Interactive 3D molecular visualization" },
   { href: "/ChemicalComparison", label: "Chemical Comparison", icon: Layers, desc: "Side-by-side compound evaluation" },
   { href: "/SimulationEngine", label: "Simulation Engine", icon: FlaskConical, desc: "Formula cost & sustainability modeling" },
-  { href: "/StructuralBiology", label: "Structural Biology", icon: Microscope, desc: "AlphaFold protein structures & binding analysis" },
+  { href: "/ComputationalStudio/Proteins", label: "Proteins", icon: Microscope, desc: "AlphaFold protein structures & binding analysis" },
 ];
 
 const NAV_LINKS = [

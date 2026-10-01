@@ -273,7 +273,6 @@ export default function Layout({ children, currentPageName }) {
   const researchToolItems = [
     { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction", category: "Research" },
     { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization", category: "Research" },
-    { href: "StructuralBiology", label: "Structural Biology", icon: Microscope, description: "AlphaFold-powered protein structure analysis & exploration", category: "Research" },
   ];
 
   // Tools dropdown: consumer tools only; research tools live in the Research hub
@@ -303,7 +302,6 @@ export default function Layout({ children, currentPageName }) {
     || location.pathname === createPageUrl("ChemicalLibrary")
     || location.pathname === createPageUrl("ChemicalDashboard")
     || location.pathname === createPageUrl("InventoryDashboard")
-    || location.pathname === createPageUrl("StructuralBiology")
     || location.pathname === createPageUrl("ResearchPortal")
     || location.pathname === createPageUrl("MoleculeAnalysis");
 
