@@ -41,7 +41,7 @@ function ScriptModal({ record, onClose }) {
           <div>
             <h2 className="font-bold text-slate-900 text-base">{record.title}</h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              {record.engine || 'Computational run'} &middot;{" "}
+              {record.sim_source === "ai_generator" ? "AI Generator" : "Script Builder"} &middot;{" "}
               {format(new Date(record.created_date), "MMM d, yyyy HH:mm")}
             </p>
           </div>
@@ -106,7 +106,7 @@ function HistoryCard({ record, onView, onDelete }) {
                   ? "bg-violet-100 text-violet-700"
                   : "bg-teal-100 text-teal-700"
               }`}>
-                {record.engine || 'Computational run'}
+                {record.sim_source === "ai_generator" ? "AI Generator" : "Script Builder"}
               </Badge>
             </div>
           </div>
@@ -180,17 +180,14 @@ export default function SimulationHistory() {
   const [viewingRecord, setViewingRecord] = useState(null);
 
   const { data: records = [], isLoading } = useQuery({
-    queryKey: ["simulation-job-history"],
-    queryFn: async () => {
-      const jobs = await base44.entities.SimulationJob.list('-created_date', 100);
-      return jobs.map(job => ({ ...job, title: job.job_name, script: job.result?.bash_script || '', prompt: JSON.stringify(job.inputs || {}), tags: [job.sim_type_label || job.sim_type], sim_source: job.sim_type, notes: job.result?.predicted_results?.summary || '' }));
-    },
+    queryKey: ["dwsim-history"],
+    queryFn: () => base44.entities.DWSIMSimulationHistory.list("-created_date", 100),
     initialData: [],
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.SimulationJob.delete(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["simulation-job-history"] }),
+    mutationFn: (id) => base44.entities.DWSIMSimulationHistory.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["dwsim-history"] }),
   });
 
   const filtered = records.filter(r => {
@@ -204,14 +201,14 @@ export default function SimulationHistory() {
   });
 
   return (
-    <AuthGate featureName="Simulation History" featureDescription="View and manage your saved computational simulation scripts.">
+    <AuthGate featureName="Simulation History" featureDescription="View and manage your saved DWSIM simulation scripts.">
       <div className="min-h-screen" style={{ backgroundColor: "#EDF7F2" }}>
         <div className="max-w-5xl mx-auto px-4 py-10">
 
           {/* Header */}
           <div className="flex items-start justify-between gap-4 mb-8">
             <div className="flex items-center gap-3">
-              <Link to={"/ComputationalStudio/Simulations"} className="p-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 transition-colors">
+              <Link to={createPageUrl("DWSIMIntegration")} className="p-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 transition-colors">
                 <ArrowLeft className="w-4 h-4 text-slate-600" />
               </Link>
               <div>
@@ -220,11 +217,11 @@ export default function SimulationHistory() {
                   Simulation History
                 </h1>
                 <p className="text-slate-500 text-sm mt-0.5">
-                  Your saved computational runs: view or download scripts.
+                  Your saved DWSIM script generations, view, re-run, or download.
                 </p>
               </div>
             </div>
-            <Link to={"/ComputationalStudio/Simulations"}>
+            <Link to={createPageUrl("DWSIMIntegration")}>
               <Button className="bg-[#007850] hover:bg-[#005f3e] text-white text-sm gap-2">
                 <FlaskConical className="w-4 h-4" />
                 New Simulation
@@ -247,9 +244,8 @@ export default function SimulationHistory() {
             <div className="flex gap-2">
               {[
                 { val: "all", label: "All" },
-                { val: 'drug_discovery', label: 'Drug discovery' },
-                { val: 'molecular_dynamics', label: 'Molecular dynamics' },
-                { val: 'dft', label: 'Quantum chemistry' },
+                { val: "ai_generator", label: "AI Generator" },
+                { val: "script_builder", label: "Script Builder" },
               ].map(opt => (
                 <button
                   key={opt.val}
@@ -270,8 +266,8 @@ export default function SimulationHistory() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
             {[
               { label: "Total Saved", value: records.length, color: "text-slate-900" },
-              { label: 'Completed', value: records.filter(r => r.status === 'completed').length, color: 'text-violet-700' },
-              { label: 'With scripts', value: records.filter(r => r.script).length, color: 'text-teal-700' },
+              { label: "AI Generated", value: records.filter(r => r.sim_source === "ai_generator").length, color: "text-violet-700" },
+              { label: "Script Builder", value: records.filter(r => r.sim_source === "script_builder").length, color: "text-teal-700" },
             ].map(stat => (
               <div key={stat.label} className="bg-white rounded-xl border border-slate-200 p-4 text-center">
                 <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
@@ -293,11 +289,11 @@ export default function SimulationHistory() {
               </p>
               <p className="text-slate-400 text-sm mb-5">
                 {records.length === 0
-                  ? "Run a computational simulation to save its configuration and script here."
+                  ? "Generate a DWSIM script using the AI Generator or Script Builder to save it here."
                   : "Try a different search or filter."}
               </p>
               {records.length === 0 && (
-                <Link to={"/ComputationalStudio/Simulations"}>
+                <Link to={createPageUrl("DWSIMIntegration")}>
                   <Button className="bg-[#007850] hover:bg-[#005f3e] text-white gap-2">
                     <FlaskConical className="w-4 h-4" />
                     Start a Simulation

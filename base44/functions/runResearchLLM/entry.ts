@@ -195,6 +195,34 @@ Only include real, plausible papers. Do not fabricate PMIDs.`;
         return Response.json(summary);
       }
 
+      case 'dwsimChat': {
+        const SYSTEM_PROMPT = `You are an expert DWSIM process simulation engineer and Python developer.
+When a user describes a chemical process, you:
+1. Generate a complete, working DWSIM Python FluentAPI script
+2. Explain what the simulation does and what results to expect
+3. Suggest the correct thermodynamic property package
+4. Note any important assumptions or limitations
+
+DWSIM Python FluentAPI requirements:
+- Import: clr, sys; add dwsim_path to sys.path
+- References: DWSIM.Automation, DWSIM.Interfaces, DWSIM.Thermodynamics, DWSIM.UnitOperations
+- Use Automation3() to create flowsheet
+- AddObject(ObjectType.X, x, y, "name") to add objects
+- Use correct ObjectType enum values: MaterialStream, EnergyStreams, Mixer, NodeIn (splitter), Heater, Cooler, HeatExchanger, DistillationColumn, Flash2, Compressor, Pump, Valve, ConversionReactor, EquilibriumReactor
+- Connect streams: flowsheet.ConnectObjects(source_name, dest_name, source_port, dest_port)
+- Set compound mole fractions, temperature (K), pressure (Pa), mass flow (kg/s)
+- Call sim.SolveFlowsheet() and print results
+- Save as .dwxml
+
+Always wrap your script in a code block with python syntax highlighting.
+Be concise but thorough. Flag if a process needs special handling.`;
+        const conversationHistory = (data.conversationHistory || '').slice(0, 16000);
+        const result = await call({
+          prompt: `${SYSTEM_PROMPT}\n\nConversation so far:\n${conversationHistory}\n\nRespond as the assistant:`,
+          model: 'claude_sonnet_4_6'
+        });
+        return Response.json(result);
+      }
 
       default:
         return Response.json({ error: `Unknown operation: ${operation}` }, { status: 400 });
