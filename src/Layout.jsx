@@ -393,7 +393,7 @@ export default function Layout({ children, currentPageName }) {
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Single smart Tools dropdown, groups Consumer and Research */}
-              <NavToolCombobox items={allToolItems} label={t('nav_tools')} isActive={isConsumerToolsActive} accent="#02988C" />
+              <NavToolCombobox items={allToolItems} label="Cb" isActive={isConsumerToolsActive} accent="#02988C" />
 
               <Link to="/ResearchPortal" className={getLinkClasses("ResearchPortal")}>Research</Link>
 
@@ -563,7 +563,7 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <div className="flex items-center gap-4">
                         <TestTube className="w-5 h-5" />
-                        {t('mobile_tools')}
+                        Cb
                       </div>
                       <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isProductSuiteOpen ? 'rotate-180' : ''}`} />
                     </button>
