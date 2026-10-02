@@ -5,7 +5,6 @@ import LandingDoors from "@/components/landing/LandingDoors";
 import LandingTrustBand from "@/components/landing/LandingTrustBand";
 import LandingFeatures from "@/components/landing/LandingFeatures";
 import AgentWalkthrough from '@/components/landing/AgentWalkthrough';
-import LatestResearch from '@/components/landing/LatestResearch';
 import LandingToolkit from "@/components/landing/LandingToolkit";
 import LandingFinalCta from "@/components/landing/LandingFinalCta";
 
@@ -21,7 +20,6 @@ export default function LandingHub() {
       <LandingFeatures />
       <LandingToolkit />
       <AgentWalkthrough />
-      <LatestResearch />
       <LandingTrustBand />
       <LandingFinalCta />
     </div>
