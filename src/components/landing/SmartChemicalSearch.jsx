@@ -7,7 +7,6 @@ const ACTIONS = [
   { key: "simulator", label: "Chemical Simulator", icon: TestTube, route: "/Simulator", param: "chemical", color: "#02988C" },
   { key: "generator", label: "Formula Generator", icon: Atom, route: "/generator", param: "chemical", color: "#02988C" },
   { key: "scanner", label: "Product Scanner", icon: QrCode, route: "/BarcodeScanner", param: "q", color: "#02988C" },
-  { key: "analysis", label: "Molecule Analysis", icon: FlaskConical, route: "/MoleculeAnalysis", param: "q", color: "#9531F5" },
   { key: "sds", label: "SDS Analyzer", icon: FileText, route: "/SDSAnalyzer", param: "q", color: "#9531F5" },
 ];
 
@@ -78,7 +77,7 @@ export default function SmartChemicalSearch() {
     if (!open || suggestions.length === 0) {
       if (e.key === "Enter" && q.trim()) {
         e.preventDefault();
-        if (!selected) navigate(`/MoleculeAnalysis?q=${encodeURIComponent(q.trim())}`);
+        if (!selected) fetchSuggestions(q.trim());
       }
       return;
     }
@@ -144,7 +143,7 @@ export default function SmartChemicalSearch() {
         )}
         <button
           type="button"
-          onClick={() => q.trim() && navigate(`/MoleculeAnalysis?q=${encodeURIComponent(q.trim())}`)}
+          onClick={() => q.trim() && fetchSuggestions(q.trim())}
           disabled={!q.trim()}
           className="bg-[#02988C] text-white rounded-md px-5 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-[#027A70] flex items-center"
         >

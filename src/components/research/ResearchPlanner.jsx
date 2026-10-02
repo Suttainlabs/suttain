@@ -53,11 +53,9 @@ function getRecommendations(answers) {
       tools.push({ tool: "Formula Generator", href: "generator", reason: "Create product formulas with built-in safety and compliance validation." });
       workflow.push("Analyze ingredient safety profiles", "Generate optimized formula", "Check regulatory compliance (FDA, EU, REACH)");
     } else if (answers.goal === "property") {
-      tools.push({ tool: "Molecule Analysis", href: "MoleculeAnalysis", reason: "Query compounds for physical, toxicity, and environmental properties." });
-      workflow.push("Look up compound in PubChem", "Run GFN2-xTB semi-empirical optimization", "Compare calculated vs. experimental properties");
+      workflow.push("Prepare the molecular structure", "Configure quantum chemistry calculations", "Compare calculated and experimental properties");
     } else {
-      tools.push({ tool: "Molecule Analysis", href: "MoleculeAnalysis", reason: "3D structure visualization and property lookup for any compound." });
-      workflow.push("Look up compound in PubChem", "Visualize 3D molecular structure", "Export structural and property data");
+      workflow.push("Prepare the molecular structure", "Configure geometry optimization", "Review and export simulation results");
     }
   }
 

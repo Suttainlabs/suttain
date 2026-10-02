@@ -9,9 +9,7 @@ import {
 import { base44 } from "@/api/base44Client";
 
 const TOOLS_MENU = [
-  { href: "/MolecularIntelligence", label: "Molecular Intelligence", icon: Atom, desc: "Hazard scoring & toxicity profiling" },
   { href: "/ComputationalSimulation", label: "Computational Simulations", icon: Cpu, desc: "DFT, quantum chemistry & QM/MM" },
-  { href: "/MoleculeExplorer", label: "Molecule Explorer", icon: Dna, desc: "Interactive 3D molecular visualization" },
   { href: "/ChemicalComparison", label: "Chemical Comparison", icon: Layers, desc: "Side-by-side compound evaluation" },
   { href: "/SimulationEngine", label: "Simulation Engine", icon: FlaskConical, desc: "Formula cost & sustainability modeling" },
   { href: "/ComputationalStudio/Proteins", label: "Proteins", icon: Microscope, desc: "AlphaFold protein structures & binding analysis" },

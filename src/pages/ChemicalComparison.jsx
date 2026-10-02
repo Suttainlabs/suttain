@@ -7,7 +7,7 @@ import {
   ExternalLink, Database, GitCompare, ChevronDown, ChevronUp, Minus
 } from 'lucide-react';
 
-// ── 3D viewer (same approach as MoleculeExplorer) ─────────────────
+// ── 3D viewer ──────────────────────────────────────────────────
 function Mol3DViewer({ cid, name, smiles }) {
   const containerRef = useRef(null);
   const viewerRef = useRef(null);

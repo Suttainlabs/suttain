@@ -52,8 +52,6 @@ const PAGE_META_DESCRIPTIONS = {
   ResearchDashboard: 'Your Suttain research dashboard, monitor activity, manage saved molecular formulas, and access computational chemistry tools.',
   ResearchPortal: 'Suttain Research Portal, molecular intelligence, computational simulation, formula generation, and API access for professional chemists and scientists.',
   APIPortal: 'Suttain Research API documentation, REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. Python and JavaScript SDKs available.',
-  MolecularIntelligence: 'Query any chemical compound for hazard classification, toxicity profiling, environmental fate, and regulatory status. Search by name, SMILES, InChI, or CAS number.',
-  MoleculeExplorer: 'Browse and visualize chemical compounds in 3D. Search your database or PubChem, render molecular structures, and view physical, toxicity, and environmental properties.',
   ChemicalDashboard: 'Comprehensive chemical dashboard, view and manage your chemical database with detailed properties, safety data, and regulatory information.',
   ChemicalComparison: 'Compare any two chemical compounds side-by-side. Contrast molecular structure, physical properties, toxicity, and environmental data with delta highlighting.',
   ChemicalLibrary: 'Browse and manage your chemical library. Search by name, CAS, formula, or safety level. Import and export chemical data.',
@@ -135,7 +133,7 @@ export default function Layout({ children, currentPageName }) {
       // Returning researcher: redirect straight to research dashboard
       if (currentUser && currentUser.first_login === false && currentUser.profile_type === 'researcher') {
         const isOnResearchPage = window.location.pathname === '/enterprise' || window.location.pathname === '/EnterpriseAPI'
-          || ['/MolecularIntelligence', '/MoleculeExplorer', '/ChemicalDashboard', '/ResearchPortal',
+          || ['/ChemicalDashboard', '/ResearchPortal',
               '/ResearchDashboard', '/APIPortal', '/ChemicalComparison', '/SDSAnalyzer',
               '/ComputationalSimulation', '/SimulationEngine', '/ChemicalLibrary'].includes(window.location.pathname);
         if (!isOnResearchPage) {
@@ -272,7 +270,6 @@ export default function Layout({ children, currentPageName }) {
 
   const researchToolItems = [
     { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction", category: "Research" },
-    { href: "MoleculeAnalysis", label: "Molecule Analysis", icon: Atom, description: "Query compounds for hazard intelligence & 3D structure visualization", category: "Research" },
   ];
 
   // Tools dropdown: consumer tools only; research tools live in the Research hub
@@ -302,8 +299,7 @@ export default function Layout({ children, currentPageName }) {
     || location.pathname === createPageUrl("ChemicalLibrary")
     || location.pathname === createPageUrl("ChemicalDashboard")
     || location.pathname === createPageUrl("InventoryDashboard")
-    || location.pathname === createPageUrl("ResearchPortal")
-    || location.pathname === createPageUrl("MoleculeAnalysis");
+    || location.pathname === createPageUrl("ResearchPortal");
 
   const isEnterpriseActive = location.pathname === '/enterprise' || location.pathname === '/EnterpriseAPI' || location.pathname === '/APIPortal';
 

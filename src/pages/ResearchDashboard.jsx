@@ -23,38 +23,6 @@ function StatCard({ label, value, sub, color = '#007850' }) {
   );
 }
 
-function RecentQueryRow({ item, onRerun }) {
-  const typeColor = {
-    name: '#007850',
-    smiles: '#6B3FA0',
-    inchi: '#00A8C8',
-    ingredient_list: '#00B478',
-  };
-  return (
-    <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0 group">
-      <div className="flex items-center gap-3 min-w-0">
-        <span
-          className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded flex-shrink-0"
-          style={{ backgroundColor: (typeColor[item.type] || '#007850') + '15', color: typeColor[item.type] || '#007850' }}
-        >
-          {item.type}
-        </span>
-        <span className="text-xs font-mono text-slate-600 truncate">{item.query}</span>
-      </div>
-      <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-        <span className="text-[10px] text-slate-400">{new Date(item.timestamp).toLocaleDateString()}</span>
-        <button
-          onClick={() => onRerun(item)}
-          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-teal-50 text-[#007850]"
-          title="Re-run analysis"
-        >
-          <Play className="w-3 h-3" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
 const FEED_ITEMS = [
   { source: 'PubChem', title: 'New bioassay results for Perfluorooctanoic acid (PFOA)', date: '2026-06-12', type: 'Bioassay' },
   { source: 'EPA CompTox', title: 'Updated aquatic toxicity estimates for 14 PFAS compounds', date: '2026-06-10', type: 'Regulatory' },
@@ -67,7 +35,6 @@ export default function ResearchDashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
-  const [queryHistory, setQueryHistory] = useState([]);
   const [savedFormulas, setSavedFormulas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
@@ -94,10 +61,6 @@ export default function ResearchDashboard() {
 
   useEffect(() => {
     if (!user) { setLoading(false); return; }
-    try {
-      const hist = JSON.parse(localStorage.getItem('mi_query_history') || '[]');
-      setQueryHistory(hist);
-    } catch {}
 
     base44.entities.Formula.filter({ created_by_id: user.id }, '-created_date', 5)
       .then(data => setSavedFormulas(data || []))
@@ -123,9 +86,6 @@ export default function ResearchDashboard() {
     }
   };
 
-  const handleRerun = (item) => {
-    navigate(`${createPageUrl('MolecularIntelligence')}?q=${encodeURIComponent(item.query)}&type=${item.type}`);
-  };
 
   if (!authChecked) {
     return (
@@ -169,7 +129,6 @@ export default function ResearchDashboard() {
     );
   }
 
-  const totalQueries = queryHistory.length;
 
   return (
     <div className="min-h-screen bg-[#F7F6F2] text-slate-800">
@@ -192,7 +151,7 @@ export default function ResearchDashboard() {
             <h1 className="text-xl font-bold text-slate-900 mb-1">
               {user.full_name?.split(' ')[0] ? `Welcome back, ${user.full_name.split(' ')[0]}.` : 'Research Dashboard'}
             </h1>
-            <p className="text-sm text-slate-500">Your molecular intelligence workspace.</p>
+            <p className="text-sm text-slate-500">Your research workspace.</p>
           </div>
           <Button
             onClick={() => setShowNewProject(true)}
@@ -203,8 +162,7 @@ export default function ResearchDashboard() {
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-          <StatCard label="Queries Run" value={totalQueries} sub="all time" color="#007850" />
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
           <StatCard label="Saved Formulas" value={savedFormulas.length} sub="in workspace" color="#6B3FA0" />
           <StatCard label="Data Sources" value="3" sub="PubChem · ChEMBL · EPA" color="#00A8C8" />
           <StatCard label="Export Formats" value="4" sub="JSON · CSV · PDF · APA" color="#00B478" />
@@ -212,27 +170,7 @@ export default function ResearchDashboard() {
 
         <div className="grid lg:grid-cols-3 gap-5">
 
-          {/* Recent queries */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white border border-slate-200 rounded-xl p-5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-slate-400" />
-                  <span className="text-xs font-bold text-slate-700 uppercase tracking-widest">Recent Queries</span>
-                </div>
-                <Link to={createPageUrl('MolecularIntelligence')} className="flex items-center gap-1 text-[#007850] text-xs font-semibold hover:underline">
-                  New Query <ChevronRight className="w-3 h-3" />
-                </Link>
-              </div>
-              {queryHistory.length === 0 ? (
-                <p className="text-xs text-slate-400 py-4 text-center">No queries yet. Run your first compound analysis.</p>
-              ) : (
-                queryHistory.slice(0, 8).map((item, i) => (
-                  <RecentQueryRow key={i} item={item} onRerun={handleRerun} />
-                ))
-              )}
-            </div>
-
             {/* Projects */}
             <div className="bg-white border border-slate-200 rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
@@ -358,7 +296,6 @@ export default function ResearchDashboard() {
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Quick Access</p>
               <div className="space-y-1">
                 {[
-                  { label: 'Molecular Intelligence', Icon: Atom, route: 'MolecularIntelligence', color: '#007850' },
                   { label: 'Computational Simulation', Icon: Cpu, route: 'ComputationalSimulation', color: '#00A8C8' },
                   { label: 'Formula Generator', Icon: FlaskConical, route: 'generator', color: '#6B3FA0' },
                   { label: 'SDS Analyzer', Icon: FileText, route: 'SDSAnalyzer', color: '#64748b' },

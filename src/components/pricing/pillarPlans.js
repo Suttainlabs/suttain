@@ -89,10 +89,8 @@ export const PLANS_BY_PILLAR = {
       priceSuffix: '',
       noteMonthly: 'No credit card required',
       noteYearly: 'No credit card required',
-      description: 'Explore molecular data with limited compute.',
+      description: 'Explore research workflows with limited compute.',
       features: [
-        'Molecule analysis and search',
-        'PubChem and ChEMBL lookups',
         '3 simulations per month',
         'No DFT or MD runs',
       ],

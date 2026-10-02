@@ -11,17 +11,7 @@ import {
 } from 'lucide-react';
 
 const modules = [
-  {
-    id: 'molecular',
-    label: 'Molecule Analysis',
-    route: 'MoleculeAnalysis',
-    idx: '01',
-    sym: 'Ma',
-    variant: 'teal',
-    badge: 'Live',
-    description: 'Query any compound for hazard classification, toxicity profiling, environmental fate, and regulatory status, then visualize its 3D structure and inspect full physical, toxicity, and environmental properties in one unified workspace.',
-    metrics: ['PubChem', 'ChEMBL', 'EPA CompTox', '3Dmol.js'],
-  },
+
   {
     id: 'simulation',
     label: 'Computational Simulation',

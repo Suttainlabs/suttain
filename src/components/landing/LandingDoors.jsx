@@ -44,7 +44,7 @@ export default function LandingDoors() {
         cell={{ idx: "02", sym: "Rs", variant: "purple" }}
         title="Professional research"
         blurb="Computational chemistry. Simulation, structural biology, and API access for research chemists and scientists."
-        items={["Molecule analysis", "Computational studio", "Structural biology", "Research API"]}
+        items={["Computational studio", "Structural biology", "Research API"]}
         href="/ResearchPortal"
         accent="#9531F5"
       />

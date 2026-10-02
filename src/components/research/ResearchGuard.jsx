@@ -38,7 +38,7 @@ export default function ResearchGuard({ children }) {
           This tool is part of Sustain research
         </h1>
         <p className="text-slate-500 max-w-md mx-auto mb-6">
-          Your Research free plan includes molecule analysis, PubChem and ChEMBL lookups, and 3 simulations per month. Computational Studio, structural biology, chemical comparison, and DFT/MD runs require the Sustain research plan.
+          Your Research free plan includes 3 simulations per month. Computational Studio, structural biology, chemical comparison, and DFT/MD runs require the Sustain research plan.
         </p>
         <Link
           to="/Pricing"

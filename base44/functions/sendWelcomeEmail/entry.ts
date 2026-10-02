@@ -11,7 +11,6 @@ const FEATURE_REGISTRY = {
     { name: 'Hydration Intelligence', desc: 'Track daily water intake with biological, food-linked adjustments tailored to your body.', url: 'https://suttain.com/HydrationHome' },
   ],
   research: [
-    { name: 'Molecule Analysis', desc: 'Query any compound for hazard classification, toxicity profiling, and 3D structure visualization.', url: 'https://suttain.com/MoleculeAnalysis' },
     { name: 'Computational Studio', desc: 'Configure advanced QM/MM, quantum chemistry, materials and biomolecular simulations for enterprise and academic research.', url: 'https://suttain.com/ComputationalStudio' },
     { name: 'Proteins', desc: 'AlphaFold-powered protein structure prediction, binding analysis, mutation sensitivity, and structure prep utilities.', url: 'https://suttain.com/ComputationalStudio/Proteins' },
     { name: 'Chemical Library', desc: 'Browse and manage your chemical library with search by name, CAS, formula, or safety level.', url: 'https://suttain.com/ChemicalLibrary' },

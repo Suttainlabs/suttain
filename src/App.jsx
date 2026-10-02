@@ -37,11 +37,8 @@ const FormulaPortfolio = lazy(() => import('./pages/FormulaPortfolio'));
 const SimulationRunner = lazy(() => import('./pages/SimulationRunner'));
 const SharedSimulationView = lazy(() => import('./pages/SharedSimulationView'));
 const BillingDashboard = lazy(() => import('./pages/BillingDashboard'));
-const MolecularIntelligence = lazy(() => import('./pages/MolecularIntelligence'));
 const ChemicalDashboard = lazy(() => import('./pages/ChemicalDashboard'));
 const InventoryDashboard = lazy(() => import('./pages/InventoryDashboard'));
-const MoleculeExplorer = lazy(() => import('./pages/MoleculeExplorer'));
-const MoleculeAnalysis = lazy(() => import('./pages/MoleculeAnalysis'));
 const ResearchPortal = lazy(() => import('./pages/ResearchPortal'));
 const ResearchDashboard = lazy(() => import('./pages/ResearchDashboard'));
 const APIPortal = lazy(() => import('./pages/APIPortal'));
@@ -152,8 +149,6 @@ const AuthenticatedApp = () => {
       <Route path="/research" element={<Navigate to="/ResearchPortal" replace />} />
 
       <Route path="/Home" element={<Navigate to="/" replace />} />
-      <Route path="/MolecularIntelligence" element={<Navigate to="/MoleculeAnalysis" replace />} />
-      <Route path="/MoleculeExplorer" element={<Navigate to="/MoleculeAnalysis" replace />} />
       <Route path="/StructuralBiology" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
       <Route path="/ComputationalSimulation" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
 
@@ -171,19 +166,19 @@ const AuthenticatedApp = () => {
       {/* ── Protected Tools (consumer + research, require login) ── */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         {['Simulator', 'generator', 'BarcodeScanner',
-          'MolecularIntelligence', 'MoleculeExplorer', 'MoleculeAnalysis', 'ChemicalDashboard', 'InventoryDashboard',
+          'ChemicalDashboard', 'InventoryDashboard',
           'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
           'SimulationEngine', 'ChemicalLibrary'
           ].map(path => {
           // Only premium Research features are hard-locked. Free-tier Research
-          // (molecule analysis, explorer, intelligence, portal + dashboard) stays
+          // (research portal + dashboard) stays
           // open to all authenticated users per the "Research free" plan.
           const RESEARCH_PATHS = ['ChemicalDashboard','InventoryDashboard','ChemicalComparison','SimulationEngine','ChemicalLibrary'];
           const isResearch = RESEARCH_PATHS.includes(path);
           const Page = Pages[path];
           if (!Page) {
             const lazyMap = {
-              MolecularIntelligence, MoleculeExplorer, MoleculeAnalysis, ChemicalDashboard, InventoryDashboard,
+              ChemicalDashboard, InventoryDashboard,
               ResearchPortal, ResearchDashboard, ChemicalComparison, SDSAnalyzer,
               ComputationalSimulation, SimulationEngine, ChemicalLibrary,
               Simulator: Pages['Simulator'], generator: Pages['generator'],
