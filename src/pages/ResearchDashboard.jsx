@@ -9,7 +9,7 @@ import {
   FileText, Layers, Loader2, Plus, FolderOpen, Share2,
   Lock, Sparkles
 } from 'lucide-react';
-import NewProjectModal from '../components/research/NewProjectModal';
+
 import KanbanBoard from '../components/research/KanbanBoard';
 import ShareProjectModal from '../components/research/ShareProjectModal';
 
@@ -30,7 +30,7 @@ export default function ResearchDashboard() {
   const [savedFormulas, setSavedFormulas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
-  const [showNewProject, setShowNewProject] = useState(false);
+  const startNewProject = () => navigate('/ComputationalStudio/Simulations');
   const [viewMode, setViewMode] = useState('list');
   const [shareProject, setShareProject] = useState(null);
 
@@ -64,10 +64,7 @@ export default function ResearchDashboard() {
       .catch(() => {});
   }, [user]);
 
-  const handleCreateProject = async (projectData) => {
-    const created = await base44.entities.ChemicalProject.create(projectData);
-    setProjects(prev => [created, ...prev]);
-  };
+
 
   const handleStatusChange = async (projectId, newStatus) => {
     setProjects(prev => prev.map(p => p.id === projectId ? { ...p, status: newStatus } : p));
@@ -146,7 +143,7 @@ export default function ResearchDashboard() {
             <p className="text-sm text-slate-500">Your research workspace.</p>
           </div>
           <Button
-            onClick={() => setShowNewProject(true)}
+            onClick={startNewProject}
             className="bg-research-accent hover:opacity-90 text-research-card"
           >
             <Plus className="w-4 h-4 mr-1.5" /> New project
@@ -186,7 +183,7 @@ export default function ResearchDashboard() {
                     </button>
                   </div>
                   <button
-                    onClick={() => setShowNewProject(true)}
+                    onClick={startNewProject}
                     className="flex items-center gap-1 text-research-accent text-xs font-semibold hover:underline"
                   >
                     <Plus className="w-3 h-3" /> New
@@ -197,13 +194,13 @@ export default function ResearchDashboard() {
                 <KanbanBoard
                   projects={projects}
                   onStatusChange={handleStatusChange}
-                  onNewProject={() => setShowNewProject(true)}
+                  onNewProject={startNewProject}
                   onShare={setShareProject}
                 />
               ) : projects.length === 0 ? (
                 <div className="text-center py-4">
                   <p className="text-xs text-slate-400 mb-2">No projects yet.</p>
-                  <button onClick={() => setShowNewProject(true)} className="text-xs text-research-accent font-semibold hover:underline">
+                  <button onClick={startNewProject} className="text-xs text-research-accent font-semibold hover:underline">
                     Start a project from a template
                   </button>
                 </div>
@@ -331,11 +328,7 @@ export default function ResearchDashboard() {
         </div>
       </div>
 
-      <NewProjectModal
-        isOpen={showNewProject}
-        onClose={() => setShowNewProject(false)}
-        onCreate={handleCreateProject}
-      />
+
 
       <ShareProjectModal
         project={shareProject}
