@@ -25,7 +25,7 @@ export default async function(req) {
   try {
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     const base44 = createClientFromRequest(req);
-    const { priceKey, promoCode, successUrl, cancelUrl } = await req.json();
+    const { priceKey, promoCode } = await req.json();
     if (!priceKey || !PRICE_MAP[priceKey]) return Response.json({ error: 'Invalid price key' }, { status: 400 });
     let user = null;
     try { user = await base44.auth.me(); } catch (_) {}
@@ -35,8 +35,9 @@ export default async function(req) {
     const sessionConfig = {
       mode: isLifetime ? 'payment' : 'subscription', payment_method_types: ['card'],
       line_items: [{ price: PRICE_MAP[priceKey], quantity: 1 }],
-      success_url: successUrl || `${req.headers.get('origin')}/Pricing?success=true`,
-      cancel_url: cancelUrl || `${req.headers.get('origin')}/Pricing?canceled=true`,
+      // Never trust caller-supplied redirect URLs or the Origin header.
+      success_url: 'https://suttain.base44.app/Pricing?success=true',
+      cancel_url: 'https://suttain.base44.app/Pricing?canceled=true',
       metadata, allow_promotion_codes: true,
       ...(!isLifetime && { subscription_data: { metadata } }),
     };
