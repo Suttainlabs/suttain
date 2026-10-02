@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,12 +11,12 @@
 
 @layer base {
   :root {
-    --font-gilroy: 'Gilroy', 'Poppins', system-ui, -apple-system, sans-serif;
+    --font-gilroy: 'IBM Plex Sans', 'Poppins', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
 
-    --font-heading: 'Gilroy', 'Poppins', system-ui, sans-serif;
-    --font-body: 'Gilroy', 'Poppins', system-ui, sans-serif;
-    --font-display: 'Gilroy', 'Poppins', system-ui, sans-serif;
+    --font-heading: 'IBM Plex Sans', 'Poppins', system-ui, sans-serif;
+    --font-body: 'IBM Plex Sans', 'Poppins', system-ui, sans-serif;
+    --font-display: 'IBM Plex Sans', 'Poppins', system-ui, sans-serif;
 
     /* Brand */
     --color-brand-primary: #02988C;
@@ -249,24 +252,7 @@
   }
 }
 
-/* ── Responsive typography scale — fluid clamp() per Tailwind size class ── */
-/* These only affect screens narrower than 640px (sm breakpoint).            */
-/* text-xs / text-sm / text-base are already readable — left untouched.      */
-@layer utilities {
-  @media (max-width: 639px) {
-    /* Tighten all Tailwind text classes on mobile */
-    .text-lg   { font-size: clamp(0.85rem,  3.5vw, 1.125rem) !important; line-height: 1.55 !important; }
-    .text-xl   { font-size: clamp(0.9rem,   4vw,   1.25rem)  !important; line-height: 1.5 !important; }
-    .text-2xl  { font-size: clamp(0.95rem,  5vw,   1.5rem)   !important; line-height: 1.35 !important; }
-    .text-3xl  { font-size: clamp(1rem,     5.5vw, 1.875rem) !important; line-height: 1.3 !important; }
-    .text-4xl  { font-size: clamp(1.05rem,  6vw,   2.25rem)  !important; line-height: 1.25 !important; }
-    .text-5xl  { font-size: clamp(1.15rem,  7vw,   3rem)     !important; line-height: 1.2 !important; }
-    .text-6xl  { font-size: clamp(1.25rem,  8vw,   3.75rem)  !important; line-height: 1.15 !important; }
-    .text-7xl  { font-size: clamp(1.45rem,  9vw,   4.5rem)   !important; line-height: 1.12 !important; }
-    .text-8xl  { font-size: clamp(1.65rem,  10vw,  6rem)     !important; line-height: 1.08 !important; }
-    .text-9xl  { font-size: clamp(1.85rem,  11vw,  8rem)     !important; line-height: 1.08 !important; }
-  }
-}
+/* Compact typography uses the same Tailwind scale on desktop and mobile. */
 
 /* ── Scrollbar hiding utility ── */
 @layer utilities {
@@ -504,13 +490,13 @@
   --quiet-violet: 271 91% 58%;
   --quiet-footer: 180 100% 20%;
 }
-.quiet-home { --font-body: 'Inter', system-ui, sans-serif; background: hsl(var(--quiet-canvas)); color: hsl(var(--quiet-ink)); }
+.quiet-home { --font-body: 'IBM Plex Sans', system-ui, sans-serif; background: hsl(var(--quiet-canvas)); color: hsl(var(--quiet-ink)); }
 .quiet-home :is(p,li,span,a,button) { font-family: var(--font-body); }
 .quiet-home .research-label { font-family: var(--font-mono); }
 .quiet-home .quiet-container { width: 100%; max-width: 1040px; margin-inline: auto; padding-inline: 32px; }
 .quiet-home :is(h1,h2,h3) { color: hsl(var(--quiet-ink)); letter-spacing: -.045em; font-family: var(--font-heading); }
-.agent-home.quiet-home h1 { font-size: clamp(32px, 4.4vw, 52px); line-height: 1.06; font-weight: 700; }
-.agent-home.quiet-home h2 { font-size: clamp(25px, 3vw, 36px); line-height: 1.14; font-weight: 600; }
+.agent-home.quiet-home h1 { font-size: clamp(28px, 3.2vw, 32px); line-height: 1.25; font-weight: 500; }
+.agent-home.quiet-home h2 { font-size: 22px; line-height: 1.3; font-weight: 500; }
 .agent-home.quiet-home h3 { font-size: 16px; line-height: 1.3; font-weight: 500; letter-spacing: -.02em; }
 .quiet-home #agent-walkthrough h2 { color: hsl(var(--quiet-ink)); }
 .quiet-home .quiet-eyebrow { color: hsl(var(--quiet-muted)); font-size: 12px; line-height: 1.5; margin-bottom: 12px; }
@@ -606,7 +592,7 @@
 .screenshot-home, .screenshot-home :is(h1,h2,h3,p,li,span,a,button,input) { font-family: var(--font-body); }
 .screenshot-home .font-mono { font-family: var(--font-mono) !important; }
 .screenshot-home .home-container { max-width: 1080px; width: 100%; margin-inline: auto; padding-inline: 40px; }
-.screenshot-home h1 { font-size: clamp(28px, 3.2vw, 36px); font-weight: 600; line-height: 1.18; letter-spacing: -.04em; color: var(--home-ink); }
+.screenshot-home h1 { font-size: clamp(28px, 3.2vw, 32px); font-weight: 600; line-height: 1.18; letter-spacing: -.04em; color: var(--home-ink); }
 .screenshot-home h2 { font-size: clamp(20px, 2.2vw, 24px); font-weight: 500; line-height: 1.3; letter-spacing: -.025em; color: var(--home-ink); }
 .screenshot-home h3 { font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--home-ink); }
 .screenshot-home p { color: var(--home-copy); }

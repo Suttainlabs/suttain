@@ -4,11 +4,28 @@ module.exports = {
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+        fontSize: {
+          xs: ['0.75rem', { lineHeight: '1.4' }],
+          sm: ['0.875rem', { lineHeight: '1.5' }],
+          base: ['1rem', { lineHeight: '1.5' }],
+          lg: ['1rem', { lineHeight: '1.5' }],
+          xl: ['1.125rem', { lineHeight: '1.4' }],
+          '2xl': ['1.375rem', { lineHeight: '1.3' }],
+          '3xl': ['1.75rem', { lineHeight: '1.25' }],
+          '4xl': ['2rem', { lineHeight: '1.2' }],
+          '5xl': ['2rem', { lineHeight: '1.2' }],
+          '6xl': ['2rem', { lineHeight: '1.2' }],
+          '7xl': ['2rem', { lineHeight: '1.2' }],
+          '8xl': ['2rem', { lineHeight: '1.2' }],
+          '9xl': ['2rem', { lineHeight: '1.2' }],
+        },
+        fontWeight: { bold: '600', extrabold: '600', black: '600' },
   		fontFamily: {
-  			gilroy: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-  			heading: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-  			body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-  			display: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          sans: ['IBM Plex Sans', 'system-ui', '-apple-system', 'sans-serif'],
+  			gilroy: ['IBM Plex Sans', 'system-ui', '-apple-system', 'sans-serif'],
+  			heading: ['IBM Plex Sans', 'system-ui', '-apple-system', 'sans-serif'],
+  			body: ['IBM Plex Sans', 'system-ui', '-apple-system', 'sans-serif'],
+  			display: ['IBM Plex Sans', 'system-ui', '-apple-system', 'sans-serif'],
   			mono: ['JetBrains Mono', 'ui-monospace', 'Menlo', 'monospace'],
   		},
   		borderRadius: {
