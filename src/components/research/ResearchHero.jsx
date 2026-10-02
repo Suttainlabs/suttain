@@ -8,7 +8,6 @@ export default function ResearchHero() {
   return (
     <section className="grid grid-cols-12 gap-8 border-b border-research-border py-12 sm:py-16 lg:py-20">
       <div className="col-span-12 lg:col-span-8">
-        <p className="research-label mb-5">Molecular intelligence OS</p>
         <h1 className="max-w-xl mb-5">A clearer path from question to calculation.</h1>
         <p className="max-w-xl text-research-muted leading-relaxed">Configure quantum chemistry and QM/MM workflows, interpret sourced results, and bring your findings into formulation. A focused research environment for independent scientists and enterprise teams.</p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
