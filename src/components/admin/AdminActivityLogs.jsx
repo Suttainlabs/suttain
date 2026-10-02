@@ -16,8 +16,8 @@ export default function AdminActivityLogs() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const data = await base44.asServiceRole.entities.VisitorLog.list('-last_seen', 200);
-      setLogs(data);
+      const response = await base44.functions.invoke('getAdminActivityLogs', {});
+      setLogs(response.data?.logs || []);
     } catch (error) {
       console.error('Failed to fetch visitor logs:', error);
     } finally {

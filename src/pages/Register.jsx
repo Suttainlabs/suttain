@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { UserPlus, Mail, Lock, Loader2 } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import AuthLayout from "@/components/AuthLayout";
+import { safeReturnTo } from "@/lib/authReturnTo";
 import GoogleIcon from "@/components/GoogleIcon";
 import MicrosoftIcon from "@/components/MicrosoftIcon";
 import AppleIcon from "@/components/AppleIcon";
@@ -21,7 +22,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
-  const redirectParam = new URLSearchParams(window.location.search).get("redirect") || "/";
+  const redirectParam = safeReturnTo();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

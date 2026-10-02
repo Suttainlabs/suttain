@@ -148,7 +148,7 @@ export default function UserManagement() {
     try {
       if (action === 'delete') {
         if (!window.confirm(`Delete ${user.email}? This cannot be undone.`)) return;
-        await base44.asServiceRole.entities.User.delete(user.id);
+        await base44.functions.invoke('adminDeleteUser', { userId: user.id });
         setUsers(prev => prev.filter(u => u.id !== user.id));
         toast({ title: 'User deleted' });
       } else if (action === 'reset') {

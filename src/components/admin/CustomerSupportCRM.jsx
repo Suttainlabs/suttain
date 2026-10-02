@@ -68,7 +68,10 @@ export default function CustomerSupportCRM() {
   // Fetch users for email autocomplete
   const { data: users = [] } = useQuery({
     queryKey: ['admin-users'],
-    queryFn: () => base44.asServiceRole.entities.User.list('', 100),
+    queryFn: async () => {
+      const response = await base44.functions.invoke('getAdminUsers', {});
+      return (response.data?.users || []).slice(0, 100);
+    },
   });
 
   // Filter emails based on search

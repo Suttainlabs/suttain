@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import { safeReturnTo } from "@/lib/authReturnTo";
 import GoogleIcon from "@/components/GoogleIcon";
 import MicrosoftIcon from "@/components/MicrosoftIcon";
 import AppleIcon from "@/components/AppleIcon";
@@ -18,7 +19,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const redirectParam = new URLSearchParams(window.location.search).get("redirect") || "/";
+  const redirectParam = safeReturnTo();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

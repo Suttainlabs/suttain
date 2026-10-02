@@ -10,8 +10,8 @@ export default function AdminUserManagement() {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const data = await base44.asServiceRole.entities.User.list('-created_date', 50);
-        setUsers(data);
+        const response = await base44.functions.invoke('getAdminUsers', {});
+        setUsers((response.data?.users || []).slice(0, 50));
       } catch (error) {
         console.error('Failed to fetch users:', error);
       } finally {
@@ -26,7 +26,7 @@ export default function AdminUserManagement() {
       case 'delete':
         if (window.confirm('Delete this user? This cannot be undone.')) {
           try {
-            await base44.asServiceRole.entities.User.delete(userId);
+            await base44.functions.invoke('adminDeleteUser', { userId });
             setUsers(users.filter(u => u.id !== userId));
           } catch (error) {
             alert('Failed to delete user');
