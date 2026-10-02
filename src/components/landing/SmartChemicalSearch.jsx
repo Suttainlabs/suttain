@@ -18,6 +18,7 @@ export default function SmartChemicalSearch() {
   const [open, setOpen] = useState(false);
   const [highlight, setHighlight] = useState(-1);
   const [selected, setSelected] = useState(null);
+  const [searchMessage, setSearchMessage] = useState('');
 
   const containerRef = useRef(null);
   const reqIdRef = useRef(0);
@@ -25,6 +26,7 @@ export default function SmartChemicalSearch() {
 
   const fetchSuggestions = useCallback((query) => {
     const myId = ++reqIdRef.current;
+    setSearchMessage('');
     setLoading(true);
     base44.functions.invoke("chemicalAutocomplete", { query })
       .then((res) => {
@@ -32,11 +34,13 @@ export default function SmartChemicalSearch() {
         const data = res?.data || res;
         const list = data?.suggestions || [];
         setSuggestions(list);
+        setSearchMessage(list.length ? '' : 'No matching chemicals found. Try a different name or CAS number.');
         setOpen(list.length > 0);
         setHighlight(-1);
       })
       .catch(() => {
         if (myId !== reqIdRef.current) return;
+        setSearchMessage('Search is unavailable right now. Please try again.');
         setSuggestions([]);
         setOpen(false);
       })
@@ -49,8 +53,10 @@ export default function SmartChemicalSearch() {
     const val = e.target.value;
     setQ(val);
     setSelected(null);
+    setSearchMessage('');
+    ++reqIdRef.current;
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!val.trim() || val.trim().length < 2) {
+    if (!val.trim() || val.trim().length < 2 || /^\d{4,14}$/.test(val.trim())) {
       setSuggestions([]);
       setOpen(false);
       setLoading(false);
@@ -73,11 +79,22 @@ export default function SmartChemicalSearch() {
     navigate(url);
   };
 
+  const submitSearch = () => {
+    const query = q.trim();
+    if (!query) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (/^\d{4,14}$/.test(query)) {
+      navigate(`/BarcodeScanner?q=${encodeURIComponent(query)}`);
+    } else {
+      fetchSuggestions(query);
+    }
+  };
+
   const onKeyDown = (e) => {
     if (!open || suggestions.length === 0) {
       if (e.key === "Enter" && q.trim()) {
         e.preventDefault();
-        if (!selected) fetchSuggestions(q.trim());
+        submitSearch();
       }
       return;
     }
@@ -143,13 +160,15 @@ export default function SmartChemicalSearch() {
         )}
         <button
           type="button"
-          onClick={() => q.trim() && fetchSuggestions(q.trim())}
+          onClick={submitSearch}
           disabled={!q.trim()}
           className="bg-[#02988C] text-white rounded-md px-5 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-[#027A70] flex items-center"
         >
           Search
         </button>
       </div>
+
+      {searchMessage && <p role="status" className="mt-3 text-sm text-muted-foreground">{searchMessage}</p>}
 
       {/* Suggestion dropdown */}
       {open && suggestions.length > 0 && (
