@@ -616,11 +616,11 @@
 .screenshot-home .home-element-symbol { font-size: 23px; font-weight: 500; line-height: 1.2; }
 .screenshot-home .home-stat-band { background: var(--color-brand-primary); padding-block: 40px; }
 .screenshot-home .home-stat-band p { color: var(--home-canvas); }
-.screenshot-home .home-stat-band .home-stat-number { color: var(--color-brand-dark); font-size: 28px; font-weight: 500; line-height: 1.2; letter-spacing: -.04em; }
-.screenshot-home .home-stat-label { font-size: 9px; letter-spacing: .16em; margin-top: 8px; }
-.screenshot-home .home-stat-copy { max-width: 360px; margin: 24px auto 0; font-size: 12px; line-height: 1.6; }
-.screenshot-home .home-stat-sources { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; max-width: 342px; margin: 26px auto 0; padding-top: 16px; border-top: 1px solid hsl(var(--primary-foreground) / .2); color: var(--home-canvas); }
-.screenshot-home .home-stat-sources span { font-family: var(--font-mono); font-size: 9px; letter-spacing: .05em; }
+.screenshot-home .home-stat-band .home-stat-number { color: var(--color-brand-dark); font-size: 36px; font-weight: 500; line-height: 1.2; letter-spacing: -.04em; }
+.screenshot-home .home-stat-label { font-size: 14px; letter-spacing: .08em; margin-top: 8px; }
+.screenshot-home .home-stat-copy { max-width: 600px; margin: 24px auto 0; font-size: 18px; line-height: 1.7; }
+.screenshot-home .home-stat-sources { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; max-width: 600px; margin: 26px auto 0; padding-top: 16px; border-top: 1px solid hsl(var(--primary-foreground) / .2); color: var(--home-canvas); }
+.screenshot-home .home-stat-sources span { font-family: var(--font-mono); font-size: 14px; letter-spacing: .03em; }
 .screenshot-home .home-section { padding-block: 72px 80px; }
 .screenshot-home .home-section-heading { text-align: center; margin-bottom: 48px; }
 .screenshot-home .home-eyebrow { font-size: 11px; letter-spacing: .08em; color: var(--home-link); margin-bottom: 12px; }
