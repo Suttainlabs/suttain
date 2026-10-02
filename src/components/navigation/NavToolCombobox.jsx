@@ -1,13 +1,20 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
-export default function NavToolCombobox({ items, label, isActive, accent = '#0F6E56' }) {
+export default function NavToolCombobox({ items, label, isActive, accent = '#0F6E56', openOnHover = false }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const closeTimer = useRef(null);
+  const hovered = useRef(false);
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+  const hoverEvents = openOnHover ? {
+    onPointerEnter: event => { if (event.pointerType !== 'mouse') return; clearTimeout(closeTimer.current); hovered.current = true; setOpen(true); },
+    onPointerLeave: event => { if (event.pointerType === 'mouse') closeTimer.current = setTimeout(() => setOpen(false), 200); }
+  } : {};
 
   const grouped = useMemo(() => {
     return items.reduce((acc, item) => {
@@ -18,6 +25,7 @@ export default function NavToolCombobox({ items, label, isActive, accent = '#0F6
   }, [items]);
 
   const handleSelect = (href) => {
+    clearTimeout(closeTimer.current);
     setOpen(false);
     navigate(createPageUrl(href));
   };
@@ -25,7 +33,7 @@ export default function NavToolCombobox({ items, label, isActive, accent = '#0F6
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className={cn(
+        <button {...hoverEvents} onKeyDown={() => { hovered.current = false; }} className={cn(
           "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all",
           isActive ? "bg-violet-100 text-violet-600" : "text-slate-600 hover:bg-slate-100"
         )}>
@@ -33,7 +41,7 @@ export default function NavToolCombobox({ items, label, isActive, accent = '#0F6
           <ChevronDown className="w-3 h-3 opacity-50" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[480px] p-3" align="start">
+      <PopoverContent {...hoverEvents} onOpenAutoFocus={event => { if (openOnHover && hovered.current) event.preventDefault(); }} className="w-[480px] p-3" align="start">
         {Object.keys(grouped).length === 0 ? (
           <p className="py-6 text-center text-sm text-slate-400">No tools available.</p>
         ) : (

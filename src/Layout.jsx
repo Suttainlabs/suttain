@@ -24,6 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import useTrialStatus from './hooks/useTrialStatus';
 import TrialBadge from './components/trial/TrialBadge';
 import NavToolCombobox from './components/navigation/NavToolCombobox';
+import MobileResearchMenu from '@/components/navigation/MobileResearchMenu';
 
 // ── Page title formatter (handles camelCase + acronyms) ────────────
 function formatPageTitle(slug) {
@@ -271,15 +272,15 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const researchToolItems = [
-    { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction", category: "Research" },
-    { href: "DrugDiscovery", label: "Drug discovery", icon: Microscope, description: "Live target search and a guided screening demonstration", category: "Research" },
+    { href: "ComputationalStudio", label: "Atomistic Simulation", icon: FlaskConical, category: "Research" },
+    { href: "DrugDiscovery", label: "Drug Design", icon: Microscope, category: "Research" },
   ];
 
   // Tools dropdown: consumer tools only; research tools live in the Research hub
   const allToolItems = [...consumerToolItems];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
-  const isResearchToolsActive = researchToolItems.some(tool => location.pathname === createPageUrl(tool.href));
+  const isResearchToolsActive = researchToolItems.some(tool => location.pathname === `/${tool.href}` || location.pathname.startsWith(`/${tool.href}/`));
 
 
   const getLinkClasses = (href) => {
@@ -395,7 +396,7 @@ export default function Layout({ children, currentPageName }) {
               {/* Single smart Tools dropdown, groups Consumer and Research */}
               <NavToolCombobox items={allToolItems} label="Cb" isActive={isConsumerToolsActive} accent="#02988C" />
 
-              <Link to="/ResearchPortal" className={getLinkClasses("ResearchPortal")}>Research</Link>
+              <NavToolCombobox items={researchToolItems} label="Research" isActive={isResearchToolsActive} accent="hsl(var(--accent))" openOnHover />
 
               <Link to={createPageUrl("Pricing")} className={getLinkClasses("Pricing")}>{t('nav_pricing')}</Link>
 
@@ -558,7 +559,7 @@ export default function Layout({ children, currentPageName }) {
                     <button
                       onClick={() => setIsProductSuiteOpen(!isProductSuiteOpen)}
                       className={`w-full flex items-center justify-between gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-colors text-suttain-dark hover:bg-cyan-50 ${
-                        isConsumerToolsActive || isResearchToolsActive ? 'bg-cyan-100' : ''
+                        isConsumerToolsActive ? 'bg-cyan-100' : ''
                       }`}
                     >
                       <div className="flex items-center gap-4">
@@ -586,26 +587,14 @@ export default function Layout({ children, currentPageName }) {
                               <span>{item.label}</span>
                             </Link>
                           ))}
-                          <p className="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Research</p>
-                          <Link to="/ResearchPortal" onClick={() => setIsMobileMenuOpen(false)}
-                            className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                              location.pathname === "/ResearchPortal" ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
-                            }`}>
-                            <FlaskConical className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
-                            <span>Research hub</span>
-                          </Link>
-                          {researchToolItems.map(item => (
-                            <Link key={item.href} to={createPageUrl(item.href)} onClick={() => setIsMobileMenuOpen(false)}
-                              className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                                location.pathname === createPageUrl(item.href) ? "bg-violet-50 text-[#6B3FA0]" : "text-slate-700 hover:bg-slate-50"
-                              }`}>
-                              <item.icon className="w-4 h-4 flex-shrink-0 text-[var(--suttain-violet)]" />
-                              <span>{item.label}</span>
-                            </Link>
-                          ))}
+
                         </motion.div>
                       )}
                     </AnimatePresence>
+                  </motion.div>
+
+                  <motion.div variants={mobileNavItemVariants}>
+                    <MobileResearchMenu items={researchToolItems} isActive={isResearchToolsActive} onNavigate={() => setIsMobileMenuOpen(false)} />
                   </motion.div>
 
                   {/* API: Mobile */}
