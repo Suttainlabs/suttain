@@ -1,19 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Database, SlidersHorizontal, Layers, ArrowUpRight } from 'lucide-react';
-const updates = [
-  { icon: Database, title: 'Search across scientific databases', detail: 'Switch between PubChem, ChEMBL, ChEBI, ChemSpider and Suttain DB, or search across them with All. Results retain their source label.' },
-  { icon: SlidersHorizontal, title: 'Bring your own forcefield', detail: 'Select built-in or saved parameters, upload a forcefield file, or create custom parameters. Use them once or save them to your library.' },
-  { icon: Layers, title: 'One simulation studio', detail: 'Configure, prepare and track workflows across five compute fields, including quantum chemistry and QM/MM, with engine selection and reusable presets.' }
+const worlds = [
+  { name: 'Consumer and brands', scope: 'home-consumer', audience: 'Product-focused tools for shoppers, makers and brands', items: [
+    { icon: Database, title: 'Ingredient safety in context', detail: 'Look up a product and explore its ingredients, safety findings and alternatives.', to: '/BarcodeScanner' },
+    { icon: SlidersHorizontal, title: 'Formulation you can review', detail: 'Prepare formulas with ingredient guidance and manufacturing instructions.', to: '/generator' },
+    { icon: Layers, title: 'Environmental impact', detail: 'Explore sustainability assessments and lower-impact product choices.', to: '/SustainabilityImpact' }
+  ] },
+  { name: 'Research workflows', scope: 'home-research', audience: 'Computational tools for scientists and R&D teams', items: [
+    { icon: Database, title: 'Multi-database search', detail: 'Search PubChem, ChEMBL, ChEBI, ChemSpider and Suttain DB with source labels.', to: '/ResearchPortal' },
+    { icon: SlidersHorizontal, title: 'Custom forcefields', detail: 'Select, upload or create parameters and attach them to your simulation setup.', to: '/ResearchDashboard' },
+    { icon: Layers, title: 'Unified simulation studio', detail: 'Prepare and track engine-specific workflows, including quantum chemistry and QM/MM.', to: '/ComputationalStudio/Simulations' }
+  ] }
 ];
 export default function LatestResearch() {
   return (
     <section className="px-4 py-14 sm:px-6 sm:py-20" aria-labelledby="latest-title">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-wrap justify-between items-end gap-5 mb-8"><div><p className="research-label mb-3">02 / Latest in research</p><h2 id="latest-title">Less setup. More control over the work.</h2></div><Link to="/ResearchPortal" className="inline-flex min-h-11 items-center gap-2 text-sm text-research-accent hover:underline">Explore the research portal<ArrowUpRight className="h-4 w-4" /></Link></div>
-        <div className="grid gap-5 md:grid-cols-3">
-          {updates.map(({ icon: Icon, title, detail }) => <Link key={title} to="/ResearchPortal" className="group rounded-xl border border-research-border bg-research-page p-6 transition-colors hover:border-research-accent"><Icon className="h-5 w-5 text-research-accent mb-6" strokeWidth={1.5} /><h3 className="mb-3">{title}</h3><p className="text-sm text-research-muted">{detail}</p><span className="mt-6 inline-flex items-center gap-2 text-sm text-research-accent">Explore workflow tools<ArrowUpRight className="h-4 w-4" /></span></Link>)}
-        </div>
+        <div className="mb-8 text-center"><p className="research-label mb-3">Inside each workspace</p><h2 id="latest-title">Product tools here. Research tools there.</h2><p className="text-research-muted mt-3">Consumer capabilities and the latest research improvements, kept in their own lanes.</p></div>
+        <div className="grid gap-6 md:grid-cols-2">{worlds.map(world => <div key={world.name} className={`${world.scope} rounded-xl border border-research-border bg-research-soft p-6`}><h3 className="mb-2">{world.name}</h3><p className="text-sm text-research-muted mb-5">{world.audience}</p><div className="space-y-3">{world.items.map(({ icon: Icon, title, detail, to }) => <Link key={title} to={to} className="block rounded-lg border border-research-border bg-research-card p-4 hover:border-research-accent transition-colors"><div className="flex items-center gap-3 text-research-accent mb-2"><Icon className="h-4 w-4 shrink-0" /><span className="text-sm font-medium flex-1">{title}</span><ArrowUpRight className="h-4 w-4" /></div><p className="text-sm text-research-muted">{detail}</p></Link>)}</div></div>)}</div>
       </div>
     </section>
   );

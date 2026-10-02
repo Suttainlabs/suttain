@@ -464,6 +464,24 @@
 .simulation-workspace :is(.hover\:bg-violet-700, .hover\:bg-indigo-700, .hover\:bg-cyan-700):hover { background-color: hsl(var(--research-accent)); opacity: 0.9; }
 .simulation-workspace pre { background-color: hsl(var(--research-text)); color: hsl(var(--research-card)); border-radius: var(--radius-md); }
 
+/* Homepage-specific accents: independent of the research tools' theme. */
+:root, .dark {
+  --home-consumer-accent: 175 97% 25%;
+  --home-consumer-soft: 175 45% 96%;
+  --home-research-accent: 247 42% 50%;
+  --home-research-soft: 247 40% 96%;
+}
+.agent-home .home-consumer, .agent-home.home-consumer {
+  --research-accent: var(--home-consumer-accent);
+  --research-soft: var(--home-consumer-soft);
+}
+.agent-home .home-research, .agent-home.home-research {
+  --research-accent: var(--home-research-accent);
+  --research-soft: var(--home-research-soft);
+}
+.agent-home :is(.home-consumer,.home-research) :is(h2,h3) { color: hsl(var(--research-accent)); }
+.agent-home #agent-walkthrough h2 { color: hsl(var(--research-accent)); }
+
 /* Homepage typography and restrained consumer compatibility. */
 .agent-home, .agent-home :is(h1,h2,h3,h4,h5,p,li,span,a,button) { font-family: var(--font-gilroy); }
 .agent-home :is(h1,h2,h3,h4,h5,.font-heading) { font-weight: 500; }

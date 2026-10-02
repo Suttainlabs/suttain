@@ -11,18 +11,20 @@ import LandingFinalCta from "@/components/landing/LandingFinalCta";
 
 export default function LandingHub() {
   return (
-    <div className="agent-home research-surface min-h-screen bg-research-card">
+    <div className="agent-home min-h-screen bg-background text-foreground font-body">
       <SEOHead
-        title="Suttain | Autonomous research workflows and chemical safety"
-        description="A workflow agent for computational research: search scientific databases, prepare quantum chemistry and QM/MM inputs, review methods and trace outputs. Plus chemical safety, product scanning and formulation tools."
+        title="Suttain | Consumer and brand tools · Research workflows"
+        description="Two distinct Suttain workspaces: product scanning, formulation and sustainability for consumers and brands; computational chemistry, scientific databases and autonomous workflows for researchers and R&D teams."
       />
       <LandingHero />
+      <LandingDoors />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-14 grid gap-5 md:grid-cols-2 items-stretch">
+        <LandingFeatures />
+        <LandingToolkit />
+      </div>
       <AgentWalkthrough />
       <LatestResearch />
       <LandingTrustBand />
-      <LandingDoors />
-      <LandingFeatures />
-      <LandingToolkit />
       <LandingFinalCta />
     </div>
   );
