@@ -11,7 +11,10 @@ const domainLabel = value => value.charAt(0) + value.slice(1).toLowerCase();
 export default function ComputationalStudioSimulations() {
   const { user } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
-  const [domain, setDomain] = useState('Chemistry');
+  const [domain, setDomain] = useState(() => {
+    const requestedDomain = new URLSearchParams(window.location.search).get('domain');
+    return DOMAIN_TAGS.includes(requestedDomain) ? requestedDomain : 'Chemistry';
+  });
   const canAccess = !user || trialStatus.isPro || trialStatus.trialDaysLeft > 0;
   const filteredSims = SIM_TYPES.filter(simulation => DOMAIN_SIM_MAP[domain]?.includes(simulation.id));
   if (user && !canAccess) return <StudioLayout><ResearchAccessNotice /></StudioLayout>;
