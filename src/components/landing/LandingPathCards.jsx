@@ -5,7 +5,7 @@ import LandingElementBadge from '@/components/landing/LandingElementBadge';
 
 const paths = [
   { number: '01', symbol: 'Cb', title: 'Consumer and brand', description: 'Safer, greener products. Scan products, generate validated formulas, and check compliance, no lab required.', items: ['Scan a product', 'Test interactions', 'Build a formula', 'Score sustainability'], link: '/BarcodeScanner', label: 'Explore consumer tools' },
-  { number: '02', symbol: 'Rs', research: true, title: 'Professional research', description: 'Computational chemistry. Simulation, structural biology, and API access for research chemists and scientists.', items: ['Molecule analysis', 'Computational studio', 'Structural biology', 'Research API'], link: '/ResearchPortal', label: 'Explore research tools' },
+  { number: '02', symbol: 'Rs', research: true, title: 'Professional research', description: 'Computational simulation and research API access for chemists, scientists, and R&D teams.', items: ['Computational studio', 'Research API'], link: '/ResearchPortal', label: 'Explore research tools' },
 ];
 export default function LandingPathCards() {
   return <section className="home-paths home-container" aria-label="Two ways to work">

@@ -598,8 +598,8 @@
   --home-line: #E5E7EB;
   --home-teal: #43918A;
   --home-link: #087B72;
-  --home-purple: #8B5CF6;
-  --home-purple-link: #7440D4;
+  --home-purple: var(--color-brand-purple);
+  --home-purple-link: var(--color-brand-purple);
   --home-search: #94BDB5;
 }
 .screenshot-home { background: var(--home-canvas); color: var(--home-ink); }
@@ -623,7 +623,7 @@
 .screenshot-home .home-path-card p { font-size: 14px; line-height: 1.65; }
 .screenshot-home .home-path-card ul { margin-block: 20px; padding-left: 15px; list-style: disc; font-size: 13px; color: var(--home-copy); }
 .screenshot-home .home-path-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--home-link); font-size: 14px; font-weight: 500; }
-.screenshot-home .home-research-card .home-path-link { color: var(--home-purple-link); }
+.screenshot-home .home-research-card .home-path-link, .screenshot-home .home-path-card.home-research-card h2 { color: var(--home-purple-link); }
 .screenshot-home .home-element { width: 56px; height: 58px; border: 1px solid var(--home-teal); border-radius: 6px; background: var(--home-canvas); display: flex; flex-direction: column; justify-content: center; padding: 6px 8px; color: var(--home-link); }
 .screenshot-home .home-element-research { border-color: var(--home-purple); color: var(--home-purple-link); }
 .screenshot-home .home-element-number { font-size: 9px; color: var(--home-copy); line-height: 1.3; }
