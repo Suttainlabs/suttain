@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { supplierVerification } from '@/functions/supplierVerification';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,18 +25,15 @@ export default function SupplierVerify() {
 
   useEffect(() => {
     if (!token) { setError('Invalid or missing verification token.'); setLoading(false); return; }
-    base44.asServiceRole?.entities?.SupplierVerification?.filter({ token })
-      .then(results => {
-        if (!results || results.length === 0) { setError('Verification request not found or expired.'); return; }
-        const req = results[0];
-        if (req.status === 'submitted' || req.status === 'validated') { setSubmitted(true); }
+    supplierVerification({ token, action: 'preview' })
+      .then(({ data: req }) => {
         setRequest(req);
         // Pre-fill ingredient data state
         const init = {};
         (req.ingredients_to_verify || []).forEach(ing => { init[ing] = { confirmed: false, grade: '', origin: '', notes: '' }; });
         setIngredientData(init);
       })
-      .catch(() => setError('Failed to load verification request.'))
+      .catch(err => setError(err.response?.data?.error || 'Failed to load verification request.'))
       .finally(() => setLoading(false));
   }, [token]);
 
@@ -62,15 +60,16 @@ export default function SupplierVerify() {
 
     setSubmitting(true);
     try {
-      await base44.entities.SupplierVerification.update(request.id, {
-        status: 'submitted',
+      await supplierVerification({
+        token,
+        action: 'submit',
         submitted_data: ingredientData,
         supplier_notes: supplierNotes,
         document_urls: uploadedFiles.map(f => f.url),
       });
       setSubmitted(true);
     } catch (err) {
-      alert('Submission failed. Please try again.');
+      alert(err.response?.data?.error || 'Submission failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -239,7 +238,7 @@ export default function SupplierVerify() {
 
         <Button
           onClick={handleSubmit}
-          disabled={submitting}
+          disabled={submitting || uploading}
           className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold py-3 rounded-xl text-base"
         >
           {submitting ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <CheckCircle className="w-5 h-5 mr-2" />}
