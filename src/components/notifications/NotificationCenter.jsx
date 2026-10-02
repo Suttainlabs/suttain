@@ -10,6 +10,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDistanceToNow, addHours, addDays, isBefore } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import NotificationBulkActions from '@/components/notifications/NotificationBulkActions';
 
 const NotificationIcon = ({ type, severity }) => {
   if (severity === 'critical') return <AlertTriangle className="w-5 h-5 text-red-600" />;
@@ -261,29 +262,7 @@ export default function NotificationCenter({ isOpen, onClose }) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {unreadCount > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => markAllReadMutation.mutate()}
-                    disabled={markAllReadMutation.isPending}
-                    className="text-xs"
-                  >
-                    {markAllReadMutation.isPending ? 'Marking...' : 'Mark all read'}
-                  </Button>
-                )}
-                {notifications.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => clearAllMutation.mutate()}
-                    disabled={clearAllMutation.isPending}
-                    className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="w-3.5 h-3.5 mr-1" />
-                    {clearAllMutation.isPending ? 'Clearing...' : 'Clear all'}
-                  </Button>
-                )}
+
                 <Button variant="ghost" size="sm" onClick={() => refetch()} className="h-8 w-8 p-0" title="Refresh">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
                 </Button>
@@ -292,6 +271,15 @@ export default function NotificationCenter({ isOpen, onClose }) {
                 </Button>
               </div>
             </div>
+
+            <NotificationBulkActions
+              unreadCount={unreadCount}
+              notificationCount={notifications.length}
+              reading={markAllReadMutation.isPending}
+              clearing={clearAllMutation.isPending}
+              onReadAll={() => markAllReadMutation.mutate()}
+              onClearAll={() => clearAllMutation.mutate()}
+            />
 
             {/* Pull to refresh indicator */}
             {isFetching && (
