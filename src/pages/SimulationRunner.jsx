@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SIM_TYPES } from "./ComputationalSimulation";
 import MoleculeDrawer from "../components/simulation/MoleculeDrawer";
 import MolViewer from "../components/simulation/MolViewer";
@@ -24,16 +24,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../com
 import {
   Cpu, ChevronLeft, Beaker, Dna, Download, Copy, CheckCircle2,
   Loader2, RotateCcw, BookOpen, Microscope, Activity, AlertTriangle,
-  Eye, SlidersHorizontal, Film, ChevronRight, FlaskConical, ArrowRight, Info, Atom, Layers, Thermometer, FileCode2, Upload, Target
+  Eye, SlidersHorizontal, Film, ChevronRight, Info, FileCode2, Upload, Target
 } from "lucide-react";
-import QuantumSettings from "../components/computational/QuantumSettings";
-import QuantumResults from "../components/computational/QuantumResults";
-import MaterialsSettings from "../components/computational/MaterialsSettings";
-import MaterialsResults from "../components/computational/MaterialsResults";
-import StructureBuilder from "../components/computational/StructureBuilder";
-import CrystalViewer3D from "../components/computational/CrystalViewer3D";
 import SimulationInputFiles from "../components/computational/SimulationInputFiles";
-import ThermoPhaseDiagram from "../components/computational/ThermoPhaseDiagram";
 import StructurePrepSuite from "../components/structural/StructurePrepSuite";
 
 function SelectField({ label, options, value, onChange }) {
@@ -79,9 +72,6 @@ export default function SimulationRunner() {
   const [envParams, setEnvParams] = useState(null);
   const [currentJobHash, setCurrentJobHash] = useState(null);
   const [currentDraftId, setCurrentDraftId] = useState(null);
-  const [useHardware, setUseHardware] = useState(false);
-  const [structureData, setStructureData] = useState(null);
-  const [structureBonds, setStructureBonds] = useState([]);
   const [inputFiles, setInputFiles] = useState(null);
   const [generatingInputs, setGeneratingInputs] = useState(false);
   const fileAutoFillRef = useRef(null);
@@ -112,7 +102,6 @@ export default function SimulationRunner() {
     "Rosetta": "Versatile platform for protein design, docking, and loop modeling.",
     "Modeller": "Comparative homology modeling from known template structures.",
     "RASPA": "Monte Carlo and MD for adsorption, diffusion, and phase equilibria in porous materials.",
-    "VASP": "Plane-wave DFT for periodic systems, surfaces, and bulk materials.",
     "EPI Suite": "EPA tool for estimating environmental fate and ecotoxicity of chemicals.",
     "ECOSAR": "Estimates aquatic toxicity from chemical structure using SAR relationships.",
     "VMD": "Powerful molecular visualization for trajectories and electrostatic maps.",
@@ -128,11 +117,6 @@ export default function SimulationRunner() {
   }, [sim, navigate]);
 
   if (!sim) return null;
-
-  const isQuantumMode = typeId === "quantum_vqe";
-  const isMaterialsMode = typeId === "materials_informatics";
-  const isStructureMode = typeId === "structure_builder";
-  const isThermoPhaseMode = typeId === "thermo_phase";
 
   const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
 
@@ -303,302 +287,6 @@ Provide a focused, technical analysis. Return JSON with:
     }
   };
 
-  const handleQuantumRun = async () => {
-    const molecule = inputs.molecule;
-    if (!molecule) return;
-
-    setIsRunning(true);
-    setResults(null);
-
-    const jobHash = generateJobHash();
-    setCurrentJobHash(jobHash);
-
-    let draftId = null;
-    if (user) {
-      try {
-        const draft = await base44.entities.SimulationDraft.create({
-          name: `Quantum VQE: ${molecule} : ${new Date().toLocaleString()}`,
-          sim_type: 'quantum_vqe',
-          sim_type_label: 'Quantum VQE (IBM Qiskit)',
-          engine: useHardware ? 'IBM Hardware' : 'Qiskit Statevector',
-          domain,
-          raw_inputs: { molecule, use_hardware: useHardware },
-          run_id: jobHash,
-          status: 'running',
-        });
-        draftId = draft.id;
-        setCurrentDraftId(draftId);
-      } catch (e) {
-        console.error('Failed to create draft:', e);
-      }
-    }
-
-    try {
-      const quantumData = await base44.functions.invoke('quantumChemistry', {
-        molecule,
-        use_hardware: useHardware,
-      });
-
-      const fullResult = {
-        ...quantumData,
-        simType: sim,
-        engine: useHardware ? 'IBM Hardware' : 'Qiskit Statevector',
-        domain,
-        inputs: { molecule },
-        job_hash: jobHash,
-      };
-      setResults(fullResult);
-      setActiveTab('analysis');
-
-      if (user && draftId) {
-        try {
-          await base44.entities.SimulationDraft.update(draftId, {
-            status: 'completed',
-            result: fullResult,
-          });
-          await base44.entities.SimulationJob.create({
-            draft_id: draftId,
-            job_hash: jobHash,
-            job_name: `Quantum VQE: ${molecule}`,
-            sim_type: 'quantum_vqe',
-            sim_type_label: 'Quantum VQE (IBM Qiskit)',
-            engine: useHardware ? 'IBM Hardware' : 'Qiskit Statevector',
-            inputs: { molecule, use_hardware: useHardware },
-            status: 'completed',
-            result: fullResult,
-          });
-        } catch (e) {
-          console.error('Failed to record job:', e);
-        }
-      }
-
-      if (user) {
-        try {
-          await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
-          if (refreshUser) await refreshUser();
-        } catch {}
-      }
-      setShowFeedback(true);
-      setTimeout(() => setShowFeedback(false), 15000);
-    } catch (e) {
-      console.error(e);
-      if (user && draftId) {
-        try {
-          await base44.entities.SimulationDraft.update(draftId, { status: 'failed', error: e.message });
-        } catch {}
-      }
-      setResults({ error: e.message || 'Quantum simulation failed' });
-    } finally {
-      setIsRunning(false);
-    }
-  };
-
-  const handleMaterialsRun = async () => {
-    const formula = inputs.formula;
-    const elements = inputs.elements;
-    if (!formula && !elements) return;
-
-    setIsRunning(true);
-    setResults(null);
-
-    const jobHash = generateJobHash();
-    setCurrentJobHash(jobHash);
-
-    let draftId = null;
-    if (user) {
-      try {
-        const draft = await base44.entities.SimulationDraft.create({
-          name: `Materials Search: ${formula || elements} : ${new Date().toLocaleString()}`,
-          sim_type: 'materials_informatics',
-          sim_type_label: 'Materials Informatics',
-          engine: 'Materials Project / OPTIMADE',
-          domain,
-          raw_inputs: { formula, elements, property_filter: inputs.property_filter },
-          run_id: jobHash,
-          status: 'running',
-        });
-        draftId = draft.id;
-        setCurrentDraftId(draftId);
-      } catch (e) {
-        console.error('Failed to create draft:', e);
-      }
-    }
-
-    try {
-      const searchResponse = await base44.functions.invoke('materialsSearch', {
-        formula,
-        elements,
-        property_filter: inputs.property_filter,
-      });
-
-      const fullResult = {
-        ...(searchResponse.data || searchResponse),
-        simType: sim,
-        engine: 'Materials Project / OPTIMADE',
-        domain,
-        inputs: { formula, elements, property_filter: inputs.property_filter },
-        job_hash: jobHash,
-      };
-      setResults(fullResult);
-
-      if (user && draftId) {
-        try {
-          await base44.entities.SimulationDraft.update(draftId, {
-            status: 'completed',
-            result: fullResult,
-          });
-          await base44.entities.SimulationJob.create({
-            draft_id: draftId,
-            job_hash: jobHash,
-            job_name: `Materials Search: ${formula || elements}`,
-            sim_type: 'materials_informatics',
-            sim_type_label: 'Materials Informatics',
-            engine: 'Materials Project / OPTIMADE',
-            inputs: { formula, elements, property_filter: inputs.property_filter },
-            status: 'completed',
-            result: fullResult,
-          });
-        } catch (e) {
-          console.error('Failed to record job:', e);
-        }
-      }
-
-      if (user) {
-        try {
-          await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
-          if (refreshUser) await refreshUser();
-        } catch {}
-      }
-      setShowFeedback(true);
-      setTimeout(() => setShowFeedback(false), 15000);
-    } catch (e) {
-      console.error(e);
-      if (user && draftId) {
-        try {
-          await base44.entities.SimulationDraft.update(draftId, { status: 'failed', error: e.message });
-        } catch {}
-      }
-      setResults({ error: e.response?.data?.error || e.message || 'Materials search failed' });
-    } finally {
-      setIsRunning(false);
-    }
-  };
-
-  const handleThermoPhaseRun = async () => {
-    const compound = inputs.compound || inputs.system;
-    if (!compound) return;
-
-    setIsRunning(true);
-    setResults(null);
-
-    const jobHash = generateJobHash();
-    setCurrentJobHash(jobHash);
-
-    let draftId = null;
-    if (user) {
-      try {
-        const draft = await base44.entities.SimulationDraft.create({
-          name: `Thermo/Phase: ${compound} : ${new Date().toLocaleString()}`,
-          sim_type: 'thermo_phase',
-          sim_type_label: 'Thermodynamics & Phase Diagrams',
-          engine: selectedEngine,
-          domain,
-          raw_inputs: { ...inputs },
-          run_id: jobHash,
-          status: 'running',
-        });
-        draftId = draft.id;
-        setCurrentDraftId(draftId);
-      } catch (e) {
-        console.error('Failed to create draft:', e);
-      }
-    }
-
-    try {
-      const thermoData = await base44.functions.invoke('thermoPhaseAnalysis', {
-        compound,
-        analysis_type: inputs.analysis_type || 'phase_diagram',
-        temperature_range: {
-          min: parseFloat(inputs.temp_min) || 100,
-          max: parseFloat(inputs.temp_max) || 800,
-          steps: 20,
-        },
-        pressure_range: {
-          min: parseFloat(inputs.pressure_min) || 0.01,
-          max: parseFloat(inputs.pressure_max) || 100,
-          steps: 10,
-        },
-        environmental_params: envParams || {},
-      });
-
-      const fullResult = {
-        ...thermoData,
-        simType: sim,
-        engine: selectedEngine,
-        domain,
-        inputs: { ...inputs },
-        job_hash: jobHash,
-      };
-      setResults(fullResult);
-      setActiveTab('analysis');
-
-      if (user && draftId) {
-        try {
-          await base44.entities.SimulationDraft.update(draftId, {
-            status: 'completed',
-            result: fullResult,
-          });
-          await base44.entities.SimulationJob.create({
-            draft_id: draftId,
-            job_hash: jobHash,
-            job_name: `Thermo/Phase: ${compound}`,
-            sim_type: 'thermo_phase',
-            sim_type_label: 'Thermodynamics & Phase Diagrams',
-            engine: selectedEngine,
-            inputs: { ...inputs },
-            status: 'completed',
-            result: fullResult,
-          });
-        } catch (e) {
-          console.error('Failed to record job:', e);
-        }
-      }
-
-      if (user) {
-        try {
-          await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
-          if (refreshUser) await refreshUser();
-        } catch {}
-      }
-      setShowFeedback(true);
-      setTimeout(() => setShowFeedback(false), 15000);
-    } catch (e) {
-      console.error(e);
-      if (user && draftId) {
-        try {
-          await base44.entities.SimulationDraft.update(draftId, { status: 'failed', error: e.message });
-        } catch {}
-      }
-      setResults({ error: e.message || 'Thermodynamic analysis failed' });
-    } finally {
-      setIsRunning(false);
-    }
-  };
-
-  const handleStructureLoaded = (result) => {
-    if (result?.structure) {
-      setStructureData(result.structure);
-      setStructureBonds(result.bonds || []);
-      setResults({
-        ...result,
-        simType: sim,
-        engine: 'ASE / Three.js',
-        domain,
-        job_hash: generateJobHash(),
-      });
-    }
-  };
-
   const handleGenerateInputs = async () => {
     setGeneratingInputs(true);
     setInputFiles(null);
@@ -762,62 +450,6 @@ Provide a focused, technical analysis. Return JSON with:
         <AnimatePresence>
           {results && (
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-8">
-              {isQuantumMode || isMaterialsMode ? (
-                <>
-                  {isQuantumMode ? <QuantumResults results={results} /> : <MaterialsResults results={results} />}
-                  <div className="flex justify-center mt-8 gap-3 flex-wrap">
-                    <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />{isMaterialsMode ? 'New Search' : 'New Simulation'}</Button>
-                    <Button onClick={isQuantumMode ? handleQuantumRun : handleMaterialsRun} disabled={isRunning} className={isQuantumMode ? "gap-2 bg-indigo-600 hover:bg-indigo-700 text-white" : "gap-2 bg-amber-600 hover:bg-amber-700 text-white"}>
-                      {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : isQuantumMode ? <Atom className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
-                      {isQuantumMode ? 'Re-run VQE' : 'Re-run Search'}
-                    </Button>
-                  </div>
-                </>
-              ) : isThermoPhaseMode ? (
-                <>
-                  {results?.error ? (
-                    <Card className="border-red-200 bg-red-50 border shadow-sm">
-                      <CardContent className="p-6 text-center">
-                        <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-2" />
-                        <p className="text-red-700 font-semibold">{results.error}</p>
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <ThermoPhaseDiagram results={results} />
-                  )}
-                  <div className="flex justify-center mt-8 gap-3 flex-wrap">
-                    <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />New Analysis</Button>
-                    <Button onClick={handleThermoPhaseRun} disabled={isRunning} className="gap-2 bg-orange-600 hover:bg-orange-700 text-white">
-                      {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Thermometer className="w-4 h-4" />}
-                      Re-run Analysis
-                    </Button>
-                  </div>
-                </>
-              ) : isStructureMode && structureData ? (
-                <>
-                  <Card className="border-0 shadow-sm">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-2 mb-4 flex-wrap">
-                        <Badge className="bg-cyan-100 text-cyan-700 text-sm font-mono">{results?.formula || ''}</Badge>
-                        <Badge variant="outline" className="text-xs">{results?.source || ''}</Badge>
-                        <span className="text-xs text-slate-400">{results?.method_note || ''}</span>
-                      </div>
-                      {results?.plain_language && (
-                        <div className="mb-4 p-3 bg-slate-50 rounded-lg">
-                          <p className="text-sm text-slate-600 leading-relaxed">{results.plain_language}</p>
-                        </div>
-                      )}
-                      <CrystalViewer3D structure={structureData} bonds={structureBonds} />
-                    </CardContent>
-                  </Card>
-                  <div className="flex justify-center mt-8 gap-3 flex-wrap">
-                    <Button variant="outline" onClick={() => { setStructureData(null); setResults(null); setStructureBonds([]); }} className="gap-2">
-                      <RotateCcw className="w-4 h-4" /> New Structure
-                    </Button>
-                  </div>
-                </>
-              ) : (
-              <>
               {/* Result Tabs */}
               <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 mb-6 w-fit">
                 {[
@@ -1022,8 +654,6 @@ Provide a focused, technical analysis. Return JSON with:
                   Re-run Analysis
                 </Button>
               </div>
-              </>
-              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -1041,67 +671,15 @@ Provide a focused, technical analysis. Return JSON with:
         {/* Config Form */}
         {!results && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-            {isStructureMode ? (
-              <Card className="border-0 shadow-md">
-                <CardContent className="p-6 md:p-8">
-                  <div className="mb-5">
-                    <h2 className="font-bold text-slate-900 text-lg mb-1">Structure Builder & 3D Viewer</h2>
-                    <p className="text-sm text-slate-500">
-                      Upload a structure file (CIF, POSCAR, XYZ, PDB) or build a common crystal type,
-                      then convert between formats and visualize in 3D. Powered by ASE-compatible
-                      structure tools and Three.js.
-                    </p>
-                  </div>
-                  <StructureBuilder onStructureLoaded={handleStructureLoaded} />
-                </CardContent>
-              </Card>
-            ) : (
-            <>
             {/* Simulation Presets */}
             <SimulationPresets onSelectPreset={handlePresetSelect} />
 
             <Card className="border-0 shadow-md">
               <CardContent className="p-6 md:p-8">
+                {/* PubChem Auto-fill */}
+                <PubChemSearch onSelect={handlePubChemSelect} />
 
-                {/* Quantum Settings: quantum mode only */}
-                {isQuantumMode && (
-                  <div className="mb-7">
-                    <QuantumSettings />
-                    <div className="mt-4 p-4 bg-indigo-50 border border-indigo-200 rounded-2xl">
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={useHardware}
-                          onChange={e => setUseHardware(e.target.checked)}
-                          className="w-4 h-4 mt-0.5 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <div>
-                          <span className="text-sm font-semibold text-indigo-800">Run on real IBM quantum hardware</span>
-                          <p className="text-xs text-indigo-600 mt-0.5">
-                            Uses your IBM Quantum token via Qiskit Runtime. Best for small molecules (H2, LiH, H2O).
-                            Hardware runs may queue and take several minutes. Without a token, the local Qiskit
-                            simulator is used (no token needed).
-                          </p>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                )}
-
-                {/* Materials Settings: materials mode only */}
-                {isMaterialsMode && (
-                  <div className="mb-7">
-                    <MaterialsSettings />
-                  </div>
-                )}
-
-                {/* PubChem Auto-fill: hidden for quantum and materials modes */}
-                {!isQuantumMode && !isMaterialsMode && (
-                  <PubChemSearch onSelect={handlePubChemSelect} />
-                )}
-
-                {/* Engine selector: hidden for quantum and materials modes */}
-                {!isQuantumMode && !isMaterialsMode && (
+                {/* Engine selector */}
                 <div className="mb-7">
                   <label className="block text-xs font-semibold text-slate-500 mb-2.5 uppercase tracking-widest">Software / Engine</label>
                   <TooltipProvider>
@@ -1129,7 +707,6 @@ Provide a focused, technical analysis. Return JSON with:
                     </div>
                   </TooltipProvider>
                 </div>
-                )}
 
                 {/* Prepare Docking: MD only */}
                 {typeId === "molecular_dynamics" && (
@@ -1193,32 +770,32 @@ Provide a focused, technical analysis. Return JSON with:
                         <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">{field.label}</label>
                         <div className="flex gap-2">
                            <input
-                             type="text"
-                             value={inputs[field.key] ?? ""}
-                             onChange={e => handleInputChange(field.key, e.target.value)}
-                             placeholder={field.placeholder}
-                             className="flex-1 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 bg-white"
-                           />
-                           {FILE_UPLOAD_KEYS.includes(field.key) && (
-                             <button
-                               type="button"
-                               onClick={() => openFileAutoFill(field.key)}
-                               className="flex-shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl border-2 border-fuchsia-200 bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-700 text-xs font-semibold transition-colors"
-                             >
-                               <Upload className="w-3.5 h-3.5" />
-                               Upload File
-                             </button>
-                           )}
-                           {DRAWABLE_KEYS.includes(field.key) && (
-                             <button
-                               type="button"
-                               onClick={() => openDrawer(field.key)}
-                               className="flex-shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl border-2 border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-semibold transition-colors">
-                               Draw
-                             </button>
-                           )}
-                         </div>
-                      </div>
+                              type="text"
+                              value={inputs[field.key] ?? ""}
+                              onChange={e => handleInputChange(field.key, e.target.value)}
+                              placeholder={field.placeholder}
+                              className="flex-1 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 bg-white"
+                            />
+                            {FILE_UPLOAD_KEYS.includes(field.key) && (
+                              <button
+                                type="button"
+                                onClick={() => openFileAutoFill(field.key)}
+                                className="flex-shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl border-2 border-fuchsia-200 bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-700 text-xs font-semibold transition-colors"
+                              >
+                                <Upload className="w-3.5 h-3.5" />
+                                Upload File
+                              </button>
+                            )}
+                            {DRAWABLE_KEYS.includes(field.key) && (
+                              <button
+                                type="button"
+                                onClick={() => openDrawer(field.key)}
+                                className="flex-shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl border-2 border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-semibold transition-colors">
+                                Draw
+                              </button>
+                            )}
+                          </div>
+                       </div>
                     )
                   ))}
                   <div>
@@ -1230,8 +807,7 @@ Provide a focused, technical analysis. Return JSON with:
                   </div>
                 </div>
 
-                {/* Environmental Parameters: hidden for quantum and materials modes */}
-                {!isQuantumMode && !isMaterialsMode && (
+                {/* Environmental Parameters */}
                 <div className="mb-7">
                   <EnvironmentalParametersPanel
                     params={envParams}
@@ -1239,55 +815,33 @@ Provide a focused, technical analysis. Return JSON with:
                     simType={typeId}
                   />
                 </div>
-                )}
 
                 {/* Run button */}
                 <div className="flex items-center gap-4 flex-wrap">
                   <Button
-                    onClick={isQuantumMode ? handleQuantumRun : isMaterialsMode ? handleMaterialsRun : isThermoPhaseMode ? handleThermoPhaseRun : handleRun}
+                    onClick={handleRun}
                     disabled={isRunning}
-                    className={isQuantumMode
-                      ? "bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
-                      : isMaterialsMode
-                        ? "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
-                        : isThermoPhaseMode
-                          ? "bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
-                          : "bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"}
+                    className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
                   >
                     {isRunning
                       ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
-                      : isQuantumMode
-                        ? <><Atom className="w-4 h-4" /> Run VQE Simulation</>
-                        : isMaterialsMode
-                          ? <><Layers className="w-4 h-4" /> Search Materials</>
-                          : isThermoPhaseMode
-                            ? <><Thermometer className="w-4 h-4" /> Run Thermo Analysis</>
-                            : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
+                      : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
                   </Button>
 
-                  {/* Generate Input Files button, for standard sim types only */}
-                  {!isQuantumMode && !isMaterialsMode && !isThermoPhaseMode && (
-                    <Button
-                      onClick={handleGenerateInputs}
-                      disabled={generatingInputs}
-                      variant="outline"
-                      className="gap-2 border-violet-300 text-violet-700 hover:bg-violet-50"
-                    >
-                      {generatingInputs
-                        ? <Loader2 className="w-4 h-4 animate-spin" />
-                        : <FileCode2 className="w-4 h-4" />}
-                      Generate Input Files
-                    </Button>
-                  )}
+                  <Button
+                    onClick={handleGenerateInputs}
+                    disabled={generatingInputs}
+                    variant="outline"
+                    className="gap-2 border-violet-300 text-violet-700 hover:bg-violet-50"
+                  >
+                    {generatingInputs
+                      ? <Loader2 className="w-4 h-4 animate-spin" />
+                      : <FileCode2 className="w-4 h-4" />}
+                    Generate Input Files
+                  </Button>
 
                   <p className="text-xs text-slate-400">
-                    {isQuantumMode
-                      ? `VQE via Qiskit ${useHardware ? 'hardware' : 'simulator'} · 10-30 seconds`
-                      : isMaterialsMode
-                        ? `Live API queries to Materials Project & OPTIMADE · 5-10 seconds`
-                        : isThermoPhaseMode
-                          ? `AI thermodynamic estimation · 5-10 seconds`
-                          : `AI analysis + ${selectedEngine} script · 5-10 seconds`}
+                    AI analysis + {selectedEngine} script · 5-10 seconds
                   </p>
                 </div>
 
@@ -1299,26 +853,20 @@ Provide a focused, technical analysis. Return JSON with:
                 )}
 
                 {isRunning && (
-                  <div className={`mt-5 ${isQuantumMode ? 'bg-indigo-50 border-indigo-200' : isMaterialsMode ? 'bg-amber-50 border-amber-200' : 'bg-violet-50 border-violet-200'} border rounded-2xl p-4 flex items-center gap-3`}>
-                    <Loader2 className={`w-5 h-5 ${isQuantumMode ? 'text-indigo-600' : isMaterialsMode ? 'text-amber-600' : 'text-violet-600'} animate-spin flex-shrink-0`} />
+                  <div className="mt-5 bg-violet-50 border-violet-200 border rounded-2xl p-4 flex items-center gap-3">
+                    <Loader2 className="w-5 h-5 text-violet-600 animate-spin flex-shrink-0" />
                     <div>
-                      <p className={`text-sm font-semibold ${isQuantumMode ? 'text-indigo-800' : isMaterialsMode ? 'text-amber-800' : 'text-violet-800'}`}>
-                        {isQuantumMode ? 'Running VQE quantum simulation…' : isMaterialsMode ? 'Searching materials databases…' : `Computing ${sim.label}…`}
+                      <p className="text-sm font-semibold text-violet-800">
+                        Computing {sim.label}…
                       </p>
-                      <p className={`text-xs ${isQuantumMode ? 'text-indigo-500' : isMaterialsMode ? 'text-amber-500' : 'text-violet-500'}`}>
-                        {isQuantumMode
-                          ? `Running VQE on Qiskit ${useHardware ? 'hardware (may queue)' : 'statevector simulator'}…`
-                          : isMaterialsMode
-                            ? `Querying Materials Project and OPTIMADE providers…`
-                            : `Generating ${selectedEngine} script, predicted results & analysis…`}
+                      <p className="text-xs text-violet-500">
+                        Generating {selectedEngine} script, predicted results & analysis…
                       </p>
                     </div>
                   </div>
                 )}
               </CardContent>
             </Card>
-            </>
-            )}
           </motion.div>
         )}
 

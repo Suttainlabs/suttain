@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom,
-  Microscope, Globe, Beaker, Activity, Eye, ExternalLink, ArrowRight, Layers, Boxes, Thermometer
+  Microscope, Globe, Beaker, Activity, Eye, ArrowRight, Layers
 } from "lucide-react";
 
 export const SIM_TYPES = [
@@ -24,19 +24,6 @@ export const SIM_TYPES = [
       { key: "functional", label: "DFT Functional", type: "select", options: ["B3LYP","PBE","PBE0","M06-2X","M06-L","ωB97X-D","CAM-B3LYP","BP86","BLYP","B97-D3","HSE06","TPSSh","B2-PLYP","DLPNO-CCSD(T)","HF"], default: "B3LYP" },
       { key: "basis_set", label: "Basis Set", type: "select", options: ["STO-3G","3-21G","6-31G","6-31G*","6-31G**","6-311G*","6-311G**","6-311+G**","6-311++G**","cc-pVDZ","cc-pVTZ","cc-pVQZ","aug-cc-pVDZ","aug-cc-pVTZ","def2-SVP","def2-TZVP","def2-QZVP","def2-TZVPP","LANL2DZ","SDD"], default: "6-31G*" },
       { key: "task", label: "Calculation Task", placeholder: "e.g. geometry optimization, frequency, NMR, single point" },
-    ]
-  },
-  {
-    id: "quantum_vqe",
-    label: "Quantum VQE (IBM Qiskit)",
-    icon: Atom,
-    color: "from-indigo-500 to-blue-600",
-    bgColor: "bg-indigo-50",
-    borderColor: "border-indigo-200",
-    engines: ["Qiskit Statevector", "IBM Hardware"],
-    description: "Variational Quantum Eigensolver for ground state energy using IBM Qiskit. Run on simulator or real quantum hardware.",
-    fields: [
-      { key: "molecule", label: "Molecule (name, SMILES, or formula)", placeholder: "e.g. H2, LiH, H2O, or SMILES" },
     ]
   },
   {
@@ -118,32 +105,6 @@ export const SIM_TYPES = [
       { key: "kpoints", label: "k-point Sampling", type: "select", options: ["2x2x2","4x4x4","6x6x6","8x8x8","10x10x10","Gamma only","Custom"], default: "4x4x4" },
       { key: "functional", label: "Functional / Method", type: "select", options: ["PBE","PBE+U","HSE06","vdW-DF","SCAN","r2SCAN","PBEsol","LDA"], default: "PBE" },
     ]
-  },
-  {
-    id: "materials_informatics",
-    label: "Materials Informatics",
-    icon: Layers,
-    color: "from-amber-500 to-orange-600",
-    bgColor: "bg-amber-50",
-    borderColor: "border-amber-200",
-    engines: ["Materials Project", "OPTIMADE", "AFLOW"],
-    description: "Search open materials databases for crystal structures, formation energies, band gaps, and electronic properties.",
-    fields: [
-      { key: "formula", label: "Chemical Formula", placeholder: "e.g. SiO2, BaTiO3, Fe2O3" },
-      { key: "elements", label: "Elements (comma-separated, optional)", placeholder: "e.g. Si, O" },
-      { key: "property_filter", label: "Property Filter", type: "select", options: ["None", "Semiconductors (band gap 0.1-3 eV)", "Insulators (band gap > 3 eV)", "Metals (band gap = 0)", "Stable materials (on hull)"], default: "None" },
-    ]
-  },
-  {
-    id: "structure_builder",
-    label: "Structure Builder & 3D Viewer",
-    icon: Boxes,
-    color: "from-cyan-500 to-teal-600",
-    bgColor: "bg-cyan-50",
-    borderColor: "border-cyan-200",
-    engines: ["ASE", "Three.js", "CIF", "POSCAR", "XYZ", "PDB"],
-    description: "Upload or build crystal structures, convert between CIF/POSCAR/XYZ/PDB, and visualize in 3D with measurement tools.",
-    fields: []
   },
   {
     id: "monte_carlo",
@@ -268,35 +229,17 @@ export const SIM_TYPES = [
     description: "Steady-state and dynamic process flowsheet simulation. Distillation columns, reactors, heat exchangers, and full plant models.",
     fields: [],
   },
-  {
-    id: "thermo_phase",
-    label: "Thermodynamics & Phase Diagrams",
-    icon: Thermometer,
-    color: "from-orange-500 to-red-600",
-    bgColor: "bg-orange-50",
-    borderColor: "border-orange-200",
-    engines: ["ThermoCalc", "CALPHAD", "NIST WebBook", "Group Contribution"],
-    description: "Thermodynamic property estimation, heat capacity curves, Gibbs energy analysis, and P-T phase diagram construction.",
-    fields: [
-      { key: "compound", label: "Compound / System", placeholder: "e.g. H2O, CO2, NaCl, Fe-C alloy" },
-      { key: "analysis_type", label: "Analysis Type", type: "select", options: ["phase_diagram", "thermodynamic_properties", "heat_capacity_curve", "gibbs_energy_curve"], default: "phase_diagram" },
-      { key: "temp_min", label: "Min Temperature (K)", placeholder: "100" },
-      { key: "temp_max", label: "Max Temperature (K)", placeholder: "800" },
-      { key: "pressure_min", label: "Min Pressure (bar)", placeholder: "0.01" },
-      { key: "pressure_max", label: "Max Pressure (bar)", placeholder: "100" },
-    ]
-  },
 ];
 
 export const DOMAIN_SIM_MAP = {
-  "Chemistry":         ["dft", "quantum_vqe", "materials_informatics", "structure_builder", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation", "thermo_phase"],
-  "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization", "thermo_phase"],
-  "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization", "thermo_phase"],
-  "Engineering":       ["materials", "materials_informatics", "structure_builder", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation", "thermo_phase"],
-  "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization", "thermo_phase"],
-  "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation", "thermo_phase"],
-  "Materials Science": ["materials", "materials_informatics", "structure_builder", "dft", "quantum_vqe", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization", "thermo_phase"],
-  "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "quantum_vqe", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization", "thermo_phase"],
+  "Chemistry":         ["dft", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
+  "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
+  "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
+  "Engineering":       ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
+  "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
+  "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation"],
+  "Materials Science": ["materials", "dft", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
 };
 
 export const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
@@ -352,10 +295,6 @@ export default function ComputationalSimulation() {
   const filteredSims = SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id));
 
   const handleSelectSim = (simId) => {
-    if (simId === "sandbox") {
-      navigate("/SimulationSandbox");
-      return;
-    }
     if (simId === "process_simulation") {
       navigate("/DWSIMIntegration");
       return;
@@ -375,19 +314,6 @@ export default function ComputationalSimulation() {
             <p className="text-slate-500 max-w-2xl mx-auto text-base leading-relaxed">
               AI-powered molecular modeling: DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.
             </p>
-
-            {/* Capability badges */}
-            <div className="flex flex-wrap justify-center gap-2 mt-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200">
-                <Atom className="w-3 h-3" /> Quantum-powered, IBM Qiskit VQE
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200">
-                <Layers className="w-3 h-3" /> Materials Informatics, Materials Project & OPTIMADE
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-100 text-cyan-700 text-xs font-semibold border border-cyan-200">
-                <Boxes className="w-3 h-3" /> Structure Builder, ASE & 3D Crystal Viewer
-              </span>
-            </div>
 
             {/* Domain tabs */}
             <div className="flex flex-wrap justify-center gap-2 mt-6">
@@ -485,28 +411,6 @@ export default function ComputationalSimulation() {
               </button>
             )}
 
-            {/* Sandbox card */}
-            <button
-              onClick={() => navigate("/SimulationSandbox")}
-              className="group text-left bg-violet-50 rounded-2xl border-2 border-dashed border-violet-300 p-5 hover:bg-violet-100 hover:border-violet-500 hover:shadow-md transition-all duration-200 focus:outline-none"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <Eye className="w-5 h-5 text-white" />
-                </div>
-                <ExternalLink className="w-4 h-4 text-violet-400 group-hover:text-violet-600 transition-colors mt-1" />
-              </div>
-              <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight flex items-center gap-1.5">
-                3D Simulation Sandbox
-              </h3>
-              <p className="text-xs text-slate-500 leading-relaxed mb-3">
-                Interactive sandbox: place atoms on a 3D grid and simulate real-time physics interactions
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                <span className="inline-block bg-violet-100 text-violet-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">Three.js</span>
-                <span className="inline-block bg-violet-100 text-violet-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">Interactive</span>
-              </div>
-            </button>
           </div>
 
         </div>

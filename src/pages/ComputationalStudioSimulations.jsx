@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Gauge, ArrowRight, ExternalLink, Eye, Layers, Circle, LayoutGrid, Hexagon } from 'lucide-react';
+import { Gauge, ArrowRight, Layers, Hexagon } from 'lucide-react';
 import StudioLayout from '@/components/studio/StudioLayout';
 import { SourcedBadge } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
@@ -41,10 +41,6 @@ export default function ComputationalStudioSimulations() {
   const filteredSims = SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id));
 
   const handleSelectSim = (simId) => {
-    if (simId === 'sandbox') {
-      navigate('/SimulationSandbox');
-      return;
-    }
     if (simId === 'process_simulation') {
       navigate('/DWSIMIntegration');
       return;
@@ -67,19 +63,6 @@ export default function ComputationalStudioSimulations() {
             </div>
           </div>
           <SourcedBadge />
-        </div>
-
-        {/* Capability badges */}
-        <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200">
-            <Circle className="w-3 h-3" /> Quantum-powered, IBM Qiskit VQE
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200">
-            <Layers className="w-3 h-3" /> Materials Informatics, Materials Project & OPTIMADE
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-100 text-cyan-700 text-xs font-semibold border border-cyan-200">
-            <LayoutGrid className="w-3 h-3" /> Structure Builder, ASE & 3D Crystal Viewer
-          </span>
         </div>
 
         {/* Domain tabs */}
@@ -177,28 +160,6 @@ export default function ComputationalStudioSimulations() {
             </button>
           )}
 
-          {/* Sandbox card */}
-          <button
-            onClick={() => navigate('/SimulationSandbox')}
-            className="group text-left bg-violet-50 rounded-2xl border-2 border-dashed border-violet-300 p-5 hover:bg-violet-100 hover:border-violet-500 hover:shadow-md transition-all duration-200 focus:outline-none"
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center flex-shrink-0 shadow-sm">
-                <Eye className="w-5 h-5 text-white" />
-              </div>
-              <ExternalLink className="w-4 h-4 text-violet-400 group-hover:text-violet-600 transition-colors mt-1" />
-            </div>
-            <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight">
-              3D Simulation Sandbox
-            </h3>
-            <p className="text-xs text-slate-500 leading-relaxed mb-3">
-              Interactive sandbox: place atoms on a 3D grid and simulate real-time physics interactions
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              <span className="inline-block bg-violet-100 text-violet-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">Three.js</span>
-              <span className="inline-block bg-violet-100 text-violet-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">Interactive</span>
-            </div>
-          </button>
         </div>
       </div>
     </StudioLayout>
