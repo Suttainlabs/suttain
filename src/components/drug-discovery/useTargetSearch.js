@@ -7,13 +7,13 @@ export default function useTargetSearch() {
   const controller = useRef(null);
   useEffect(() => () => controller.current?.abort(), []);
   function resetSearch() { controller.current?.abort(); controller.current = null; setSearching(false); setSelectedTarget(null); setMatches([]); setSearchError(''); setSourceWarning(''); }
-  async function runSearch() {
-    if (!query.trim() || searching) return;
+  async function runSearch(searchQuery = query) {
+    if (!searchQuery.trim()) return;
     controller.current?.abort(); const request = new AbortController(); controller.current = request;
     setSearching(true); setSearchError(''); setSourceWarning(''); setMatches([]); setSelectedTarget(null);
     const timer = setTimeout(() => request.abort(), 15000);
     try {
-      const result = await searchTargets(query, request.signal);
+      const result = await searchTargets(searchQuery, request.signal);
       if (controller.current !== request) return;
       setMatches(result.matches);
       if (!result.matches.length) setSearchError(result.unavailable.length === 3 ? 'Target sources could not be reached. Please try again.' : 'No match found across the available sources. Try a different protein, gene, or disease name.');

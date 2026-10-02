@@ -1,10 +1,7 @@
-import { Loader2 } from 'lucide-react';
+import TargetSearchInput from '@/components/drug-discovery/TargetSearchInput';
 export default function TargetSearchStep({ state: s }) {
   return <section>
-    <form onSubmit={e => { e.preventDefault(); s.runSearch(); }} aria-busy={s.searching}>
-      <label htmlFor="drug-target-query" className="block text-sm mb-2">Search by disease, gene, or protein</label>
-      <div className="flex flex-col sm:flex-row gap-2 mb-4"><input id="drug-target-query" maxLength={200} value={s.query} onChange={e => s.setQuery(e.target.value)} className="simulation-control flex-1 min-w-0" placeholder="e.g. EGFR, BACE1, SARS-CoV-2 Mpro" aria-describedby="drug-target-notes" /><button disabled={s.searching || !s.query.trim()} className="research-primary bg-primary text-primary-foreground disabled:opacity-50">{s.searching && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}{s.searching ? 'Searching…' : 'Search'}</button></div>
-    </form>
+    <TargetSearchInput state={s} />
     <div aria-live="polite">{s.searchError && <p className="text-sm text-destructive mb-3">{s.searchError}</p>}{s.sourceWarning && <p className="text-sm text-muted-foreground mb-3">{s.sourceWarning}</p>}</div>
     <div className="space-y-3">{s.matches.map(t => <div key={t.pdb_id || t.chembl_id || t.uniprot_id} className={`border rounded-lg p-4 ${s.selectedTarget === t ? 'border-primary bg-secondary/50' : 'border-border'}`}>
       <button onClick={() => s.setSelectedTarget(t)} aria-pressed={s.selectedTarget === t} className="w-full text-left"><span className="block font-medium">{t.name}</span><span className="block text-xs text-muted-foreground mt-1">{t.target_class || 'Protein target'} · {t.disease_context || 'No disease annotation found'}</span><span className="mt-3 flex gap-2 text-xs flex-wrap">{t.structure_resolved && <span className="rounded bg-secondary text-secondary-foreground px-2 py-1">Structure resolved{t.resolution ? ` · ${t.resolution} Å` : ''}{t.method ? ` · ${t.method}` : ''}</span>}{typeof t.activity_count === 'number' && <span className="rounded bg-secondary text-secondary-foreground px-2 py-1">{t.activity_count.toLocaleString()} ChEMBL activity records</span>}<span className="rounded bg-muted px-2 py-1">{s.selectedTarget === t ? 'Selected target' : 'Select this target'}</span></span></button>
