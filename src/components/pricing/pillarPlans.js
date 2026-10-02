@@ -14,7 +14,7 @@ export const PILLARS = [
     label: 'Research',
     accent: '#9531F5',
     fill: '#F5EEFF',
-    tagline: 'Simulation, molecular intelligence, and structural biology.',
+    tagline: 'Computational simulations, research workflows, and citation-ready exports.',
   },
 ];
 
@@ -105,13 +105,11 @@ export const PLANS_BY_PILLAR = {
       priceSuffix: '/month',
       noteMonthly: 'Cancel anytime',
       noteYearly: 'Billed $479.90 per year, save 20%',
-      description: 'Computational studio, simulations, and structural biology.',
+      description: 'Run simulations and manage research workflows in one computational workspace.',
       features: [
         'Unlimited DFT and MD simulations',
         'Full Core access included',
         'Computational studio and job queue',
-        'Structural biology suite',
-        'Chemical comparison and SDS analyzer',
         'Citation-ready exports',
       ],
       cta: 'Get research',
