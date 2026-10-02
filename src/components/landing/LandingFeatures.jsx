@@ -4,15 +4,11 @@ import ElementCell from "./ElementCell";
 const EVERYONE = [
   { idx: "03", sym: "Sn", title: "Scan a product", desc: "Point your camera at a barcode or ingredient list for real chemical identification." },
   { idx: "04", sym: "Ti", title: "Test interactions", desc: "Check whether combining products or ingredients is safe before you mix them." },
-  { idx: "05", sym: "Bf", title: "Build a formula", desc: "Generate a validated skincare, soap, or cleaning formula from scratch." },
+  { idx: "05", sym: "Bf", title: "Build a formula", desc: "Prepare a skincare, soap or cleaning formula, then review its ingredients and manufacturing steps." },
   { idx: "06", sym: "Ss", title: "Score sustainability", desc: "See how a product or formula stacks up on environmental impact." },
 ];
 
-const RESEARCH = [
-  { idx: "06", sym: "Mi", title: "Molecular intelligence", desc: "Structure, properties, and hazard classification for any compound in the index, queryable, not just searchable." },
-  { idx: "07", sym: "Sm", title: "Simulation", desc: "Model reactions and formulations before you run them, with the same safety engine that powers consumer scans." },
-  { idx: "08", sym: "Ap", title: "API access", desc: "Bring Suttain's data model, safety engine, and formula intelligence directly into your own tools and pipelines." },
-];
+
 
 function FeatureGrid({ items, variant }) {
   const cols = variant === "research" ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
@@ -42,15 +38,9 @@ function SecHead({ eyebrow, eyebrowColor, title, sub }) {
 
 export default function LandingFeatures() {
   return (
-    <>
-      <section className="px-6 py-24">
-        <SecHead eyebrow="FOR EVERYONE" eyebrowColor="#027A70" title="Four ways in, one plain-language answer" sub="However you start, you end up knowing for sure." />
-        <FeatureGrid items={EVERYONE} variant="consumer" />
-      </section>
-      <section className="px-6 py-24 bg-[#F7F6F2]">
-        <SecHead eyebrow="FOR RESEARCHERS" eyebrowColor="#7D26CC" title="Chemical intelligence, at working depth" sub="The same engine, running at the resolution real chemical work needs." />
-        <FeatureGrid items={RESEARCH} variant="research" />
-      </section>
-    </>
+    <section id="consumer-tools" className="px-4 py-12 sm:px-6 sm:py-16 bg-research-card">
+      <SecHead eyebrow="03 / Everyday chemical decisions" eyebrowColor="hsl(var(--research-accent))" title="The same care, closer to everyday life" sub="Start with a product, a combination or a formulation. Use the findings to inform your next decision, not replace a safety professional." />
+      <FeatureGrid items={EVERYONE} variant="consumer" />
+    </section>
   );
 }

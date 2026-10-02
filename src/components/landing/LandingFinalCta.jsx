@@ -3,27 +3,11 @@ import { Link } from "react-router-dom";
 
 export default function LandingFinalCta() {
   return (
-    <div className="bg-[#9531F5] text-white px-6 py-20 text-center">
-      <div className="max-w-[1080px] mx-auto">
-        <h2 className="font-heading font-semibold text-[clamp(22px,3vw,26px)] text-white mb-3.5">Start with either door</h2>
-        <p className="text-[#E4E2F6] max-w-[480px] mx-auto mb-8 text-[15px] leading-[1.65]">
-          Scan something on your shelf, or talk to us about what your team needs from the API.
-        </p>
-        <div className="flex gap-3 justify-center flex-wrap">
-          <Link
-            to="/BarcodeScanner"
-            className="inline-flex items-center bg-white text-[#9531F5] border-[1.5px] border-white rounded-[7px] px-[18px] py-[9px] text-sm font-medium hover:bg-[#F5EEFF] transition-colors"
-          >
-            Scan a product
-          </Link>
-          <Link
-            to="/APIPortal"
-            className="inline-flex items-center bg-transparent text-white border-[1.5px] border-white rounded-[7px] px-[18px] py-[9px] text-sm font-medium hover:bg-white hover:text-[#9531F5] transition-colors"
-          >
-            Talk to us about API access
-          </Link>
-        </div>
+    <section className="bg-research-soft border-t border-research-border px-4 py-14 sm:px-6 sm:py-20">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+        <div><p className="research-label mb-3">Your next workflow starts here</p><h2 className="mb-3">Let preparation move faster.<br />Keep judgment with you.</h2><p className="max-w-lg text-research-muted">Open the research workspace, or start with a product on your shelf.</p></div>
+        <div className="flex flex-col sm:flex-row md:flex-col gap-3"><Link to="/ResearchDashboard" className="research-primary">Open research dashboard</Link><Link to="/BarcodeScanner" className="research-secondary">Try the product scanner</Link></div>
       </div>
-    </div>
+    </section>
   );
 }

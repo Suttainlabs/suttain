@@ -31,23 +31,11 @@ function Door({ cell, title, blurb, items, href, accent }) {
 
 export default function LandingDoors() {
   return (
-    <div className="max-w-[920px] mx-auto px-6 pb-24 grid md:grid-cols-2 gap-5">
-      <Door
-        cell={{ idx: "01", sym: "Cb", variant: "teal" }}
-        title="Consumer and brand"
-        blurb="Safer, greener products. Scan products, generate validated formulas, and check compliance, no lab required."
-        items={["Scan a product", "Test interactions", "Build a formula", "Score sustainability"]}
-        href="/Simulator"
-        accent="#02988C"
-      />
-      <Door
-        cell={{ idx: "02", sym: "Rs", variant: "purple" }}
-        title="Professional research"
-        blurb="Computational chemistry. Simulation, structural biology, and API access for research chemists and scientists."
-        items={["Computational studio", "Structural biology", "Research API"]}
-        href="/ResearchDashboard"
-        accent="#9531F5"
-      />
-    </div>
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-4" aria-label="Ways to work with Suttain">
+      <div className="grid gap-8 md:grid-cols-12 border-b border-research-border pb-10">
+        <div className="md:col-span-7"><p className="research-label mb-3">For scientists and R&D teams</p><h2 className="mb-3">Autonomous research workflows</h2><p className="text-research-muted mb-4">Search, configure, prepare and track your work in Suttain’s computational studio. Review the files before taking them into your chosen engine or HPC system.</p><Link to="/ResearchDashboard" className="inline-flex min-h-11 items-center gap-2 text-sm text-research-accent hover:underline">Open the research workspace<ArrowRight /></Link></div>
+        <div className="md:col-span-5 md:border-l md:border-research-border md:pl-8"><p className="research-label mb-3">For consumers and brands</p><h3 className="mb-3">Make better chemical decisions</h3><p className="text-research-muted mb-4">Scan products, explore interactions, build formulas and assess sustainability, with guidance you can review.</p><a href="#consumer-tools" className="inline-flex min-h-11 items-center gap-2 text-sm text-research-accent hover:underline">Explore consumer tools<ArrowRight /></a></div>
+      </div>
+    </section>
   );
 }

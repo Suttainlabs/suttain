@@ -464,6 +464,17 @@
 .simulation-workspace :is(.hover\:bg-violet-700, .hover\:bg-indigo-700, .hover\:bg-cyan-700):hover { background-color: hsl(var(--research-accent)); opacity: 0.9; }
 .simulation-workspace pre { background-color: hsl(var(--research-text)); color: hsl(var(--research-card)); border-radius: var(--radius-md); }
 
+/* Homepage typography and restrained consumer compatibility. */
+.agent-home, .agent-home :is(h1,h2,h3,h4,h5,p,li,span,a,button) { font-family: var(--font-gilroy); }
+.agent-home :is(h1,h2,h3,h4,h5,.font-heading) { font-weight: 500; }
+.agent-home h1 { font-size: clamp(1.75rem, 3.5vw, 2rem); line-height: 1.25; }
+.agent-home h2 { font-size: 1.375rem; line-height: 1.35; }
+.agent-home h3 { font-size: 1.125rem; line-height: 1.4; }
+.agent-home :is(code,pre,.font-mono,.research-label) { font-family: var(--font-mono) !important; }
+.agent-home :is([class*="text-[#0A1F1D]"],[class*="text-[#2A3338]"]) { color: hsl(var(--research-text)); }
+.agent-home :is([class*="text-[#3F4651]"],[class*="text-[#4B5563]"]) { color: hsl(var(--research-muted)); }
+.agent-home [class*="border-[#E5E7EB]"] { border-color: hsl(var(--research-border)); }
+
 /* Darken slate-400/500 for WCAG 2.1 text contrast */
 .text-slate-400 { color: #64748B; }
 .text-slate-500 { color: #475569; }
