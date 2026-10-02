@@ -4,6 +4,7 @@ import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
 import AuthContext from '../components/auth/AuthContext';
 import ElementCell from '@/components/landing/ElementCell';
+import WaitlistCountBadge from '@/components/enterprise/WaitlistCountBadge';
 import { base44 } from '@/api/base44Client';
 import {
   Code2, Copy, CheckCheck, Terminal, Key, Lock, ArrowRight,
@@ -386,6 +387,7 @@ export default function APIPortal() {
             <span className="block font-mono text-xs tracking-[0.04em] mb-3" style={{ color: '#7A3FE0' }}>GET EARLY ACCESS</span>
             <h2 className="font-heading font-semibold text-[clamp(22px,3vw,26px)] mb-3" style={{ color: '#0A1F1D' }}>Join the enterprise waitlist</h2>
             <p className="text-[14px] max-w-xl mx-auto" style={{ color: '#3F4651' }}>Be among the first to access the Suttain API. We're onboarding organizations in cohorts.</p>
+            <WaitlistCountBadge />
           </div>
           <WaitlistForm />
         </div>
