@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { BarChart3, Activity, RotateCcw, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import SimulationStatusBanner from '@/components/shared/SimulationStatusBanner';
 
 export default function SimulationDashboard() {
   const [selectedJobId, setSelectedJobId] = useState(null);
@@ -78,6 +79,8 @@ export default function SimulationDashboard() {
             </Button>
           </div>
         </motion.div>
+
+        <SimulationStatusBanner />
 
         {/* Metrics Chart */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>

@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useTrialStatus from "../hooks/useTrialStatus";
 import TrialExpiredBanner from "../components/trial/TrialExpiredBanner";
 import SubscriptionLock from '@/components/shared/SubscriptionLock';
+import SimulationStatusBanner from '@/components/shared/SimulationStatusBanner';
 import AuthGate from "../components/auth/AuthGate";
 import AuthContext from '../components/auth/AuthContext';
 import ChemicalInput from "../components/simulator/ChemicalInput";
@@ -872,6 +873,7 @@ export default function Simulator() {
   return (
     <AuthGate featureName="Chemical Simulator" featureDescription="Test chemical interactions safely with our advanced simulation engine. Start your 14-day free trial to save simulations and access the full database.">
       <SEOHead {...pageSEO.simulator} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6"><SimulationStatusBanner user={user} pillar="core" /></div>
       {!isLoading && simulationData && !trialStatus.canSimulateCore && <SubscriptionLock featureName="Core simulations" limit />}
       {user && !simulationData && !trialStatus.canSimulateCore ? (
         <TrialExpiredBanner featureName="Chemical Simulator" />

@@ -5,6 +5,7 @@ import { DOMAIN_SIM_MAP } from '@/pages/ComputationalSimulation';
 import SimulationDashboardHeader from '@/components/research/SimulationDashboardHeader';
 import SimulationQuickAccess from '@/components/research/SimulationQuickAccess';
 import RecentSimulationRuns from '@/components/research/RecentSimulationRuns';
+import SimulationStatusBanner from '@/components/shared/SimulationStatusBanner';
 
 const SUPPORTED_TYPES = new Set(Object.values(DOMAIN_SIM_MAP).flat());
 export default function SimulationDashboardWorkspace({ user }) {
@@ -20,6 +21,7 @@ export default function SimulationDashboardWorkspace({ user }) {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <SimulationDashboardHeader user={user} />
+      <SimulationStatusBanner user={user} className="mb-6" />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
         {stats.map(stat => <div key={stat.label} className="rounded-xl border border-research-border bg-research-card p-5 sm:p-6"><p className="research-label mb-4">{stat.label}</p><p className="text-3xl font-medium text-research-accent mb-2">{isPending || error ? '...' : stat.value}</p><p className="text-sm text-research-muted">{stat.detail}</p></div>)}
       </div>
