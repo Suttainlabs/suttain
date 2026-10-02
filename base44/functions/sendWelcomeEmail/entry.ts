@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { requireUser, reserveSecurityAction, deny } from '../../shared/securityGuards.ts';
 
 // ── Centralized feature/tool registry ──────────────────────────────
 // Update this list whenever a new feature, tool, or platform is added
@@ -54,18 +55,19 @@ function renderFeatureSection(title, color, items) {
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await requireUser(base44);
     const body = await req.json();
-
-    // Called from entity automation: payload has event + data
-    const userData = body.data || body;
-    const email = userData.email;
-    const fullName = userData.full_name || '';
+    const requestedEmail = (body.data || body).email;
+    if (requestedEmail && String(requestedEmail).toLowerCase() !== user.email.toLowerCase()) deny('Welcome emails can only be sent to your account', 403);
+    const email = user.email;
+    const fullName = user.full_name || '';
+    if (!await reserveSecurityAction(base44, user, { recipient: email, dedupeKey: `welcome:${user.id}` })) return Response.json({ success: true, already_sent: true });
     const firstName = escapeHtml(fullName.split(' ')[0] || 'there');
     const safeFullName = escapeHtml(fullName);
     const safeEmail = escapeHtml(email);
 
     if (!email) {
-      console.error('No email found in payload:', JSON.stringify(body));
+      console.error('Authenticated user has no email');
       return Response.json({ error: 'No email in payload' }, { status: 400 });
     }
 
@@ -179,6 +181,6 @@ export default async function(req) {
     return Response.json({ success: true, email, featuresListed: totalTools });
   } catch (error) {
     console.error('Failed to send welcome email:', error.message, error.stack);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
 }

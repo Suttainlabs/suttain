@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { requireUser, reserveSecurityAction, deny } from '../../shared/securityGuards.ts';
 
 // Narrow, app-specific LLM operations for the research/computational domain.
 // Accepts a known `operation` enum + structured domain `data` (never a raw prompt);
@@ -7,8 +8,11 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await requireUser(base44);
     const { operation, data = {} } = await req.json();
-
+    if (!['plainLanguageSummary', 'domainReliabilityInterpretation', 'sustainabilityProfile', 'relatedResearch', 'externalDatabaseSearch', 'externalDatabaseSummary'].includes(operation)) deny('Unknown operation', 400);
+    if (!data || typeof data !== 'object' || JSON.stringify(data).length > 16000) deny('Research input is too large or invalid', 400);
+    await reserveSecurityAction(base44, user, { channel: 'research', limit: 30, hourly: true });
     const call = (params) => base44.asServiceRole.integrations.Core.InvokeLLM(params);
 
     switch (operation) {
@@ -200,6 +204,6 @@ Only include real, plausible papers. Do not fabricate PMIDs.`;
     }
   } catch (error) {
     console.error('runResearchLLM error:', error.message);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
 }

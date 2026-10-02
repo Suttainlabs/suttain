@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { Resend } from 'npm:resend@2.0.0';
+import { requireUser, registeredRecipient, reserveSecurityAction } from '../../shared/securityGuards.ts';
 
 function escapeHtml(str) {
   if (str == null) return '';
@@ -16,10 +16,7 @@ const emailRegex = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
 export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const user = await requireUser(base44);
 
     const body = await req.json();
     const {
@@ -41,6 +38,9 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ error: 'Invalid supervisor email' }, { status: 400 });
     }
 
+    const supervisor = await registeredRecipient(base44, user, supervisor_email);
+    if (String(supervisor_name).length > 200 || String(chemicals_summary || '').length > 2000 || JSON.stringify(simulation_snapshot).length > 50000) return Response.json({ error: 'Request too large' }, { status: 400 });
+    await reserveSecurityAction(base44, user, { recipient: supervisor.email });
     const token = crypto.randomUUID() + '-' + crypto.randomUUID();
     const now = new Date().toISOString();
 
@@ -96,14 +96,11 @@ export default async function (req: Request): Promise<Response> {
     let emailSent = false;
     let emailError = null;
     try {
-      const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
-      await resend.emails.send({
-        from: 'Suttain <noreply@suttain.com>',
-        to: [supervisor_email],
-        cc: 'contact@suttain.com',
-        reply_to: 'contact@suttain.com',
-        subject: `Supervisor approval requested by ${user.full_name || user.email}`,
-        html
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        from_name: 'Suttain',
+        to: supervisor.email,
+        subject: 'Supervisor approval requested',
+        body: html
       });
       emailSent = true;
     } catch (e) {
@@ -121,6 +118,6 @@ export default async function (req: Request): Promise<Response> {
     });
   } catch (error) {
     console.error('createSupervisorApprovalRequest error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
 }

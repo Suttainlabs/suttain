@@ -1,15 +1,17 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { requireUser, registeredRecipient, reserveSecurityAction, escapeHtml, deny } from '../../shared/securityGuards.ts';
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
-    const { email, full_name, plan_name = 'Pro' } = await req.json();
-
-    if (!email || !full_name) {
-      return Response.json({ error: 'Missing email or full_name' }, { status: 400 });
-    }
-
-    const firstName = full_name.split(' ')[0] || 'there';
+    const actor = await requireUser(base44, true);
+    const body = await req.json();
+    const subscriber = await registeredRecipient(base44, actor, body.email);
+    if (!['active', 'trialing', 'canceling'].includes(subscriber.subscription_status) || !subscriber.stripe_customer_id) deny('No active Stripe subscription', 403);
+    const email = subscriber.email;
+    const dedupeKey = `subscription:${subscriber.id}:${subscriber.stripe_subscription_id || subscriber.subscription_start_date || subscriber.stripe_customer_id}`;
+    if (!await reserveSecurityAction(base44, actor, { recipient: email, dedupeKey })) return Response.json({ success: true, already_sent: true });
+    const firstName = escapeHtml((subscriber.full_name || '').split(' ')[0] || 'there');
 
     const emailContent = `
       <div style="margin:0;padding:0;background:#f6fbfa;font-family:Arial,Helvetica,sans-serif;color:#1e293b;">
@@ -91,6 +93,6 @@ Deno.serve(async (req) => {
     return Response.json({ success: true, email });
   } catch (error) {
     console.error('Error sending subscription thank you email:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
-});
+}

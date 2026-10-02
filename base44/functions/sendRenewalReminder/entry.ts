@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { Resend } from 'npm:resend@4.0.0';
-
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+import { secrets } from 'base44:runtime';
+import { requireUser, reserveSecurityAction, escapeHtml } from '../../shared/securityGuards.ts';
 
 const PLAN_LABELS = {
   starter: 'Suttain Starter',
@@ -12,7 +12,8 @@ const PLAN_LABELS = {
 
 async function sendEmailViaResend(to, subject, html) {
   try {
-    await resend.emails.send({
+    const resend = new Resend(secrets.get('RESEND_API_KEY'));
+    const result = await resend.emails.send({
       from: 'Suttain <contact@suttain.com>',
       to,
       cc: 'contact@suttain.com',
@@ -20,15 +21,19 @@ async function sendEmailViaResend(to, subject, html) {
       subject,
       html,
     });
+    if (result.error) throw new Error(result.error.message);
     console.log('Renewal reminder sent to:', to);
   } catch (e) {
     console.error('Resend email failed:', e);
+    throw e;
   }
 }
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const actor = await requireUser(base44, true);
+    const { dryRun = false } = await req.json().catch(() => ({}));
 
     // Calculate the date 3 days from now (UTC, date-only)
     const now = new Date();
@@ -51,7 +56,7 @@ Deno.serve(async (req) => {
       if (userEndDate !== targetDateStr) continue;
 
       const planLabel = PLAN_LABELS[user.subscription_plan] || 'Suttain Pro';
-      const firstName = (user.full_name || '').split(' ')[0] || 'there';
+      const firstName = escapeHtml((user.full_name || '').split(' ')[0] || 'there');
       const formattedDate = new Date(user.subscription_end_date).toLocaleDateString('en-US', {
         month: 'long', day: 'numeric', year: 'numeric'
       });
@@ -94,14 +99,16 @@ Deno.serve(async (req) => {
         </div>
       `;
 
+      if (dryRun) { sentCount++; continue; }
+      if (!await reserveSecurityAction(base44, actor, { channel: 'renewal', limit: 1000, recipient: user.email, dedupeKey: `renewal:${user.id}:${user.subscription_end_date}` })) continue;
       await sendEmailViaResend(user.email, `Your ${planLabel} subscription renews on ${formattedDate}`, html);
       sentCount++;
     }
 
     console.log(`Renewal reminder complete: ${sentCount} emails sent for subscriptions ending ${targetDateStr}`);
-    return Response.json({ success: true, sent: sentCount, targetDate: targetDateStr });
+    return Response.json({ success: true, ...(dryRun ? { eligible: sentCount, dryRun: true } : { sent: sentCount }), targetDate: targetDateStr });
   } catch (error) {
     console.error('sendRenewalReminder error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
-});
+}

@@ -1,13 +1,11 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { requireUser } from '../../shared/securityGuards.ts';
 
-Deno.serve(async (req) => {
+export default async function(req) {
     try {
         const base44 = createClientFromRequest(req);
 
-        const user = await base44.auth.me();
-        if (!user) {
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        await requireUser(base44, true);
 
         const body = await req.json();
 
@@ -36,7 +34,7 @@ Deno.serve(async (req) => {
         const notFound = [];
 
         for (const chemicalName of chemicals) {
-            const results = await base44.asServiceRole.entities.Chemical.filter({ name: chemicalName });
+            const results = await base44.entities.Chemical.filter({ name: chemicalName });
 
             if (!results || results.length === 0) {
                 notFound.push(chemicalName);
@@ -54,7 +52,7 @@ Deno.serve(async (req) => {
             }
 
             const newStock = Math.max(0, currentStock - 1);
-            await base44.asServiceRole.entities.Chemical.update(chemical.id, {
+            await base44.entities.Chemical.update(chemical.id, {
                 stock_quantity: newStock
             });
 
@@ -73,6 +71,6 @@ Deno.serve(async (req) => {
 
     } catch (error) {
         console.error('deductChemicalInventory error:', error.message);
-        return Response.json({ error: error.message }, { status: 500 });
+        return Response.json({ error: error.message }, { status: error.status || 500 });
     }
-});
+}

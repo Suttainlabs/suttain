@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { requireUser, registeredRecipient, reserveSecurityAction } from '../../shared/securityGuards.ts';
 
 const APP_URL = 'https://app.suttain.com';
 
@@ -12,13 +13,15 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const { verificationId, supplierEmail, supplierName, formulaName, ingredients, token } = await req.json();
+    const user = await requireUser(base44);
+    const { verificationId } = await req.json();
+    if (typeof verificationId !== 'string' || !verificationId) return Response.json({ error: 'Missing verificationId' }, { status: 400 });
+    const verification = await base44.entities.SupplierVerification.get(verificationId);
+    if (!verification || verification.created_by_id !== user.id) return Response.json({ error: 'Forbidden' }, { status: 403 });
+    const { supplier_email: supplierEmail, supplier_name: supplierName, formula_name: formulaName, ingredients_to_verify: ingredients, token } = verification;
 
     // Validate required fields
     if (!supplierEmail || !token || !verificationId) {
@@ -31,11 +34,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Invalid email address' }, { status: 400 });
     }
 
-    // Verify the requesting user owns this verification record
-    const verification = await base44.entities.SupplierVerification.get(verificationId);
-    if (!verification || verification.created_by_id !== user.id) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const supplier = await registeredRecipient(base44, user, supplierEmail);
+    if (!Array.isArray(ingredients) || ingredients.length > 50 || JSON.stringify(ingredients).length > 10000) return Response.json({ error: 'Invalid ingredient list' }, { status: 400 });
+    if (!await reserveSecurityAction(base44, user, { recipient: supplier.email, dedupeKey: `supplier:${verification.id}` })) return Response.json({ success: true, already_sent: true });
 
     // Build verify URL with hardcoded domain, never trust user-controlled origin header
     const verifyUrl = `${APP_URL}/SupplierVerify?token=${encodeURIComponent(token)}`;
@@ -81,7 +82,7 @@ Deno.serve(async (req) => {
 
     // Use the platform's restricted SendEmail integration instead of raw Resend client
     await base44.asServiceRole.integrations.Core.SendEmail({
-      to: supplierEmail,
+      to: supplier.email,
       subject: `Ingredient Verification Request for "${safeFormulaName}", Suttain`,
       body: html,
     });
@@ -89,6 +90,6 @@ Deno.serve(async (req) => {
     return Response.json({ success: true });
   } catch (err) {
     console.error('inviteSupplierVerification error:', err);
-    return Response.json({ error: err.message }, { status: 500 });
+    return Response.json({ error: err.message }, { status: err.status || 500 });
   }
-});
+}

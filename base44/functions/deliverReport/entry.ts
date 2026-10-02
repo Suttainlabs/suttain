@@ -1,14 +1,10 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { requireUser, registeredRecipient, reserveSecurityAction, deny } from '../../shared/securityGuards.ts';
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const user = await requireUser(base44);
     const { reportId, deliveryOptions } = await req.json();
 
     // Fetch the report
@@ -19,6 +15,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Report not found' }, { status: 404 });
     }
 
+    if (report.created_by_id !== user.id && user.role !== 'admin') deny('Forbidden', 403);
     const results = {
       email: [],
       slack: [],
@@ -26,16 +23,27 @@ Deno.serve(async (req) => {
     };
 
     const delivery = deliveryOptions || report.delivery || {};
-    const reportUrl = `https://app.base44.com/report/${reportId}`;
+    for (const field of ['email_recipients', 'webhook_urls', 'slack_channels']) {
+      if (delivery[field] !== undefined && (!Array.isArray(delivery[field]) || delivery[field].length > 5 || delivery[field].some(value => typeof value !== 'string' || value.length > 2048))) deny('Invalid delivery destinations', 400);
+    }
+    const emailRecipients = await Promise.all((delivery.email_recipients || []).map(email => registeredRecipient(base44, user, email)));
+    // Privileged external integrations may only target the report's saved destinations.
+    for (const field of ['webhook_urls', 'slack_channels']) {
+      if ((delivery[field] || []).some(value => !(report.delivery?.[field] || []).includes(value))) deny('Destination must be saved on the report', 403);
+    }
+    if (!await reserveSecurityAction(base44, user, { channel: 'report', limit: 10, dedupeKey: `report:${report.id}:${report.updated_date}` })) return Response.json({ success: true, already_sent: true });
+    const reportUrl = `https://suttain.base44.app/ReportGenerator?id=${encodeURIComponent(reportId)}`;
 
     // Send email notifications
     if (delivery.email_recipients?.length) {
-      for (const email of delivery.email_recipients) {
+      for (const recipient of emailRecipients) {
+        const email = recipient.email;
         try {
+          await reserveSecurityAction(base44, user, { recipient: email });
           await base44.asServiceRole.integrations.Core.SendEmail({
             to: email,
-            subject: `Report Ready: ${report.title}`,
-            body: generateEmailBody(report, reportUrl)
+            subject: 'Your Suttain report is ready',
+            text: generateEmailBody(report, reportUrl)
           });
           results.email.push({ email, status: 'sent' });
         } catch (err) {
@@ -150,9 +158,9 @@ Deno.serve(async (req) => {
 
     return Response.json({ success: true, results });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
-});
+}
 
 function generateEmailBody(report, reportUrl) {
   const insights = report.ai_insights || {};

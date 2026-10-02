@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/accordion';
 import { useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { jobText, applicationUrl } from '@/components/careers/jobContent';
 
 export default function CareersPage() {
   const [jobs, setJobs] = useState([]);
@@ -74,10 +75,7 @@ export default function CareersPage() {
     if (specificJob) {
         const jobUrl = `${defaultUrl}?jobId=${specificJob.id}`;
         
-        // Create a temporary div to strip HTML tags from the description
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = specificJob.description;
-        const cleanDescription = (tempDiv.textContent || tempDiv.innerText || "").trim();
+        const cleanDescription = jobText(specificJob.description);
         const shortDescription = cleanDescription.substring(0, 160) + (cleanDescription.length > 160 ? '...' : '');
 
         // Set page title and Open Graph meta tags for the specific job
@@ -244,14 +242,14 @@ export default function CareersPage() {
                       <AccordionContent className="p-6 pt-0">
                         <div className="prose max-w-none prose-slate prose-headings:font-semibold prose-headings:text-slate-800 prose-ul:list-disc prose-ol:list-decimal prose-strong:font-semibold">
                           <h4 className="font-semibold">Description</h4>
-                          <div dangerouslySetInnerHTML={{ __html: job.description }} />
+                          <div className="whitespace-pre-wrap">{jobText(job.description)}</div>
                           <h4 className="mt-4 font-semibold">Requirements</h4>
-                          <div dangerouslySetInnerHTML={{ __html: job.requirements }} />
+                          <div className="whitespace-pre-wrap">{jobText(job.requirements)}</div>
                         </div>
                         <div className="mt-6 flex flex-wrap gap-4">
-                            {job.application_url && (
+                            {applicationUrl(job.application_url) && (
                                 <Button asChild className="bg-[var(--suttain-violet)] hover:bg-[#8125d9]">
-                                <a href={job.application_url} target="_blank" rel="noopener noreferrer">
+                                <a href={applicationUrl(job.application_url)} target="_blank" rel="noopener noreferrer">
                                     Apply Now <ArrowRight className="w-4 h-4 ml-2" />
                                 </a>
                                 </Button>
