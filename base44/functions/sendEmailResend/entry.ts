@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { Resend } from 'npm:resend@2.0.0';
 import { reserveIpAction } from '../../shared/ipRateLimit.ts';
 const ADMIN_EMAIL = Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com';

@@ -1,5 +1,5 @@
 import Stripe from 'npm:stripe@17.7.0';
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { reserveIpAction } from '../../shared/ipRateLimit.ts';
 
 // Initialize Stripe only while handling a request.
