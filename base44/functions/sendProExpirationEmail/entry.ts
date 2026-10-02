@@ -1,26 +1,18 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { Resend } from 'npm:resend@4.0.0';
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Allow both scheduled (service role) and admin-triggered calls
-    let callerIsAdmin = false;
-    try {
-      const user = await base44.auth.me();
-      callerIsAdmin = user?.role === 'admin';
-    } catch (_) {
-      // Called from automation (no user session), allow via service role
+    // Authorization is mandatory and cannot be bypassed with request-body flags.
+    const user = await base44.auth.me().catch(() => null);
+    if (!user?.id || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await req.json().catch(() => ({}));
-    const { manual, targetUserId } = body;
-
-    // If called manually from frontend, require admin
-    if (manual && !callerIsAdmin) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const { targetUserId } = body;
 
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
     const now = new Date();
@@ -207,4 +199,4 @@ Deno.serve(async (req) => {
     console.error('sendProExpirationEmail error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
-});
+}

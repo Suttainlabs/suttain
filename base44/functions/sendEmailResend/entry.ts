@@ -1,7 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { Resend } from 'npm:resend@2.0.0';
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+import { reserveIpAction } from '../../shared/ipRateLimit.ts';
 const ADMIN_EMAIL = Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com';
 
 function escapeHtml(str) {
@@ -410,13 +409,16 @@ const getSafetyAlertHtml = (userName, alertData) => `
 </html>
 `;
 
-Deno.serve(async (req) => {
+export default async function(req) {
     try {
         const base44 = createClientFromRequest(req);
         const { type, to, subject, html, text, from, data } = await req.json();
 
-        // Public types that only send to ADMIN_EMAIL (no auth required, but HTML-escape everything)
+        // Public types stay pinned to ADMIN_EMAIL and share one daily IP budget.
         const isPublicType = type === 'demo_request' || type === 'contact_form';
+        if (isPublicType) {
+            await reserveIpAction(base44, req, { channel: 'public_contact_email', limit: 5 });
+        }
 
         // All other types require authentication
         let user = null;
@@ -427,6 +429,7 @@ Deno.serve(async (req) => {
             }
         }
 
+        const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
         // Helper: send a single email via Resend
         const sendEmail = async (recipient, subjectLine, htmlBody) => {
             await resend.emails.send({
@@ -608,6 +611,6 @@ Deno.serve(async (req) => {
 
         return Response.json({ success: true, data: emailData });
     } catch (error) {
-        return Response.json({ error: error.message }, { status: 500 });
+        return Response.json({ error: error.message }, { status: error.status || 500 });
     }
-});
+}

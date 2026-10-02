@@ -1,5 +1,6 @@
 import Stripe from 'npm:stripe@17.7.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { reserveIpAction } from '../../shared/ipRateLimit.ts';
 
 // Initialize Stripe only while handling a request.
 
@@ -27,6 +28,7 @@ export default async function(req) {
     const base44 = createClientFromRequest(req);
     const { priceKey, promoCode } = await req.json();
     if (!priceKey || !PRICE_MAP[priceKey]) return Response.json({ error: 'Invalid price key' }, { status: 400 });
+    await reserveIpAction(base44, req, { channel: 'public_checkout', limit: 10, hourly: true });
     let user = null;
     try { user = await base44.auth.me(); } catch (_) {}
     const isLifetime = priceKey === 'lifetime';
@@ -55,6 +57,6 @@ export default async function(req) {
     return Response.json({ url: session.url });
   } catch (error) {
     console.error('Checkout error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
 }
