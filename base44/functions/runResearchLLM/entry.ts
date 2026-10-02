@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { requireUser, reserveSecurityAction, deny } from '../../shared/securityGuards.ts';
+import { researchEntitlement } from '../../shared/usageEntitlements.ts';
 
 // Narrow, app-specific LLM operations for the research/computational domain.
 // Accepts a known `operation` enum + structured domain `data` (never a raw prompt);
@@ -9,6 +10,8 @@ export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await requireUser(base44);
+    const denied = researchEntitlement(user);
+    if (denied) return denied;
     const { operation, data = {} } = await req.json();
     if (!['plainLanguageSummary', 'domainReliabilityInterpretation', 'sustainabilityProfile', 'relatedResearch', 'externalDatabaseSearch', 'externalDatabaseSummary'].includes(operation)) deny('Unknown operation', 400);
     if (!data || typeof data !== 'object' || JSON.stringify(data).length > 16000) deny('Research input is too large or invalid', 400);

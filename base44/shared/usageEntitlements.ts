@@ -1,10 +1,16 @@
 export function planAccess(user) {
   const bypass = user?.role === 'admin' || !!user?.admin_granted_access;
   const access = user?.product_access || [];
-  const paid = !!user && !['none', 'canceled', 'unpaid', 'past_due', 'incomplete', 'incomplete_expired'].includes(user.subscription_status);
+  const expiresAt = user?.subscription_end_date ? Date.parse(user.subscription_end_date) : null;
+  const paid = !!user && ['active', 'trialing', 'canceling'].includes(user.subscription_status)
+    && (expiresAt === null || (Number.isFinite(expiresAt) && expiresAt > Date.now()));
   const research = bypass || (paid && access.includes('research'));
   const core = bypass || research || (paid && (access.includes('core') || (!access.length && ['pro', 'starter', 'lifetime'].includes(user.subscription_plan))));
   return { core, research };
+}
+export function researchEntitlement(user) {
+  if (planAccess(user).research) return null;
+  return Response.json({ error: 'Research subscription required', code: 'RESEARCH_REQUIRED', pillar: 'research' }, { status: 403 });
 }
 export async function reserveUsage(base44, user, type, count = 1) {
   const access = planAccess(user);

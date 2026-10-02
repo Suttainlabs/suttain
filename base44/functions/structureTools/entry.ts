@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { researchEntitlement } from '../../shared/usageEntitlements.ts';
 
 // ── Structure parsers ──────────────────────────────────────────────
 
@@ -378,7 +379,7 @@ function explainStructure(structure) {
 
 // ── Main handler ───────────────────────────────────────────────────
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     let user;
@@ -391,6 +392,11 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const { action, file_content, format_in, format_out, build_params, pdb_id } = body;
+    // Reading a structure or looking up public PDB data remains available.
+    if (['convert', 'build'].includes(action)) {
+      const denied = researchEntitlement(user);
+      if (denied) return denied;
+    }
 
     let result = {};
 
@@ -491,4 +497,4 @@ Deno.serve(async (req) => {
     console.error('structureTools error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
   }
-});
+}

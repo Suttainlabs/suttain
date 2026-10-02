@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { researchEntitlement } from '../../shared/usageEntitlements.ts';
 
 const PUBCHEM_PROPS = 'MolecularFormula,MolecularWeight,CanonicalSMILES,IUPACName,XLogP,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount,HeavyAtomCount,Charge';
 
@@ -110,7 +111,7 @@ run 10000
   return `# Unknown engine: ${engine}`;
 }
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
@@ -118,6 +119,11 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const { mode, molecule, molecule_b, engine } = body;
+    // Basic public-database descriptors remain available to signed-in users.
+    if (['compare', 'engine_input'].includes(mode)) {
+      const denied = researchEntitlement(user);
+      if (denied) return denied;
+    }
 
     if (!molecule) return Response.json({ error: 'molecule is required' }, { status: 400 });
 
@@ -177,4 +183,4 @@ Deno.serve(async (req) => {
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
-});
+}
