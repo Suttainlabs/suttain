@@ -13,23 +13,23 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
+    setCompareA(null);
+    setCompareB(null);
+    setShowComparison(false);
     loadHistory();
-  }, [simTypeId]);
-
-  useEffect(() => {
-    if (currentResults) saveRun();
-  }, [currentResults]);
+  }, [simTypeId, currentResults]);
 
   const loadHistory = async () => {
     try {
-      const records = await base44.entities.DWSIMSimulationHistory.filter(
-        { sim_source: "script_builder" },
-        "-created_date",
-        30
+      const records = await base44.entities.SimulationJob.filter(
+        { sim_type: simTypeId, status: 'completed' }, '-created_date', 30
       );
-      // Filter to this sim type via tags
-      const filtered = records.filter(r => r.tags?.includes(simTypeId));
-      setHistory(filtered);
+      setHistory(records.map(record => ({
+        ...record, title: record.job_name,
+        config: { ...record.result, engine: record.engine, key_values: record.result?.predicted_results?.key_values || [] },
+        notes: record.result?.predicted_results?.summary || '',
+      })));
     } catch {
       setHistory([]);
     } finally {
@@ -37,27 +37,6 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
     }
   };
 
-  const saveRun = async () => {
-    if (!currentResults) return;
-    const molName = currentInputs?.molecule || currentInputs?.system || currentInputs?.compound || currentInputs?.ligand || "Unknown";
-    try {
-      await base44.entities.DWSIMSimulationHistory.create({
-        title: `${molName}: ${engine}`,
-        sim_source: "script_builder",
-        prompt: JSON.stringify(currentInputs),
-        config: {
-          engine,
-          sim_type: simTypeId,
-          key_values: currentResults.predicted_results?.key_values || [],
-          system_overview: currentResults.system_overview,
-          scientific_interpretation: currentResults.scientific_interpretation,
-        },
-        tags: [simTypeId],
-        notes: currentResults.predicted_results?.summary || "",
-      });
-      await loadHistory();
-    } catch {}
-  };
 
   const parseConfig = (record) => {
     try { return record.config || {}; } catch { return {}; }

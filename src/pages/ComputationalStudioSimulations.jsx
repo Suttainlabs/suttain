@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Gauge, ArrowRight, Layers, Hexagon } from 'lucide-react';
+import { Gauge, ArrowRight, Hexagon } from 'lucide-react';
 import StudioLayout from '@/components/studio/StudioLayout';
-import { SourcedBadge } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
 import useTrialStatus from '@/hooks/useTrialStatus';
 import { createPageUrl } from '@/utils';
@@ -14,7 +13,7 @@ export default function ComputationalStudioSimulations() {
   const { user } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
   const navigate = useNavigate();
-  const [domain, setDomain] = useState('Chemistry');
+  const [domain, setDomain] = useState('Pharma');
 
   const canAccess = !user || trialStatus.isPro || trialStatus.trialDaysLeft > 0;
 
@@ -28,7 +27,7 @@ export default function ComputationalStudioSimulations() {
             </div>
             <h2 className="text-2xl font-bold text-slate-900 mb-2">Pro feature</h2>
             <p className="text-slate-600 mb-1">Computational simulations require a <span className="font-semibold text-violet-700">Pro subscription</span>.</p>
-            <p className="text-slate-500 text-sm mb-6">Run DFT, MD, drug discovery, protein modeling, materials science and more.</p>
+            <p className="text-slate-500 text-sm mb-6">Access drug discovery, molecular dynamics and quantum chemistry workflows.</p>
             <Link to={createPageUrl('Pricing')} className="block w-full bg-[#534AB7] hover:bg-[#4538a0] text-white font-bold py-3 px-6 rounded-xl transition-all text-center">
               Upgrade to Pro
             </Link>
@@ -41,10 +40,6 @@ export default function ComputationalStudioSimulations() {
   const filteredSims = SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id));
 
   const handleSelectSim = (simId) => {
-    if (simId === 'process_simulation') {
-      navigate('/DWSIMIntegration');
-      return;
-    }
     navigate(`/SimulationRunner?type=${simId}&domain=${encodeURIComponent(domain)}`);
   };
 
@@ -59,10 +54,9 @@ export default function ComputationalStudioSimulations() {
             </div>
             <div>
               <h1 className="text-2xl font-semibold text-slate-900">Simulations</h1>
-              <p className="text-sm text-slate-500">AI-powered molecular modeling, DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.</p>
+              <p className="text-sm text-slate-500">Drug discovery, molecular dynamics and quantum chemistry for companies and research laboratories.</p>
             </div>
           </div>
-          <SourcedBadge />
         </div>
 
         {/* Domain tabs */}
@@ -98,7 +92,7 @@ export default function ComputationalStudioSimulations() {
 
         {/* Simulation cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredSims.filter(s => s.id !== 'process_simulation').map(s => {
+          {filteredSims.map(s => {
             const Icon = s.icon;
             return (
               <button
@@ -132,33 +126,7 @@ export default function ComputationalStudioSimulations() {
             );
           })}
 
-          {/* DWSIM Process Simulation card */}
-          {filteredSims.some(s => s.id === 'process_simulation') && (
-            <button
-              onClick={() => handleSelectSim('process_simulation')}
-              className="group text-left bg-white rounded-2xl border border-slate-200 p-5 hover:border-teal-300 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-700 flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <Layers className="w-5 h-5 text-white" />
-                </div>
-                <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-0.5 transition-all mt-1" />
-              </div>
-              <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight group-hover:text-teal-700 transition-colors">
-                Process Simulation (DWSIM)
-              </h3>
-              <p className="text-xs text-slate-500 leading-relaxed mb-3">
-                Steady-state and dynamic process flowsheet simulation. Distillation columns, reactors, heat exchangers, and full plant models.
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {['DWSIM', 'FluentAPI', 'Python', 'Open Source'].map(e => (
-                  <span key={e} className="inline-block bg-teal-50 text-teal-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                    {e}
-                  </span>
-                ))}
-              </div>
-            </button>
-          )}
+
 
         </div>
       </div>

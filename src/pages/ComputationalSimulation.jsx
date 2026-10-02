@@ -12,7 +12,7 @@ import {
 export const SIM_TYPES = [
   {
     id: "dft",
-    label: "DFT / Quantum Chemistry",
+    label: "Quantum chemistry",
     icon: Atom,
     color: "from-violet-500 to-purple-600",
     bgColor: "bg-violet-50",
@@ -28,13 +28,13 @@ export const SIM_TYPES = [
   },
   {
     id: "molecular_dynamics",
-    label: "Molecular Dynamics (MD)",
+    label: "Molecular dynamics",
     icon: Activity,
     color: "from-teal-500 to-cyan-600",
     bgColor: "bg-teal-50",
     borderColor: "border-teal-200",
     engines: ["GROMACS", "AMBER", "NAMD", "OpenMM", "LAMMPS"],
-    description: "Protein folding, membrane dynamics, ligand binding, trajectory analysis",
+    description: "Mixture transport, diffusion, molecular interactions and trajectory analysis",
     fields: [
       { key: "system", label: "System Description", placeholder: "e.g. Lysozyme in water box, 50ns NPT simulation" },
       { key: "force_field", label: "Force Field", type: "select", options: ["AMBER99SB-ILDN","CHARMM36","OPLS-AA","GROMOS54A7","ff14SB","CHARMM36m","AMBER14SB","TraPPE"], default: "AMBER99SB-ILDN" },
@@ -44,7 +44,7 @@ export const SIM_TYPES = [
   },
   {
     id: "drug_discovery",
-    label: "Drug Discovery / Docking",
+    label: "Drug discovery",
     icon: Pill,
     color: "from-pink-500 to-rose-600",
     bgColor: "bg-pink-50",
@@ -218,59 +218,27 @@ export const SIM_TYPES = [
       { key: "scale", label: "System Size", type: "select", options: ["100s - 1000s atoms","1000s - 100k atoms","100k - 1M atoms","Custom (specify)"], default: "1000s - 100k atoms" },
     ]
   },
-  {
-    id: "process_simulation",
-    label: "Process Simulation (DWSIM)",
-    icon: Layers,
-    color: "from-teal-600 to-emerald-700",
-    bgColor: "bg-teal-50",
-    borderColor: "border-teal-200",
-    engines: ["DWSIM", "FluentAPI", "Python", "Open Source"],
-    description: "Steady-state and dynamic process flowsheet simulation. Distillation columns, reactors, heat exchangers, and full plant models.",
-    fields: [],
-  },
+
 ];
 
 export const DOMAIN_SIM_MAP = {
-  "Chemistry":         ["dft", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
-  "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
-  "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Engineering":       ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
-  "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation"],
-  "Materials Science": ["materials", "dft", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
-  "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  Pharma: ['drug_discovery'],
+  'Chemical Manufacturing': ['molecular_dynamics'],
+  Academic: ['dft'],
 };
-
-export const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
-
-export const DOMAIN_COLORS = {
-  "Chemistry": "bg-violet-600 text-white border-violet-600",
-  "Biochemistry": "bg-teal-600 text-white border-teal-600",
-  "Drug Discovery": "bg-pink-600 text-white border-pink-600",
-  "Engineering": "bg-slate-600 text-white border-slate-600",
-  "Biology": "bg-blue-600 text-white border-blue-600",
-  "Environmental": "bg-green-600 text-white border-green-600",
-  "Materials Science": "bg-amber-600 text-white border-amber-600",
-  "Biophysics": "bg-cyan-600 text-white border-cyan-600",
-};
-
+export const DOMAIN_TAGS = ['Pharma', 'Chemical Manufacturing', 'Academic'];
+export const DOMAIN_COLORS = Object.fromEntries(DOMAIN_TAGS.map(domain => [domain, 'bg-primary text-primary-foreground border-primary']));
 export const DOMAIN_DESCRIPTIONS = {
-  "Chemistry": "Quantum chemistry, DFT, reaction mechanisms, spectroscopy and statistical simulations.",
-  "Biochemistry": "Protein dynamics, biomolecular interactions, excited states and visualization.",
-  "Drug Discovery": "Docking, ADMET, binding affinity, protein modeling and ML-based drug design.",
-  "Engineering": "Materials DFT, band structure, Monte Carlo and ML potentials for engineering systems.",
-  "Biology": "Protein folding, membrane dynamics, coarse-grain and advanced biomolecular sampling.",
-  "Environmental": "Pollutant fate, photodegradation, ecotoxicology and atmospheric chemistry.",
-  "Materials Science": "Solid-state DFT, surface catalysis, spectroscopy and neural network potentials.",
-  "Biophysics": "Enhanced sampling, free energy, protein-RNA interactions and photophysics.",
+  Pharma: 'Drug discovery: ligand-receptor docking and binding-site analysis for pharmaceutical research.',
+  'Chemical Manufacturing': 'Molecular dynamics: mixture behavior, diffusion and molecular interactions for industrial development.',
+  Academic: 'Quantum chemistry: DFT electronic structure, geometry optimization and molecular properties for research laboratories.',
 };
 
 export default function ComputationalSimulation() {
   const { user } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
   const navigate = useNavigate();
-  const [domain, setDomain] = useState("Chemistry");
+  const [domain, setDomain] = useState("Pharma");
 
   const canAccess = !user || trialStatus.isPro || trialStatus.trialDaysLeft > 0;
 
@@ -283,7 +251,7 @@ export default function ComputationalSimulation() {
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Pro Feature</h2>
           <p className="text-slate-600 mb-1">Computational Simulations require a <span className="font-semibold text-violet-700">Pro subscription</span>.</p>
-          <p className="text-slate-500 text-sm mb-6">Run DFT, MD, drug discovery, protein modeling, materials science and more.</p>
+          <p className="text-slate-500 text-sm mb-6">Access drug discovery, molecular dynamics and quantum chemistry workflows.</p>
           <Link to={createPageUrl('Pricing')} className="block w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all text-center">
             Upgrade to Pro
           </Link>
@@ -295,10 +263,6 @@ export default function ComputationalSimulation() {
   const filteredSims = SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id));
 
   const handleSelectSim = (simId) => {
-    if (simId === "process_simulation") {
-      navigate("/DWSIMIntegration");
-      return;
-    }
     navigate(`/SimulationRunner?type=${simId}&domain=${encodeURIComponent(domain)}`);
   };
 
@@ -312,7 +276,7 @@ export default function ComputationalSimulation() {
               Computational Simulations
             </h1>
             <p className="text-slate-500 max-w-2xl mx-auto text-base leading-relaxed">
-              AI-powered molecular modeling: DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.
+              Drug discovery, molecular dynamics and quantum chemistry for companies and research laboratories.
             </p>
 
             {/* Domain tabs */}
@@ -349,7 +313,7 @@ export default function ComputationalSimulation() {
 
           {/* Simulation Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredSims.filter(s => s.id !== 'process_simulation').map(s => {
+            {filteredSims.map(s => {
               const Icon = s.icon;
               return (
                 <button
@@ -383,33 +347,7 @@ export default function ComputationalSimulation() {
               );
             })}
 
-            {/* DWSIM Process Simulation card */}
-            {filteredSims.some(s => s.id === 'process_simulation') &&  (
-              <button
-                onClick={() => handleSelectSim('process_simulation')}
-                className="group text-left bg-white rounded-2xl border border-slate-200 p-5 hover:border-teal-300 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-700 flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <Layers className="w-5 h-5 text-white" />
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-0.5 transition-all mt-1" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight group-hover:text-teal-700 transition-colors">
-                  Process Simulation (DWSIM)
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mb-3">
-                  Steady-state and dynamic process flowsheet simulation. Distillation columns, reactors, heat exchangers, and full plant models.
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {['DWSIM', 'FluentAPI', 'Python', 'Open Source'].map(e => (
-                    <span key={e} className="inline-block bg-teal-50 text-teal-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      {e}
-                    </span>
-                  ))}
-                </div>
-              </button>
-            )}
+
 
           </div>
 

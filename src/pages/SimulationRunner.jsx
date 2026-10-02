@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { SIMULATION_TEMPLATES } from '@/components/computational/simulationTemplates';
 import { SIM_TYPES } from "./ComputationalSimulation";
 import MoleculeDrawer from "../components/simulation/MoleculeDrawer";
 import MolViewer from "../components/simulation/MolViewer";
@@ -48,9 +49,11 @@ export default function SimulationRunner() {
   const { user, refreshUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const params = new URLSearchParams(window.location.search);
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
   const typeId = params.get("type");
-  const domain = params.get("domain") || "Chemistry";
+  const templateId = params.get('template');
+  const domain = params.get("domain") || 'Academic';
 
   const sim = SIM_TYPES.find(s => s.id === typeId);
 
@@ -109,12 +112,19 @@ export default function SimulationRunner() {
     "VESTA": "Crystal structure visualization and electron density analysis.",
     "SchNet": "Graph neural network potential for fast, accurate molecular dynamics.",
     "MACE": "State-of-the-art equivariant ML potential for large and complex systems.",
-    "DWSIM": "Open-source process simulator for chemical and petrochemical flowsheets.",
   };
 
   useEffect(() => {
-    if (!sim) navigate("/ComputationalSimulation");
-  }, [sim, navigate]);
+    if (!sim) { navigate('/ComputationalStudio/Simulations', { replace: true }); return; }
+    const preset = SIMULATION_TEMPLATES.find(p => p.id === templateId && p.simType === typeId);
+    const defaults = Object.fromEntries(sim.fields.filter(f => f.default).map(f => [f.key, f.default]));
+    setInputs({ ...defaults, ...(preset?.fields || {}) });
+    setSelectedEngine(preset?.engine || sim.engines[0]);
+    setResults(null);
+    setInputFiles(null);
+    setEnvParams(null);
+    setCustomForcefield(null);
+  }, [typeId, templateId, sim, navigate]);
 
   if (!sim) return null;
 
@@ -124,8 +134,12 @@ export default function SimulationRunner() {
   const handleDrawerConfirm = (smiles) => { if (drawerTargetKey) handleInputChange(drawerTargetKey, smiles); };
 
   const handlePresetSelect = (preset) => {
-    if (preset.engine) setSelectedEngine(preset.engine);
-    if (preset.fields) setInputs(prev => ({ ...prev, ...preset.fields }));
+    if (typeId === preset.simType && templateId === preset.id) {
+      setInputs({ ...preset.fields });
+      setSelectedEngine(preset.engine);
+      return;
+    }
+    navigate(`/SimulationRunner?type=${preset.simType}&domain=${encodeURIComponent(preset.industry)}&template=${preset.id}`);
   };
 
   const handlePubChemSelect = (compound) => {
@@ -240,7 +254,6 @@ Provide a focused, technical analysis. Return JSON with:
       });
 
       const fullResult = { ...response, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs }, environmental_params: { ...env }, job_hash: jobHash };
-      setResults(fullResult);
       setActiveTab("analysis");
 
       // Update the draft with results and create an auditable SimulationJob
@@ -267,6 +280,7 @@ Provide a focused, technical analysis. Return JSON with:
         }
       }
 
+      setResults(fullResult);
       if (user) {
         try {
           await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
@@ -672,7 +686,7 @@ Provide a focused, technical analysis. Return JSON with:
         {!results && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
             {/* Simulation Presets */}
-            <SimulationPresets onSelectPreset={handlePresetSelect} />
+            <SimulationPresets onSelectPreset={handlePresetSelect} selectedId={templateId} />
 
             <Card className="border-0 shadow-md">
               <CardContent className="p-6 md:p-8">
