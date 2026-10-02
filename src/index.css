@@ -628,7 +628,7 @@
 .screenshot-home .home-element-research { border-color: var(--home-purple); color: var(--home-purple-link); }
 .screenshot-home .home-element-number { font-size: 9px; color: var(--home-copy); line-height: 1.3; }
 .screenshot-home .home-element-symbol { font-size: 23px; font-weight: 500; line-height: 1.2; }
-.screenshot-home .home-stat-band { background: var(--home-teal); padding-block: 55px; }
+.screenshot-home .home-stat-band { background: var(--color-brand-dark); padding-block: 55px; }
 .screenshot-home .home-stat-band p { color: var(--home-canvas); }
 .screenshot-home .home-stat-number { font-size: 36px; font-weight: 600; line-height: 1.2; letter-spacing: -.04em; }
 .screenshot-home .home-stat-label { font-size: 11px; letter-spacing: .16em; margin-top: 10px; }
