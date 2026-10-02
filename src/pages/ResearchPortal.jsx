@@ -6,6 +6,7 @@ import ResearchPrinciples from '@/components/research/ResearchPrinciples';
 import ResearchComputeCard from '@/components/research/ResearchComputeCard';
 import ResearchAPIOverview from '@/components/research/ResearchAPIOverview';
 import ResearchAudience from '@/components/research/ResearchAudience';
+import ResearchWorkflowMap from '@/components/research/ResearchWorkflowMap';
 
 export default function ResearchPortal() {
   const { hash } = useLocation();
@@ -27,6 +28,7 @@ export default function ResearchPortal() {
       </div>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-6">
         <ResearchHero />
+        <ResearchWorkflowMap />
         <ResearchDataSources />
         <ResearchPrinciples />
         <ResearchComputeCard />
