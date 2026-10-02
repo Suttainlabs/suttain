@@ -606,12 +606,12 @@
 .screenshot-home, .screenshot-home :is(h1,h2,h3,p,li,span,a,button,input) { font-family: var(--font-body); }
 .screenshot-home .font-mono { font-family: var(--font-mono) !important; }
 .screenshot-home .home-container { max-width: 1080px; width: 100%; margin-inline: auto; padding-inline: 40px; }
-.screenshot-home h1 { font-size: clamp(32px, 4.2vw, 48px); font-weight: 600; line-height: 1.18; letter-spacing: -.04em; color: var(--home-ink); }
-.screenshot-home h2 { font-size: clamp(23px, 2.7vw, 30px); font-weight: 500; line-height: 1.3; letter-spacing: -.025em; color: var(--home-ink); }
-.screenshot-home h3 { font-size: 17px; font-weight: 500; line-height: 1.4; color: var(--home-ink); }
+.screenshot-home h1 { font-size: clamp(28px, 3.2vw, 36px); font-weight: 600; line-height: 1.18; letter-spacing: -.04em; color: var(--home-ink); }
+.screenshot-home h2 { font-size: clamp(20px, 2.2vw, 24px); font-weight: 500; line-height: 1.3; letter-spacing: -.025em; color: var(--home-ink); }
+.screenshot-home h3 { font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--home-ink); }
 .screenshot-home p { color: var(--home-copy); }
 .screenshot-home .home-hero { padding-block: 78px 50px; }
-.screenshot-home .home-hero-copy { max-width: 850px; margin: 24px auto 0; font-size: 19px; line-height: 1.7; }
+.screenshot-home .home-hero-copy { max-width: 850px; margin: 24px auto 0; font-size: 16px; line-height: 1.7; }
 .screenshot-home .home-hero-search { max-width: 720px; margin: 42px auto 0; text-align: left; }
 .screenshot-home .home-hero-search > div { max-width: none; }
 .screenshot-home .home-hero-search > div > div:first-child { background: var(--home-canvas); border-color: var(--home-ink); padding: 7px; border-radius: 12px; }
@@ -619,8 +619,8 @@
 .screenshot-home .home-hero-search > div > div:first-child > button:last-child { background: var(--home-search); color: var(--home-ink); min-height: 52px; padding-inline: 25px; font-size: 16px; }
 .screenshot-home .home-paths { padding-block: 0 82px; }
 .screenshot-home .home-path-card { border: 1px solid var(--home-line); border-radius: 12px; background: var(--home-canvas); padding: 32px; }
-.screenshot-home .home-path-card h2 { font-size: 20px; margin-block: 18px 8px; }
-.screenshot-home .home-path-card p { font-size: 15px; line-height: 1.65; }
+.screenshot-home .home-path-card h2 { font-size: 18px; margin-block: 18px 8px; }
+.screenshot-home .home-path-card p { font-size: 14px; line-height: 1.65; }
 .screenshot-home .home-path-card ul { margin-block: 20px; padding-left: 15px; list-style: disc; font-size: 13px; color: var(--home-copy); }
 .screenshot-home .home-path-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--home-link); font-size: 14px; font-weight: 500; }
 .screenshot-home .home-research-card .home-path-link { color: var(--home-purple-link); }
@@ -630,14 +630,14 @@
 .screenshot-home .home-element-symbol { font-size: 23px; font-weight: 500; line-height: 1.2; }
 .screenshot-home .home-stat-band { background: var(--home-teal); padding-block: 55px; }
 .screenshot-home .home-stat-band p { color: var(--home-canvas); }
-.screenshot-home .home-stat-number { font-size: 46px; font-weight: 600; line-height: 1.2; letter-spacing: -.04em; }
+.screenshot-home .home-stat-number { font-size: 36px; font-weight: 600; line-height: 1.2; letter-spacing: -.04em; }
 .screenshot-home .home-stat-label { font-size: 11px; letter-spacing: .16em; margin-top: 10px; }
 .screenshot-home .home-stat-copy { max-width: 580px; margin: 28px auto 0; font-size: 16px; line-height: 1.65; }
 .screenshot-home .home-section { padding-block: 72px 80px; }
 .screenshot-home .home-section-heading { text-align: center; margin-bottom: 48px; }
 .screenshot-home .home-eyebrow { font-size: 11px; letter-spacing: .08em; color: var(--home-link); margin-bottom: 12px; }
 .screenshot-home .home-research-label { color: var(--home-purple-link); }
-.screenshot-home .home-section-heading > p:last-child { margin-top: 12px; font-size: 16px; }
+.screenshot-home .home-section-heading > p:last-child { margin-top: 12px; font-size: 14px; }
 .screenshot-home .home-feature { display: block; border-radius: 6px; }
 .screenshot-home .home-feature h3 { margin-top: 18px; margin-bottom: 8px; }
 .screenshot-home .home-feature p { font-size: 14px; line-height: 1.7; }
@@ -648,12 +648,12 @@
 .screenshot-home .home-workflow-card { background: var(--home-canvas); border: 1px solid var(--home-line); border-radius: 12px; padding: 26px 20px; align-self: stretch; }
 .screenshot-home .home-workflow-card .home-element { margin-inline: auto; }
 .screenshot-home .home-workflow-card h3 { margin-block: 18px 8px; }
-.screenshot-home .home-workflow-card p { font-size: 15px; line-height: 1.65; }
+.screenshot-home .home-workflow-card p { font-size: 14px; line-height: 1.65; }
 .screenshot-home .home-workflow-arrow { width: 32px; color: var(--home-copy); justify-self: center; }
 .screenshot-home .home-workflow-note { max-width: 780px; margin: 42px auto 0; font-size: 15px; line-height: 1.7; }
 .screenshot-home .home-trust { padding-block: 46px 38px; border-bottom: 1px solid var(--home-line); }
 .screenshot-home .home-source-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px 48px; padding-block: 18px; color: var(--home-copy); }
-.screenshot-home .home-source-row span { font-size: 22px; font-weight: 500; letter-spacing: -.025em; }
+.screenshot-home .home-source-row span { font-size: 18px; font-weight: 500; letter-spacing: -.025em; }
 .screenshot-home .home-trust-note { font-size: 12px; margin-top: 10px; }
 .screenshot-home .home-final { padding-block: 64px 80px; }
 .screenshot-home .home-cta { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 12px 22px; border: 1px solid var(--home-teal); border-radius: 7px; color: var(--home-canvas); background: var(--home-link); font-size: 14px; }
