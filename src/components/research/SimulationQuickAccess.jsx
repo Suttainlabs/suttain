@@ -8,7 +8,7 @@ const sentenceCase = value => value.charAt(0) + value.slice(1).toLowerCase();
 export default function SimulationQuickAccess() {
   return (
     <aside className="rounded-xl border border-research-border bg-research-card p-5 sm:p-6">
-      <p className="research-label mb-2">Quick access</p><h2 className="!text-lg mb-5">Compute fields</h2>
+      <p className="research-label mb-2">Quick access</p><h2 className="!text-lg mb-5">Research tools</h2>
       <div className="divide-y divide-research-border">
         {DOMAIN_TAGS.map(domain => {
           const Icon = ICONS[domain];

@@ -17,8 +17,8 @@ export default function ResearchDashboard() {
     <div className="min-h-screen research-surface flex items-center justify-center px-4 py-12">
       <section className="max-w-xl w-full text-center bg-research-card border border-research-border rounded-xl p-6 sm:p-8">
         <div className="research-icon bg-research-soft mx-auto mb-5"><Lock className="h-5 w-5" strokeWidth={1.5} /></div>
-        <h1 className="mb-4">Your simulation workspace</h1>
-        <p className="text-research-muted mb-7">Sign in to configure computational simulations and track your quantum chemistry, materials and biomolecular workflows.</p>
+        <h1 className="mb-4">Your research workspace</h1>
+        <p className="text-research-muted mb-7">Sign in to track Atomistic Simulation workflows and Drug Design jobs, and revisit your saved candidate shortlists.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center"><Link to="/login?returnTo=%2FResearchDashboard" className="research-secondary">Sign in</Link><Link to="/register?returnTo=%2FResearchDashboard" className="research-primary">Sign up free</Link></div>
       </section>
     </div>
