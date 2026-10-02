@@ -2,7 +2,7 @@ export const agentWorkflowSteps = [
   {
     title: 'Define the question', mode: 'You initiate', icon: 'trigger',
     summary: 'Start with a compound, a system or a calculation you want to explore.',
-    action: 'Choose a workflow in the computational studio, select an engine and set your conditions. Search a scientific database or bring your own molecular input.',
+    action: 'Choose Atomistic Simulation for molecular calculations or Drug Design for target exploration. Select relevant source records and define the inputs and scope.',
     human: 'You choose the source record, inputs, method and scope. Nothing starts until you request it.',
     provenance: 'Database results identify their source. Keep the selected record and your input files as the starting evidence.',
     uncertainty: 'Check compound identity and missing properties before proceeding. A search match is not scientific validation.',
@@ -11,7 +11,7 @@ export const agentWorkflowSteps = [
   {
     title: 'Prepare the workflow', mode: 'Automated after your request', icon: 'prepare',
     summary: 'Let Suttain assemble the analysis and engine-specific setup.',
-    action: 'Once requested, Suttain prepares workflow analysis, scripts or input files from your configuration. Quantum chemistry and QM/MM workflows sit alongside the other compute fields.',
+    action: 'Atomistic Simulation prepares workflow analysis and engine-specific files. Drug Design guides target selection, screening setup, and illustrative candidate comparison.',
     human: 'You decide when to generate files or request analysis. Engine execution requires separately configured compute; preparing a script does not run a calculation.',
     provenance: 'Inspect the selected engine, method notes, conditions and forcefield alongside the generated setup.',
     uncertainty: 'Predicted values are estimates, not measured or engine-executed results. Check assumptions and file compatibility.',
@@ -21,7 +21,7 @@ export const agentWorkflowSteps = [
     title: 'Review and override', mode: 'Human review', icon: 'review',
     summary: 'The researcher makes the decision, not the generated answer.',
     action: 'Inspect the approach, limitations, references and script. Change conditions or forcefield parameters and rerun preparation when the setup does not fit your question.',
-    human: 'Your review is the decision gate before external execution or downstream use. This is a researcher-led check, not a formal approval workflow in the studio.',
+    human: 'Your review is the decision gate before external execution or downstream use. This is a researcher-led check, not a formal approval workflow in the research workspace.',
     provenance: 'Compare cited sources with the method and check the original publication or database record.',
     uncertainty: 'If an output is uncertain or wrong, do not use it as evidence. Revise the inputs, rerun and obtain expert validation.',
     output: 'A setup you choose to accept, revise or stop. You remain accountable for scientific use.'

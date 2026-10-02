@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import useTargetSuggestions from '@/components/drug-discovery/useTargetSuggestions';
+import useTargetSuggestions from '@/components/drug-design/useTargetSuggestions';
 export default function TargetSearchInput({ state: s }) {
   const [open, setOpen] = useState(false); const [active, setActive] = useState(-1);
   const { items, loading, unavailable } = useTargetSuggestions(s.query, open);
@@ -16,7 +16,7 @@ export default function TargetSearchInput({ state: s }) {
     if (event.key === 'Enter' && visible && active >= 0 && items[active]) { event.preventDefault(); pick(items[active]); }
   }
   return <form onSubmit={e => { e.preventDefault(); search(); }} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) { setOpen(false); setActive(-1); } }}>
-    <label htmlFor="drug-target-query" className="block text-sm mb-2">Search by disease, gene, or protein</label>
+    <label htmlFor="drug-target-query" className="block text-sm mb-2">Find a Drug Design target by disease, gene, or protein</label>
     <div className="flex flex-col sm:flex-row gap-2 mb-4">
       <div className="relative flex-1 min-w-0">
         <input id="drug-target-query" role="combobox" aria-autocomplete="list" aria-expanded={visible} aria-controls={visible ? 'drug-target-suggestions' : undefined} aria-activedescendant={visible && items[active] ? `drug-target-suggestion-${active}` : undefined} aria-describedby="drug-target-notes" autoComplete="off" maxLength={200} value={s.query} onFocus={() => setOpen(true)} onChange={e => { s.setQuery(e.target.value); setActive(-1); setOpen(true); }} onKeyDown={onKeyDown} className="simulation-control w-full" placeholder="e.g. EGFR, BACE1, SARS-CoV-2 Mpro" />

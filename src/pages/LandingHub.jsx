@@ -13,8 +13,8 @@ export default function LandingHub() {
   return (
     <div className="screenshot-home min-h-screen font-body">
       <SEOHead
-        title="Suttain | Consumer and brand tools · Research workflows"
-        description="Two distinct Suttain workspaces: product scanning, formulation and sustainability for consumers and brands; computational chemistry, scientific databases and autonomous workflows for researchers and R&D teams."
+        title="Suttain | Consumer tools · Atomistic Simulation · Drug Design"
+        description="Explore consumer and brand tools for safer products, or choose Research for Atomistic Simulation and Drug Design: configure molecular calculations, search biological targets, and organize research with source-backed context."
       />
       <LandingHeroSearch />
       <LandingPathCards />

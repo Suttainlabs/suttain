@@ -44,9 +44,8 @@ const ResearchDashboard = lazy(() => import('./pages/ResearchDashboard'));
 const APIPortal = lazy(() => import('./pages/APIPortal'));
 const ChemicalComparison = lazy(() => import('./pages/ChemicalComparison'));
 
-const ComputationalStudio = lazy(() => import('./pages/ComputationalStudio'));
-const DrugDiscovery = lazy(() => import('./pages/DrugDiscovery'));
-const ComputationalStudioSimulations = lazy(() => import('./pages/ComputationalStudioSimulations'));
+const AtomisticSimulation = lazy(() => import('@/pages/AtomisticSimulation'));
+const DrugDesign = lazy(() => import('@/pages/DrugDesign'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const LandingHub = lazy(() => import('./pages/LandingHub'));
@@ -156,8 +155,8 @@ const AuthenticatedApp = () => {
       <Route path="/research" element={<Navigate to="/ResearchPortal" replace />} />
 
       <Route path="/Home" element={<Navigate to="/" replace />} />
-      <Route path="/StructuralBiology" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
-      <Route path="/ComputationalSimulation" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
+      <Route path="/StructuralBiology" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
+      <Route path="/ComputationalSimulation" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
 
       {/* ── Public marketing pages (no login required) ── */}
       <Route path="/enterprise" element={<Navigate to="/APIPortal" replace />} />
@@ -203,14 +202,17 @@ const AuthenticatedApp = () => {
         })}
 
 
-        <Route path="/ComputationalStudio" element={<LayoutWrapper currentPageName="ComputationalStudio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudio /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
-        <Route path="/ComputationalStudio/Simulations" element={<LayoutWrapper currentPageName="ComputationalStudioSimulations"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioSimulations /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
-        <Route path="/DrugDiscovery" element={<LayoutWrapper currentPageName="DrugDiscovery"><Suspense fallback={<div role="status" className="py-16 text-center text-muted-foreground">Loading drug discovery…</div>}><ResearchGuard><PageTransition><DrugDiscovery /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
-        <Route path="/ComputationalStudio/Proteins" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
-        <Route path="/ComputationalStudio/SmallMolecules" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
-        <Route path="/ComputationalStudio/Materials" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
-        <Route path="/HazardEngine" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
-        <Route path="/ComputationalStudio/Jobs" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
+        <Route path="/AtomisticSimulation" element={<LayoutWrapper currentPageName="AtomisticSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><AtomisticSimulation /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
+        <Route path="/AtomisticSimulation/Simulations" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
+        <Route path="/DrugDesign" element={<LayoutWrapper currentPageName="DrugDesign"><Suspense fallback={<div role="status" className="py-16 text-center text-muted-foreground">Loading Drug Design…</div>}><ResearchGuard><PageTransition><DrugDesign /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
+        <Route path="/ComputationalStudio" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
+        <Route path="/ComputationalStudio/Simulations" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
+        <Route path="/DrugDiscovery" element={<Navigate to={`/DrugDesign${location.search}${location.hash}`} replace />} />
+        <Route path="/ComputationalStudio/Proteins" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
+        <Route path="/ComputationalStudio/SmallMolecules" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
+        <Route path="/ComputationalStudio/Materials" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
+        <Route path="/HazardEngine" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
+        <Route path="/ComputationalStudio/Jobs" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
 
       </Route>
       <Route path="/BatchSimulation" element={<LayoutWrapper currentPageName="BatchSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><BatchSimulation /></PageTransition></Suspense></LayoutWrapper>} />
@@ -240,8 +242,8 @@ const AuthenticatedApp = () => {
       <Route path="/CarbonOpportunitySimulator" element={<LayoutWrapper currentPageName="CarbonOpportunitySimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonOpportunitySimulator /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaPortfolio" element={<LayoutWrapper currentPageName="FormulaPortfolio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaPortfolio /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationRunner" element={<LayoutWrapper currentPageName="SimulationRunner"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationRunner /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/DWSIMIntegration" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
-      <Route path="/SimulationHistory" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
+      <Route path="/DWSIMIntegration" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
+      <Route path="/SimulationHistory" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
       <Route path="/SharedSimulationView" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><SharedSimulationView /></Suspense>} />
       <Route path="/BillingDashboard" element={<LayoutWrapper currentPageName="BillingDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BillingDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BatchRecords" element={<LayoutWrapper currentPageName="BatchRecords"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BatchRecords /></PageTransition></Suspense></LayoutWrapper>} />

@@ -10,7 +10,7 @@ export default function RecentSimulationRuns({ runs, loading, error, onRetry }) 
       {loading ? <div role="status" className="flex items-center justify-center gap-2 py-14 text-sm text-research-muted"><Loader2 className="h-4 w-4 animate-spin" />Loading simulations...</div> : error ? (
         <div role="alert" className="py-8 text-center"><p className="text-sm text-destructive mb-4">Unable to load your simulation workflows.</p><button onClick={onRetry} className="research-secondary">Try again</button></div>
       ) : runs.length === 0 ? (
-        <div className="flex flex-col items-center text-center py-10"><div className="research-icon bg-research-soft mb-5"><Cpu className="h-5 w-5" strokeWidth={1.5} /></div><h3 className="mb-2">No simulation workflows yet</h3><p className="text-sm text-research-muted max-w-sm mb-6">Choose a compute field and configure your first calculation. Your saved simulation activity will appear here.</p><Link to="/ComputationalStudio/Simulations" className="research-secondary">Explore simulations<ArrowUpRight className="h-4 w-4" /></Link></div>
+        <div className="flex flex-col items-center text-center py-10"><div className="research-icon bg-research-soft mb-5"><Cpu className="h-5 w-5" strokeWidth={1.5} /></div><h3 className="mb-2">No simulation workflows yet</h3><p className="text-sm text-research-muted max-w-sm mb-6">Choose a compute field and configure your first calculation. Your saved simulation activity will appear here.</p><Link to="/AtomisticSimulation" className="research-secondary">Explore simulations<ArrowUpRight className="h-4 w-4" /></Link></div>
       ) : (
         <div className="divide-y divide-research-border">
           {runs.map(run => <article key={run.id} className="py-4 first:pt-0 last:pb-0">

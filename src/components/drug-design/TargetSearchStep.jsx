@@ -1,4 +1,4 @@
-import TargetSearchInput from '@/components/drug-discovery/TargetSearchInput';
+import TargetSearchInput from '@/components/drug-design/TargetSearchInput';
 export default function TargetSearchStep({ state: s }) {
   return <section>
     <TargetSearchInput state={s} />
@@ -9,7 +9,7 @@ export default function TargetSearchStep({ state: s }) {
       {t.chembl_name && <p className="text-xs text-muted-foreground mt-2">ChEMBL hit: {t.chembl_name}</p>}{t.uniprot_name && <p className="text-xs text-muted-foreground">UniProt hit: {t.uniprot_name}</p>}
       <p className="text-xs font-mono text-muted-foreground mt-2">via {t.source_notes.join(' + ')}</p>
     </div>)}</div>
-    <p id="drug-target-notes" className="text-xs text-muted-foreground mt-4">Top hits are looked up independently by source and are not verified to represent the same biological target. Check the source records before scientific use; activity records are not a count of unique ligands.</p>
+    <p id="drug-target-notes" className="text-xs text-muted-foreground mt-4">Drug Design looks up top hits independently across sources; they may not represent the same biological target. Verify original records before scientific use. Activity records are not a count of unique ligands.</p>
     <div className="flex justify-end mt-6"><button disabled={!s.selectedTarget} onClick={() => s.setStep(1)} className="research-primary bg-primary text-primary-foreground disabled:opacity-40">Continue to library & method →</button></div>
   </section>;
 }

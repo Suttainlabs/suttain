@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import fetchTargetSuggestions from '@/components/drug-discovery/fetchTargetSuggestions';
+import fetchTargetSuggestions from '@/components/drug-design/fetchTargetSuggestions';
 export default function useTargetSuggestions(query, enabled) {
   const [result, setResult] = useState({ query: '', items: [], unavailable: [], loading: false });
   const eligible = enabled && query.trim().length >= 2;

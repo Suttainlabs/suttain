@@ -52,7 +52,7 @@ export const uiTranslations = {
     tool_formula_generator: 'Formula Generator',
     tool_suttainscan: 'Product Scanner',
     tool_hydration: 'Hydration Intelligence',
-    tool_computational_simulation: 'Computational Simulation',
+    tool_computational_simulation: 'Atomistic Simulation',
     tool_sds_analyzer: 'SDS Analyzer',
     tool_structural_biology: 'Structural Biology',
     business_enterprise_api: 'Enterprise API',

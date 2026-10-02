@@ -10,7 +10,7 @@ const worlds = [
   { name: 'Research workflows', scope: 'home-research', audience: 'Computational tools for scientists and R&D teams', items: [
     { icon: Database, title: 'Multi-database search', detail: 'Search PubChem, ChEMBL, ChEBI, ChemSpider and Suttain DB with source labels.', to: '/ResearchPortal' },
     { icon: SlidersHorizontal, title: 'Custom forcefields', detail: 'Select, upload or create parameters and attach them to your simulation setup.', to: '/ResearchDashboard' },
-    { icon: Layers, title: 'Unified simulation studio', detail: 'Prepare and track engine-specific workflows, including quantum chemistry and QM/MM.', to: '/ComputationalStudio/Simulations' }
+    { icon: Layers, title: 'Atomistic Simulation', detail: 'Prepare and track engine-specific workflows, including quantum chemistry and QM/MM.', to: '/AtomisticSimulation' }
   ] }
 ];
 export default function LatestResearch() {

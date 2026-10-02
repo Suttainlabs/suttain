@@ -8,7 +8,7 @@ export default function ResearchAPIOverview() {
       <div className="col-span-12 lg:col-span-7">
         <div className="flex items-center gap-3 mb-6"><div className="research-icon"><Code2 className="h-5 w-5" strokeWidth={1.5} /></div><span className="research-label">Research API / Early access</span></div>
         <h2 id="research-api-heading" className="mb-4">The same research context. In your own systems.</h2>
-        <p className="text-research-muted max-w-lg">Connect compound data, safety screening and formulation workflows to the tools your team already uses. Explore endpoint references, request parameters and Python and JavaScript examples in the full documentation.</p>
+        <p className="text-research-muted max-w-lg">Complement Atomistic Simulation and Drug Design with compound lookup, safety screening, and formulation context for your own systems. Review documented endpoints and Python and JavaScript examples; these references do not imply a live simulation or screening API.</p>
         <Link to="/APIPortal" className="research-primary mt-7">Research API<ArrowRight className="h-4 w-4" /></Link>
       </div>
       <div className="col-span-12 lg:col-span-5 lg:border-l lg:border-research-border lg:pl-8 flex flex-col justify-center">

@@ -9,10 +9,10 @@ import {
 import { base44 } from "@/api/base44Client";
 
 const TOOLS_MENU = [
-  { href: "/ComputationalSimulation", label: "Computational Simulations", icon: Cpu, desc: "DFT, quantum chemistry & QM/MM" },
+  { href: "/AtomisticSimulation", label: "Atomistic Simulation", icon: Cpu, desc: "Quantum chemistry, molecular dynamics & QM/MM" },
   { href: "/ChemicalComparison", label: "Chemical Comparison", icon: Layers, desc: "Side-by-side compound evaluation" },
   { href: "/SimulationEngine", label: "Simulation Engine", icon: FlaskConical, desc: "Formula cost & sustainability modeling" },
-  { href: "/ComputationalStudio/Proteins", label: "Proteins", icon: Microscope, desc: "AlphaFold protein structures & binding analysis" },
+  { href: "/AtomisticSimulation", label: "Proteins", icon: Microscope, desc: "AlphaFold protein structures & binding analysis" },
 ];
 
 const NAV_LINKS = [

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { submitDrugDiscoveryJob } from '@/functions/submitDrugDiscoveryJob';
-import { CANDIDATES } from '@/components/drug-discovery/discoveryData';
+import { CANDIDATES } from '@/components/drug-design/discoveryData';
 export default function useDiscoveryActions(records) {
   const [saving, setSaving] = useState(false); const [submitting, setSubmitting] = useState(false); const [actionError, setActionError] = useState('');
   async function launch(payload) {

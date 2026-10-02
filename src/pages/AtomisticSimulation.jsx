@@ -9,7 +9,7 @@ import SimulationStatusBanner from '@/components/shared/SimulationStatusBanner';
 import { SIM_TYPES, DOMAIN_SIM_MAP, DOMAIN_TAGS, DOMAIN_DESCRIPTIONS } from '@/pages/ComputationalSimulation';
 
 const domainLabel = value => value.charAt(0) + value.slice(1).toLowerCase();
-export default function ComputationalStudioSimulations() {
+export default function AtomisticSimulation() {
   const { user } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
   const [domain, setDomain] = useState(() => {
@@ -18,15 +18,15 @@ export default function ComputationalStudioSimulations() {
   });
   const canAccess = trialStatus.canRunResearchSim;
   const filteredSims = SIM_TYPES.filter(simulation => DOMAIN_SIM_MAP[domain]?.includes(simulation.id));
-  if (user && !canAccess) return <StudioLayout><SimulationStatusBanner user={user} className="mb-6" /><SubscriptionLock pillar="research" featureName="Research simulations" limit /></StudioLayout>;
+  if (user && !canAccess) return <StudioLayout><SimulationStatusBanner user={user} className="mb-6" /><SubscriptionLock pillar="research" featureName="Atomistic Simulation" limit /></StudioLayout>;
   return (
     <StudioLayout>
       <section className="pt-3 sm:pt-5">
         <div className="grid grid-cols-12 gap-4 mb-9">
           <div className="col-span-12 lg:col-span-9">
-            <p className="research-label mb-4">Computational studio / Workflow catalog</p>
-            <div className="flex items-center gap-3 mb-4"><Gauge className="h-6 w-6 text-research-accent" strokeWidth={1.5} /><h1>Simulations</h1></div>
-            <p className="text-research-muted max-w-2xl">Advanced QM/MM, quantum chemistry and materials workflows for independent, enterprise and academic research.</p>
+            <p className="research-label mb-4">Research / Atomistic Simulation / Workflow catalog</p>
+            <div className="flex items-center gap-3 mb-4"><Gauge className="h-6 w-6 text-research-accent" strokeWidth={1.5} /><h1>Atomistic Simulation</h1></div>
+            <p className="text-research-muted max-w-2xl">Prepare quantum chemistry, QM/MM, molecular dynamics, and materials workflows at the atomic scale. Select a field, configure your system, and review engine-specific inputs before executing calculations with configured compute.</p>
           </div>
 
         </div>

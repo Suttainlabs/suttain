@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import useDiscoveryRecords from '@/components/drug-discovery/useDiscoveryRecords';
-import useDiscoveryActions from '@/components/drug-discovery/useDiscoveryActions';
-import { CANDIDATES } from '@/components/drug-discovery/discoveryData';
-import useTargetSearch from '@/components/drug-discovery/useTargetSearch';
+import useDiscoveryRecords from '@/components/drug-design/useDiscoveryRecords';
+import useDiscoveryActions from '@/components/drug-design/useDiscoveryActions';
+import { CANDIDATES } from '@/components/drug-design/discoveryData';
+import useTargetSearch from '@/components/drug-design/useTargetSearch';
 export default function useDiscoveryState() {
   const search = useTargetSearch();
   const [view, setView] = useState('dashboard'); const [step, setStep] = useState(0);

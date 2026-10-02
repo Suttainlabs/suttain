@@ -10,7 +10,7 @@ const SOURCES = [
 export default function ResearchDataSources() {
   return (
     <section className="py-10 sm:py-12 border-b border-research-border" aria-labelledby="research-sources">
-      <h2 id="research-sources" className="flex items-center gap-2 mb-6 !text-sm"><Database className="w-4 h-4 text-research-accent" />Integrated data sources</h2>
+      <h2 id="research-sources" className="flex items-center gap-2 mb-6 !text-sm"><Database className="w-4 h-4 text-research-accent" />Scientific context for simulation and design</h2>
       <div className="grid grid-cols-12 gap-y-6">
         {SOURCES.map((source, i) => (
           <div key={source.name} className={`col-span-12 sm:col-span-6 lg:col-span-3 ${i > 0 ? 'lg:border-l lg:border-research-border lg:pl-6' : ''} pr-4`}>

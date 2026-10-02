@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import searchTargets from '@/components/drug-discovery/searchTargets';
+import searchTargets from '@/components/drug-design/searchTargets';
 export default function useTargetSearch() {
   const [query, setQuery] = useState('EGFR'); const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState(''); const [sourceWarning, setSourceWarning] = useState('');

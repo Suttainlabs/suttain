@@ -40,10 +40,10 @@ function getRecommendations(answers) {
   const workflow = [];
 
   if (answers.domain === "proteins") {
-    tools.push({ tool: "Simulations", href: "ComputationalStudio/Simulations", reason: "QM/MM enzyme catalysis, active-site calculations and biomolecular dynamics." });
+    tools.push({ tool: "Simulations", href: "AtomisticSimulation/Simulations", reason: "QM/MM enzyme catalysis, active-site calculations and biomolecular dynamics." });
     workflow.push("Prepare the biomolecular structure", "Define the active-site QM region", "Configure QM/MM reaction-path calculations");
   } else if (answers.domain === "materials") {
-    tools.push({ tool: "Computational Studio", href: "ComputationalStudio", reason: "Materials Project integration with DFT simulation and crystal structure analysis." });
+    tools.push({ tool: "Atomistic Simulation", href: "AtomisticSimulation", reason: "Materials Project integration with DFT simulation and crystal structure analysis." });
     workflow.push("Search Materials Project database", "Run DFT geometry optimization", "Analyze electronic and mechanical properties");
   } else {
     if (answers.goal === "hazard") {
@@ -62,8 +62,8 @@ function getRecommendations(answers) {
   if (answers.compute === "hpc") {
     tools.push({ tool: "Research API", href: "APIPortal", reason: "Programmatic access for batch processing and HPC workflow integration." });
   }
-  if (!tools.some((t) => t.tool === "Computational Studio")) {
-    tools.push({ tool: "Computational Studio", href: "ComputationalStudio", reason: "Unified workspace for all computational chemistry tasks." });
+  if (!tools.some((t) => t.tool === "Atomistic Simulation")) {
+    tools.push({ tool: "Atomistic Simulation", href: "AtomisticSimulation", reason: "Unified workspace for all computational chemistry tasks." });
   }
 
   return { tools, workflow };

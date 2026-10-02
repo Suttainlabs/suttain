@@ -8,10 +8,10 @@ export default function SimulationWorkflowHeader({ simulation, domain, engine })
   const Icon = simulation.icon;
   return (
     <header className="border-b border-research-border pb-8 mb-8">
-      <Link to="/ComputationalStudio/Simulations" className="inline-flex items-center gap-2 text-sm text-research-muted hover:text-research-accent mb-7"><ArrowLeft className="h-4 w-4" />Back to simulations</Link>
+      <Link to="/AtomisticSimulation" className="inline-flex items-center gap-2 text-sm text-research-muted hover:text-research-accent mb-7"><ArrowLeft className="h-4 w-4" />Back to simulations</Link>
       <div className="grid grid-cols-12 gap-6 items-end">
         <div className="col-span-12 lg:col-span-9">
-          <p className="research-label mb-4">Computational studio / {sentenceLabel(domain)}</p>
+          <p className="research-label mb-4">Atomistic Simulation / {sentenceLabel(domain)}</p>
           <div className="flex items-start gap-4">
             <div className="research-icon bg-research-soft"><Icon className="h-5 w-5" strokeWidth={1.5} /></div>
             <div className="min-w-0"><h1 className="mb-3">{sentenceLabel(simulation.label)}</h1><p className="text-research-muted max-w-2xl">{simulation.description}</p></div>

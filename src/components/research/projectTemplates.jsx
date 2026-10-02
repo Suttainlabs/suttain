@@ -35,7 +35,7 @@ export const PROJECT_TEMPLATES = [
   },
   {
     id: 'computational',
-    name: 'Computational Simulation',
+    name: 'Atomistic Simulation',
     description: 'Run DFT, molecular dynamics, or quantum mechanics simulations on target molecules.',
     project_type: 'computational',
     color: '#6366F1',

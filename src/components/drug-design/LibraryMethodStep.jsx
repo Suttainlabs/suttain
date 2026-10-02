@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LIBRARIES, METHODS } from '@/components/drug-discovery/discoveryData';
+import { LIBRARIES, METHODS } from '@/components/drug-design/discoveryData';
 export default function LibraryMethodStep({ state: s }) {
   const [fileError, setFileError] = useState('');
   async function readLibrary(event) {
@@ -16,7 +16,7 @@ export default function LibraryMethodStep({ state: s }) {
       <div><label htmlFor="drug-admet" className="block text-sm mb-1">ADMET / toxicity filter</label><select id="drug-admet" value={s.admetFilter} onChange={e => s.setAdmetFilter(e.target.value)} className="simulation-control"><option value="standard">Standard</option><option value="strict">Strict</option><option value="none">None</option></select></div>
     </div>
     {s.library === 'user_upload' && <div className="mt-4"><label htmlFor="drug-library-file" className="block text-sm mb-1">Choose a local library file (CSV or SDF, up to 5 MB)</label><input id="drug-library-file" type="file" accept=".csv,.sdf" onChange={readLibrary} className="block w-full text-sm" aria-describedby="drug-file-help" /><p id="drug-file-help" className="text-xs text-muted-foreground mt-2">Read locally only; never uploaded or stored. Your file is not used to calculate the fixed demonstration candidates.</p>{s.libraryFile && <p className="text-sm mt-2">Selected: {s.libraryFile.name}</p>}{fileError && <p role="alert" className="text-sm text-destructive mt-2">{fileError}</p>}</div>}
-    <p className="text-xs text-muted-foreground mt-4">These settings illustrate a real pipeline; they do not change the example scores or perform docking, ML, or ADMET calculations.</p>
+    <p className="text-xs text-muted-foreground mt-4">Drug Design uses these settings to illustrate screening setup. They do not change the example candidates or perform docking, ML, or ADMET calculations.</p>
     {!s.validCount && <p role="alert" className="text-sm text-destructive mt-3">Enter a whole number from 1 to 10,000.</p>}
     <div className="flex flex-wrap justify-between gap-3 mt-6"><button onClick={() => s.setStep(0)} className="research-secondary">← Back</button><button onClick={() => s.setStep(2)} disabled={!s.ready} className="research-primary bg-primary text-primary-foreground disabled:opacity-40">Continue to review →</button></div>
   </section>;

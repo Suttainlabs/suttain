@@ -2,9 +2,9 @@ import React from 'react';
 import { Shield, BookOpen, GitBranch } from 'lucide-react';
 
 const PRINCIPLES = [
-  { icon: Shield, title: 'No black box outputs', detail: 'Review source references and confidence information alongside your results. Keep the method in view, not just the answer.' },
-  { icon: BookOpen, title: 'Citation-ready exports', detail: 'Take your findings into reports with source citations and structured exports. Keep your research useful beyond the workspace.' },
-  { icon: GitBranch, title: 'Simulation to formula pipeline', detail: 'Bring computational findings into formulation decisions. Continue your work in a dedicated formula workspace with safety and compliance checks.' },
+  { icon: Shield, title: 'Methods and limitations in view', detail: 'Review Atomistic Simulation settings and Drug Design source records. Distinguish generated setups, illustrative scores, and actual compute results.' },
+  { icon: BookOpen, title: 'Research context you can retain', detail: 'Keep available inputs, references, and exports with your work. Review original sources and validate findings before sharing or publishing.' },
+  { icon: GitBranch, title: 'Two complementary research paths', detail: 'Use Atomistic Simulation to prepare molecular calculations and Drug Design to investigate targets and candidates. Choose the method that fits your scientific question.' },
 ];
 export default function ResearchPrinciples() {
   return (

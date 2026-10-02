@@ -49,9 +49,9 @@ const PAGE_META_DESCRIPTIONS = {
   FAQ: 'Frequently asked questions about Suttain, chemical safety analysis, formula generation, product scanning, pricing, and research API access.',
   AboutUs: 'Suttain makes chemical safety accessible to everyone. Learn about our mission to democratize chemical knowledge for safer products and formulations.',
   Careers: 'Join Suttain: careers in chemical safety, AI, and sustainable product development. View open positions and help build the future of chemical intelligence.',
-  ResearchPortal: 'Suttain Research Portal, a unified computational chemistry platform integrating PubChem, ChEMBL, and EPA CompTox for molecular intelligence, simulation, and API access.',
+  ResearchPortal: 'Suttain Research Portal: Atomistic Simulation and Drug Design with source-backed molecular inputs, target exploration, and reviewable research workflows.',
   ResearchDashboard: 'Your Suttain research dashboard, monitor activity, manage saved molecular formulas, and access computational chemistry tools.',
-  ResearchPortal: 'Suttain Research Portal, molecular intelligence, computational simulation, formula generation, and API access for professional chemists and scientists.',
+  ResearchPortal: 'Explore Atomistic Simulation and Drug Design in Suttain Research, with scientific source records and clear workflow limitations.',
   APIPortal: 'Suttain Research API documentation, REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. Python and JavaScript SDKs available.',
   ChemicalDashboard: 'Comprehensive chemical dashboard, view and manage your chemical database with detailed properties, safety data, and regulatory information.',
   ChemicalComparison: 'Compare any two chemical compounds side-by-side. Contrast molecular structure, physical properties, toxicity, and environmental data with delta highlighting.',
@@ -70,7 +70,8 @@ const PAGE_META_DESCRIPTIONS = {
   LearningSuite: 'Suttain learning center, tutorials and guides on chemical safety, product formulation, and sustainable manufacturing from basics to advanced techniques.',
   ExternalDatabases: 'Explore external chemical databases integrated with Suttain, PubChem, ChEMBL, EPA CompTox, RCSB PDB, and more scientific data sources.',
   BookADemo: 'Book a demo of the Suttain chemical safety and compliance platform. See how our tools can streamline your formulation and regulatory workflows.',
-  ComputationalStudio: 'Suttain Computational Studio: a unified workspace for molecular intelligence, protein structure prediction, materials analysis, and hazard prediction with single run, batch, and pipeline modes.',
+  AtomisticSimulation: 'Suttain Atomistic Simulation: configure quantum chemistry, QM/MM, molecular dynamics, and materials workflows with reviewable engine-specific inputs.',
+  DrugDesign: 'Suttain Drug Design: search biological targets, explore screening methods, and save candidate shortlists with clear limits on illustrative results.',
 };
 
 // Lazy-loaded components with error boundaries
@@ -138,7 +139,7 @@ export default function Layout({ children, currentPageName }) {
           || ['/ChemicalDashboard', '/ResearchPortal',
               '/ResearchDashboard', '/APIPortal', '/ChemicalComparison', '/SDSAnalyzer',
               '/ComputationalSimulation', '/SimulationEngine', '/ChemicalLibrary', '/SimulationRunner',
-              '/ComputationalStudio', '/ComputationalStudio/Simulations', '/DrugDiscovery', '/Simulator', '/generator', '/CarbonTaxSimulator', '/Workspace', '/Pricing'].includes(window.location.pathname);
+              '/AtomisticSimulation', '/AtomisticSimulation/Simulations', '/DrugDesign', '/ComputationalStudio', '/ComputationalStudio/Simulations', '/DrugDiscovery', '/Simulator', '/generator', '/CarbonTaxSimulator', '/Workspace', '/Pricing'].includes(window.location.pathname);
         if (!isOnResearchPage) {
           navigate(createPageUrl('ResearchDashboard'));
         }
@@ -272,8 +273,8 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const researchToolItems = [
-    { href: "ComputationalStudio", label: "Atomistic Simulation", icon: FlaskConical, category: "Research" },
-    { href: "DrugDiscovery", label: "Drug Design", icon: Microscope, category: "Research" },
+    { href: "AtomisticSimulation", label: "Atomistic Simulation", icon: FlaskConical, category: "Research" },
+    { href: "DrugDesign", label: "Drug Design", icon: Microscope, category: "Research" },
   ];
 
   // Tools dropdown: consumer tools only; research tools live in the Research hub
