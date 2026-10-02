@@ -101,7 +101,7 @@ Return a JSON with key "barcode" containing the digit string, or null if not cle
     }
 }
 
-Deno.serve(async (req) => {
+export default async function(req) {
     try {
         const base44 = createClientFromRequest(req);
         const user = await base44.auth.me();
@@ -110,23 +110,35 @@ Deno.serve(async (req) => {
         }
 
         const { file_url } = await req.json();
-        if (!file_url) {
-            return Response.json({ error: 'file_url is required' }, { status: 400 });
+        let imageUrl;
+        try {
+            if (typeof file_url !== 'string' || file_url.length > 4096) throw new Error('Invalid URL');
+            imageUrl = new URL(file_url);
+            // Only the known platform upload-storage origin; never arbitrary hosts.
+            if (imageUrl.protocol !== 'https:' || imageUrl.username || imageUrl.password ||
+                imageUrl.port || imageUrl.hostname !== 'qtrypzzcjebvfcihiynt.supabase.co' ||
+                !imageUrl.pathname.startsWith('/storage/v1/object/public/base44-prod/public/')) {
+                throw new Error('Untrusted image URL');
+            }
+        } catch {
+            return Response.json({ error: 'Use an image uploaded through the app.' }, { status: 400 });
         }
 
-        console.log('Scanning barcode from image:', file_url);
+        console.log('Scanning barcode from uploaded image');
 
         // Fetch the image as a buffer for zxing
         let imageBuffer = null;
         try {
-            const imgRes = await fetch(file_url);
+            const imgRes = await fetch(imageUrl.href, { redirect: 'error' });
             if (imgRes.ok) {
                 imageBuffer = await imgRes.arrayBuffer();
             } else {
                 console.error('Failed to fetch image, status:', imgRes.status);
+                return Response.json({ error: 'Unable to read the uploaded image.' }, { status: 400 });
             }
         } catch (fetchErr) {
             console.error('Failed to fetch image:', fetchErr.message);
+            return Response.json({ error: 'Unable to read the uploaded image.' }, { status: 400 });
         }
 
         // Strategy 1: zxing-wasm (proper barcode library)
@@ -138,7 +150,7 @@ Deno.serve(async (req) => {
         // Strategy 2: LLM fallback with strict validation
         if (!barcode) {
             console.log('zxing found nothing, trying LLM fallback...');
-            barcode = await decodeWithLLM(base44, file_url);
+            barcode = await decodeWithLLM(base44, imageUrl.href);
         }
 
         if (barcode) {
@@ -155,4 +167,4 @@ Deno.serve(async (req) => {
         console.error('Unexpected error in scanBarcodeFromImage:', error);
         return Response.json({ error: 'An unexpected error occurred.' }, { status: 500 });
     }
-});
+}
