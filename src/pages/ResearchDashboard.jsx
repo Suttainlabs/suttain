@@ -100,7 +100,7 @@ export default function ResearchDashboard() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/login?returnTo=%2FResearchDashboard')}
               variant="outline"
               size="lg"
               className="flex-1 bg-research-card"
@@ -108,7 +108,7 @@ export default function ResearchDashboard() {
               Login
             </Button>
             <Button
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/register?returnTo=%2FResearchDashboard')}
               size="lg"
               className="flex-1 bg-research-accent hover:opacity-90 text-white"
             >

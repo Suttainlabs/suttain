@@ -45,7 +45,7 @@ export default function LandingDoors() {
         title="Professional research"
         blurb="Computational chemistry. Simulation, structural biology, and API access for research chemists and scientists."
         items={["Computational studio", "Structural biology", "Research API"]}
-        href="/ResearchPortal"
+        href="/ResearchDashboard"
         accent="#9531F5"
       />
     </div>

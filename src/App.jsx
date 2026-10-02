@@ -90,6 +90,7 @@ const AuthenticatedApp = () => {
     || location.pathname === '/enterprise'
     || location.pathname === '/EnterpriseAPI'
     || location.pathname === '/APIPortal'
+    || location.pathname === '/ResearchDashboard'
     || location.pathname === '/ApproveSimulation';
 
   // Check if on auth routes, never redirect these
@@ -103,8 +104,8 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors, but never on auth pages
-  if (authError) {
+  // The research dashboard handles visitors with its own sign-in prompt.
+  if (authError && location.pathname !== '/ResearchDashboard') {
     if (authError.type === 'user_not_registered' && !isAuthRoute) {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required' && !isAuthRoute) {
@@ -163,11 +164,13 @@ const AuthenticatedApp = () => {
       <Route path="/ResearchPortal" element={<LayoutWrapper currentPageName="ResearchPortal"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><ResearchPortal /></PageTransition></Suspense></LayoutWrapper>} />
 
 
+      <Route path="/ResearchDashboard" element={<LayoutWrapper currentPageName="ResearchDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin" /></div>}><PageTransition><ResearchDashboard /></PageTransition></Suspense></LayoutWrapper>} />
+
       {/* ── Protected Tools (consumer + research, require login) ── */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         {['Simulator', 'generator', 'BarcodeScanner',
           'ChemicalDashboard', 'InventoryDashboard',
-          'ResearchDashboard', 'ChemicalComparison', 'SDSAnalyzer',
+          'ChemicalComparison', 'SDSAnalyzer',
           'SimulationEngine', 'ChemicalLibrary'
           ].map(path => {
           // Only premium Research features are hard-locked. Free-tier Research
