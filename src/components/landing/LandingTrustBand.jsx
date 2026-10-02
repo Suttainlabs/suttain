@@ -16,7 +16,7 @@ export default function LandingTrustBand() {
         <img src={p.logo} alt={p.label ? '' : p.name} className={p.name === 'ChEMBL' ? 'h-10 w-10 object-contain' : 'h-10 w-32 object-contain'} loading="lazy" />
         {p.label && <span>{p.label}</span>}
       </div>)}</div>
-      <p className="home-trust-note">130M+ records in PubChem’s compound index. Verify original records before scientific use.</p>
+      <p className="home-trust-note">130M+ records across all data sources. Verify original records before scientific use.</p>
     </section>
   );
 }
