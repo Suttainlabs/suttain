@@ -319,7 +319,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#FFFFFF' }}>
+    <div className={`min-h-screen ${currentPageName === 'Home' ? 'quiet-home-shell' : ''}`} style={{ backgroundColor: '#FFFFFF' }}>
       <style>{`
         :root {
           --suttain-teal: #02988C;
@@ -759,6 +759,7 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Legal + Language */}
             <div className="flex flex-col gap-4 md:items-end">
+              <p className="text-xs font-medium">Quick links</p>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
                 <li><Link to="/privacy-policy" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_privacy')}</Link></li>
                 <li><Link to="/terms-of-service" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_terms')}</Link></li>

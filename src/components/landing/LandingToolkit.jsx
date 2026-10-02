@@ -1,21 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight } from 'lucide-react';
+import { ScanLine, Atom, NotebookPen, Globe2 } from 'lucide-react';
 
 const TOOLS = [
-  { title: 'Computational studio', desc: 'For computational chemists: configure quantum chemistry, QM/MM and other engine-specific workflows.', to: '/ComputationalStudio/Simulations' },
-  { title: 'Scientific database search', desc: 'For researchers: discover compounds across PubChem, ChEMBL, ChEBI, ChemSpider and Suttain DB.', to: '/ResearchPortal' },
-  { title: 'Forcefields and run tracking', desc: 'For simulation teams: manage parameters, prepare inputs and revisit saved workflow analyses.', to: '/ResearchDashboard' },
-  { title: 'Research API', desc: 'For developers and research organizations: explore chemical data and workflow integration options.', to: '/APIPortal' }
+  { title: 'Product scanner', desc: 'Ingredient and product safety insights.', to: '/BarcodeScanner', icon: ScanLine },
+  { title: 'Chemical simulator', desc: 'Interaction analysis before mixing.', to: '/Simulator', icon: Atom },
+  { title: 'Formula generator', desc: 'Ingredient guidance for your next formula.', to: '/generator', icon: NotebookPen },
+  { title: 'Research portal', desc: 'A dedicated computational research workspace.', to: '/ResearchPortal', icon: Globe2 }
 ];
 
 export default function LandingToolkit() {
   return (
-    <section id="research-world" className="home-research scroll-mt-20 rounded-xl border border-research-border p-6 sm:p-8" aria-labelledby="research-title">
-      <p className="research-label mb-3">Dedicated research workspace</p><h2 id="research-title" className="mb-3">From scientific question to prepared workflow</h2>
-      <p className="text-research-muted mb-6">For scientists, computational chemists and R&amp;D teams working with molecular systems. This is a separate research surface, not the consumer product-analysis toolkit.</p>
-      <div className="grid gap-3">{TOOLS.map(tool => <Link key={tool.title} to={tool.to} className="rounded-lg border border-research-border p-4 hover:border-research-accent transition-colors"><h3 className="flex items-center justify-between gap-3 mb-1">{tool.title}<ArrowUpRight className="h-4 w-4 shrink-0" /></h3><p className="text-sm text-research-muted">{tool.desc}</p></Link>)}</div>
-      <p className="text-sm text-research-muted mt-6">Review generated inputs and estimates. Engine execution requires separately configured compute.</p>
+    <section id="research-world" className="quiet-toolkit quiet-section scroll-mt-20" aria-labelledby="research-title">
+      <div className="quiet-container"><div className="quiet-section-heading"><p className="quiet-eyebrow">Toolkit</p><h2 id="research-title">Real tools, not just an engine</h2></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{TOOLS.map(({ icon: Icon, ...tool }) => <Link key={tool.title} to={tool.to} className="quiet-tool"><div><h3>{tool.title}</h3><p>{tool.desc}</p></div><span className="quiet-tool-icon"><Icon className="h-8 w-8" strokeWidth={1.1} /></span></Link>)}</div>
+        <div className="quiet-tool-extras"><Link to="/ComputationalStudio/Simulations">Computational studio</Link><Link to="/ResearchDashboard">Forcefields and run tracking</Link><Link to="/APIPortal">Research API</Link></div>
+        <p className="quiet-note">Research inputs need review and separately configured compute.</p>
+      </div>
     </section>
   );
 }

@@ -1,24 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ScanLine, FlaskConical } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export default function LandingDoors() {
   return (
-    <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-12" aria-label="Choose your Suttain workspace">
-      <div className="grid gap-5 md:grid-cols-2">
-        <article className="home-consumer flex flex-col rounded-xl border border-research-accent bg-research-soft p-6 sm:p-8">
-          <div className="flex items-center justify-between mb-6"><p className="research-label">For consumers, makers and product brands</p><ScanLine className="h-6 w-6 text-research-accent ml-3 shrink-0" /></div>
-          <h2 className="mb-3">Consumer and brand tools</h2><p className="text-research-muted mb-5">Understand what is in a product, explore ingredient interactions and develop formulations with safety and environmental impact in view.</p>
-          <p className="text-sm mb-6">Product scanning · Formulation · Chemical safety · Sustainability</p>
-          <a href="#consumer-world" className="research-primary mt-auto">Explore consumer and brand tools<ArrowRight className="h-4 w-4" /></a>
-          <Link to="/BarcodeScanner" className="min-h-11 mt-3 flex items-center justify-center text-sm text-research-accent hover:underline">Go to product scanner</Link>
+    <section className="quiet-doors quiet-container" aria-label="Choose your Suttain workspace">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-7">
+        <article className="quiet-door quiet-consumer">
+          <Link to="/BarcodeScanner" aria-label="Open product scanner" className="quiet-door-image"><img src="https://media.base44.com/images/public/688eaf737ea3b621021f8bac/2dc985a43_generated_image.png" alt="Teal ball-and-stick molecular structure on a pale background" fetchPriority="high" width="800" height="1000" /></Link>
+          <p className="quiet-audience">For consumers and brands</p>
+          <h2>Make better<br />chemical decisions</h2>
+          <a href="#consumer-world" className="quiet-door-link">Explore consumer tools<ArrowRight className="h-3.5 w-3.5" /></a>
         </article>
-        <article className="home-research flex flex-col rounded-xl border border-research-accent bg-research-soft p-6 sm:p-8">
-          <div className="flex items-center justify-between mb-6"><p className="research-label">For scientists, computational chemists and R&amp;D teams</p><FlaskConical className="h-6 w-6 text-research-accent ml-3 shrink-0" /></div>
-          <h2 className="mb-3">Autonomous research workflows</h2><p className="text-research-muted mb-5">A dedicated computational workspace for sourced compound search, engine-specific workflow preparation and researcher-led review.</p>
-          <p className="text-sm mb-6">Computational studio · Scientific databases · Forcefields · Research API</p>
-          <a href="#research-world" className="research-primary mt-auto">Explore research workflows<ArrowRight className="h-4 w-4" /></a>
-          <Link to="/ResearchDashboard" className="min-h-11 mt-3 flex items-center justify-center text-sm text-research-accent hover:underline">Go to research dashboard</Link>
+        <article className="quiet-door quiet-research">
+          <Link to="/ResearchDashboard" aria-label="Open research dashboard" className="quiet-door-image"><img src="https://media.base44.com/images/public/688eaf737ea3b621021f8bac/e95bbe871_generated_image.png" alt="Sculptural protein ribbon structure on a pale gray background" fetchPriority="high" width="800" height="1000" /></Link>
+          <p className="quiet-audience">For scientists and R&amp;D teams</p>
+          <h2>Autonomous<br />research workflows</h2>
+          <a href="#research-world" className="quiet-door-link">Open the research workspace<ArrowRight className="h-3.5 w-3.5" /></a>
         </article>
       </div>
     </section>
