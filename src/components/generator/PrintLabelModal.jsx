@@ -1,4 +1,5 @@
 import React from 'react';
+import escapeHtml from '@/components/shared/escapeHtml';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +15,8 @@ export default function PrintLabelModal({ isOpen, onClose, formula, businessMode
   
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    printWindow.opener = null;
     printWindow.document.write(`
       <html>
         <head>
@@ -49,19 +52,19 @@ export default function PrintLabelModal({ isOpen, onClose, formula, businessMode
         </head>
         <body>
           <div class="label-container">
-            <h1>${formula.name}</h1>
-            <p>${formula.description || `A formula for ${formula.productType?.replace(/_/g, ' ')}`}</p>
+            <h1>${escapeHtml(formula.name)}</h1>
+            <p>${escapeHtml(formula.description || `A formula for ${formula.productType?.replace(/_/g, ' ')}`)}</p>
             
             <h2>Ingredients:</h2>
             <ul class="ingredients">
-              ${formula.ingredients.map(ing => `<li>${ing.chemical_name}</li>`).join('')}
+              ${formula.ingredients.map(ing => `<li>${escapeHtml(ing.chemical_name)}</li>`).join('')}
             </ul>
 
             <h2>Directions:</h2>
             <p>Follow formula instructions for use. For external use only unless specified otherwise.</p>
 
             <div class="footer">
-              Batch Date: ${new Date().toLocaleDateString()} • Shelf Life: ${formula.properties?.shelf_life || '6 months'}
+              Batch Date: ${new Date().toLocaleDateString()} • Shelf Life: ${escapeHtml(formula.properties?.shelf_life || '6 months')}
               <br/>
               ${businessMode ? `Manufactured for commercial use.` : 'For personal use only.'}
             </div>

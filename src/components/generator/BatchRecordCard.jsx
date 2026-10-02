@@ -25,10 +25,12 @@ export default function BatchRecordCard({ formula, batchName, batchSize, batchUn
   const handlePrint = () => {
     const printContent = printRef.current;
     const win = window.open('', '_blank');
+    if (!win || !printContent) return;
+    win.opener = null;
     win.document.write(`
       <html>
         <head>
-          <title>Batch Record - ${generatedBatchNumber}</title>
+          <title>Batch Record</title>
           <style>
             body { font-family: Arial, sans-serif; padding: 24px; color: #1e293b; }
             .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #02988C; padding-bottom: 12px; margin-bottom: 20px; }
@@ -49,10 +51,13 @@ export default function BatchRecordCard({ formula, batchName, batchSize, batchUn
             .footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #94a3b8; text-align: center; }
           </style>
         </head>
-        <body>${printContent.innerHTML}</body>
+        <body></body>
       </html>
     `);
     win.document.close();
+    win.document.title = `Batch Record - ${generatedBatchNumber}`;
+    // React has already encoded text; copy the DOM without reparsing user content as HTML.
+    win.document.body.appendChild(win.document.importNode(printContent, true));
     setTimeout(() => win.print(), 500);
   };
 

@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
+import escapeHtml from '@/components/shared/escapeHtml';
 
 const fmt = (n) => (isFinite(n) ? `$${n.toFixed(2)}` : '$0.00');
 
@@ -207,14 +208,15 @@ export default function CostProductionPanel({ formula, batchSize, batchUnit, cos
   const handleExportPDF = () => {
     const win = window.open('', '_blank');
     if (!win) return;
+    win.opener = null;
     const rows = ingredientCostBreakdown
       .map(
-        (i) => `<tr><td>${i.name}</td><td>${i.percentage}%</td><td>${i.gramsNeeded.toFixed(1)}g</td><td>${fmt(i.price)}/${i.unit}g</td><td>${fmt(i.cost)}</td></tr>`
+        (i) => `<tr><td>${escapeHtml(i.name)}</td><td>${escapeHtml(i.percentage)}%</td><td>${escapeHtml(i.gramsNeeded.toFixed(1))}g</td><td>${escapeHtml(fmt(i.price))}/${escapeHtml(i.unit)}g</td><td>${escapeHtml(fmt(i.cost))}</td></tr>`
       )
       .join('');
 
     win.document.write(`
-      <html><head><title>Costing Sheet - ${formula.name}</title>
+      <html><head><title>Costing Sheet - ${escapeHtml(formula.name)}</title>
       <style>
         body { font-family: Arial, sans-serif; padding: 40px; color: #1e293b; }
         h1 { color: #007850; } h2 { color: #0f172a; margin-top: 30px; }
@@ -227,7 +229,7 @@ export default function CostProductionPanel({ formula, batchSize, batchUnit, cos
         .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
       </style></head><body>
       <h1>Cost & Production Sheet</h1>
-      <p><strong>Formula:</strong> ${formula.name} | <strong>Batch:</strong> ${effectiveBatchGrams.toFixed(0)}g (${scaleMultiplier}x scale)</p>
+      <p><strong>Formula:</strong> ${escapeHtml(formula.name)} | <strong>Batch:</strong> ${effectiveBatchGrams.toFixed(0)}g (${scaleMultiplier}x scale)</p>
 
       <h2>Ingredient Costs</h2>
       <table><thead><tr><th>Ingredient</th><th>%</th><th>Amount</th><th>Price</th><th>Cost</th></tr></thead>
