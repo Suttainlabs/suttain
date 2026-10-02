@@ -34,6 +34,7 @@
     },
     "environmental_params": {
       "type": "object",
+      "description": "Isolated environmental parameters for this simulation sandbox",
       "properties": {
         "solvent": {
           "type": "string"
@@ -43,6 +44,19 @@
         },
         "forcefield": {
           "type": "string"
+        },
+        "forcefield_file_uri": {
+          "type": "string"
+        },
+        "forcefield_file_name": {
+          "type": "string"
+        },
+        "custom_forcefield_id": {
+          "type": "string"
+        },
+        "custom_forcefield": {
+          "type": "object",
+          "additionalProperties": true
         },
         "temperature": {
           "type": "number",
@@ -76,8 +90,7 @@
           "type": "string",
           "description": "Reference to a saved SimulationEnvironment preset if reused"
         }
-      },
-      "description": "Isolated environmental parameters for this simulation sandbox"
+      }
     },
     "run_id": {
       "type": "string",

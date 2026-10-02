@@ -85,17 +85,26 @@ function ForcefieldForm({ initial, onSave, onCancel }) {
   const [dihedrals, setDihedrals] = useState(initial?.dihedral_parameters ?? []);
   const [notes, setNotes] = useState(initial?.notes ?? "");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSave = async () => {
     if (!name.trim()) return;
-    setSaving(true);
-    const data = {
-      name: name.trim(), description, base_forcefield: base,
-      lj_parameters: lj, bond_parameters: bonds,
-      angle_parameters: angles, dihedral_parameters: dihedrals, notes
-    };
-    await onSave(data);
-    setSaving(false);
+    setSaving(true); setError('');
+    try {
+      const normalize = (rows, keys) => rows.map(row => Object.fromEntries(Object.entries(row).map(([key, value]) => {
+        if (!keys.includes(key)) return [key, value];
+        if (value === '' || !Number.isFinite(Number(value))) throw new Error('Enter a number for every parameter value.');
+        return [key, Number(value)];
+      })));
+      await onSave({
+        name: name.trim(), description, base_forcefield: base,
+        lj_parameters: normalize(lj, ['epsilon', 'sigma']),
+        bond_parameters: normalize(bonds, ['k_bond', 'r0']),
+        angle_parameters: normalize(angles, ['k_angle', 'theta0']),
+        dihedral_parameters: normalize(dihedrals, ['k_dihedral', 'n', 'delta']), notes
+      });
+    } catch (err) { setError(err.message || 'Could not save this forcefield.'); }
+    finally { setSaving(false); }
   };
 
   return (
@@ -164,6 +173,7 @@ function ForcefieldForm({ initial, onSave, onCancel }) {
           className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white resize-none" />
       </div>
 
+      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
       <div className="flex gap-2 pt-1">
         <Button onClick={handleSave} disabled={saving || !name.trim()}
           className="bg-teal-600 hover:bg-teal-700 text-white gap-2">
@@ -176,7 +186,7 @@ function ForcefieldForm({ initial, onSave, onCancel }) {
 }
 
 // ─── Main exported component ───────────────────────────────────────────────
-export default function CustomForcefieldManager({ isOpen, onClose, onSelect }) {
+export default function CustomForcefieldManager({ isOpen, onClose, onSelect, initialView = 'list', selectOnSave = false }) {
   const [forcefields, setForcefields] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list"); // "list" | "new" | "edit"
@@ -184,7 +194,7 @@ export default function CustomForcefieldManager({ isOpen, onClose, onSelect }) {
   const [saved, setSaved] = useState(null);
 
   useEffect(() => {
-    if (isOpen) fetchForcefields();
+    if (isOpen) { setView(initialView); setEditing(null); fetchForcefields(); }
   }, [isOpen]);
 
   const fetchForcefields = async () => {
@@ -195,11 +205,10 @@ export default function CustomForcefieldManager({ isOpen, onClose, onSelect }) {
   };
 
   const handleSave = async (data) => {
-    if (editing) {
-      await base44.entities.CustomForcefield.update(editing.id, data);
-    } else {
-      await base44.entities.CustomForcefield.create(data);
-    }
+    const record = editing
+      ? await base44.entities.CustomForcefield.update(editing.id, data)
+      : await base44.entities.CustomForcefield.create(data);
+    if (selectOnSave) { onSelect(record); onClose(); }
     setSaved(data.name);
     setTimeout(() => setSaved(null), 2500);
     setView("list");

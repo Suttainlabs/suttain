@@ -40,7 +40,7 @@ ${molecule}
 }
 
 function genGROMACS(inputs, env) {
-  const ff = inputs.force_field || env.forcefield || 'AMBER99SB-ILDN';
+  const ff = env.forcefield || inputs.force_field || 'AMBER99SB-ILDN';
   const temp = inputs.temperature || env.temperature || 300;
   const time = inputs.simulation_time || '100 ns';
   const system = inputs.system || 'Protein in water';
@@ -276,7 +276,7 @@ run 100000`;
 }
 
 function genOpenMM(inputs, env) {
-  const ff = inputs.force_field || env.forcefield || 'AMBER14SB';
+  const ff = env.forcefield || inputs.force_field || 'AMBER14SB';
   const temp = inputs.temperature || env.temperature || 300;
   const time = inputs.simulation_time || '100 ns';
   const system = inputs.system || 'Protein in water';
@@ -295,7 +295,7 @@ import simtk.unit as unit
 pdb = PDBFile('system.pdb')
 
 # Force field
-forcefield = ForceField('${ff}.xml', '${ff}_water.xml')
+forcefield = ForceField(${env.forcefield_file_name?.endsWith('.xml') ? JSON.stringify(env.forcefield_file_name.replace(/[^a-zA-Z0-9_.-]/g, '_')) : `'${ff}.xml', '${ff}_water.xml'`})
 
 # System with periodic boundary conditions
 system = forcefield.createSystem(pdb.topology,
@@ -468,6 +468,14 @@ export default async function(req) {
 
     const env = environmental_params || {};
     const files = generateInputFiles(sim_type, engine, inputs || {}, env);
+    if (env.custom_forcefield && !env.forcefield_file_name) {
+      const ff = env.custom_forcefield;
+      files.push({ filename: 'custom_forcefield_parameters.json', content: JSON.stringify({ name: ff.name, base_forcefield: ff.base_forcefield, lj_parameters: ff.lj_parameters, bond_parameters: ff.bond_parameters, angle_parameters: ff.angle_parameters, dihedral_parameters: ff.dihedral_parameters, notes: ff.notes }, null, 2), description: 'Saved custom parameters. Integrate into the selected engine format and validate units before execution.' });
+    }
+    if (env.forcefield_file_name) {
+      const filename = String(env.forcefield_file_name).replace(/[^a-zA-Z0-9_.-]/g, '_').slice(0, 200);
+      files.push({ filename: 'forcefield_setup.txt', content: `Selected forcefield: ${env.forcefield || 'Custom'}\nAttached private file: ${filename}\nDownload the attached forcefield from the simulation page and place it beside these inputs.\nVerify file format, units, atom types and engine compatibility before running.\nGROMACS .itp: include it in the topology at the correct parameter section using #include "${filename}".\nGROMACS .top: use this topology with gmx grompp -p "${filename}".\nOpenMM .xml: load with ForceField("${filename}") and compatible solvent parameters.\nAMBER .prmtop: use as the topology (-p) with matching coordinates.\nUploaded files are not converted or executed by this preparation workflow.`, description: 'Setup instructions for the attached forcefield' });
+    }
 
     return Response.json({
       files,

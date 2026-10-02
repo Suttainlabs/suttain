@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import ForcefieldPicker from '@/components/simulation/ForcefieldPicker';
 
 const SOLVENT_OPTIONS = [
   { value: "none", label: "None / Vacuum" },
@@ -203,12 +204,7 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
               <Input value={env.solvent_custom} onChange={e => update('solvent_custom', e.target.value)} placeholder="e.g. 80:20 water:ethanol mixture" />
             </div>
           )}
-          <div>
-            <Label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide flex items-center gap-1">
-              <FlaskConical className="w-3 h-3" /> Forcefield
-            </Label>
-            <Input value={env.forcefield} onChange={e => update('forcefield', e.target.value)} placeholder="e.g. AMBER99SB-ILDN" />
-          </div>
+          <ForcefieldPicker env={env} onChange={onChange} />
           <NumberInput label="Temperature" value={env.temperature} onChange={v => update('temperature', v)} placeholder="300" unit="K" />
           <NumberInput label="Pressure" value={env.pressure} onChange={v => update('pressure', v)} placeholder="1.0" unit="bar" />
           <NumberInput label="pH" value={env.ph} onChange={v => update('ph', v)} placeholder="7.0" unit="pH" />

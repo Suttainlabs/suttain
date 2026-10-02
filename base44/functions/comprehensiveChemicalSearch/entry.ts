@@ -156,7 +156,7 @@ async function searchPubChem(resolvedName, originalQuery) {
       iupac_name: props.IUPACName,
       molecular_formula: props.MolecularFormula,
       molecular_weight: props.MolecularWeight,
-      smiles: props.CanonicalSMILES,
+      smiles: props.ConnectivitySMILES || props.CanonicalSMILES || props.SMILES,
       chemical_type: 'compound',
       category: 'other',
       safety_level: 'unknown',
@@ -203,27 +203,16 @@ async function searchChEMBL(query) {
 
 async function searchChEBI(query) {
   try {
-    const url = `https://www.ebi.ac.uk/chebi/websrvices2/rest/search?search=${encodeURIComponent(query)}&ontologyDataOutput=false&searchCategory=ALL&stars=ALL&maximumResults=5`;
-    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-    if (!res.ok) return [];
-    const data = await res.json();
-    const results = data?.searchResults?.results || [];
-    return results
-      .filter(r => r.chebiAsciiName)
-      .map(r => ({
-        name: r.chebiAsciiName,
-        scientific_name: r.chebiAsciiName,
-        iupac_name: r.iupacNames?.[0] || '',
-        molecular_formula: r.formulae?.[0]?.data || '',
-        molecular_weight: r.mass ? parseFloat(r.mass) : null,
-        chemical_type: 'compound',
-        category: 'biochemical',
-        safety_level: 'unknown',
-        source: 'chebi',
-        source_db: 'ChEBI',
-        chebi_id: r.chebiId,
-        who_essential: isWHOEssential(r.chebiAsciiName),
-      }));
+    const response = await fetch(`https://www.ebi.ac.uk/ols4/api/search?q=${encodeURIComponent(query)}&ontology=chebi&rows=5`);
+    if (!response.ok) return [];
+    const data = await response.json();
+    return await Promise.all((data.response?.docs || []).map(async doc => {
+      const detail = await fetch(`https://www.ebi.ac.uk/ols4/api/ontologies/chebi/terms?iri=${encodeURIComponent(doc.iri)}`);
+      const term = detail.ok ? (await detail.json())._embedded?.terms?.[0] : null;
+      const annotations = term?.annotation || {};
+      const get = key => { const entry = Object.entries(annotations).find(([name]) => name.toLowerCase().includes(key)); return entry ? (Array.isArray(entry[1]) ? entry[1][0] : entry[1]) : ''; };
+      return { name: doc.label, scientific_name: doc.label, smiles: get('smiles'), molecular_formula: get('formula'), molecular_weight: Number(get('mass')) || null, chebi_id: doc.obo_id, source: 'chebi', source_db: 'ChEBI', chemical_type: 'compound', category: 'biochemical', safety_level: 'unknown' };
+    }));
   } catch (e) {
     console.error('ChEBI search failed:', e.message);
     return [];
@@ -321,7 +310,7 @@ async function searchPubChemAutocomplete(query) {
   }
 }
 
-Deno.serve(async (req) => {
+export default async function(req) {
   const base44 = createClientFromRequest(req);
 
   const user = await base44.auth.me();
@@ -336,8 +325,26 @@ Deno.serve(async (req) => {
     return Response.json({ error: "Invalid JSON body", results: [] }, { status: 400 });
   }
   
-  const query = body.query || '';
+  const query = typeof body.query === 'string' ? body.query.slice(0, 200) : '';
   const category = body.category;
+  const database = body.database || 'All';
+  if (!['All', 'PubChem', 'ChEMBL', 'ChEBI', 'ChemSpider', 'Suttain DB'].includes(database)) {
+    return Response.json({ error: 'Invalid database' }, { status: 400 });
+  }
+  if (database !== 'All') {
+    const resolved = COMMON_NAME_MAP[query.trim().toLowerCase()] || query.trim();
+    let results = [];
+    if (database === 'PubChem') results = await searchPubChem(resolved, query);
+    if (database === 'ChEMBL') results = await searchChEMBL(query);
+    if (database === 'ChEBI') results = await searchChEBI(query);
+    if (database === 'ChemSpider') results = await searchChemSpider(query);
+    if (database === 'Suttain DB' && query.trim()) {
+      const chemicals = await base44.entities.Chemical.list('-created_date', 500);
+      const term = query.trim().toLowerCase();
+      results = chemicals.filter(c => [c.name, c.scientific_name, c.cas_number].some(v => v?.toLowerCase().includes(term))).map(c => ({ ...c, source_db: 'Suttain DB' }));
+    }
+    return Response.json({ results: results.slice(0, 25), sources: [database] });
+  }
   const searchTerm = query.trim().toLowerCase();
 
   if (!searchTerm) {
@@ -418,4 +425,4 @@ Deno.serve(async (req) => {
     console.error("Chemical search error:", error);
     return Response.json({ error: "Search failed", details: error.message }, { status: 500 });
   }
-});
+}

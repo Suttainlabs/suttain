@@ -12,7 +12,7 @@ import SustainabilityProfileCard from "../components/computational/Sustainabilit
 import RelatedResearch from "../components/computational/RelatedResearch";
 import SimulationHistoryPanel from "../components/computational/SimulationHistoryPanel";
 import SimulationPresets from "../components/computational/SimulationPresets";
-import PubChemSearch from "../components/computational/PubChemSearch";
+import DatabaseSearch from '@/components/computational/DatabaseSearch';
 import { jsPDF } from "jspdf";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
@@ -30,6 +30,8 @@ import SimulationInputFiles from "../components/computational/SimulationInputFil
 import SimulationWorkflowHeader from '@/components/research/SimulationWorkflowHeader';
 import SimulationWorkflowField from '@/components/research/SimulationWorkflowField';
 import SimulationEngineSelector from '@/components/research/SimulationEngineSelector';
+import ForcefieldAttachment from '@/components/simulation/ForcefieldAttachment';
+import { generateSimulationInputs } from '@/functions/generateSimulationInputs';
 
 export default function SimulationRunner() {
   const { user, refreshUser } = useContext(AuthContext);
@@ -184,11 +186,11 @@ Boundary Conditions: ${env.boundary_conditions || 'periodic'}`;
           sim_type_label: sim.label,
           engine: selectedEngine,
           domain,
-          raw_inputs: { ...inputs },
+          raw_inputs: { ...inputs, forcefield_asset: env.forcefield_file_uri ? { file_uri: env.forcefield_file_uri, file_name: env.forcefield_file_name } : null, custom_forcefield: env.custom_forcefield || customForcefield || null },
           environmental_params: { ...env },
           run_id: jobHash,
           status: 'running',
-          custom_forcefield_id: customForcefield?.id || null,
+          custom_forcefield_id: env.custom_forcefield_id || customForcefield?.id || null,
         });
         draftId = draft.id;
         setCurrentDraftId(draftId);
@@ -228,7 +230,7 @@ Provide a focused, technical analysis. Return JSON with:
     try {
       const response = await base44.functions.invoke('runConsumerLLM', {
         operation: 'simulationRunner',
-        data: { selectedEngine, simulationConfig: { ...inputs, ...env }, moleculeInfo: inputSummary }
+        data: { selectedEngine, simulationConfig: { forcefield_file_name: env.forcefield_file_name || '', custom_forcefield: env.custom_forcefield || customForcefield || null, ...inputs, ...env, force_field: env.forcefield || inputs.force_field }, moleculeInfo: inputSummary + (env.forcefield_file_name ? `\nUploaded forcefield file: ${env.forcefield_file_name}. Reference this local file in the script, do not invent its contents. Verify compatibility with ${selectedEngine} before execution.` : '') }
       });
 
       const fullResult = { ...response.data, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs }, environmental_params: { ...env }, job_hash: jobHash };
@@ -283,7 +285,7 @@ Provide a focused, technical analysis. Return JSON with:
     setGeneratingInputs(true);
     setInputFiles(null);
     try {
-      const result = await base44.functions.invoke('generateSimulationInputs', {
+      const result = await generateSimulationInputs({
         sim_type: typeId,
         engine: selectedEngine,
         inputs: { ...inputs },
@@ -574,6 +576,7 @@ Provide a focused, technical analysis. Return JSON with:
                 </div>
               )}
 
+              <ForcefieldAttachment env={results.environmental_params} />
               {/* Plain Language Summary */}
               <div className="mt-5">
                 <PlainLanguageSummary
@@ -645,7 +648,7 @@ Provide a focused, technical analysis. Return JSON with:
             <Card className="border border-research-border bg-research-card shadow-none rounded-xl">
               <CardContent className="p-5 sm:p-8">
                 {/* PubChem Auto-fill */}
-                <PubChemSearch onSelect={handlePubChemSelect} />
+                <DatabaseSearch onSelect={handlePubChemSelect} />
 
                 <SimulationEngineSelector engines={sim.engines} selected={selectedEngine} onSelect={setSelectedEngine} tooltips={ENGINE_TOOLTIPS} />
 
@@ -742,6 +745,7 @@ Provide a focused, technical analysis. Return JSON with:
                 {inputFiles && (
                   <div className="mt-5">
                     <SimulationInputFiles result={inputFiles} />
+                    <ForcefieldAttachment env={envParams} />
                   </div>
                 )}
 
