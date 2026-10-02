@@ -61,24 +61,26 @@ const TOOLS = [
       const payload = isSmiles ? { smiles: input.trim(), mode: 'balanced' } : { query: input.trim(), mode: 'balanced' };
       const res = d(await base44.functions.invoke('hazardClassifier', payload));
       if (res.error) throw new Error(res.error);
-      const pred = res.prediction || {};
-      const confidence = pred.confidence ? Math.round(parseFloat(pred.confidence)) : null;
-      const label = pred.binary_result === 'hazardous' ? 'Hazardous' : (pred.binary_result === 'likely_safe' ? 'Likely safe' : (pred.binary_result || 'N/A'));
-      const categories = (pred.hazard_categories || []).map(c => typeof c === 'string' ? c : c.category);
+      const confidence = res.confidence_pct != null ? Math.round(parseFloat(res.confidence_pct)) : null;
+      const label = res.verdict || 'N/A';
       return {
         source: 'EPA CompTox + ECHA', sourceType: 'database', confidence,
         label,
         data: [
           ['Binary result', label],
-          ['Compound', res.compound?.name || input],
-          ['SMILES', (res.compound?.smiles || input).slice(0, 50)],
-          ['Confidence label', pred.confidence_label || 'N/A'],
-          ['GHS codes', (pred.hazard_categories || []).flatMap(c => c.ghs || []).join(', ') || 'See categories'],
+          ['Compound', res.query || input],
+          ['SMILES', (res.resolved_smiles || input).slice(0, 50)],
+          ['Hazard probability', res.hazard_probability != null ? `${res.hazard_probability}` : 'N/A'],
+          ['Operating mode', res.operating_mode || 'N/A'],
+          ['Decision threshold', res.decision_threshold != null ? `${res.decision_threshold}` : 'N/A'],
+          ['Model', res.provenance?.model || 'N/A'],
+          ['Training data', res.provenance?.training_data || 'N/A'],
+          ['ROC-AUC', res.validation_metrics?.roc_auc ?? 'N/A'],
         ],
-        categories,
-        citations: pred.citations || [],
-        uncertainty: pred.uncertainty_statement || pred.false_negative_note || '',
-        structuralAlerts: pred.structural_alerts || [],
+        categories: [],
+        citations: [],
+        uncertainty: res.honesty_note || '',
+        structuralAlerts: [],
         raw: res,
       };
     },
