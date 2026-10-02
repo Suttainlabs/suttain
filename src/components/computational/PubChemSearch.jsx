@@ -49,62 +49,36 @@ export default function PubChemSearch({ onSelect }) {
   };
 
   return (
-    <div className="mb-5 p-4 bg-indigo-50 border border-indigo-200 rounded-2xl">
-      <p className="text-xs font-bold text-indigo-800 mb-2 uppercase tracking-wide">PubChem Auto-fill</p>
-      <p className="text-xs text-indigo-600 mb-3">Search by molecule name or CAS number to auto-populate the form.</p>
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-indigo-400" />
-          <input
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="e.g. caffeine, 58-08-2, aspirin..."
-            className="w-full pl-9 pr-3 py-2 border border-indigo-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
-          />
+    <section className="mb-8 pb-7 border-b border-research-border">
+      <div className="flex items-start gap-3 mb-5">
+        <div className="research-icon bg-research-soft"><Search className="h-5 w-5" strokeWidth={1.5} /></div>
+        <div><h2 className="!text-lg mb-1">PubChem auto-fill</h2><p className="text-sm text-research-muted">Search by molecule name or CAS number to auto-populate the form.</p></div>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 min-w-0"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-research-muted" />
+          <input aria-label="Molecule name or CAS number" value={query} onChange={event => setQuery(event.target.value)} onKeyDown={handleKeyDown} placeholder="e.g. caffeine, 58-08-2, aspirin..." className="simulation-control !pl-10" />
         </div>
-        <button
-          onClick={search}
-          disabled={loading || !query.trim()}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1"
-        >
-          {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
-          Search
+        <button type="button" onClick={search} disabled={loading || !query.trim()} className="research-primary disabled:opacity-50 disabled:cursor-not-allowed">
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}Search
         </button>
       </div>
-
-      {error && (
-        <div className="mt-3 flex items-center gap-2 text-red-600 bg-red-50 border border-red-200 rounded-xl p-3 text-xs">
-          <X className="w-3.5 h-3.5 flex-shrink-0" />
-          {error}
-        </div>
-      )}
-
+      {error && <div role="alert" className="mt-3 flex items-center gap-2 text-destructive bg-destructive/5 border border-destructive/20 rounded-lg p-3 text-sm"><X className="h-4 w-4 shrink-0" />{error}</div>}
       {results && (
-        <div className="mt-3 bg-white border border-indigo-200 rounded-xl p-3">
-          <div className="flex items-start justify-between gap-2 flex-wrap">
-            <div>
-              <p className="font-bold text-slate-800 text-sm">{results.name}</p>
-              {results.iupac_name && <p className="text-xs text-slate-500">{results.iupac_name}</p>}
-              <div className="flex flex-wrap gap-2 mt-1.5">
-                {results.formula && <span className="text-[11px] font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded">{results.formula}</span>}
-                {results.molecular_weight && <span className="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded">MW: {results.molecular_weight}</span>}
-                {results.cid && <span className="text-[11px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">CID: {results.cid}</span>}
+        <div className="mt-4 bg-research-soft border border-research-border rounded-lg p-4">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="min-w-0"><p className="font-medium text-research-text">{results.name}</p>
+              {results.iupac_name && <p className="text-sm text-research-muted break-words">{results.iupac_name}</p>}
+              <div className="flex flex-wrap gap-2 mt-3">
+                {results.formula && <span className="research-label border border-research-border bg-research-card px-2 py-1 rounded">{results.formula}</span>}
+                {results.molecular_weight && <span className="research-label border border-research-border bg-research-card px-2 py-1 rounded">MW: {results.molecular_weight}</span>}
+                {results.cid && <span className="research-label border border-research-border bg-research-card px-2 py-1 rounded">CID: {results.cid}</span>}
               </div>
-              {results.smiles && (
-                <p className="text-[10px] font-mono text-slate-500 mt-1.5 break-all">SMILES: {results.smiles.slice(0, 60)}{results.smiles.length > 60 ? "..." : ""}</p>
-              )}
+              {results.smiles && <p className="research-label mt-3 break-all">SMILES: {results.smiles.slice(0, 60)}{results.smiles.length > 60 ? '...' : ''}</p>}
             </div>
-            <button
-              onClick={() => onSelect(results)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-colors flex-shrink-0"
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              Use this molecule
-            </button>
+            <button type="button" onClick={() => onSelect(results)} className="research-secondary"><CheckCircle2 className="h-4 w-4" />Use this molecule</button>
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

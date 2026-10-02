@@ -170,24 +170,25 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
   const isMDLike = ['molecular_dynamics', 'protein_modeling', 'biomolecular_dynamics', 'monte_carlo'].includes(simType);
 
   return (
-    <Card className="border-2 border-cyan-200 bg-cyan-50/30">
+    <Card className="border border-research-border bg-research-page shadow-none rounded-xl">
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-              <Beaker className="w-4 h-4 text-white" />
+            <div className="research-icon bg-research-card">
+              <Beaker className="w-5 h-5" strokeWidth={1.5} />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 text-sm">Environmental Parameters</h3>
-              <p className="text-xs text-slate-500">Isolated sandbox conditions, decoupled from saved entities</p>
+              <p className="research-label mb-1">03 / Environment</p>
+              <h3 className="!text-lg mb-1 text-research-text">Environmental parameters</h3>
+              <p className="text-sm text-research-muted">Isolated sandbox conditions, decoupled from saved entities</p>
             </div>
           </div>
           <div className="flex gap-2">
             <Button size="sm" variant="outline" onClick={() => setShowLibrary(true)} className="gap-1.5 text-xs">
-              <Library className="w-3.5 h-3.5" /> Load Preset
+              <Library className="w-3.5 h-3.5" /> Load preset
             </Button>
             <Button size="sm" variant="outline" onClick={() => setShowSaveDialog(true)} className="gap-1.5 text-xs">
-              <Save className="w-3.5 h-3.5" /> Save Preset
+              <Save className="w-3.5 h-3.5" /> Save preset
             </Button>
           </div>
         </div>
@@ -198,7 +199,7 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
           </div>
           {env.solvent === 'custom' && (
             <div className="md:col-span-2">
-              <Label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Custom Solvent Description</Label>
+              <Label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Custom solvent description</Label>
               <Input value={env.solvent_custom} onChange={e => update('solvent_custom', e.target.value)} placeholder="e.g. 80:20 water:ethanol mixture" />
             </div>
           )}
@@ -211,12 +212,12 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
           <NumberInput label="Temperature" value={env.temperature} onChange={v => update('temperature', v)} placeholder="300" unit="K" />
           <NumberInput label="Pressure" value={env.pressure} onChange={v => update('pressure', v)} placeholder="1.0" unit="bar" />
           <NumberInput label="pH" value={env.ph} onChange={v => update('ph', v)} placeholder="7.0" unit="pH" />
-          <NumberInput label="Ionic Strength" value={env.ionic_strength} onChange={v => update('ionic_strength', v)} placeholder="0.15" unit="mol/L" />
+          <NumberInput label="Ionic strength" value={env.ionic_strength} onChange={v => update('ionic_strength', v)} placeholder="0.15" unit="mol/L" />
 
           {isMDLike && (
             <>
-              <SelectInput label="Boundary Conditions" value={env.boundary_conditions} onChange={v => update('boundary_conditions', v)} options={BOUNDARY_OPTIONS} />
-              <SelectInput label="Box Type" value={env.box_type} onChange={v => update('box_type', v)} options={BOX_OPTIONS} />
+              <SelectInput label="Boundary conditions" value={env.boundary_conditions} onChange={v => update('boundary_conditions', v)} options={BOUNDARY_OPTIONS} />
+              <SelectInput label="Box type" value={env.box_type} onChange={v => update('box_type', v)} options={BOX_OPTIONS} />
               <SelectInput label="Thermostat" value={env.thermostat} onChange={v => update('thermostat', v)} options={THERMOSTAT_OPTIONS} />
               <SelectInput label="Barostat" value={env.barostat} onChange={v => update('barostat', v)} options={BAROSTAT_OPTIONS} />
             </>
@@ -228,12 +229,12 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
           <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4" onClick={() => setShowSaveDialog(false)}>
             <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-900">Save Environment Preset</h3>
+                <h3 className="font-bold text-slate-900">Save environment preset</h3>
                 <button onClick={() => setShowSaveDialog(false)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
               </div>
               <Input value={envName} onChange={e => setEnvName(e.target.value)} placeholder="e.g. Physiological Saline 310K" className="mb-4" />
               <Button onClick={() => envName.trim() && saveMutation.mutate(envName.trim())} disabled={!envName.trim() || saveMutation.isPending} className="w-full bg-cyan-600 hover:bg-cyan-700 text-white">
-                {saveMutation.isPending ? 'Saving...' : 'Save Preset'}
+                {saveMutation.isPending ? 'Saving...' : 'Save preset'}
               </Button>
             </div>
           </div>
@@ -244,7 +245,7 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
           <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4" onClick={() => setShowLibrary(false)}>
             <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-900">Saved Environment Presets</h3>
+                <h3 className="font-bold text-slate-900">Saved environment presets</h3>
                 <button onClick={() => setShowLibrary(false)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
               </div>
               {savedEnvs.length === 0 ? (

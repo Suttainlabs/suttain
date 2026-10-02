@@ -20,29 +20,16 @@ import AuthContext from "../components/auth/AuthContext";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip";
+
 import {
   Cpu, ChevronLeft, Beaker, Dna, Download, Copy, CheckCircle2,
   Loader2, RotateCcw, BookOpen, Microscope, Activity, AlertTriangle,
   Eye, SlidersHorizontal, Film, ChevronRight, Info, FileCode2, Upload
 } from "lucide-react";
 import SimulationInputFiles from "../components/computational/SimulationInputFiles";
-
-function SelectField({ label, options, value, onChange }) {
-  return (
-    <div>
-      <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">{label}</label>
-      <select
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white text-slate-800"
-      >
-        {value && !options.includes(value) && <option value={value}>{value}</option>}
-        {options.map(o => <option key={o} value={o}>{o}</option>)}
-      </select>
-    </div>
-  );
-}
+import SimulationWorkflowHeader from '@/components/research/SimulationWorkflowHeader';
+import SimulationWorkflowField from '@/components/research/SimulationWorkflowField';
+import SimulationEngineSelector from '@/components/research/SimulationEngineSelector';
 
 export default function SimulationRunner() {
   const { user, refreshUser } = useContext(AuthContext);
@@ -413,10 +400,8 @@ Provide a focused, technical analysis. Return JSON with:
   };
 
   const reset = () => { setResults(null); setInputs({}); };
-  const Icon = sim.icon;
-
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#EDF7F2' }}>
+    <div className="simulation-workspace research-surface min-h-screen">
       <ToolFeedbackToast
         isOpen={showFeedback}
         onClose={() => setShowFeedback(false)}
@@ -426,47 +411,25 @@ Provide a focused, technical analysis. Return JSON with:
         pointsToAward={50}
       />
 
-      <div className="max-w-5xl mx-auto px-4 py-8">
-
-        {/* Back + Header */}
-        <div className="mb-8">
-          <button
-            onClick={() => navigate("/ComputationalSimulation")}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-violet-700 font-medium mb-5 transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" /> Back to Simulations
-          </button>
-
-          <div className="flex items-center gap-4">
-            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${sim.color} flex items-center justify-center shadow-md flex-shrink-0`}>
-              <Icon className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">{domain}</span>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-900">{sim.label}</h1>
-              <p className="text-slate-500 text-sm mt-0.5">{sim.description}</p>
-            </div>
-          </div>
-        </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        <SimulationWorkflowHeader simulation={sim} domain={domain} engine={selectedEngine} />
 
         {/* Results */}
         <AnimatePresence>
           {results && (
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-8">
               {/* Result Tabs */}
-              <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 mb-6 w-fit">
+              <div className="flex items-center gap-1 border-b border-research-border pb-3 mb-6 overflow-x-auto">
                 {[
                   { id: "analysis", label: "Analysis", icon: Microscope },
-                  { id: "script", label: `${results.engine} Script`, icon: Cpu },
+                  { id: "script", label: `${results.engine} script`, icon: Cpu },
                   { id: "viz", label: "Visualization", icon: Eye },
                   ...((typeId === "molecular_dynamics" || typeId === "protein_modeling" || typeId === "biomolecular_dynamics")
                     ? [{ id: "trajectory", label: "Trajectory", icon: Film }]
                     : []),
                 ].map(tab => (
                   <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.id ? "bg-violet-600 text-white shadow" : "text-slate-600 hover:bg-slate-100"}`}>
+                    className={`flex shrink-0 items-center gap-2 min-h-11 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.id ? 'bg-research-soft text-research-accent' : 'text-research-muted hover:bg-research-card'}`}>
                     <tab.icon className="w-4 h-4" />{tab.label}
                   </button>
                 ))}
@@ -474,17 +437,17 @@ Provide a focused, technical analysis. Return JSON with:
 
               {activeTab === "analysis" && (
                 <div className="space-y-5">
-                  <Card className="border-0 shadow-sm">
+                  <Card className="border border-research-border bg-research-card shadow-none">
                     <CardContent className="p-6">
-                      <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-violet-600" /> System Overview</h3>
+                      <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-violet-600" /> System overview</h3>
                       <p className="text-slate-700 text-sm leading-relaxed">{results.system_overview}</p>
                     </CardContent>
                   </Card>
 
                   {results.predicted_results?.key_values?.length > 0 && (
-                    <Card className="border-0 shadow-sm">
+                    <Card className="border border-research-border bg-research-card shadow-none">
                       <CardContent className="p-6">
-                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Activity className="w-4 h-4 text-teal-600" /> Predicted Results</h3>
+                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Activity className="w-4 h-4 text-teal-600" /> Predicted results</h3>
                         <p className="text-slate-600 text-sm mb-4">{results.predicted_results.summary}</p>
                         <div className="overflow-x-auto rounded-xl border border-slate-100">
                           <table className="w-full text-sm">
@@ -512,15 +475,15 @@ Provide a focused, technical analysis. Return JSON with:
                   )}
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <Card className="border-0 shadow-sm">
+                    <Card className="border border-research-border bg-research-card shadow-none">
                       <CardContent className="p-6">
-                        <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><Beaker className="w-4 h-4 text-blue-600" /> Computational Approach</h3>
+                        <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><Beaker className="w-4 h-4 text-blue-600" /> Computational approach</h3>
                         <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{results.computational_approach}</p>
                       </CardContent>
                     </Card>
-                    <Card className="border-0 shadow-sm">
+                    <Card className="border border-research-border bg-research-card shadow-none">
                       <CardContent className="p-6">
-                        <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><Dna className="w-4 h-4 text-pink-600" /> Scientific Interpretation</h3>
+                        <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><Dna className="w-4 h-4 text-pink-600" /> Scientific interpretation</h3>
                         <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{results.scientific_interpretation}</p>
                       </CardContent>
                     </Card>
@@ -536,9 +499,9 @@ Provide a focused, technical analysis. Return JSON with:
                   )}
 
                   {results.next_steps?.length > 0 && (
-                    <Card className="border-0 shadow-sm">
+                    <Card className="border border-research-border bg-research-card shadow-none">
                       <CardContent className="p-6">
-                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><ChevronRight className="w-4 h-4 text-green-600" /> Next Steps</h3>
+                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><ChevronRight className="w-4 h-4 text-green-600" /> Next steps</h3>
                         <ul className="space-y-2">
                           {results.next_steps.map((step, i) => (
                             <li key={i} className="flex items-start gap-3 text-sm text-slate-700">
@@ -552,7 +515,7 @@ Provide a focused, technical analysis. Return JSON with:
                   )}
 
                   {results.references?.length > 0 && (
-                    <Card className="border-0 shadow-sm">
+                    <Card className="border border-research-border bg-research-card shadow-none">
                       <CardContent className="p-6">
                         <h3 className="font-bold text-slate-900 mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-slate-600" /> References</h3>
                         <ul className="space-y-1">{results.references.map((ref,i) => <li key={i} className="text-xs text-slate-600 font-mono">{ref}</li>)}</ul>
@@ -563,12 +526,12 @@ Provide a focused, technical analysis. Return JSON with:
               )}
 
               {activeTab === "script" && (
-                <Card className="border-0 shadow-sm">
+                <Card className="border border-research-border bg-research-card shadow-none">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="font-bold text-slate-900 flex items-center gap-2">
                         <Cpu className="w-4 h-4 text-violet-600" /> {results.engine} Script
-                        <Badge className="bg-green-100 text-green-700 text-xs">Ready to Run</Badge>
+                        <Badge className="bg-green-100 text-green-700 text-xs">Ready to run</Badge>
                       </h3>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline" onClick={handleCopyScript} className="gap-2">
@@ -599,9 +562,9 @@ Provide a focused, technical analysis. Return JSON with:
                 <div className="space-y-5">
                   <MolViewer simType={results.simType?.id} inputs={results.inputs} />
                   {results.visualization_commands && (
-                    <Card className="border-0 shadow-sm">
+                    <Card className="border border-research-border bg-research-card shadow-none">
                       <CardContent className="p-6">
-                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Eye className="w-4 h-4 text-fuchsia-600" /> CLI Visualization Commands</h3>
+                        <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Eye className="w-4 h-4 text-fuchsia-600" /> CLI visualization commands</h3>
                         <pre className="bg-slate-900 text-cyan-300 rounded-xl p-5 overflow-x-auto text-xs leading-relaxed font-mono whitespace-pre-wrap">
                           {results.visualization_commands}
                         </pre>
@@ -635,7 +598,7 @@ Provide a focused, technical analysis. Return JSON with:
                     <Cpu className="w-4 h-4 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Simulation Job ID</p>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Simulation job ID</p>
                     <p className="text-sm font-mono text-slate-800 truncate">{currentJobHash}</p>
                   </div>
                 </div>
@@ -650,13 +613,13 @@ Provide a focused, technical analysis. Return JSON with:
               </div>
 
               <div className="flex justify-center mt-8 gap-3 flex-wrap">
-                <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />New Simulation</Button>
-                <Button onClick={generatePDFReport} variant="outline" className="gap-2 border-violet-300 text-violet-700 hover:bg-violet-50">
-                  <Download className="w-4 h-4" /> Generate Report
+                <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="w-4 h-4" />New simulation</Button>
+                <Button onClick={generatePDFReport} variant="outline" className="research-secondary h-auto">
+                  <Download className="w-4 h-4" /> Generate report
                 </Button>
                 <Button onClick={handleRun} disabled={isRunning} className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
                   {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Cpu className="w-4 h-4" />}
-                  Re-run Analysis
+                  Re-run analysis
                 </Button>
               </div>
             </motion.div>
@@ -679,46 +642,19 @@ Provide a focused, technical analysis. Return JSON with:
             {/* Simulation Presets */}
             <SimulationPresets onSelectPreset={handlePresetSelect} />
 
-            <Card className="border-0 shadow-md">
-              <CardContent className="p-6 md:p-8">
+            <Card className="border border-research-border bg-research-card shadow-none rounded-xl">
+              <CardContent className="p-5 sm:p-8">
                 {/* PubChem Auto-fill */}
                 <PubChemSearch onSelect={handlePubChemSelect} />
 
-                {/* Engine selector */}
-                <div className="mb-7">
-                  <label className="block text-xs font-semibold text-slate-500 mb-2.5 uppercase tracking-widest">Software / Engine</label>
-                  <TooltipProvider>
-                    <div className="flex flex-wrap gap-2">
-                      {sim.engines.map(e => (
-                        <Tooltip key={e}>
-                          <TooltipTrigger asChild>
-                            <button onClick={() => setSelectedEngine(e)}
-                              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${
-                                selectedEngine === e
-                                  ? "bg-violet-600 text-white border-violet-600 shadow"
-                                  : "bg-white text-slate-600 border-slate-200 hover:border-violet-300"
-                              }`}>
-                              {e}
-                              {ENGINE_TOOLTIPS[e] && <Info className="w-3 h-3 opacity-60" />}
-                            </button>
-                          </TooltipTrigger>
-                          {ENGINE_TOOLTIPS[e] && (
-                            <TooltipContent side="bottom" className="max-w-xs text-xs">
-                              {ENGINE_TOOLTIPS[e]}
-                            </TooltipContent>
-                          )}
-                        </Tooltip>
-                      ))}
-                    </div>
-                  </TooltipProvider>
-                </div>
+                <SimulationEngineSelector engines={sim.engines} selected={selectedEngine} onSelect={setSelectedEngine} tooltips={ENGINE_TOOLTIPS} />
 
                 {/* Custom Forcefield picker, MD only */}
                 {typeId === "molecular_dynamics" && (
                   <div className="mb-7 p-4 bg-teal-50 border border-teal-200 rounded-2xl">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div>
-                        <p className="text-sm font-semibold text-teal-800">Custom Forcefield Parameters</p>
+                        <p className="text-sm font-semibold text-teal-800">Custom forcefield parameters</p>
                         {customForcefield ? (
                           <p className="text-xs text-teal-600 mt-0.5">
                             Using: <span className="font-bold">{customForcefield.name}</span>
@@ -738,61 +674,31 @@ Provide a focused, technical analysis. Return JSON with:
                         <Button size="sm" variant="outline" onClick={() => setFfManagerOpen(true)}
                           className="gap-1.5 border-teal-300 text-teal-700 hover:bg-teal-100 text-xs">
                           <SlidersHorizontal className="w-3.5 h-3.5" />
-                          {customForcefield ? "Change / Edit" : "Load Custom FF"}
+                          {customForcefield ? "Change / edit" : "Load custom forcefield"}
                         </Button>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-7">
-                  {sim.fields.map(field => (
-                    field.type === "select" ? (
-                      <SelectField key={field.key} label={field.label} options={field.options}
-                        value={inputs[field.key] || field.default || field.options[0]}
-                        onChange={v => handleInputChange(field.key, v)} />
-                    ) : (
-                      <div key={field.key}>
-                        <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">{field.label}</label>
-                        <div className="flex gap-2">
-                           <input
-                              type="text"
-                              value={inputs[field.key] ?? ""}
-                              onChange={e => handleInputChange(field.key, e.target.value)}
-                              placeholder={field.placeholder}
-                              className="flex-1 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 bg-white"
-                            />
-                            {FILE_UPLOAD_KEYS.includes(field.key) && (
-                              <button
-                                type="button"
-                                onClick={() => openFileAutoFill(field.key)}
-                                className="flex-shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl border-2 border-fuchsia-200 bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-700 text-xs font-semibold transition-colors"
-                              >
-                                <Upload className="w-3.5 h-3.5" />
-                                Upload File
-                              </button>
-                            )}
-                            {DRAWABLE_KEYS.includes(field.key) && (
-                              <button
-                                type="button"
-                                onClick={() => openDrawer(field.key)}
-                                className="flex-shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl border-2 border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-semibold transition-colors">
-                                Draw
-                              </button>
-                            )}
-                          </div>
-                       </div>
-                    )
-                  ))}
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Additional Notes (optional)</label>
-                    <input type="text" value={inputs.notes ?? ""}
-                      onChange={e => handleInputChange("notes", e.target.value)}
-                      placeholder="Any special requirements or context..."
-                      className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white" />
+                <section className="mb-8">
+                  <p className="research-label mb-2">02 / System configuration</p>
+                  <h2 className="!text-lg mb-5">Calculation parameters</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                    {sim.fields.map(field => (
+                      <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]}
+                        onChange={value => handleInputChange(field.key, value)}
+                        canUpload={FILE_UPLOAD_KEYS.includes(field.key)} canDraw={DRAWABLE_KEYS.includes(field.key)}
+                        onUpload={() => openFileAutoFill(field.key)} onDraw={() => openDrawer(field.key)} />
+                    ))}
+                    <div className="min-w-0 md:col-span-2">
+                      <label htmlFor="simulation-notes" className="block text-sm font-medium text-research-text mb-2">Additional notes (optional)</label>
+                      <input id="simulation-notes" type="text" value={inputs.notes ?? ''}
+                        onChange={event => handleInputChange('notes', event.target.value)}
+                        placeholder="Any special requirements or context..." className="simulation-control" />
+                    </div>
                   </div>
-                </div>
+                </section>
 
                 {/* Environmental Parameters */}
                 <div className="mb-7">
@@ -804,11 +710,11 @@ Provide a focused, technical analysis. Return JSON with:
                 </div>
 
                 {/* Run button */}
-                <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-3 flex-wrap border-t border-research-border pt-6">
                   <Button
                     onClick={handleRun}
                     disabled={isRunning}
-                    className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold px-8 py-2.5 rounded-xl gap-2 shadow-md"
+                    className="research-primary h-auto shadow-none"
                   >
                     {isRunning
                       ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
@@ -819,12 +725,12 @@ Provide a focused, technical analysis. Return JSON with:
                     onClick={handleGenerateInputs}
                     disabled={generatingInputs}
                     variant="outline"
-                    className="gap-2 border-violet-300 text-violet-700 hover:bg-violet-50"
+                    className="research-secondary h-auto"
                   >
                     {generatingInputs
                       ? <Loader2 className="w-4 h-4 animate-spin" />
                       : <FileCode2 className="w-4 h-4" />}
-                    Generate Input Files
+                    Generate input files
                   </Button>
 
                   <p className="text-xs text-slate-400">

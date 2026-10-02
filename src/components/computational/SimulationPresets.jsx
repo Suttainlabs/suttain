@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from "react";
-import { Search, Beaker, Atom, BookOpen, X } from "lucide-react";
+import { Search, X } from 'lucide-react';
+import SimulationTemplateCard from '@/components/research/SimulationTemplateCard';
 
 import { PRESETS } from '@/components/computational/enterprisePresets';
-const CATEGORY_ICONS = { catalysis: Atom, biomolecular: BookOpen, solid_state: Beaker };
+
 
 export default function SimulationPresets({ onSelectPreset }) {
   const [search, setSearch] = useState("");
@@ -23,63 +24,19 @@ export default function SimulationPresets({ onSelectPreset }) {
   };
 
   return (
-    <div className="mb-8">
-      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-        <div>
-          <h2 className="text-base font-bold text-slate-900">Enterprise simulation templates</h2>
-          <p className="text-xs text-slate-500">Select a preset to auto-fill the simulation form</p>
-        </div>
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-          <input
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search templates..."
-            className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white"
-          />
-          {search && (
-            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
+    <section className="py-7 mb-8 border-b border-research-border">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-6">
+        <div><p className="research-label mb-2">Workflow presets</p><h2 className="mb-2">Enterprise simulation templates</h2><p className="text-sm text-research-muted">Select a preset to auto-fill the simulation form.</p></div>
+        <div className="relative w-full sm:w-64 shrink-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-research-muted" />
+          <input aria-label="Search simulation templates" value={search} onChange={event => setSearch(event.target.value)} placeholder="Search templates..." className="simulation-control !pl-10 !pr-10" />
+          {search && <button type="button" aria-label="Clear template search" onClick={() => setSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-research-muted hover:text-research-accent"><X className="h-4 w-4" /></button>}
         </div>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {filtered.map(preset => {
-          const Icon = CATEGORY_ICONS[preset.category] || Atom;
-          const isActive = selected === preset.id;
-          return (
-            <button
-              key={preset.id}
-              onClick={() => handleSelect(preset)}
-              className={`text-left p-4 rounded-xl border-2 transition-all focus:outline-none ${
-                isActive
-                  ? "border-violet-500 bg-violet-50 shadow-md"
-                  : "border-slate-200 bg-white hover:border-violet-300 hover:shadow-sm"
-              }`}
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-4 h-4 text-violet-600" />
-                </div>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${preset.tagColor}`}>
-                  {preset.tag}
-                </span>
-              </div>
-              <p className="text-sm font-medium text-foreground leading-tight mb-1">{preset.label}</p>
-              <p className="text-xs text-primary mb-1">{preset.engine}</p>
-              <p className="text-[11px] text-slate-500 leading-snug line-clamp-2">{preset.description}</p>
-              {isActive && (
-                <p className="text-[10px] text-violet-600 font-semibold mt-2">Applied to form below</p>
-              )}
-            </button>
-          );
-        })}
-        {filtered.length === 0 && (
-          <div className="col-span-full text-center py-8 text-sm text-slate-500">No templates match your search.</div>
-        )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {filtered.map(preset => <SimulationTemplateCard key={preset.id} preset={preset} selected={selected === preset.id} onSelect={handleSelect} />)}
+        {filtered.length === 0 && <p className="col-span-full text-center py-8 text-sm text-research-muted">No templates match your search.</p>}
       </div>
-    </div>
+    </section>
   );
 }

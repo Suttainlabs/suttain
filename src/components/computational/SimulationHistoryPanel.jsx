@@ -72,11 +72,12 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
         <CardContent className="p-5">
           <button
             onClick={() => setExpanded(!expanded)}
-            className="w-full flex items-center justify-between text-left"
+            aria-expanded={expanded}
+            className="w-full flex items-center justify-between text-left min-h-11"
           >
             <h3 className="font-bold text-slate-900 flex items-center gap-2 text-sm">
               <History className="w-4 h-4 text-indigo-600" />
-              Simulation History
+              Simulation history
               {history.length > 0 && (
                 <span className="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full">
                   {history.length}
@@ -146,7 +147,7 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
                       size="sm"
                     >
                       <GitCompare className="w-4 h-4" />
-                      {showComparison ? "Hide" : "View"} Side-by-Side Comparison
+                      {showComparison ? "Hide" : "View"} side-by-side comparison
                     </Button>
                   )}
                 </>

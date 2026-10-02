@@ -439,6 +439,31 @@
   .research-dashboard [class*="text-slate-800"], .research-dashboard [class*="text-slate-900"] { color: hsl(var(--research-text)); }
 }
 
+/* Shared controls and scoped compatibility styles for every simulation workflow. */
+@layer components {
+  .simulation-control {
+    @apply w-full min-h-11 rounded-lg border border-research-border bg-research-card px-3 py-2.5 text-sm text-research-text placeholder:text-research-muted focus:border-research-accent focus:ring-1 focus:ring-research-accent;
+  }
+}
+.simulation-workspace :is(.font-bold, .font-semibold, .font-black) { font-weight: 500; }
+.simulation-workspace .uppercase { text-transform: none; letter-spacing: normal; }
+.simulation-workspace :is(.text-slate-800, .text-slate-900) { color: hsl(var(--research-text)); }
+.simulation-workspace :is(.text-slate-400, .text-slate-500, .text-slate-600, .text-slate-700) { color: hsl(var(--research-muted)); }
+.simulation-workspace :is([class*="text-violet-"], [class*="text-indigo-"], [class*="text-fuchsia-"], [class*="text-pink-"], [class*="text-blue-"], [class*="text-cyan-"], [class*="text-teal-"]) { color: hsl(var(--research-accent)); }
+.simulation-workspace :is(.bg-white, .bg-white\/90) { background-color: hsl(var(--research-card)); }
+.simulation-workspace :is(.bg-slate-50, .bg-slate-100, .bg-violet-50, .bg-violet-100, .bg-indigo-50, .bg-indigo-100, .bg-cyan-50, .bg-teal-50, .bg-teal-100, .bg-fuchsia-50) { background-color: hsl(var(--research-soft)); }
+.simulation-workspace :is(.bg-violet-600, .bg-indigo-600, .bg-cyan-600, .bg-teal-600) { background-color: hsl(var(--research-accent)); color: hsl(var(--research-card)); }
+.simulation-workspace :is([class*="border-slate-"], [class*="border-violet-"], [class*="border-indigo-"], [class*="border-cyan-"], [class*="border-teal-"]) { border-color: hsl(var(--research-border)); }
+.simulation-workspace :is(.border-violet-500, .border-teal-500) { border-color: hsl(var(--research-accent)); }
+.simulation-workspace :is(.shadow-sm, .shadow-md) { box-shadow: none; }
+.simulation-workspace :is(.rounded-2xl, .rounded-xl) { border-radius: var(--radius-lg); }
+.simulation-workspace :is(input:not([type="file"]):not([type="checkbox"]):not([type="radio"]), select, textarea) { min-height: 44px; border-width: 1px; border-color: hsl(var(--research-border)); border-radius: var(--radius-md); background-color: hsl(var(--research-card)); color: hsl(var(--research-text)); font-size: 14px; }
+.simulation-workspace :is(input, select, textarea):focus { border-color: hsl(var(--research-accent)); --tw-ring-color: hsl(var(--research-accent)); }
+.simulation-workspace label { color: hsl(var(--research-text)); font-size: 14px; font-weight: 500; }
+.simulation-workspace :is(.hover\:bg-violet-50, .hover\:bg-slate-100):hover { background-color: hsl(var(--research-soft)); }
+.simulation-workspace :is(.hover\:bg-violet-700, .hover\:bg-indigo-700, .hover\:bg-cyan-700):hover { background-color: hsl(var(--research-accent)); opacity: 0.9; }
+.simulation-workspace pre { background-color: hsl(var(--research-text)); color: hsl(var(--research-card)); border-radius: var(--radius-md); }
+
 /* Darken slate-400/500 for WCAG 2.1 text contrast */
 .text-slate-400 { color: #64748B; }
 .text-slate-500 { color: #475569; }

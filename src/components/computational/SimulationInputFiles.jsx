@@ -52,13 +52,13 @@ export default function SimulationInputFiles({ result }) {
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h3 className="font-bold text-slate-900 flex items-center gap-2">
             <FileCode2 className="w-4 h-4 text-violet-600" />
-            Simulation Input Files
+            Simulation input files
             <Badge className="bg-green-100 text-green-700 text-xs">{result.files.length} files</Badge>
           </h3>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs font-mono">{result.engine}</Badge>
             <Button size="sm" variant="outline" onClick={handleDownloadAll} className="gap-1.5">
-              <Download className="w-3.5 h-3.5" /> Download All
+              <Download className="w-3.5 h-3.5" /> Download all
             </Button>
           </div>
         </div>
