@@ -13,7 +13,7 @@
     },
     "sim_type": {
       "type": "string",
-      "description": "Simulation type ID (e.g. dft, molecular_dynamics, drug_discovery)"
+      "description": "Simulation type ID (e.g. dft, molecular_dynamics, quantum_mechanics)"
     },
     "sim_type_label": {
       "type": "string",
@@ -30,7 +30,7 @@
     "raw_inputs": {
       "type": "object",
       "additionalProperties": true,
-      "description": "Raw configuration inputs keyed by field name \u2014 decoupled from any saved entity references"
+      "description": "Raw configuration inputs keyed by field name, decoupled from saved entity references"
     },
     "environmental_params": {
       "type": "object",
@@ -81,7 +81,7 @@
     },
     "run_id": {
       "type": "string",
-      "description": "Unique hash identifier generated for this simulation run \u2014 used for auditability"
+      "description": "Unique hash identifier generated for this simulation run, used for auditability"
     },
     "status": {
       "type": "string",
@@ -97,7 +97,7 @@
     "result": {
       "type": "object",
       "additionalProperties": true,
-      "description": "AI-generated result data after execution"
+      "description": "Generated workflow result data"
     },
     "error": {
       "type": "string",

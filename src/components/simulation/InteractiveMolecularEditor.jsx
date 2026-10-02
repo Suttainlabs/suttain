@@ -18,14 +18,6 @@ const FUNCTIONAL_GROUPS = [
   { name: "Ether", smiles: "O", color: "text-indigo-400", icon: "OR" },
 ];
 
-const LIGAND_PRESETS = [
-  { name: "Aspirin", smiles: "CC(=O)Oc1ccccc1C(=O)O" },
-  { name: "Ibuprofen", smiles: "CC(C)Cc1ccc(cc1)C(C)C(=O)O" },
-  { name: "Caffeine", smiles: "CN1C=NC2=C1C(=O)N(C(=O)N2C)C" },
-  { name: "Ethanol", smiles: "CCO" },
-  { name: "Acetone", smiles: "CC(=O)C" },
-  { name: "Benzene", smiles: "c1ccccc1" },
-];
 
 export default function InteractiveMolecularEditor({ viewer, loaded }) {
   const [editMode, setEditMode] = useState(false);
@@ -34,8 +26,6 @@ export default function InteractiveMolecularEditor({ viewer, loaded }) {
   const [optimizationRunning, setOptimizationRunning] = useState(false);
   const [optimizationProgress, setOptimizationProgress] = useState(0);
   const [optimizationSteps, setOptimizationSteps] = useState([]);
-  const [ligandMode, setLigandMode] = useState(false);
-  const [selectedLigand, setSelectedLigand] = useState(null);
   const [showFunctionalGroups, setShowFunctionalGroups] = useState(false);
   const [atomInfo, setAtomInfo] = useState(null);
   const [showPlotOverlay, setShowPlotOverlay] = useState(false);
@@ -81,13 +71,6 @@ export default function InteractiveMolecularEditor({ viewer, loaded }) {
     setOptimizationProgress(100);
   };
 
-  const addLigand = (ligandSmiles) => {
-    if (!viewer || !loaded) return;
-    setSelectedLigand(ligandSmiles);
-    // In production, would use RDKit or similar to generate 3D coords
-    // For now, show UI feedback
-    setLigandMode(true);
-  };
 
   const addFunctionalGroup = (groupSmiles) => {
     if (!viewer || !loaded) return;
@@ -159,36 +142,6 @@ export default function InteractiveMolecularEditor({ viewer, loaded }) {
 
       {editMode && (
         <>
-          {/* Ligand Docking Section */}
-          <div className="bg-slate-800 rounded-lg p-4 border border-slate-700 space-y-3">
-            <div className="flex items-center gap-2 mb-3">
-              <Zap className="w-4 h-4 text-cyan-400" />
-              <h4 className="text-sm font-semibold text-white">Ligand Docking</h4>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-2">
-              {LIGAND_PRESETS.map(lig => (
-                <button
-                  key={lig.name}
-                  onClick={() => addLigand(lig.smiles)}
-                  className={`px-3 py-2 text-white text-xs rounded-lg border transition-all font-medium ${
-                    selectedLigand === lig.smiles
-                      ? 'bg-cyan-600 border-cyan-400 text-cyan-100 shadow-lg shadow-cyan-500/50'
-                      : 'bg-slate-700 hover:bg-slate-600 border-slate-600 hover:border-slate-500'
-                  }`}
-                >
-                  <Plus className="w-3 h-3 inline mr-1" /> {lig.name}
-                </button>
-              ))}
-            </div>
-
-            {selectedLigand && (
-              <div className="bg-slate-700 border border-cyan-500/30 rounded-lg p-2 text-xs text-cyan-300">
-                ✓ Ligand ready: {selectedLigand.substring(0, 30)}...
-              </div>
-            )}
-          </div>
-
           {/* Functional Groups Library */}
           <div className="bg-slate-800 rounded-lg p-4 border border-slate-700 space-y-3">
             <button

@@ -15,7 +15,7 @@ const ROLE_RECOMMENDATIONS = {
   researcher: {
     headline: 'Recommended for Researchers',
     items: [
-      { label: 'Computational Simulation', desc: 'DFT, MD, protein docking, QM scripting', href: 'ComputationalSimulation', icon: Cpu, color: '#7c3aed' },
+      { label: 'Computational Simulation', desc: 'DFT, QM/MM, spectroscopy and quantum chemistry', href: 'ComputationalSimulation', icon: Cpu, color: '#7c3aed' },
       { label: 'Chemical Simulator', desc: 'Predict reactions and hazard profiles', href: 'Simulator', icon: Atom, color: '#02988C' },
       { label: 'Ingredient Database', desc: 'Search 250k+ chemicals with full data', href: 'IngredientDatabase', icon: FlaskConical, color: '#0891b2' },
     ]

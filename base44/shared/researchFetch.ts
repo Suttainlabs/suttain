@@ -1,5 +1,5 @@
 // Shared fetch helpers for Suttain Research backend functions.
-// Reused by structurePrediction, binderDesign, and dockingAnalysis.
+// Shared network utilities for computational research methods.
 // Extracted (not copied) per platform guidance so all three functions share one implementation.
 
 export async function fetchWithRetry(url, options = {}, maxRetries = 3) {

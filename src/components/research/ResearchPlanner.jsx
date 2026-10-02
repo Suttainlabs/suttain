@@ -40,8 +40,8 @@ function getRecommendations(answers) {
   const workflow = [];
 
   if (answers.domain === "proteins") {
-    tools.push({ tool: "Proteins", href: "ComputationalStudio/Proteins", reason: "AlphaFold-powered protein structure prediction and binding site analysis." });
-    workflow.push("Look up protein structure via AlphaFold", "Analyze binding pockets and domains", "Run molecular docking simulation");
+    tools.push({ tool: "Simulations", href: "ComputationalStudio/Simulations", reason: "QM/MM enzyme catalysis, active-site calculations and biomolecular dynamics." });
+    workflow.push("Prepare the biomolecular structure", "Define the active-site QM region", "Configure QM/MM reaction-path calculations");
   } else if (answers.domain === "materials") {
     tools.push({ tool: "Computational Studio", href: "ComputationalStudio", reason: "Materials Project integration with DFT simulation and crystal structure analysis." });
     workflow.push("Search Materials Project database", "Run DFT geometry optimization", "Analyze electronic and mechanical properties");

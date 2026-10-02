@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import StructurePrepPanel from './StructurePrepPanel';
-import { Scissors, Layers, Search, Hash, LayoutGrid, Target } from 'lucide-react';
+import { Scissors, Layers, Search, Hash } from 'lucide-react';
 
 const MODE_META = {
   split: { label: 'Splitter', icon: Scissors, color: '#3B82F6' },
   merge: { label: 'Merger', icon: Layers, color: '#8B5CF6' },
   missing_residues: { label: 'Missing Residues', icon: Search, color: '#F59E0B' },
   renumber: { label: 'Renumber', icon: Hash, color: '#EC4899' },
-  grid_params: { label: 'Grid Generator', icon: LayoutGrid, color: '#007850' },
-  ligand_grid_params: { label: 'Ligand Grid', icon: Target, color: '#EF4444' },
 };
 
 export default function StructurePrepSuite({

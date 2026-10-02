@@ -397,7 +397,7 @@ export default function HPCJobManagement() {
                   <label className="block text-sm font-semibold text-slate-900 mb-1">Script Type</label>
                   <select value={scriptType} onChange={e => setScriptType(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-400 focus:outline-none">
-                    {["ORCA", "GROMACS", "VASP", "Quantum ESPRESSO", "AMBER", "AutoDock", "Other"].map(t => (
+                    {["ORCA", "GROMACS", "VASP", "Quantum ESPRESSO", "AMBER", "Q-Chem", "Other"].map(t => (
                       <option key={t} value={t}>{t}</option>
                     ))}
                   </select>

@@ -27,15 +27,6 @@ const SIM_TYPES = [
       { key: "simulation_time", label: "Simulation Time", type: "select", options: ["1 ns","10 ns","50 ns","100 ns","500 ns","1 µs"], default: "100 ns" },
     ]
   },
-  { id: "drug_discovery", label: "Drug Discovery / Docking", icon: FlaskConical, color: "from-pink-500 to-rose-600",
-    engines: ["AutoDock Vina", "Glide", "DOCK6"],
-    fields: [
-      { key: "ligand", label: "Ligand", placeholder: "e.g. Ibuprofen or SMILES" },
-      { key: "receptor", label: "Target Receptor", placeholder: "e.g. COX-2, PDB: 1CX2" },
-      { key: "binding_site", label: "Binding Site", placeholder: "e.g. active site" },
-      { key: "properties", label: "Properties", placeholder: "e.g. binding affinity, ADMET" },
-    ]
-  },
   { id: "protein_modeling", label: "Protein Modeling", icon: Dna, color: "from-blue-500 to-indigo-600",
     engines: ["GROMACS", "AMBER", "Modeller", "AlphaFold"],
     fields: [

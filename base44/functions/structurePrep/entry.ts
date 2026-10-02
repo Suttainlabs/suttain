@@ -73,39 +73,6 @@ Deno.serve(async (req) => {
 
     const pad = typeof padding === 'number' ? padding : 4.0;
 
-    if (action === 'grid_params') {
-      let targetAtoms = atoms;
-      if (residues && Array.isArray(residues) && residues.length > 0) {
-        const resSet = new Set(residues.map(r => parseInt(r)));
-        targetAtoms = atoms.filter(a => resSet.has(a.resSeq));
-        if (targetAtoms.length === 0) targetAtoms = atoms;
-      }
-      const bb = computeBoundingBox(targetAtoms);
-      const center = { x: (bb.minX + bb.maxX) / 2, y: (bb.minY + bb.maxY) / 2, z: (bb.minZ + bb.maxZ) / 2 };
-      const size = { x: (bb.maxX - bb.minX) + 2 * pad, y: (bb.maxY - bb.minY) + 2 * pad, z: (bb.maxZ - bb.minZ) + 2 * pad };
-      return Response.json({
-        source: 'Method: in-browser calc',
-        center: center,
-        size: size,
-        padding: pad,
-        ngrid: { x: Math.ceil(size.x), y: Math.ceil(size.y), z: Math.ceil(size.z) },
-        residues_used: residues || 'all'
-      });
-    }
-
-    if (action === 'ligand_grid_params') {
-      const ligandAtoms = atoms.filter(a => a.record === 'HETATM');
-      if (ligandAtoms.length === 0) return Response.json({ error: 'No HETATM (ligand) records found.' }, { status: 400 });
-      const bb = computeBoundingBox(ligandAtoms);
-      const center = { x: (bb.minX + bb.maxX) / 2, y: (bb.minY + bb.maxY) / 2, z: (bb.minZ + bb.maxZ) / 2 };
-      const size = { x: (bb.maxX - bb.minX) + 2 * pad, y: (bb.maxY - bb.minY) + 2 * pad, z: (bb.maxZ - bb.minZ) + 2 * pad };
-      return Response.json({
-        source: 'Method: in-browser calc',
-        center, size, padding: pad,
-        ligand_atoms: ligandAtoms.length
-      });
-    }
-
     if (action === 'missing_residues') {
       const chains = {};
       for (const a of atoms) {

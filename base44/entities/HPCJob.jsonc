@@ -22,7 +22,7 @@
         "VASP",
         "Quantum ESPRESSO",
         "AMBER",
-        "AutoDock",
+        "Q-Chem",
         "Other"
       ],
       "description": "Type of simulation script"

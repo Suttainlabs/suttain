@@ -17,46 +17,24 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
   }, [simTypeId]);
 
   useEffect(() => {
-    if (currentResults) saveRun();
+    if (currentResults) loadHistory();
   }, [currentResults]);
 
   const loadHistory = async () => {
     try {
-      const records = await base44.entities.DWSIMSimulationHistory.filter(
-        { sim_source: "script_builder" },
-        "-created_date",
-        30
+      const user = await base44.auth.me();
+      const records = await base44.entities.SimulationJob.filter(
+        { sim_type: simTypeId, status: 'completed', created_by_id: user.id }, '-created_date', 30
       );
-      // Filter to this sim type via tags
-      const filtered = records.filter(r => r.tags?.includes(simTypeId));
-      setHistory(filtered);
+      setHistory(records.map(record => ({
+        ...record, title: record.job_name, notes: record.result?.predicted_results?.summary || '',
+        config: { ...record.result, key_values: record.result?.predicted_results?.key_values || [] },
+      })));
     } catch {
       setHistory([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  const saveRun = async () => {
-    if (!currentResults) return;
-    const molName = currentInputs?.molecule || currentInputs?.system || currentInputs?.compound || currentInputs?.ligand || "Unknown";
-    try {
-      await base44.entities.DWSIMSimulationHistory.create({
-        title: `${molName}: ${engine}`,
-        sim_source: "script_builder",
-        prompt: JSON.stringify(currentInputs),
-        config: {
-          engine,
-          sim_type: simTypeId,
-          key_values: currentResults.predicted_results?.key_values || [],
-          system_overview: currentResults.system_overview,
-          scientific_interpretation: currentResults.scientific_interpretation,
-        },
-        tags: [simTypeId],
-        notes: currentResults.predicted_results?.summary || "",
-      });
-      await loadHistory();
-    } catch {}
   };
 
   const parseConfig = (record) => {

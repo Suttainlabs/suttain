@@ -24,10 +24,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../com
 import {
   Cpu, ChevronLeft, Beaker, Dna, Download, Copy, CheckCircle2,
   Loader2, RotateCcw, BookOpen, Microscope, Activity, AlertTriangle,
-  Eye, SlidersHorizontal, Film, ChevronRight, Info, FileCode2, Upload, Target
+  Eye, SlidersHorizontal, Film, ChevronRight, Info, FileCode2, Upload
 } from "lucide-react";
 import SimulationInputFiles from "../components/computational/SimulationInputFiles";
-import StructurePrepSuite from "../components/structural/StructurePrepSuite";
 
 function SelectField({ label, options, value, onChange }) {
   return (
@@ -38,6 +37,7 @@ function SelectField({ label, options, value, onChange }) {
         onChange={e => onChange(e.target.value)}
         className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white text-slate-800"
       >
+        {value && !options.includes(value) && <option value={value}>{value}</option>}
         {options.map(o => <option key={o} value={o}>{o}</option>)}
       </select>
     </div>
@@ -49,7 +49,7 @@ export default function SimulationRunner() {
   const navigate = useNavigate();
 
   const params = new URLSearchParams(window.location.search);
-  const typeId = params.get("type");
+  const [typeId, setTypeId] = useState(params.get("type"));
   const domain = params.get("domain") || "Chemistry";
 
   const sim = SIM_TYPES.find(s => s.id === typeId);
@@ -91,15 +91,12 @@ export default function SimulationRunner() {
     "NAMD": "Scales well on large HPC clusters for very large biomolecular systems.",
     "OpenMM": "GPU-accelerated MD with flexible Python scripting support.",
     "LAMMPS": "Versatile MD engine for materials science and engineering applications.",
-    "AutoDock Vina": "Fast and accurate rigid/flexible receptor docking for drug discovery.",
-    "Glide": "High-throughput virtual screening with extra precision docking modes.",
-    "DOCK6": "Flexible docking with energy scoring for structure-based drug design.",
     "RDKit": "Open-source cheminformatics for ADMET prediction and ligand preparation.",
     "OpenBabel": "Chemical file format interconversion and property prediction toolkit.",
     "VASP": "Industry standard for periodic DFT in materials and surface science.",
     "Quantum ESPRESSO": "Open-source plane-wave DFT for solids, surfaces, and nanostructures.",
     "AlphaFold": "State-of-the-art AI protein structure prediction from sequence.",
-    "Rosetta": "Versatile platform for protein design, docking, and loop modeling.",
+    "Rosetta": "Versatile platform for protein structure refinement and loop modeling.",
     "Modeller": "Comparative homology modeling from known template structures.",
     "RASPA": "Monte Carlo and MD for adsorption, diffusion, and phase equilibria in porous materials.",
     "EPI Suite": "EPA tool for estimating environmental fate and ecotoxicity of chemicals.",
@@ -109,7 +106,7 @@ export default function SimulationRunner() {
     "VESTA": "Crystal structure visualization and electron density analysis.",
     "SchNet": "Graph neural network potential for fast, accurate molecular dynamics.",
     "MACE": "State-of-the-art equivariant ML potential for large and complex systems.",
-    "DWSIM": "Open-source process simulator for chemical and petrochemical flowsheets.",
+    "Q-Chem": "Quantum chemistry, excited states and embedded QM/MM calculations for molecular systems.",
   };
 
   useEffect(() => {
@@ -124,8 +121,16 @@ export default function SimulationRunner() {
   const handleDrawerConfirm = (smiles) => { if (drawerTargetKey) handleInputChange(drawerTargetKey, smiles); };
 
   const handlePresetSelect = (preset) => {
-    if (preset.engine) setSelectedEngine(preset.engine);
-    if (preset.fields) setInputs(prev => ({ ...prev, ...preset.fields }));
+    const presetSim = SIM_TYPES.find(item => item.id === preset.simType);
+    const defaults = Object.fromEntries(presetSim.fields.filter(field => field.default).map(field => [field.key, field.default]));
+    setTypeId(preset.simType);
+    setSelectedEngine(preset.engine);
+    setInputs({ ...defaults, ...preset.fields });
+    setResults(null);
+    setInputFiles(null);
+    setEnvParams(null);
+    setCustomForcefield(null);
+    navigate(`/SimulationRunner?type=${preset.simType}&domain=${encodeURIComponent(domain)}`, { replace: true });
   };
 
   const handlePubChemSelect = (compound) => {
@@ -239,8 +244,7 @@ Provide a focused, technical analysis. Return JSON with:
         data: { selectedEngine, simulationConfig: { ...inputs, ...env }, moleculeInfo: inputSummary }
       });
 
-      const fullResult = { ...response, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs }, environmental_params: { ...env }, job_hash: jobHash };
-      setResults(fullResult);
+      const fullResult = { ...response.data, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs }, environmental_params: { ...env }, job_hash: jobHash };
       setActiveTab("analysis");
 
       // Update the draft with results and create an auditable SimulationJob
@@ -273,6 +277,7 @@ Provide a focused, technical analysis. Return JSON with:
           if (refreshUser) await refreshUser();
         } catch {}
       }
+      setResults(fullResult);
       setShowFeedback(true);
       setTimeout(() => setShowFeedback(false), 15000);
     } catch (e) {
@@ -297,7 +302,7 @@ Provide a focused, technical analysis. Return JSON with:
         inputs: { ...inputs },
         environmental_params: envParams || {},
       });
-      setInputFiles(result);
+      setInputFiles(result.data);
     } catch (e) {
       console.error('Failed to generate input files:', e);
     } finally {
@@ -708,24 +713,6 @@ Provide a focused, technical analysis. Return JSON with:
                   </TooltipProvider>
                 </div>
 
-                {/* Prepare Docking: MD only */}
-                {typeId === "molecular_dynamics" && (
-                  <div className="mb-7">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0D9E8E] to-[#3B82F6] flex items-center justify-center">
-                        <Target className="w-4 h-4 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-slate-900 text-sm">Prepare Docking</h3>
-                        <p className="text-slate-500 text-xs">Generate AutoDock Vina & AutoDock4 grid parameters from any structure</p>
-                      </div>
-                    </div>
-                    <div className="bg-[#0F172A] rounded-2xl p-5">
-                      <StructurePrepSuite modes={['grid_params', 'ligand_grid_params']} />
-                    </div>
-                  </div>
-                )}
-
                 {/* Custom Forcefield picker, MD only */}
                 {typeId === "molecular_dynamics" && (
                   <div className="mb-7 p-4 bg-teal-50 border border-teal-200 rounded-2xl">
@@ -825,7 +812,7 @@ Provide a focused, technical analysis. Return JSON with:
                   >
                     {isRunning
                       ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
-                      : <><Cpu className="w-4 h-4" /> Run Simulation and Analyze</>}
+                      : <><Cpu className="w-4 h-4" /> Prepare workflow and analyze</>}
                   </Button>
 
                   <Button
@@ -841,7 +828,7 @@ Provide a focused, technical analysis. Return JSON with:
                   </Button>
 
                   <p className="text-xs text-slate-400">
-                    AI analysis + {selectedEngine} script · 5-10 seconds
+                    Workflow analysis + {selectedEngine} script. Engine execution requires configured compute.
                   </p>
                 </div>
 
@@ -857,7 +844,7 @@ Provide a focused, technical analysis. Return JSON with:
                     <Loader2 className="w-5 h-5 text-violet-600 animate-spin flex-shrink-0" />
                     <div>
                       <p className="text-sm font-semibold text-violet-800">
-                        Computing {sim.label}…
+                        Preparing {sim.label} workflow…
                       </p>
                       <p className="text-xs text-violet-500">
                         Generating {selectedEngine} script, predicted results & analysis…

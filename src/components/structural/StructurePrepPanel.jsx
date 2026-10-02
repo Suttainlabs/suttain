@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import {
-  Scissors, Layers, Search, Hash, LayoutGrid, Target,
+  Scissors, Layers, Search, Hash,
   Upload, FileText, Download, Copy, Check, Loader2, AlertCircle,
   Eye, ArrowRight, FlaskRound, Zap,
 } from 'lucide-react';
@@ -37,20 +37,6 @@ const MODE_CONFIG = {
     color: '#EC4899',
     inputs: ['pdb', 'startResidue'],
   },
-  grid_params: {
-    title: 'Grid Parameter Generator',
-    description: 'Generate AutoDock Vina and AutoDock4 grid parameters from selected residues. Computes center from averaged atom coordinates plus padding.',
-    icon: LayoutGrid,
-    color: '#007850',
-    inputs: ['pdb', 'residues', 'padding'],
-  },
-  ligand_grid_params: {
-    title: 'Ligand-Based Grid Parameters',
-    description: 'Auto-detect the co-crystallized ligand, find protein residues within 5 Å, and generate Vina + AutoDock4 grid params centered on the binding site.',
-    icon: Target,
-    color: '#EF4444',
-    inputs: ['pdb'],
-  },
 };
 
 // ── Shared PDB state (localStorage) ──────────────────────────────────
@@ -85,25 +71,6 @@ function downloadFile(content, filename) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-}
-
-function formatVinaParams(vina) {
-  return [
-    `center_x = ${vina.center_x}`,
-    `center_y = ${vina.center_y}`,
-    `center_z = ${vina.center_z}`,
-    `size_x = ${vina.size_x}`,
-    `size_y = ${vina.size_y}`,
-    `size_z = ${vina.size_z}`,
-  ].join('\n');
-}
-
-function formatAutodockParams(ad4) {
-  return [
-    `gridcenter = ${ad4.center_x} ${ad4.center_y} ${ad4.center_z}`,
-    `npts = ${ad4.npts_x} ${ad4.npts_y} ${ad4.npts_z}`,
-    `spacing = ${ad4.spacing}`,
-  ].join('\n');
 }
 
 // ── Drag-and-drop upload area ───────────────────────────────────────
@@ -207,8 +174,6 @@ export default function StructurePrepPanel({
   const [activePdbName, setActivePdbName] = useState(propPdbName || '');
   const [ligandPdb, setLigandPdb] = useState('');
   const [ligandPdbName, setLigandPdbName] = useState('');
-  const [residues, setResidues] = useState('');
-  const [padding, setPadding] = useState('5.0');
   const [startResidue, setStartResidue] = useState('1');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -262,10 +227,6 @@ export default function StructurePrepPanel({
       setError('Please upload both protein and ligand PDB files.');
       return;
     }
-    if (mode === 'grid_params' && !residues.trim()) {
-      setError('Please enter residue numbers (comma-separated).');
-      return;
-    }
 
     setLoading(true);
     try {
@@ -275,10 +236,6 @@ export default function StructurePrepPanel({
         payload.ligandPdb = ligandPdb;
       } else {
         payload.pdbContent = activePdb;
-      }
-      if (mode === 'grid_params') {
-        payload.residues = residues;
-        payload.padding = parseFloat(padding) || 5.0;
       }
       if (mode === 'renumber') {
         payload.startResidue = parseInt(startResidue) || 1;
@@ -300,20 +257,6 @@ export default function StructurePrepPanel({
   const handleViewIn3D = (pdbContent, name) => {
     if (onResult) {
       onResult(pdbContent, name);
-    }
-  };
-
-  const handleUseParams = () => {
-    if (!result?.vina) return;
-    try {
-      localStorage.setItem('suttain_docking_params', JSON.stringify({
-        vina: result.vina,
-        autodock4: result.autodock4,
-        source: mode,
-      }));
-    } catch {}
-    if (onUseParams) {
-      onUseParams({ vina: result.vina, autodock4: result.autodock4 });
     }
   };
 
@@ -365,37 +308,6 @@ export default function StructurePrepPanel({
             onFile={handleLigandFile}
             fileName={ligandPdbName}
           />
-        )}
-
-        {/* Residue numbers (grid_params only) */}
-        {config.inputs.includes('residues') && (
-          <div>
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">
-              Residue Numbers (comma-separated)
-            </label>
-            <input
-              value={residues}
-              onChange={(e) => setResidues(e.target.value)}
-              placeholder="e.g. 45, 46, 47, 88, 92"
-              className="w-full bg-white border border-slate-300 focus:border-[#007850] text-slate-900 placeholder-slate-400 text-xs px-3 py-2 rounded-lg outline-none transition-colors"
-            />
-          </div>
-        )}
-
-        {/* Padding (grid_params only) */}
-        {config.inputs.includes('padding') && (
-          <div>
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">
-              Padding (Å)
-            </label>
-            <input
-              type="number"
-              step="0.5"
-              value={padding}
-              onChange={(e) => setPadding(e.target.value)}
-              className="w-full bg-white border border-slate-300 focus:border-[#007850] text-slate-900 text-xs px-3 py-2 rounded-lg outline-none transition-colors"
-            />
-          </div>
         )}
 
         {/* Start residue (renumber only) */}
@@ -580,54 +492,7 @@ export default function StructurePrepPanel({
             </div>
           )}
 
-          {/* Grid params results (grid_params + ligand_grid_params) */}
-          {(mode === 'grid_params' || mode === 'ligand_grid_params') && result.vina && (
-            <div className="space-y-3">
-              {/* Ligand info (ligand_grid_params only) */}
-              {mode === 'ligand_grid_params' && (
-                <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                  <Check className="w-3 h-3 text-[#007850]" />
-                  Ligand: {result.ligandNames.join(', ')} · {result.ligandAtomCount} atoms ·
-                  {' '}{result.nearbyResidueCount} residues within 5 Å
-                </div>
-              )}
 
-              {/* Vina params */}
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    AutoDock Vina
-                  </span>
-                  <CopyButton text={formatVinaParams(result.vina)} label="Copy Vina" />
-                </div>
-                <pre className="text-[10px] font-mono text-slate-700 leading-relaxed">
-{formatVinaParams(result.vina)}
-                </pre>
-              </div>
-
-              {/* AutoDock4 params */}
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    AutoDock4
-                  </span>
-                  <CopyButton text={formatAutodockParams(result.autodock4)} label="Copy AD4" />
-                </div>
-                <pre className="text-[10px] font-mono text-slate-700 leading-relaxed">
-{formatAutodockParams(result.autodock4)}
-                </pre>
-              </div>
-
-              {/* Use these params button */}
-              <button
-                onClick={handleUseParams}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-[#007850] to-[#3B82F6] text-slate-900 text-xs font-bold transition-colors hover:opacity-90 active:scale-[0.98]"
-              >
-                <ArrowRight className="w-3.5 h-3.5" />
-                Use these params in docking
-              </button>
-            </div>
-          )}
         </div>
       )}
 

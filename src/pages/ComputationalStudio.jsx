@@ -4,7 +4,7 @@ import { Gauge, ArrowRight, Users } from 'lucide-react';
 import StudioLayout from '@/components/studio/StudioLayout';
 
 const TOOL_CARDS = [
-  { path: '/ComputationalStudio/Simulations', title: 'Simulations', description: 'Run DFT, MD, docking, QM, materials, and Monte Carlo simulations across scientific domains', icon: Gauge },
+  { path: '/ComputationalStudio/Simulations', title: 'Simulations', description: 'Configure QM/MM, quantum chemistry, biomolecular dynamics and materials calculations across five compute fields', icon: Gauge },
 ];
 
 export default function ComputationalStudio() {

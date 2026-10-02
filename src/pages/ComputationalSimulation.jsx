@@ -5,8 +5,8 @@ import useTrialStatus from "../hooks/useTrialStatus";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  Cpu, FlaskConical, Dna, Pill, Leaf, Zap, Atom,
-  Microscope, Globe, Beaker, Activity, Eye, ArrowRight, Layers
+  Cpu, FlaskConical, Dna, Zap, Atom,
+  Microscope, Beaker, Activity, Eye, ArrowRight
 } from "lucide-react";
 
 export const SIM_TYPES = [
@@ -21,7 +21,7 @@ export const SIM_TYPES = [
     description: "Electronic structure, energies, molecular orbitals, geometry optimization",
     fields: [
       { key: "molecule", label: "Molecule / SMILES / Formula", placeholder: "e.g. H2O, C6H6, caffeine" },
-      { key: "functional", label: "DFT Functional", type: "select", options: ["B3LYP","PBE","PBE0","M06-2X","M06-L","ωB97X-D","CAM-B3LYP","BP86","BLYP","B97-D3","HSE06","TPSSh","B2-PLYP","DLPNO-CCSD(T)","HF"], default: "B3LYP" },
+      { key: "functional", label: "DFT Functional", type: "select", options: ["B3LYP","PBE","PBE0","M06-2X","M06-L","wB97X-D","ωB97X-D","CAM-B3LYP","BP86","BLYP","B97-D3","HSE06","TPSSh","B2-PLYP","DLPNO-CCSD(T)","HF"], default: "B3LYP" },
       { key: "basis_set", label: "Basis Set", type: "select", options: ["STO-3G","3-21G","6-31G","6-31G*","6-31G**","6-311G*","6-311G**","6-311+G**","6-311++G**","cc-pVDZ","cc-pVTZ","cc-pVQZ","aug-cc-pVDZ","aug-cc-pVTZ","def2-SVP","def2-TZVP","def2-QZVP","def2-TZVPP","LANL2DZ","SDD"], default: "6-31G*" },
       { key: "task", label: "Calculation Task", placeholder: "e.g. geometry optimization, frequency, NMR, single point" },
     ]
@@ -34,28 +34,12 @@ export const SIM_TYPES = [
     bgColor: "bg-teal-50",
     borderColor: "border-teal-200",
     engines: ["GROMACS", "AMBER", "NAMD", "OpenMM", "LAMMPS"],
-    description: "Protein folding, membrane dynamics, ligand binding, trajectory analysis",
+    description: "Biomolecular dynamics, membrane dynamics, conformational sampling and trajectory analysis",
     fields: [
       { key: "system", label: "System Description", placeholder: "e.g. Lysozyme in water box, 50ns NPT simulation" },
       { key: "force_field", label: "Force Field", type: "select", options: ["AMBER99SB-ILDN","CHARMM36","OPLS-AA","GROMOS54A7","ff14SB","CHARMM36m","AMBER14SB","TraPPE"], default: "AMBER99SB-ILDN" },
       { key: "temperature", label: "Temperature (K)", type: "select", options: ["298","300","310","273","320","350","400"], default: "300" },
       { key: "simulation_time", label: "Simulation Time", type: "select", options: ["1 ns","10 ns","50 ns","100 ns","500 ns","1 µs","Custom"], default: "100 ns" },
-    ]
-  },
-  {
-    id: "drug_discovery",
-    label: "Drug Discovery / Docking",
-    icon: Pill,
-    color: "from-pink-500 to-rose-600",
-    bgColor: "bg-pink-50",
-    borderColor: "border-pink-200",
-    engines: ["AutoDock Vina", "Glide", "DOCK6", "RDKit", "OpenBabel"],
-    description: "Ligand-receptor docking, ADMET prediction, binding affinity, pharmacophore",
-    fields: [
-      { key: "ligand", label: "Ligand (drug candidate)", placeholder: "e.g. Ibuprofen, aspirin, or SMILES" },
-      { key: "receptor", label: "Target Receptor / Protein", placeholder: "e.g. COX-2, ACE2, PDB: 1CX2" },
-      { key: "binding_site", label: "Binding Site / Region", placeholder: "e.g. active site, allosteric pocket" },
-      { key: "properties", label: "Properties to Predict", placeholder: "e.g. binding affinity, ADMET, LogP, toxicity" },
     ]
   },
   {
@@ -101,7 +85,7 @@ export const SIM_TYPES = [
     description: "Solid-state DFT, band structure, density of states, surface reactions",
     fields: [
       { key: "material", label: "Material / Crystal", placeholder: "e.g. TiO2 rutile, graphene, perovskite BaTiO3" },
-      { key: "property", label: "Property to Calculate", type: "select", options: ["Band gap","Density of States (DOS)","Band structure","Phonons","Adsorption energy","Formation energy","Magnetic moment","Dielectric constant"], default: "Band gap" },
+      { key: "property", label: "Property to Calculate", type: "select", options: ["Band gap","Density of States (DOS)","Band structure","Band structure + DOS","Phonons","Adsorption energy","Formation energy","Magnetic moment","Dielectric constant"], default: "Band gap" },
       { key: "kpoints", label: "k-point Sampling", type: "select", options: ["2x2x2","4x4x4","6x6x6","8x8x8","10x10x10","Gamma only","Custom"], default: "4x4x4" },
       { key: "functional", label: "Functional / Method", type: "select", options: ["PBE","PBE+U","HSE06","vdW-DF","SCAN","r2SCAN","PBEsol","LDA"], default: "PBE" },
     ]
@@ -120,22 +104,6 @@ export const SIM_TYPES = [
       { key: "ensemble", label: "Ensemble", type: "select", options: ["GCMC","NPT","NVT","Gibbs","NPT-GEMC","µVT"], default: "GCMC" },
       { key: "temperature", label: "Temperature (K)", type: "select", options: ["273","298","300","310","350","400","500"], default: "298" },
       { key: "property", label: "Property to Calculate", type: "select", options: ["Adsorption isotherm","Henry constant","Selectivity","Heat of adsorption","Radial distribution function","Free energy","Phase diagram"], default: "Adsorption isotherm" },
-    ]
-  },
-  {
-    id: "environmental",
-    label: "Environmental / Green Chem",
-    icon: Globe,
-    color: "from-lime-500 to-green-600",
-    bgColor: "bg-lime-50",
-    borderColor: "border-lime-200",
-    engines: ["ORCA", "RDKit", "OpenBabel", "EPI Suite", "ECOSAR"],
-    description: "Pollutant degradation, atmospheric chemistry, ecotoxicology, fate & transport",
-    fields: [
-      { key: "compound", label: "Compound / Pollutant", placeholder: "e.g. atrazine herbicide, PFAS, CO2" },
-      { key: "environment", label: "Environmental Matrix", type: "select", options: ["Aquatic (freshwater)","Aquatic (marine)","Atmospheric","Soil / sediment","Groundwater","Air-water interface"], default: "Aquatic (freshwater)" },
-      { key: "process", label: "Process to Model", type: "select", options: ["Photodegradation","Biodegradation","Sorption","Hydrolysis","Atmospheric OH oxidation","Volatilization","Bioaccumulation"], default: "Photodegradation" },
-      { key: "metrics", label: "Metrics / Outputs", type: "select", options: ["Half-life","Degradation products","Ecotoxicity LC50","LogKow / LogKoc","Henry's law constant","BCF (bioconcentration)"], default: "Half-life" },
     ]
   },
   {
@@ -218,52 +186,23 @@ export const SIM_TYPES = [
       { key: "scale", label: "System Size", type: "select", options: ["100s - 1000s atoms","1000s - 100k atoms","100k - 1M atoms","Custom (specify)"], default: "1000s - 100k atoms" },
     ]
   },
-  {
-    id: "process_simulation",
-    label: "Process Simulation (DWSIM)",
-    icon: Layers,
-    color: "from-teal-600 to-emerald-700",
-    bgColor: "bg-teal-50",
-    borderColor: "border-teal-200",
-    engines: ["DWSIM", "FluentAPI", "Python", "Open Source"],
-    description: "Steady-state and dynamic process flowsheet simulation. Distillation columns, reactors, heat exchangers, and full plant models.",
-    fields: [],
-  },
 ];
 
 export const DOMAIN_SIM_MAP = {
-  "Chemistry":         ["dft", "quantum_mechanics", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "visualization", "process_simulation"],
-  "Biochemistry":      ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "visualization"],
-  "Drug Discovery":    ["drug_discovery", "molecular_dynamics", "protein_modeling", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Engineering":       ["materials", "monte_carlo", "dft", "surface_chemistry", "machine_learning_pot", "visualization", "process_simulation"],
-  "Biology":           ["protein_modeling", "molecular_dynamics", "biomolecular_dynamics", "machine_learning_pot", "visualization"],
-  "Environmental":     ["environmental", "monte_carlo", "dft", "surface_chemistry", "visualization", "process_simulation"],
-  "Materials Science": ["materials", "dft", "monte_carlo", "surface_chemistry", "electron_spectroscopy", "machine_learning_pot", "visualization"],
-  "Biophysics":        ["molecular_dynamics", "protein_modeling", "quantum_mechanics", "biomolecular_dynamics", "electron_spectroscopy", "machine_learning_pot", "visualization"],
+  Chemistry: ['dft', 'quantum_mechanics', 'monte_carlo', 'surface_chemistry', 'electron_spectroscopy', 'visualization'],
+  'Quantum Chemistry': ['quantum_mechanics', 'electron_spectroscopy', 'dft', 'surface_chemistry', 'monte_carlo', 'visualization'],
+  'Materials Science': ['materials', 'dft', 'monte_carlo', 'surface_chemistry', 'electron_spectroscopy', 'machine_learning_pot', 'visualization'],
+  Biochemistry: ['molecular_dynamics', 'biomolecular_dynamics', 'machine_learning_pot', 'quantum_mechanics', 'visualization'],
+  Biophysics: ['biomolecular_dynamics', 'molecular_dynamics', 'machine_learning_pot', 'quantum_mechanics', 'electron_spectroscopy', 'visualization'],
 };
-
-export const DOMAIN_TAGS = ["Chemistry", "Biochemistry", "Drug Discovery", "Engineering", "Biology", "Environmental", "Materials Science", "Biophysics"];
-
-export const DOMAIN_COLORS = {
-  "Chemistry": "bg-violet-600 text-white border-violet-600",
-  "Biochemistry": "bg-teal-600 text-white border-teal-600",
-  "Drug Discovery": "bg-pink-600 text-white border-pink-600",
-  "Engineering": "bg-slate-600 text-white border-slate-600",
-  "Biology": "bg-blue-600 text-white border-blue-600",
-  "Environmental": "bg-green-600 text-white border-green-600",
-  "Materials Science": "bg-amber-600 text-white border-amber-600",
-  "Biophysics": "bg-cyan-600 text-white border-cyan-600",
-};
-
+export const DOMAIN_TAGS = ['Chemistry', 'Quantum Chemistry', 'Materials Science', 'Biochemistry', 'Biophysics'];
+export const DOMAIN_COLORS = Object.fromEntries(DOMAIN_TAGS.map(domain => [domain, 'bg-primary text-primary-foreground border-primary']));
 export const DOMAIN_DESCRIPTIONS = {
-  "Chemistry": "Quantum chemistry, DFT, reaction mechanisms, spectroscopy and statistical simulations.",
-  "Biochemistry": "Protein dynamics, biomolecular interactions, excited states and visualization.",
-  "Drug Discovery": "Docking, ADMET, binding affinity, protein modeling and ML-based drug design.",
-  "Engineering": "Materials DFT, band structure, Monte Carlo and ML potentials for engineering systems.",
-  "Biology": "Protein folding, membrane dynamics, coarse-grain and advanced biomolecular sampling.",
-  "Environmental": "Pollutant fate, photodegradation, ecotoxicology and atmospheric chemistry.",
-  "Materials Science": "Solid-state DFT, surface catalysis, spectroscopy and neural network potentials.",
-  "Biophysics": "Enhanced sampling, free energy, protein-RNA interactions and photophysics.",
+  Chemistry: 'DFT, catalytic reaction mechanisms, transition states, spectroscopy and statistical simulations.',
+  'Quantum Chemistry': 'TDDFT, coupled-cluster calculations, excited states and electronic spectroscopy.',
+  'Materials Science': 'Periodic DFT, band structure, density of states, surface catalysis and interatomic potentials.',
+  Biochemistry: 'QM/MM enzymatic reactions, biomolecular dynamics and protein active-site quantum regions.',
+  Biophysics: 'QM/MM, enhanced sampling, free-energy calculations and spectroscopy of biomolecular systems.',
 };
 
 export default function ComputationalSimulation() {
@@ -283,7 +222,7 @@ export default function ComputationalSimulation() {
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Pro Feature</h2>
           <p className="text-slate-600 mb-1">Computational Simulations require a <span className="font-semibold text-violet-700">Pro subscription</span>.</p>
-          <p className="text-slate-500 text-sm mb-6">Run DFT, MD, drug discovery, protein modeling, materials science and more.</p>
+          <p className="text-slate-500 text-sm mb-6">Configure QM/MM, advanced quantum chemistry and materials calculations.</p>
           <Link to={createPageUrl('Pricing')} className="block w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all text-center">
             Upgrade to Pro
           </Link>
@@ -295,10 +234,6 @@ export default function ComputationalSimulation() {
   const filteredSims = SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id));
 
   const handleSelectSim = (simId) => {
-    if (simId === "process_simulation") {
-      navigate("/DWSIMIntegration");
-      return;
-    }
     navigate(`/SimulationRunner?type=${simId}&domain=${encodeURIComponent(domain)}`);
   };
 
@@ -312,7 +247,7 @@ export default function ComputationalSimulation() {
               Computational Simulations
             </h1>
             <p className="text-slate-500 max-w-2xl mx-auto text-base leading-relaxed">
-              AI-powered molecular modeling: DFT, MD, drug discovery, QM, materials science, Monte Carlo, and visualization tools.
+              Advanced QM/MM, quantum chemistry and materials workflows for enterprise and academic research.
             </p>
 
             {/* Domain tabs */}
@@ -349,7 +284,7 @@ export default function ComputationalSimulation() {
 
           {/* Simulation Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredSims.filter(s => s.id !== 'process_simulation').map(s => {
+            {filteredSims.map(s => {
               const Icon = s.icon;
               return (
                 <button
@@ -383,33 +318,6 @@ export default function ComputationalSimulation() {
               );
             })}
 
-            {/* DWSIM Process Simulation card */}
-            {filteredSims.some(s => s.id === 'process_simulation') &&  (
-              <button
-                onClick={() => handleSelectSim('process_simulation')}
-                className="group text-left bg-white rounded-2xl border border-slate-200 p-5 hover:border-teal-300 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-700 flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <Layers className="w-5 h-5 text-white" />
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-0.5 transition-all mt-1" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight group-hover:text-teal-700 transition-colors">
-                  Process Simulation (DWSIM)
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mb-3">
-                  Steady-state and dynamic process flowsheet simulation. Distillation columns, reactors, heat exchangers, and full plant models.
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {['DWSIM', 'FluentAPI', 'Python', 'Open Source'].map(e => (
-                    <span key={e} className="inline-block bg-teal-50 text-teal-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      {e}
-                    </span>
-                  ))}
-                </div>
-              </button>
-            )}
 
           </div>
 

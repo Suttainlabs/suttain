@@ -35,8 +35,6 @@ const CarbonTaxSimulator = lazy(() => import('./pages/CarbonTaxSimulator'));
 const CarbonOpportunitySimulator = lazy(() => import('./pages/CarbonOpportunitySimulator'));
 const FormulaPortfolio = lazy(() => import('./pages/FormulaPortfolio'));
 const SimulationRunner = lazy(() => import('./pages/SimulationRunner'));
-const DWSIMIntegration = lazy(() => import('./pages/DWSIMIntegration'));
-const SimulationHistory = lazy(() => import('./pages/SimulationHistory'));
 const SharedSimulationView = lazy(() => import('./pages/SharedSimulationView'));
 const BillingDashboard = lazy(() => import('./pages/BillingDashboard'));
 const MolecularIntelligence = lazy(() => import('./pages/MolecularIntelligence'));
@@ -237,8 +235,8 @@ const AuthenticatedApp = () => {
       <Route path="/CarbonOpportunitySimulator" element={<LayoutWrapper currentPageName="CarbonOpportunitySimulator"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><CarbonOpportunitySimulator /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/FormulaPortfolio" element={<LayoutWrapper currentPageName="FormulaPortfolio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaPortfolio /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/SimulationRunner" element={<LayoutWrapper currentPageName="SimulationRunner"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationRunner /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/DWSIMIntegration" element={<LayoutWrapper currentPageName="DWSIMIntegration"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><DWSIMIntegration /></PageTransition></Suspense></LayoutWrapper>} />
-      <Route path="/SimulationHistory" element={<LayoutWrapper currentPageName="SimulationHistory"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><SimulationHistory /></PageTransition></Suspense></LayoutWrapper>} />
+      <Route path="/DWSIMIntegration" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
+      <Route path="/SimulationHistory" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
       <Route path="/SharedSimulationView" element={<Suspense fallback={<div className="fixed inset-0 bg-slate-50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><SharedSimulationView /></Suspense>} />
       <Route path="/BillingDashboard" element={<LayoutWrapper currentPageName="BillingDashboard"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BillingDashboard /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/BatchRecords" element={<LayoutWrapper currentPageName="BatchRecords"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><BatchRecords /></PageTransition></Suspense></LayoutWrapper>} />

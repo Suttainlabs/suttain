@@ -127,7 +127,7 @@ export default function AboutUsPage() {
               {
                 num: '5',
                 title: 'Computational Simulations',
-                desc: 'Run DFT, molecular dynamics, drug discovery, protein modeling, and quantum chemistry scripts without a lab.',
+                desc: 'Configure DFT, QM/MM, molecular dynamics, spectroscopy and materials calculations for enterprise and academic research.',
                 icon: Microscope
               },
               {
