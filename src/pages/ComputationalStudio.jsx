@@ -60,8 +60,7 @@ export default function ComputationalStudio() {
               </div>
               <h3 className="text-base font-semibold text-slate-900">{card.title}</h3>
               <p className="text-sm text-slate-500 mt-1 flex-1">{card.description}</p>
-              <div className="mt-3 flex items-center justify-between">
-                <SourcedBadge />
+              <div className="mt-3 flex items-center justify-end">
                 <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#0F6E56] group-hover:gap-1.5 transition-all">
                   Open <ArrowRight className="w-3.5 h-3.5" />
                 </span>
