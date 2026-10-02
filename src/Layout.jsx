@@ -75,7 +75,7 @@ const PAGE_META_DESCRIPTIONS = {
 };
 
 // Lazy-loaded components with error boundaries
-const ClaraAssistant = React.lazy(() => import("./components/shared/ClaraAssistant").catch(() => ({ default: () => null })));
+
 const AuthModal = React.lazy(() => import("./components/auth/AuthModal").catch(() => ({ default: () => null })));
 const SimplifiedOnboarding = React.lazy(() => import("./components/auth/SimplifiedOnboarding").catch(() => ({ default: () => null })));
 
@@ -714,10 +714,6 @@ export default function Layout({ children, currentPageName }) {
       <main className="flex-1 pb-16 lg:pb-0 relative z-10">
         <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: fetchUserAndSetState }}>
           {children}
-          {/* Clara AI Assistant */}
-          <React.Suspense fallback={null}>
-            <ClaraAssistant />
-          </React.Suspense>
 
           {/* Notification Center */}
           {user && (
