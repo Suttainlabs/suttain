@@ -10,7 +10,6 @@ import PipelinePanel from '@/components/studio/PipelinePanel';
 import { SourcedBadge, TrustLabel, downloadTextFile, StudioPageHeader, StudioSectionHeading } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
 import XTBQuantumPanel from '@/components/studio/XTBQuantumPanel';
-import DockingPanel from '@/components/studio/DockingPanel';
 
 const INPUT_TYPES = [
   { value: 'name', label: 'Compound Name', placeholder: 'e.g. aspirin' },
@@ -515,10 +514,7 @@ export default function ComputationalStudioSmallMolecules() {
           <XTBQuantumPanel />
         </div>
 
-        <div className="border-t border-slate-200 pt-6 space-y-4">
-          <StudioSectionHeading icon={ArrowLeftRight} title="Docking and binding analysis" subtitle="Predict ranked binding poses, docking scores, and interaction residues for a small molecule or protein ligand against a protein receptor." />
-          <DockingPanel />
-        </div>
+
       </div>
     </StudioLayout>
   );
