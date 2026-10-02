@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, SlidersHorizontal, FileCode2, UserCheck, FileSearch } from 'lucide-react';
 import { agentWorkflowSteps } from '@/components/landing/agentWorkflowSteps';
 import { consumerWorkflowSteps } from '@/components/landing/consumerWorkflowSteps';
+import ConsumerWorkflowTools from '@/components/landing/ConsumerWorkflowTools';
 
 const icons = [SlidersHorizontal, FileCode2, UserCheck, FileSearch];
 export default function AgentWalkthrough() {
@@ -26,11 +27,11 @@ export default function AgentWalkthrough() {
         </div>
         <div id="workflow-detail" aria-live="polite" aria-atomic="true" className="quiet-step-detail">
           <div className="grid gap-8 lg:grid-cols-2">
-            <div><p className="research-label mb-3">Step 0{active + 1} / {step.mode}</p><h3 className="mb-3">{step.title}</h3><p className="text-research-muted mb-6">{step.action}</p><div className="border-l-2 border-research-accent pl-4"><p className="text-sm font-medium mb-2">Your decision</p><p className="text-sm text-research-muted">{step.human}</p></div></div>
+            <div><p className="research-label mb-3">Step 0{active + 1} / {step.mode}</p><h3 className="mb-3">{step.title}</h3><p className="text-research-muted mb-6">{step.action}</p>{track === 'consumer' && active === 0 && <ConsumerWorkflowTools />}<div className="border-l-2 border-research-accent pl-4"><p className="text-sm font-medium mb-2">Your decision</p><p className="text-sm text-research-muted">{step.human}</p></div></div>
             <dl className="space-y-5"><div><dt className="text-sm font-medium mb-1">Sources and provenance</dt><dd className="text-sm text-research-muted">{step.provenance}</dd></div><div><dt className="text-sm font-medium mb-1">When it is uncertain or wrong</dt><dd className="text-sm text-research-muted">{step.uncertainty}</dd></div><div className="rounded-lg bg-research-soft p-4"><dt className="research-label mb-2">Output</dt><dd className="text-sm">{step.output}</dd></div></dl>
           </div>
         </div>
-        <p className="quiet-note">{track === 'consumer' ? 'Product-scanning example. Formulation and impact tools are separate.' : 'Workflow preparation, not engine execution. Review inputs before use.'}</p>
+        <p className="quiet-note">{track === 'consumer' ? 'Five tools, one shared journey. Each tool has its own inputs and outputs.' : 'Workflow preparation, not engine execution. Review inputs before use.'}</p>
       </div>
     </section>
   );
