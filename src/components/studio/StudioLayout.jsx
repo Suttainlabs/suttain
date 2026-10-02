@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutGrid, Search, Hexagon, Circle, Layers, SlidersHorizontal, Gauge,
-  AlertTriangle, ListChecks, ChevronRight, ChevronDown,
+  ListChecks, ChevronRight, ChevronDown,
 } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
@@ -17,7 +17,6 @@ const STUDIO_NAV = [
   ]},
   { type: 'group', label: 'Compute', icon: SlidersHorizontal, items: [
     { path: '/ComputationalStudio/Simulations', label: 'Simulations', icon: Gauge },
-    { path: '/ComputationalStudio/HazardSafety', label: 'Hazard & Safety', icon: AlertTriangle },
   ]},
   { type: 'group', label: 'Operations', icon: ListChecks, items: [
     { path: '/ComputationalStudio/Jobs', label: 'Jobs', icon: ListChecks },

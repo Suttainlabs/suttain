@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LayoutGrid, Hexagon, Circle, Layers, Gauge, AlertTriangle, ListChecks, ArrowRight, Users } from 'lucide-react';
+import { LayoutGrid, Hexagon, Circle, Layers, Gauge, ListChecks, ArrowRight, Users } from 'lucide-react';
 import StudioLayout from '@/components/studio/StudioLayout';
 import Studio3DViewer from '@/components/studio/Studio3DViewer';
 import { SourcedBadge } from '@/components/studio/StudioShared';
@@ -10,7 +10,6 @@ const TOOL_CARDS = [
   { path: '/ComputationalStudio/Proteins', title: 'Proteins', description: 'Predict, visualize, and analyze protein structures from sequence to property', icon: Hexagon },
   { path: '/ComputationalStudio/SmallMolecules', title: 'Small Molecules', description: 'Look up, compute, and compare molecular properties and descriptors', icon: Circle },
   { path: '/ComputationalStudio/Materials', title: 'Materials', description: 'Build structures and generate inputs for external simulation engines', icon: Layers },
-  { path: '/ComputationalStudio/HazardSafety', title: 'Hazard & Safety', description: 'Run validated hazard classification with confidence scores and source citations', icon: AlertTriangle },
   { path: '/ComputationalStudio/Jobs', title: 'Jobs', description: 'Track all submitted jobs across single run, batch, and pipeline modes', icon: ListChecks },
 ];
 
