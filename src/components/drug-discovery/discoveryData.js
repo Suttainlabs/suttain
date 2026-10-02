@@ -11,10 +11,10 @@ export const METHODS = { docking_ml_rerank: 'Docking + ML re-ranking (recommende
 export const WALKTHROUGH = [
   { view: 'new', step: 0, title: '1. Define a target', body: 'Search for the disease, gene, or protein you are investigating. Public protein structures, bioactivity records, and disease annotations help establish what a candidate compound would need to bind to.' },
   { view: 'new', step: 1, title: '2. Choose a library & method', body: 'Choose a compound library and a screening approach. In a real pipeline, docking models possible binding poses, ML re-ranking prioritizes predictions, and property filters provide a faster first pass. Here these are demonstration settings.' },
-  { view: 'new', step: 2, title: '3. Review & launch', body: 'Confirm your target, library, and method before committing compute. Real screening may take hours; this demonstration runs a short local progress simulation without submitting an HPC job.' },
-  { view: 'queue', title: '4. Track the job queue', body: 'Follow screening progress while you explore other views. This tool simulates a job queue in your browser; it does not connect to a live compute cluster.' },
+  { view: 'new', step: 2, title: '3. Review & launch', body: 'Confirm your target, library, and method before committing compute. Launching requires a connected real screening provider. Until one is connected, submission is blocked and no job is counted.' },
+  { view: 'queue', title: '4. Track the job queue', body: 'The queue reads your saved real compute submissions and refreshes every 15 seconds. It does not simulate progress; it remains empty until a real screening provider accepts a job.' },
   { view: 'candidates', title: '5. Review ranked candidates', body: 'Compare example binding scores and ADMET risk labels, then sort or filter candidates. Real binding affinity and absorption, distribution, metabolism, excretion, and toxicity require validated models and laboratory testing; these example values are not predictions.' },
-  { view: 'shortlist', title: '6. Shortlist & compare', body: 'Select promising example candidates, compare them side by side, and export a CSV. SDF export needs real molecular structures, and API access to this local shortlist is not yet connected.' },
+  { view: 'shortlist', title: '6. Shortlist & compare', body: 'Save illustrative candidates privately to your account, compare them side by side, and export a CSV. Your shortlist survives refresh. SDF export needs real molecular structures, and shortlist API access is not yet connected.' },
 ];
 export const RISK_STYLE = { low: 'bg-secondary text-secondary-foreground', moderate: 'bg-muted text-foreground', high: 'bg-destructive/10 text-destructive' };
 export function exportShortlist(items) {

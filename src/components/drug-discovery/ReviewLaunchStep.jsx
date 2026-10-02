@@ -5,8 +5,9 @@ export default function ReviewLaunchStep({ state: s }) {
   return <section>
     <h2 className="mb-4">Review & launch</h2>
     <dl className="border border-border rounded-lg divide-y divide-border">{rows.map(([label, value]) => <div key={label} className="grid sm:grid-cols-2 gap-1 sm:gap-4 p-4 text-sm"><dt className="text-muted-foreground">{label}</dt><dd className="font-medium break-words sm:text-right">{value}</dd></div>)}</dl>
-    <p className="text-xs text-muted-foreground mt-4">This is a demonstration estimate, not a measured cost or runtime. Launching runs a short local simulation; it uses no HPC resources or AI credits.</p>
+    <p className="text-xs text-muted-foreground mt-4">This is an illustrative estimate, not a measured cost or runtime. A real screening provider is not yet connected; submission is unavailable and no job will be counted.</p>
+    {s.actionError && <p role="alert" className="text-sm text-destructive mt-3">{s.actionError}</p>}
     {!s.ready && <p className="text-sm text-destructive mt-3">Choose a target and valid library settings before launching.</p>}
-    <div className="flex flex-wrap justify-between gap-3 mt-6"><button onClick={() => s.setStep(1)} className="research-secondary">← Back to edit</button><button onClick={s.launchJob} disabled={!s.ready || s.jobRunning} className="research-primary bg-primary text-primary-foreground disabled:opacity-40">{s.jobRunning ? 'A demonstration is running' : 'Launch screening job →'}</button></div>
+    <div className="flex flex-wrap justify-between gap-3 mt-6"><button onClick={() => s.setStep(1)} className="research-secondary">← Back to edit</button><button onClick={s.launchJob} disabled={!s.ready || s.submitting || !s.metrics.data?.computeAvailable} className="research-primary bg-primary text-primary-foreground disabled:opacity-40">{s.submitting ? 'Submitting…' : s.metrics.data?.computeAvailable ? 'Launch screening job →' : 'Compute connection required'}</button></div>
   </section>;
 }

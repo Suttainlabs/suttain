@@ -1,0 +1,63 @@
+{
+  "name": "DrugDiscoveryShortlist",
+  "type": "object",
+  "properties": {
+    "candidate_id": {
+      "type": "string"
+    },
+    "drug": {
+      "type": "string"
+    },
+    "score": {
+      "type": "number"
+    },
+    "risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "moderate",
+        "high"
+      ]
+    },
+    "sim": {
+      "type": "number"
+    },
+    "synth": {
+      "type": "number"
+    },
+    "source_job_id": {
+      "type": "string"
+    },
+    "added_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "is_illustrative": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "candidate_id",
+    "drug",
+    "score",
+    "risk",
+    "sim",
+    "synth",
+    "added_timestamp"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

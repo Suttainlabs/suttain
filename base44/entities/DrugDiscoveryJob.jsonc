@@ -1,0 +1,99 @@
+{
+  "name": "DrugDiscoveryJob",
+  "type": "object",
+  "properties": {
+    "target_ref": {
+      "type": "string"
+    },
+    "target_label": {
+      "type": "string"
+    },
+    "library": {
+      "type": "string",
+      "enum": [
+        "suttain_index",
+        "chembl_bioactive",
+        "user_upload"
+      ]
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "docking_ml_rerank",
+        "docking_only",
+        "property_filter"
+      ]
+    },
+    "max_candidates": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000
+    },
+    "compounds_screened": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "Actual reported screened count, not the requested limit."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Submitted",
+        "Queued",
+        "Running",
+        "Completed",
+        "Failed"
+      ]
+    },
+    "submit_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "start_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "end_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "error": {
+      "type": "string"
+    },
+    "provider_job_id": {
+      "type": "string",
+      "description": "Receipt from a real screening compute provider."
+    },
+    "execution_mode": {
+      "type": "string",
+      "enum": [
+        "real",
+        "demonstration"
+      ],
+      "default": "demonstration"
+    }
+  },
+  "required": [
+    "target_ref",
+    "target_label",
+    "library",
+    "method",
+    "max_candidates",
+    "status",
+    "submit_timestamp"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
