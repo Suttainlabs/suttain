@@ -402,6 +402,43 @@
   }
 }
 
+/* Research surface tokens: intentionally isolated from the consumer theme. */
+:root, .dark {
+  --research-page: 60 16% 96%;
+  --research-card: 0 0% 100%;
+  --research-text: 0 0% 10%;
+  --research-muted: 0 0% 40%;
+  --research-accent: 165 46% 34%;
+  --research-soft: 160 22% 94%;
+  --research-border: 220 14% 91%;
+}
+@layer components {
+  .research-surface {
+    @apply bg-research-page text-research-text;
+    font-family: var(--font-body);
+  }
+  .research-surface h1, .research-surface h2, .research-surface h3 {
+    color: hsl(var(--research-text));
+    font-weight: 500;
+  }
+  .research-primary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-research-accent px-5 py-3 text-sm font-medium text-research-card transition-opacity hover:opacity-90;
+  }
+  .research-secondary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-research-border bg-research-card px-5 py-3 text-sm font-medium text-research-text transition-colors hover:border-research-accent;
+  }
+  .research-label {
+    @apply font-mono text-xs font-normal tracking-wide text-research-muted;
+  }
+  .research-icon {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-research-border bg-research-card text-research-accent;
+  }
+  .research-dashboard .uppercase { text-transform: none; letter-spacing: normal; }
+  .research-dashboard .font-bold, .research-dashboard .font-black, .research-dashboard .font-semibold { font-weight: 500; }
+  .research-dashboard [class*="text-slate-"] { color: hsl(var(--research-muted)); }
+  .research-dashboard [class*="text-slate-800"], .research-dashboard [class*="text-slate-900"] { color: hsl(var(--research-text)); }
+}
+
 /* Darken slate-400/500 for WCAG 2.1 text contrast */
 .text-slate-400 { color: #64748B; }
 .text-slate-500 { color: #475569; }

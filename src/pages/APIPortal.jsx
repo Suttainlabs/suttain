@@ -210,6 +210,12 @@ export default function APIPortal() {
   return (
     <div className="min-h-screen" style={{ background: '#F7F6F2' }}>
 
+      <nav aria-label="Research documentation navigation" className="research-surface border-b border-research-border">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 min-h-12 py-3 flex flex-wrap items-center justify-between gap-3">
+          <Link to="/ResearchPortal#research-api" className="text-sm text-research-accent inline-flex items-center gap-2">Research overview <ArrowRight className="h-4 w-4" /></Link>
+          <span className="research-label">Research / API documentation</span>
+        </div>
+      </nav>
       {/* Hero */}
       <section className="px-6 pt-14 pb-10 text-center">
         <motion.div {...fade(0)} className="flex justify-center mb-5"><ElementCell index="00" symbol="Ap" variant="purple" /></motion.div>
@@ -386,7 +392,7 @@ export default function APIPortal() {
 
         {/* Footer nav */}
         <div className="border rounded-[10px] p-6 bg-white flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10" style={{ borderColor: '#E5E7EB' }}>
-          <Link to={createPageUrl('ResearchPortal')} className="text-sm font-medium transition-colors" style={{ color: '#3F4651' }}>Research Portal</Link>
+          <Link to="/ResearchPortal#research-api" className="text-sm font-medium transition-colors" style={{ color: '#3F4651' }}>Research overview</Link>
           <Link to={createPageUrl('Pricing')} className="text-sm font-medium transition-colors" style={{ color: '#3F4651' }}>Pricing</Link>
           <a href="mailto:enterprise@suttain.com" className="text-sm font-medium transition-colors" style={{ color: '#3F4651' }}>Contact sales</a>
         </div>

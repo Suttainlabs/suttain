@@ -9,59 +9,25 @@ const STUDIO_NAV = [
 
 export default function StudioLayout({ children }) {
   const location = useLocation();
-  const current = STUDIO_NAV.find(p => p.path === location.pathname);
-
+  const current = STUDIO_NAV.find(page => page.path === location.pathname);
   return (
-    <div className="min-h-screen bg-[#F7F6F2] relative">
-      <div className="relative z-10">
-        {/* Sub-navigation */}
-        <div className="sticky top-14 z-30 bg-[#F7F6F2]/90 backdrop-blur-md border-b border-slate-200/80">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="flex items-center gap-2 h-12">
-              <Link to="/ComputationalStudio" className="flex items-center gap-2 flex-shrink-0 pr-2">
-                <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
-                  <LayoutGrid className="w-3.5 h-3.5 text-[#0F6E56]" />
-                </div>
-                <span className="font-semibold text-slate-800 text-sm hidden sm:block">Computational Studio</span>
-              </Link>
-              <div className="h-5 w-px bg-slate-200 hidden sm:block" />
-              <nav className="flex items-center gap-1 flex-1">
-                {STUDIO_NAV.map((item, idx) => {
-                  const isActive = location.pathname === item.path;
-                  return (
-                    <Link key={idx} to={item.path}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                        isActive ? 'text-[#0F6E56] bg-[#0F6E56]/5' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/70'
-                      }`}>
-                      <item.icon className="w-3.5 h-3.5" />
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </div>
-          </div>
+    <div className="research-surface min-h-screen">
+      <div className="sticky top-14 z-30 border-b border-research-border bg-research-page">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-5 py-3">
+          <Link to="/ComputationalStudio" className="flex items-center gap-2 text-sm font-medium"><LayoutGrid className="h-4 w-4 text-research-accent" /><span>Computational studio</span></Link>
+          <span className="hidden sm:block h-5 w-px bg-research-border" />
+          <nav aria-label="Studio navigation" className="flex items-center gap-1">
+            {STUDIO_NAV.map(({ path, label, icon: Icon }) => <Link key={path} to={path} aria-current={location.pathname === path ? 'page' : undefined} className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${location.pathname === path ? 'bg-research-soft text-research-accent' : 'text-research-muted hover:text-research-text'}`}><Icon className="h-3.5 w-3.5" />{label}</Link>)}
+          </nav>
         </div>
-
-        {/* Breadcrumbs */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500">
-            <Link to="/" className="hover:text-slate-700">Home</Link>
-            <ChevronRight className="w-3 h-3" />
-            <Link to="/ComputationalStudio" className="hover:text-slate-700">Computational Studio</Link>
-            {current && current.path !== '/ComputationalStudio' && (
-              <>
-                <ChevronRight className="w-3 h-3" />
-                <span className="font-medium text-slate-700">{current.label}</span>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
-          {children}
-        </div>
+      </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-12">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs text-research-muted mb-8">
+          <Link to="/ResearchPortal" className="hover:text-research-accent">Research</Link><ChevronRight className="h-3 w-3" />
+          <Link to="/ComputationalStudio" aria-current={current?.label === 'Hub' ? 'page' : undefined} className="hover:text-research-accent">Computational studio</Link>
+          {current?.label === 'Simulations' && <><ChevronRight className="h-3 w-3" /><span aria-current="page">Simulations</span></>}
+        </nav>
+        {children}
       </div>
     </div>
   );

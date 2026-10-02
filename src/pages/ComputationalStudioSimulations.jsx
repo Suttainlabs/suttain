@@ -1,136 +1,44 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Gauge, ArrowRight, Hexagon } from 'lucide-react';
+import { Gauge, Hexagon } from 'lucide-react';
 import StudioLayout from '@/components/studio/StudioLayout';
-import { SourcedBadge } from '@/components/studio/StudioShared';
 import AuthContext from '@/components/auth/AuthContext';
 import useTrialStatus from '@/hooks/useTrialStatus';
-import { createPageUrl } from '@/utils';
-import {
-  SIM_TYPES, DOMAIN_SIM_MAP, DOMAIN_TAGS, DOMAIN_COLORS, DOMAIN_DESCRIPTIONS,
-} from './ComputationalSimulation';
+import SimulationCatalogCard from '@/components/research/SimulationCatalogCard';
+import ResearchAccessNotice from '@/components/research/ResearchAccessNotice';
+import { SIM_TYPES, DOMAIN_SIM_MAP, DOMAIN_TAGS, DOMAIN_DESCRIPTIONS } from '@/pages/ComputationalSimulation';
 
+const domainLabel = value => value.charAt(0) + value.slice(1).toLowerCase();
 export default function ComputationalStudioSimulations() {
   const { user } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
-  const navigate = useNavigate();
   const [domain, setDomain] = useState('Chemistry');
-
   const canAccess = !user || trialStatus.isPro || trialStatus.trialDaysLeft > 0;
-
-  if (user && !canAccess) {
-    return (
-      <StudioLayout>
-        <div className="flex items-center justify-center py-16 px-4">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border border-violet-100 p-8 text-center">
-            <div className="w-16 h-16 bg-[#534AB7] rounded-2xl flex items-center justify-center mx-auto mb-5">
-              <Gauge className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Pro feature</h2>
-            <p className="text-slate-600 mb-1">Computational simulations require a <span className="font-semibold text-violet-700">Pro subscription</span>.</p>
-            <p className="text-slate-500 text-sm mb-6">Configure QM/MM, advanced quantum chemistry and materials calculations.</p>
-            <Link to={createPageUrl('Pricing')} className="block w-full bg-[#534AB7] hover:bg-[#4538a0] text-white font-bold py-3 px-6 rounded-xl transition-all text-center">
-              Upgrade to Pro
-            </Link>
-          </div>
-        </div>
-      </StudioLayout>
-    );
-  }
-
-  const filteredSims = SIM_TYPES.filter(s => DOMAIN_SIM_MAP[domain]?.includes(s.id));
-
-  const handleSelectSim = (simId) => {
-    navigate(`/SimulationRunner?type=${simId}&domain=${encodeURIComponent(domain)}`);
-  };
-
+  const filteredSims = SIM_TYPES.filter(simulation => DOMAIN_SIM_MAP[domain]?.includes(simulation.id));
+  if (user && !canAccess) return <StudioLayout><ResearchAccessNotice /></StudioLayout>;
   return (
     <StudioLayout>
-      <div className="space-y-6 py-4">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white border border-slate-200">
-              <Gauge className="w-5 h-5 text-[#0F6E56]" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-semibold text-slate-900">Simulations</h1>
-              <p className="text-sm text-slate-500">Advanced QM/MM, quantum chemistry and materials workflows for enterprise and academic research.</p>
-            </div>
+      <section className="pt-3 sm:pt-5">
+        <div className="grid grid-cols-12 gap-4 mb-9">
+          <div className="col-span-12 lg:col-span-9">
+            <p className="research-label mb-4">Computational studio / Workflow catalog</p>
+            <div className="flex items-center gap-3 mb-4"><Gauge className="h-6 w-6 text-research-accent" strokeWidth={1.5} /><h1>Simulations</h1></div>
+            <p className="text-research-muted max-w-2xl">Advanced QM/MM, quantum chemistry and materials workflows for independent, enterprise and academic research.</p>
           </div>
-          <SourcedBadge />
+          <p className="col-span-12 lg:col-span-3 research-label lg:text-right lg:self-end">05 compute fields</p>
         </div>
-
-        {/* Domain tabs */}
-        <div className="flex flex-wrap gap-2">
-          {DOMAIN_TAGS.map(d => (
-            <button
-              key={d}
-              onClick={() => setDomain(d)}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all ${
-                domain === d
-                  ? DOMAIN_COLORS[d] || 'bg-violet-600 text-white border-violet-600'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-violet-300 hover:text-violet-600'
-              }`}
-            >
-              {d}
-            </button>
-          ))}
+        <div role="group" aria-label="Filter by compute field" className="flex flex-wrap gap-2 border-b border-research-border pb-6 mb-6">
+          {DOMAIN_TAGS.map(value => <button key={value} type="button" aria-pressed={domain === value} onClick={() => setDomain(value)} className={`min-h-11 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${domain === value ? 'bg-research-accent text-research-card border-research-accent' : 'bg-research-card text-research-muted border-research-border hover:border-research-accent'}`}>{domainLabel(value)}</button>)}
         </div>
-
-        {/* Domain description banner */}
-        <div className="bg-white border border-slate-200 rounded-2xl px-6 py-4 flex items-center gap-4 shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center flex-shrink-0">
-            <Hexagon className="w-5 h-5 text-[#534AB7]" />
-          </div>
-          <div>
-            <p className="font-semibold text-slate-900 text-sm">{domain}</p>
-            <p className="text-slate-500 text-xs">{DOMAIN_DESCRIPTIONS[domain]}</p>
-          </div>
-          <div className="ml-auto text-xs text-slate-400 font-medium hidden sm:block">
-            {filteredSims.length} simulation types available
-          </div>
+        <div aria-live="polite" className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-xl border border-research-border bg-research-card p-5 sm:p-6 mb-6">
+          <div className="research-icon"><Hexagon className="h-5 w-5" strokeWidth={1.5} /></div>
+          <div className="flex-1"><h2 className="!text-lg mb-1">{domainLabel(domain)}</h2><p className="text-sm text-research-muted">{DOMAIN_DESCRIPTIONS[domain]}</p></div>
+          <p className="font-mono text-xs text-research-muted sm:text-right shrink-0">{String(filteredSims.length).padStart(2, '0')} workflows available</p>
         </div>
-
-        {/* Simulation cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredSims.map(s => {
-            const Icon = s.icon;
-            return (
-              <button
-                key={s.id}
-                onClick={() => handleSelectSim(s.id)}
-                className="group text-left bg-white rounded-2xl border border-slate-200 p-5 hover:border-violet-300 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-400"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center flex-shrink-0 shadow-sm`}>
-                    <Icon className="w-5 h-5 text-white" />
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-violet-500 group-hover:translate-x-0.5 transition-all mt-1" />
-                </div>
-                <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-tight group-hover:text-violet-700 transition-colors">
-                  {s.label}
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mb-3">{s.description}</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {s.engines.slice(0, 3).map(e => (
-                    <span key={e} className="inline-block bg-slate-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      {e}
-                    </span>
-                  ))}
-                  {s.engines.length > 3 && (
-                    <span className="inline-block bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full">
-                      +{s.engines.length - 3}
-                    </span>
-                  )}
-                </div>
-              </button>
-            );
-          })}
-
-
+          {filteredSims.map((simulation, index) => <SimulationCatalogCard key={simulation.id} simulation={simulation} domain={domain} index={index} />)}
         </div>
-      </div>
+        {filteredSims.length === 0 && <p className="py-12 text-center text-research-muted">No workflows are available for this compute field.</p>}
+      </section>
     </StudioLayout>
   );
 }

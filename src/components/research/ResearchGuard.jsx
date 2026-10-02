@@ -12,7 +12,7 @@ export default function ResearchGuard({ children }) {
   if (isAuthLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-research-border border-t-research-accent rounded-full animate-spin" />
       </div>
     );
   }
@@ -25,14 +25,14 @@ export default function ResearchGuard({ children }) {
   if (hasResearchAccess) return <>{children}</>;
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4" style={{ background: '#F7F6F2' }}>
-      <div className="max-w-xl w-full text-center">
-        <div className="inline-flex items-center gap-2 bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
+    <div className="research-surface min-h-[70vh] flex items-center justify-center px-4 py-10">
+      <div className="max-w-xl w-full rounded-xl border border-research-border bg-research-card p-8 text-center">
+        <div className="inline-flex items-center gap-2 text-research-accent font-mono text-xs mb-6">
           <FlaskConical className="w-3.5 h-3.5" />
           Suttain Research
         </div>
-        <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-violet-50 border border-violet-200 flex items-center justify-center">
-          <Lock className="w-6 h-6" style={{ color: '#534AB7' }} />
+        <div className="research-icon mx-auto mb-5">
+          <Lock className="w-5 h-5 text-research-accent" />
         </div>
         <h1 className="text-2xl font-semibold text-slate-900 mb-2">
           This tool is part of Sustain research
@@ -42,8 +42,7 @@ export default function ResearchGuard({ children }) {
         </p>
         <Link
           to="/Pricing"
-          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors hover:opacity-90"
-          style={{ background: '#534AB7' }}
+          className="research-primary"
         >
           Get research <ArrowRight className="w-3.5 h-3.5" />
         </Link>

@@ -17,6 +17,15 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+          research: {
+            page: 'hsl(var(--research-page))',
+            card: 'hsl(var(--research-card))',
+            text: 'hsl(var(--research-text))',
+            muted: 'hsl(var(--research-muted))',
+            accent: 'hsl(var(--research-accent))',
+            soft: 'hsl(var(--research-soft))',
+            border: 'hsl(var(--research-border))',
+          },
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			/* Brand */

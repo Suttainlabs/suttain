@@ -13,15 +13,7 @@ import NewProjectModal from '../components/research/NewProjectModal';
 import KanbanBoard from '../components/research/KanbanBoard';
 import ShareProjectModal from '../components/research/ShareProjectModal';
 
-function StatCard({ label, value, sub, color = '#007850' }) {
-  return (
-    <div className="bg-white border border-slate-200 rounded-xl p-4">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{label}</p>
-      <p className="text-2xl font-black" style={{ color }}>{value}</p>
-      {sub && <p className="text-[10px] text-slate-400 mt-1">{sub}</p>}
-    </div>
-  );
-}
+import StatCard from '@/components/research/ResearchStatCard';
 
 const FEED_ITEMS = [
   { source: 'PubChem', title: 'New bioassay results for Perfluorooctanoic acid (PFOA)', date: '2026-06-12', type: 'Bioassay' },
@@ -89,20 +81,20 @@ export default function ResearchDashboard() {
 
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-[#F7F6F2] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-[#6B3FA0] rounded-full animate-spin" />
+      <div className="min-h-screen research-surface research-dashboard bg-research-page flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-research-border border-t-research-accent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#F7F6F2] flex items-center justify-center px-4 py-12">
-        <div className="max-w-2xl mx-auto text-center bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-[#6B3FA0] to-[#8B5CF6] rounded-2xl flex items-center justify-center mx-auto mb-4">
+      <div className="min-h-screen research-surface research-dashboard bg-research-page flex items-center justify-center px-4 py-12">
+        <div className="max-w-2xl mx-auto text-center bg-research-card border border-research-border rounded-2xl shadow-sm p-8">
+          <div className="w-16 h-16 bg-research-accent rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Lock className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-3">Unlock the Research Dashboard</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">Unlock the Research dashboard</h2>
           <p className="text-slate-600 leading-relaxed mb-6">
             Your personal research hub, saved compounds, usage metrics, active simulations, and a scientific feed.
           </p>
@@ -111,17 +103,17 @@ export default function ResearchDashboard() {
               onClick={() => navigate('/login')}
               variant="outline"
               size="lg"
-              className="flex-1 bg-white"
+              className="flex-1 bg-research-card"
             >
               Login
             </Button>
             <Button
               onClick={() => navigate('/register')}
               size="lg"
-              className="flex-1 bg-gradient-to-r from-[#007850] to-[#00A8C8] hover:opacity-90 text-white"
+              className="flex-1 bg-research-accent hover:opacity-90 text-white"
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              Sign Up Free
+              Sign up free
             </Button>
           </div>
         </div>
@@ -131,48 +123,48 @@ export default function ResearchDashboard() {
 
 
   return (
-    <div className="min-h-screen bg-[#F7F6F2] text-slate-800">
+    <div className="min-h-screen research-surface research-dashboard bg-research-page text-slate-800">
       {/* Sub-header: breadcrumb, no back button */}
-      <div className="border-b border-slate-200 bg-white/80 sticky top-[68px] z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-2">
-          <Link to={createPageUrl('ResearchPortal')} className="text-[11px] font-semibold text-slate-400 hover:text-[#6B3FA0] transition-colors uppercase tracking-widest">
+      <div className="border-b border-research-border bg-research-card sticky top-[68px] z-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-10 flex items-center gap-2">
+          <Link to={createPageUrl('ResearchPortal')} className="text-sm font-semibold text-slate-400 hover:text-research-accent transition-colors uppercase tracking-widest">
             Suttain Research
           </Link>
-          <span className="text-slate-300 text-[11px]">/</span>
-          <BarChart2 className="w-3.5 h-3.5 text-[#007850]" />
-          <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Dashboard</span>
+          <span className="text-slate-300 text-sm">/</span>
+          <BarChart2 className="w-3.5 h-3.5 text-research-accent" />
+          <span className="text-sm font-bold text-slate-500 tracking-widest uppercase">Dashboard</span>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         {/* Greeting */}
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold text-slate-900 mb-1">
-              {user.full_name?.split(' ')[0] ? `Welcome back, ${user.full_name.split(' ')[0]}.` : 'Research Dashboard'}
+              {user.full_name?.split(' ')[0] ? `Welcome back, ${user.full_name.split(' ')[0]}.` : 'Research dashboard'}
             </h1>
             <p className="text-sm text-slate-500">Your research workspace.</p>
           </div>
           <Button
             onClick={() => setShowNewProject(true)}
-            className="bg-[#6B3FA0] hover:bg-violet-700 text-white"
+            className="bg-research-accent hover:opacity-90 text-research-card"
           >
-            <Plus className="w-4 h-4 mr-1.5" /> New Project
+            <Plus className="w-4 h-4 mr-1.5" /> New project
           </Button>
         </div>
 
         {/* Stats row */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
-          <StatCard label="Saved Formulas" value={savedFormulas.length} sub="in workspace" color="#6B3FA0" />
-          <StatCard label="Data Sources" value="3" sub="PubChem · ChEMBL · EPA" color="#00A8C8" />
-          <StatCard label="Export Formats" value="4" sub="JSON · CSV · PDF · APA" color="#00B478" />
+          <StatCard label="Saved formulas" value={savedFormulas.length} sub="in workspace" color="#6B3FA0" />
+          <StatCard label="Data sources" value="3" sub="PubChem · ChEMBL · EPA" color="#00A8C8" />
+          <StatCard label="Export formats" value="4" sub="JSON · CSV · PDF · APA" color="#00B478" />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-5">
 
           <div className="lg:col-span-2 space-y-4">
             {/* Projects */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5">
+            <div className="bg-research-card border border-research-border rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <FolderOpen className="w-4 h-4 text-slate-400" />
@@ -182,20 +174,20 @@ export default function ResearchDashboard() {
                   <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
                     <button
                       onClick={() => setViewMode('list')}
-                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${viewMode === 'list' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider transition-colors ${viewMode === 'list' ? 'bg-research-card text-slate-800 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       List
                     </button>
                     <button
                       onClick={() => setViewMode('board')}
-                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${viewMode === 'board' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider transition-colors ${viewMode === 'board' ? 'bg-research-card text-slate-800 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       Board
                     </button>
                   </div>
                   <button
                     onClick={() => setShowNewProject(true)}
-                    className="flex items-center gap-1 text-[#6B3FA0] text-xs font-semibold hover:underline"
+                    className="flex items-center gap-1 text-research-accent text-xs font-semibold hover:underline"
                   >
                     <Plus className="w-3 h-3" /> New
                   </button>
@@ -211,7 +203,7 @@ export default function ResearchDashboard() {
               ) : projects.length === 0 ? (
                 <div className="text-center py-4">
                   <p className="text-xs text-slate-400 mb-2">No projects yet.</p>
-                  <button onClick={() => setShowNewProject(true)} className="text-xs text-[#6B3FA0] font-semibold hover:underline">
+                  <button onClick={() => setShowNewProject(true)} className="text-xs text-research-accent font-semibold hover:underline">
                     Start a project from a template
                   </button>
                 </div>
@@ -219,23 +211,23 @@ export default function ResearchDashboard() {
                 <div className="space-y-2">
                   {projects.map(p => (
                     <div key={p.id} className="flex items-center gap-3 py-2.5 border-b border-slate-100 last:border-0">
-                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: p.color || '#6B3FA0' }} />
+                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: p.color || 'hsl(var(--research-accent))' }} />
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-semibold text-slate-800 truncate">{p.name}</p>
                         {p.project_type && (
-                          <p className="text-[10px] text-slate-400 mt-0.5 capitalize">{p.project_type.replace(/_/g, ' ')}</p>
+                          <p className="text-xs text-slate-400 mt-0.5 capitalize">{p.project_type.replace(/_/g, ' ')}</p>
                         )}
                       </div>
                       {p.tags?.length > 0 && (
                         <div className="flex gap-1 flex-shrink-0">
                           {p.tags.slice(0, 2).map(tag => (
-                            <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-medium">{tag}</span>
+                            <span key={tag} className="text-xs px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-medium">{tag}</span>
                           ))}
                         </div>
                       )}
                       <button
                         onClick={() => setShareProject(p)}
-                        className="p-1.5 rounded text-slate-400 hover:text-[#6B3FA0] hover:bg-violet-50 transition-colors flex-shrink-0"
+                        className="p-1.5 rounded text-slate-400 hover:text-research-accent hover:bg-research-soft transition-colors flex-shrink-0"
                         title="Share project"
                       >
                         <Share2 className="w-3.5 h-3.5" />
@@ -247,13 +239,13 @@ export default function ResearchDashboard() {
             </div>
 
             {/* Saved formulas */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5">
+            <div className="bg-research-card border border-research-border rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <FlaskConical className="w-4 h-4 text-slate-400" />
-                  <span className="text-xs font-bold text-slate-700 uppercase tracking-widest">Saved Formulas</span>
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-widest">Saved formulas</span>
                 </div>
-                <Link to={createPageUrl('FormulaPortfolio')} className="flex items-center gap-1 text-[#007850] text-xs font-semibold hover:underline">
+                <Link to={createPageUrl('FormulaPortfolio')} className="flex items-center gap-1 text-research-accent text-xs font-semibold hover:underline">
                   View all <ChevronRight className="w-3 h-3" />
                 </Link>
               </div>
@@ -264,7 +256,7 @@ export default function ResearchDashboard() {
               ) : savedFormulas.length === 0 ? (
                 <div className="text-center py-4">
                   <p className="text-xs text-slate-400 mb-2">No formulas saved yet.</p>
-                  <Link to={createPageUrl('generator')} className="text-xs text-[#007850] font-semibold hover:underline">
+                  <Link to={createPageUrl('generator')} className="text-xs text-research-accent font-semibold hover:underline">
                     Generate your first formula
                   </Link>
                 </div>
@@ -273,13 +265,13 @@ export default function ResearchDashboard() {
                   <div key={f.id} className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
                     <div className="min-w-0">
                       <p className="text-xs font-semibold text-slate-800 truncate">{f.name}</p>
-                      {f.product_type && <p className="text-[10px] text-slate-400 mt-0.5">{f.product_type}</p>}
+                      {f.product_type && <p className="text-xs text-slate-400 mt-0.5">{f.product_type}</p>}
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0 ml-3">
                       {f.safety_score != null && (
-                        <span className="text-[10px] font-bold text-emerald-600">{f.safety_score} safety</span>
+                        <span className="text-xs font-bold text-emerald-600">{f.safety_score} safety</span>
                       )}
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${f.status === 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                      <span className={`text-xs px-1.5 py-0.5 rounded font-bold uppercase ${f.status === 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
                         {f.status || 'draft'}
                       </span>
                     </div>
@@ -292,15 +284,15 @@ export default function ResearchDashboard() {
           {/* Right column */}
           <div className="space-y-4">
             {/* Quick access */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Quick Access</p>
+            <div className="bg-research-card border border-research-border rounded-xl p-5">
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Quick access</p>
               <div className="space-y-1">
                 {[
-                  { label: 'Computational Simulation', Icon: Cpu, route: 'ComputationalSimulation', color: '#00A8C8' },
-                  { label: 'Formula Generator', Icon: FlaskConical, route: 'generator', color: '#6B3FA0' },
-                  { label: 'SDS Analyzer', Icon: FileText, route: 'SDSAnalyzer', color: '#64748b' },
-                  { label: 'Ingredient Database', Icon: Database, route: 'IngredientDatabase', color: '#00B478' },
-                  { label: 'Research API', Icon: Layers, route: 'APIPortal', color: '#6B3FA0' },
+                  { label: 'Computational simulation', Icon: Cpu, route: 'ComputationalSimulation', color: 'hsl(var(--research-accent))' },
+                  { label: 'Formula generator', Icon: FlaskConical, route: 'generator', color: 'hsl(var(--research-accent))' },
+                  { label: 'SDS analyzer', Icon: FileText, route: 'SDSAnalyzer', color: 'hsl(var(--research-accent))' },
+                  { label: 'Ingredient database', Icon: Database, route: 'IngredientDatabase', color: 'hsl(var(--research-accent))' },
+                  { label: 'Research API', Icon: Layers, route: 'APIPortal', color: 'hsl(var(--research-accent))' },
                 ].map(({ label, Icon, route, color }) => (
                   <Link
                     key={route}
@@ -316,21 +308,21 @@ export default function ResearchDashboard() {
             </div>
 
             {/* Scientific feed */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5">
+            <div className="bg-research-card border border-research-border rounded-xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="w-4 h-4 text-slate-400" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Scientific Feed</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Scientific feed</span>
               </div>
               <div className="space-y-3">
                 {FEED_ITEMS.map((item, i) => (
                   <div key={i} className="border-b border-slate-100 last:border-0 pb-3 last:pb-0">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-[9px] font-bold text-[#007850] uppercase">{item.source}</span>
+                      <span className="text-xs font-bold text-research-accent uppercase">{item.source}</span>
                       <span className="text-slate-300">·</span>
-                      <span className="text-[9px] text-slate-400">{item.type}</span>
+                      <span className="text-xs text-slate-400">{item.type}</span>
                     </div>
-                    <p className="text-[11px] text-slate-600 leading-snug">{item.title}</p>
-                    <p className="text-[9px] text-slate-400 mt-1">{item.date}</p>
+                    <p className="text-sm text-slate-600 leading-snug">{item.title}</p>
+                    <p className="text-xs text-slate-400 mt-1">{item.date}</p>
                   </div>
                 ))}
               </div>
