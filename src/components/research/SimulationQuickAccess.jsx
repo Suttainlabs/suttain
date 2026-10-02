@@ -18,6 +18,7 @@ export default function SimulationQuickAccess() {
             <ArrowUpRight className="h-4 w-4 shrink-0 mt-1 ml-auto text-research-muted group-hover:text-research-accent" />
           </Link>;
         })}
+        <Link to="/DrugDiscovery" className="group flex items-start gap-3 py-4"><Beaker className="h-4 w-4 shrink-0 mt-1 text-research-accent" aria-hidden="true" /><div className="min-w-0"><h3 className="!text-sm mb-1 group-hover:text-research-accent">Drug discovery</h3><p className="text-xs text-research-muted">Live target search and guided screening demonstration.</p></div><ArrowUpRight className="h-4 w-4 shrink-0 mt-1 ml-auto text-research-muted" aria-hidden="true" /></Link>
       </div>
     </aside>
   );

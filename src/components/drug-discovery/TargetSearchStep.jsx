@@ -1,0 +1,18 @@
+import { Loader2 } from 'lucide-react';
+export default function TargetSearchStep({ state: s }) {
+  return <section>
+    <form onSubmit={e => { e.preventDefault(); s.runSearch(); }} aria-busy={s.searching}>
+      <label htmlFor="drug-target-query" className="block text-sm mb-2">Search by disease, gene, or protein</label>
+      <div className="flex flex-col sm:flex-row gap-2 mb-4"><input id="drug-target-query" maxLength={200} value={s.query} onChange={e => s.setQuery(e.target.value)} className="simulation-control flex-1 min-w-0" placeholder="e.g. EGFR, BACE1, SARS-CoV-2 Mpro" aria-describedby="drug-target-notes" /><button disabled={s.searching || !s.query.trim()} className="research-primary bg-primary text-primary-foreground disabled:opacity-50">{s.searching && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}{s.searching ? 'Searching…' : 'Search'}</button></div>
+    </form>
+    <div aria-live="polite">{s.searchError && <p className="text-sm text-destructive mb-3">{s.searchError}</p>}{s.sourceWarning && <p className="text-sm text-muted-foreground mb-3">{s.sourceWarning}</p>}</div>
+    <div className="space-y-3">{s.matches.map(t => <div key={t.pdb_id || t.chembl_id || t.uniprot_id} className={`border rounded-lg p-4 ${s.selectedTarget === t ? 'border-primary bg-secondary/50' : 'border-border'}`}>
+      <button onClick={() => s.setSelectedTarget(t)} aria-pressed={s.selectedTarget === t} className="w-full text-left"><span className="block font-medium">{t.name}</span><span className="block text-xs text-muted-foreground mt-1">{t.target_class || 'Protein target'} · {t.disease_context || 'No disease annotation found'}</span><span className="mt-3 flex gap-2 text-xs flex-wrap">{t.structure_resolved && <span className="rounded bg-secondary text-secondary-foreground px-2 py-1">Structure resolved{t.resolution ? ` · ${t.resolution} Å` : ''}{t.method ? ` · ${t.method}` : ''}</span>}{typeof t.activity_count === 'number' && <span className="rounded bg-secondary text-secondary-foreground px-2 py-1">{t.activity_count.toLocaleString()} ChEMBL activity records</span>}<span className="rounded bg-muted px-2 py-1">{s.selectedTarget === t ? 'Selected target' : 'Select this target'}</span></span></button>
+      <div className="flex flex-wrap gap-3 mt-3 text-xs text-primary">{t.pdb_id && <a href={`https://www.rcsb.org/structure/${encodeURIComponent(t.pdb_id)}`} target="_blank" rel="noopener noreferrer" className="underline">PDB {t.pdb_id}</a>}{t.chembl_id && <a href={`https://www.ebi.ac.uk/chembl/explore/target/${encodeURIComponent(t.chembl_id)}`} target="_blank" rel="noopener noreferrer" className="underline">ChEMBL {t.chembl_id}</a>}{t.uniprot_id && <a href={`https://www.uniprot.org/uniprotkb/${encodeURIComponent(t.uniprot_id)}/entry`} target="_blank" rel="noopener noreferrer" className="underline">UniProt {t.uniprot_id}</a>}</div>
+      {t.chembl_name && <p className="text-xs text-muted-foreground mt-2">ChEMBL hit: {t.chembl_name}</p>}{t.uniprot_name && <p className="text-xs text-muted-foreground">UniProt hit: {t.uniprot_name}</p>}
+      <p className="text-xs font-mono text-muted-foreground mt-2">via {t.source_notes.join(' + ')}</p>
+    </div>)}</div>
+    <p id="drug-target-notes" className="text-xs text-muted-foreground mt-4">Top hits are looked up independently by source and are not verified to represent the same biological target. Check the source records before scientific use; activity records are not a count of unique ligands.</p>
+    <div className="flex justify-end mt-6"><button disabled={!s.selectedTarget} onClick={() => s.setStep(1)} className="research-primary bg-primary text-primary-foreground disabled:opacity-40">Continue to library & method →</button></div>
+  </section>;
+}

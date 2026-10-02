@@ -137,7 +137,7 @@ export default function Layout({ children, currentPageName }) {
           || ['/ChemicalDashboard', '/ResearchPortal',
               '/ResearchDashboard', '/APIPortal', '/ChemicalComparison', '/SDSAnalyzer',
               '/ComputationalSimulation', '/SimulationEngine', '/ChemicalLibrary', '/SimulationRunner',
-              '/ComputationalStudio', '/ComputationalStudio/Simulations', '/Simulator', '/generator', '/CarbonTaxSimulator', '/Workspace', '/Pricing'].includes(window.location.pathname);
+              '/ComputationalStudio', '/ComputationalStudio/Simulations', '/DrugDiscovery', '/Simulator', '/generator', '/CarbonTaxSimulator', '/Workspace', '/Pricing'].includes(window.location.pathname);
         if (!isOnResearchPage) {
           navigate(createPageUrl('ResearchDashboard'));
         }
@@ -272,6 +272,7 @@ export default function Layout({ children, currentPageName }) {
 
   const researchToolItems = [
     { href: "ComputationalStudio", label: "Computational Studio", icon: FlaskConical, description: "Unified workspace for molecules, proteins, materials, and hazard prediction", category: "Research" },
+    { href: "DrugDiscovery", label: "Drug discovery", icon: Microscope, description: "Live target search and a guided screening demonstration", category: "Research" },
   ];
 
   // Tools dropdown: consumer tools only; research tools live in the Research hub

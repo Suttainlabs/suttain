@@ -45,6 +45,7 @@ const APIPortal = lazy(() => import('./pages/APIPortal'));
 const ChemicalComparison = lazy(() => import('./pages/ChemicalComparison'));
 
 const ComputationalStudio = lazy(() => import('./pages/ComputationalStudio'));
+const DrugDiscovery = lazy(() => import('./pages/DrugDiscovery'));
 const ComputationalStudioSimulations = lazy(() => import('./pages/ComputationalStudioSimulations'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
@@ -204,6 +205,7 @@ const AuthenticatedApp = () => {
 
         <Route path="/ComputationalStudio" element={<LayoutWrapper currentPageName="ComputationalStudio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudio /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Simulations" element={<LayoutWrapper currentPageName="ComputationalStudioSimulations"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioSimulations /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
+        <Route path="/DrugDiscovery" element={<LayoutWrapper currentPageName="DrugDiscovery"><Suspense fallback={<div role="status" className="py-16 text-center text-muted-foreground">Loading drug discovery…</div>}><ResearchGuard><PageTransition><DrugDiscovery /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Proteins" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
         <Route path="/ComputationalStudio/SmallMolecules" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
         <Route path="/ComputationalStudio/Materials" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />

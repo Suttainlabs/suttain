@@ -4,6 +4,7 @@ import ResearchHero from '@/components/research/ResearchHero';
 import ResearchDataSources from '@/components/research/ResearchDataSources';
 import ResearchPrinciples from '@/components/research/ResearchPrinciples';
 import ResearchComputeCard from '@/components/research/ResearchComputeCard';
+import DrugDiscoveryToolCard from '@/components/research/DrugDiscoveryToolCard';
 import ResearchAPIOverview from '@/components/research/ResearchAPIOverview';
 import ResearchAudience from '@/components/research/ResearchAudience';
 import ResearchWorkflowMap from '@/components/research/ResearchWorkflowMap';
@@ -18,10 +19,11 @@ export default function ResearchPortal() {
   return (
     <div className="research-surface min-h-screen">
       <div className="border-b border-research-border bg-research-card">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 min-h-12 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <span className="research-label">Suttain / Research</span>
           <nav aria-label="Research navigation" className="flex items-center gap-5 text-sm text-research-muted">
             <Link to="/ComputationalStudio" className="hover:text-research-accent">Studio</Link>
+            <Link to="/DrugDiscovery" className="hover:text-research-accent">Drug discovery</Link>
             <a href="#research-api" className="hover:text-research-accent">API overview</a>
           </nav>
         </div>
@@ -32,6 +34,7 @@ export default function ResearchPortal() {
         <ResearchDataSources />
         <ResearchPrinciples />
         <ResearchComputeCard />
+        <DrugDiscoveryToolCard />
         <ResearchAPIOverview />
         <ResearchAudience />
       </div>
