@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import AuthContext from '@/components/auth/AuthContext';
+import useTrialStatus from '@/hooks/useTrialStatus';
+import { getCurrentUsage } from '@/utils/usageTracker';
+import { getPlanAccess } from '@/utils/planAccess';
+import SubscriptionLock from '@/components/shared/SubscriptionLock';
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -21,6 +26,8 @@ const STATUS_STYLES = {
 };
 
 export default function SimulationQueueManager() {
+  const { user, refreshUser } = useContext(AuthContext);
+  const trialStatus = useTrialStatus(user);
   const [queues, setQueues] = useState([]);
   const [loadingQueues, setLoadingQueues] = useState(true);
   const [activeQueueId, setActiveQueueId] = useState(null);
@@ -73,7 +80,7 @@ export default function SimulationQueueManager() {
   };
 
   const handleRunQueue = async (queue) => {
-    if (runningQueueId) return;
+    if (runningQueueId || !trialStatus.canRunResearchSim) return;
     setRunningQueueId(queue.id);
     await base44.entities.SimulationQueue.update(queue.id, { status: "running" });
     setQueues(prev => prev.map(q => q.id === queue.id ? { ...q, status: "running" } : q));
@@ -83,9 +90,15 @@ export default function SimulationQueueManager() {
 
     let completed = 0;
     let failed = 0;
+    let limited = false;
+    let attempts = 0;
+    const latest = await base44.auth.me();
+    const allowance = getPlanAccess(latest).hasResearchAccess ? Infinity : 3 - getCurrentUsage(latest).researchSimulations;
 
     for (const job of sorted) {
       if (job.status === "completed") { completed++; continue; }
+      if (attempts >= allowance) { limited = true; break; }
+      attempts++;
 
       await base44.entities.SimulationJob.update(job.id, { status: "running" });
 
@@ -121,13 +134,15 @@ Return JSON with:
       setQueues(prev => prev.map(q => q.id === queue.id ? { ...q, completed_jobs: completed, failed_jobs: failed } : q));
     }
 
-    const finalStatus = failed === sorted.length ? "paused" : "completed";
+    const finalStatus = limited || failed === sorted.length ? "paused" : "completed";
     await base44.entities.SimulationQueue.update(queue.id, { status: finalStatus, completed_jobs: completed, failed_jobs: failed });
     setQueues(prev => prev.map(q => q.id === queue.id ? { ...q, status: finalStatus, completed_jobs: completed, failed_jobs: failed } : q));
+    if (refreshUser) await refreshUser();
     setRunningQueueId(null);
   };
 
   const activeQueue = queues.find(q => q.id === activeQueueId);
+  if (!runningQueueId && !trialStatus.canRunResearchSim) return <SubscriptionLock pillar="research" featureName="Research simulations" limit />;
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8">

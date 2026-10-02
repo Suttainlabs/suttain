@@ -5,10 +5,11 @@ import AuthContext from '../components/auth/AuthContext';
 import PillarTabs from '@/components/pricing/PillarTabs';
 import PillarPlanCard from '@/components/pricing/PillarPlanCard';
 import { PILLARS, PLANS_BY_PILLAR } from '@/components/pricing/pillarPlans';
+import useTrialStatus from '@/hooks/useTrialStatus';
 
 export default function Pricing() {
   const { user, refreshUser } = useContext(AuthContext);
-  const [activePillar, setActivePillar] = useState('core');
+  const [activePillar, setActivePillar] = useState(() => new URLSearchParams(window.location.search).get('pillar') === 'research' ? 'research' : 'core');
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [checkoutLoading, setCheckoutLoading] = useState(null);
   const [promoCode, setPromoCode] = useState('');
@@ -25,14 +26,15 @@ export default function Pricing() {
 
   const handleUpgrade = async (priceKey) => {
     if (!priceKey) return;
-    if (window.self !== window.top) {
-      alert('Checkout works only from the published app. Please open the app in a new tab.');
-      return;
-    }
+    const isFramed = window.self !== window.top;
+    const checkoutTab = isFramed ? window.open('', '_blank') : null;
+    if (isFramed && !checkoutTab) { alert('Allow popups to continue to checkout.'); return; }
+    if (checkoutTab) checkoutTab.opener = null;
     const isAuthed = user ? true : await base44.auth.isAuthenticated();
     if (!isAuthed) {
+      checkoutTab?.close();
       sessionStorage.setItem('pendingCheckout', priceKey);
-      window.location.href = '/login?redirect=' + encodeURIComponent('/Pricing');
+      window.location.href = '/login?returnTo=' + encodeURIComponent('/Pricing?pillar=' + activePillar);
       return;
     }
     setCheckoutLoading(priceKey);
@@ -43,8 +45,11 @@ export default function Pricing() {
         successUrl: window.location.origin + '/Pricing?success=true',
         cancelUrl: window.location.origin + '/Pricing?canceled=true',
       });
-      if (res.data?.url) window.location.href = res.data.url;
+      if (!res.data?.url) throw new Error('No checkout link returned');
+      if (checkoutTab) checkoutTab.location.replace(res.data.url);
+      else window.location.assign(res.data.url);
     } catch (error) {
+      checkoutTab?.close();
       console.error('Checkout failed:', error);
       alert('Failed to start checkout. Please try again.');
     } finally {
@@ -52,18 +57,18 @@ export default function Pricing() {
     }
   };
 
-  // Resume a pending checkout after login
+  // Restore the chosen pillar after login; checkout starts on a fresh buyer click.
   useEffect(() => {
     const pending = sessionStorage.getItem('pendingCheckout');
     if (pending && user) {
       sessionStorage.removeItem('pendingCheckout');
-      handleUpgrade(pending);
+      setActivePillar(pending.startsWith('research') ? 'research' : 'core');
     }
   }, [user]);
 
   const pillar = PILLARS.find(p => p.id === activePillar);
   const plans = PLANS_BY_PILLAR[activePillar] || [];
-  const access = user?.product_access || [];
+  const accessStatus = useTrialStatus(user);
 
   return (
     <div className="min-h-screen" style={{ background: '#F7F6F2' }}>
@@ -82,7 +87,7 @@ export default function Pricing() {
         <div className="text-center mb-8">
           <h1>Pricing</h1>
           <p className="mt-2" style={{ color: '#5F5F5B' }}>
-            Two product lines, priced separately. Start free and upgrade only what you need.
+            Start free. Core unlocks consumer tools; Research includes unlimited research and full Core access.
           </p>
         </div>
 
@@ -117,7 +122,7 @@ export default function Pricing() {
               billingCycle={billingCycle}
               onUpgrade={handleUpgrade}
               checkoutLoading={checkoutLoading}
-              owned={!plan.free && access.includes(activePillar)}
+              owned={!plan.free && (activePillar === 'research' ? accessStatus.hasResearchAccess : accessStatus.hasCoreAccess)}
             />
           ))}
         </div>

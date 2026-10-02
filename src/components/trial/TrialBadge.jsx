@@ -8,7 +8,7 @@ export default function TrialBadge({ trialStatus }) {
 
   if (trialStatus.isPro) {
     // Purple badge for Research subscribers, green badge for Core subscribers.
-    if (trialStatus.hasResearchAccess && !trialStatus.hasCoreAccess) {
+    if (trialStatus.hasResearchAccess) {
       return (
         <div className="flex items-center gap-1.5 bg-violet-50 border border-violet-300 rounded-lg px-3 py-1.5">
           <Crown className="w-4 h-4 text-violet-600" />

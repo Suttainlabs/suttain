@@ -6,7 +6,7 @@ import { getAccurateChemicalAnalysis } from "@/functions/getAccurateChemicalAnal
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useTrialStatus from "../hooks/useTrialStatus";
 import TrialExpiredBanner from "../components/trial/TrialExpiredBanner";
-import { incrementUsage } from "../utils/usageTracker";
+import SubscriptionLock from '@/components/shared/SubscriptionLock';
 import AuthGate from "../components/auth/AuthGate";
 import AuthContext from '../components/auth/AuthContext';
 import ChemicalInput from "../components/simulator/ChemicalInput";
@@ -643,6 +643,8 @@ export default function Simulator() {
   };
 
   const handleSimulate = async (enhancedData, chemicalsOverride) => {
+    if (isLoading) return;
+    if (!trialStatus.canSimulateCore) { setError('Monthly simulation limit reached. Subscribe to Core to continue.'); return; }
     const runChemicals = chemicalsOverride || chemicals;
     if (runChemicals.length < 1) {
       setError("Please add at least 1 chemical to run a simulation.");
@@ -706,13 +708,10 @@ export default function Simulator() {
       setStep(2);
 
       // Increment usage for free tier users
-      if (user && trialStatus && !trialStatus.isPro) {
-        await incrementUsage(user, 'simulations').catch(console.error);
-        if (refreshUser) refreshUser();
-      }
+      if (refreshUser) await refreshUser();
 
-      // Save simulation to database
-      try {
+      // Saved history and workspace require paid Core (included with Research).
+      if (trialStatus.hasCoreAccess) try {
         await base44.entities.Simulation.create({
           chemicals: runChemicals.map(c => c.name || c.scientific_name),
           risk_score: finalData.risk_assessment?.overall_risk_score || 0,
@@ -763,6 +762,7 @@ export default function Simulator() {
       console.error("Simulation failed:", error);
       setError("Failed to run simulation: " + error.message);
     } finally {
+      if (refreshUser) await refreshUser();
       setIsLoading(false);
     }
   };
@@ -872,7 +872,8 @@ export default function Simulator() {
   return (
     <AuthGate featureName="Chemical Simulator" featureDescription="Test chemical interactions safely with our advanced simulation engine. Start your 14-day free trial to save simulations and access the full database.">
       <SEOHead {...pageSEO.simulator} />
-      {user && !trialStatus.isPro && !trialStatus.canSimulate ? (
+      {!isLoading && simulationData && !trialStatus.canSimulateCore && <SubscriptionLock featureName="Core simulations" limit />}
+      {user && !simulationData && !trialStatus.canSimulateCore ? (
         <TrialExpiredBanner featureName="Chemical Simulator" />
       ) : (
       <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#EDF7F2' }}>

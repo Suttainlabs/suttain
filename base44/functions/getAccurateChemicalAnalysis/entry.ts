@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { reserveUsage } from '../../shared/usageEntitlements.ts';
 import {
   computeCombinationFloor,
   buildAuthoritativeWarnings,
@@ -150,6 +151,8 @@ export default async function (req) {
       return Response.json({ error: 'At least 2 chemicals are required' }, { status: 400 });
     }
 
+    const denied = await reserveUsage(base44, user, 'simulations');
+    if (denied) return denied;
     console.log(`[${appId}] getAccurateChemicalAnalysis: user=${user.email} chemicals=${chemicals.join(', ')} persona=${persona}`);
 
     // ── Step 1: Check hardcoded fatal/dangerous combinations ─────────────────

@@ -1,7 +1,7 @@
 import Stripe from 'npm:stripe@17.7.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+// Initialize Stripe only while handling a request.
 
 // Unified price IDs (USD)
 const PRICE_MAP = {
@@ -20,68 +20,35 @@ const PRICE_MAP = {
   lifetime: 'price_1Tn2eSI9tsZ7WvXe702tFhHX',          // $999.99 one-time
 };
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    });
-  }
-
+export default async function(req) {
+  if (req.method === 'OPTIONS') return new Response(null, { headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'Content-Type, Authorization' } });
   try {
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     const base44 = createClientFromRequest(req);
-    const body = await req.json();
-    const { priceKey, promoCode, successUrl, cancelUrl } = body;
-
-    if (!priceKey || !PRICE_MAP[priceKey]) {
-      return Response.json({ error: 'Invalid price key' }, { status: 400 });
-    }
-
-    let userEmail = null;
-    let userId = null;
-    try {
-      const user = await base44.auth.me();
-      if (user) { userEmail = user.email; userId = user.id; }
-    } catch (_) {}
-
+    const { priceKey, promoCode, successUrl, cancelUrl } = await req.json();
+    if (!priceKey || !PRICE_MAP[priceKey]) return Response.json({ error: 'Invalid price key' }, { status: 400 });
+    let user = null;
+    try { user = await base44.auth.me(); } catch (_) {}
     const isLifetime = priceKey === 'lifetime';
-
+    const metadata = { base44_app_id: Deno.env.get('BASE44_APP_ID'), price_key: priceKey,
+      product_line: ['core', 'research'].find(p => priceKey.startsWith(p)) || '', user_id: user?.id || '', promo_code: promoCode || '' };
     const sessionConfig = {
-      mode: isLifetime ? 'payment' : 'subscription',
-      payment_method_types: ['card'],
+      mode: isLifetime ? 'payment' : 'subscription', payment_method_types: ['card'],
       line_items: [{ price: PRICE_MAP[priceKey], quantity: 1 }],
       success_url: successUrl || `${req.headers.get('origin')}/Pricing?success=true`,
       cancel_url: cancelUrl || `${req.headers.get('origin')}/Pricing?canceled=true`,
-      metadata: {
-        base44_app_id: Deno.env.get('BASE44_APP_ID'),
-        price_key: priceKey,
-        product_line: ['core', 'research'].find((p) => priceKey.startsWith(p)) || '',
-        user_id: userId || '',
-        promo_code: promoCode || '',
-      },
-      allow_promotion_codes: true,
+      metadata, allow_promotion_codes: true,
+      ...(!isLifetime && { subscription_data: { metadata } }),
     };
-
-    // Pre-apply a specific promo code if provided
+    if (user?.stripe_customer_id) sessionConfig.customer = user.stripe_customer_id;
+    else if (user?.email) sessionConfig.customer_email = user.email;
     if (promoCode) {
-      try {
-        const promoCodes = await stripe.promotionCodes.list({ code: promoCode, active: true });
-        if (promoCodes.data.length > 0) {
-          sessionConfig.discounts = [{ promotion_code: promoCodes.data[0].id }];
-          console.log(`Promo code applied: ${promoCode} -> ${promoCodes.data[0].id}`);
-        } else {
-          console.log(`Promo code not found or inactive: ${promoCode}`);
-        }
-      } catch (promoErr) {
-        console.error('Promo code lookup failed:', promoErr.message);
+      const codes = await stripe.promotionCodes.list({ code: promoCode, active: true });
+      if (codes.data.length) {
+        sessionConfig.discounts = [{ promotion_code: codes.data[0].id }];
+        delete sessionConfig.allow_promotion_codes;
       }
     }
-
-    if (userEmail) sessionConfig.customer_email = userEmail;
-
     const session = await stripe.checkout.sessions.create(sessionConfig);
     console.log(`Checkout created: ${priceKey}`);
     return Response.json({ url: session.url });
@@ -89,4 +56,4 @@ Deno.serve(async (req) => {
     console.error('Checkout error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
-});
+}

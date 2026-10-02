@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import useTrialStatus from "../hooks/useTrialStatus";
 import TrialExpiredBanner from "../components/trial/TrialExpiredBanner";
-import { incrementUsage } from "../utils/usageTracker";
+import SubscriptionLock from '@/components/shared/SubscriptionLock';
 import AuthGate from "../components/auth/AuthGate";
 import AuthContext from "../components/auth/AuthContext";
 import { Check } from "lucide-react";
@@ -102,6 +102,8 @@ export default function Generator() {
   };
 
   const handleGenerateOptions = async (description, productTypeOverride, businessModeOverride) => {
+    if (isGenerating) return;
+    if (!trialStatus.canFormulate) { navigate('/Pricing?pillar=core'); return; }
     setProductDescription(description);
     setIsGenerating(true);
     const activeProductType = productTypeOverride || selectedProductType;
@@ -221,10 +223,7 @@ export default function Generator() {
         setFormulaOptions(formulas);
         setCurrentStep(4);
         // Increment usage for free tier users
-        if (user && trialStatus && !trialStatus.isPro) {
-          await incrementUsage(user, 'formulas').catch(console.error);
-          if (refreshUser) refreshUser();
-        }
+        if (refreshUser) await refreshUser();
         await awardPoints(10, "Formula options generated");
       } else {
         throw new Error("Invalid response format");
@@ -238,6 +237,7 @@ export default function Generator() {
         variant: "destructive",
       });
     } finally {
+      if (refreshUser) await refreshUser();
       setIsGenerating(false);
     }
   };
@@ -379,8 +379,8 @@ export default function Generator() {
         }
       });
 
-      // Auto-save to Workspace
-      base44.entities.WorkspaceSession.create({
+      // Saved workspace is included with Core and Research.
+      if (trialStatus.hasCoreAccess) base44.entities.WorkspaceSession.create({
         title: fullRecipe.name,
         type: 'formula',
         snapshot: {
@@ -409,6 +409,7 @@ export default function Generator() {
         variant: "destructive",
       });
     } finally {
+      if (refreshUser) await refreshUser();
       setIsGenerating(false);
     }
   };
@@ -435,7 +436,7 @@ export default function Generator() {
     );
   }
 
-  if (!trialStatus.isPro && !trialStatus.canFormulate) {
+  if (currentStep < 4 && !trialStatus.canFormulate) {
     return <TrialExpiredBanner featureName="Formula Generator" />;
   }
 
@@ -444,6 +445,7 @@ export default function Generator() {
   return (
     <PersonaLayout>
       <div>
+        {currentStep >= 4 && !isGenerating && !trialStatus.canFormulate && <SubscriptionLock featureName="Formula generations" limit />}
             {/* Mode Indicator Pill, inline above the stepper */}
             {currentStep > 1 && (
               <div className="flex justify-end mb-3">

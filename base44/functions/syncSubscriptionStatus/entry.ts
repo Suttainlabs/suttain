@@ -1,11 +1,13 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { subscriptionPillars } from '../../shared/subscriptionPillars.ts';
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
 
-    // This function is invoked by the platform scheduler (no user context).
-    // Use service role directly, the scheduler is platform-internal.
+    const actor = await base44.auth.me();
+    if (actor?.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
+    const { dryRun = false } = await req.json();
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeKey) {
       return Response.json({ error: 'STRIPE_SECRET_KEY not configured' }, { status: 500 });
@@ -73,6 +75,8 @@ Deno.serve(async (req) => {
       subCancelAtEnd[sub.id] = sub.cancel_at_period_end || false;
     }
 
+    if (dryRun) return Response.json({ success: true, dryRun: true, activeSubscriptions: activeSubscriptions.length, pillars: subscriptionPillars(activeSubscriptions) });
+
     // ── 2. Fetch all users from database ──
     const allUsers = await base44.asServiceRole.entities.User.list('-created_date', 500);
 
@@ -99,28 +103,8 @@ Deno.serve(async (req) => {
         const plan = u.subscription_plan;
         const status = u.subscription_status;
 
-        // Check admin_granted_access: only admins (role check above) should have it.
-        // Non-admin users with admin_granted_access bypass payment, revoke it.
-        if (u.admin_granted_access) {
-          results.revoked.push({
-            id: u.id, email: u.email, full_name: u.full_name,
-            plan: plan || 'none', reason: 'ADMIN_GRANTED_ACCESS_BYPASS'
-          });
-          updatesToApply.push({
-            id: u.id,
-            admin_granted_access: false,
-            subscription_plan: 'free',
-            subscription_status: 'none',
-            subscription_billing: null,
-            stripe_subscription_id: null,
-            subscription_end_date: null,
-            usage_period_start: null,
-            usage_simulations: 0,
-            usage_formulas: 0,
-            usage_scans: 0,
-          });
-          continue;
-        }
+        // Preserve administrator-granted access as an explicit entitlement bypass.
+        if (u.admin_granted_access) continue;
 
         // Already on trial/free, skip
         if (!plan || plan === 'trial' || plan === 'free') {
@@ -156,6 +140,7 @@ Deno.serve(async (req) => {
           updatesToApply.push({
             id: u.id,
             subscription_plan: 'free',
+            product_access: [],
             subscription_status: 'none',
             subscription_billing: null,
             stripe_subscription_id: null,
@@ -170,11 +155,16 @@ Deno.serve(async (req) => {
         }
 
         // Pro / Starter / Academic, must have active subscription
-        const hasActiveSub = u.stripe_subscription_id && activeSubIds.has(u.stripe_subscription_id);
+        const userSubscriptions = activeSubscriptions.filter(s => s.customer === u.stripe_customer_id || s.id === u.stripe_subscription_id);
+        const hasActiveSub = userSubscriptions.length > 0;
 
         if (hasActiveSub) {
           // Sync end date and cancel status
-          const updateData = {};
+          const primarySub = userSubscriptions.find(s => s.id === u.stripe_subscription_id) || userSubscriptions[0];
+          const updateData = {
+            product_access: [...(u.product_access || []).filter(p => !['core', 'research'].includes(p)), ...subscriptionPillars(userSubscriptions)],
+            stripe_subscription_id: primarySub.id,
+          };
           if (subEndDates[u.stripe_subscription_id]) {
             updateData.subscription_end_date = subEndDates[u.stripe_subscription_id];
           }
@@ -199,6 +189,7 @@ Deno.serve(async (req) => {
           updatesToApply.push({
             id: u.id,
             subscription_plan: 'free',
+            product_access: [],
             subscription_status: 'none',
             subscription_billing: null,
             stripe_subscription_id: null,
@@ -271,4 +262,4 @@ Deno.serve(async (req) => {
     console.error('syncSubscriptionStatus error:', JSON.stringify(errorInfo));
     return Response.json({ error: errorInfo }, { status: 500 });
   }
-});
+}

@@ -70,6 +70,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ResearchGuard from '@/components/research/ResearchGuard';
+import PremiumFeatureGate from '@/components/shared/PremiumFeatureGate';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
 import DomTranslator from '@/components/i18n/DomTranslator';
 
@@ -77,9 +78,13 @@ const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
 
-const LayoutWrapper = ({ children, currentPageName }) => Layout ?
-  <Layout currentPageName={currentPageName}>{children}</Layout>
-  : <>{children}</>;
+const CORE_PREMIUM_PAGES = ['CarbonTaxSimulator', 'CarbonOpportunitySimulator', 'Workspace', 'FormulaPortfolio', 'SimulationHistory', 'SimulationDashboard', 'BatchRecords'];
+const LayoutWrapper = ({ children, currentPageName }) => {
+  const content = CORE_PREMIUM_PAGES.includes(currentPageName)
+    ? <PremiumFeatureGate featureName={currentPageName === 'Workspace' ? 'Saved history and workspace' : currentPageName.includes('Carbon') ? 'Carbon tax simulator' : 'Saved history'}>{children}</PremiumFeatureGate>
+    : children;
+  return Layout ? <Layout currentPageName={currentPageName}>{content}</Layout> : <>{content}</>;
+};
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();

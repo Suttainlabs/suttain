@@ -7,6 +7,7 @@ import AuthContext from '../auth/AuthContext';
 import LiveScanner from './LiveScanner';
 import BarcodeAnalysis from './ProductAnalysis';
 import BarcodeHistory from './BarcodeHistory';
+import PremiumFeatureGate from '@/components/shared/PremiumFeatureGate';
 import { base44 } from '@/api/base44Client';
 import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, QrCode, Smartphone, ArrowRight, Scan, Zap, Leaf, ShieldCheck, Recycle, FlaskConical, ScanLine, BarChart2 } from 'lucide-react';
 import BulkScanDashboard from './BulkScanDashboard';
@@ -73,9 +74,9 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
     }, []);
 
     useEffect(() => {
-        if (user) loadHistory();
+        if (user && trialStatus.hasCoreAccess) loadHistory();
         else setHistory([]);
-    }, [user, loadHistory]);
+    }, [user, trialStatus.hasCoreAccess, loadHistory]);
 
     const handleLookup = useCallback(async (scannedBarcode, scanMethod = 'manual') => {
         if (!user) { openAuthModal('login'); return; }
@@ -91,7 +92,7 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
             const { data } = await base44.functions.invoke('lookupBarcode', { barcode: scannedBarcode });
             if (data) {
                 setProductInfo(data);
-                if (data.source !== 'Not Found') {
+                if (data.source !== 'Not Found' && trialStatus.hasCoreAccess) {
                     try {
                         await BarcodeHistoryEntity.create({
                             barcode: scannedBarcode,
@@ -119,7 +120,7 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
         } finally {
             setIsLoading(false);
         }
-    }, [loadHistory, user, openAuthModal]);
+    }, [loadHistory, user, openAuthModal, trialStatus.hasCoreAccess]);
 
     const handleScanSuccess = (bc) => { setIsLiveScannerOpen(false); handleLookup(bc, 'live_scan'); };
     const handleHistorySelect = (bc) => handleLookup(bc, 'history');
@@ -355,7 +356,7 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
                                                     <span className="ml-auto text-xs text-slate-400 font-medium">{history.length} scans</span>
                                                 </div>
                                                 <div className="p-4">
-                                                    <BarcodeHistory history={history} onSelect={handleHistorySelect} onDelete={handleDeleteHistory} />
+                                                    <PremiumFeatureGate featureName="Saved scan history"><BarcodeHistory history={history} onSelect={handleHistorySelect} onDelete={handleDeleteHistory} /></PremiumFeatureGate>
                                                 </div>
                                             </div>
                                         </motion.div>

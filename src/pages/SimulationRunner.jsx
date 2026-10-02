@@ -32,9 +32,13 @@ import SimulationWorkflowField from '@/components/research/SimulationWorkflowFie
 import SimulationEngineSelector from '@/components/research/SimulationEngineSelector';
 import ForcefieldAttachment from '@/components/simulation/ForcefieldAttachment';
 import { generateSimulationInputs } from '@/functions/generateSimulationInputs';
+import useTrialStatus from '@/hooks/useTrialStatus';
+import SubscriptionLock from '@/components/shared/SubscriptionLock';
+import PremiumFeatureGate from '@/components/shared/PremiumFeatureGate';
 
 export default function SimulationRunner() {
   const { user, refreshUser } = useContext(AuthContext);
+  const trialStatus = useTrialStatus(user);
   const navigate = useNavigate();
 
   const params = new URLSearchParams(window.location.search);
@@ -161,6 +165,8 @@ export default function SimulationRunner() {
   };
 
   const handleRun = async () => {
+    if (isRunning) return;
+    if (!trialStatus.canRunResearchSim) { navigate('/Pricing?pillar=research'); return; }
     const inputSummary = sim.fields.map(f => `${f.label}: ${inputs[f.key] || 'not specified'}`).join('\n');
     const env = { solvent: 'water', temperature: 300, pressure: 1.0, ph: 7.0, ionic_strength: 0.15, boundary_conditions: 'periodic', ...envParams };
     const envSummary = `Solvent: ${env.solvent === 'custom' ? (env.solvent_custom || 'custom') : env.solvent}
@@ -277,6 +283,7 @@ Provide a focused, technical analysis. Return JSON with:
         } catch {}
       }
     } finally {
+      if (refreshUser) await refreshUser();
       setIsRunning(false);
     }
   };
@@ -402,8 +409,10 @@ Provide a focused, technical analysis. Return JSON with:
   };
 
   const reset = () => { setResults(null); setInputs({}); };
+  if (!isRunning && !results && !trialStatus.canRunResearchSim) return <SubscriptionLock pillar="research" featureName="Research simulations" limit />;
   return (
     <div className="simulation-workspace research-surface min-h-screen">
+      {!isRunning && results && !trialStatus.canRunResearchSim && <SubscriptionLock pillar="research" featureName="Research simulations" limit />}
       <ToolFeedbackToast
         isOpen={showFeedback}
         onClose={() => setShowFeedback(false)}
@@ -631,12 +640,12 @@ Provide a focused, technical analysis. Return JSON with:
 
         {/* History & Comparison, always visible */}
         <div className="mt-8">
-          <SimulationHistoryPanel
+          <PremiumFeatureGate featureName="Saved history"><SimulationHistoryPanel
             currentResults={results}
             currentInputs={inputs}
             simTypeId={typeId}
             engine={selectedEngine}
-          />
+          /></PremiumFeatureGate>
         </div>
 
         {/* Config Form */}

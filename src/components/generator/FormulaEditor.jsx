@@ -1,4 +1,5 @@
 import React, { useState, useContext, Suspense, useMemo, useEffect, useRef } from "react";
+import { getPlanAccess } from '@/utils/planAccess';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -525,6 +526,7 @@ export default function FormulaEditor({
   };
 
   const handleSaveFormula = async () => {
+    if (user && !getPlanAccess(user).hasCoreAccess) { navigate('/Pricing?pillar=core'); return; }
     if (!user) {
       openAuthModal('login');
       return;
@@ -651,7 +653,7 @@ export default function FormulaEditor({
   };
 
   const handleViewHistory = () => {
-    navigate(createPageUrl('FormulaHistory'));
+    navigate(getPlanAccess(user).hasCoreAccess ? '/FormulaPortfolio' : '/Pricing?pillar=core');
   };
 
   // Modified handleStartNewFormula to not automatically show rating modal

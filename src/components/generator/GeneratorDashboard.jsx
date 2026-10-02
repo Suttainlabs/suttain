@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import AuthContext from '@/components/auth/AuthContext';
+import useTrialStatus from '@/hooks/useTrialStatus';
+import PremiumFeatureGate from '@/components/shared/PremiumFeatureGate';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -97,6 +100,8 @@ const RecentProjectCard = ({ formula, onClick }) => {
 };
 
 export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
+  const { user } = useContext(AuthContext);
+  const { hasCoreAccess } = useTrialStatus(user);
   const [showLoadModal, setShowLoadModal] = useState(false);
   const [recentFormulas, setRecentFormulas] = useState([]);
 
@@ -110,6 +115,7 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
   const sdsChemical = urlParams.get('chemical') || '';
 
   useEffect(() => {
+    if (!hasCoreAccess) { setRecentFormulas([]); return; }
     const fetchRecent = async () => {
       try {
         const formulas = await base44.entities.Formula.list('-updated_date', 3);
@@ -119,7 +125,7 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
       }
     };
     fetchRecent();
-  }, []);
+  }, [hasCoreAccess]);
 
   const handleSelectAndLoad = (formula) => {
     setShowLoadModal(false);
@@ -286,7 +292,7 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
       </div>
 
       {/* Recent Projects */}
-      {recentFormulas.length > 0 && (
+      {hasCoreAccess && recentFormulas.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -318,11 +324,11 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
       )}
 
       {showLoadModal && (
-        <LoadFormulaModal
+        <PremiumFeatureGate featureName="Saved formulas"><LoadFormulaModal
           isOpen={showLoadModal}
           onClose={() => setShowLoadModal(false)}
           onSelectFormula={handleSelectAndLoad}
-        />
+        /></PremiumFeatureGate>
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { planAccess, reserveUsage } from '../../shared/usageEntitlements.ts';
 
 // Narrow, app-specific LLM operations for the consumer/sustainability/carbon
 // domain. Accepts a known `operation` enum + structured domain `data` (never a
@@ -12,6 +13,16 @@ export default async function(req) {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { operation, data = {} } = await req.json();
+    if (['carbonTaxSimulation', 'carbonAlternatives', 'carbonIntensityEstimate'].includes(operation) && !planAccess(user).core) {
+      return Response.json({ error: 'Core subscription required', pillar: 'core' }, { status: 403 });
+    }
+    const quotaType = ['simulationRunner', 'simulationQueue'].includes(operation) ? 'research'
+      : operation === 'formulaOptions' ? 'formulas'
+      : ['experimentation', 'batchSimulation'].includes(operation) ? 'simulations' : null;
+    if (quotaType) {
+      const denied = await reserveUsage(base44, user, quotaType);
+      if (denied) return denied;
+    }
     const call = (params) => base44.asServiceRole.integrations.Core.InvokeLLM(params);
 
     switch (operation) {

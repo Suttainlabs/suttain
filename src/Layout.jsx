@@ -118,8 +118,9 @@ export default function Layout({ children, currentPageName }) {
     return `Good evening, ${firstName}!`;
   }, []);
 
-  const fetchUserAndSetState = useCallback(async () => {
-    setIsAuthLoading(true);
+  const fetchUserAndSetState = useCallback(async ({ background = false } = {}) => {
+    // Keep mounted tools and their results visible while refreshing usage.
+    if (!background) setIsAuthLoading(true);
     try {
       const currentUser = await User.me();
       setUser(currentUser);
@@ -131,11 +132,12 @@ export default function Layout({ children, currentPageName }) {
       }
 
       // Returning researcher: redirect straight to research dashboard
-      if (currentUser && currentUser.first_login === false && currentUser.profile_type === 'researcher') {
+      if (!background && currentUser && currentUser.first_login === false && currentUser.profile_type === 'researcher') {
         const isOnResearchPage = window.location.pathname === '/enterprise' || window.location.pathname === '/EnterpriseAPI'
           || ['/ChemicalDashboard', '/ResearchPortal',
               '/ResearchDashboard', '/APIPortal', '/ChemicalComparison', '/SDSAnalyzer',
-              '/ComputationalSimulation', '/SimulationEngine', '/ChemicalLibrary'].includes(window.location.pathname);
+              '/ComputationalSimulation', '/SimulationEngine', '/ChemicalLibrary', '/SimulationRunner',
+              '/ComputationalStudio', '/ComputationalStudio/Simulations', '/Simulator', '/generator', '/CarbonTaxSimulator', '/Workspace', '/Pricing'].includes(window.location.pathname);
         if (!isOnResearchPage) {
           navigate(createPageUrl('ResearchDashboard'));
         }
@@ -708,7 +710,7 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Main Content */}
       <main className="flex-1 pb-16 lg:pb-0 relative z-10">
-        <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: fetchUserAndSetState }}>
+        <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: () => fetchUserAndSetState({ background: true }) }}>
           {children}
 
           {/* Notification Center */}

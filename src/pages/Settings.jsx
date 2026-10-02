@@ -5,6 +5,7 @@ import AuthContext from '../components/auth/AuthContext';
 import NotificationPreferences from '../components/notifications/NotificationPreferences';
 import AccountDeletionSection from '../components/settings/AccountDeletionSection';
 import SubscriptionCard from '../components/profile/SubscriptionCard';
+import { getPlanAccess } from '@/utils/planAccess';
 import BillingHistory from '../components/profile/BillingHistory';
 import {
   ArrowLeft, CreditCard, Bell, Trash2, User, ChevronRight, Crown, Check
@@ -192,9 +193,7 @@ function BillingInfo({ user }) {
 
       <div className="px-6 py-4 flex items-center justify-between">
         <p className="text-xs text-slate-400">Need help with your subscription?</p>
-        <a href="mailto:contact@suttain.com" className="text-xs font-semibold text-teal-600 hover:underline">
-          Contact support
-        </a>
+        {getPlanAccess(user).hasCoreAccess ? <a href="mailto:contact@suttain.com" className="text-xs font-medium text-primary hover:underline">Email support</a> : <Link to="/Pricing?pillar=core" className="text-xs font-medium text-primary hover:underline">Unlock email support</Link>}
       </div>
     </div>
   );

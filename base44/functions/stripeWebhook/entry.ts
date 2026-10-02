@@ -1,6 +1,7 @@
 import StripeLib from 'npm:stripe@17.7.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { Resend } from 'npm:resend@4.0.0';
+import { subscriptionPillars } from '../../shared/subscriptionPillars.ts';
 
 // Initialize clients lazily inside the handler so that missing secrets
 // cause a controlled 500 response rather than a module-level boot crash.
@@ -138,7 +139,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
   await sendEmailViaResend(email, `Welcome to ${planInfo.name}, Your Subscription is Active`, body);
 }
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
 
@@ -292,22 +293,16 @@ Deno.serve(async (req) => {
         const subscription = event.data.object;
         console.log('Subscription fully ended:', subscription.id);
         try {
-          const users = await base44.asServiceRole.entities.User.filter({
-            stripe_subscription_id: subscription.id
-          });
+          const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: subscription.customer });
           if (users.length > 0) {
+            const remaining = await stripe.subscriptions.list({ customer: subscription.customer, status: 'all', limit: 100 });
+            const active = remaining.data.filter(s => s.id !== subscription.id && ['active', 'trialing'].includes(s.status));
             await base44.asServiceRole.entities.User.update(users[0].id, {
-              subscription_plan: 'free',
-              subscription_status: 'none',
-              subscription_billing: null,
-              stripe_subscription_id: null,
-              stripe_customer_id: null,
-              subscription_end_date: null,
-              subscription_cancel_at: null,
-              usage_period_start: null,
-              usage_simulations: 0,
-              usage_formulas: 0,
-              usage_scans: 0,
+              product_access: subscriptionPillars(active),
+              subscription_plan: active.length ? 'pro' : 'free',
+              subscription_status: active.length ? 'active' : 'none',
+              stripe_subscription_id: active[0]?.id || null,
+              subscription_end_date: active[0]?.current_period_end ? new Date(active[0].current_period_end * 1000).toISOString() : null,
             });
             console.log(`Reset user ${users[0].id} to free tier after subscription ended`);
           }
@@ -329,8 +324,10 @@ Deno.serve(async (req) => {
             if (subscription.cancel_at_period_end) {
               newStatus = 'canceling';
             }
+            const paidSubscriptions = await stripe.subscriptions.list({ customer: subscription.customer, status: 'all', limit: 100 });
             const updateData = {
-              subscription_status: newStatus,
+              product_access: subscriptionPillars(paidSubscriptions.data),
+              subscription_status: paidSubscriptions.data.some(s => ['active', 'trialing'].includes(s.status)) ? (newStatus === 'canceling' ? 'canceling' : 'active') : newStatus,
               subscription_cancel_at: subscription.cancel_at_period_end && subscription.current_period_end
                 ? new Date(subscription.current_period_end * 1000).toISOString()
                 : null,
@@ -398,7 +395,9 @@ Deno.serve(async (req) => {
 
         if (targetUserId) {
           try {
+            const paidSubscriptions = await stripe.subscriptions.list({ customer: invoice.customer, status: 'all', limit: 100 });
             await base44.asServiceRole.entities.User.update(targetUserId, {
+              product_access: subscriptionPillars(paidSubscriptions.data),
               subscription_plan: plan,
               subscription_status: 'active',
               subscription_billing: billing,
@@ -448,4 +447,4 @@ Deno.serve(async (req) => {
     console.error('Webhook error:', error);
     return Response.json({ error: error.message }, { status: 400 });
   }
-});
+}

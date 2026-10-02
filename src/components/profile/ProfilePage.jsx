@@ -11,6 +11,7 @@ import NotificationCenter from '../notifications/NotificationCenter';
 import DashboardGreeting from '../dashboard/DashboardGreeting';
 import StatRow from '../dashboard/StatRow';
 import RecentActivityList from '../dashboard/RecentActivityList';
+import PremiumFeatureGate from '@/components/shared/PremiumFeatureGate';
 import SupervisorApprovalsPanel from '../dashboard/SupervisorApprovalsPanel';
 import { Crown, Zap, ChevronRight } from 'lucide-react';
 
@@ -77,7 +78,7 @@ export default function ProfilePage() {
 
         
 
-        <RecentActivityList />
+        <PremiumFeatureGate featureName="Saved history"><RecentActivityList /></PremiumFeatureGate>
 
         <SupervisorApprovalsPanel />
 

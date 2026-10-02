@@ -8,6 +8,9 @@ import AuthContext from '../components/auth/AuthContext';
 import BatchResultsTable from '../components/batch-simulation/BatchResultsTable';
 import { parseCSV } from '../utils/csvParser';
 import useTrialStatus from '../hooks/useTrialStatus';
+import { getCurrentUsage } from '@/utils/usageTracker';
+import { getPlanAccess } from '@/utils/planAccess';
+import SubscriptionLock from '@/components/shared/SubscriptionLock';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Upload, FileText, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
@@ -83,7 +86,7 @@ const UploadArea = ({ onFile, isProcessing }) => {
 };
 
 export default function BatchSimulation() {
-  const { user } = useContext(AuthContext);
+  const { user, refreshUser } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
   const [combinations, setCombinations] = useState([]);
   const [results, setResults] = useState([]);
@@ -91,7 +94,7 @@ export default function BatchSimulation() {
   const [error, setError] = useState('');
   const [uploadError, setUploadError] = useState('');
 
-  const canAccess = !user || trialStatus.isPro || trialStatus.trialDaysLeft > 0;
+  const canAccess = trialStatus.canSimulateCore;
 
   const handleCSVUpload = async (file) => {
     try {
@@ -107,7 +110,7 @@ export default function BatchSimulation() {
   };
 
   const runBatchSimulation = async () => {
-    if (combinations.length === 0) return;
+    if (isRunning || !trialStatus.canSimulateCore || combinations.length === 0) return;
     setIsRunning(true);
     setError('');
     setResults(combinations.map(c => ({ ...c, processing: true })));
@@ -115,7 +118,10 @@ export default function BatchSimulation() {
     const processed = [...combinations];
     let completed = 0;
 
+    const latest = await base44.auth.me();
+    const allowance = getPlanAccess(latest).hasCoreAccess ? Infinity : 3 - getCurrentUsage(latest).simulations;
     for (let i = 0; i < combinations.length; i++) {
+      if (i >= allowance) { setError('Monthly simulation limit reached. Subscribe to Core to run the remaining combinations.'); break; }
       try {
         const combo = combinations[i];
         const prompt = `Analyze the chemical interaction and safety risk of mixing these chemicals: ${combo.chemicals.join(', ')}.
@@ -145,33 +151,15 @@ Return a JSON response with:
       }
     }
 
+    if (refreshUser) await refreshUser();
     setIsRunning(false);
   };
 
-  if (user && !canAccess) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg border border-violet-100 p-8 text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
-            <FileText className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Pro Feature</h2>
-          <p className="text-slate-600 mb-6">Batch Simulations require a Pro subscription to run multiple combinations at once.</p>
-          <div className="space-y-3">
-            <Link to={createPageUrl('Pricing')} className="block w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all">
-              Upgrade to Pro
-            </Link>
-            <Link to="/" className="block w-full text-slate-500 hover:text-slate-700 text-sm py-2">
-              Back to Home
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (user && !canAccess && !isRunning && results.length === 0) return <SubscriptionLock featureName="Core simulations" limit />;
 
   return (
     <AuthGate featureName="Batch Simulation" featureDescription="Upload CSV files and run batch chemical simulations.">
+      {!isRunning && !canAccess && <SubscriptionLock featureName="Core simulations" limit />}
       <div className="max-w-6xl mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">

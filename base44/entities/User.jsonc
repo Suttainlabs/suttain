@@ -40,19 +40,28 @@
     "subscription_plan": {
       "type": "string",
       "enum": [
+        "free",
         "trial",
         "pro",
-        "enterprise"
+        "enterprise",
+        "starter",
+        "academic",
+        "lifetime"
       ],
       "default": "trial"
     },
     "subscription_status": {
       "type": "string",
       "enum": [
+        "none",
         "active",
         "canceled",
+        "canceling",
         "past_due",
-        "trialing"
+        "trialing",
+        "unpaid",
+        "incomplete",
+        "incomplete_expired"
       ],
       "default": "trialing"
     },
@@ -60,7 +69,8 @@
       "type": "string",
       "enum": [
         "monthly",
-        "yearly"
+        "yearly",
+        "lifetime"
       ]
     },
     "subscription_end_date": {
@@ -72,6 +82,34 @@
     },
     "stripe_subscription_id": {
       "type": "string"
+    },
+    "admin_granted_access": {
+      "type": "boolean",
+      "default": false
+    },
+    "usage_period_start": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "usage_simulations": {
+      "type": "number",
+      "default": 0
+    },
+    "usage_formulas": {
+      "type": "number",
+      "default": 0
+    },
+    "usage_scans": {
+      "type": "number",
+      "default": 0
+    },
+    "research_usage_period_start": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "usage_research_simulations": {
+      "type": "number",
+      "default": 0
     },
     "first_login": {
       "type": "boolean",

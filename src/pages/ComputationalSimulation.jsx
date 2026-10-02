@@ -211,7 +211,7 @@ export default function ComputationalSimulation() {
   const navigate = useNavigate();
   const [domain, setDomain] = useState("Chemistry");
 
-  const canAccess = !user || trialStatus.isPro || trialStatus.trialDaysLeft > 0;
+  const canAccess = trialStatus.canRunResearchSim;
 
   if (user && !canAccess) {
     return (

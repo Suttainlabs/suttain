@@ -92,7 +92,7 @@ export const PLANS_BY_PILLAR = {
       description: 'Explore research workflows with limited compute.',
       features: [
         '3 simulations per month',
-        'No DFT or MD runs',
+        'DFT and MD workflows included within the free allowance',
       ],
       free: true,
       cta: 'Current plan',
@@ -108,6 +108,7 @@ export const PLANS_BY_PILLAR = {
       description: 'Computational studio, simulations, and structural biology.',
       features: [
         'Unlimited DFT and MD simulations',
+        'Full Core access included',
         'Computational studio and job queue',
         'Structural biology suite',
         'Chemical comparison and SDS analyzer',
