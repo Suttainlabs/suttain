@@ -50,11 +50,6 @@ const APIPortal = lazy(() => import('./pages/APIPortal'));
 const ChemicalComparison = lazy(() => import('./pages/ChemicalComparison'));
 
 const ComputationalStudio = lazy(() => import('./pages/ComputationalStudio'));
-const ComputationalStudioProteins = lazy(() => import('./pages/ComputationalStudioProteins'));
-const ComputationalStudioSmallMolecules = lazy(() => import('./pages/ComputationalStudioSmallMolecules'));
-const ComputationalStudioMaterials = lazy(() => import('./pages/ComputationalStudioMaterials'));
-const HazardEngine = lazy(() => import('./pages/HazardEngine'));
-const ComputationalStudioJobs = lazy(() => import('./pages/ComputationalStudioJobs'));
 const ComputationalStudioSimulations = lazy(() => import('./pages/ComputationalStudioSimulations'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
@@ -161,7 +156,7 @@ const AuthenticatedApp = () => {
       <Route path="/Home" element={<Navigate to="/" replace />} />
       <Route path="/MolecularIntelligence" element={<Navigate to="/MoleculeAnalysis" replace />} />
       <Route path="/MoleculeExplorer" element={<Navigate to="/MoleculeAnalysis" replace />} />
-      <Route path="/StructuralBiology" element={<Navigate to="/ComputationalStudio/Proteins" replace />} />
+      <Route path="/StructuralBiology" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
       <Route path="/ComputationalSimulation" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
 
       {/* ── Public marketing pages (no login required) ── */}
@@ -208,11 +203,11 @@ const AuthenticatedApp = () => {
 
         <Route path="/ComputationalStudio" element={<LayoutWrapper currentPageName="ComputationalStudio"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudio /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio/Simulations" element={<LayoutWrapper currentPageName="ComputationalStudioSimulations"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioSimulations /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
-        <Route path="/ComputationalStudio/Proteins" element={<LayoutWrapper currentPageName="ComputationalStudioProteins"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioProteins /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
-        <Route path="/ComputationalStudio/SmallMolecules" element={<LayoutWrapper currentPageName="ComputationalStudioSmallMolecules"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioSmallMolecules /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
-        <Route path="/ComputationalStudio/Materials" element={<LayoutWrapper currentPageName="ComputationalStudioMaterials"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioMaterials /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
-        <Route path="/HazardEngine" element={<LayoutWrapper currentPageName="HazardEngine"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><HazardEngine /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
-        <Route path="/ComputationalStudio/Jobs" element={<LayoutWrapper currentPageName="ComputationalStudioJobs"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><ComputationalStudioJobs /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
+        <Route path="/ComputationalStudio/Proteins" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
+        <Route path="/ComputationalStudio/SmallMolecules" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
+        <Route path="/ComputationalStudio/Materials" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
+        <Route path="/HazardEngine" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
+        <Route path="/ComputationalStudio/Jobs" element={<Navigate to="/ComputationalStudio/Simulations" replace />} />
 
       </Route>
       <Route path="/BatchSimulation" element={<LayoutWrapper currentPageName="BatchSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><PageTransition><BatchSimulation /></PageTransition></Suspense></LayoutWrapper>} />
