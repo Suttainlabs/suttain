@@ -30,6 +30,6 @@ export default function DatabaseSearch({ onSelect }) {
     </form>
     {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
     {results?.length === 0 && <p className="mt-3 text-sm text-research-muted">No matches in {database === 'All' ? 'the integrated databases' : database}. Try another name or database.</p>}
-    <div className="mt-4 space-y-3">{results?.map((compound, index) => <DatabaseSearchResult key={`${compound.source_db}-${index}`} compound={compound} onSelect={onSelect} />)}</div>
+    <div className="mt-4 space-y-3">{results?.map((compound, index) => <DatabaseSearchResult key={`${compound.source_db}-${index}`} compound={compound} onSelect={compound => { setResults(null); onSelect(compound); }} />)}</div>
   </section>;
 }
