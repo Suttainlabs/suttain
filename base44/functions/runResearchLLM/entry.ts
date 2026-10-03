@@ -13,7 +13,7 @@ export default async function(req) {
     const denied = researchEntitlement(user);
     if (denied) return denied;
     const { operation, data = {} } = await req.json();
-    if (!['plainLanguageSummary', 'domainReliabilityInterpretation', 'sustainabilityProfile', 'relatedResearch', 'externalDatabaseSearch', 'externalDatabaseSummary'].includes(operation)) deny('Unknown operation', 400);
+    if (!['plainLanguageSummary', 'domainReliabilityInterpretation', 'relatedResearch', 'externalDatabaseSearch', 'externalDatabaseSummary'].includes(operation)) deny('Unknown operation', 400);
     if (!data || typeof data !== 'object' || JSON.stringify(data).length > 16000) deny('Research input is too large or invalid', 400);
     await reserveSecurityAction(base44, user, { channel: 'research', limit: 30, hourly: true });
     const call = (params) => base44.asServiceRole.integrations.Core.InvokeLLM(params);
@@ -58,34 +58,6 @@ Fraction Very Low (<50): ${(fractionPlddtVeryLow * 100).toFixed(1)}%
 Explain in exactly 2 sentences what these metrics tell us about which domains are reliable and what that means for understanding this protein's function and potential drug-binding sites.`;
         const interpRes = await call({ prompt });
         return Response.json(typeof interpRes === 'string' ? interpRes : JSON.stringify(interpRes));
-      }
-
-      case 'sustainabilityProfile': {
-        const moleculeName = (data.moleculeName || 'the molecule').toString().slice(0, 200);
-        const prompt = `You are an environmental chemist. Based on what is known about the molecule "${moleculeName}", estimate its sustainability profile.
-
-Return a JSON object with these exact keys:
-- biodegradability_percent: number 0-100 (estimated % biodegradability under aerobic conditions, e.g. 85)
-- persistence: string, one of "Low", "Moderate", "High" (environmental persistence)
-- aquatic_toxicity: string, one of "Low", "Moderate", "High" (estimated aquatic toxicity class)
-- carbon_footprint: string, one of "Low", "Moderate", "High" (relative carbon footprint of production/use)
-- data_available: boolean (true if real data exists, false if estimated)
-- notes: string (1 sentence note, or "Sustainability data limited for this compound. Manual review recommended." if data_available is false)`;
-        const resp = await call({
-          prompt,
-          response_json_schema: {
-            type: 'object',
-            properties: {
-              biodegradability_percent: { type: 'number' },
-              persistence: { type: 'string' },
-              aquatic_toxicity: { type: 'string' },
-              carbon_footprint: { type: 'string' },
-              data_available: { type: 'boolean' },
-              notes: { type: 'string' }
-            }
-          }
-        });
-        return Response.json(resp);
       }
 
       case 'relatedResearch': {

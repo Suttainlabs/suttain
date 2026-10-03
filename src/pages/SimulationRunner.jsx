@@ -8,7 +8,6 @@ import CustomForcefieldManager from "../components/simulation/CustomForcefieldMa
 import EnvironmentalParametersPanel from "../components/simulation/EnvironmentalParametersPanel";
 import ToolFeedbackToast from "../components/shared/ToolFeedbackToast";
 import PlainLanguageSummary from "../components/computational/PlainLanguageSummary";
-import SustainabilityProfileCard from "../components/computational/SustainabilityProfileCard";
 import RelatedResearch from "../components/computational/RelatedResearch";
 import SimulationHistoryPanel from "../components/computational/SimulationHistoryPanel";
 import SimulationPresets from "../components/computational/SimulationPresets";
@@ -592,14 +591,6 @@ Provide a focused, technical analysis. Return JSON with:
                   results={results}
                   simLabel={sim?.label}
                   domain={domain}
-                />
-              </div>
-
-              {/* Sustainability Profile */}
-              <div className="mt-5">
-                <SustainabilityProfileCard
-                  results={results}
-                  molecule={results?.inputs?.molecule || results?.inputs?.compound || results?.inputs?.ligand || results?.inputs?.system}
                 />
               </div>
 
