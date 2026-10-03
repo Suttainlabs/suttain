@@ -563,11 +563,11 @@ export default function SimulationRunner() {
         {/* History & Comparison, always visible */}
         <div className="mt-8">
           <PremiumFeatureGate featureName="Saved history"><SimulationHistoryPanel
-            currentResults={results}
+            currentResults={inputFiles || results}
             currentInputs={inputs}
             simTypeId={typeId}
             engine={selectedEngine}
-            onSelectResult={record => {setInputs(record.inputs || {});setEnvParams(record.environmental_params || {});setInputFiles(null);setSelectedEngine(record.engine);setResults({...record.result,execution_mode:record.execution_mode,provider_job_id:record.provider_job_id,inputs:record.inputs,environmental_params:record.environmental_params,simType:sim,engine:record.result?.engine || record.engine,domain,job_hash:record.job_hash});setActiveTab('analysis');}}
+            onSelectResult={record => {setInputs(record.inputs || {});setEnvParams(record.environmental_params || {});setInputFiles(null);setSelectedEngine(record.engine);setResults({...record.result,job_id:record.id,execution_mode:record.execution_mode,provider_job_id:record.provider_job_id,inputs:record.inputs,environmental_params:record.environmental_params,simType:sim,engine:record.result?.engine || record.engine,domain,job_hash:record.job_hash});setActiveTab('analysis');}}
           /></PremiumFeatureGate>
         </div>
 
@@ -664,9 +664,9 @@ export default function SimulationRunner() {
                       : <><Cpu className="w-4 h-4" /> {selectedEngine==='Rowan' ? 'Run on Rowan' : selectedCatalogue?.id==='pubchem' ? 'Look up compound' : `Prepare ${selectedEngine} workflow`}</>}
                   </Button>
 
-                  <Button
+                  {selectedCatalogue?.id!=='pubchem' && <Button
                     onClick={handleGenerateInputs}
-                    disabled={generatingInputs}
+                    disabled={isRunning}
                     variant="outline"
                     className="research-secondary h-auto"
                   >
@@ -674,7 +674,7 @@ export default function SimulationRunner() {
                       ? <Loader2 className="w-4 h-4 animate-spin" />
                       : <FileCode2 className="w-4 h-4" />}
                     Generate input files
-                  </Button>
+                  </Button>}
 
                   <p className="text-xs text-slate-400">
                     Rowan compute is capped at 25 Rowan credits per job. Only mapped molecular tasks run; other workflows report an unsupported state.
