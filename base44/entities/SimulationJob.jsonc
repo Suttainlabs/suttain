@@ -64,6 +64,19 @@
     "order": {
       "type": "number",
       "description": "Position in the queue"
+    },
+    "provider_job_id": {
+      "type": "string",
+      "description": "Receipt from a real compute provider (e.g. a Rowan workflow UUID). Empty for local/LLM-only runs."
+    },
+    "execution_mode": {
+      "type": "string",
+      "enum": [
+        "real",
+        "demonstration"
+      ],
+      "default": "demonstration",
+      "description": "Whether this job ran on a real compute provider (real) or is a local/LLM-prepared demonstration."
     }
   },
   "required": [
