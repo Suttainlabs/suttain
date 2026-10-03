@@ -1,18 +1,24 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 
-Deno.serve(async (req) => {
+export default async function(req) {
+    if (req.method !== 'POST') {
+        return Response.json({ error: 'Method not allowed' }, { status: 405, headers: { Allow: 'POST' } });
+    }
     try {
         const base44 = createClientFromRequest(req);
-        const user = await base44.auth.me();
+        const user = await base44.auth.me().catch(() => null);
 
         if (!user) {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { referral_code } = await req.json();
-
-        if (!referral_code) {
-            return Response.json({ error: 'No referral code provided' }, { status: 400 });
+        const body = await req.json().catch(() => null);
+        if (typeof body?.referral_code !== 'string' || body.referral_code.length > 10) {
+            return Response.json({ error: 'Invalid referral code' }, { status: 400 });
+        }
+        const referral_code = body.referral_code.trim().toUpperCase();
+        if (!/^[A-Z0-9]{1,10}$/.test(referral_code)) {
+            return Response.json({ error: 'Invalid referral code' }, { status: 400 });
         }
 
         // Don't allow self-referral
@@ -26,28 +32,28 @@ Deno.serve(async (req) => {
         }
 
         // Find the referring user
-        const allUsers = await base44.asServiceRole.entities.User.filter({ referral_code });
-        if (!allUsers || allUsers.length === 0) {
+        const allUsers = await base44.asServiceRole.entities.User.filter({ referral_code }, '-created_date', 2);
+        if (!allUsers || allUsers.length !== 1) {
             return Response.json({ error: 'Invalid referral code' }, { status: 404 });
         }
 
         const referrer = allUsers[0];
+        if (referrer.id === user.id) {
+            return Response.json({ error: 'Cannot use your own referral code' }, { status: 400 });
+        }
 
-        // Mark current user as referred
+        // A submitted code is attribution only, not proof of a genuine referral.
+        // Never award points from this caller-controlled flow, including for admins.
+        // Future rewards must use independently verified, deduplicated evidence.
         await base44.auth.updateMe({ referred_by: referral_code });
 
-        // Award 100 points to the referrer
-        const newPoints = (referrer.reward_points || 0) + 100;
-        await base44.asServiceRole.entities.User.update(referrer.id, { reward_points: newPoints });
-
-        console.log(`Referral processed: ${referrer.email} earned 100 points for referring ${user.email}`);
-
-        return Response.json({ 
-            success: true, 
-            message: 'Referral applied. Your referrer has been rewarded 100 points.' 
+        return Response.json({
+            success: true,
+            rewarded: false,
+            message: 'Referral code recorded. Automatic referral rewards are paused until verification is available.'
         });
     } catch (error) {
         console.error('processReferral error:', error.message);
-        return Response.json({ error: error.message }, { status: 500 });
+        return Response.json({ error: 'Unable to record the referral code.' }, { status: 500 });
     }
-});
+}

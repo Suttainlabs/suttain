@@ -44,15 +44,20 @@ export default function ReferralPanel({ user, onPointsUpdated }) {
     const handleApplyCode = async () => {
         if (!inputCode.trim()) return;
         setIsApplying(true);
-        const res = await processReferral({ referral_code: inputCode.trim().toUpperCase() });
-        if (res?.data?.success) {
-            toast.success('Referral code applied successfully.');
-            if (onPointsUpdated) onPointsUpdated();
-        } else {
-            toast.error(res?.data?.error || 'Invalid or already used code.');
+        try {
+            const res = await processReferral({ referral_code: inputCode.trim().toUpperCase() });
+            if (res?.data?.success) {
+                toast.success(res.data.message);
+                setInputCode('');
+                if (onPointsUpdated) onPointsUpdated();
+            } else {
+                toast.error(res?.data?.error || 'Invalid or already used code.');
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.error || 'Unable to apply the referral code.');
+        } finally {
+            setIsApplying(false);
         }
-        setIsApplying(false);
-        setInputCode('');
     };
 
     return (
@@ -60,12 +65,12 @@ export default function ReferralPanel({ user, onPointsUpdated }) {
             <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
                     <Gift className="w-4 h-4 text-violet-500" />
-                    Refer a Friend: Earn 100 Points
+                    Refer a friend
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <p className="text-sm text-slate-500">
-                    Share your unique link. When a friend signs up and uses your code, you earn 100 reward points.
+                    Share your unique link. Referral codes can still be recorded, but automatic rewards are paused until referral verification is available.
                 </p>
 
                 {/* Your referral link */}
