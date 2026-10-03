@@ -22,59 +22,17 @@ const COLOR_SCHEMES = [
   { label: "Residue", value: "amino" },
 ];
 
-// Load 3Dmol.js from CDN once
-let _3dmolLoaded = false;
-let _3dmolCallbacks = [];
-function load3Dmol(cb) {
-  if (window.$3Dmol) { cb(); return; }
-  _3dmolCallbacks.push(cb);
-  if (_3dmolLoaded) return;
-  _3dmolLoaded = true;
-  const script = document.createElement("script");
-  script.src = "https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.1.0/3Dmol-min.js";
-  script.onload = () => { _3dmolCallbacks.forEach(fn => fn()); _3dmolCallbacks = []; };
-  document.head.appendChild(script);
-}
-
-function looksLikeDescription(str) {
-  const words = str.trim().split(/\s+/);
-  return words.length > 3 && !str.includes('=') && !str.includes('(') && !str.includes('#') && !/^[A-Za-z0-9]{4}$/.test(str.trim());
-}
-
-async function fetchMoleculeData(identifier) {
-  const clean = (identifier || "").trim();
-  if (!clean) return null;
-  if (looksLikeDescription(clean)) return null;
-
-  if (/^[A-Za-z0-9]{4}$/.test(clean)) {
-    const url = `https://files.rcsb.org/download/${clean.toUpperCase()}.pdb`;
-    const res = await fetch(url);
-    if (res.ok) return { format: "pdb", data: await res.text(), source: `PDB: ${clean.toUpperCase()}` };
-  }
-
-  const nameUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(clean)}/SDF`;
-  try {
-    const res = await fetch(nameUrl);
-    if (res.ok) return { format: "sdf", data: await res.text(), source: `PubChem: ${clean}` };
-  } catch (_) {}
-
-  if (clean.includes("=") || clean.includes("(") || clean.includes("#")) {
-    const smilesUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(clean)}/SDF`;
-    try {
-      const res = await fetch(smilesUrl);
-      if (res.ok) return { format: "sdf", data: await res.text(), source: `SMILES: ${clean}` };
-    } catch (_) {}
-  }
-
-  return null;
-}
+import { resolveMolecule } from '@/components/simulation/resolveMolecule';
+import loadMolecularViewer from '@/components/simulation/loadMolecularViewer';
+import VisualizationContext from '@/components/simulation/VisualizationContext';
 
 // ── Single panel viewer ──────────────────────────────────────────────────────
-const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, label, accentColor = "fuchsia", onLoadedChange, onPdbLoaded, externalQuery }, ref) {
+const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, visualizationTarget, hasCommands, label, accentColor = "fuchsia", onLoadedChange, onPdbLoaded, externalQuery }, ref) {
   const containerRef = useRef(null);
   const internalViewerRef = useRef(null);
   const viewerRefFinal = ref || internalViewerRef;
-  const [query, setQuery] = useState(initialIdentifier || "");
+  const [query, setQuery] = useState(visualizationTarget?.smiles || visualizationTarget?.pdb_id || visualizationTarget?.name || initialIdentifier || "");
+  const requestRef = useRef(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [source, setSource] = useState(null);
@@ -115,16 +73,22 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
     viewer.render();
   };
 
-  const loadMolecule = async () => {
-    const identifier = query.trim();
-    if (!identifier || !containerRef.current) return;
-
+  const loadMolecule = async (value, target = null) => {
+    const identifier = typeof value === 'string' ? value.trim() : query.trim();
+    if (!containerRef.current) return;
+    const request = ++requestRef.current;
     setLoading(true);
     setError(null);
     setLoaded(false);
-
-    load3Dmol(async () => {
-      try {
+    setSource(null);
+    setSelectedAtom(null);
+    setSelectedBond(null);
+    prevHighlightRef.current = null;
+    onLoadedChange?.(false);
+    onPdbLoaded?.(null);
+    try {
+        await loadMolecularViewer();
+        if (request !== requestRef.current || !containerRef.current) return;
         if (internalViewerRef.current) {
           internalViewerRef.current.clear();
         } else {
@@ -134,20 +98,20 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
           });
         }
 
-        const molData = await fetchMoleculeData(identifier);
-
+        if (ref) ref.current = internalViewerRef.current;
+        const molData = await resolveMolecule(identifier, target);
+        if (request !== requestRef.current || !containerRef.current) return;
         if (!molData) {
-          if (looksLikeDescription(identifier)) {
-            setError(`"${identifier}" is a process/reaction type, not a single molecule.`);
-          } else {
-            setError(`Could not load "${identifier}". Try a PDB ID, drug name, or SMILES.`);
-          }
-          if (onLoadedChange) onLoadedChange(false);
-          setLoading(false);
+          setError('Enter a specific molecule, catalyst, reactant, SMILES, or PDB ID to display its structure.');
           return;
         }
-
-        internalViewerRef.current.addModel(molData.data, molData.format);
+        const model = internalViewerRef.current.addModel(molData.data, molData.format);
+        if (!model.selectedAtoms({}).length) {
+          internalViewerRef.current.clear();
+          setError('No readable atoms were found. Enter a specific molecule or a valid structure identifier.');
+          return;
+        }
+        internalViewerRef.current.resize();
         applyStyle(internalViewerRef.current);
         internalViewerRef.current.zoomTo();
         internalViewerRef.current.zoom(0.8);
@@ -155,7 +119,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
         setSource(molData.source);
         setLoaded(true);
         if (onLoadedChange) onLoadedChange(true);
-        if (onPdbLoaded) onPdbLoaded(/^[A-Za-z0-9]{4}$/.test(identifier) ? identifier.toUpperCase() : null);
+        if (onPdbLoaded) onPdbLoaded(molData.pdbId || null);
 
         // Set up atom click handler
         internalViewerRef.current.setClickable({}, true, (atom) => {
@@ -187,11 +151,10 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
           setSelectedBond(null);
         });
       } catch (e) {
-        setError("Failed to load molecule: " + e.message);
+        if (request === requestRef.current) setError(e.message || 'The structure could not be loaded. Try another identifier.');
       } finally {
-        setLoading(false);
+        if (request === requestRef.current) setLoading(false);
       }
-    });
   };
 
   useEffect(() => {
@@ -199,22 +162,29 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
   }, [style, colorScheme, loaded]);
 
   useEffect(() => {
-    if (initialIdentifier) loadMolecule();
-    return () => { internalViewerRef.current = null; };
-  }, []);
+    const identifier = visualizationTarget?.smiles || visualizationTarget?.pdb_id || visualizationTarget?.name || initialIdentifier || '';
+    setQuery(identifier);
+    if (identifier) loadMolecule(initialIdentifier || identifier, visualizationTarget);
+  }, [initialIdentifier, visualizationTarget?.smiles, visualizationTarget?.pdb_id, visualizationTarget?.name]);
 
   useEffect(() => {
-    if (externalQuery && externalQuery !== query) {
-      setQuery(externalQuery);
-    }
+    if (externalQuery) { setQuery(externalQuery); loadMolecule(externalQuery); }
   }, [externalQuery]);
 
-  // Trigger load when query changes via externalQuery
   useEffect(() => {
-    if (externalQuery && query === externalQuery) {
-      loadMolecule();
-    }
-  }, [query]);
+    const observer = new ResizeObserver(() => {
+      internalViewerRef.current?.resize();
+      internalViewerRef.current?.render();
+    });
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => {
+      ++requestRef.current;
+      observer.disconnect();
+      internalViewerRef.current?.clear();
+      internalViewerRef.current = null;
+      if (ref) ref.current = null;
+    };
+  }, []);
 
   const handleReset = () => {
     if (internalViewerRef.current) { internalViewerRef.current.zoomTo(); internalViewerRef.current.zoom(0.8); internalViewerRef.current.render(); }
@@ -242,7 +212,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
       <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 border-b border-slate-700">
         <span className="text-xs text-slate-400 font-semibold">Presets:</span>
         {[{ name: 'H₂O', smiles: 'O' }, { name: 'Ethanol', smiles: 'CCO' }, { name: 'Benzene', smiles: 'c1ccccc1' }].map(p => (
-          <button key={p.name} onClick={() => { setQuery(p.smiles); }} className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded border border-slate-600">{p.name}</button>
+          <button key={p.name} onClick={() => { setQuery(p.smiles); loadMolecule(p.smiles, { smiles: p.smiles }); }} className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded border border-slate-600">{p.name}</button>
         ))}
       </div>
 
@@ -306,12 +276,13 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
         )}
 
         {error && !loading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center z-10">
-            <div className="w-10 h-10 rounded-full bg-red-900/50 flex items-center justify-center mb-2">
-              <Eye className="w-5 h-5 text-red-400" />
+          <div role="status" className="absolute inset-0 flex flex-col items-center justify-center bg-research-card p-4 text-center z-10">
+            <div className="w-10 h-10 rounded-full bg-research-soft flex items-center justify-center mb-2">
+              <Eye className="w-5 h-5 text-research-accent" />
             </div>
-            <p className="text-xs text-red-300 font-medium mb-1">Visualization unavailable</p>
-            <p className="text-xs text-slate-400">{error}</p>
+            <p className="text-sm text-research-text font-medium mb-1">Choose a structure to explore</p>
+            <p className="text-sm text-research-muted">{error}</p>
+            {hasCommands && <p className="text-sm text-research-muted mt-2">Your visualization commands are available below for use with engine output files.</p>}
           </div>
         )}
 
@@ -357,7 +328,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, l
 });
 
 // ── Main MolViewer ────────────────────────────────────────────────────────────
-export default function MolViewer({ simType, inputs }) {
+export default function MolViewer({ simType, inputs, visualizationTarget, visualizationCommands }) {
   const [compareMode, setCompareMode] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [moleculeLoaded, setMoleculeLoaded] = useState(false);
@@ -373,7 +344,7 @@ export default function MolViewer({ simType, inputs }) {
     return (
       inputs.molecule || inputs.ligand || inputs.sequence ||
       inputs.compound || inputs.molecule_or_trajectory ||
-      inputs.material || inputs.system || null
+      inputs.material || inputs.system || inputs.reactants || inputs.surface || null
     );
   };
 
@@ -443,6 +414,8 @@ export default function MolViewer({ simType, inputs }) {
         </div>
       </div>
 
+      <VisualizationContext target={visualizationTarget} input={initialIdentifier} />
+
       {/* Visualization Controller */}
       {showController && (
         <div style={{ height: '300px' }} className="overflow-y-auto border-t border-slate-700">
@@ -465,7 +438,7 @@ export default function MolViewer({ simType, inputs }) {
       ) : compareMode ? (
         <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-slate-700" style={{ height: "520px" }}>
           <div className="flex-1 flex flex-col overflow-hidden">
-            <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} label="Molecule A" accentColor="fuchsia" onLoadedChange={setMoleculeLoaded} onPdbLoaded={setLoadedPdbId} />
+            <SinglePanel ref={viewerRef} initialIdentifier={initialIdentifier} visualizationTarget={visualizationTarget} hasCommands={!!visualizationCommands} label="Molecule A" accentColor="fuchsia" onLoadedChange={setMoleculeLoaded} onPdbLoaded={setLoadedPdbId} />
           </div>
           <div className="flex-1 flex flex-col overflow-hidden">
             <SinglePanel initialIdentifier={null} label="Molecule B" accentColor="cyan" />
@@ -477,6 +450,8 @@ export default function MolViewer({ simType, inputs }) {
             <SinglePanel
               ref={viewerRef}
               initialIdentifier={initialIdentifier}
+              visualizationTarget={visualizationTarget}
+              hasCommands={!!visualizationCommands}
               externalQuery={externalLoadQuery}
               accentColor="fuchsia"
               onLoadedChange={setMoleculeLoaded}
@@ -495,7 +470,7 @@ export default function MolViewer({ simType, inputs }) {
 
       <div className="px-4 py-2 bg-slate-800 border-t border-slate-700">
         <p className="text-xs text-slate-500">
-          🖱️ Rotate: left-click drag · Zoom: scroll · Pan: right-click drag · <span className="text-fuchsia-400">🔬 Inspector:</span> enable via <ScanSearch className="w-3 h-3 inline text-fuchsia-400 mx-0.5" /> then click any atom · Powered by <span className="text-fuchsia-400">3Dmol.js</span>
+          Rotate: left-click drag · Zoom: scroll · Pan: right-click drag · <span className="text-fuchsia-400">Inspector:</span> enable via <ScanSearch className="w-3 h-3 inline text-fuchsia-400 mx-0.5" /> then click any atom · Powered by <span className="text-fuchsia-400">3Dmol.js</span>
         </p>
       </div>
     </div>

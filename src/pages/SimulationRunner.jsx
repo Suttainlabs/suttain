@@ -570,7 +570,7 @@ Provide a focused, technical analysis. Return JSON with:
 
               {activeTab === "viz" && (
                 <div className="space-y-5">
-                  <MolViewer simType={results.simType?.id} inputs={results.inputs} />
+                  <MolViewer simType={results.simType?.id} inputs={results.inputs} visualizationTarget={results.visualization_target} visualizationCommands={results.visualization_commands} />
                   {results.visualization_commands && (
                     <Card className="border border-research-border bg-research-card shadow-none">
                       <CardContent className="p-6">

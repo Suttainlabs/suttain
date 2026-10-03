@@ -1244,7 +1244,7 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
         const simulationConfig = data.simulationConfig || {};
         const moleculeInfo = (data.moleculeInfo || '').toString();
         const result = await call({
-          prompt: `Prepare an advanced quantum chemistry, QM/MM, materials or molecular dynamics workflow appropriate to ${selectedEngine} and the specified configuration. Do not claim the engine has executed: this operation prepares an analysis and input script, not a numerical calculation. Do not invent calculated energies, barriers or spectra; leave numerical key_values empty unless supplied by the user.\n\nMolecule: ${moleculeInfo}\nConfiguration: ${JSON.stringify(simulationConfig).slice(0, 2000)}\n\nProvide a focused, technical analysis. Return JSON with:\n1. system_overview: Brief 2-3 sentence description\n2. computational_approach: Method justification (3-4 sentences)\n3. predicted_results: { summary: string, key_values: [{property, value, unit, interpretation}] }, describe expected qualitative outputs without inventing numerical results\n4. scientific_interpretation: What results mean (3-4 sentences)\n5. bash_script: Complete, ready-to-run ${selectedEngine} input file or bash script with comments\n6. visualization_commands: Visualization commands/scripts\n7. limitations: 2-3 sentence limitation note\n8. next_steps: array of 3 concise next steps\n9. references: array of 2-3 real paper citations`,
+          prompt: `Prepare an advanced quantum chemistry, QM/MM, materials or molecular dynamics workflow appropriate to ${selectedEngine} and the specified configuration. Do not claim the engine has executed: this operation prepares an analysis and input script, not a numerical calculation. Do not invent calculated energies, barriers or spectra; leave numerical key_values empty unless supplied by the user.\n\nMolecule: ${moleculeInfo}\nConfiguration: ${JSON.stringify(simulationConfig).slice(0, 2000)}\n\nProvide a focused, technical analysis. Return JSON with:\n1. system_overview: Brief 2-3 sentence description\n2. computational_approach: Method justification (3-4 sentences)\n3. predicted_results: { summary: string, key_values: [{property, value, unit, interpretation}] }, describe expected qualitative outputs without inventing numerical results\n4. scientific_interpretation: What results mean (3-4 sentences)\n5. bash_script: Complete, ready-to-run ${selectedEngine} input file or bash script with comments\n6. visualization_commands: Visualization commands/scripts\n6a. visualization_target: { smiles?: string, pdb_id?: string, name?: string, reason: string }. Preserve any explicit input SMILES or PDB ID exactly. For a process or reaction, identify a real specific catalyst, key reactant, product or representative molecule that a structure database can resolve. Clearly state in reason when this is only a representative example and not the user's specified geometry or a computed intermediate. Never invent PDB IDs, atomic coordinates or a structure for an unspecified complex. If no defensible molecule can be identified, omit identifiers and explain why in reason.\n7. limitations: 2-3 sentence limitation note\n8. next_steps: array of 3 concise next steps\n9. references: array of 2-3 real paper citations`,
           response_json_schema: {
             type: 'object',
             properties: {
@@ -1259,10 +1259,14 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
               scientific_interpretation: { type: 'string' },
               bash_script: { type: 'string' },
               visualization_commands: { type: 'string' },
+              visualization_target: { type: 'object', properties: {
+                smiles: { type: 'string' }, pdb_id: { type: 'string' }, name: { type: 'string' }, reason: { type: 'string' }
+              }, required: ['reason'] },
               limitations: { type: 'string' },
               next_steps: { type: 'array', items: { type: 'string' } },
               references: { type: 'array', items: { type: 'string' } }
-            }
+            },
+            required: ['visualization_target']
           }
         });
         return Response.json(result);
