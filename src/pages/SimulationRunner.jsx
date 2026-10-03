@@ -42,6 +42,10 @@ import LocalEngineResults from '@/components/simulation/LocalEngineResults';
 import SourceLookupResults from '@/components/simulation/SourceLookupResults';
 import { runPubchemLookup } from '@/functions/runPubchemLookup';
 import environmentDefaults from '@/components/simulation/environmentDefaults';
+import SimulationConfigRail from '@/components/simulation/SimulationConfigRail';
+import SimulationResultsRail from '@/components/simulation/SimulationResultsRail';
+import SimulationAdvancedSettings from '@/components/simulation/SimulationAdvancedSettings';
+import SimulationRunActions from '@/components/simulation/SimulationRunActions';
 
 export default function SimulationRunner() {
   const { user, refreshUser } = useContext(AuthContext);
@@ -56,6 +60,7 @@ export default function SimulationRunner() {
 
   const [selectedEngine, setSelectedEngine] = useState(sim?.id === 'molecular_dynamics' ? 'OpenMM' : 'Rowan');
   const [autoFallback, setAutoFallback] = useState(true);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [lookupBusy, setLookupBusy] = useState(false);
   const registry = useEngineRegistry();
   const selectedCatalogue = registry.data?.engines?.find(e => e.label === selectedEngine);
@@ -338,9 +343,15 @@ export default function SimulationRunner() {
         pointsToAward={50}
       />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 pb-56 lg:pb-10">
         <SimulationWorkflowHeader simulation={sim} domain={domain} engine={selectedEngine} />
-
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-6 items-start">
+          <SimulationConfigRail sim={sim} engine={selectedEngine} catalogue={selectedCatalogue} inputs={inputs} onChange={handleInputChange} onEngine={handleEngineSelect}
+            fields={sim.fields.filter(field=>isMdEngine ? !['force_field','temperature','simulation_time','system'].includes(field.key) : selectedEngine==='Rowan' && ['dft','quantum_mechanics'].includes(typeId) ? !['functional','method','task','basis_set','properties'].includes(field.key) : !selectedCatalogue || selectedEngine==='Rowan' || !['functional','method','task','basis_set','properties','theory_level','property','analysis_type'].includes(field.key))}
+            onCompound={handlePubChemSelect} onPreset={handlePresetSelect} onUpload={openFileAutoFill} onDraw={openDrawer} uploadKeys={FILE_UPLOAD_KEYS} drawKeys={DRAWABLE_KEYS}
+            onAdvanced={()=>setAdvancedOpen(true)} summary={['dft','quantum_mechanics'].includes(typeId)?`Charge: ${inputs.charge ?? 'reference'} · Spin: ${inputs.multiplicity ?? 1} · Solvent: ${effectiveEnvironment.solvent || 'none'}`:`${effectiveEnvironment.temperature ?? '—'} K · ${effectiveEnvironment.pressure ?? '—'} bar · Environment & notes`}
+            actions={{engine:selectedEngine,isLookup:selectedCatalogue?.id==='pubchem',isRunning,generatingInputs,onRun:handleRun,onGenerate:handleGenerateInputs,isMdEngine}}/>
+          <SimulationResultsRail hasOutput={!!(results || inputFiles)} isRunning={isRunning} engine={selectedEngine}>
         {(rowan.error || rowan.job?.status === 'failed') && <div role="alert" className="mb-6 rounded-xl border border-destructive bg-card p-5 text-destructive">{rowan.error || rowan.job.error}</div>}
         {isRunning && rowan.job?.provider_job_id && <div role="status" className="mb-6 rounded-xl border border-research-border bg-research-card p-5"><p className="research-label">Real Rowan compute run · {rowan.job.status}</p><p className="font-mono text-xs break-all mt-2">{rowan.job.provider_job_id}</p><p className="text-sm text-research-muted mt-2">Tracking completion notifications with polling fallback. You can return to this workflow later.</p></div>}
         {results?.execution_mode === 'real' && results.result_kind!=='lookup' && <RowanResults result={results} onReset={reset} onRun={handleRun} isRunning={isRunning}/>}
@@ -552,18 +563,8 @@ export default function SimulationRunner() {
           )}
         </AnimatePresence>
 
-        {results && (
-          <section className="mt-6 rounded-xl border border-research-border bg-research-card p-5">
-            <SimulationEngineSelector engines={sim.engines} selected={selectedEngine} onSelect={handleEngineSelect} tooltips={ENGINE_TOOLTIPS} simType={typeId}/>
-            <EngineParameterFields engine={selectedCatalogue} inputs={inputs} onChange={handleInputChange} simType={typeId}/>
-            <Button onClick={selectedCatalogue?.id==='pubchem' ? handleRun : handleGenerateInputs} disabled={isRunning} variant="outline" className="research-secondary h-auto">
-              {generatingInputs ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileCode2 className="w-4 h-4" />}
-              {generatingInputs ? 'Generating input files…' : selectedCatalogue?.id==='pubchem' ? 'Look up compound' : 'Generate input files'}
-            </Button>
-            {inputGenerationError && <p role="alert" className="mt-5 text-sm text-destructive">{inputGenerationError}</p>}
-            {inputFiles && <div className="mt-5"><SimulationInputFiles result={inputFiles} simTypeLabel={sim.label} linkedJobId={inputFiles.job_id} /><ForcefieldAttachment env={envParams} /></div>}
-          </section>
-        )}
+        {inputGenerationError && <p role="alert" className="rounded-xl border border-destructive bg-research-card p-5 text-sm text-destructive">{inputGenerationError}</p>}
+        {inputFiles && <section className="rounded-xl border border-research-border bg-research-card p-5"><SimulationInputFiles result={inputFiles} simTypeLabel={sim.label} linkedJobId={inputFiles.job_id}/><ForcefieldAttachment env={envParams}/></section>}
 
         {/* History & Comparison, always visible */}
         <div className="mt-8">
@@ -576,146 +577,14 @@ export default function SimulationRunner() {
           /></PremiumFeatureGate>
         </div>
 
-        {/* Config Form */}
-        {!results && (
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-            {/* Simulation Presets */}
-            <SimulationPresets onSelectPreset={handlePresetSelect} />
-
-            <Card className="border border-research-border bg-research-card shadow-none rounded-xl">
-              <CardContent className="p-5 sm:p-8">
-                {/* PubChem Auto-fill */}
-                <DatabaseSearch onSelect={handlePubChemSelect} />
-
-                <SimulationEngineSelector engines={sim.engines} selected={selectedEngine} onSelect={handleEngineSelect} tooltips={ENGINE_TOOLTIPS} simType={typeId} />
-                <EngineParameterFields engine={selectedCatalogue} inputs={inputs} onChange={handleInputChange} simType={typeId}/>
-                {selectedEngine==='Rowan' && <label className="flex items-center gap-3 mb-7"><input type="checkbox" checked={autoFallback} onChange={e=>setAutoFallback(e.target.checked)}/><span>Automatically prepare compatible local inputs if Rowan credits run out</span></label>}
-
-                {/* Custom Forcefield picker, MD only */}
-                {typeId === "molecular_dynamics" && !isMdEngine && (
-                  <div className="mb-7 p-4 bg-teal-50 border border-teal-200 rounded-2xl">
-                    <div className="flex items-center justify-between flex-wrap gap-2">
-                      <div>
-                        <p className="text-sm font-semibold text-teal-800">Custom forcefield parameters</p>
-                        {customForcefield ? (
-                          <p className="text-xs text-teal-600 mt-0.5">
-                            Using: <span className="font-bold">{customForcefield.name}</span>
-                            <span className="ml-1 text-teal-500">({customForcefield.base_forcefield})</span>
-                          </p>
-                        ) : (
-                          <p className="text-xs text-teal-600 mt-0.5">Optionally load saved LJ, bond, angle & dihedral overrides</p>
-                        )}
-                      </div>
-                      <div className="flex gap-2">
-                        {customForcefield && (
-                          <button onClick={() => { setCustomForcefield(null); setEnvParams(prev=>({...environmentDefaults(selectedEngine),...prev,forcefield:'',custom_forcefield:null,custom_forcefield_id:'',forcefield_file_uri:'',forcefield_file_name:''})); }}
-                            className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors">
-                            Remove
-                          </button>
-                        )}
-                        <Button size="sm" variant="outline" onClick={() => setFfManagerOpen(true)}
-                          className="gap-1.5 border-teal-300 text-teal-700 hover:bg-teal-100 text-xs">
-                          <SlidersHorizontal className="w-3.5 h-3.5" />
-                          {customForcefield ? "Change / edit" : "Load custom forcefield"}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <section className="mb-8">
-                  <p className="research-label mb-2">02 / System configuration</p>
-                  <h2 className="!text-lg mb-5">Calculation parameters</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                    {sim.fields.filter(field=>isMdEngine ? !['force_field','temperature','simulation_time','system'].includes(field.key) : selectedEngine==='Rowan' && ['dft','quantum_mechanics'].includes(typeId) ? !['functional','method','task','basis_set','properties'].includes(field.key) : !selectedCatalogue || selectedEngine==='Rowan' || !['functional','method','task','basis_set','properties','theory_level','property','analysis_type'].includes(field.key)).map(field => (
-                      <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]}
-                        onChange={value => handleInputChange(field.key, value)}
-                        canUpload={FILE_UPLOAD_KEYS.includes(field.key)} canDraw={DRAWABLE_KEYS.includes(field.key)}
-                        onUpload={() => openFileAutoFill(field.key)} onDraw={() => openDrawer(field.key)} />
-                    ))}
-                    {['dft','quantum_mechanics'].includes(typeId) && <>
-                      <div><label htmlFor="rowan-charge" className="block mb-2">Molecular charge (XYZ / SMILES override)</label><input id="rowan-charge" type="number" min="-10" max="10" step="1" placeholder="Use reference charge" value={inputs.charge ?? ''} onChange={e => handleInputChange('charge',e.target.value === '' ? undefined : Number(e.target.value))} className="simulation-control"/></div>
-                      <div><label htmlFor="rowan-spin" className="block mb-2">Spin multiplicity</label><input id="rowan-spin" type="number" min="1" max="7" step="1" value={inputs.multiplicity ?? 1} onChange={e => handleInputChange('multiplicity',Number(e.target.value))} className="simulation-control"/></div>
-                      <p className="md:col-span-2 text-sm text-research-muted">SMILES and compound names use a PubChem 3D reference conformer; upload XYZ for unindexed molecules. Rowan executes mapped methods with gpu4pyscf (or Psi4); GFN2-xTB uses xtb. Selected legacy engines remain input-file targets, not the actual compute engine.</p>
-                    </>}
-                    <div className="min-w-0 md:col-span-2">
-                      <label htmlFor="simulation-notes" className="block text-sm font-medium text-research-text mb-2">Additional notes (optional)</label>
-                      <input id="simulation-notes" type="text" value={inputs.notes ?? ''}
-                        onChange={event => handleInputChange('notes', event.target.value)}
-                        placeholder="Any special requirements or context..." className="simulation-control" />
-                    </div>
-                  </div>
-                </section>
-
-                {/* Environmental Parameters */}
-                <div className="mb-7">
-                  <EnvironmentalParametersPanel
-                    params={envParams}
-                    onChange={setEnvParams}
-                    simType={typeId}
-                    engine={selectedEngine}
-                  />
-                </div>
-
-                {['dft','quantum_mechanics'].includes(typeId) && <p className="text-sm text-research-muted mb-5">Rowan applies implicit solvent only; temperature, pressure, pH, ionic strength and classical forcefields remain saved context and do not control this quantum calculation.</p>}
-                {/* Run button */}
-                <div className="flex items-center gap-3 flex-wrap border-t border-research-border pt-6">
-                  <Button
-                    onClick={handleRun}
-                    disabled={isRunning}
-                    className="research-primary h-auto shadow-none"
-                  >
-                    {isRunning
-                      ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
-                      : <><Cpu className="w-4 h-4" /> {selectedEngine==='Rowan' ? 'Run on Rowan' : selectedCatalogue?.id==='pubchem' ? 'Look up compound' : `Prepare ${selectedEngine} workflow`}</>}
-                  </Button>
-
-                  {selectedCatalogue?.id!=='pubchem' && <Button
-                    onClick={handleGenerateInputs}
-                    disabled={isRunning}
-                    variant="outline"
-                    className="research-secondary h-auto"
-                  >
-                    {generatingInputs
-                      ? <Loader2 className="w-4 h-4 animate-spin" />
-                      : <FileCode2 className="w-4 h-4" />}
-                    Generate input files
-                  </Button>}
-
-                  <p className="text-xs text-slate-400">
-                    {isMdEngine ? 'Local MD package only; hosted MD requires your compute service URL and authentication details.' : 'Rowan compute is capped at 25 Rowan credits per job. Only mapped molecular tasks run; other workflows report an unsupported state.'}
-                  </p>
-                </div>
-
-                {inputGenerationError && <p role="alert" className="mt-5 text-sm text-destructive">{inputGenerationError}</p>}
-                {/* Generated Input Files Panel */}
-                {inputFiles && (
-                  <div className="mt-5">
-                    <SimulationInputFiles result={inputFiles} simTypeLabel={sim.label} />
-                    <ForcefieldAttachment env={envParams} />
-                  </div>
-                )}
-
-                {isRunning && (
-                  <div className="mt-5 bg-violet-50 border-violet-200 border rounded-2xl p-4 flex items-center gap-3">
-                    <Loader2 className="w-5 h-5 text-violet-600 animate-spin flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-semibold text-violet-800">
-                        Submitting or tracking {sim.label}…
-                      </p>
-                      <p className="text-xs text-violet-500">
-                        Resolving 3D input and waiting for real Rowan output. No simulated values are generated.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
+          </SimulationResultsRail>
+        </div>
+        <SimulationAdvancedSettings open={advancedOpen} onOpenChange={setAdvancedOpen} sim={sim} engine={selectedEngine} catalogue={selectedCatalogue} inputs={inputs} onChange={handleInputChange} environment={envParams} onEnvironment={setEnvParams} autoFallback={autoFallback} onFallback={setAutoFallback} customForcefield={customForcefield} onForcefield={()=>setFfManagerOpen(true)} isMdEngine={isMdEngine}
+          onRemoveForcefield={()=>{setCustomForcefield(null);setEnvParams(prev=>({...environmentDefaults(selectedEngine),...prev,forcefield:'',custom_forcefield:null,custom_forcefield_id:'',forcefield_file_uri:'',forcefield_file_name:''}));}}/>
 
       </div>
 
+      <div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-research-card border-t border-research-border px-4 pb-[env(safe-area-inset-bottom)]"><SimulationRunActions engine={selectedEngine} isLookup={selectedCatalogue?.id==='pubchem'} isRunning={isRunning} generatingInputs={generatingInputs} onRun={handleRun} onGenerate={handleGenerateInputs} isMdEngine={isMdEngine}/></div>
       <input
         ref={fileAutoFillRef}
         type="file"

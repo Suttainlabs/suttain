@@ -663,6 +663,13 @@
   .screenshot-home .home-feature p, .screenshot-home .home-workflow-card p { font-size: 16px; }
 }
 
+/* Compact configuration rail: keep core inputs readable at narrow desktop widths. */
+@media (min-width: 1024px) {
+  .simulation-workspace aside .sm\:grid-cols-2,
+  .simulation-workspace aside .md\:grid-cols-2 { grid-template-columns: minmax(0, 1fr); }
+  .simulation-workspace aside .sm\:col-span-2 { grid-column: 1 / -1; }
+}
+
 /* Darken slate-400/500 for WCAG 2.1 text contrast */
 .text-slate-400 { color: #64748B; }
 .text-slate-500 { color: #475569; }
