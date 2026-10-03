@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { Resend } from 'npm:resend@2.0.0';
+import { reserveIpAction } from '../../shared/ipRateLimit.ts';
 
 function escapeHtml(str) {
   if (str == null) return '';
@@ -14,11 +15,13 @@ function escapeHtml(str) {
 export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
+    // Count all attempts, including missing/invalid tokens, before any approval lookup.
+    await reserveIpAction(base44, req, { channel: 'supervisor_approval_attempt', limit: 30, hourly: true });
     const body = await req.json();
     const { token, action, reason } = body || {};
 
-    if (!token) {
-      return Response.json({ error: 'Missing approval token' }, { status: 400 });
+    if (typeof token !== 'string' || !token || token.length > 200) {
+      return Response.json({ error: 'Missing or invalid approval token' }, { status: 400 });
     }
 
     // Public read by token, service role bypasses RLS (no login required for the supervisor)
@@ -128,6 +131,9 @@ export default async function (req: Request): Promise<Response> {
     });
   } catch (error) {
     console.error('resolveSupervisorApproval error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, {
+      status: error.status || 500,
+      headers: error.status === 429 ? { 'Retry-After': String(3600 - (Math.floor(Date.now() / 1000) % 3600)) } : {}
+    });
   }
 }

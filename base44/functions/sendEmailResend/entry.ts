@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { Resend } from 'npm:resend@2.0.0';
 import { reserveIpAction } from '../../shared/ipRateLimit.ts';
+import { requireUser } from '../../shared/securityGuards.ts';
 const ADMIN_EMAIL = Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com';
 
 function escapeHtml(str) {
@@ -412,21 +413,13 @@ const getSafetyAlertHtml = (userName, alertData) => `
 export default async function(req) {
     try {
         const base44 = createClientFromRequest(req);
+        // Every email operation requires a verified app session before parsing or sending.
+        const user = await requireUser(base44);
         const { type, to, subject, html, text, from, data } = await req.json();
 
-        // Public types stay pinned to ADMIN_EMAIL and share one daily IP budget.
-        const isPublicType = type === 'demo_request' || type === 'contact_form';
-        if (isPublicType) {
+        // Contact notifications remain pinned to ADMIN_EMAIL with the existing daily budget.
+        if (type === 'demo_request' || type === 'contact_form') {
             await reserveIpAction(base44, req, { channel: 'public_contact_email', limit: 5 });
-        }
-
-        // All other types require authentication
-        let user = null;
-        if (!isPublicType) {
-            user = await base44.auth.me();
-            if (!user) {
-                return Response.json({ error: 'Unauthorized' }, { status: 401 });
-            }
         }
 
         const resend = new Resend(Deno.env.get('RESEND_API_KEY'));

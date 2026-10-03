@@ -82,6 +82,10 @@ export default function FAQPage() {
     setError('');
 
     try {
+      if (!(await base44.auth.isAuthenticated())) {
+        setError(<>Please <a className="underline" href={`/login?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>sign in</a> before sending a message.</>);
+        return;
+      }
       await base44.entities.ContactSubmission.create({
         name: formData.name,
         email: formData.email,
