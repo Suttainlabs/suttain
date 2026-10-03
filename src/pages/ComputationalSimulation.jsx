@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Cpu, FlaskConical, Dna, Zap, Atom,
-  Microscope, Beaker, Activity, Eye, ArrowRight
+  Microscope, Beaker, Activity, ArrowRight
 } from "lucide-react";
 
 export const SIM_TYPES = [
@@ -106,22 +106,7 @@ export const SIM_TYPES = [
       { key: "property", label: "Property to Calculate", type: "select", options: ["Adsorption isotherm","Henry constant","Selectivity","Heat of adsorption","Radial distribution function","Free energy","Phase diagram"], default: "Adsorption isotherm" },
     ]
   },
-  {
-    id: "visualization",
-    label: "Visualization & Analysis",
-    icon: Eye,
-    color: "from-fuchsia-500 to-pink-600",
-    bgColor: "bg-fuchsia-50",
-    borderColor: "border-fuchsia-200",
-    engines: ["VMD", "PyMOL", "Avogadro", "VESTA", "ChimeraX"],
-    description: "Molecular visualization, trajectory analysis, electrostatic potential maps, 3D rendering",
-    fields: [
-      { key: "molecule_or_trajectory", label: "Molecule / Trajectory / PDB", placeholder: "e.g. protein.pdb, trajectory.xtc, C6H6 benzene" },
-      { key: "viz_type", label: "Visualization Type", type: "select", options: ["Electrostatic potential map","Orbital density","RMSD plot","Ramachandran plot","Surface representation","Cartoon/ribbon","Space-filling model","Electron density map"], default: "Electrostatic potential map" },
-      { key: "tool_preference", label: "Preferred Tool", type: "select", options: ["VMD","PyMOL","Avogadro","VESTA","ChimeraX"], default: "VMD" },
-      { key: "output_format", label: "Output Format", type: "select", options: ["PNG image","High-res TIFF","Movie (MP4)","Interactive session","Script only","PDF report"], default: "PNG image" },
-    ]
-  },
+
   {
     id: "surface_chemistry",
     label: "Surface Chemistry & Catalysis",
@@ -189,11 +174,11 @@ export const SIM_TYPES = [
 ];
 
 export const DOMAIN_SIM_MAP = {
-  Chemistry: ['dft', 'quantum_mechanics', 'monte_carlo', 'surface_chemistry', 'electron_spectroscopy', 'visualization'],
-  'Quantum Chemistry': ['quantum_mechanics', 'electron_spectroscopy', 'dft', 'surface_chemistry', 'monte_carlo', 'visualization'],
-  'Materials Science': ['materials', 'dft', 'monte_carlo', 'surface_chemistry', 'electron_spectroscopy', 'machine_learning_pot', 'visualization'],
-  Biochemistry: ['molecular_dynamics', 'biomolecular_dynamics', 'machine_learning_pot', 'quantum_mechanics', 'visualization'],
-  Biophysics: ['biomolecular_dynamics', 'molecular_dynamics', 'machine_learning_pot', 'quantum_mechanics', 'electron_spectroscopy', 'visualization'],
+  Chemistry: ['dft', 'quantum_mechanics', 'monte_carlo', 'surface_chemistry', 'electron_spectroscopy'],
+  'Quantum Chemistry': ['quantum_mechanics', 'electron_spectroscopy', 'dft', 'surface_chemistry', 'monte_carlo'],
+  'Materials Science': ['materials', 'dft', 'monte_carlo', 'surface_chemistry', 'electron_spectroscopy', 'machine_learning_pot'],
+  Biochemistry: ['molecular_dynamics', 'biomolecular_dynamics', 'machine_learning_pot', 'quantum_mechanics'],
+  Biophysics: ['biomolecular_dynamics', 'molecular_dynamics', 'machine_learning_pot', 'quantum_mechanics', 'electron_spectroscopy'],
 };
 export const DOMAIN_TAGS = ['Chemistry', 'Quantum Chemistry', 'Materials Science', 'Biochemistry', 'Biophysics'];
 export const DOMAIN_COLORS = Object.fromEntries(DOMAIN_TAGS.map(domain => [domain, 'bg-primary text-primary-foreground border-primary']));
