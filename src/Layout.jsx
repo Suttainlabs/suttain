@@ -52,7 +52,7 @@ const PAGE_META_DESCRIPTIONS = {
   ResearchPortal: 'Suttain Research Portal: Atomistic Simulation and Drug Design with source-backed molecular inputs, target exploration, and reviewable research workflows.',
   ResearchDashboard: 'Your Suttain research dashboard, monitor activity, manage saved molecular formulas, and access computational chemistry tools.',
   ResearchPortal: 'Explore Atomistic Simulation and Drug Design in Suttain Research, with scientific source records and clear workflow limitations.',
-  APIPortal: 'Suttain Research API documentation, REST endpoints for compound lookup, hazard scoring, interaction checking, and formula generation. Python and JavaScript SDKs available.',
+  APIPortal: 'Suttain API documentation: supported research engines, request parameters, workflow examples, and software citations.',
   ChemicalDashboard: 'Comprehensive chemical dashboard, view and manage your chemical database with detailed properties, safety data, and regulatory information.',
   ChemicalComparison: 'Compare any two chemical compounds side-by-side. Contrast molecular structure, physical properties, toxicity, and environmental data with delta highlighting.',
   ChemicalLibrary: 'Browse and manage your chemical library. Search by name, CAS, formula, or safety level. Import and export chemical data.',
