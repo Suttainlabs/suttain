@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 const defaultMeta = {
   title: 'Suttain - Chemical Safety & Formula Generator',
   description: 'Create safe skincare, cleaning products & formulas with AI. Test chemical interactions, scan product barcodes, and get instant safety analysis. 14-day free trial for DIY creators & businesses.',
-  keywords: 'chemical safety, formula generator, chemical simulator, skincare formulation, cleaning products, ingredient analysis, product safety, chemical reactions, AI formulation, sustainable products, cosmetic formulation, household cleaners, DIY skincare, chemical database',
+  keywords: 'chemical safety, formula generator, chemical analysis, skincare formulation, cleaning products, ingredient analysis, product safety, chemical reactions, AI formulation, sustainable products, cosmetic formulation, household cleaners, DIY skincare, chemical database',
   image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/804622166_PNG1.png',
   url: 'https://suttain.com',
   type: 'website',
@@ -119,7 +119,7 @@ export default function SEOHead({
     const webAppSchema = {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "Suttain Chemical Simulator",
+      "name": "Suttain Chemical Analysis",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "Web Browser",
       "offers": {
@@ -185,12 +185,12 @@ export const pageSEO = {
   home: {
     title: null, // Uses default
     description: 'Create safe skincare, cleaning products & formulas with AI. Test chemical interactions, scan product barcodes, and get instant safety analysis. 14-day free trial for DIY creators & businesses.',
-    keywords: 'chemical safety, formula generator, chemical simulator, skincare formulation, cleaning products DIY, ingredient safety, product formulation software'
+    keywords: 'chemical safety, formula generator, chemical analysis, skincare formulation, cleaning products DIY, ingredient safety, product formulation software'
   },
   simulator: {
-    title: 'Chemical Safety Simulator',
-    description: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations. Chemical interaction simulator with 14-day free trial.',
-    keywords: 'chemical simulator, chemical reactions, hazard analysis, chemical safety testing, mixing chemicals safely, chemical compatibility'
+    title: 'Chemical Analysis',
+    description: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations. Chemical analysis with 14-day free trial.',
+    keywords: 'chemical analysis, chemical reactions, hazard analysis, chemical safety testing, mixing chemicals safely, chemical compatibility'
   },
   generator: {
     title: 'Formula Generator',

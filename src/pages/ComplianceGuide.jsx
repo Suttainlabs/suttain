@@ -32,7 +32,7 @@ const NOT_COVERED = [
 ];
 
 const WORKFLOW = [
-  'Identify your compound: Use the Chemical Simulator or API to look up any compound by name, SMILES, InChI, or CAS number.',
+  'Identify your compound: Use the Chemical Analysis or API to look up any compound by name, SMILES, InChI, or CAS number.',
   'Check hazard classification: Review GHS signal words, H-statements, and pictograms. Use the SDS Analyzer to extract data from existing Safety Data Sheets.',
   'Cross-reference regulatory databases: Our tools surface EPA CompTox, ECHA/REACH, and FDA data where available, all with source citations.',
   'Export citation-ready reports: Download results in CSV, JSON, or PDF with full source attribution for your compliance file.',

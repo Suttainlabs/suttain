@@ -871,12 +871,12 @@ export default function Simulator() {
   const isBusinessMode = persona === 'business';
 
   return (
-    <AuthGate featureName="Chemical Simulator" featureDescription="Test chemical interactions safely with our advanced simulation engine. Start your 14-day free trial to save simulations and access the full database.">
+    <AuthGate featureName="Chemical Analysis" featureDescription="Test chemical interactions safely with our advanced simulation engine. Start your 14-day free trial to save simulations and access the full database.">
       <SEOHead {...pageSEO.simulator} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6"><SimulationStatusBanner user={user} pillar="core" /></div>
       {!isLoading && simulationData && !trialStatus.canSimulateCore && <SubscriptionLock featureName="Core simulations" limit />}
       {user && !simulationData && !trialStatus.canSimulateCore ? (
-        <TrialExpiredBanner featureName="Chemical Simulator" />
+        <TrialExpiredBanner featureName="Chemical Analysis" />
       ) : (
       <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#EDF7F2' }}>
 
@@ -983,7 +983,7 @@ export default function Simulator() {
               >
                 <div className="flex flex-col items-center gap-2 mb-3 sm:flex-row sm:justify-center sm:gap-3">
                   <h1 className="text-2xl md:text-3xl font-bold text-slate-800 text-center">
-                    Chemical Interaction Simulator
+                    Chemical Analysis
                   </h1>
                   <span className={`px-4 py-1.5 text-sm font-semibold rounded-full capitalize flex-shrink-0 ${
                     {
@@ -1289,7 +1289,7 @@ export default function Simulator() {
               onSubmit={handleFeedbackSubmit}
               featureType="simulation"
               title="Rate Your Simulation Experience"
-              description="Your feedback helps us improve the chemical simulator"
+              description="Your feedback helps us improve the chemical analysis"
             />
           )}
         </Suspense>

@@ -27,7 +27,7 @@ const TOOLS = [
   },
   {
     icon: TestTube,
-    label: "Chemical Simulator",
+    label: "Chemical Analysis",
     desc: "Test chemical interactions, predict hazards, and analyze safety data sheets with AI-powered risk scoring.",
     href: "Simulator",
     color: "#007850",

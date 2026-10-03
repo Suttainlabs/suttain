@@ -102,7 +102,7 @@ export default function AboutUsPage() {
             {[
               {
                 num: '1',
-                title: 'Chemical Safety Simulator',
+                title: 'Chemical Analysis',
                 desc: 'Test interactions and predict reactions before mixing. Get instant hazard profiles, SDS analysis, and AI risk scoring.',
                 icon: Beaker
               },

@@ -357,7 +357,7 @@ k = Ae^(-Ea/RT)
   'advanced-simulation': {
     id: 'advanced-simulation',
     title: 'Advanced Simulation Techniques',
-    description: 'Master the chemical simulator for complex analyses',
+    description: 'Master the chemical analysis for complex analyses',
     icon: 'TestTube',
     color: 'bg-cyan-500',
     level: 'advanced',

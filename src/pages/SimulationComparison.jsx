@@ -115,7 +115,7 @@ const SimulationSelector = ({ simulations, selected, onToggle, isLoading }) => {
         <div className="p-6 bg-slate-50 rounded-lg text-center">
           <p className="text-slate-600">No simulations found. Run a simulation first.</p>
           <Link to={createPageUrl('Simulator')} className="text-violet-600 hover:underline text-sm mt-2 inline-block">
-            Go to Chemical Simulator
+            Go to Chemical Analysis
           </Link>
         </div>
       ) : (

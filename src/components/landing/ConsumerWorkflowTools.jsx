@@ -4,7 +4,7 @@ import { ScanLine, Atom, FlaskConical, BarChart2, FileText, ArrowUpRight } from 
 
 const tools = [
   { title: 'Product scanner', goal: 'Understand a product', to: '/BarcodeScanner', icon: ScanLine },
-  { title: 'Chemical simulator', goal: 'Explore interactions', to: '/Simulator', icon: Atom },
+  { title: 'Chemical Analysis', goal: 'Explore interactions', to: '/Simulator', icon: Atom },
   { title: 'Formula generator', goal: 'Develop a formula', to: '/generator', icon: FlaskConical },
   { title: 'Tax simulator', goal: 'Estimate carbon tax exposure', to: '/CarbonTaxSimulator', icon: BarChart2 },
   { title: 'SDS analyzer', goal: 'Review document hazards', to: '/SDSAnalyzer', icon: FileText },

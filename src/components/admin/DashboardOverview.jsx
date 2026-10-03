@@ -118,7 +118,7 @@ export default function DashboardOverview() {
   ];
 
   const toolsOverview = [
-    { label: 'Chemical Simulator', icon: Shield, color: 'text-emerald-600', bg: 'bg-emerald-50', desc: 'Safety, hazard & risk analysis' },
+    { label: 'Chemical Analysis', icon: Shield, color: 'text-emerald-600', bg: 'bg-emerald-50', desc: 'Safety, hazard & risk analysis' },
     { label: 'Formula Generator', icon: Atom, color: 'text-teal-600', bg: 'bg-teal-50', desc: 'AI-powered formulation builder' },
     { label: 'Quick Scan', icon: QrCode, color: 'text-cyan-600', bg: 'bg-cyan-50', desc: 'Barcode & ingredient scanner' },
     { label: 'Ingredient Database', icon: FlaskConical, color: 'text-blue-600', bg: 'bg-blue-50', desc: '250k+ chemicals with eco data' },

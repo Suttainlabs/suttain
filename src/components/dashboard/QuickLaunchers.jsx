@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 import { TestTube, FileText } from 'lucide-react';
 
 const TOOLS = [
-  { href: 'Simulator', label: 'Chemical Simulator', icon: TestTube, accent: '#02988C' },
+  { href: 'Simulator', label: 'Chemical Analysis', icon: TestTube, accent: '#02988C' },
   { href: 'SDSAnalyzer', label: 'SDS Analyzer', icon: FileText, accent: '#02988C' },
 ];
 

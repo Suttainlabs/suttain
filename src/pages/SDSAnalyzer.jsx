@@ -10,7 +10,7 @@ const features = [
   { icon: ShieldCheck, label: "Hazard Identification", desc: "Extracts all GHS hazard classes, H & P statements automatically" },
   { icon: Leaf, label: "Safer Alternatives", desc: "AI suggests lower-risk ingredient swaps with risk reduction estimates" },
   { icon: FlaskConical, label: "Formula Recommendations", desc: "Actionable steps to make your formulas cleaner and safer" },
-  { icon: Sparkles, label: "One-Click Simulation", desc: "Send extracted ingredients directly to the Chemical Simulator" },
+  { icon: Sparkles, label: "One-Click Simulation", desc: "Send extracted ingredients directly to the Chemical Analysis" },
 ];
 
 const TABS = [

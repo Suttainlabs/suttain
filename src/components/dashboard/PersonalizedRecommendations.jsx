@@ -16,7 +16,7 @@ const ROLE_RECOMMENDATIONS = {
     headline: 'Recommended for Researchers',
     items: [
       { label: 'Computational Simulation', desc: 'DFT, QM/MM, spectroscopy and quantum chemistry', href: 'ComputationalSimulation', icon: Cpu, color: '#7c3aed' },
-      { label: 'Chemical Simulator', desc: 'Predict reactions and hazard profiles', href: 'Simulator', icon: Atom, color: '#02988C' },
+      { label: 'Chemical Analysis', desc: 'Predict reactions and hazard profiles', href: 'Simulator', icon: Atom, color: '#02988C' },
       { label: 'Ingredient Database', desc: 'Search 250k+ chemicals with full data', href: 'IngredientDatabase', icon: FlaskConical, color: '#0891b2' },
     ]
   },
@@ -31,7 +31,7 @@ const ROLE_RECOMMENDATIONS = {
   teacher: {
     headline: 'Recommended for Educators',
     items: [
-      { label: 'Chemical Simulator', desc: 'Safe, interactive chemical reaction demos', href: 'Simulator', icon: Atom, color: '#02988C' },
+      { label: 'Chemical Analysis', desc: 'Safe, interactive chemical reaction demos', href: 'Simulator', icon: Atom, color: '#02988C' },
       { label: 'Learning Center', desc: 'Tutorials and guided walkthroughs', href: 'LearningSuite', icon: FlaskConical, color: '#9531F5' },
       { label: 'Ingredient Database', desc: 'Reference database for classroom use', href: 'IngredientDatabase', icon: Shield, color: '#0891b2' },
     ]
@@ -47,7 +47,7 @@ const ROLE_RECOMMENDATIONS = {
   student: {
     headline: 'Recommended for Students',
     items: [
-      { label: 'Chemical Simulator', desc: 'Explore reactions interactively', href: 'Simulator', icon: Atom, color: '#02988C' },
+      { label: 'Chemical Analysis', desc: 'Explore reactions interactively', href: 'Simulator', icon: Atom, color: '#02988C' },
       { label: 'Learning Center', desc: 'Guided tutorials and chemistry guides', href: 'LearningSuite', icon: FlaskConical, color: '#9531F5' },
       { label: 'Ingredient Database', desc: 'Look up any chemical with full data', href: 'IngredientDatabase', icon: BarChart3, color: '#0891b2' },
     ]
@@ -57,7 +57,7 @@ const ROLE_RECOMMENDATIONS = {
 const DEFAULT_RECOMMENDATIONS = {
   headline: 'Where would you like to start?',
   items: [
-    { label: 'Chemical Simulator', desc: 'Test ingredient combinations for safety', href: 'Simulator', icon: Atom, color: '#02988C' },
+    { label: 'Chemical Analysis', desc: 'Test ingredient combinations for safety', href: 'Simulator', icon: Atom, color: '#02988C' },
     { label: 'Formula Generator', desc: 'Create AI-built, validated formulas', href: 'generator', icon: FlaskConical, color: '#9531F5' },
     { label: 'Product Scanner', desc: 'Scan any product barcode', href: 'BarcodeScanner', icon: QrCode, color: '#0891b2' },
   ]

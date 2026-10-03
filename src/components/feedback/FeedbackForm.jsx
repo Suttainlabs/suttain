@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -119,7 +118,7 @@ export default function FeedbackForm({ onSubmit }) {
                 <SelectValue placeholder="Select the feature you used..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="simulator">Chemical Interaction Simulator</SelectItem>
+                <SelectItem value="simulator">Chemical Analysis</SelectItem>
                 <SelectItem value="generator">DIY Formula Generator</SelectItem>
                 <SelectItem value="scanner">Barcode Scanner</SelectItem>
               </SelectContent>

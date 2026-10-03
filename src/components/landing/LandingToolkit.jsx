@@ -4,7 +4,7 @@ import { ScanLine, Atom, NotebookPen, Globe2 } from 'lucide-react';
 
 const TOOLS = [
   { title: 'Product scanner', desc: 'Ingredient and product safety insights.', to: '/BarcodeScanner', icon: ScanLine },
-  { title: 'Chemical simulator', desc: 'Interaction analysis before mixing.', to: '/Simulator', icon: Atom },
+  { title: 'Chemical Analysis', desc: 'Interaction analysis before mixing.', to: '/Simulator', icon: Atom },
   { title: 'Formula generator', desc: 'Ingredient guidance for your next formula.', to: '/generator', icon: NotebookPen },
   { title: 'Research portal', desc: 'A dedicated computational research workspace.', to: '/ResearchPortal', icon: Globe2 }
 ];

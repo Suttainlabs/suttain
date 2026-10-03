@@ -41,7 +41,7 @@ function formatPageTitle(slug) {
 const PAGE_META_DESCRIPTIONS = {
   Home: 'Suttain is an AI-powered platform for chemical safety analysis, formula generation, and product scanning. Test chemical interactions, create safe formulas, and scan products for hazards.',
   Pricing: 'Suttain pricing plans for consumers and researchers. Free, Pro, and Lifetime tiers for chemical safety tools. Research plans with API access, simulation credits, and academic discounts.',
-  Simulator: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations with Suttain chemical interaction simulator.',
+  Simulator: 'Test chemical combinations safely before mixing. Get instant hazard analysis, reaction predictions, and safety recommendations with Suttain chemical analysis.',
   generator: 'Create professional skincare, soap, and cleaning product formulas with AI. Get ingredient recommendations, safety validation, and step-by-step manufacturing instructions.',
   BarcodeScanner: 'Scan any product barcode to instantly analyze ingredients. Get safety ratings, allergen alerts, and healthier alternatives for household and personal care products.',
   TermsOfService: 'Suttain Terms of Service, the terms and conditions governing use of the Suttain chemical safety, formula generation, and research platform.',
@@ -265,7 +265,7 @@ export default function Layout({ children, currentPageName }) {
   const helpMenuItems = [];
 
   const consumerToolItems = [
-    { href: "Simulator", label: "Chemical Simulator", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
+    { href: "Simulator", label: "Chemical Analysis", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
     { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", category: "Formulation" },
     { href: "BarcodeScanner", label: "Product Scanner", icon: QrCode, description: "Scan any product, toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
     { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety & Analysis" },

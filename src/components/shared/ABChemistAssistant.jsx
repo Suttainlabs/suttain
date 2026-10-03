@@ -75,7 +75,7 @@ If you're unsure about specific chemical data, recommend consulting official saf
       const errorMessage = {
         id: Date.now() + 1,
         type: "assistant",
-        content: "I'm experiencing technical difficulties right now. Please try again in a moment, or feel free to use our Chemical Simulator or Formula Generator for immediate assistance.",
+        content: "I'm experiencing technical difficulties right now. Please try again in a moment, or feel free to use our Chemical Analysis or Formula Generator for immediate assistance.",
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);

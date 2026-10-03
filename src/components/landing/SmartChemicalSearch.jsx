@@ -4,7 +4,7 @@ import { Loader2, Search, TestTube, Atom, QrCode, FlaskConical, FileText, X } fr
 import { base44 } from "@/api/base44Client";
 
 const ACTIONS = [
-  { key: "simulator", label: "Chemical Simulator", icon: TestTube, route: "/Simulator", param: "chemical", color: "#02988C" },
+  { key: "simulator", label: "Chemical Analysis", icon: TestTube, route: "/Simulator", param: "chemical", color: "#02988C" },
   { key: "generator", label: "Formula Generator", icon: Atom, route: "/generator", param: "chemical", color: "#02988C" },
   { key: "scanner", label: "Product Scanner", icon: QrCode, route: "/BarcodeScanner", param: "q", color: "#02988C" },
   { key: "sds", label: "SDS Analyzer", icon: FileText, route: "/SDSAnalyzer", param: "q", color: "#9531F5" },

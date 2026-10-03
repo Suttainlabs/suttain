@@ -25,7 +25,7 @@ export default function FeedbackCard({ review }) {
     switch (feature) {
       case 'simulator':
         return {
-          label: 'Chemical Simulator',
+          label: 'Chemical Analysis',
           icon: Beaker,
           color: 'bg-teal-100 text-teal-800 border-teal-200'
         };
