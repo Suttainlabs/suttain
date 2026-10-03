@@ -515,6 +515,17 @@ export default function SimulationRunner() {
           )}
         </AnimatePresence>
 
+        {results && (
+          <section className="mt-6 rounded-xl border border-research-border bg-research-card p-5">
+            <Button onClick={handleGenerateInputs} disabled={generatingInputs} variant="outline" className="research-secondary h-auto">
+              {generatingInputs ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileCode2 className="w-4 h-4" />}
+              {generatingInputs ? 'Generating input files…' : 'Generate input files'}
+            </Button>
+            {inputGenerationError && <p role="alert" className="mt-5 text-sm text-destructive">{inputGenerationError}</p>}
+            {inputFiles && <div className="mt-5"><SimulationInputFiles result={inputFiles} simTypeLabel={sim.label} linkedJobId={rowan.job?.id} /><ForcefieldAttachment env={envParams} /></div>}
+          </section>
+        )}
+
         {/* History & Comparison, always visible */}
         <div className="mt-8">
           <PremiumFeatureGate featureName="Saved history"><SimulationHistoryPanel
