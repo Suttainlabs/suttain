@@ -1,4 +1,5 @@
 import React from 'react';
+import BasisSetSelect from '@/components/simulation/BasisSetSelect';
 export default function EngineParameterFields({engine,inputs,onChange,simType}) {
   if(!engine || engine.id==='rowan') return null;
   const update=(key,value)=>onChange(key,value);
@@ -11,7 +12,7 @@ export default function EngineParameterFields({engine,inputs,onChange,simType}) 
       <div><label htmlFor="engine-task">Prepared task</label><select id="engine-task" className="simulation-control" value={inputs.engine_task || engine.tasks[0]} onChange={e=>update('engine_task',e.target.value)}>{engine.tasks.map(x=><option key={x}>{x}</option>)}</select></div>
       {engine.id==='rdkit'?<div className="sm:col-span-2"><label htmlFor="rdkit-smiles">Explicit SMILES</label><input id="rdkit-smiles" className="simulation-control" value={inputs.smiles || ''} onChange={e=>update('smiles',e.target.value)} placeholder="CCO"/></div>:<>
         <div className="sm:col-span-2"><label htmlFor="engine-geometry">XYZ geometry (optional for molecular compound lookup; required for crystals)</label><textarea id="engine-geometry" rows={6} className="simulation-control font-mono" value={inputs.geometry_xyz || ''} onChange={e=>update('geometry_xyz',e.target.value)} placeholder={'3\nWater\nO 0 0 0\nH 0 0 0.9572\nH 0.9266 0 -0.2396'}/></div>
-        {!engine.periodic && engine.id!=='xtb' && <div><label htmlFor="engine-basis">Basis set</label><input id="engine-basis" className="simulation-control" value={inputs.basis_set || (engine.id==='gamess'?'6-31G*':'def2-SVP')} onChange={e=>update('basis_set',e.target.value)}/></div>}
+        {!engine.periodic && engine.id!=='xtb' && <div><label htmlFor="engine-basis">Basis set</label><BasisSetSelect engineId={engine.id} value={inputs.basis_set} onChange={value=>update('basis_set',value)}/></div>}
         {engine.periodic && <div className="sm:col-span-2"><label htmlFor="engine-cell">Cell vectors in angstroms (nine components)</label><input id="engine-cell" className="simulation-control font-mono" value={inputs.cell || ''} onChange={e=>update('cell',e.target.value)} placeholder="12 0 0 0 12 0 0 0 12"/></div>}
         {engine.pseudo_required && <div className="sm:col-span-2"><label htmlFor="engine-pseudos">Local pseudopotential filenames by element (JSON)</label><textarea id="engine-pseudos" className="simulation-control font-mono" value={inputs.pseudopotentials || ''} onChange={e=>update('pseudopotentials',e.target.value)} placeholder={'{"Si":"Si.pbe.UPF"}'}/></div>}
         {engine.active_space && inputs.engine_method==='CASSCF' && ['active_electrons','active_orbitals'].map(key=><div key={key}><label htmlFor={key}>{key.replace('_',' ')}</label><input id={key} type="number" min="1" max="30" className="simulation-control" value={inputs[key] || ''} onChange={e=>update(key,Number(e.target.value))}/></div>)}
