@@ -15,7 +15,7 @@ import PremiumFeatureGate from '@/components/shared/PremiumFeatureGate';
 import SupervisorApprovalsPanel from '../dashboard/SupervisorApprovalsPanel';
 import { Crown, Zap, ChevronRight } from 'lucide-react';
 
-export default function ProfilePage() {
+export default function ProfilePage({children}) {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const trialStatus = useTrialStatus(user);
@@ -79,6 +79,8 @@ export default function ProfilePage() {
         
 
         <PremiumFeatureGate featureName="Saved history"><RecentActivityList /></PremiumFeatureGate>
+
+        {children}
 
         <SupervisorApprovalsPanel />
 

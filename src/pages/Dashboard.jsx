@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import AuthContext from '@/components/auth/AuthContext';
 import AuthGate from '@/components/auth/AuthGate';
 import ProfilePage from '@/components/profile/ProfilePage';
+import SavedScripts from '@/components/dashboard/SavedScripts';
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
@@ -14,5 +15,5 @@ export default function Dashboard() {
     );
   }
 
-  return <ProfilePage />;
+  return <ProfilePage><SavedScripts user={user}/></ProfilePage>;
 }

@@ -68,6 +68,7 @@ export default function SimulationRunner() {
   const [currentDraftId, setCurrentDraftId] = useState(null);
   const [inputFiles, setInputFiles] = useState(null);
   const [generatingInputs, setGeneratingInputs] = useState(false);
+  const [inputGenerationError, setInputGenerationError] = useState('');
   const fileAutoFillRef = useRef(null);
   const [fileAutoFillTarget, setFileAutoFillTarget] = useState(null);
 
@@ -170,6 +171,7 @@ export default function SimulationRunner() {
   const handleGenerateInputs = async () => {
     setGeneratingInputs(true);
     setInputFiles(null);
+    setInputGenerationError('');
     try {
       const result = await generateSimulationInputs({
         sim_type: typeId,
@@ -179,7 +181,7 @@ export default function SimulationRunner() {
       });
       setInputFiles(result.data);
     } catch (e) {
-      console.error('Failed to generate input files:', e);
+      setInputGenerationError(e.response?.data?.error || e.message);
     } finally {
       setGeneratingInputs(false);
     }
@@ -632,10 +634,11 @@ export default function SimulationRunner() {
                   </p>
                 </div>
 
+                {inputGenerationError && <p role="alert" className="mt-5 text-sm text-destructive">{inputGenerationError}</p>}
                 {/* Generated Input Files Panel */}
                 {inputFiles && (
                   <div className="mt-5">
-                    <SimulationInputFiles result={inputFiles} />
+                    <SimulationInputFiles result={inputFiles} simTypeLabel={sim.label} />
                     <ForcefieldAttachment env={envParams} />
                   </div>
                 )}

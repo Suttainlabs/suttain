@@ -1,0 +1,50 @@
+{
+  "name": "SavedScript",
+  "type": "object",
+  "properties": {
+    "engine": {
+      "type": "string"
+    },
+    "sim_type": {
+      "type": "string"
+    },
+    "sim_type_label": {
+      "type": "string"
+    },
+    "filename": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 120000
+    },
+    "description": {
+      "type": "string"
+    },
+    "linked_job_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "engine",
+    "sim_type",
+    "sim_type_label",
+    "filename",
+    "content"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

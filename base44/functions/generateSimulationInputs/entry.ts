@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import inputGeometry from '../../shared/inputGeometry.ts';
 
 // ── Engine-specific input file templates ────────────────────────────
 // Generates structured, ready-to-run input files for computational
@@ -429,9 +430,42 @@ function genCP2K(inputs, env) {
   }];
 }
 
-function generateInputFiles(simType, engine, inputs, env) {
+function quantumTemplateSettings(inputs, env) {
+  const method=String(inputs.functional || inputs.method || inputs.theory_level || 'B3LYP').replace(/^TDDFT\//i,'');
+  const basis=String(inputs.basis_set || '6-31G*');
+  if(!/^[A-Za-z0-9()+*._-]+$/.test(method) || !/^[A-Za-z0-9()+*._-]+$/.test(basis)) throw Object.assign(new Error('Choose an engine-compatible method and basis set.'),{status:400});
+  if(method==='GFN2-xTB') throw Object.assign(new Error('GFN2-xTB is not supported by these Gaussian or Q-Chem templates.'),{status:400});
+  const task=String(inputs.task || inputs.properties || 'Single-point energy').toLowerCase();
+  const solvent=String(env.solvent || 'none');
+  const solvated=!['none','vacuum','gas','gas_phase','Gas phase'].includes(solvent);
+  const dielectrics={water:78.3553,ethanol:24.852,methanol:32.613,acetone:20.493,acetonitrile:35.688,benzene:2.2706,toluene:2.3741,DMSO:46.826,dimethylsulfoxide:46.826,chloroform:4.7113,hexane:1.8819};
+  if(solvated && !dielectrics[solvent]) throw Object.assign(new Error('Choose a supported implicit solvent for this input template.'),{status:400});
+  return {method,basis,task,solvent,solvated,dielectric:dielectrics[solvent]};
+}
+function genQChem(inputs, env, geometry) {
+  const s=quantumTemplateSettings(inputs,env);
+  const supported=/single.point|dipole|population|optim|freq|excitation|oscillator|transition state|natural transition/;
+  if(!supported.test(s.task)) throw Object.assign(new Error('This task has no Q-Chem input template. Choose energy, optimization, frequencies, or excited states.'),{status:400});
+  const job=/transition state/.test(s.task) ? 'TS' : /optim/.test(s.task) ? 'OPT' : /freq/.test(s.task) ? 'FREQ' : 'SP';
+  const excited=/excitation|oscillator|natural transition/.test(s.task) || /^TDDFT\//i.test(inputs.method || '');
+  const content=`$molecule\n${geometry.charge} ${geometry.multiplicity}\n${geometry.coordinates}\n$end\n\n$rem\nJOBTYPE ${job}\nMETHOD ${s.method}\nBASIS ${s.basis}\nSCF_CONVERGENCE 8\nMAX_SCF_CYCLES 200${excited ? '\nCIS_N_ROOTS 10' : ''}${s.solvated ? '\nSOLVENT_METHOD PCM' : ''}\n$end\n${s.solvated ? `\n$pcm\nTHEORY CPCM\n$end\n\n$solvent\nDIELECTRIC ${s.dielectric}\n$end\n` : ''}`;
+  return [{filename:'qchem_input.in',content,description:`Q-Chem ${s.method}/${s.basis} input (${s.task}). Coordinates supplied in angstroms or resolved from a PubChem 3D reference. Review before running: qchem -nt 8 qchem_input.in qchem_output.out`}];
+}
+function genGaussian(inputs, env, geometry) {
+  const s=quantumTemplateSettings(inputs,env);
+  const tasks=/transition state/.test(s.task) ? 'Opt=(TS,CalcFC,NoEigenTest)' : /freq/.test(s.task) ? 'Freq' : /optim/.test(s.task) ? 'Opt' : /nmr/.test(s.task) ? 'NMR=GIAO' : /natural bond/.test(s.task) ? 'Pop=NBO' : /population/.test(s.task) ? 'Pop=Full' : /irc/.test(s.task) ? 'IRC=(CalcFC)' : /uv.vis|excitation|oscillator|natural transition/.test(s.task) || /^TDDFT\//i.test(inputs.method || '') ? 'TD=(NStates=10)' : /single.point|dipole/.test(s.task) ? 'SP' : null;
+  if(!tasks) throw Object.assign(new Error('This task has no Gaussian input template. Choose an energy, optimization, frequency, or supported property task.'),{status:400});
+  const method=({PBE:'PBEPBE',PBE0:'PBE1PBE'})[s.method] || s.method;
+  const basis=s.basis.replace(/^def2-/i,'Def2');
+  const solvent=s.solvent==='dimethylsulfoxide' ? 'DMSO' : s.solvent;
+  const content=`%chk=gaussian_input.chk\n%mem=4GB\n%nprocshared=8\n#p ${method}/${basis} ${tasks} SCF=Tight${s.solvated ? ` SCRF=(CPCM,Solvent=${solvent})` : ''}\n\nSuttain molecular calculation\n\n${geometry.charge} ${geometry.multiplicity}\n${geometry.coordinates}\n\n`;
+  return [{filename:'gaussian_input.gjf',content,description:`Gaussian ${s.method}/${s.basis} input (${s.task}). Coordinates supplied in angstroms or resolved from a PubChem 3D reference. Review before running: g16 < gaussian_input.gjf > gaussian_output.log`}];
+}
+async function generateInputFiles(simType, engine, inputs, env) {
   const e = (engine || '').toLowerCase();
 
+  if (e.includes('q-chem') || e.includes('qchem')) return genQChem(inputs,env,await inputGeometry(inputs));
+  if (e.includes('gaussian')) return genGaussian(inputs,env,await inputGeometry(inputs));
   if (e.includes('orca')) return genORCA(inputs, env);
   if (e.includes('gromacs')) return genGROMACS(inputs, env);
   if (e.includes('vasp')) return genVASP(inputs, env);
@@ -467,7 +501,7 @@ export default async function(req) {
     if (!engine) return Response.json({ error: 'Engine is required' }, { status: 400 });
 
     const env = environmental_params || {};
-    const files = generateInputFiles(sim_type, engine, inputs || {}, env);
+    const files = await generateInputFiles(sim_type, engine, inputs || {}, env);
     if (env.custom_forcefield && !env.forcefield_file_name) {
       const ff = env.custom_forcefield;
       files.push({ filename: 'custom_forcefield_parameters.json', content: JSON.stringify({ name: ff.name, base_forcefield: ff.base_forcefield, lj_parameters: ff.lj_parameters, bond_parameters: ff.bond_parameters, angle_parameters: ff.angle_parameters, dihedral_parameters: ff.dihedral_parameters, notes: ff.notes }, null, 2), description: 'Saved custom parameters. Integrate into the selected engine format and validate units before execution.' });
@@ -486,6 +520,6 @@ export default async function(req) {
     });
   } catch (error) {
     console.error('generateSimulationInputs error:', error.message);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
 }
