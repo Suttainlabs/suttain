@@ -1,0 +1,5 @@
+import React from 'react';
+export default function RowanDipole({dipole}) {
+  const valid=Array.isArray(dipole) && dipole.length===3 && dipole.every(Number.isFinite);
+  return <section className="space-y-4"><h3>Dipole moment</h3>{valid ? <><dl className="space-y-3">{[...dipole.map((v,i) => [`${['X','Y','Z'][i]} component`,v]),['Magnitude (derived)',Math.hypot(...dipole)]].map(([label,value]) => <div key={label} className="flex justify-between border-b border-research-border pb-3"><dt className="text-sm text-research-muted">{label}</dt><dd className="font-mono text-sm">{value.toFixed(6)} Debye</dd></div>)}</dl><p className="text-xs text-research-muted">Components refer to the Cartesian frame of the returned computed geometry; magnitude is the Euclidean norm.</p></> : <p role="status">Rowan did not report a dipole vector.</p>}</section>;
+}

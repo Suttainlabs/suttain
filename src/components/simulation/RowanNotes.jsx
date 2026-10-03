@@ -1,0 +1,8 @@
+import React, {useEffect,useState} from 'react';
+import {base44} from '@/api/base44Client';
+export default function RowanNotes({result,onSaved}) {
+  const [job,setJob]=useState(null),[notes,setNotes]=useState(result.notes || ''),[status,setStatus]=useState('Loading saved notes…'),[busy,setBusy]=useState(false);
+  useEffect(() => {let active=true;(async () => {try {const user=await base44.auth.me();const rows=await base44.entities.SimulationJob.filter({provider_job_id:result.provider_job_id,created_by_id:user.id},undefined,1);if(active){setJob(rows[0] || null);setNotes(rows[0]?.result?.notes || result.notes || '');setStatus(rows[0] ? '' : 'No editable saved job was found.');}}catch(e){if(active)setStatus(e.message);}})();return () => {active=false;};},[result.provider_job_id]);
+  const save=async e => {e.preventDefault();setBusy(true);setStatus('');try {const latest=await base44.entities.SimulationJob.get(job.id);await base44.entities.SimulationJob.update(job.id,{result:{...latest.result,notes}});onSaved(notes);setStatus('Notes saved.');}catch(e){setStatus(`Unable to save: ${e.message}`);}finally{setBusy(false);}};
+  return <form onSubmit={save} className="space-y-4"><label htmlFor="rowan-notes" className="block font-medium">Research notes</label><p className="text-xs text-research-muted">Saved with this Suttain calculation. Notes do not modify Rowan’s computed output.</p><textarea id="rowan-notes" rows={10} maxLength={10000} className="simulation-control" value={notes} onChange={e => setNotes(e.target.value)}/><button className="research-primary disabled:opacity-50" disabled={!job || busy}>{busy ? 'Saving…' : 'Save notes'}</button><p role="status" className="text-sm text-research-muted">{status}</p></form>;
+}

@@ -20,7 +20,7 @@ const STATS = [
 
 const CAPABILITIES = [
   { idx: '01', sym: 'Ci', variant: 'teal', icon: Atom, title: 'Chemical Intelligence API', description: 'Query 130M+ compounds with property, toxicity, and regulatory data via a single REST endpoint.', endpoints: ['GET /v1/chemicals/{cid}', 'POST /v1/chemicals/search'] },
-  { idx: '02', sym: 'Se', variant: 'purple', icon: Cpu, title: 'Simulation Engine API', description: 'Submit computational jobs (DFT, MD, QM/MM) programmatically and retrieve results asynchronously.', endpoints: ['POST /v1/simulations/run', 'GET /v1/simulations/{id}'] },
+  { idx: '02', sym: 'Se', variant: 'purple', icon: Cpu, title: 'Simulation Engine API', description: 'Rowan powers molecular DFT and quantum-chemistry compute: B3LYP, PBE, PBE0, M06-2X, M06-L, CAM-B3LYP, BP86, TPSSh, r2SCAN, HF and GFN2-xTB, using GPU4PySCF, Psi4 or xtb. MD and materials workflows are not yet runnable through this integration.', endpoints: ['POST /v1/simulations/run', 'GET /v1/simulations/{id}'] },
   { idx: '03', sym: 'Sc', variant: 'teal', icon: ShieldCheck, title: 'Safety & Compliance API', description: 'Automated SDS parsing, GHS classification, and regulatory cross-referencing across REACH, EPA, and FDA.', endpoints: ['POST /v1/sds/analyze', 'GET /v1/compliance/{formula_id}'] },
   { idx: '04', sym: 'Su', variant: 'blue', icon: Leaf, title: 'Sustainability API', description: 'Carbon footprint calculation, LCA scoring, and sustainability benchmarking for chemical formulations.', endpoints: ['POST /v1/sustainability/score', 'GET /v1/carbon/calculate'] },
   { idx: '05', sym: 'Wh', variant: 'purple', icon: Radio, title: 'Webhooks & Events', description: 'Real-time event streaming for simulation completion, regulatory changes, and safety alert triggers.', endpoints: ['POST /v1/webhooks/register', 'GET /v1/webhooks/events'] },
@@ -250,6 +250,7 @@ export default function APIPortal() {
 
         {/* Capabilities */}
         <div className="mb-14">
+          <p className="mb-4 text-sm text-foreground">Quantum-chemistry compute: <a href="https://www.rowansci.com" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4">Powered by Rowan</a>. Suttain provides workflow preparation and result review; Rowan performs the supported calculations.</p>
           <span className="block font-mono text-xs tracking-[0.04em] mb-4" style={{ color: '#027A70' }}>API CAPABILITIES</span>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {CAPABILITIES.map((cap) => (
@@ -392,6 +393,7 @@ export default function APIPortal() {
           <WaitlistForm />
         </div>
 
+        <p className="mb-6 text-sm text-muted-foreground">Rowan Scientific. https://www.rowansci.com (accessed 2026-10-03). Publications should also cite the engine, method, basis set and solvent model used. <a href="https://docs.rowansci.com/citations" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4">Rowan citation guidance</a> · <a href="https://docs.rowansci.com/api" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4">Rowan API reference</a></p>
         {/* Footer nav */}
         <div className="border rounded-[10px] p-6 bg-white flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10" style={{ borderColor: '#E5E7EB' }}>
           <Link to="/ResearchPortal#research-api" className="text-sm font-medium transition-colors" style={{ color: '#3F4651' }}>Research overview</Link>

@@ -22,7 +22,7 @@ export default async function(req) {
       const molecule = await resolveRowanMolecule(data.structure || {});
       const workflow = await rowanRequest('/workflow',{method:'POST',body:JSON.stringify({workflow_type:'basic_calculation',name:`Suttain ${jobHash}`,initial_molecule:molecule,workflow_data:{initial_molecule:molecule,settings:mapping.settings,tasks:mapping.settings.tasks,engine:mapping.settings.engine},max_credits:25,webhook_url:'https://suttain.base44.app/functions/receiveRowanWebhook',is_draft:false})});
       if (!workflow.uuid) throw new Error('Rowan did not return a workflow receipt.');
-      job = await base44.entities.SimulationJob.update(job.id,{provider_job_id:workflow.uuid,status:workflow.object_status === 1 ? 'running' : 'pending'});
+      job = await base44.entities.SimulationJob.update(job.id,{provider_job_id:workflow.uuid,status:workflow.object_status === 1 ? 'running' : 'pending',result:{...job.result,input_smiles:typeof data.structure?.smiles === 'string' ? data.structure.smiles.slice(0,2000) : molecule.smiles || null}});
       return Response.json({job});
     } catch (error) {
       const fallback = !mapping.unsupported && !error.status && (!error.providerStatus || error.providerStatus >= 500 || [402,429].includes(error.providerStatus));
