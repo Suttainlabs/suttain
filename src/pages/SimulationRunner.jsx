@@ -36,6 +36,11 @@ import SubscriptionLock from '@/components/shared/SubscriptionLock';
 import PremiumFeatureGate from '@/components/shared/PremiumFeatureGate';
 import useRowanRun from '@/components/simulation/useRowanRun';
 import RowanResults from '@/components/simulation/RowanResults';
+import useEngineRegistry from '@/components/simulation/useEngineRegistry';
+import EngineParameterFields from '@/components/simulation/EngineParameterFields';
+import LocalEngineResults from '@/components/simulation/LocalEngineResults';
+import SourceLookupResults from '@/components/simulation/SourceLookupResults';
+import { runPubchemLookup } from '@/functions/runPubchemLookup';
 
 export default function SimulationRunner() {
   const { user, refreshUser } = useContext(AuthContext);
@@ -48,7 +53,11 @@ export default function SimulationRunner() {
 
   const sim = SIM_TYPES.find(s => s.id === typeId);
 
-  const [selectedEngine, setSelectedEngine] = useState(sim?.engines[0] || null);
+  const [selectedEngine, setSelectedEngine] = useState('Rowan');
+  const [autoFallback, setAutoFallback] = useState(true);
+  const [lookupBusy, setLookupBusy] = useState(false);
+  const registry = useEngineRegistry();
+  const selectedCatalogue = registry.data?.engines?.find(e => e.label === selectedEngine);
   const [inputs, setInputs] = useState(() => {
     const defaults = {};
     sim?.fields.forEach(f => { if (f.default) defaults[f.key] = f.default; });
@@ -104,8 +113,8 @@ export default function SimulationRunner() {
     "Q-Chem": "Quantum chemistry, excited states and embedded QM/MM calculations for molecular systems.",
   };
 
-  const rowan = useRowanRun({ user, sim, engine:selectedEngine, domain, inputs, environment:{solvent:'water',...envParams}, onResult:setResults, refreshUser });
-  const { isRunning } = rowan;
+  const rowan = useRowanRun({ user, sim, engine:selectedEngine, domain, inputs, environment:{solvent:'water',...envParams}, onResult:setResults, refreshUser, autoFallback });
+  const isRunning = rowan.isRunning || generatingInputs || lookupBusy;
   useEffect(() => {
     if (!sim) navigate('/AtomisticSimulation');
   }, [sim, navigate]);
@@ -113,6 +122,15 @@ export default function SimulationRunner() {
   if (!sim) return null;
 
   const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
+  const handleEngineSelect = (label) => {
+    const entry=registry.data?.engines?.find(e=>e.label===label);
+    setSelectedEngine(label); setInputFiles(null); setInputGenerationError('');
+    setInputs(prev=>{const next={...prev};delete next.engine_method;delete next.engine_task;
+      if(entry?.deployment==='input_file') {next.engine_method=entry.methods[0];next.engine_task=entry.tasks[0];}
+      if(entry?.id==='gamess') next.basis_set='6-31G*';
+      return next;
+    });
+  };
 
   const openDrawer = (fieldKey) => { setDrawerTargetKey(fieldKey); setDrawerOpen(true); };
   const handleDrawerConfirm = (smiles) => { if (drawerTargetKey) handleInputChange(drawerTargetKey, smiles); };
@@ -165,6 +183,14 @@ export default function SimulationRunner() {
   const handleRun = async () => {
     if (isRunning) return;
     if (!trialStatus.canRunResearchSim) { navigate('/Pricing?pillar=research'); return; }
+    if(selectedCatalogue?.id==='pubchem') {
+      setLookupBusy(true);setInputGenerationError('');
+      try {const {data}=await runPubchemLookup({query:inputs.query || inputs.molecule || inputs.system,namespace:inputs.namespace || 'name',operation:'Properties',sim_type:typeId});setResults({...data,inputs,simType:sim,domain});await refreshUser?.();}
+      catch(error) {setInputGenerationError(error.response?.data?.error || error.message);}
+      finally {setLookupBusy(false);}
+      return;
+    }
+    if(selectedEngine!=='Rowan') {await handleGenerateInputs();return;}
     await rowan.run();
   };
 
@@ -175,11 +201,15 @@ export default function SimulationRunner() {
     try {
       const result = await generateSimulationInputs({
         sim_type: typeId,
-        engine: selectedEngine,
+        engine: selectedEngine==='Rowan' ? (inputs.functional==='GFN2-xTB' || inputs.method==='GFN2-xTB' ? 'xtb' : 'ORCA') : selectedEngine,
         inputs: { ...inputs },
-        environmental_params: envParams || {},
+        environmental_params: results?.environmental_params || envParams || {},
+        sim_type_label:sim.label,
+        domain,
+        record_job:true,
       });
-      setInputFiles(result.data);
+      if(result.data.execution_mode==='local_pending' && !results) setResults({...result.data,inputs,environmental_params:envParams || {},simType:sim,domain});
+      else setInputFiles(result.data);
     } catch (e) {
       setInputGenerationError(e.response?.data?.error || e.message);
     } finally {
@@ -289,7 +319,7 @@ export default function SimulationRunner() {
     URL.revokeObjectURL(url);
   };
 
-  const reset = () => { setResults(null); setInputs({}); };
+  const reset = () => { setResults(null); setInputFiles(null); setInputGenerationError(''); setSelectedEngine('Rowan'); setInputs(Object.fromEntries(sim.fields.filter(f=>f.default).map(f=>[f.key,f.default]))); };
   if (!isRunning && !results && !trialStatus.canRunResearchSim) return <SubscriptionLock pillar="research" featureName="Research simulations" limit />;
   return (
     <div className="simulation-workspace research-surface min-h-screen">
@@ -308,10 +338,12 @@ export default function SimulationRunner() {
 
         {(rowan.error || rowan.job?.status === 'failed') && <div role="alert" className="mb-6 rounded-xl border border-destructive bg-card p-5 text-destructive">{rowan.error || rowan.job.error}</div>}
         {isRunning && rowan.job?.provider_job_id && <div role="status" className="mb-6 rounded-xl border border-research-border bg-research-card p-5"><p className="research-label">Real Rowan compute run · {rowan.job.status}</p><p className="font-mono text-xs break-all mt-2">{rowan.job.provider_job_id}</p><p className="text-sm text-research-muted mt-2">Tracking completion notifications with polling fallback. You can return to this workflow later.</p></div>}
-        {results?.execution_mode === 'real' && <RowanResults result={results} onReset={reset} onRun={handleRun} isRunning={isRunning}/>}
+        {results?.execution_mode === 'real' && results.result_kind!=='lookup' && <RowanResults result={results} onReset={reset} onRun={handleRun} isRunning={isRunning}/>}
+        {results?.execution_mode==='local_pending' && <LocalEngineResults result={results} onReset={reset}/>}
+        {results?.result_kind==='lookup' && <SourceLookupResults result={results} onReset={reset}/>}
         {/* Previous demonstration results remain readable. */}
         <AnimatePresence>
-          {results && results.execution_mode !== 'real' && (
+          {results && !['real','local_pending'].includes(results.execution_mode) && (
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-8">
               <div role="status" className="mb-5 rounded-xl border border-research-border bg-research-soft p-5"><p className="research-label">Demonstration mode</p><p className="text-sm text-research-muted">No real compute completed. Any estimates or reference structures below are illustrative, not Rowan output.</p></div>
               {/* Result Tabs */}
@@ -517,12 +549,14 @@ export default function SimulationRunner() {
 
         {results && (
           <section className="mt-6 rounded-xl border border-research-border bg-research-card p-5">
-            <Button onClick={handleGenerateInputs} disabled={generatingInputs} variant="outline" className="research-secondary h-auto">
+            <SimulationEngineSelector engines={sim.engines} selected={selectedEngine} onSelect={handleEngineSelect} tooltips={ENGINE_TOOLTIPS} simType={typeId}/>
+            <EngineParameterFields engine={selectedCatalogue} inputs={inputs} onChange={handleInputChange} simType={typeId}/>
+            <Button onClick={selectedCatalogue?.id==='pubchem' ? handleRun : handleGenerateInputs} disabled={isRunning} variant="outline" className="research-secondary h-auto">
               {generatingInputs ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileCode2 className="w-4 h-4" />}
-              {generatingInputs ? 'Generating input files…' : 'Generate input files'}
+              {generatingInputs ? 'Generating input files…' : selectedCatalogue?.id==='pubchem' ? 'Look up compound' : 'Generate input files'}
             </Button>
             {inputGenerationError && <p role="alert" className="mt-5 text-sm text-destructive">{inputGenerationError}</p>}
-            {inputFiles && <div className="mt-5"><SimulationInputFiles result={inputFiles} simTypeLabel={sim.label} linkedJobId={rowan.job?.id} /><ForcefieldAttachment env={envParams} /></div>}
+            {inputFiles && <div className="mt-5"><SimulationInputFiles result={inputFiles} simTypeLabel={sim.label} linkedJobId={inputFiles.job_id} /><ForcefieldAttachment env={envParams} /></div>}
           </section>
         )}
 
@@ -533,7 +567,7 @@ export default function SimulationRunner() {
             currentInputs={inputs}
             simTypeId={typeId}
             engine={selectedEngine}
-            onSelectResult={record => {setInputs(record.inputs || {});setSelectedEngine(record.engine);setResults({...record.result,execution_mode:record.execution_mode,provider_job_id:record.provider_job_id,inputs:record.inputs,environmental_params:record.environmental_params,simType:sim,engine:record.result?.engine || record.engine,domain,job_hash:record.job_hash});setActiveTab('analysis');}}
+            onSelectResult={record => {setInputs(record.inputs || {});setEnvParams(record.environmental_params || {});setInputFiles(null);setSelectedEngine(record.engine);setResults({...record.result,execution_mode:record.execution_mode,provider_job_id:record.provider_job_id,inputs:record.inputs,environmental_params:record.environmental_params,simType:sim,engine:record.result?.engine || record.engine,domain,job_hash:record.job_hash});setActiveTab('analysis');}}
           /></PremiumFeatureGate>
         </div>
 
@@ -548,7 +582,9 @@ export default function SimulationRunner() {
                 {/* PubChem Auto-fill */}
                 <DatabaseSearch onSelect={handlePubChemSelect} />
 
-                <SimulationEngineSelector engines={sim.engines} selected={selectedEngine} onSelect={setSelectedEngine} tooltips={ENGINE_TOOLTIPS} />
+                <SimulationEngineSelector engines={sim.engines} selected={selectedEngine} onSelect={handleEngineSelect} tooltips={ENGINE_TOOLTIPS} simType={typeId} />
+                <EngineParameterFields engine={selectedCatalogue} inputs={inputs} onChange={handleInputChange} simType={typeId}/>
+                {selectedEngine==='Rowan' && <label className="flex items-center gap-3 mb-7"><input type="checkbox" checked={autoFallback} onChange={e=>setAutoFallback(e.target.checked)}/><span>Automatically prepare compatible local inputs if Rowan credits run out</span></label>}
 
                 {/* Custom Forcefield picker, MD only */}
                 {typeId === "molecular_dynamics" && (
@@ -586,7 +622,7 @@ export default function SimulationRunner() {
                   <p className="research-label mb-2">02 / System configuration</p>
                   <h2 className="!text-lg mb-5">Calculation parameters</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                    {sim.fields.map(field => (
+                    {sim.fields.filter(field=>!selectedCatalogue || selectedEngine==='Rowan' || !['functional','method','task','basis_set','properties','theory_level','property','analysis_type'].includes(field.key)).map(field => (
                       <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]}
                         onChange={value => handleInputChange(field.key, value)}
                         canUpload={FILE_UPLOAD_KEYS.includes(field.key)} canDraw={DRAWABLE_KEYS.includes(field.key)}
@@ -625,7 +661,7 @@ export default function SimulationRunner() {
                   >
                     {isRunning
                       ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
-                      : <><Cpu className="w-4 h-4" /> Run on Rowan</>}
+                      : <><Cpu className="w-4 h-4" /> {selectedEngine==='Rowan' ? 'Run on Rowan' : selectedCatalogue?.id==='pubchem' ? 'Look up compound' : `Prepare ${selectedEngine} workflow`}</>}
                   </Button>
 
                   <Button

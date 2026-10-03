@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import AuthContext from '../components/auth/AuthContext';
 import ElementCell from '@/components/landing/ElementCell';
 import WaitlistCountBadge from '@/components/enterprise/WaitlistCountBadge';
+import ComputeEngineDocs from '@/components/enterprise/ComputeEngineDocs';
 import { base44 } from '@/api/base44Client';
 import {
   Code2, Copy, CheckCheck, Terminal, Key, Lock, ArrowRight,
@@ -267,6 +268,8 @@ export default function APIPortal() {
             ))}
           </div>
         </div>
+
+        <ComputeEngineDocs />
 
         {/* Interactive docs */}
         <div id="docs" className="mb-14 scroll-mt-20">

@@ -112,7 +112,7 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
                             <div className="flex-1 min-w-0">
                               <p className="font-semibold text-slate-800 text-xs truncate">{record.title}</p>
                               <p className="text-[11px] text-slate-500 mt-0.5">
-                                {new Date(record.created_date).toLocaleDateString()} · {cfg.engine || "Unknown engine"}
+                                {new Date(record.created_date).toLocaleDateString()} · {cfg.engine || record.engine || "Unknown engine"} · {record.execution_mode==='local_pending'?'Local execution pending':record.result?.result_kind==='lookup'?'Source lookup':record.execution_mode==='real'?'Computed':'Demonstration'}
                               </p>
                               {record.notes && <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-1">{record.notes}</p>}
                             </div>

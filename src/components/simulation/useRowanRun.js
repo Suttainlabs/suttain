@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { runRowanCompute } from '@/functions/runRowanCompute';
 import { pollRowanJobs } from '@/functions/pollRowanJobs';
 import prepareRowanInput from '@/components/simulation/prepareRowanInput';
-export default function useRowanRun({user,sim,engine,domain,inputs,environment,onResult,refreshUser}) {
+export default function useRowanRun({user,sim,engine,domain,inputs,environment,onResult,refreshUser,autoFallback=true}) {
   const storageKey = `suttain-rowan-active-${user?.id}-${sim?.id}`;
   const [job,setJob] = useState(null), [busy,setBusy] = useState(false), [error,setError] = useState('');
   useEffect(() => { if (!user || !sim) return; const id = localStorage.getItem(storageKey); if (id) base44.entities.SimulationJob.filter({id,created_by_id:user.id},undefined,1).then(rows => { if(rows[0]) setJob(rows[0]); }); },[storageKey,user?.id]);
@@ -31,7 +31,7 @@ export default function useRowanRun({user,sim,engine,domain,inputs,environment,o
     setBusy(true);setError('');onResult(null);
     try {
       const structure = ['dft','quantum_mechanics'].includes(sim.id) ? await prepareRowanInput(inputs) : {};
-      const {data} = await runRowanCompute({sim_type:sim.id,sim_type_label:sim.label,engine,inputs,domain,environmental_params:environment || {},structure});
+      const {data} = await runRowanCompute({sim_type:sim.id,sim_type_label:sim.label,engine,inputs,domain,environmental_params:environment || {},structure,auto_fallback:autoFallback});
       setJob(data.job);
       if (['pending','running'].includes(data.job.status)) localStorage.setItem(storageKey,data.job.id);
       if (data.job.status === 'failed') {localStorage.removeItem(storageKey);setError(data.job.error);}

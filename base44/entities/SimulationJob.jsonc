@@ -4,42 +4,35 @@
   "properties": {
     "draft_id": {
       "type": "string",
-      "description": "Reference to the parent SimulationDraft workspace this job belongs to"
+      "description": "Parent SimulationDraft workspace"
     },
     "job_hash": {
       "type": "string",
-      "description": "Unique hash identifier for this job \u2014 generated from configuration + environmental params + timestamp for auditability"
+      "description": "Audit identifier for this job"
     },
     "job_name": {
-      "type": "string",
-      "description": "User-defined name for this job"
+      "type": "string"
     },
     "description": {
       "type": "string",
-      "maxLength": 1000,
-      "description": "Optional short description for search visibility and previews"
+      "maxLength": 1000
     },
     "sim_type": {
-      "type": "string",
-      "description": "Simulation type ID (e.g. dft, molecular_dynamics)"
+      "type": "string"
     },
     "sim_type_label": {
-      "type": "string",
-      "description": "Human-readable simulation type label"
+      "type": "string"
     },
     "engine": {
-      "type": "string",
-      "description": "Software engine (e.g. GROMACS, ORCA)"
+      "type": "string"
     },
     "inputs": {
       "type": "object",
-      "additionalProperties": true,
-      "description": "Key-value input parameters for this job"
+      "additionalProperties": true
     },
     "environmental_params": {
       "type": "object",
-      "additionalProperties": true,
-      "description": "Environmental parameters snapshot at time of job creation"
+      "additionalProperties": true
     },
     "status": {
       "type": "string",
@@ -50,33 +43,32 @@
         "failed"
       ],
       "default": "pending",
-      "description": "Current execution status"
+      "description": "Completed means workflow operation finished; local_pending execution mode means preparation only, not completed compute."
     },
     "result": {
       "type": "object",
       "additionalProperties": true,
-      "description": "AI-generated result data after execution"
+      "description": "Provider output or prepared local input package, identified by execution_mode"
     },
     "error": {
-      "type": "string",
-      "description": "Error message if job failed"
+      "type": "string"
     },
     "order": {
-      "type": "number",
-      "description": "Position in the queue"
+      "type": "number"
     },
     "provider_job_id": {
       "type": "string",
-      "description": "Receipt from a real compute provider (e.g. a Rowan workflow UUID). Empty for local/LLM-only runs."
+      "description": "Real compute receipt, or PubChem source CID for lookup; empty for prepared local jobs"
     },
     "execution_mode": {
       "type": "string",
       "enum": [
         "real",
-        "demonstration"
+        "demonstration",
+        "local_pending"
       ],
       "default": "demonstration",
-      "description": "Whether this job ran on a real compute provider (real) or is a local/LLM-prepared demonstration."
+      "description": "local_pending means generated files awaiting execution outside Suttain"
     }
   },
   "required": [

@@ -3,6 +3,8 @@ import { requireUser, reserveSecurityAction } from '../../shared/securityGuards.
 import { reserveUsage, planAccess } from '../../shared/usageEntitlements.ts';
 import { resolveRowanMolecule, mapRowanSettings, invalid } from '../../shared/rowanInput.ts';
 import { rowanRequest } from '../../shared/rowanCompute.ts';
+import { pickFallback } from '../../shared/engineRegistry.ts';
+import prepareEnginePackage from '../../shared/prepareEnginePackage.ts';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req), user = await requireUser(base44);
@@ -25,6 +27,26 @@ export default async function(req) {
       job = await base44.entities.SimulationJob.update(job.id,{provider_job_id:workflow.uuid,status:workflow.object_status === 1 ? 'running' : 'pending',result:{...job.result,input_smiles:typeof data.structure?.smiles === 'string' ? data.structure.smiles.slice(0,2000) : molecule.smiles || null}});
       return Response.json({job});
     } catch (error) {
+      const creditExhausted = error.providerStatus === 402 || /(?:insufficient|exhausted|not enough|out of|no remaining|lack of).*credits|credits.*(?:exhausted|insufficient|depleted)/i.test(error.message || '');
+      if (creditExhausted) {
+        const alternative = data.auto_fallback === false ? null : pickFallback(data);
+        if (alternative) {
+          try {
+            const result = await prepareEnginePackage({...data,engine:alternative.label});
+            const attributed = {...result,fallback:{from:'Rowan',to:alternative.label,reason:error.message,notice:'Rowan credits unavailable. Input files prepared for local execution; no alternative calculation has run.'},job_id:job.id};
+            job = await base44.entities.SimulationJob.update(job.id,{engine:alternative.label,status:'completed',execution_mode:'local_pending',result:attributed});
+            await base44.entities.SimulationDraft.update(draft.id,{engine:alternative.label,status:'draft',result:attributed});
+            return Response.json({job,fallback:true});
+          } catch(preparationError) {
+            job = await base44.entities.SimulationJob.update(job.id,{status:'failed',error:`${error.message} Local fallback could not be prepared: ${preparationError.message}`});
+            await base44.entities.SimulationDraft.update(draft.id,{status:'failed',error:job.error});
+            return Response.json({job});
+          }
+        }
+        job = await base44.entities.SimulationJob.update(job.id,{status:'failed',error:`${error.message} No compatible automatic fallback is available for this method/task. Choose an input-file engine manually.`});
+        await base44.entities.SimulationDraft.update(draft.id,{status:'failed',error:job.error});
+        return Response.json({job});
+      }
       const fallback = !mapping.unsupported && !error.status && (!error.providerStatus || error.providerStatus >= 500 || [402,429].includes(error.providerStatus));
       let result = {execution_mode:'demonstration',system_overview:'Demonstration mode: no real calculation was completed.',computational_approach:'Review-only workflow preparation; computed properties and trajectories are unavailable.',scientific_interpretation:'No scientific conclusions can be drawn from this demonstration.',limitations:error.message,predicted_results:{summary:'No computed values available',key_values:[]}};
       if (fallback && planAccess(user).research) {

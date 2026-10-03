@@ -1,0 +1,15 @@
+import React from 'react';
+export default function EngineApiCard({engine}) {
+  const payload=JSON.stringify(engine.example,null,2);
+  const example=`const response = await base44.functions.invoke('${engine.endpoint}', ${payload});\nconsole.log(response.data);`;
+  return <details className="rounded-xl border border-research-border bg-research-card p-5"><summary className="cursor-pointer flex flex-wrap items-center justify-between gap-2 font-medium"><span>{engine.label}</span><span className="text-xs text-research-muted">{engine.deployment==='hosted'?'Live service':'Local input package'}</span></summary><div className="space-y-4 mt-5">
+    <p className="text-sm text-research-muted">{engine.hosting_note || (engine.deployment==='input_file'?'Prepare files and execute them on your own computer or HPC. No calculation runs on Suttain.':'Runs a hosted request; review the operation and provider attribution.')}</p>
+    <dl className="space-y-2 text-sm"><div><dt className="font-medium">Methods</dt><dd className="text-research-muted">{engine.methods.join(', ')}</dd></div><div><dt className="font-medium">Prepared tasks</dt><dd className="text-research-muted">{engine.tasks.join(', ')}</dd></div><div><dt className="font-medium">Version</dt><dd className="text-research-muted">{engine.version}</dd></div><div><dt className="font-medium">License / requirements</dt><dd className="text-research-muted">{engine.license}</dd></div></dl>
+    <h3 className="text-sm">Function: {engine.endpoint}</h3><p className="text-sm text-research-muted">Authenticated Base44 function invocation. Use the initialized Base44 SDK client for your app. No invented /v1 engine routes or separate Suttain SDK are required.</p>
+    <details><summary className="cursor-pointer text-sm">Request schema</summary><pre className="mt-3 rounded-lg bg-research-soft p-4 overflow-x-auto text-xs">{JSON.stringify(engine.parameter_schema,null,2)}</pre></details>
+    <h3 className="text-sm">Example request</h3><pre className="rounded-lg bg-research-soft p-4 overflow-x-auto text-xs">{example}</pre>
+    <p className="text-sm text-research-muted">{engine.deployment==='input_file'?'Response: files[] with filename/content/description, engine, method, task, execution_mode="local_pending", citations[], summary and (when record_job=true) job_id. Input preparation is recorded as a finished operation but remains pending local computation.':'Response: Rowan returns job with status and provider_job_id; PubChem returns source_cid, properties/synonyms, retrieved_at, citations and job_id. PubChem is a lookup, not equivalent quantum computation.'}</p>
+    <p className="text-sm text-research-muted">Errors: 400 invalid or unsupported method/task; 401 sign-in required; 403 quota exhausted; 429 request limit; provider errors never imply successful compute.</p>
+    <h3 className="text-sm">Citation</h3><p className="text-sm text-research-muted">{engine.citation}</p><a className="text-research-accent text-sm underline" href={engine.docs_url} target="_blank" rel="noopener noreferrer">Official software reference</a>
+  </div></details>;
+}

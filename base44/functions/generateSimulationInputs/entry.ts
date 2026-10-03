@@ -1,5 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import inputGeometry from '../../shared/inputGeometry.ts';
+import { findEngine } from '../../shared/engineRegistry.ts';
+import prepareEnginePackage from '../../shared/prepareEnginePackage.ts';
+import recordPreparedJob from '../../shared/recordPreparedJob.ts';
+import { reserveSecurityAction } from '../../shared/securityGuards.ts';
 
 // ── Engine-specific input file templates ────────────────────────────
 // Generates structured, ready-to-run input files for computational
@@ -497,8 +501,13 @@ export default async function(req) {
 
     const body = await req.json();
     const { sim_type, engine, inputs, environmental_params } = body;
-
-    if (!engine) return Response.json({ error: 'Engine is required' }, { status: 400 });
+    if (!engine || typeof sim_type !== 'string' || !inputs || typeof inputs !== 'object' || Array.isArray(inputs) || JSON.stringify(body).length > 32000) return Response.json({ error: 'Supply engine, sim_type and bounded inputs (maximum 32 KB).' }, { status: 400 });
+    const registered = findEngine(engine);
+    if (registered) {
+      const result = await prepareEnginePackage(body);
+      await reserveSecurityAction(base44,user,{channel:'engine_inputs',limit:30,hourly:true});
+      return Response.json(body.record_job === false ? result : await recordPreparedJob(base44,body,result));
+    }
 
     const env = environmental_params || {};
     const files = await generateInputFiles(sim_type, engine, inputs || {}, env);
