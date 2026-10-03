@@ -24,13 +24,13 @@ const PRICE_MAP = {
 export default async function(req) {
   if (req.method === 'OPTIONS') return new Response(null, { headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'Content-Type, Authorization' } });
   try {
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user?.id || !user.email) return Response.json({ error: 'Sign in to continue to checkout' }, { status: 401 });
     const { priceKey, promoCode } = await req.json();
     if (!priceKey || !PRICE_MAP[priceKey]) return Response.json({ error: 'Invalid price key' }, { status: 400 });
     await reserveIpAction(base44, req, { channel: 'public_checkout', limit: 10, hourly: true });
-    let user = null;
-    try { user = await base44.auth.me(); } catch (_) {}
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     const isLifetime = priceKey === 'lifetime';
     const metadata = { base44_app_id: Deno.env.get('BASE44_APP_ID'), price_key: priceKey,
       product_line: ['core', 'research'].find(p => priceKey.startsWith(p)) || '', user_id: user?.id || '', promo_code: promoCode || '' };
