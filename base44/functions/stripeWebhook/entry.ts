@@ -2,6 +2,7 @@ import StripeLib from 'npm:stripe@17.7.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { Resend } from 'npm:resend@4.0.0';
 import { subscriptionPillars } from '../../shared/subscriptionPillars.ts';
+import { escapeHtml } from '../../shared/securityGuards.ts';
 
 // Initialize clients lazily inside the handler so that missing secrets
 // cause a controlled 500 response rather than a module-level boot crash.
@@ -105,7 +106,7 @@ async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
               </tr>
               <tr>
                 <td style="padding:38px 36px 34px;">
-                  <p style="font-size:17px;line-height:1.7;margin:0 0 20px;color:#0f172a;font-weight:600;">Hello ${firstName},</p>
+                  <p style="font-size:17px;line-height:1.7;margin:0 0 20px;color:#0f172a;font-weight:600;">Hello ${escapeHtml(firstName)},</p>
                   <p style="font-size:16px;line-height:1.75;margin:0 0 22px;color:#475569;">Thank you for subscribing to ${planInfo.name}, we are excited to welcome you to our community.</p>
                   <p style="font-size:16px;line-height:1.75;margin:0 0 18px;color:#475569;">${renewalText}</p>
                   <p style="font-size:16px;line-height:1.75;margin:0 0 18px;color:#475569;">You now have access to the following features:</p>
@@ -267,7 +268,7 @@ export default async function(req) {
           await sendEmailViaResend(
             Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
             `New Suttain Purchase: ${customerName || customerEmail}`,
-            `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${customerName || ':'}</li><li><b>Email:</b> ${customerEmail}</li><li><b>Plan:</b> ${priceKey}</li><li><b>Billing:</b> ${billing}</li><li><b>Session ID:</b> ${session.id}</li></ul>`
+            `<p>A new purchase was completed.</p><ul><li><b>Name:</b> ${escapeHtml(customerName || ':')}</li><li><b>Email:</b> ${escapeHtml(customerEmail)}</li><li><b>Plan:</b> ${escapeHtml(priceKey)}</li><li><b>Billing:</b> ${escapeHtml(billing)}</li><li><b>Session ID:</b> ${escapeHtml(session.id)}</li></ul>`
           );
 
           // Create in-app admin notification
@@ -412,7 +413,7 @@ export default async function(req) {
             await sendEmailViaResend(
               Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com',
               `Subscription Renewal/New: ${userName}`,
-              `<p>New subscription confirmed via invoice.paid.</p><ul><li><b>Email:</b> ${invoiceEmail}</li><li><b>Plan:</b> ${plan}</li><li><b>Billing:</b> ${billing}</li><li><b>Subscription ID:</b> ${invoiceSubId}</li><li><b>Invoice:</b> ${invoice.id}</li></ul>`
+              `<p>New subscription confirmed via invoice.paid.</p><ul><li><b>Email:</b> ${escapeHtml(invoiceEmail)}</li><li><b>Plan:</b> ${escapeHtml(plan)}</li><li><b>Billing:</b> ${escapeHtml(billing)}</li><li><b>Subscription ID:</b> ${escapeHtml(invoiceSubId)}</li><li><b>Invoice:</b> ${escapeHtml(invoice.id)}</li></ul>`
             );
 
             // Create in-app admin notification
