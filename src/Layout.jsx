@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, Cpu, BarChart2, FolderOpen, ShieldCheck, ShieldAlert, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight, Code2 } from "lucide-react";
+import { Home, TestTube, Atom, Menu, X, HelpCircle, LogIn, ChevronDown, ChevronLeft, LogOut, Sparkles, User as UserIcon, QrCode, Leaf, AppWindow, LayoutDashboard, Star, Linkedin, Instagram, Youtube, Apple, Building2, Briefcase, Bell, Cpu, BarChart2, FolderOpen, ShieldCheck, ShieldAlert, ShoppingBag, TrendingUp, FileText, FlaskConical, Droplets, CreditCard, Microscope, Terminal, ArrowUpRight, Code2, Target } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
@@ -273,8 +273,8 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const researchToolItems = [
-    { href: "AtomisticSimulation", label: "Atomistic Simulation", icon: FlaskConical, category: "Research" },
-    { href: "DrugDesign", label: "Drug Design", icon: Microscope, category: "Research" },
+    { href: "AtomisticSimulation", label: "Atomistic Simulation", icon: Atom, category: "Research" },
+    { href: "DrugDesign", label: "Drug Design", icon: Target, category: "Research" },
   ];
 
   // Tools dropdown: consumer tools only; research tools live in the Research hub
