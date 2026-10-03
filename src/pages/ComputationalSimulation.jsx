@@ -23,7 +23,7 @@ export const SIM_TYPES = [
       { key: "molecule", label: "Molecule / SMILES / Formula", placeholder: "e.g. H2O, C6H6, caffeine" },
       { key: "functional", label: "DFT Functional", type: "select", options: ["B3LYP","PBE","PBE0","M06-2X","M06-L","wB97X-D","ωB97X-D","CAM-B3LYP","BP86","BLYP","B97-D3","HSE06","TPSSh","B2-PLYP","DLPNO-CCSD(T)","HF"], default: "B3LYP" },
       { key: "basis_set", label: "Basis Set", type: "select", options: ["STO-3G","3-21G","6-31G","6-31G*","6-31G**","6-311G*","6-311G**","6-311+G**","6-311++G**","cc-pVDZ","cc-pVTZ","cc-pVQZ","aug-cc-pVDZ","aug-cc-pVTZ","def2-SVP","def2-TZVP","def2-QZVP","def2-TZVPP","LANL2DZ","SDD"], default: "6-31G*" },
-      { key: "task", label: "Calculation Task", placeholder: "e.g. geometry optimization, frequency, NMR, single point" },
+      { key: "task", label: "Calculation Task", type: "select", options: ["Geometry optimization","Single-point energy","Frequency analysis (IR/Raman)","NMR chemical shifts","UV-Vis (TDDFT)","Population analysis","Natural bond orbital (NBO)","Transition state (TS) optimization","IRC path","Conformer search"], default: "Geometry optimization" },
     ]
   },
   {
