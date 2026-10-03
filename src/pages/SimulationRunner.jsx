@@ -138,6 +138,7 @@ export default function SimulationRunner() {
     setInputs(prev=>{const next={...prev};delete next.engine_method;delete next.engine_task;
       if(entry?.deployment==='input_file') {next.engine_method=entry.methods[0];next.engine_task=entry.tasks[0];}
       if(entry?.id==='gamess') next.basis_set='6-31G*';
+      if(entry?.id==='mace') {next.charge=0;next.multiplicity=1;next.engine_method=['materials','surface_chemistry'].includes(typeId)?'MACE-MP-0':'MACE-OFF23';next.engine_task=typeId==='molecular_dynamics'?'Molecular dynamics':'Single-point energy';next.mace_periodic=['materials','surface_chemistry'].includes(typeId);}
       return next;
     });
   };
@@ -347,9 +348,9 @@ export default function SimulationRunner() {
         <SimulationWorkflowHeader simulation={sim} domain={domain} engine={selectedEngine} />
         <div className="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-6 items-start">
           <SimulationConfigRail sim={sim} engine={selectedEngine} catalogue={selectedCatalogue} inputs={inputs} onChange={handleInputChange} onEngine={handleEngineSelect}
-            fields={sim.fields.filter(field=>isMdEngine ? !['force_field','temperature','simulation_time','system'].includes(field.key) : selectedEngine==='Rowan' && ['dft','quantum_mechanics'].includes(typeId) ? !['functional','method','task','basis_set','properties'].includes(field.key) : !selectedCatalogue || selectedEngine==='Rowan' || !['functional','method','task','basis_set','properties','theory_level','property','analysis_type'].includes(field.key))}
+            fields={sim.fields.filter(field=>selectedCatalogue?.id==='mace' ? FILE_UPLOAD_KEYS.includes(field.key) : isMdEngine ? !['force_field','temperature','simulation_time','system'].includes(field.key) : selectedEngine==='Rowan' && ['dft','quantum_mechanics'].includes(typeId) ? !['functional','method','task','basis_set','properties'].includes(field.key) : !selectedCatalogue || selectedEngine==='Rowan' || !['functional','method','task','basis_set','properties','theory_level','property','analysis_type'].includes(field.key))}
             onCompound={handlePubChemSelect} onPreset={handlePresetSelect} onUpload={openFileAutoFill} onDraw={openDrawer} uploadKeys={FILE_UPLOAD_KEYS} drawKeys={DRAWABLE_KEYS}
-            onAdvanced={()=>setAdvancedOpen(true)} summary={['dft','quantum_mechanics'].includes(typeId)?`Charge: ${inputs.charge ?? 'reference'} · Spin: ${inputs.multiplicity ?? 1} · Solvent: ${effectiveEnvironment.solvent || 'none'}`:`${effectiveEnvironment.temperature ?? '—'} K · ${effectiveEnvironment.pressure ?? '—'} bar · Environment & notes`}
+            onAdvanced={()=>setAdvancedOpen(true)} summary={selectedCatalogue?.id==='mace'?'Local device, cell, optimization & MD settings':['dft','quantum_mechanics'].includes(typeId)?`Charge: ${inputs.charge ?? 'reference'} · Spin: ${inputs.multiplicity ?? 1} · Solvent: ${effectiveEnvironment.solvent || 'none'}`:`${effectiveEnvironment.temperature ?? '—'} K · ${effectiveEnvironment.pressure ?? '—'} bar · Environment & notes`}
             actions={{engine:selectedEngine,isLookup:selectedCatalogue?.id==='pubchem',isRunning,generatingInputs,onRun:handleRun,onGenerate:handleGenerateInputs,isMdEngine}}/>
           <SimulationResultsRail hasOutput={!!(results || inputFiles)} isRunning={isRunning} engine={selectedEngine}>
         {(rowan.error || rowan.job?.status === 'failed') && <div role="alert" className="mb-6 rounded-xl border border-destructive bg-card p-5 text-destructive">{rowan.error || rowan.job.error}</div>}

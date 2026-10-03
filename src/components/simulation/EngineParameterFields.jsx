@@ -2,8 +2,10 @@ import React from 'react';
 import BasisSetSelect from '@/components/simulation/BasisSetSelect';
 import MdParameterFields from '@/components/simulation/MdParameterFields';
 import RowanParameterFields from '@/components/simulation/RowanParameterFields';
+import MaceParameterFields from '@/components/simulation/MaceParameterFields';
 export default function EngineParameterFields({engine,inputs,onChange,simType,section='all'}) {
   if(!engine) return null;
+  if(engine.id==='mace') return <MaceParameterFields engine={engine} inputs={inputs} onChange={onChange} simType={simType} section={section}/>;
   if(engine.id==='rowan') return section==='advanced'?null:<RowanParameterFields engine={engine} inputs={inputs} onChange={onChange} simType={simType}/>;
   const update=(key,value)=>onChange(key,value);
   if(engine.md) return <MdParameterFields engine={engine} inputs={inputs} onChange={onChange} simType={simType} section={section}/>;
