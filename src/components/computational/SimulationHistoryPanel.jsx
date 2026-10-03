@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { History, GitCompare, Loader2, TrendingUp, TrendingDown, Minus, ChevronDown, ChevronUp } from "lucide-react";
 
-export default function SimulationHistoryPanel({ currentResults, currentInputs, simTypeId, engine }) {
+export default function SimulationHistoryPanel({ currentResults, currentInputs, simTypeId, engine, onSelectResult }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [compareA, setCompareA] = useState(null);
@@ -117,6 +117,7 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
                               {record.notes && <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-1">{record.notes}</p>}
                             </div>
                             <div className="flex gap-1 flex-shrink-0">
+                              {onSelectResult && <button className="text-xs text-research-accent underline px-2" onClick={() => onSelectResult(record)}>Open results</button>}
                               <button
                                 onClick={() => setCompareA(isA ? null : record)}
                                 className={`text-[10px] font-bold px-2 py-1 rounded-lg transition-colors ${

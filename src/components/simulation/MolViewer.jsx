@@ -208,7 +208,8 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, v
         </div>
       )}
 
-      {/* Presets */}
+      {/* Reference search is hidden for immutable computed output. */}
+      {!visualizationTarget?.computed && <>
       <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 border-b border-slate-700">
         <span className="text-xs text-slate-400 font-semibold">Presets:</span>
         {[{ name: 'H₂O', smiles: 'O' }, { name: 'Ethanol', smiles: 'CCO' }, { name: 'Benzene', smiles: 'c1ccccc1' }].map(p => (
@@ -232,6 +233,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, v
         </Button>
       </div>
 
+      </>}
       {/* Style controls */}
       <div className="flex flex-wrap items-center gap-2 px-3 py-2 bg-slate-800 border-b border-slate-700">
         <select value={style} onChange={e => setStyle(e.target.value)}
@@ -371,6 +373,7 @@ export default function MolViewer({ simType, inputs, visualizationTarget, visual
             <Camera className="w-4 h-4" />
             <span className="text-xs font-semibold hidden sm:inline">Snapshot</span>
           </button>
+          {!visualizationTarget?.computed && <>
           <span className="text-xs text-slate-400 hidden sm:block">Tools:</span>
           <button
             onClick={() => {
@@ -396,6 +399,7 @@ export default function MolViewer({ simType, inputs, visualizationTarget, visual
             className={`p-1.5 rounded-lg transition-colors ${showEditor ? "bg-cyan-600 text-white" : "text-slate-400 hover:text-white hover:bg-slate-700"}`}>
             <Wrench className="w-4 h-4" />
           </button>
+          </>}
           <span className="text-xs text-slate-400 hidden sm:block">View:</span>
         </div>
         <div className="flex items-center gap-3">

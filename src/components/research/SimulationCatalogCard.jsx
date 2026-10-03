@@ -10,7 +10,8 @@ export default function SimulationCatalogCard({ simulation, domain, index }) {
       <div className="flex items-start justify-between mb-6"><div className="research-icon bg-research-soft"><Icon className="h-5 w-5" strokeWidth={1.5} /></div><span className="research-label">{String(index + 1).padStart(2, '0')}</span></div>
       <h3 className="!text-lg mb-3">{sentenceLabel(simulation.label)}</h3>
       <p className="text-sm text-research-muted leading-relaxed mb-6">{simulation.description}</p>
-      <div className="flex flex-wrap gap-1.5 mt-auto" aria-label="Supported engines">
+      <p className="research-label mb-4">{['dft','quantum_mechanics'].includes(simulation.id) ? 'Rowan compute · mapped molecular tasks' : 'Not yet runnable on Rowan'}</p>
+      <div className="flex flex-wrap gap-1.5 mt-auto" aria-label="Workflow input engines">
         {simulation.engines.map(engine => <span key={engine} className="rounded border border-research-border px-2 py-1 font-mono text-xs text-research-muted">{engine}</span>)}
       </div>
       <div className="flex items-center justify-between border-t border-research-border pt-4 mt-5 text-sm text-research-accent"><span>Configure workflow</span><ArrowUpRight className="h-4 w-4" /></div>

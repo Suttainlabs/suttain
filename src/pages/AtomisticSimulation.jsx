@@ -26,7 +26,7 @@ export default function AtomisticSimulation() {
           <div className="col-span-12 lg:col-span-9">
             <p className="research-label mb-4">Research / Atomistic Simulation / Workflow catalog</p>
             <div className="flex items-center gap-3 mb-4"><Gauge className="h-6 w-6 text-research-accent" strokeWidth={1.5} /><h1>Atomistic Simulation</h1></div>
-            <p className="text-research-muted max-w-2xl">Prepare quantum chemistry, QM/MM, molecular dynamics, and materials workflows at the atomic scale. Select a field, configure your system, and review engine-specific inputs before executing calculations with configured compute.</p>
+            <p className="text-research-muted max-w-2xl">Run mapped small-molecule quantum chemistry tasks on Rowan and inspect genuine computed geometry and properties. All catalog workflows can be configured; unsupported tasks report a clear failure rather than illustrative results.</p>
           </div>
 
         </div>

@@ -196,7 +196,7 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="md:col-span-2 lg:col-span-1">
-            <SelectInput label="Solvent" value={env.solvent} onChange={v => update('solvent', v)} options={SOLVENT_OPTIONS} />
+            <SelectInput label="Solvent" value={env.solvent} onChange={v => update('solvent', v)} options={['dft','quantum_mechanics'].includes(simType) ? SOLVENT_OPTIONS.filter(o => !['tip3p','tip4p','spc','custom'].includes(o.value)).map(o => o.value === 'water' ? {...o,label:'Water (implicit)'} : o) : SOLVENT_OPTIONS} />
           </div>
           {env.solvent === 'custom' && (
             <div className="md:col-span-2">

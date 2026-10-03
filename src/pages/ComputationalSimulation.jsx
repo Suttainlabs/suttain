@@ -21,7 +21,7 @@ export const SIM_TYPES = [
     description: "Electronic structure, energies, molecular orbitals, geometry optimization",
     fields: [
       { key: "molecule", label: "Molecule / SMILES / Formula", placeholder: "e.g. H2O, C6H6, caffeine" },
-      { key: "functional", label: "DFT Functional", type: "select", options: ["B3LYP","PBE","PBE0","M06-2X","M06-L","wB97X-D","ωB97X-D","CAM-B3LYP","BP86","BLYP","B97-D3","HSE06","TPSSh","B2-PLYP","DLPNO-CCSD(T)","HF"], default: "B3LYP" },
+      { key: "functional", label: "DFT Functional", type: "select", options: ["B3LYP","PBE","PBE0","M06-2X","M06-L","CAM-B3LYP","BP86","TPSSh","HF","r2SCAN","GFN2-xTB","wB97X-D","ωB97X-D","BLYP","B97-D3","HSE06","B2-PLYP","DLPNO-CCSD(T)"], default: "B3LYP" },
       { key: "basis_set", label: "Basis Set", type: "select", options: ["STO-3G","3-21G","6-31G","6-31G*","6-31G**","6-311G*","6-311G**","6-311+G**","6-311++G**","cc-pVDZ","cc-pVTZ","cc-pVQZ","aug-cc-pVDZ","aug-cc-pVTZ","def2-SVP","def2-TZVP","def2-QZVP","def2-TZVPP","LANL2DZ","SDD"], default: "6-31G*" },
       { key: "task", label: "Calculation Task", type: "select", options: ["Geometry optimization","Single-point energy","Frequency analysis (IR/Raman)","NMR chemical shifts","UV-Vis (TDDFT)","Population analysis","Natural bond orbital (NBO)","Transition state (TS) optimization","IRC path","Conformer search"], default: "Geometry optimization" },
     ]
@@ -69,8 +69,8 @@ export const SIM_TYPES = [
     description: "Excited states, TDDFT, reaction pathways, transition states, photochemistry",
     fields: [
       { key: "system", label: "Chemical System", placeholder: "e.g. photocatalytic water splitting, A→B→C reaction" },
-      { key: "method", label: "QM Method", type: "select", options: ["TDDFT/B3LYP","TDDFT/CAM-B3LYP","EOM-CCSD","CASPT2","CASSCF","ADC(2)","CC2","MP2","DLPNO-CCSD(T)"], default: "TDDFT/B3LYP" },
-      { key: "properties", label: "Properties of Interest", type: "select", options: ["Excitation energies","Oscillator strengths","Reaction barrier","Dipole moment","Transition state","IRC path","Natural transition orbitals","Spin-orbit coupling"], default: "Excitation energies" },
+      { key: "method", label: "QM Method", type: "select", options: ["B3LYP","PBE","HF","GFN2-xTB","TDDFT/B3LYP","TDDFT/CAM-B3LYP","EOM-CCSD","CASPT2","CASSCF","ADC(2)","CC2","MP2","DLPNO-CCSD(T)"], default: "B3LYP" },
+      { key: "properties", label: "Properties of Interest", type: "select", options: ["Excitation energies","Oscillator strengths","Reaction barrier","Dipole moment","Transition state","IRC path","Natural transition orbitals","Spin-orbit coupling"], default: "Dipole moment" },
       { key: "environment", label: "Environment", type: "select", options: ["Gas phase","Water (PCM)","Solvent (COSMO)","DMSO (PCM)","Benzene (PCM)","Ethanol (PCM)"], default: "Gas phase" },
     ]
   },

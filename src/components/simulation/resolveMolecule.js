@@ -6,6 +6,7 @@ export function extractSmiles(value = '') {
 
 export async function resolveMolecule(identifier, target = null) {
   const raw = String(identifier || '').trim();
+  if (target?.computed && /^\d+\s*\n/.test(raw)) return {data:raw,format:'xyz',source:'Rowan computed geometry · real output'};
   // Keep uploaded coordinates intact; never turn a structure file into a name lookup.
   if (/^(ATOM  |HETATM)/m.test(raw)) return { data: raw, format: 'pdb', source: 'Input coordinates · not simulation output' };
   if (/M  END/.test(raw)) return { data: raw, format: 'sdf', source: 'Input coordinates · not simulation output' };

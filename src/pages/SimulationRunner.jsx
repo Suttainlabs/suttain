@@ -34,6 +34,8 @@ import { generateSimulationInputs } from '@/functions/generateSimulationInputs';
 import useTrialStatus from '@/hooks/useTrialStatus';
 import SubscriptionLock from '@/components/shared/SubscriptionLock';
 import PremiumFeatureGate from '@/components/shared/PremiumFeatureGate';
+import useRowanRun from '@/components/simulation/useRowanRun';
+import RowanResults from '@/components/simulation/RowanResults';
 
 export default function SimulationRunner() {
   const { user, refreshUser } = useContext(AuthContext);
@@ -52,7 +54,7 @@ export default function SimulationRunner() {
     sim?.fields.forEach(f => { if (f.default) defaults[f.key] = f.default; });
     return defaults;
   });
-  const [isRunning, setIsRunning] = useState(false);
+
   const [results, setResults] = useState(null);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("analysis");
@@ -101,8 +103,10 @@ export default function SimulationRunner() {
     "Q-Chem": "Quantum chemistry, excited states and embedded QM/MM calculations for molecular systems.",
   };
 
+  const rowan = useRowanRun({ user, sim, engine:selectedEngine, domain, inputs, environment:{solvent:'water',...envParams}, onResult:setResults, refreshUser });
+  const { isRunning } = rowan;
   useEffect(() => {
-    if (!sim) navigate("/ComputationalSimulation");
+    if (!sim) navigate('/AtomisticSimulation');
   }, [sim, navigate]);
 
   if (!sim) return null;
@@ -147,7 +151,7 @@ export default function SimulationRunner() {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const content = ev.target.result;
-      if (content.length <= 8000) {
+      if (content.length <= 24000) {
         handleInputChange(fileAutoFillTarget, content);
       } else {
         handleInputChange(fileAutoFillTarget, file.name);
@@ -157,134 +161,10 @@ export default function SimulationRunner() {
     e.target.value = '';
   };
 
-  const generateJobHash = () => {
-    const ts = Date.now().toString(36);
-    const rand = Math.random().toString(36).substring(2, 10);
-    return `sim-${ts}-${rand}`;
-  };
-
   const handleRun = async () => {
     if (isRunning) return;
     if (!trialStatus.canRunResearchSim) { navigate('/Pricing?pillar=research'); return; }
-    const inputSummary = sim.fields.map(f => `${f.label}: ${inputs[f.key] || 'not specified'}`).join('\n');
-    const env = { solvent: 'water', temperature: 300, pressure: 1.0, ph: 7.0, ionic_strength: 0.15, boundary_conditions: 'periodic', ...envParams };
-    const envSummary = `Solvent: ${env.solvent === 'custom' ? (env.solvent_custom || 'custom') : env.solvent}
-Forcefield: ${env.forcefield || 'default'}
-Temperature: ${env.temperature || 300} K
-Pressure: ${env.pressure || 1.0} bar
-pH: ${env.ph || 7.0}
-Ionic Strength: ${env.ionic_strength || 0.15} mol/L
-Boundary Conditions: ${env.boundary_conditions || 'periodic'}`;
-
-    const jobHash = generateJobHash();
-    setCurrentJobHash(jobHash);
-    setIsRunning(true);
-    setResults(null);
-
-    // Create isolated SimulationDraft workspace (decoupled from saved entities)
-    let draftId = null;
-    if (user) {
-      try {
-        const draft = await base44.entities.SimulationDraft.create({
-          name: `${sim.label}: ${new Date().toLocaleString()}`,
-          sim_type: typeId,
-          sim_type_label: sim.label,
-          engine: selectedEngine,
-          domain,
-          raw_inputs: { ...inputs, forcefield_asset: env.forcefield_file_uri ? { file_uri: env.forcefield_file_uri, file_name: env.forcefield_file_name } : null, custom_forcefield: env.custom_forcefield || customForcefield || null },
-          environmental_params: { ...env },
-          run_id: jobHash,
-          status: 'running',
-          custom_forcefield_id: env.custom_forcefield_id || customForcefield?.id || null,
-        });
-        draftId = draft.id;
-        setCurrentDraftId(draftId);
-      } catch (e) {
-        console.error('Failed to create simulation draft:', e);
-      }
-    }
-
-    const customFFNote = customForcefield && typeId === "molecular_dynamics"
-      ? `\n\nCustom Forcefield: "${customForcefield.name}" (extends ${customForcefield.base_forcefield})
-${customForcefield.description ? `Description: ${customForcefield.description}` : ""}
-${customForcefield.lj_parameters?.length ? `LJ params: ${customForcefield.lj_parameters.map(p => `${p.atom_type}: ε=${p.epsilon} kJ/mol, σ=${p.sigma} nm`).join("; ")}` : ""}
-${customForcefield.bond_parameters?.length ? `Bond params: ${customForcefield.bond_parameters.map(p => `${p.atom1}-${p.atom2}: k=${p.k_bond}, r0=${p.r0}`).join("; ")}` : ""}
-${customForcefield.angle_parameters?.length ? `Angle params: ${customForcefield.angle_parameters.map(p => `${p.atom1}-${p.atom2}-${p.atom3}: k=${p.k_angle}, θ0=${p.theta0}`).join("; ")}` : ""}
-${customForcefield.dihedral_parameters?.length ? `Dihedral params: ${customForcefield.dihedral_parameters.map(p => `${p.atom1}-${p.atom2}-${p.atom3}-${p.atom4}: k=${p.k_dihedral}, n=${p.n}, δ=${p.delta}`).join("; ")}` : ""}
-Incorporate these custom parameters into the simulation script.` : "";
-
-    const prompt = `You are a computational chemistry expert. A researcher wants to run a ${sim.label} simulation using ${selectedEngine} for ${domain}.
-
-Parameters:
-${inputSummary}
-
-Environmental Conditions:
-${envSummary}${customFFNote}
-
-Provide a focused, technical analysis. Return JSON with:
-1. system_overview: Brief 2-3 sentence description
-2. computational_approach: Method justification (3-4 sentences)
-3. predicted_results: { summary: string, key_values: [{property, value, unit, interpretation}] }, include 4-6 realistic numerical results
-4. scientific_interpretation: What results mean (3-4 sentences)
-5. bash_script: Complete, ready-to-run ${selectedEngine} input file or bash script with comments
-6. visualization_commands: Visualization commands/scripts
-7. limitations: 2-3 sentence limitation note
-8. next_steps: array of 3 concise next steps
-9. references: array of 2-3 real paper citations`;
-
-    try {
-      const response = await base44.functions.invoke('runConsumerLLM', {
-        operation: 'simulationRunner',
-        data: { selectedEngine, simulationConfig: { forcefield_file_name: env.forcefield_file_name || '', custom_forcefield: env.custom_forcefield || customForcefield || null, ...inputs, ...env, force_field: env.forcefield || inputs.force_field }, moleculeInfo: inputSummary + (env.forcefield_file_name ? `\nUploaded forcefield file: ${env.forcefield_file_name}. Reference this local file in the script, do not invent its contents. Verify compatibility with ${selectedEngine} before execution.` : '') }
-      });
-
-      const fullResult = { ...response.data, simType: sim, engine: selectedEngine, domain, inputs: { ...inputs }, environmental_params: { ...env }, job_hash: jobHash };
-      setActiveTab("analysis");
-
-      // Update the draft with results and create an auditable SimulationJob
-      if (user && draftId) {
-        try {
-          await base44.entities.SimulationDraft.update(draftId, {
-            status: 'completed',
-            result: fullResult,
-          });
-          await base44.entities.SimulationJob.create({
-            draft_id: draftId,
-            job_hash: jobHash,
-            job_name: `${sim.label}: ${selectedEngine}`,
-            sim_type: typeId,
-            sim_type_label: sim.label,
-            engine: selectedEngine,
-            inputs: { ...inputs },
-            environmental_params: { ...env },
-            status: 'completed',
-            result: fullResult,
-          });
-        } catch (e) {
-          console.error('Failed to record simulation job:', e);
-        }
-      }
-
-      if (user) {
-        try {
-          await base44.auth.updateMe({ reward_points: (user.reward_points || 0) + 50 });
-          if (refreshUser) await refreshUser();
-        } catch {}
-      }
-      setResults(fullResult);
-      setShowFeedback(true);
-      setTimeout(() => setShowFeedback(false), 15000);
-    } catch (e) {
-      console.error(e);
-      if (user && draftId) {
-        try {
-          await base44.entities.SimulationDraft.update(draftId, { status: 'failed', error: e.message });
-        } catch {}
-      }
-    } finally {
-      if (refreshUser) await refreshUser();
-      setIsRunning(false);
-    }
+    await rowan.run();
   };
 
   const handleGenerateInputs = async () => {
@@ -424,10 +304,14 @@ Provide a focused, technical analysis. Return JSON with:
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <SimulationWorkflowHeader simulation={sim} domain={domain} engine={selectedEngine} />
 
-        {/* Results */}
+        {(rowan.error || rowan.job?.status === 'failed') && <div role="alert" className="mb-6 rounded-xl border border-destructive bg-card p-5 text-destructive">{rowan.error || rowan.job.error}</div>}
+        {isRunning && rowan.job?.provider_job_id && <div role="status" className="mb-6 rounded-xl border border-research-border bg-research-card p-5"><p className="research-label">Real Rowan compute run · {rowan.job.status}</p><p className="font-mono text-xs break-all mt-2">{rowan.job.provider_job_id}</p><p className="text-sm text-research-muted mt-2">Tracking completion notifications with polling fallback. You can return to this workflow later.</p></div>}
+        {results?.execution_mode === 'real' && <RowanResults result={results} onReset={reset} onRun={handleRun} isRunning={isRunning}/>}
+        {/* Previous demonstration results remain readable. */}
         <AnimatePresence>
-          {results && (
+          {results && results.execution_mode !== 'real' && (
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-8">
+              <div role="status" className="mb-5 rounded-xl border border-research-border bg-research-soft p-5"><p className="research-label">Demonstration mode</p><p className="text-sm text-research-muted">No real compute completed. Any estimates or reference structures below are illustrative, not Rowan output.</p></div>
               {/* Result Tabs */}
               <div className="flex items-center gap-1 border-b border-research-border pb-3 mb-6 overflow-x-auto">
                 {[
@@ -636,6 +520,7 @@ Provide a focused, technical analysis. Return JSON with:
             currentInputs={inputs}
             simTypeId={typeId}
             engine={selectedEngine}
+            onSelectResult={record => {setInputs(record.inputs || {});setSelectedEngine(record.engine);setResults({...record.result,execution_mode:record.execution_mode,provider_job_id:record.provider_job_id,inputs:record.inputs,environmental_params:record.environmental_params,simType:sim,engine:record.result?.engine || record.engine,domain,job_hash:record.job_hash});setActiveTab('analysis');}}
           /></PremiumFeatureGate>
         </div>
 
@@ -694,6 +579,11 @@ Provide a focused, technical analysis. Return JSON with:
                         canUpload={FILE_UPLOAD_KEYS.includes(field.key)} canDraw={DRAWABLE_KEYS.includes(field.key)}
                         onUpload={() => openFileAutoFill(field.key)} onDraw={() => openDrawer(field.key)} />
                     ))}
+                    {['dft','quantum_mechanics'].includes(typeId) && <>
+                      <div><label htmlFor="rowan-charge" className="block mb-2">Molecular charge (XYZ / SMILES override)</label><input id="rowan-charge" type="number" min="-10" max="10" step="1" placeholder="Use reference charge" value={inputs.charge ?? ''} onChange={e => handleInputChange('charge',e.target.value === '' ? undefined : Number(e.target.value))} className="simulation-control"/></div>
+                      <div><label htmlFor="rowan-spin" className="block mb-2">Spin multiplicity</label><input id="rowan-spin" type="number" min="1" max="7" step="1" value={inputs.multiplicity ?? 1} onChange={e => handleInputChange('multiplicity',Number(e.target.value))} className="simulation-control"/></div>
+                      <p className="md:col-span-2 text-sm text-research-muted">SMILES and compound names use a PubChem 3D reference conformer; upload XYZ for unindexed molecules. Rowan executes mapped methods with gpu4pyscf (or Psi4); GFN2-xTB uses xtb. Selected legacy engines remain input-file targets, not the actual compute engine.</p>
+                    </>}
                     <div className="min-w-0 md:col-span-2">
                       <label htmlFor="simulation-notes" className="block text-sm font-medium text-research-text mb-2">Additional notes (optional)</label>
                       <input id="simulation-notes" type="text" value={inputs.notes ?? ''}
@@ -712,6 +602,7 @@ Provide a focused, technical analysis. Return JSON with:
                   />
                 </div>
 
+                {['dft','quantum_mechanics'].includes(typeId) && <p className="text-sm text-research-muted mb-5">Rowan applies implicit solvent only; temperature, pressure, pH, ionic strength and classical forcefields remain saved context and do not control this quantum calculation.</p>}
                 {/* Run button */}
                 <div className="flex items-center gap-3 flex-wrap border-t border-research-border pt-6">
                   <Button
@@ -721,7 +612,7 @@ Provide a focused, technical analysis. Return JSON with:
                   >
                     {isRunning
                       ? <><Loader2 className="w-4 h-4 animate-spin" /> Running…</>
-                      : <><Cpu className="w-4 h-4" /> Prepare workflow and analyze</>}
+                      : <><Cpu className="w-4 h-4" /> Run on Rowan</>}
                   </Button>
 
                   <Button
@@ -737,7 +628,7 @@ Provide a focused, technical analysis. Return JSON with:
                   </Button>
 
                   <p className="text-xs text-slate-400">
-                    Workflow analysis + {selectedEngine} script. Engine execution requires configured compute.
+                    Rowan compute is capped at 25 Rowan credits per job. Only mapped molecular tasks run; other workflows report an unsupported state.
                   </p>
                 </div>
 
@@ -754,10 +645,10 @@ Provide a focused, technical analysis. Return JSON with:
                     <Loader2 className="w-5 h-5 text-violet-600 animate-spin flex-shrink-0" />
                     <div>
                       <p className="text-sm font-semibold text-violet-800">
-                        Preparing {sim.label} workflow…
+                        Submitting or tracking {sim.label}…
                       </p>
                       <p className="text-xs text-violet-500">
-                        Generating {selectedEngine} script, predicted results & analysis…
+                        Resolving 3D input and waiting for real Rowan output. No simulated values are generated.
                       </p>
                     </div>
                   </div>
