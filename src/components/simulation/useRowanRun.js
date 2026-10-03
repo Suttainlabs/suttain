@@ -39,5 +39,6 @@ export default function useRowanRun({user,sim,engine,domain,inputs,environment,o
     } catch(e) {setError(e.response?.data?.error || e.message);}
     finally {setBusy(false);}
   };
-  return {job,isRunning:busy || ['pending','running'].includes(job?.status),error,run};
+  const clearError = () => {setError('');setJob(previous=>previous?.status==='failed'?null:previous);};
+  return {job,isRunning:busy || ['pending','running'].includes(job?.status),error,run,clearError};
 }

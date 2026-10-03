@@ -1,3 +1,4 @@
+import {rowanMethods,rowanTasks} from './rowanCapabilities.ts';
 export const elements = 'X H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og'.split(' ');
 export function invalid(message) { const error = new Error(message); error.status = 400; throw error; }
 export function validateMolecule(molecule) {
@@ -29,13 +30,13 @@ export async function resolveRowanMolecule(input) {
 }
 export function mapRowanSettings(simType, inputs, requestedEngine, environment = {}) {
   if (!['dft', 'quantum_mechanics'].includes(simType)) return { unsupported: `${simType.replace(/_/g, ' ')} is not yet supported by this Rowan compute integration. No calculation was submitted.` };
-  const tasks = { 'Geometry optimization': ['optimize','energy','charge','dipole'], 'Single-point energy': ['energy','charge','dipole'], 'Frequency analysis (IR/Raman)': ['optimize','frequencies','energy','charge','dipole'], 'Population analysis': ['energy','charge','dipole'], 'Hessian': ['hessian','energy'], 'Transition state (TS) optimization': ['optimize_ts','energy','charge','dipole'] };
+  const tasks = rowanTasks;
   const taskLabel = inputs.task || (inputs.properties === 'Dipole moment' ? 'Single-point energy' : inputs.properties);
   if (!tasks[taskLabel]) return { unsupported: `${taskLabel || 'Requested task'} is not supported by the basic-calculation pipeline. No substitute calculation was submitted.` };
-  const methods = { B3LYP:'b3lyp', PBE:'pbe', PBE0:'pbe0', 'M06-2X':'m062x', 'M06-L':'m06l', 'CAM-B3LYP':'camb3lyp', BP86:'bp86', TPSSh:'tpssh', HF:'hf', r2SCAN:'r2scan', 'GFN2-xTB':'gfn2_xtb' };
-  const method = methods[inputs.functional || inputs.method];
-  if (!method) return { unsupported: 'The selected electronic-structure method is not mapped to Rowan. Choose a supported method; no different method was substituted.' };
-  const engine = method === 'gfn2_xtb' ? 'xtb' : requestedEngine === 'Psi4' ? 'psi4' : 'gpu4pyscf';
+  const methodLabel = simType === 'dft' ? inputs.functional || inputs.method : inputs.method || inputs.functional;
+  const method = rowanMethods[methodLabel];
+  if (!method) return { unsupported: ['wB97X-D','ωB97X-D'].includes(methodLabel) ? `${methodLabel} is not supported by Rowan's basic-calculation API. wB97X-D3 is available but is a different functional; select it explicitly, or choose B3LYP. No method was substituted.` : `${methodLabel || 'The selected method'} is not supported by this Rowan integration. Choose a method from the Rowan method selector. No method was substituted.` };
+  const engine = method === 'gfn2_xtb' ? 'xtb' : method === 'wb97x_d3' || requestedEngine === 'Psi4' ? 'psi4' : 'gpu4pyscf';
   const settings = { method, engine, mode:'auto', tasks:tasks[taskLabel], opt_settings:{ max_steps:100 } };
   if (method !== 'gfn2_xtb') settings.basis_set = { name: String(inputs.basis_set || 'def2-SVP') };
   const solvent = environment.solvent;

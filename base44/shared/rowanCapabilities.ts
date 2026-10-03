@@ -1,0 +1,4 @@
+// Exact identifiers in Rowan's published stjames Method enum.
+// wB97X-D is not wB97X-D3: never alias these distinct functionals.
+export const rowanMethods = {B3LYP:'b3lyp',PBE:'pbe',PBE0:'pbe0','M06-2X':'m062x','M06-L':'m06l','CAM-B3LYP':'camb3lyp',BP86:'bp86',TPSSh:'tpssh',HF:'hf',r2SCAN:'r2scan','GFN2-xTB':'gfn2_xtb','wB97X-D3':'wb97x_d3'};
+export const rowanTasks = {'Geometry optimization':['optimize','energy','charge','dipole'],'Single-point energy':['energy','charge','dipole'],'Frequency analysis (IR/Raman)':['optimize','frequencies','energy','charge','dipole'],'Population analysis':['energy','charge','dipole'],'Hessian':['hessian','energy'],'Transition state (TS) optimization':['optimize_ts','energy','charge','dipole']};

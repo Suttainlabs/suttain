@@ -124,9 +124,10 @@ export default function SimulationRunner() {
 
   if (!sim) return null;
 
-  const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
+  const handleInputChange = (key, value) => { rowan.clearError(); setInputs(prev => ({ ...prev, [key]: value })); };
   const handleEngineSelect = (label) => {
     const entry=registry.data?.engines?.find(e=>e.label===label);
+    rowan.clearError();
     setSelectedEngine(label); setInputFiles(null); setInputGenerationError('');
     if(['OpenMM','GROMACS'].includes(label) && label !== selectedEngine) setEnvParams(prev=>({...environmentDefaults(label),...prev,thermostat:label==='OpenMM'?'langevin':'vrescale',barostat:label==='OpenMM'?'monte_carlo':'parrinello_rahman'}));
     setInputs(prev=>{const next={...prev};delete next.engine_method;delete next.engine_task;
@@ -626,7 +627,7 @@ export default function SimulationRunner() {
                   <p className="research-label mb-2">02 / System configuration</p>
                   <h2 className="!text-lg mb-5">Calculation parameters</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                    {sim.fields.filter(field=>isMdEngine ? !['force_field','temperature','simulation_time','system'].includes(field.key) : !selectedCatalogue || selectedEngine==='Rowan' || !['functional','method','task','basis_set','properties','theory_level','property','analysis_type'].includes(field.key)).map(field => (
+                    {sim.fields.filter(field=>isMdEngine ? !['force_field','temperature','simulation_time','system'].includes(field.key) : selectedEngine==='Rowan' && ['dft','quantum_mechanics'].includes(typeId) ? !['functional','method','task','basis_set','properties'].includes(field.key) : !selectedCatalogue || selectedEngine==='Rowan' || !['functional','method','task','basis_set','properties','theory_level','property','analysis_type'].includes(field.key)).map(field => (
                       <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]}
                         onChange={value => handleInputChange(field.key, value)}
                         canUpload={FILE_UPLOAD_KEYS.includes(field.key)} canDraw={DRAWABLE_KEYS.includes(field.key)}

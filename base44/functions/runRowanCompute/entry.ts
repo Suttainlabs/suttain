@@ -12,7 +12,8 @@ export default async function(req) {
     if (!data || JSON.stringify(data).length > 32000 || !data.inputs || typeof data.inputs !== 'object') invalid('Invalid simulation inputs.');
     if (!['dft','quantum_mechanics','molecular_dynamics','protein_modeling','materials','monte_carlo','visualization','surface_chemistry','biomolecular_dynamics','electron_spectroscopy','machine_learning_pot'].includes(data.sim_type)) invalid('Unknown simulation type.');
     const mapping = mapRowanSettings(data.sim_type, data.inputs, String(data.engine || '').slice(0,60), data.environmental_params || {});
-    if (data.validate_only) { if (user.role !== 'admin') return Response.json({error:'Forbidden'}, {status:403}); return Response.json({valid:true,mapping}); }
+    if (data.validate_only) { if (user.role !== 'admin') return Response.json({error:'Forbidden'}, {status:403}); return Response.json({valid:!mapping.unsupported,mapping}); }
+    if (mapping.unsupported) invalid(mapping.unsupported);
     const limited = await reserveUsage(base44, user, 'research');
     if (limited) return limited;
     await reserveSecurityAction(base44,user,{channel:'rowan_compute',limit:10,hourly:true});
