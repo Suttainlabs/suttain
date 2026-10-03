@@ -41,6 +41,7 @@ import EngineParameterFields from '@/components/simulation/EngineParameterFields
 import LocalEngineResults from '@/components/simulation/LocalEngineResults';
 import SourceLookupResults from '@/components/simulation/SourceLookupResults';
 import { runPubchemLookup } from '@/functions/runPubchemLookup';
+import environmentDefaults from '@/components/simulation/environmentDefaults';
 
 export default function SimulationRunner() {
   const { user, refreshUser } = useContext(AuthContext);
@@ -53,7 +54,7 @@ export default function SimulationRunner() {
 
   const sim = SIM_TYPES.find(s => s.id === typeId);
 
-  const [selectedEngine, setSelectedEngine] = useState('Rowan');
+  const [selectedEngine, setSelectedEngine] = useState(sim?.id === 'molecular_dynamics' ? 'OpenMM' : 'Rowan');
   const [autoFallback, setAutoFallback] = useState(true);
   const [lookupBusy, setLookupBusy] = useState(false);
   const registry = useEngineRegistry();
@@ -113,7 +114,9 @@ export default function SimulationRunner() {
     "Q-Chem": "Quantum chemistry, excited states and embedded QM/MM calculations for molecular systems.",
   };
 
-  const rowan = useRowanRun({ user, sim, engine:selectedEngine, domain, inputs, environment:{solvent:'water',...envParams}, onResult:setResults, refreshUser, autoFallback });
+  const effectiveEnvironment = { ...environmentDefaults(selectedEngine), ...envParams };
+  const isMdEngine = ['OpenMM','GROMACS'].includes(selectedEngine);
+  const rowan = useRowanRun({ user, sim, engine:selectedEngine, domain, inputs, environment:effectiveEnvironment, onResult:setResults, refreshUser, autoFallback });
   const isRunning = rowan.isRunning || generatingInputs || lookupBusy;
   useEffect(() => {
     if (!sim) navigate('/AtomisticSimulation');
@@ -125,6 +128,7 @@ export default function SimulationRunner() {
   const handleEngineSelect = (label) => {
     const entry=registry.data?.engines?.find(e=>e.label===label);
     setSelectedEngine(label); setInputFiles(null); setInputGenerationError('');
+    if(['OpenMM','GROMACS'].includes(label) && label !== selectedEngine) setEnvParams(prev=>({...environmentDefaults(label),...prev,thermostat:label==='OpenMM'?'langevin':'vrescale',barostat:label==='OpenMM'?'monte_carlo':'parrinello_rahman'}));
     setInputs(prev=>{const next={...prev};delete next.engine_method;delete next.engine_task;
       if(entry?.deployment==='input_file') {next.engine_method=entry.methods[0];next.engine_task=entry.tasks[0];}
       if(entry?.id==='gamess') next.basis_set='6-31G*';
@@ -202,13 +206,13 @@ export default function SimulationRunner() {
       const result = await generateSimulationInputs({
         sim_type: typeId,
         engine: selectedEngine==='Rowan' ? (inputs.functional==='GFN2-xTB' || inputs.method==='GFN2-xTB' ? 'xtb' : 'ORCA') : selectedEngine,
-        inputs: { ...inputs },
-        environmental_params: results?.environmental_params || envParams || {},
+        inputs: { ...inputs, ...(isMdEngine ? {md_steps:inputs.md_steps ?? 10000,md_timestep_fs:inputs.md_timestep_fs ?? 1,md_padding_nm:inputs.md_padding_nm ?? 1.2} : {}) },
+        environmental_params: effectiveEnvironment,
         sim_type_label:sim.label,
         domain,
         record_job:true,
       });
-      if(result.data.execution_mode==='local_pending' && !results) setResults({...result.data,inputs,environmental_params:envParams || {},simType:sim,domain});
+      if(result.data.execution_mode==='local_pending' && !results) setResults({...result.data,inputs,environmental_params:result.data.environmental_params || effectiveEnvironment,simType:sim,domain});
       else setInputFiles(result.data);
     } catch (e) {
       setInputGenerationError(e.response?.data?.error || e.message);
@@ -319,7 +323,7 @@ export default function SimulationRunner() {
     URL.revokeObjectURL(url);
   };
 
-  const reset = () => { setResults(null); setInputFiles(null); setInputGenerationError(''); setSelectedEngine('Rowan'); setInputs(Object.fromEntries(sim.fields.filter(f=>f.default).map(f=>[f.key,f.default]))); };
+  const reset = () => { setResults(null); setInputFiles(null); setInputGenerationError(''); setSelectedEngine(sim.id === 'molecular_dynamics' ? 'OpenMM' : 'Rowan'); setInputs(Object.fromEntries(sim.fields.filter(f=>f.default).map(f=>[f.key,f.default]))); };
   if (!isRunning && !results && !trialStatus.canRunResearchSim) return <SubscriptionLock pillar="research" featureName="Research simulations" limit />;
   return (
     <div className="simulation-workspace research-surface min-h-screen">
@@ -587,7 +591,7 @@ export default function SimulationRunner() {
                 {selectedEngine==='Rowan' && <label className="flex items-center gap-3 mb-7"><input type="checkbox" checked={autoFallback} onChange={e=>setAutoFallback(e.target.checked)}/><span>Automatically prepare compatible local inputs if Rowan credits run out</span></label>}
 
                 {/* Custom Forcefield picker, MD only */}
-                {typeId === "molecular_dynamics" && (
+                {typeId === "molecular_dynamics" && !isMdEngine && (
                   <div className="mb-7 p-4 bg-teal-50 border border-teal-200 rounded-2xl">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div>
@@ -603,7 +607,7 @@ export default function SimulationRunner() {
                       </div>
                       <div className="flex gap-2">
                         {customForcefield && (
-                          <button onClick={() => setCustomForcefield(null)}
+                          <button onClick={() => { setCustomForcefield(null); setEnvParams(prev=>({...environmentDefaults(selectedEngine),...prev,forcefield:'',custom_forcefield:null,custom_forcefield_id:'',forcefield_file_uri:'',forcefield_file_name:''})); }}
                             className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors">
                             Remove
                           </button>
@@ -622,7 +626,7 @@ export default function SimulationRunner() {
                   <p className="research-label mb-2">02 / System configuration</p>
                   <h2 className="!text-lg mb-5">Calculation parameters</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                    {sim.fields.filter(field=>!selectedCatalogue || selectedEngine==='Rowan' || !['functional','method','task','basis_set','properties','theory_level','property','analysis_type'].includes(field.key)).map(field => (
+                    {sim.fields.filter(field=>isMdEngine ? !['force_field','temperature','simulation_time','system'].includes(field.key) : !selectedCatalogue || selectedEngine==='Rowan' || !['functional','method','task','basis_set','properties','theory_level','property','analysis_type'].includes(field.key)).map(field => (
                       <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]}
                         onChange={value => handleInputChange(field.key, value)}
                         canUpload={FILE_UPLOAD_KEYS.includes(field.key)} canDraw={DRAWABLE_KEYS.includes(field.key)}
@@ -648,6 +652,7 @@ export default function SimulationRunner() {
                     params={envParams}
                     onChange={setEnvParams}
                     simType={typeId}
+                    engine={selectedEngine}
                   />
                 </div>
 
@@ -677,7 +682,7 @@ export default function SimulationRunner() {
                   </Button>}
 
                   <p className="text-xs text-slate-400">
-                    Rowan compute is capped at 25 Rowan credits per job. Only mapped molecular tasks run; other workflows report an unsupported state.
+                    {isMdEngine ? 'Local MD package only; hosted MD requires your compute service URL and authentication details.' : 'Rowan compute is capped at 25 Rowan credits per job. Only mapped molecular tasks run; other workflows report an unsupported state.'}
                   </p>
                 </div>
 
@@ -728,7 +733,7 @@ export default function SimulationRunner() {
       <CustomForcefieldManager
         isOpen={ffManagerOpen}
         onClose={() => setFfManagerOpen(false)}
-        onSelect={(ff) => { setCustomForcefield(ff); setFfManagerOpen(false); }}
+        onSelect={(ff) => { setCustomForcefield(ff); setEnvParams(prev=>({...environmentDefaults(selectedEngine),...prev,forcefield:ff.name,custom_forcefield:ff,custom_forcefield_id:ff.id,forcefield_file_uri:ff.file_uri || '',forcefield_file_name:ff.file_name || ''})); setFfManagerOpen(false); }}
       />
     </div>
   );

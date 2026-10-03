@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import ForcefieldPicker from '@/components/simulation/ForcefieldPicker';
+import environmentDefaults from '@/components/simulation/environmentDefaults';
 
 const SOLVENT_OPTIONS = [
   { value: "none", label: "None / Vacuum" },
@@ -57,20 +58,7 @@ const BAROSTAT_OPTIONS = [
   { value: "none", label: "None" },
 ];
 
-const DEFAULT_ENV = {
-  solvent: "water",
-  solvent_custom: "",
-  forcefield: "",
-  temperature: 300,
-  pressure: 1.0,
-  ph: 7.0,
-  ionic_strength: 0.15,
-  boundary_conditions: "periodic",
-  box_type: "cubic",
-  thermostat: "vrescale",
-  barostat: "parrinello_rahman",
-  environment_id: null,
-};
+const MD_ENGINES = ['OpenMM', 'GROMACS'];
 
 function SelectInput({ label, value, onChange, options }) {
   return (
@@ -81,6 +69,7 @@ function SelectInput({ label, value, onChange, options }) {
         onChange={e => onChange(e.target.value)}
         className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white text-slate-800"
       >
+        {!options.some(o=>o.value===value) && <option value={value}>{value} (choose a supported option)</option>}
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </div>
@@ -106,13 +95,17 @@ function NumberInput({ label, value, onChange, placeholder, unit }) {
   );
 }
 
-export default function EnvironmentalParametersPanel({ params, onChange, simType }) {
+export default function EnvironmentalParametersPanel({ params, onChange, simType, engine }) {
   const queryClient = useQueryClient();
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [envName, setEnvName] = useState("");
   const [showLibrary, setShowLibrary] = useState(false);
 
-  const env = { ...DEFAULT_ENV, ...params };
+  const env = { ...environmentDefaults(engine), ...params };
+  const wiredMD = MD_ENGINES.includes(engine);
+  const openmm = engine === 'OpenMM';
+  const mdThermostats = openmm ? ['langevin','andersen'] : ['vrescale','nose_hoover','berendsen','langevin'];
+  const mdBarostats = openmm ? ['monte_carlo','none'] : ['parrinello_rahman','c_rescale','berendsen','none'];
 
   const update = (key, value) => {
     onChange({ ...env, [key]: value, environment_id: null });
@@ -196,7 +189,7 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="md:col-span-2 lg:col-span-1">
-            <SelectInput label="Solvent" value={env.solvent} onChange={v => update('solvent', v)} options={['dft','quantum_mechanics'].includes(simType) ? SOLVENT_OPTIONS.filter(o => !['tip3p','tip4p','spc','custom'].includes(o.value)).map(o => o.value === 'water' ? {...o,label:'Water (implicit)'} : o) : SOLVENT_OPTIONS} />
+            <SelectInput label="Solvent" value={env.solvent} onChange={v => update('solvent', v)} options={wiredMD ? SOLVENT_OPTIONS.filter(o=>['none','water','tip3p'].includes(o.value)) : ['dft','quantum_mechanics'].includes(simType) ? SOLVENT_OPTIONS.filter(o => !['tip3p','tip4p','spc','custom'].includes(o.value)).map(o => o.value === 'water' ? {...o,label:'Water (implicit)'} : o) : SOLVENT_OPTIONS} />
           </div>
           {env.solvent === 'custom' && (
             <div className="md:col-span-2">
@@ -212,13 +205,15 @@ export default function EnvironmentalParametersPanel({ params, onChange, simType
 
           {isMDLike && (
             <>
-              <SelectInput label="Boundary conditions" value={env.boundary_conditions} onChange={v => update('boundary_conditions', v)} options={BOUNDARY_OPTIONS} />
-              <SelectInput label="Box type" value={env.box_type} onChange={v => update('box_type', v)} options={BOX_OPTIONS} />
-              <SelectInput label="Thermostat" value={env.thermostat} onChange={v => update('thermostat', v)} options={THERMOSTAT_OPTIONS} />
-              <SelectInput label="Barostat" value={env.barostat} onChange={v => update('barostat', v)} options={BAROSTAT_OPTIONS} />
+              <SelectInput label="Boundary conditions" value={env.boundary_conditions} onChange={v => update('boundary_conditions', v)} options={wiredMD ? BOUNDARY_OPTIONS.filter(o=>(openmm?['periodic','vacuum']:['periodic']).includes(o.value)) : BOUNDARY_OPTIONS} />
+            <SelectInput label="Box type" value={env.box_type} onChange={v => update('box_type', v)} options={wiredMD ? BOX_OPTIONS.filter(o=>o.value==='cubic') : BOX_OPTIONS} />
+            <SelectInput label="Thermostat" value={env.thermostat} onChange={v => update('thermostat', v)} options={wiredMD ? THERMOSTAT_OPTIONS.filter(o=>mdThermostats.includes(o.value)) : THERMOSTAT_OPTIONS} />
+            <SelectInput label="Barostat" value={env.barostat} onChange={v => update('barostat', v)} options={wiredMD ? BAROSTAT_OPTIONS.filter(o=>mdBarostats.includes(o.value)) : BAROSTAT_OPTIONS} />
             </>
           )}
         </div>
+
+        {wiredMD && <p className="mt-4 text-sm text-research-muted">Applied to local {engine} scripts: temperature, {env.barostat==='none'?'NVT (pressure coupling off)':'NPT pressure'}, selected forcefield and custom parameters. pH and ionic strength remain context; prepare protonation and ions yourself. Uploaded forcefields must be complete {openmm?'OpenMM XML files':'GROMACS TOP topologies'}. Hosted MD is not connected.</p>}
 
         {/* Save Dialog */}
         {showSaveDialog && (

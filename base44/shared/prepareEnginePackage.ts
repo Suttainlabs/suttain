@@ -3,9 +3,11 @@ import inputGeometry from './inputGeometry.ts';
 import {elements,invalid} from './rowanInput.ts';
 import molecularEngineTemplates from './molecularEngineTemplates.ts';
 import periodicEngineTemplates from './periodicEngineTemplates.ts';
+import prepareMdPackage from './prepareMdPackage.ts';
 export default async function prepareEnginePackage(data) {
   const engine=findEngine(data.engine); if(!engine || engine.deployment!=='input_file') invalid('Select an input-file engine. Rowan and PubChem are hosted services.');
   if(engine.id!=='rdkit' && !engine.sim_types.includes(data.sim_type)) invalid(`${engine.label} does not support this workflow in the current input generator. See the engine reference for supported workflows.`);
+  if(engine.md) return prepareMdPackage(engine,data);
   const inputs=data.inputs || {}, env=data.environmental_params || {};
   const method=inputs.engine_method || inputs.functional || inputs.method || engine.methods[0];
   const task=inputs.engine_task || inputs.task || (inputs.properties==='Dipole moment' ? 'Single-point energy' : inputs.properties) || engine.tasks[0];

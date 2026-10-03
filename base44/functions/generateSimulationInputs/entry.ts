@@ -506,7 +506,8 @@ export default async function(req) {
     if (registered) {
       const result = await prepareEnginePackage(body);
       await reserveSecurityAction(base44,user,{channel:'engine_inputs',limit:30,hourly:true});
-      return Response.json(body.record_job === false ? result : await recordPreparedJob(base44,body,result));
+      const preparedData = registered.md ? {...body,environmental_params:result.environmental_params} : body;
+      return Response.json(body.record_job === false ? result : await recordPreparedJob(base44,preparedData,result));
     }
 
     const env = environmental_params || {};
