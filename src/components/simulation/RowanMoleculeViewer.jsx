@@ -1,7 +1,13 @@
 import React,{useEffect,useRef,useState} from 'react';
 import loadMolecularViewer from '@/components/simulation/loadMolecularViewer';
-export default function RowanMoleculeViewer({xyz,values,selectedAtom,onSelect}) {
-  const container=useRef(null),viewer=useRef(null),select=useRef(onSelect),[ready,setReady]=useState(false),[error,setError]=useState('');
+import ViewerActionMenu from '@/components/simulation/ViewerActionMenu';
+import ViewerViewControls from '@/components/simulation/ViewerViewControls';
+import hideCarbonHydrogens from '@/components/simulation/hideCarbonHydrogens';
+const representations = [{value:'ball-stick',label:'Ball and stick'},{value:'stick',label:'Stick'},{value:'sphere',label:'Sphere'},{value:'line',label:'Line'}];
+const colors = [{value:'result',label:'Result values / element'},{value:'element',label:'Element (CPK)'},{value:'spectrum',label:'Spectrum'}];
+export default function RowanMoleculeViewer({xyz,values,selectedAtom,onSelect,name}) {
+  const container=useRef(null),viewport=useRef(null),viewer=useRef(null),select=useRef(onSelect),[ready,setReady]=useState(false),[error,setError]=useState('');
+  const [hideCH,setHideCH]=useState(false),[representation,setRepresentation]=useState('ball-stick'),[colorScheme,setColorScheme]=useState('result');
   select.current=onSelect;
   useEffect(() => {
     let stopped=false;setReady(false);setError('');
@@ -15,16 +21,21 @@ export default function RowanMoleculeViewer({xyz,values,selectedAtom,onSelect}) 
       viewer.current.setClickable({},true,atom => select.current?.(atom.index));viewer.current.zoomTo();viewer.current.render();setReady(true);
     }catch(e){if(!stopped)setError(e.message);}})();
     const observer=new ResizeObserver(() => {viewer.current?.resize();viewer.current?.render();});observer.observe(container.current);
-    return () => {stopped=true;observer.disconnect();viewer.current?.clear();viewer.current=null;};
+    return () => {stopped=true;observer.disconnect();viewer.current?.spin(false);viewer.current?.clear();viewer.current=null;};
   },[xyz]);
   useEffect(() => {
     if(!ready || !viewer.current)return;
     const v=viewer.current,css=window.getComputedStyle(document.documentElement),negative=css.getPropertyValue('--color-brand-primary').trim(),positive=css.getPropertyValue('--color-brand-purple').trim(),neutral=css.getPropertyValue('--color-text-muted').trim();
-    v.setStyle({},{stick:{},sphere:{scale:0.25}});
-    if(Array.isArray(values))values.forEach((value,index) => {if(Number.isFinite(value))v.setStyle({index},{stick:{color:value < -0.001 ? negative : value > 0.001 ? positive : neutral},sphere:{scale:0.3,color:value < -0.001 ? negative : value > 0.001 ? positive : neutral}});});
+    const styleFor = color => {
+      const appearance = color ? {color} : {colorscheme:colorScheme==='spectrum'?'spectrum':'element'};
+      return representation==='ball-stick' ? {stick:appearance,sphere:{scale:color?0.3:0.25,...appearance}} : {[representation]:appearance};
+    };
+    v.setStyle({},styleFor());
+    if(colorScheme==='result' && Array.isArray(values))values.forEach((value,index) => {if(Number.isFinite(value))v.setStyle({index},styleFor(value < -0.001 ? negative : value > 0.001 ? positive : neutral));});
     v.removeAllLabels();
     if(Number.isInteger(selectedAtom)){v.addStyle({index:selectedAtom},{sphere:{scale:0.55,opacity:0.7}});const atom=v.getModel()?.selectedAtoms({index:selectedAtom})?.[0];if(atom)v.addLabel(`${selectedAtom+1} ${atom.elem}`,{position:atom,backgroundColor:neutral,fontColor:css.getPropertyValue('--color-text-white').trim(),fontSize:14});}
+    if(hideCH) hideCarbonHydrogens(v);
     v.render();
-  },[ready,values,selectedAtom]);
-  return <div className="space-y-3"><div className="relative h-96 rounded-lg border border-research-border overflow-hidden"><div ref={container} className="absolute inset-0 bg-research-card"/>{!xyz && <p role="status" className="absolute inset-0 flex items-center justify-center p-4">Coordinates were not reported.</p>}{xyz && !ready && !error && <p role="status" className="absolute bottom-4 left-4 text-sm text-research-muted">Loading computed geometry…</p>}{error && <p role="alert" className="absolute inset-0 flex items-center justify-center bg-research-card p-4 text-destructive">{error}</p>}</div><div className="flex justify-between items-center gap-3"><p className="text-xs text-research-muted">Rotate: drag · Zoom: scroll · Select: click an atom</p><button disabled={!ready} className="research-secondary !px-3 !py-2 disabled:opacity-50" onClick={() => {viewer.current.zoomTo();viewer.current.render();}}>Reset view</button></div></div>;
+  },[ready,values,selectedAtom,hideCH,representation,colorScheme]);
+  return <div className="space-y-3"><div ref={viewport} className="molecule-viewport relative h-96 rounded-lg border border-research-border overflow-hidden"><div ref={container} className="absolute inset-0 bg-research-card"/><ViewerActionMenu viewerRef={viewer} viewportRef={viewport} ready={ready} hideCH={hideCH} onHideCH={setHideCH} name={name || 'rowan-molecule'} resetKey={xyz} viewControls={<ViewerViewControls representation={representation} onRepresentation={setRepresentation} representations={representations} colorScheme={colorScheme} onColorScheme={setColorScheme} colors={colors} onReset={() => {viewer.current.zoomTo();viewer.current.render();}} />} />{!xyz && <p role="status" className="absolute inset-0 flex items-center justify-center p-4">Coordinates were not reported.</p>}{xyz && !ready && !error && <p role="status" className="absolute bottom-4 left-4 text-sm text-research-muted">Loading computed geometry…</p>}{error && <p role="alert" className="absolute inset-0 flex items-center justify-center bg-research-card p-4 text-destructive">{error}</p>}</div><div className="flex justify-between items-center gap-3"><p className="text-xs text-research-muted">Rotate: drag · Zoom: scroll · Select: click an atom</p><button disabled={!ready} className="research-secondary !px-3 !py-2 disabled:opacity-50" onClick={() => {viewer.current.zoomTo();viewer.current.render();}}>Reset view</button></div></div>;
 }

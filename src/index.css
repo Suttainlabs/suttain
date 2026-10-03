@@ -1,7 +1,7 @@
 @import '@fontsource/ibm-plex-sans/400.css';
 @import '@fontsource/ibm-plex-sans/500.css';
 @import '@fontsource/ibm-plex-sans/600.css';
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -669,6 +669,11 @@
   .simulation-workspace aside .md\:grid-cols-2 { grid-template-columns: minmax(0, 1fr); }
   .simulation-workspace aside .sm\:col-span-2 { grid-column: 1 / -1; }
 }
+
+/* Molecular viewer menus stay inside the fullscreen surface. */
+:root, .dark { --font-viewer: 'Inter', system-ui, sans-serif; }
+.viewer-action-controls { --font-body: var(--font-viewer); --font-heading: var(--font-viewer); }
+.molecule-viewport:fullscreen { width: 100vw; height: 100vh; background: hsl(var(--research-card)); }
 
 /* Darken slate-400/500 for WCAG 2.1 text contrast */
 .text-slate-400 { color: #64748B; }

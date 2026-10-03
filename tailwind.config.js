@@ -21,6 +21,7 @@ module.exports = {
         },
         fontWeight: { bold: '600', extrabold: '600', black: '600' },
   		fontFamily: {
+  		  viewer: ['var(--font-viewer)'],
           sans: ['IBM Plex Sans', 'system-ui', '-apple-system', 'sans-serif'],
   			gilroy: ['IBM Plex Sans', 'system-ui', '-apple-system', 'sans-serif'],
   			heading: ['IBM Plex Sans', 'system-ui', '-apple-system', 'sans-serif'],

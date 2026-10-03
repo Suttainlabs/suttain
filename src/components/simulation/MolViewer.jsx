@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import MolecularEditor3D from "./MolecularEditor3D";
 import AtomInspectorPanel from "./AtomInspectorPanel";
 import PDBLayerPanel from "./PDBLayerPanel";
+import ViewerActionMenu from '@/components/simulation/ViewerActionMenu';
+import ViewerViewControls from '@/components/simulation/ViewerViewControls';
+import hideCarbonHydrogens from '@/components/simulation/hideCarbonHydrogens';
 
 const VIEWER_STYLES = [
   { label: "Stick", value: "stick" },
@@ -29,6 +32,10 @@ import VisualizationContext from '@/components/simulation/VisualizationContext';
 // ── Single panel viewer ──────────────────────────────────────────────────────
 const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, visualizationTarget, hasCommands, label, accentColor = "fuchsia", onLoadedChange, onPdbLoaded, externalQuery }, ref) {
   const containerRef = useRef(null);
+  const viewportRef = useRef(null);
+  const [hideCH, setHideCH] = useState(false);
+  const hideCHRef = useRef(false);
+  hideCHRef.current = hideCH;
   const internalViewerRef = useRef(null);
   const viewerRefFinal = ref || internalViewerRef;
   const [query, setQuery] = useState(visualizationTarget?.smiles || visualizationTarget?.pdb_id || visualizationTarget?.name || initialIdentifier || "");
@@ -70,6 +77,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, v
     } else {
       viewer.setStyle({}, { [style]: { colorscheme: colorScheme } });
     }
+    if (hideCHRef.current) hideCarbonHydrogens(viewer);
     viewer.render();
   };
 
@@ -90,6 +98,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, v
         await loadMolecularViewer();
         if (request !== requestRef.current || !containerRef.current) return;
         if (internalViewerRef.current) {
+          internalViewerRef.current.spin(false);
           internalViewerRef.current.clear();
         } else {
           internalViewerRef.current = window.$3Dmol.createViewer(containerRef.current, {
@@ -159,7 +168,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, v
 
   useEffect(() => {
     if (internalViewerRef.current && loaded) applyStyle(internalViewerRef.current);
-  }, [style, colorScheme, loaded]);
+  }, [style, colorScheme, loaded, hideCH]);
 
   useEffect(() => {
     const identifier = visualizationTarget?.smiles || visualizationTarget?.pdb_id || visualizationTarget?.name || initialIdentifier || '';
@@ -180,6 +189,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, v
     return () => {
       ++requestRef.current;
       observer.disconnect();
+      internalViewerRef.current?.spin(false);
       internalViewerRef.current?.clear();
       internalViewerRef.current = null;
       if (ref) ref.current = null;
@@ -267,8 +277,10 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, v
       </div>
 
       {/* 3D canvas */}
-      <div className="relative flex-1" style={{ minHeight: "320px" }}>
+      <div ref={viewportRef} className="molecule-viewport relative flex-1" style={{ minHeight: "320px" }}>
         <div ref={containerRef} className="w-full h-full absolute inset-0" />
+        <ViewerActionMenu viewerRef={internalViewerRef} viewportRef={viewportRef} ready={loaded && !loading} hideCH={hideCH} onHideCH={setHideCH} name={visualizationTarget?.name || query || label} resetKey={source}
+          viewControls={<ViewerViewControls representation={style} onRepresentation={setStyle} representations={VIEWER_STYLES} colorScheme={colorScheme} onColorScheme={setColorScheme} colors={COLOR_SCHEMES} onReset={handleReset} />} />
 
         {loading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 z-10">
@@ -297,7 +309,7 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, v
 
         {/* Source badge */}
         {source && loaded && (
-          <div className="absolute bottom-2 left-2 z-10 bg-slate-900/70 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">
+          <div className="absolute bottom-2 right-2 max-w-[calc(100%-8rem)] truncate z-10 bg-slate-900/70 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">
             {source}
           </div>
         )}
