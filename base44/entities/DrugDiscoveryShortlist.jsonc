@@ -35,6 +35,48 @@
     "is_illustrative": {
       "type": "boolean",
       "default": true
+    },
+    "smiles": {
+      "type": "string"
+    },
+    "molecular_weight": {
+      "type": "number"
+    },
+    "logp": {
+      "type": "number"
+    },
+    "tpsa": {
+      "type": "number"
+    },
+    "hbd": {
+      "type": "number"
+    },
+    "hba": {
+      "type": "number"
+    },
+    "rotatable_bonds": {
+      "type": "number"
+    },
+    "lipinski_violations": {
+      "type": "number"
+    },
+    "veber_violations": {
+      "type": "number"
+    },
+    "most_similar_known_ligand": {
+      "type": "string"
+    },
+    "reference_smiles": {
+      "type": "string"
+    },
+    "binding_proxy_score": {
+      "type": "number"
+    },
+    "target_chembl_id": {
+      "type": "string"
+    },
+    "descriptor_method": {
+      "type": "string"
     }
   },
   "required": [
@@ -43,7 +85,6 @@
     "score",
     "risk",
     "sim",
-    "synth",
     "added_timestamp"
   ],
   "rls": {

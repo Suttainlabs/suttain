@@ -21,7 +21,8 @@
       "enum": [
         "docking_ml_rerank",
         "docking_only",
-        "property_filter"
+        "property_filter",
+        "ligand_similarity"
       ]
     },
     "max_candidates": {
@@ -32,8 +33,7 @@
     "compounds_screened": {
       "type": "integer",
       "minimum": 0,
-      "default": 0,
-      "description": "Actual reported screened count, not the requested limit."
+      "default": 0
     },
     "status": {
       "type": "string",
@@ -62,7 +62,7 @@
     },
     "provider_job_id": {
       "type": "string",
-      "description": "Receipt from a real screening compute provider."
+      "description": "Local execution receipt for JS screening, not an external provider receipt."
     },
     "execution_mode": {
       "type": "string",
@@ -71,6 +71,11 @@
         "demonstration"
       ],
       "default": "demonstration"
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Bounded ranked candidates, counts, resolved target, provenance and limitations."
     }
   },
   "required": [

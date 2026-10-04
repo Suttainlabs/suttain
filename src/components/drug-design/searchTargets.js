@@ -32,6 +32,8 @@ export default async function searchTargets(query, signal) {
   const result = await Promise.allSettled([pdb(query.trim(), signal), chembl(query.trim(), signal), uniprot(query.trim(), signal)]);
   const hits = result.filter(r => r.status === 'fulfilled' && r.value).map(r => r.value);
   const unavailable = result.flatMap((r, i) => r.status === 'rejected' ? [sources[i]] : []);
-  const combined = Object.assign({}, ...hits);
-  return { matches: hits.length ? [{ ...combined, name: combined.name || combined.chembl_name || combined.uniprot_name || query, source_notes: hits.map(hit => hit.source) }] : [], unavailable };
+  // Independent search hits are not proof of the same biological target.
+  const matches = hits.map(hit => ({ ...hit, name: hit.chembl_name || hit.uniprot_name || hit.name || query, source_notes: [hit.source] }));
+  matches.sort((a, b) => Number(!!b.chembl_id) - Number(!!a.chembl_id));
+  return { matches, unavailable };
 }

@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { requireUser } from '../../shared/securityGuards.ts';
 import { eachOwnedPage, realJobFilter } from '../../shared/drugDiscoveryRecords.ts';
+import { screeningCapability } from '../../shared/ligandScreening.ts';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req); const user = await requireUser(base44);
@@ -19,6 +20,6 @@ export default async function(req) {
       eachOwnedPage(base44.entities.DrugDiscoveryShortlist, user.id, {}, ['candidate_id'], rows => { for (const row of rows) candidates.add(row.candidate_id); })
     ]);
     const minutes = completedWithTime ? Math.round(durationSum / completedWithTime / 60000) : null;
-    return Response.json({ activeJobs, compoundsScreened30d, candidatesShortlisted: candidates.size, avgTimeToShortlist: minutes === null ? null : `${Math.floor(minutes / 60)}h ${minutes % 60}m`, totalJobs, computeAvailable: false });
+    return Response.json({ activeJobs, compoundsScreened30d, candidatesShortlisted: candidates.size, avgTimeToShortlist: minutes === null ? null : `${Math.floor(minutes / 60)}h ${minutes % 60}m`, totalJobs, computeAvailable: screeningCapability().available, screening: screeningCapability() });
   } catch (error) { console.error('Discovery metrics failed', error.message); return Response.json({ error: 'Unable to load discovery activity.' }, { status: error.status || 500 }); }
 }

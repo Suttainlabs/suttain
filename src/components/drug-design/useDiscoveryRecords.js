@@ -18,5 +18,6 @@ export default function useDiscoveryRecords() {
     const stopJobs = base44.entities.DrugDiscoveryJob.subscribe(update); const stopSaved = base44.entities.DrugDiscoveryShortlist.subscribe(update);
     return () => { stopJobs(); stopSaved(); };
   }, [user?.id, client]);
-  return { user, metrics, jobs, shortlist: saved.data || [], shortlistLoading: saved.isPending, shortlistError: saved.error, refresh };
+  const latestJob = (jobs.data || []).find(job => job.status === 'Completed' && Array.isArray(job.result?.candidates));
+  return { user, metrics, jobs, latestJob, shortlist: saved.data || [], shortlistLoading: saved.isPending, shortlistError: saved.error, refresh };
 }
