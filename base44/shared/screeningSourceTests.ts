@@ -37,7 +37,7 @@ export async function runSourceTests() {
     try {
       const data = await provider(target, input, { fetcher: fixtures(name, scenario), timeout: 10 });
       const rank = rankEvidence(data.rows, input);
-      const ok = scenario === 'empty' || scenario === 'mismatched' ? data.rows.length === 0 : scenario === 'duplicate' ? rank.duplicate_count === 1 && rank.candidates.length === 1 : scenario === 'mixed' ? name === 'PubChem' ? rank.candidates[0]?.measured_affinity === null : rank.candidates[0]?.measured_affinity?.type === 'IC50' : scenario === 'success' && rank.candidates.length === 1;
+      const ok = scenario === 'empty' || scenario === 'mismatched' ? data.rows.length === 0 : scenario === 'duplicate' ? rank.duplicate_count === 1 && rank.candidates.length === 1 : scenario === 'mixed' ? name === 'PubChem' ? rank.candidates.every(c => c.measured_affinity === null) : rank.candidates.some(c => c.smiles === 'CCO' && c.measured_affinity?.type === 'IC50' && c.measured_affinity?.value_nm === 100) && rank.candidates.every(c => c.measured_affinity === null || (c.measured_affinity.type === 'IC50' && c.measured_affinity.relation === '=')) : scenario === 'success' && rank.candidates.length === 1;
       assert(`${name}: ${scenario}`, ok);
     } catch (e) { assert(`${name}: ${scenario}`, ['unavailable', 'malformed', 'timeout'].includes(scenario) && !!e.sourceCode); }
   }
