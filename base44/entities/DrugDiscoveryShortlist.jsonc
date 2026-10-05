@@ -77,6 +77,55 @@
     },
     "descriptor_method": {
       "type": "string"
+    },
+    "target_uniprot_id": {
+      "type": "string"
+    },
+    "reference_source_url": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "inchikey": {
+      "type": "string"
+    },
+    "canonical_smiles": {
+      "type": "string"
+    },
+    "deduplication_basis": {
+      "type": "string"
+    },
+    "ranking_method": {
+      "type": "string"
+    },
+    "ranking_score": {
+      "type": "number"
+    },
+    "evidence_label": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "measured_affinity": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "score_components": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "screening_provenance": {
+      "type": "object",
+      "additionalProperties": true
     }
   },
   "required": [

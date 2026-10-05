@@ -1,0 +1,10 @@
+export default function CandidateEvidence({ candidate: c }) {
+  const measured = c.measured_affinity;
+  return <div className="mt-2 text-xs space-y-2">
+    <p className="font-medium">{c.evidence_label || 'Legacy result; assay evidence not recorded'}</p>
+    {measured && <p>{measured.type} {measured.relation} {measured.value} {measured.units} · measured, not predicted</p>}
+    {c.ranking_method === 'balanced_evidence' && <p>Heuristic score: {c.ranking_score?.toFixed(4)} · not a probability</p>}
+    {!!c.evidence?.length && <details><summary className="cursor-pointer text-primary">Assay evidence ({c.evidence.length})</summary><ul className="space-y-3 mt-2 text-muted-foreground">{c.evidence.map((e, i) => <li key={i} className="border-l border-border pl-3"><p>{e.source} · {e.type} {e.relation === 'reported' ? '(qualifier unreported)' : e.relation} {e.value} {e.units}</p><p>{e.assay_description || 'Assay description not supplied'}</p><p>{e.target_match}</p><p>{e.assay_id ? `Assay ${e.assay_id}` : 'Assay identifier not exposed'}{e.activity_id ? ` · Activity ${e.activity_id}` : ''}</p>{e.source_url && <a href={e.source_url} target="_blank" rel="noreferrer" className="text-primary underline">Source record</a>}{e.pmid && <a href={`https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(e.pmid)}/`} target="_blank" rel="noreferrer" className="text-primary underline ml-3">Publication</a>}{e.doi && <a href={`https://doi.org/${encodeURIComponent(e.doi)}`} target="_blank" rel="noreferrer" className="text-primary underline ml-3">DOI</a>}</li>)}</ul></details>}
+    {c.score_components && <details><summary className="cursor-pointer text-primary">Score components</summary><p className="mt-2 text-muted-foreground">Similarity: {c.score_components.similarity ?? 'Missing'} · potency component: {c.score_components.measured_potency ?? 'Missing'} · estimated properties: {c.score_components.estimated_properties?.toFixed(3)}. Components are 0–1 heuristics, not measurements.</p></details>}
+  </div>;
+}

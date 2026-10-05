@@ -14,10 +14,10 @@ export default async function(req) {
     const started = new Date().toISOString();
     const result = await runLigandScreening(input);
     // Receipt identifies actual local execution; it is not an external compute receipt.
-    const receipt = `chembl-ligand-${crypto.randomUUID()}`;
+    const receipt = `evidence-screening-${crypto.randomUUID()}`;
     const job = await base44.entities.DrugDiscoveryJob.create({
       target_ref: result.target.id, target_label: result.target.name,
-      library: 'chembl_bioactive', method: result.method, max_candidates: input.max_candidates,
+      library: result.effective_library, method: result.method, max_candidates: input.max_candidates,
       compounds_screened: result.compounds_screened, status: 'Completed',
       execution_mode: 'real', provider_job_id: receipt,
       submit_timestamp: started, start_timestamp: started, end_timestamp: new Date().toISOString(), result
@@ -25,6 +25,6 @@ export default async function(req) {
     return Response.json({ success: true, job_id: job.id, receipt, compounds_screened: result.compounds_screened, candidates_retained: result.candidates.length });
   } catch (error) {
     console.error('Ligand screening failed', error.message);
-    return Response.json({ error: error.status ? error.message : 'Screening could not be completed and saved. Please try again.' }, { status: error.status || 500 });
+    return Response.json({ error: error.status ? error.message : 'Screening could not be completed and saved. Please try again.', source_status: error.sourceStatus || [] }, { status: error.status || 500 });
   }
 }

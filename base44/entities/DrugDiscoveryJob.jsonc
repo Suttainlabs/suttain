@@ -13,7 +13,9 @@
       "enum": [
         "suttain_index",
         "chembl_bioactive",
-        "user_upload"
+        "user_upload",
+        "bindingdb",
+        "pubchem"
       ]
     },
     "method": {
@@ -22,7 +24,9 @@
         "docking_ml_rerank",
         "docking_only",
         "property_filter",
-        "ligand_similarity"
+        "ligand_similarity",
+        "measured_potency",
+        "balanced_evidence"
       ]
     },
     "max_candidates": {
@@ -62,7 +66,7 @@
     },
     "provider_job_id": {
       "type": "string",
-      "description": "Local execution receipt for JS screening, not an external provider receipt."
+      "description": "Local execution receipt, not an external provider receipt."
     },
     "execution_mode": {
       "type": "string",
@@ -75,7 +79,7 @@
     "result": {
       "type": "object",
       "additionalProperties": true,
-      "description": "Bounded ranked candidates, counts, resolved target, provenance and limitations."
+      "description": "Bounded ranked candidates, source statuses, assay evidence and limitations."
     }
   },
   "required": [
