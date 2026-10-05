@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { hasResearchSubscription,hashApiKey,reserveApiRequest } from '../../shared/researchApiSecurity.ts';
+import { requireApiAdmin,hasResearchSubscription,hashApiKey,reserveApiRequest } from '../../shared/researchApiSecurity.ts';
 import { callApiOperation } from '../../shared/researchApiInternal.ts';
 import { apiCatalog,dispatchApiOperation,validateApiInput } from '../../shared/researchApiOperations.ts';
 import { deny } from '../../shared/securityGuards.ts';
@@ -18,7 +18,8 @@ export default async function(req) {
     if(!matches.length) deny('Invalid or revoked API key.',401);
     const key=matches[0];
     const owners=await base44.asServiceRole.entities.User.filter({id:key.owner_user_id},undefined,1);
-    if(!owners.length || !await hasResearchSubscription(owners[0])) deny('The key owner must have an active paid Research subscription.',403);
+    requireApiAdmin(owners[0]);
+    if(!await hasResearchSubscription(owners[0])) deny('The key owner must have an active paid Research subscription.',403);
     if(key.kind==='team') {
       const teams=await base44.asServiceRole.entities.Team.filter({id:key.team_id,created_by_id:key.owner_user_id},undefined,1);
       if(!teams.length) deny('Team access is no longer available.',403);

@@ -2,6 +2,12 @@ import { secrets } from 'base44:runtime';
 import { deny } from './securityGuards.ts';
 import { subscriptionPillars } from './subscriptionPillars.ts';
 export const API_LIMITS = { rate:60, monthly:10000, keys:20 };
+export function requireApiAdmin(user) {
+  if(user?.role !== 'admin') {
+    const error=new Error('API keys are currently restricted to administrators. Public access is not yet available.');
+    error.status=403;error.code='API_ADMIN_ONLY';throw error;
+  }
+}
 export async function hashApiKey(value) { return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 export function newApiSecret() { return 'sut_live_' + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 export function validateKeySettings(data) {

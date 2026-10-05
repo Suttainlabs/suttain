@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { deny } from './securityGuards.ts';
+import { requireApiAdmin } from './researchApiSecurity.ts';
 import { verifyApiContext,callApiOperation } from './researchApiInternal.ts';
 export async function operationClient(req,operation) {
   const base44=createClientFromRequest(req);
@@ -10,6 +11,7 @@ export async function operationClient(req,operation) {
   if(key.status!=='active') deny('Invalid or revoked API key.',401);
   const owner=await base44.asServiceRole.entities.User.get(key.owner_user_id);
   if(!owner) deny('API owner no longer exists.',403);
+  requireApiAdmin(owner);
   return scopedApiClient(base44,owner,(name,data)=>callApiOperation(base44,name,data,key.id,context.request_id));
 }
 const writable=['SimulationDraft','SimulationJob','DrugDiscoveryJob'];

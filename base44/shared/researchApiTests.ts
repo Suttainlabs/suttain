@@ -1,4 +1,4 @@
-import { reserveApiRequest,hashApiKey,newApiSecret,safeKey,validateKeySettings } from './researchApiSecurity.ts';
+import { requireApiAdmin,reserveApiRequest,hashApiKey,newApiSecret,safeKey,validateKeySettings } from './researchApiSecurity.ts';
 import { signedApiInput,verifyApiContext,callApiOperation } from './researchApiInternal.ts';
 import { scopedApiClient } from './researchApiContext.ts';
 export default async function apiSecurityTests() {
@@ -10,6 +10,7 @@ export default async function apiSecurityTests() {
   return {get:async()=>({...record}),updateMany:async(query,update)=>{if(Object.entries(query).some(([k,v])=>record[k]!==v)) return {updated:0};Object.assign(record,update.$set || {});for(const [field,amount] of Object.entries(update.$inc || {})) record[field]=(record[field] || 0)+amount;return {updated:1};}};
  }
  const now=new Date('2026-10-01T12:00:01Z');
+ await check('Only admins qualify for the API preview',async()=>{requireApiAdmin({role:'admin'});return await fails(()=>requireApiAdmin({role:'user',admin_granted_access:true,subscription_status:'active',product_access:['research']}),403) && await fails(()=>requireApiAdmin(null),403);});
  await check('Generated keys have 256-bit secrets; stored hashes differ',async()=>{const key=newApiSecret(),hash=await hashApiKey(key);return /^sut_live_[a-f0-9]{64}$/.test(key) && /^[a-f0-9]{64}$/.test(hash) && !hash.includes(key);});
  await check('Serialized management records never expose key hashes',async()=>!JSON.stringify(safeKey({key_hash:'never-export',monthly_limit:100})).includes('never-export'));
  await check('Rate rejection does not consume quota',async()=>{const store=mockStore();await reserveApiRequest(store,'key','a',now);await reserveApiRequest(store,'key','b',now);const denied=await fails(()=>reserveApiRequest(store,'key','c',now),429);return denied && (await store.get()).total_count===2 && (await store.get()).denied_count===1;});

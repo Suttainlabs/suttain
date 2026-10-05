@@ -1,10 +1,11 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { requireUser,deny } from '../../shared/securityGuards.ts';
-import { API_LIMITS,hasResearchSubscription,newApiSecret,hashApiKey,safeKey,validateKeySettings } from '../../shared/researchApiSecurity.ts';
+import { API_LIMITS,requireApiAdmin,hasResearchSubscription,newApiSecret,hashApiKey,safeKey,validateKeySettings } from '../../shared/researchApiSecurity.ts';
 import { apiCatalog } from '../../shared/researchApiOperations.ts';
 export default async function(req) {
   try {
     const base44=createClientFromRequest(req), user=await requireUser(base44);
+    requireApiAdmin(user);
     const text=await req.text();if(text.length>4000) deny('Request too large.',413);
     const input=JSON.parse(text || '{}'), action=input.action || 'list';
     const store=base44.asServiceRole.entities.ResearchApiKey;
