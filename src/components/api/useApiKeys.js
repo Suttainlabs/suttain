@@ -9,7 +9,7 @@ export default function useApiKeys() {
  const query=useQuery({queryKey:key,queryFn:async()=> (await manageResearchApiKeys({action:'list'})).data,enabled:!!user,refetchInterval:30000});
  async function action(payload) {
   setBusy(true);setError('');
-  try {const response=await manageResearchApiKeys(payload);if(response.data.error) throw new Error(response.data.error);await cache.invalidateQueries({queryKey:key});if(response.data.secret) setSecret(response.data.secret);return response.data;}
+  try {const response=await manageResearchApiKeys(payload);if(response.data.error) throw new Error(response.data.error);if(response.data.secret) setSecret(response.data.secret);await cache.invalidateQueries({queryKey:key});return response.data;}
   catch(e){setError(e.response?.data?.error || e.message);return null;}finally{setBusy(false);}
  }
  return {user,isAuthLoading,...query,queryError:query.error,busy,error,secret,setSecret,action};

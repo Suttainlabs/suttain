@@ -17,8 +17,13 @@ const extra=[
 export function apiCatalog() {return [...extra,...engineRegistry.map(e=>({name:e.endpoint,group:e.deployment==='input_file'?'Local engine preparation':'Hosted / source lookup',example:e.example}))].filter((e,i,all)=>e.name && all.findIndex(x=>x.name===e.name)===i);}
 export async function dispatchApiOperation(name,input,client) {
   if(!apiCatalog().some(e=>e.name===name)) deny('Unknown API operation.',400);
-  const response=await client.functions.invoke(name,input);
-  return Response.json(response.data);
+  try {
+    const response=await client.functions.invoke(name,input);
+    return Response.json(response.data,{status:response.data?.error && (!response.status || response.status===200) ? 502 : response.status || 200});
+  } catch(error) {
+    if(error.response?.status) return Response.json(error.response.data || {error:'Operation failed.'},{status:error.response.status});
+    throw error;
+  }
 }
 export function validateApiInput(operation,input) {
   if(!input || typeof input!=='object' || Array.isArray(input)) deny('input must be a JSON object.',400);

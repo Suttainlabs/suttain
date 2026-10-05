@@ -3,9 +3,12 @@ import { hasResearchSubscription,hashApiKey,reserveApiRequest } from '../../shar
 import { callApiOperation } from '../../shared/researchApiInternal.ts';
 import { apiCatalog,dispatchApiOperation,validateApiInput } from '../../shared/researchApiOperations.ts';
 import { deny } from '../../shared/securityGuards.ts';
+import { waitUntil } from 'base44:runtime';
 export default async function(req) {
   const requestId=crypto.randomUUID();
   const headers={'X-Request-Id':requestId,'Cache-Control':'no-store'};
+  let auditStore,auditKey,admitted=false;
+  const audit=status=>auditStore.updateMany({id:auditKey},{$set:{last_status:status},...(status>=400?{$inc:{error_count:1}}:{})}).catch(()=>console.error('API usage status update failed',requestId));
   try {
     if(req.method!=='POST') deny('Use POST with a JSON request.',405);
     const token=(req.headers.get('Authorization') || '').replace(/^Bearer\s+/i,'');
@@ -25,13 +28,15 @@ export default async function(req) {
     if(!apiCatalog().some(e=>e.name===body?.operation)) deny('Unknown operation. See the API operation reference.',400);
     validateApiInput(body.operation,body.input);
     const quota=await reserveApiRequest(store,key.id,requestId);
+    auditStore=store;auditKey=key.id;admitted=true;
     headers['X-RateLimit-Remaining']=String(quota.rate_remaining);headers['X-MonthlyLimit-Remaining']=String(quota.monthly_remaining);headers['X-MonthlyLimit-Reset']=quota.monthly_reset;
     const client={functions:{invoke:(name,input)=>callApiOperation(base44,name,input,key.id,requestId)}};
     const response=await dispatchApiOperation(body.operation,body.input,client);
-    await store.updateMany({id:key.id},{$set:{last_status:response.status},...(!response.ok?{$inc:{error_count:1}}:{})});
+    waitUntil(audit(response.status));
     const responseHeaders=new Headers(response.headers);for(const [name,value] of Object.entries(headers)) responseHeaders.set(name,value);
     return new Response(response.body,{status:response.status,headers:responseHeaders});
   } catch(error) {
+    if(admitted) waitUntil(audit(error.status || 500));
     if(error.retryAfter) headers['Retry-After']=String(error.retryAfter);
     return Response.json({error:error.status?error.message:'API operation could not be completed.',code:error.code || (error.status===401?'INVALID_KEY':error.status===403?'RESEARCH_REQUIRED':'REQUEST_FAILED'),request_id:requestId},{status:error.status || 500,headers});
   }

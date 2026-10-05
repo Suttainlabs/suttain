@@ -25,7 +25,7 @@ export default function ApiKeyPlatform() {
    <p className="text-xs text-muted-foreground">Team creators manage shared keys. Teammates use the shared secret without receiving account or billing permissions. Team requests and saved jobs are attributed to the subscribing key owner.</p>
   </>}
   {typeof state.error==='string' && state.error && <p role="alert" className="text-sm text-destructive">{state.error}</p>}
-  {form && <ApiKeyForm record={form.id?form:null} teams={state.data?.teams || []} busy={state.busy} onSave={save} onClose={()=>setForm(null)}/>}
+  {form && <ApiKeyForm record={form.id?form:null} teams={state.data?.teams || []} busy={state.busy} error={state.error} onSave={save} onClose={()=>setForm(null)}/>}
   {state.secret && <ApiSecretDialog secret={state.secret} onClose={()=>state.setSecret('')}/>}
  </section>;
 }

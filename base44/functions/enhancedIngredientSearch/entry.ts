@@ -169,6 +169,7 @@ const INGREDIENT_DATABASE = [
 ];
 
 export default async function(req) {
+ try {
   const base44 = await operationClient(req,'enhancedIngredientSearch');
 
   const user = await base44.auth.me();
@@ -278,8 +279,9 @@ export default async function(req) {
   } catch (error) {
     console.error("Enhanced ingredient search error:", error);
     return new Response(JSON.stringify({ error: error.message, results: [] }), {
-      status: 500,
+      status: error.status || 500,
       headers: { "Content-Type": "application/json" }
     });
   }
+ } catch(error) {return Response.json({error:error.message},{status:error.status || 500});}
 }

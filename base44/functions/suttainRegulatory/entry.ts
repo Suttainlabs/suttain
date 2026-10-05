@@ -119,6 +119,6 @@ export default async function(req) {
       pictograms: pictograms
     });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
 }

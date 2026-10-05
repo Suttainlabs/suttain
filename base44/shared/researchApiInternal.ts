@@ -1,6 +1,7 @@
 import { secrets } from 'base44:runtime';
 import { hashApiKey } from './researchApiSecurity.ts';
 import { deny } from './securityGuards.ts';
+import { apiCatalog } from './researchApiOperations.ts';
 async function signingKey() {return await crypto.subtle.importKey('raw',new TextEncoder().encode(secrets.get('RESEARCH_API_INTERNAL_SECRET')),{name:'HMAC',hash:'SHA-256'},false,['sign','verify']);}
 export async function signedApiInput(operation,input,keyId,requestId) {
   const {__research_context:ignored,...data}=input;
@@ -17,6 +18,7 @@ export async function verifyApiContext(input,operation) {
   return context;
 }
 export async function callApiOperation(base44,operation,input,keyId,requestId) {
+  if(!apiCatalog().some(item=>item.name===operation)) deny('This operation is not exposed by the Research API.',403);
   const payload=await signedApiInput(operation,input,keyId,requestId);
   return await base44.asServiceRole.functions.invoke(operation,payload);
 }

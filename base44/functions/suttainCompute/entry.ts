@@ -181,6 +181,6 @@ export default async function(req) {
 
     return Response.json({ error: `Unknown mode: ${mode}. Use descriptors, compare, or engine_input.` }, { status: 400 });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message }, { status: error.status || 500 });
   }
 }

@@ -1,0 +1,27 @@
+import { reserveApiRequest,hashApiKey,newApiSecret,safeKey,validateKeySettings } from './researchApiSecurity.ts';
+import { signedApiInput,verifyApiContext,callApiOperation } from './researchApiInternal.ts';
+import { scopedApiClient } from './researchApiContext.ts';
+export default async function apiSecurityTests() {
+ const tests=[];
+ const check=async(name,fn)=>{try{if(!await fn()) throw new Error('Assertion failed');tests.push({name,passed:true});}catch(error){tests.push({name,passed:false,error:error.message});}};
+ const fails=async(fn,status)=>{try{await fn();return false;}catch(e){return e.status===status;}};
+ function mockStore(initial={}) {
+  let record={id:'key',status:'active',rate_limit:2,monthly_limit:4,version:0,month_count:0,minute_count:0,total_count:0,...initial};
+  return {get:async()=>({...record}),updateMany:async(query,update)=>{if(Object.entries(query).some(([k,v])=>record[k]!==v)) return {updated:0};Object.assign(record,update.$set || {});for(const [field,amount] of Object.entries(update.$inc || {})) record[field]=(record[field] || 0)+amount;return {updated:1};}};
+ }
+ const now=new Date('2026-10-01T12:00:01Z');
+ await check('Generated keys have 256-bit secrets; stored hashes differ',async()=>{const key=newApiSecret(),hash=await hashApiKey(key);return /^sut_live_[a-f0-9]{64}$/.test(key) && /^[a-f0-9]{64}$/.test(hash) && !hash.includes(key);});
+ await check('Serialized management records never expose key hashes',async()=>!JSON.stringify(safeKey({key_hash:'never-export',monthly_limit:100})).includes('never-export'));
+ await check('Rate rejection does not consume quota',async()=>{const store=mockStore();await reserveApiRequest(store,'key','a',now);await reserveApiRequest(store,'key','b',now);const denied=await fails(()=>reserveApiRequest(store,'key','c',now),429);return denied && (await store.get()).total_count===2 && (await store.get()).denied_count===1;});
+ await check('Concurrent reservations cannot exceed key rate',async()=>{const store=mockStore();const results=await Promise.allSettled(Array.from({length:5},(_,i)=>reserveApiRequest(store,'key',String(i),now)));return results.filter(r=>r.status==='fulfilled').length===2 && (await store.get()).month_count===2;});
+ await check('Monthly rejection and UTC reset are enforced',async()=>{const store=mockStore({monthly_limit:1});await reserveApiRequest(store,'key','a',now);const denied=await fails(()=>reserveApiRequest(store,'key','b',new Date('2026-10-01T12:01:01Z')),429);await reserveApiRequest(store,'key','c',new Date('2026-11-01T00:00:00Z'));return denied && (await store.get()).month_count===1;});
+ await check('Revoked keys are rejected before usage',async()=>fails(()=>reserveApiRequest(mockStore({status:'revoked'}),'key','x',now),401));
+ await check('Limits cannot exceed server ceilings',async()=>fails(()=>validateKeySettings({label:'test',rate_limit:61,monthly_limit:1000}),400));
+ await check('Internal authorization validates signature and operation',async()=>{const input=await signedApiInput('getComputeEngines',{},'key','req');return (await verifyApiContext(input,'getComputeEngines')).key_id==='key' && await fails(()=>verifyApiContext(input,'runRowanCompute'),401);});
+ await check('Tampered internal inputs are rejected',async()=>{const input=await signedApiInput('suttainCompute',{molecule:'water'},'key','req');return await fails(()=>verifyApiContext({...input,molecule:'aspirin'},'suttainCompute'),401);});
+ await check('Unlisted downstream operations cannot be invoked',async()=>fails(()=>callApiOperation({},'adminDeleteUser',{},'key','req'),403));
+ await check('All job reads carry an immutable owner filter',async()=>{let query,linkQuery;const service={entities:{ResearchApiJob:{filter:async q=>{linkQuery=q;return [];}},SimulationJob:{filter:async q=>{query=q;return [];}},User:{}}};const client=scopedApiClient({asServiceRole:service},{id:'owner',email:'owner@example.invalid'},()=>{});await client.entities.SimulationJob.filter({created_by_id:'other'});return query.$and[1].$or[0].created_by_id==='owner' && linkQuery.owner_user_id==='owner' && await fails(()=>client.entities.SimulationJob.update('other-job',{status:'completed'}),404);});
+ await check('Service-created jobs acquire protected owner provenance',async()=>{let link;const service={entities:{ResearchApiJob:{create:async data=>{link=data;},filter:async()=>link?[link]:[]},SimulationJob:{create:async()=>({id:'job',created_by_id:'service'}),filter:async()=>link?[{id:'job',created_by_id:'service'}]:[]}}};const client=scopedApiClient({asServiceRole:service},{id:'owner',email:'owner@example.invalid'},()=>{});await client.entities.SimulationJob.create({status:'completed',created_by_id:'spoofed'});const job=await client.entities.SimulationJob.get('job');return link.owner_user_id==='owner' && link.record_id==='job' && job.created_by_id==='service' && job.api_owner_user_id==='owner';});
+ await check('API actor cannot inherit admin privileges',async()=>{const client=scopedApiClient({asServiceRole:{entities:{},integrations:{}}},{id:'owner',email:'owner@example.invalid',role:'admin',admin_granted_access:true},()=>{});const actor=await client.auth.me();return actor.role==='user' && !actor.admin_granted_access;});
+ return {passed:tests.filter(t=>t.passed).length,total:tests.length,tests};
+}

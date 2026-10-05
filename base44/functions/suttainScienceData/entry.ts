@@ -104,6 +104,6 @@ export default async function(req) {
   } catch (error) {
     // Return 200 with error body so the frontend can surface a friendly message
     // instead of a generic "Request failed with status code 500".
-    return Response.json({ error: error.message }, { status: 200 });
+    return Response.json({ error: error.message }, { status: error.status || 200 });
   }
 }

@@ -311,6 +311,7 @@ async function searchPubChemAutocomplete(query) {
 }
 
 export default async function(req) {
+ try {
   const base44 = await operationClient(req,'comprehensiveChemicalSearch');
 
   const user = await base44.auth.me();
@@ -423,6 +424,7 @@ export default async function(req) {
 
   } catch (error) {
     console.error("Chemical search error:", error);
-    return Response.json({ error: "Search failed", details: error.message }, { status: 500 });
+    return Response.json({ error: "Search failed", details: error.message }, { status: error.status || 500 });
   }
+ } catch(error) {return Response.json({error:error.message},{status:error.status || 500});}
 }

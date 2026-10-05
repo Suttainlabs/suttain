@@ -15,6 +15,10 @@ export default async function(req) {
       await store.updateMany({id:key.id,owner_user_id:user.id},{$set:{status:'revoked',revoked_at:new Date().toISOString()},$inc:{version:1}});
       return Response.json({success:true});
     }
+    if(action==='archive') {
+      const key=keys.find(k=>k.id===input.id);if(!key || key.status!=='revoked') deny('Only revoked keys can be archived.',400);
+      await store.delete(key.id);return Response.json({success:true});
+    }
     const eligible=await hasResearchSubscription(user);
     if(action==='list') return Response.json({eligible,keys:keys.map(safeKey),teams:teams.map(t=>({id:t.id,name:t.name})),limits:API_LIMITS,catalog:apiCatalog(),monthly_reset:new Date(Date.UTC(new Date().getUTCFullYear(),new Date().getUTCMonth()+1,1)).toISOString()});
     if(!eligible) deny('An active paid Research subscription is required. Existing subscribers need no new purchase or migration.',403);
@@ -23,10 +27,6 @@ export default async function(req) {
       if(teams.length>=20) deny('Team limit reached.',400);
       const team=await base44.entities.Team.create({name:input.name.trim(),members:[{email:user.email,role:'owner',joined_date:new Date().toISOString()}]});
       return Response.json({team:{id:team.id,name:team.name}});
-    }
-    if(action==='archive') {
-      const key=keys.find(k=>k.id===input.id);if(!key || key.status!=='revoked') deny('Only revoked keys can be archived.',400);
-      await store.delete(key.id);return Response.json({success:true});
     }
     if(action==='create') {
       if(keys.length>=API_LIMITS.keys) deny('Key record limit reached (20). Archive a revoked key before creating another.',400);
