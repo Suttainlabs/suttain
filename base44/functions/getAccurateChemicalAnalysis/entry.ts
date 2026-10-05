@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { operationClient } from '../../shared/researchApiContext.ts';
 import { reserveUsage } from '../../shared/usageEntitlements.ts';
 import {
   computeCombinationFloor,
@@ -136,7 +136,7 @@ async function writeAuditLog(base44, params) {
 export default async function (req) {
   const appId = Deno.env.get('BASE44_APP_ID');
   try {
-    const base44 = createClientFromRequest(req);
+    const base44 = await operationClient(req,'getAccurateChemicalAnalysis');
     const user = await base44.auth.me();
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });

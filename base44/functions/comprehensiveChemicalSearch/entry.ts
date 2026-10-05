@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { operationClient } from '../../shared/researchApiContext.ts';
 
 const COMMON_NAME_MAP = {
   'bleach': 'sodium hypochlorite',
@@ -311,7 +311,7 @@ async function searchPubChemAutocomplete(query) {
 }
 
 export default async function(req) {
-  const base44 = createClientFromRequest(req);
+  const base44 = await operationClient(req,'comprehensiveChemicalSearch');
 
   const user = await base44.auth.me();
   if (!user) {

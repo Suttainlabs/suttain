@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { operationClient } from '../../shared/researchApiContext.ts';
 
 // Property mappings for ingredient search
 const PROPERTY_KEYWORDS = {
@@ -168,8 +168,8 @@ const INGREDIENT_DATABASE = [
   }
 ];
 
-Deno.serve(async (req) => {
-  const base44 = createClientFromRequest(req);
+export default async function(req) {
+  const base44 = await operationClient(req,'enhancedIngredientSearch');
 
   const user = await base44.auth.me();
   if (!user) {
@@ -282,4 +282,4 @@ Deno.serve(async (req) => {
       headers: { "Content-Type": "application/json" }
     });
   }
-});
+}

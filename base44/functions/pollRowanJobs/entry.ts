@@ -1,9 +1,9 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { operationClient } from '../../shared/researchApiContext.ts';
 import { requireUser } from '../../shared/securityGuards.ts';
 import { syncRowanJob } from '../../shared/rowanCompute.ts';
 export default async function(req) {
   try {
-    const base44 = createClientFromRequest(req), user = await requireUser(base44);
+    const base44 = await operationClient(req,'pollRowanJobs'), user = await requireUser(base44);
     const {job_id,catch_up = false} = await req.json();
     if (catch_up) {
       if (user.role !== 'admin') return Response.json({error:'Forbidden'},{status:403});

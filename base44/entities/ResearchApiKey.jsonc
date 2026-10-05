@@ -1,0 +1,124 @@
+{
+  "name": "ResearchApiKey",
+  "type": "object",
+  "properties": {
+    "owner_user_id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "personal",
+        "team"
+      ]
+    },
+    "team_id": {
+      "type": "string"
+    },
+    "team_name": {
+      "type": "string"
+    },
+    "key_hash": {
+      "type": "string"
+    },
+    "prefix": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "revoked"
+      ]
+    },
+    "revoked_at": {
+      "type": "string"
+    },
+    "rate_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 60
+    },
+    "monthly_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000
+    },
+    "version": {
+      "type": "integer",
+      "default": 0
+    },
+    "usage_month": {
+      "type": "string"
+    },
+    "month_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "minute_window": {
+      "type": "string"
+    },
+    "minute_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "total_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "error_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "denied_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "last_used_at": {
+      "type": "string"
+    },
+    "last_status": {
+      "type": "integer"
+    },
+    "last_request_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "owner_user_id",
+    "label",
+    "kind",
+    "key_hash",
+    "prefix",
+    "status",
+    "rate_limit",
+    "monthly_limit",
+    "version"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

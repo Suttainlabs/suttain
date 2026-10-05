@@ -1,10 +1,10 @@
-import {createClientFromRequest} from 'npm:@base44/sdk@0.8.52';
+import {operationClient} from '../../shared/researchApiContext.ts';
 import {requireUser,reserveSecurityAction} from '../../shared/securityGuards.ts';
 import {reserveUsage} from '../../shared/usageEntitlements.ts';
 import {findEngine} from '../../shared/engineRegistry.ts';
 export default async function(req) {
   try {
-    const base44=createClientFromRequest(req),user=await requireUser(base44),data=await req.json();
+    const base44=await operationClient(req,'runPubchemLookup'),user=await requireUser(base44),data=await req.json();
     if(JSON.stringify(data).length>6000) return Response.json({error:'Request too large.'},{status:400});
     const query=String(data.query || '').trim(), namespace=data.namespace || 'name', operation=data.operation || 'Properties';
     if(!query || query.length>1000 || !['name','smiles','cid'].includes(namespace) || !['Properties','Synonyms'].includes(operation) || (namespace==='cid' && !/^\d+$/.test(query))) return Response.json({error:'Provide a valid query, namespace and operation.'},{status:400});

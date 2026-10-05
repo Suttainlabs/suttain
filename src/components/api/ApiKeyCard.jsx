@@ -1,0 +1,13 @@
+import React from 'react';
+import { KeyRound,Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+export default function ApiKeyCard({record,eligible,busy,onEdit,onRevoke,onArchive}) {
+ const revoked=record.status==='revoked';
+ return <article className="rounded-xl border border-border bg-card p-5 space-y-4">
+  <div className="flex items-start justify-between gap-3"><div className="flex gap-3 min-w-0">{record.kind==='team'?<Users className="w-5 h-5 text-primary shrink-0 mt-1"/>:<KeyRound className="w-5 h-5 text-primary shrink-0 mt-1"/>}<div className="min-w-0"><h3 className="break-words text-base font-medium">{record.label}</h3><p className="text-xs text-muted-foreground">{record.kind==='team'?record.team_name:'Personal key'}</p><code className="text-xs text-muted-foreground">{record.prefix}••••••</code></div></div><span className={`rounded-full px-2.5 py-1 text-xs ${revoked?'bg-muted text-muted-foreground':'bg-secondary text-secondary-foreground'}`}>{revoked?'Revoked':eligible?'Active':'Subscription paused'}</span></div>
+  <div><div className="flex justify-between gap-2 text-sm mb-2"><span>{record.used.toLocaleString()} / {record.monthly_limit.toLocaleString()} this month</span><span className="text-muted-foreground">{record.remaining.toLocaleString()} left</span></div><progress aria-label={`${record.label} monthly usage`} value={Math.min(record.used,record.monthly_limit)} max={record.monthly_limit} className="w-full h-2 accent-primary"/><p className="text-xs text-muted-foreground mt-1">{record.rate_limit} requests/minute · {record.error_count} errors · {record.denied_count} limit denials</p></div>
+  <dl className="text-xs text-muted-foreground grid grid-cols-2 gap-2"><div><dt>Created</dt><dd>{new Date(record.created_date).toLocaleDateString()}</dd></div><div><dt>Last used</dt><dd>{record.last_used_at?new Date(record.last_used_at).toLocaleString():'Not used yet'}</dd></div></dl>
+  {record.last_status && <p className="text-xs text-muted-foreground">Last response: HTTP {record.last_status}</p>}
+  <div className="flex flex-wrap gap-2">{!revoked && <><Button variant="outline" size="sm" disabled={!eligible || busy} onClick={()=>onEdit(record)}>Edit limits</Button><Button variant="outline" size="sm" disabled={busy} onClick={()=>{if(window.confirm(`Revoke “${record.label}”? Scripts using it will stop working immediately.`)) onRevoke(record.id);}}>Revoke key</Button></>}{revoked && <Button size="sm" variant="outline" disabled={busy} onClick={()=>{if(window.confirm('Archive this revoked key and remove its usage summary?')) onArchive(record.id);}}>Archive revoked key</Button>}</div>
+ </article>;
+}

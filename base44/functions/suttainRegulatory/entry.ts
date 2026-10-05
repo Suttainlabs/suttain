@@ -1,8 +1,8 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { operationClient } from '../../shared/researchApiContext.ts';
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
-    const base44 = createClientFromRequest(req);
+    const base44 = await operationClient(req,'suttainRegulatory');
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -121,4 +121,4 @@ Deno.serve(async (req) => {
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
-});
+}

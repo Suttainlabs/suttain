@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { operationClient } from '../../shared/researchApiContext.ts';
 import inputGeometry from '../../shared/inputGeometry.ts';
 import { findEngine } from '../../shared/engineRegistry.ts';
 import prepareEnginePackage from '../../shared/prepareEnginePackage.ts';
@@ -495,7 +495,7 @@ async function generateInputFiles(simType, engine, inputs, env) {
 
 export default async function(req) {
   try {
-    const base44 = createClientFromRequest(req);
+    const base44 = await operationClient(req,'generateSimulationInputs');
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 

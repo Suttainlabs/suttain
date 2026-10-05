@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { operationClient } from '../../shared/researchApiContext.ts';
 import { requireUser, reserveSecurityAction } from '../../shared/securityGuards.ts';
 import { reserveUsage, planAccess } from '../../shared/usageEntitlements.ts';
 import { resolveRowanMolecule, mapRowanSettings, invalid } from '../../shared/rowanInput.ts';
@@ -7,7 +7,7 @@ import { pickFallback } from '../../shared/engineRegistry.ts';
 import prepareEnginePackage from '../../shared/prepareEnginePackage.ts';
 export default async function(req) {
   try {
-    const base44 = createClientFromRequest(req), user = await requireUser(base44);
+    const base44 = await operationClient(req,'runRowanCompute'), user = await requireUser(base44);
     const data = await req.json();
     if (!data || JSON.stringify(data).length > 32000 || !data.inputs || typeof data.inputs !== 'object') invalid('Invalid simulation inputs.');
     if (!['dft','quantum_mechanics','molecular_dynamics','protein_modeling','materials','monte_carlo','visualization','surface_chemistry','biomolecular_dynamics','electron_spectroscopy','machine_learning_pot'].includes(data.sim_type)) invalid('Unknown simulation type.');

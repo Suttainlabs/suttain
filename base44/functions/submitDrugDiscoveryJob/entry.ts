@@ -1,10 +1,10 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { operationClient } from '../../shared/researchApiContext.ts';
 import { requireUser, reserveSecurityAction } from '../../shared/securityGuards.ts';
 import { validateSubmission } from '../../shared/drugDiscoveryRecords.ts';
 import { runLigandScreening, screeningCapability } from '../../shared/ligandScreening.ts';
 export default async function(req) {
   try {
-    const base44 = createClientFromRequest(req); const user = await requireUser(base44);
+    const base44 = await operationClient(req,'submitDrugDiscoveryJob'); const user = await requireUser(base44);
     if (req.method !== 'POST') return Response.json({ error: 'Use POST.' }, { status: 405 });
     const text = await req.text(); if (text.length > 6000) return Response.json({ error: 'Request too large.' }, { status: 413 });
     let input; try { input = JSON.parse(text); } catch { return Response.json({ error: 'Invalid request.' }, { status: 400 }); }

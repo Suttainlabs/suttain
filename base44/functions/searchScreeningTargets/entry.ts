@@ -1,9 +1,9 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { operationClient } from '../../shared/researchApiContext.ts';
 import { requireUser, reserveSecurityAction } from '../../shared/securityGuards.ts';
 import { searchEvidenceTargets } from '../../shared/screeningTargetSearch.ts';
 export default async function(req) {
   try {
-    const base44 = createClientFromRequest(req), user = await requireUser(base44);
+    const base44 = await operationClient(req,'searchScreeningTargets'), user = await requireUser(base44);
     const text = await req.text(); if (text.length > 1000) return Response.json({ error: 'Search request too large.' }, { status: 400 });
     const { query } = JSON.parse(text);
     if (typeof query !== 'string' || !query.trim() || query.length > 150) return Response.json({ error: 'Enter a target name or identifier (up to 150 characters).' }, { status: 400 });

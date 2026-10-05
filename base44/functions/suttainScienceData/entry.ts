@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { operationClient } from '../../shared/researchApiContext.ts';
 
 async function pubchemLookup(query) {
   const isSmiles = /[()=#\[\]\\]/.test(query) || /^\d+$/.test(query) === false && query.length > 30;
@@ -83,9 +83,9 @@ async function alphafoldLookup(query) {
   };
 }
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
-    const base44 = createClientFromRequest(req);
+    const base44 = await operationClient(req,'suttainScienceData');
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -106,4 +106,4 @@ Deno.serve(async (req) => {
     // instead of a generic "Request failed with status code 500".
     return Response.json({ error: error.message }, { status: 200 });
   }
-});
+}

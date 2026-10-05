@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { operationClient } from '../../shared/researchApiContext.ts';
 import { researchEntitlement } from '../../shared/usageEntitlements.ts';
 
 const PUBCHEM_PROPS = 'MolecularFormula,MolecularWeight,CanonicalSMILES,IUPACName,XLogP,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount,HeavyAtomCount,Charge';
@@ -113,7 +113,7 @@ run 10000
 
 export default async function(req) {
   try {
-    const base44 = createClientFromRequest(req);
+    const base44 = await operationClient(req,'suttainCompute');
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
