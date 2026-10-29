@@ -48,6 +48,7 @@ const PAGE_META_DESCRIPTIONS = {
   PrivacyPolicy: 'Suttain Privacy Policy, how we collect, use, and protect your data when using our chemical safety analysis, formula generation, and product scanning tools.',
   FAQ: 'Frequently asked questions about Suttain, chemical safety analysis, formula generation, product scanning, pricing, and research API access.',
   AboutUs: 'Suttain makes chemical safety accessible to everyone. Learn about our mission to democratize chemical knowledge for safer products and formulations.',
+  Articles: 'Guides from Suttain on product safety, ingredients, barcode scanning and chemical analysis.',
   Careers: 'Join Suttain: careers in chemical safety, AI, and sustainable product development. View open positions and help build the future of chemical intelligence.',
   ResearchPortal: 'Suttain Research Portal: Atomistic Simulation and Drug Design with source-backed molecular inputs, target exploration, and reviewable research workflows.',
   ResearchDashboard: 'Your Suttain research dashboard, monitor activity, manage saved molecular formulas, and access computational chemistry tools.',
@@ -758,6 +759,7 @@ export default function Layout({ children, currentPageName }) {
                 <li><Link to="/terms-of-service" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_terms')}</Link></li>
                 <li><Link to="/compliance-guide" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_compliance_guide')}</Link></li>
                 <li><Link to={createPageUrl('Blog')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_blog')}</Link></li>
+                <li><Link to={createPageUrl('Articles')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">Articles</Link></li>
                 <li><Link to={createPageUrl('Careers')} className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_careers')}</Link></li>
                 <li><a href="mailto:contact@suttain.com" className="text-slate-500 hover:text-[var(--suttain-teal)] transition-colors">{t('footer_contact')}</a></li>
               </ul>
