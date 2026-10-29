@@ -205,11 +205,66 @@ const tamarind = {
 
 const ADAPTERS: Record<ProviderId, { submit: (t: Task, i: any, k: string) => Promise<{ provider_job_id: string }>; poll: (t: Task, id: string, input?: any) => Promise<PollOutcome> }> = { rowan, boltz, tamarind };
 
+// ---------- Recommendation ----------
+// Deterministic rules: the same goal and input always produce the same recommendation.
+// Each rule rests on a documented difference between engines (sources noted inline).
+export type Goal = 'potency' | 'hit_discovery' | 'pose' | 'quick_screen' | 'full_profile';
+export const GOALS: Record<Task, { id: Goal; label: string; hint: string }[]> = {
+  binding: [
+    { id: 'potency', label: 'Estimate potency / rank analogs', hint: 'How strongly does each compound bind?' },
+    { id: 'hit_discovery', label: 'Find real binders (hit discovery)', hint: 'Does this compound bind at all?' },
+    { id: 'pose', label: 'See the binding pose', hint: 'Where and how does it sit in the pocket?' },
+  ],
+  adme: [
+    { id: 'full_profile', label: 'Full property profile', hint: 'A wider property set for a few molecules' },
+    { id: 'quick_screen', label: 'Quick screen of many molecules', hint: 'Solubility, permeability, lipophilicity at scale' },
+  ],
+};
+
+export function recommend(task: Task, rawInput: any, goal?: Goal | null) {
+  const n = task === 'adme' ? (Array.isArray(rawInput?.smiles) ? rawInput.smiles.filter((s: any) => String(s || '').trim()).length : 1) : 1;
+  let order: ProviderId[], reason: string, chosenGoal: Goal;
+  if (task === 'binding') {
+    chosenGoal = goal && GOALS.binding.some(g => g.id === goal) ? goal : 'potency';
+    if (chosenGoal === 'hit_discovery') {
+      // Rowan SDK docs: Boltz-2.1 binding_confidence is the primary metric for hit discovery.
+      order = ['boltz', 'rowan', 'tamarind'];
+      reason = 'Boltz API runs Boltz-2.1, which reports a binding-confidence score built to separate true binders from decoys.';
+    } else if (chosenGoal === 'pose') {
+      // Rowan returns PoseBusters pose validity; Tamarind returns full structure files.
+      order = ['rowan', 'tamarind', 'boltz'];
+      reason = 'Rowan returns the predicted complex with a PoseBusters pose-validity check, so you can trust the pose before reading into it.';
+    } else {
+      // Rowan SDK docs: Boltz-2 pred_value is a predicted pIC50 (-log10 IC50).
+      order = ['rowan', 'boltz', 'tamarind'];
+      reason = 'Rowan runs Boltz-2, which reports a predicted pIC50, an interpretable potency number for ranking analogs.';
+    }
+  } else {
+    chosenGoal = n > ROWAN_ADME_MAX ? 'quick_screen' : (goal && GOALS.adme.some(g => g.id === goal) ? goal : 'full_profile');
+    if (chosenGoal === 'quick_screen') {
+      order = ['boltz', 'rowan'];
+      reason = n > ROWAN_ADME_MAX
+        ? `Boltz scores up to 128 molecules in one batch; Rowan runs one job per molecule (max ${ROWAN_ADME_MAX} here).`
+        : 'Boltz ADME gives a fast Tier-1 screen: solubility, permeability and lipophilicity.';
+    } else {
+      order = ['rowan', 'boltz'];
+      reason = 'Rowan ADMET returns a per-molecule property set (e.g. molecular weight, logP, TPSA), wider than the three Tier-1 values from Boltz.';
+    }
+  }
+  const engines = order.map(p => ({ provider: p, label: PROVIDERS[p].label, model: PROVIDERS[p].model[task], configured: !!secrets.get(PROVIDERS[p].secret) }));
+  const recommended = engines.find(e => e.configured)?.provider || order[0];
+  const unavailableTop = recommended !== order[0];
+  return {
+    task, goal: chosenGoal, recommended, order, engines,
+    reason: unavailableTop ? `${reason} ${PROVIDERS[order[0]].label} is not connected, so ${PROVIDERS[recommended].label} is the best available choice.` : reason,
+  };
+}
+
 // ---------- Router ----------
-export async function submitWithFallback(task: Task, rawInput: any, opts: { preferred?: ProviderId | 'auto'; autoFallback?: boolean } = {}) {
+export async function submitWithFallback(task: Task, rawInput: any, opts: { preferred?: ProviderId | 'auto'; autoFallback?: boolean; goal?: Goal | null } = {}) {
   if (!CHAINS[task]) throw new ProviderError('Unknown calculation type.', { kind: 'invalid' });
   const input = validateInput(task, rawInput);
-  const chain = CHAINS[task];
+  const chain = recommend(task, input, opts.goal).order; // "Auto" follows the recommendation for the user's goal
   const preferred = opts.preferred && opts.preferred !== 'auto' ? opts.preferred : null;
   if (preferred && !chain.includes(preferred)) throw new ProviderError(`${PROVIDERS[preferred]?.label || preferred} does not run this calculation.`, { kind: 'invalid' });
   let order = preferred ? [preferred, ...chain.filter(p => p !== preferred)] : chain;
