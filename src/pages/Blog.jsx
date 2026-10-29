@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, Mail, Bell, Sparkles } from 'lucide-react';
+import { BookOpen, Mail, Bell, Sparkles, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -42,45 +44,6 @@ export default function Blog() {
     };
   }, []);
 
-  // Inject Holo SEO blog embed script after the #holo-blog div is in the DOM
-  useEffect(() => {
-    const HOLO_SRC = 'https://prod-api-holo-ai.fly.dev/public/seo/embed/903b95ba-05ee-4234-b176-ac77ce51e666.js';
-    const existing = document.querySelector('script[src*="prod-api-holo-ai.fly.dev"]');
-    if (existing) existing.remove();
-
-    const script = document.createElement('script');
-    script.src = HOLO_SRC;
-    script.defer = true;
-    document.body.appendChild(script);
-
-    return () => {
-      const s = document.querySelector('script[src*="prod-api-holo-ai.fly.dev"]');
-      if (s) s.remove();
-    };
-  }, []);
-
-  // Soro and Holo both open articles via ?post=<slug>. When an article is open,
-  // hide whichever embed is still showing its post list, so the reader sees the
-  // article first instead of having to scroll past the other blog's list.
-  useEffect(() => {
-    const sync = () => {
-      const hasPost = new URLSearchParams(window.location.search).has('post');
-      ['soro-blog', 'holo-blog'].forEach((id) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        const section = el.closest('section') || el;
-        const listLinks = el.querySelectorAll('a[href*="post="]').length;
-        section.style.display = hasPost && listLinks >= 2 ? 'none' : '';
-      });
-    };
-    sync();
-    const timer = setInterval(sync, 500);
-    window.addEventListener('popstate', sync);
-    return () => {
-      clearInterval(timer);
-      window.removeEventListener('popstate', sync);
-    };
-  }, []);
 
 
 
@@ -140,10 +103,19 @@ export default function Blog() {
         </div>
       </section>
 
-      {/* Holo Blog Embed */}
+      {/* Link to the Holo-powered Articles page (separate page: both embeds use ?post=) */}
       <section className="pb-16 px-4">
         <div className="max-w-3xl mx-auto">
-          <div id="holo-blog"></div>
+          <Link
+            to={createPageUrl('Articles')}
+            className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-6 hover:border-[var(--suttain-teal)] transition-colors"
+          >
+            <div>
+              <p className="text-lg font-semibold text-slate-900">More articles from Suttain</p>
+              <p className="text-slate-500">Guides on product safety, ingredients and chemical analysis.</p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-[var(--suttain-teal)] shrink-0" />
+          </Link>
         </div>
       </section>
 
