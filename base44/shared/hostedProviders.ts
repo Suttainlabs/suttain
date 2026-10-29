@@ -1,36 +1,43 @@
 // base44/shared/hostedProviders.ts
-// Hosted compute router for Suttain: per-calculation provider chains with automatic failover.
-// Matches existing conventions in rowanCompute.ts (secrets from base44:runtime, providerStatus on errors).
+// Hosted compute router for Suttain: per-calculation provider chains with interchangeable failover.
+// Default order: Rowan -> Boltz API -> Tamarind. Users can pick any provider; the rest become fallbacks.
 //
-// Verified against provider docs on 2026-10-28:
-//   Boltz API  - POST /compute/v1/predictions/adme, GET /compute/v1/predictions/adme/{id},
-//                POST /compute/v1/predictions/structure-and-binding (model "boltz-2.1"), header x-api-key
-//   Tamarind   - POST /api/validate-job, POST /api/submit-job, GET /api/jobs?jobName=, POST /api/result,
-//                tool type "boltz" with inputFormat "molecules", header x-api-key
-// NOT yet verified (check on first live run):
+// Request formats verified 2026-10-28:
+//   Rowan     - from the official SDK source (rowan-python 3.2.4 / stjames 0.0.293):
+//               POST https://api.rowansci.com/workflow, header X-API-Key
+//               workflow_type "protein_cofolding" (Boltz-2 co-folding + affinity) and "admet" (one SMILES per workflow)
+//               GET /workflow/{uuid} -> object_status (0 queued, 1 running, 2 done, 3/4/7 failed) + object_data
+//   Boltz API - POST /compute/v1/predictions/adme | /structure-and-binding, GET /compute/v1/predictions/adme/{id}
+//   Tamarind  - POST /api/validate-job, /api/submit-job, GET /api/jobs?jobName=, POST /api/result; tool "boltz"
+// Not yet verified (check on first live run):
 //   - Boltz retrieve path for structure-and-binding (assumed to mirror the ADME retrieve path)
-//   - Exact field names of Boltz binding-affinity output (stored raw; extracted defensively below)
-//   - Tamarind setting that switches on affinity for the boltz tool (read GET /api/tools/boltz/schema)
+//   - Tamarind setting that switches on affinity for its boltz tool (GET /api/tools/boltz/schema, needs a key)
+// Note: Rowan router jobs are synced by polling (pollHostedPredictions), not by the Rowan webhook.
 import { secrets } from 'base44:runtime';
 
 export type Task = 'binding' | 'adme';
-export type ProviderId = 'boltz' | 'tamarind';
-export type FailKind = 'credits' | 'unavailable' | 'invalid' | 'not_configured';
+export type ProviderId = 'rowan' | 'boltz' | 'tamarind';
+export type FailKind = 'credits' | 'unavailable' | 'invalid' | 'unsupported' | 'not_configured';
 
-// Order = automatic fallback order when the user picks "Auto".
+// Order = automatic fallback order. A user's chosen provider moves to the front; the others follow in this order.
 export const CHAINS: Record<Task, ProviderId[]> = {
-  binding: ['boltz', 'tamarind'],
-  adme: ['boltz'],
+  binding: ['rowan', 'boltz', 'tamarind'],
+  adme: ['rowan', 'boltz'],
 };
 
-export const PROVIDERS: Record<ProviderId, { label: string; secret: string; tasks: Task[]; model: Record<string, string>; citation: string }> = {
+export const PROVIDERS: Record<ProviderId, { label: string; secret: string; header: string; tasks: Task[]; model: Record<string, string>; citation: string }> = {
+  rowan: {
+    label: 'Rowan', secret: 'ROWAN_API_KEY', header: 'X-API-Key', tasks: ['binding', 'adme'],
+    model: { binding: 'Boltz-2 co-folding (run by Rowan)', adme: 'Rowan ADMET' },
+    citation: 'Rowan Scientific. https://www.rowansci.com. Binding computed with Boltz-2 (Passaro, Corso, Wohlwend et al., 2025).',
+  },
   boltz: {
-    label: 'Boltz API', secret: 'BOLTZ_API_KEY', tasks: ['binding', 'adme'],
+    label: 'Boltz API', secret: 'BOLTZ_API_KEY', header: 'x-api-key', tasks: ['binding', 'adme'],
     model: { binding: 'Boltz-2.1 (structure + binding)', adme: 'Boltz ADME v1 (Tier 1)' },
     citation: 'Boltz-2: Passaro, Corso, Wohlwend et al. (MIT Jameel Clinic / Recursion), 2025. https://boltz.bio',
   },
   tamarind: {
-    label: 'Tamarind Bio', secret: 'TAMARIND_API_KEY', tasks: ['binding'],
+    label: 'Tamarind Bio', secret: 'TAMARIND_API_KEY', header: 'x-api-key', tasks: ['binding'],
     model: { binding: 'Boltz-2 (hosted by Tamarind)' },
     citation: 'Computed with Boltz-2 on Tamarind Bio (https://www.tamarind.bio). Cite Boltz-2 and the hosting platform.',
   },
@@ -43,34 +50,36 @@ export class ProviderError extends Error {
   }
 }
 
-const CREDIT_RE = /(insufficient|exhausted|not enough|out of|no remaining).*(credit|balance|fund)|credit.*(exhausted|insufficient|depleted)|budget (was )?exceeded|spending limit|quota/i;
+const CREDIT_RE = /(insufficient|exhausted|not enough|out of|no remaining|lack of).*(credit|balance|fund)|credit.*(exhausted|insufficient|depleted)|budget (was )?exceeded|spending limit|quota/i;
 
 function classify(status: number, text: string): FailKind {
   if (status === 402 || CREDIT_RE.test(text)) return 'credits';
   if (status === 429 || status >= 500) return 'unavailable';
-  return 'invalid'; // bad input: do not burn the next provider's credits on the same payload
+  return 'invalid'; // bad input: do not spend the next provider's credits on the same payload
 }
 
 async function http(provider: ProviderId, url: string, init: RequestInit = {}) {
-  const key = secrets.get(PROVIDERS[provider].secret);
-  if (!key) throw new ProviderError(`${PROVIDERS[provider].label} is not configured.`, { provider, kind: 'not_configured' });
+  const p = PROVIDERS[provider];
+  const key = secrets.get(p.secret);
+  if (!key) throw new ProviderError(`${p.label} is not configured.`, { provider, kind: 'not_configured' });
   let response: Response;
   try {
-    response = await fetch(url, { ...init, headers: { 'x-api-key': key, 'Content-Type': 'application/json', ...(init.headers || {}) }, signal: AbortSignal.timeout(25000) });
-  } catch (e) {
-    throw new ProviderError(`${PROVIDERS[provider].label} could not be reached.`, { provider, kind: 'unavailable' });
+    response = await fetch(url, { ...init, headers: { [p.header]: key, 'Content-Type': 'application/json', ...(init.headers || {}) }, signal: AbortSignal.timeout(25000) });
+  } catch {
+    throw new ProviderError(`${p.label} could not be reached.`, { provider, kind: 'unavailable' });
   }
   const text = await response.text();
   let data: any = text;
   try { data = JSON.parse(text); } catch { /* some endpoints return plain text */ }
   if (!response.ok) {
     const detail = typeof data === 'string' ? data : (data?.error?.message || data?.error || data?.detail || data?.message || `HTTP ${response.status}`);
-    throw new ProviderError(`${PROVIDERS[provider].label}: ${String(detail).slice(0, 400)}`, { provider, kind: classify(response.status, String(detail)), providerStatus: response.status });
+    const msg = typeof detail === 'string' ? detail : JSON.stringify(detail);
+    throw new ProviderError(`${p.label}: ${msg.slice(0, 400)}`, { provider, kind: classify(response.status, msg), providerStatus: response.status });
   }
   return { status: response.status, data };
 }
 
-// ---------- Input validation (shared) ----------
+// ---------- Input validation (shared by all providers) ----------
 const AA = /^[ACDEFGHIKLMNPQRSTVWYX]+$/;
 export function validateInput(task: Task, input: any) {
   if (task === 'binding') {
@@ -84,6 +93,59 @@ export function validateInput(task: Task, input: any) {
   if (!list.length || list.length > 128) throw new ProviderError('Enter between 1 and 128 SMILES strings.', { kind: 'invalid' });
   return { smiles: list };
 }
+
+type AdmeRow = { smiles: string; status: string; properties: Record<string, unknown>; error: string | null };
+type PollOutcome =
+  | { state: 'running' }
+  | { state: 'failed'; error: string }
+  | { state: 'completed'; raw: unknown; version?: string | null; rows?: AdmeRow[] };
+
+// ---------- Rowan adapter ----------
+const ROWAN = 'https://api.rowansci.com';
+const ROWAN_ADME_MAX = 10; // Rowan ADMET is one workflow per molecule; larger batches go to the next provider
+const ROWAN_FAILED = [3, 4, 7];
+
+const rowan = {
+  async submit(task: Task, input: any) {
+    if (task === 'binding') {
+      const workflow_data = {
+        initial_protein_sequences: [input.protein_sequence],
+        initial_smiles_list: [input.ligand_smiles],
+        ligand_binding_affinity_index: 0,
+        use_msa_server: true, use_potentials: false, do_pose_refinement: false, compute_strain: false,
+        model: 'boltz_2',
+      };
+      const { data } = await http('rowan', `${ROWAN}/workflow`, { method: 'POST', body: JSON.stringify({ workflow_type: 'protein_cofolding', workflow_data, name: 'Suttain binding', max_credits: 50, is_draft: false }) });
+      if (!data?.uuid) throw new ProviderError('Rowan did not return a workflow receipt.', { provider: 'rowan', kind: 'unavailable' });
+      return { provider_job_id: data.uuid as string };
+    }
+    if (input.smiles.length > ROWAN_ADME_MAX) throw new ProviderError(`Rowan ADMET runs one molecule per workflow; batches over ${ROWAN_ADME_MAX} go to the next engine.`, { provider: 'rowan', kind: 'unsupported' });
+    const uuids: string[] = [];
+    for (const smiles of input.smiles) {
+      const { data } = await http('rowan', `${ROWAN}/workflow`, { method: 'POST', body: JSON.stringify({ workflow_type: 'admet', workflow_data: { initial_smiles: smiles }, initial_smiles: smiles, name: 'Suttain ADMET', max_credits: 10, is_draft: false }) });
+      if (!data?.uuid) throw new ProviderError('Rowan did not return a workflow receipt.', { provider: 'rowan', kind: 'unavailable' });
+      uuids.push(data.uuid);
+    }
+    return { provider_job_id: uuids.join(',') };
+  },
+  async poll(task: Task, id: string, input?: any): Promise<PollOutcome> {
+    const uuids = id.split(',');
+    const workflows = [];
+    for (const uuid of uuids) workflows.push((await http('rowan', `${ROWAN}/workflow/${encodeURIComponent(uuid)}`)).data);
+    if (workflows.some(w => ROWAN_FAILED.includes(w.object_status)) && task === 'binding') return { state: 'failed', error: 'Rowan co-folding failed or stopped.' };
+    if (!workflows.every(w => w.object_status === 2 || ROWAN_FAILED.includes(w.object_status))) return { state: 'running' };
+    if (task === 'binding') {
+      const d = workflows[0].object_data || {};
+      const best = d.cofolding_results?.[0] || { affinity_score: d.affinity_score, scores: d.scores, posebusters_valid: d.posebusters_valid };
+      return { state: 'completed', raw: { affinity_score: best.affinity_score, scores: best.scores, posebusters_valid: best.posebusters_valid, predicted_structure_uuid: best.predicted_structure_uuid ?? d.predicted_structure_uuid, model: d.model, credits_charged: workflows[0].credits_charged } };
+    }
+    const smiles: string[] = input?.smiles || [];
+    const rows: AdmeRow[] = workflows.map((w, i) => ROWAN_FAILED.includes(w.object_status)
+      ? { smiles: smiles[i] || w.object_data?.initial_smiles || '', status: 'failed', properties: {}, error: 'Rowan ADMET failed for this molecule.' }
+      : { smiles: smiles[i] || w.object_data?.initial_smiles || '', status: 'succeeded', properties: w.object_data?.properties || {}, error: null });
+    return { state: 'completed', raw: workflows.map(w => ({ uuid: w.uuid, properties: w.object_data?.properties, credits_charged: w.credits_charged })), rows };
+  },
+};
 
 // ---------- Boltz adapter ----------
 const BOLTZ = 'https://api.boltz.bio/compute/v1/predictions';
@@ -104,11 +166,12 @@ const boltz = {
     if (!data?.id) throw new ProviderError('Boltz API did not return a prediction id.', { provider: 'boltz', kind: 'unavailable' });
     return { provider_job_id: data.id as string };
   },
-  async poll(task: Task, id: string) {
+  async poll(task: Task, id: string): Promise<PollOutcome> {
     const { data } = await http('boltz', `${BOLTZ}/${boltzPath(task)}/${encodeURIComponent(id)}`);
-    if (data.status === 'succeeded') return { state: 'completed' as const, raw: data.output, version: data.version };
-    if (data.status === 'failed') return { state: 'failed' as const, error: data.error?.message || 'Boltz prediction failed.' };
-    return { state: 'running' as const };
+    if (data.status === 'failed') return { state: 'failed', error: data.error?.message || 'Boltz prediction failed.' };
+    if (data.status !== 'succeeded') return { state: 'running' };
+    const rows = task === 'adme' ? (data.output?.molecules || []).map((m: any) => ({ smiles: m.smiles, status: m.status, properties: m.adme || {}, error: m.error?.message || null })) : undefined;
+    return { state: 'completed', raw: data.output, version: data.version, rows };
   },
 };
 
@@ -116,33 +179,31 @@ const boltz = {
 const TAM = 'https://app.tamarind.bio/api';
 const tamarind = {
   async submit(task: Task, input: any, idempotencyKey: string) {
-    if (task !== 'binding') throw new ProviderError('Tamarind is only wired for binding in Suttain.', { provider: 'tamarind', kind: 'invalid' });
+    if (task !== 'binding') throw new ProviderError('Tamarind does not offer ADME in Suttain.', { provider: 'tamarind', kind: 'unsupported' });
     const settings = { inputFormat: 'molecules', molecules: [
       { type: 'protein', sequence: input.protein_sequence, chain: 'A' },
       { type: 'ligand', sequence: input.ligand_smiles, chain: 'B' },
     ] };
-    // validate-job answers 200 even when invalid; status is checked by http(), then read `valid`.
+    // validate-job answers 200 even when invalid; http() checks the status, then read `valid`.
     const check = await http('tamarind', `${TAM}/validate-job`, { method: 'POST', body: JSON.stringify({ type: 'boltz', settings }) });
     if (!check.data?.valid) throw new ProviderError(`Tamarind rejected the input: ${check.data?.error || 'invalid settings'}`, { provider: 'tamarind', kind: 'invalid' });
     const jobName = `suttain-${idempotencyKey}`.replace(/[^A-Za-z0-9_.-]/g, '').slice(0, 200);
     await http('tamarind', `${TAM}/submit-job`, { method: 'POST', body: JSON.stringify({ jobName, type: 'boltz', settings: check.data.normalized }) });
     return { provider_job_id: jobName };
   },
-  async poll(_task: Task, jobName: string) {
+  async poll(_task: Task, jobName: string): Promise<PollOutcome> {
     const { data } = await http('tamarind', `${TAM}/jobs?jobName=${encodeURIComponent(jobName)}`);
     const s = data?.JobStatus;
-    if (s === 'Complete') {
-      const res = await http('tamarind', `${TAM}/result`, { method: 'POST', body: JSON.stringify({ jobName }) });
-      if (res.status === 202) return { state: 'running' as const }; // archive still being prepared
-      const url = typeof res.data === 'string' ? res.data.replace(/^"|"$/g, '') : null;
-      return { state: 'completed' as const, raw: { results_zip_url: url, scores: data?.Score ?? null } };
-    }
-    if (s === 'Failed' || s === 'Stopped') return { state: 'failed' as const, error: `Tamarind job ${s.toLowerCase()}.` };
-    return { state: 'running' as const };
+    if (s === 'Failed' || s === 'Stopped') return { state: 'failed', error: `Tamarind job ${String(s).toLowerCase()}.` };
+    if (s !== 'Complete') return { state: 'running' };
+    const res = await http('tamarind', `${TAM}/result`, { method: 'POST', body: JSON.stringify({ jobName }) });
+    if (res.status === 202) return { state: 'running' }; // results archive still being prepared
+    const url = typeof res.data === 'string' ? res.data.replace(/^"|"$/g, '') : null;
+    return { state: 'completed', raw: { results_zip_url: url, scores: data?.Score ?? null } };
   },
 };
 
-const ADAPTERS = { boltz, tamarind };
+const ADAPTERS: Record<ProviderId, { submit: (t: Task, i: any, k: string) => Promise<{ provider_job_id: string }>; poll: (t: Task, id: string, input?: any) => Promise<PollOutcome> }> = { rowan, boltz, tamarind };
 
 // ---------- Router ----------
 export async function submitWithFallback(task: Task, rawInput: any, opts: { preferred?: ProviderId | 'auto'; autoFallback?: boolean } = {}) {
@@ -169,17 +230,18 @@ export async function submitWithFallback(task: Task, rawInput: any, opts: { pref
   throw new ProviderError('No provider could take this calculation right now (credits exhausted or service unavailable).', { kind: 'exhausted', attempts });
 }
 
-export async function pollProvider(provider: ProviderId, task: Task, providerJobId: string) {
-  return ADAPTERS[provider].poll(task, providerJobId);
+export async function pollProvider(provider: ProviderId, task: Task, providerJobId: string, input?: any) {
+  return ADAPTERS[provider].poll(task, providerJobId, input);
 }
 
-// Pull affinity-like numbers out of Boltz output without guessing field names.
-// Every value keeps its original key path so the UI can show exactly what the provider reported.
+// Pull affinity and confidence numbers out of any provider's output without guessing exact field names.
+// Each value keeps its full key path so the UI shows exactly what the provider reported.
+const METRIC_RE = /affinity|pred_value|probability|binding_confidence|optimization_score|ic50|confidence_score|iptm|ptm|plddt/i;
 export function extractMetrics(raw: any, prefix = '', out: { key: string; value: number }[] = []) {
-  if (raw && typeof raw === 'object') {
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     for (const [k, v] of Object.entries(raw)) {
       const path = prefix ? `${prefix}.${k}` : k;
-      if (typeof v === 'number' && /affinity|ic50|probability|confidence|iptm|ptm|plddt/i.test(k)) out.push({ key: path, value: v });
+      if (typeof v === 'number' && METRIC_RE.test(path)) out.push({ key: path, value: v });
       else if (v && typeof v === 'object' && out.length < 40) extractMetrics(v, path, out);
     }
   }
