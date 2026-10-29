@@ -14,6 +14,7 @@ export function moleculeXYZ(molecule) {
   return `${molecule.atoms.length}\nRowan computed geometry\n${molecule.atoms.map(a => `${elements[a.atomic_number]} ${a.position.join(' ')}`).join('\n')}`;
 }
 export async function syncRowanJob(client, job, service = false) {
+  if (job.result?.router_provider) return job; // Boltz/Tamarind jobs are synced by pollHostedPredictions, never by Rowan
   const entities = service ? client.asServiceRole.entities : client.entities;
   if (!job.provider_job_id || !['pending','running'].includes(job.status)) return job;
   const workflow = await rowanRequest(`/workflow/${encodeURIComponent(job.provider_job_id)}`);
