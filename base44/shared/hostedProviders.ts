@@ -236,7 +236,7 @@ export async function pollProvider(provider: ProviderId, task: Task, providerJob
 
 // Pull affinity and confidence numbers out of any provider's output without guessing exact field names.
 // Each value keeps its full key path so the UI shows exactly what the provider reported.
-const METRIC_RE = /affinity|pred_value|probability|binding_confidence|optimization_score|ic50|confidence_score|iptm|ptm|plddt/i;
+const METRIC_RE = /affinity|pred_value|probability|binding_confidence|optimization_score|ic50|confidence_score|iptm|ptm|lddt/i;
 export function extractMetrics(raw: any, prefix = '', out: { key: string; value: number }[] = []) {
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     for (const [k, v] of Object.entries(raw)) {
