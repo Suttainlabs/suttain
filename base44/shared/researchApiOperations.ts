@@ -12,6 +12,7 @@ const extra=[
  {name:'pollRowanJobs',group:'Hosted job status',example:{job_id:'YOUR_JOB_ID'}},
  {name:'runHostedPrediction',group:'Drug discovery',example:{task:'adme',provider:'auto',input:{smiles:['CC(=O)Oc1ccccc1C(=O)O']}}},
  {name:'pollHostedPredictions',group:'Hosted job status',example:{job_id:'YOUR_JOB_ID'}},
+ {name:'recommendEngine',group:'Drug discovery',example:{task:'binding',goal:'hit_discovery'}},
  {name:'getResearchApiJob',group:'Saved API results',example:{kind:'simulation',job_id:'YOUR_JOB_ID'}},
  {name:'getComputeEngines',group:'Engine registry',example:{}},
  {name:'generateSimulationInputs',group:'Local engine preparation',example:engineRegistry.find(e=>e.id==='orca')?.example || {}}
