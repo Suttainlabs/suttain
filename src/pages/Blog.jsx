@@ -42,6 +42,23 @@ export default function Blog() {
     };
   }, []);
 
+  // Inject Holo SEO blog embed script after the #holo-blog div is in the DOM
+  useEffect(() => {
+    const HOLO_SRC = 'https://prod-api-holo-ai.fly.dev/public/seo/embed/903b95ba-05ee-4234-b176-ac77ce51e666.js';
+    const existing = document.querySelector('script[src*="prod-api-holo-ai.fly.dev"]');
+    if (existing) existing.remove();
+
+    const script = document.createElement('script');
+    script.src = HOLO_SRC;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    return () => {
+      const s = document.querySelector('script[src*="prod-api-holo-ai.fly.dev"]');
+      if (s) s.remove();
+    };
+  }, []);
+
 
 
   const handleSubscribe = async (e) => {
@@ -97,6 +114,13 @@ export default function Blog() {
       <section className="py-16 px-4">
         <div className="max-w-3xl mx-auto">
           <div id="soro-blog" className="space-y-6"></div>
+        </div>
+      </section>
+
+      {/* Holo Blog Embed */}
+      <section className="pb-16 px-4">
+        <div className="max-w-3xl mx-auto">
+          <div id="holo-blog"></div>
         </div>
       </section>
 
