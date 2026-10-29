@@ -7,14 +7,15 @@ async function syncHostedJob(client, job, service = false) {
   const entities = service ? client.asServiceRole.entities : client.entities;
   const provider = job.result?.router_provider;
   if (!PROVIDERS[provider] || !job.provider_job_id || !['pending', 'running'].includes(job.status)) return job;
-  const outcome = await pollProvider(provider, job.result.task, job.provider_job_id);
+  const outcome: any = await pollProvider(provider, job.result.task, job.provider_job_id, job.result.inputs_normalized);
   let update: any = { status: 'running' };
   if (outcome.state === 'failed') update = { status: 'failed', error: outcome.error };
   if (outcome.state === 'completed') {
     const file = new File([JSON.stringify({ provider, task: job.result.task, raw: outcome.raw })], `${provider}-results.json`, { type: 'application/json' });
     const { file_uri } = await client.asServiceRole.integrations.Core.UploadPrivateFile({ file });
     const metrics = job.result.task === 'binding' ? extractMetrics(outcome.raw) : [];
-    const adme = job.result.task === 'adme' ? (outcome.raw?.molecules || []).map(m => ({ smiles: m.smiles, status: m.status, ...(m.adme || {}), error: m.error?.message || null })) : null;
+    // ADME rows are normalized by each adapter: { smiles, status, properties, error }. Property sets differ by provider.
+    const adme = job.result.task === 'adme' ? (outcome.rows || []) : null;
     update = {
       status: 'completed',
       result: {
