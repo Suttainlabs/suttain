@@ -4,7 +4,7 @@
 import { operationClient } from '../../shared/researchApiContext.ts';
 import { requireUser, reserveSecurityAction } from '../../shared/securityGuards.ts';
 import { reserveUsage } from '../../shared/usageEntitlements.ts';
-import { submitWithFallback, PROVIDERS, CHAINS } from '../../shared/hostedProviders.ts';
+import { submitWithFallback, recommend, PROVIDERS, CHAINS } from '../../shared/hostedProviders.ts';
 
 const TASK_LABEL = { binding: 'Protein–ligand binding (structure + affinity)', adme: 'ADME prediction (Tier 1)' };
 
@@ -24,7 +24,8 @@ export default async function (req) {
     let job = await base44.entities.SimulationJob.create({ draft_id: draft.id, job_hash: jobHash, job_name: name, sim_type: data.task, sim_type_label: TASK_LABEL[data.task], engine: 'Auto', inputs: data.input || {}, status: 'pending', execution_mode: 'real', result: {} });
 
     try {
-      const routed = await submitWithFallback(data.task, data.input, { preferred: data.provider, autoFallback: data.auto_fallback !== false });
+      const rec = recommend(data.task, data.input, data.goal);
+      const routed = await submitWithFallback(data.task, data.input, { preferred: data.provider, autoFallback: data.auto_fallback !== false, goal: data.goal });
       const p = PROVIDERS[routed.provider];
       const switched = routed.attempts.length > 0;
       job = await base44.entities.SimulationJob.update(job.id, {
@@ -32,6 +33,7 @@ export default async function (req) {
         result: {
           router_provider: routed.provider,            // marks this job as NOT a Rowan job (see syncRowanJob guard)
           task: data.task, model: p.model[data.task], requested_provider: routed.requested,
+          goal: rec.goal, recommendation: { provider: rec.recommended, reason: rec.reason, followed: routed.provider === rec.recommended },
           inputs_normalized: routed.input, attempts: routed.attempts,
           fallback: switched ? { from: routed.attempts.map(a => PROVIDERS[a.provider].label), to: p.label, reasons: routed.attempts.map(a => a.kind), notice: `Ran on ${p.label} because ${routed.attempts.map(a => `${PROVIDERS[a.provider].label} (${a.kind})`).join(', ')} could not take it. Scores from different engines are not directly comparable.` } : null,
           citations: [{ title: p.label, text: p.citation }],
