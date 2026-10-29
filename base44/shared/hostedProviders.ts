@@ -37,7 +37,7 @@ export const PROVIDERS: Record<ProviderId, { label: string; secret: string; task
 };
 
 export class ProviderError extends Error {
-  provider?: ProviderId; kind: FailKind | 'exhausted'; providerStatus?: number; attempts?: unknown[];
+  provider?: ProviderId; kind!: FailKind | 'exhausted'; providerStatus?: number; attempts?: unknown[];
   constructor(message: string, opts: { provider?: ProviderId; kind: FailKind | 'exhausted'; providerStatus?: number; attempts?: unknown[] }) {
     super(message); Object.assign(this, opts);
   }
