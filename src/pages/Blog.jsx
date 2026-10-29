@@ -59,6 +59,29 @@ export default function Blog() {
     };
   }, []);
 
+  // Soro and Holo both open articles via ?post=<slug>. When an article is open,
+  // hide whichever embed is still showing its post list, so the reader sees the
+  // article first instead of having to scroll past the other blog's list.
+  useEffect(() => {
+    const sync = () => {
+      const hasPost = new URLSearchParams(window.location.search).has('post');
+      ['soro-blog', 'holo-blog'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const section = el.closest('section') || el;
+        const listLinks = el.querySelectorAll('a[href*="post="]').length;
+        section.style.display = hasPost && listLinks >= 2 ? 'none' : '';
+      });
+    };
+    sync();
+    const timer = setInterval(sync, 500);
+    window.addEventListener('popstate', sync);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('popstate', sync);
+    };
+  }, []);
+
 
 
   const handleSubscribe = async (e) => {
