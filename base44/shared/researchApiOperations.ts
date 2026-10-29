@@ -10,6 +10,8 @@ const extra=[
  {name:'searchScreeningTargets',group:'Drug discovery',example:{query:'EGFR'}},
  {name:'submitDrugDiscoveryJob',group:'Drug discovery',example:{target_ref:'CHEMBL203',target_label:'EGFR',library:'chembl_bioactive',method:'balanced_evidence',max_candidates:20}},
  {name:'pollRowanJobs',group:'Hosted job status',example:{job_id:'YOUR_JOB_ID'}},
+ {name:'runHostedPrediction',group:'Drug discovery',example:{task:'adme',provider:'auto',input:{smiles:['CC(=O)Oc1ccccc1C(=O)O']}}},
+ {name:'pollHostedPredictions',group:'Hosted job status',example:{job_id:'YOUR_JOB_ID'}},
  {name:'getResearchApiJob',group:'Saved API results',example:{kind:'simulation',job_id:'YOUR_JOB_ID'}},
  {name:'getComputeEngines',group:'Engine registry',example:{}},
  {name:'generateSimulationInputs',group:'Local engine preparation',example:engineRegistry.find(e=>e.id==='orca')?.example || {}}
