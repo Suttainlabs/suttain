@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, ArrowLeft } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,20 @@ import { createPageUrl } from '@/utils';
 const HOLO_SRC = 'https://prod-api-holo-ai.fly.dev/public/seo/embed/903b95ba-05ee-4234-b176-ac77ce51e666.js';
 
 export default function Articles() {
+  // Holo switches between list and article views via pushState (?post=slug).
+  // Hide the page hero while an article is open so the article title is the only H1.
+  const readPost = () => new URLSearchParams(window.location.search).has('post');
+  const [articleOpen, setArticleOpen] = useState(readPost);
+  useEffect(() => {
+    const sync = () => setArticleOpen(readPost());
+    const timer = setInterval(sync, 400);
+    window.addEventListener('popstate', sync);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('popstate', sync);
+    };
+  }, []);
+
   // Inject the Holo script after #holo-blog is in the DOM (React doesn't run <script> tags in JSX)
   useEffect(() => {
     const existing = document.querySelector('script[src*="prod-api-holo-ai.fly.dev"]');
@@ -33,7 +47,7 @@ export default function Articles() {
         description="Guides from Suttain on product safety, ingredients, barcode scanning and chemical analysis."
       />
 
-      <section className="py-20 px-4 text-center border-b border-slate-100">
+      <section className={`py-20 px-4 text-center border-b border-slate-100 ${articleOpen ? 'hidden' : ''}`}>
         <div className="max-w-2xl mx-auto">
           <Badge className="mb-5 bg-[var(--suttain-teal)]/10 text-[var(--suttain-teal)] border-[var(--suttain-teal)]/20 px-3 py-1">
             <BookOpen className="w-3 h-3 mr-1.5" />
