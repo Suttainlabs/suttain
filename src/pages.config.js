@@ -7,6 +7,7 @@
  */
 import AboutUs from './pages/AboutUs';
 import AdminDashboard from './pages/AdminDashboard';
+import Articles from './pages/Articles';
 import BarcodeScanner from './pages/BarcodeScanner';
 import Blog from './pages/Blog';
 import Careers from './pages/Careers';
@@ -26,6 +27,7 @@ import __Layout from './Layout.jsx';
 export const PAGES = {
     "AboutUs": AboutUs,
     "AdminDashboard": AdminDashboard,
+    "Articles": Articles,
     "BarcodeScanner": BarcodeScanner,
     "Blog": Blog,
     "Careers": Careers,
