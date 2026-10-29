@@ -1,5 +1,5 @@
 // Submits a binding or ADME calculation to the user's chosen provider, or "auto" with failover.
-// Body: { task: 'binding'|'adme', provider: 'auto'|'boltz'|'tamarind', auto_fallback?: boolean,
+// Body: { task: 'binding'|'adme', provider: 'auto'|'rowan'|'boltz'|'tamarind', auto_fallback?: boolean,
 //         input: { protein_sequence, ligand_smiles } | { smiles: string[] }, label?: string }
 import { operationClient } from '../../shared/researchApiContext.ts';
 import { requireUser, reserveSecurityAction } from '../../shared/securityGuards.ts';
