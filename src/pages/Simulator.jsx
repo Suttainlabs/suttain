@@ -26,6 +26,7 @@ import FormulaComparisonChart from "../components/simulator/FormulaComparisonCha
 import ChemicalInventoryManager from "../components/simulator/ChemicalInventoryManager";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
 import SEOHead, { pageSEO } from "../components/shared/SEOHead";
+import ConsumerWorkbench, { ModeTabs, WorkbenchGrid, SetupRail, ResultsRail } from "@/components/consumer/ConsumerWorkbench";
 
 // Lazy load RatingModal
 const RatingModal = lazy(() => import("../components/shared/RatingModal"));
@@ -878,54 +879,19 @@ export default function Simulator() {
       {user && !simulationData && !trialStatus.canSimulateCore ? (
         <TrialExpiredBanner featureName="Chemical Analysis" />
       ) : (
-      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#EDF7F2' }}>
-
-        <div className="max-w-7xl mx-auto relative z-10">
-          {/* Mode Toggle */}
-          <div className="flex justify-center mb-6 px-2">
-            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm overflow-x-auto max-w-full">
-              <button
-                onClick={() => setActiveMode("simulator")}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
-                  activeMode === "simulator"
-                    ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                <FlaskConical className="w-4 h-4 flex-shrink-0" /> <span>Simulator</span>
-              </button>
-              <button
-                onClick={() => setActiveMode("matrix")}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
-                  activeMode === "matrix"
-                    ? "bg-gradient-to-r from-red-600 to-orange-600 text-white shadow"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                <Grid3X3 className="w-4 h-4 flex-shrink-0" /> <span>Hazard Matrix</span>
-              </button>
-              <button
-                onClick={() => setActiveMode("sds")}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
-                  activeMode === "sds"
-                    ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                <FileText className="w-4 h-4 flex-shrink-0" /> <span>SDS Analyzer</span>
-              </button>
-              <button
-                onClick={() => setActiveMode("inventory")}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
-                  activeMode === "inventory"
-                    ? "bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                <Package className="w-4 h-4 flex-shrink-0" /> <span>Inventory</span>
-              </button>
-            </div>
-          </div>
+      <ConsumerWorkbench toolId="analysis" tag={activeMode === "simulator" && persona ? persona.replace(/_/g, ' ') : null}>
+        <div className="relative">
+          <ModeTabs
+            label="Analysis mode"
+            value={activeMode}
+            onChange={setActiveMode}
+            modes={[
+              { id: "simulator", label: "Interaction check", icon: FlaskConical },
+              { id: "matrix", label: "Hazard matrix", icon: Grid3X3 },
+              { id: "sds", label: "SDS analyzer", icon: FileText },
+              { id: "inventory", label: "Inventory", icon: Package },
+            ]}
+          />
 
           {/* Hazard Interaction Matrix mode */}
           {activeMode === "matrix" && (
@@ -975,47 +941,6 @@ export default function Simulator() {
             <PersonaSelector onSelectPersona={(selectedPersona) => setPersona(selectedPersona)} />
           ) : activeMode === "simulator" ? (
             <>
-              {/* Header Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center mb-8"
-              >
-                <div className="flex flex-col items-center gap-2 mb-3 sm:flex-row sm:justify-center sm:gap-3">
-                  <h1 className="text-2xl md:text-3xl font-bold text-slate-800 text-center">
-                    Chemical Analysis
-                  </h1>
-                  <span className={`px-4 py-1.5 text-sm font-semibold rounded-full capitalize flex-shrink-0 ${
-                    {
-                      business: 'bg-slate-900 text-white',
-                      researcher: 'bg-slate-700 text-white',
-                      teacher: 'bg-teal-600 text-white',
-                      student: 'bg-blue-600 text-white',
-                      diy: 'bg-orange-600 text-white',
-                      chef: 'bg-amber-600 text-white',
-                      manufacturer: 'bg-red-700 text-white',
-                      engineer: 'bg-cyan-700 text-white',
-                      pharma: 'bg-purple-600 text-white',
-                      doctor: 'bg-blue-700 text-white',
-                      nurse: 'bg-pink-600 text-white',
-                      eco: 'bg-green-700 text-white',
-                      cosmetic: 'bg-rose-500 text-white',
-                      safety: 'bg-red-600 text-white',
-                      lab: 'bg-violet-600 text-white',
-                    }[persona] || 'bg-green-600 text-white'
-                  }`}>
-                    {persona?.replace(/_/g, ' ') || 'Household'}
-                  </span>
-                </div>
-                <p className="text-base text-slate-600 max-w-2xl mx-auto">
-                  {isBusinessMode
-                    ? "Professional safety analysis for cosmetic and skincare formulations"
-                    : isResearchMode 
-                    ? "Advanced scientific analysis with comprehensive experimental control and documentation" 
-                    : "Understand how chemicals interact safely in everyday life"}
-                </p>
-              </motion.div>
-
               {/* SDS Source Banner */}
               {sdsSourceBanner && step === 1 && (
                 <div className="mb-4 flex items-center gap-3 bg-teal-50 border border-teal-200 rounded-xl px-4 py-3">
@@ -1046,61 +971,10 @@ export default function Simulator() {
                 </motion.div>
               )}
 
-              {/* Progress Stepper */}
-              <div className="flex justify-center items-center mb-10">
-                <div className="flex items-center gap-3">
-                  {['Setup', 'Analysis', 'Alternatives'].map((label, index) => (
-                    <React.Fragment key={label}>
-                      <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="flex flex-col items-center"
-                      >
-                        <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
-                            step >= (index + 1)
-                              ? isBusinessMode
-                                ? "bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-lg scale-105"
-                                : isResearchMode
-                                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg scale-105"
-                                : "bg-gradient-to-r from-[var(--suttain-teal)] to-[var(--suttain-blue)] text-white shadow-lg scale-105"
-                              : "bg-white text-slate-400 border-2 border-slate-200 shadow-sm"
-                          }`}
-                        >
-                          {index + 1}
-                        </div>
-                        <span className={`text-xs mt-2 font-semibold ${step >= (index + 1) ? 'text-slate-800' : 'text-slate-400'}`}>
-                          {label}
-                        </span>
-                      </motion.div>
-                      {index < 2 && (
-                        <div className={`w-16 h-0.5 rounded-full ${
-                          step > (index + 1)
-                            ? isBusinessMode
-                              ? 'bg-gradient-to-r from-slate-900 to-slate-800'
-                              : isResearchMode
-                              ? 'bg-gradient-to-r from-indigo-600 to-purple-600'
-                              : 'bg-gradient-to-r from-[var(--suttain-teal)] to-[var(--suttain-blue)]'
-                            : 'bg-slate-200'
-                        } transition-all duration-500`}></div>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
-
-              {/* Step Content */}
-              <AnimatePresence mode="wait">
-                {step === 1 && (
-                  <motion.div
-                    key="input"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Suspense fallback={<div>Loading input form...</div>}>
+              {/* Workbench: setup rail + results */}
+              <WorkbenchGrid wide>
+                <SetupRail flush label="Configuration" title={step === 1 ? "Set up your analysis" : "Your mixture"}>
+                    <Suspense fallback={<div className="px-5 pb-5 text-sm text-research-muted">Loading input form…</div>}>
                       {isBusinessMode ? (
                         <BusinessChemicalInput
                           chemicals={chemicals}
@@ -1133,9 +1007,15 @@ export default function Simulator() {
                         />
                       )}
                     </Suspense>
-                  </motion.div>
-                )}
-
+                </SetupRail>
+                <ResultsRail
+                  hasOutput={!!simulationData}
+                  isRunning={isLoading}
+                  runningText="Analysing how these chemicals interact…"
+                  tag={step === 3 ? "Safer alternatives" : simulationData ? "Interaction analysis" : null}
+                  emptyText="Add at least two chemicals on the left, then run the analysis. Results open here as guided steps: overview, structures, reaction, health and detailed analysis."
+                >
+              <AnimatePresence mode="wait">
                 {step === 2 && simulationData && (
                    <motion.div
                      key="results"
@@ -1152,6 +1032,7 @@ export default function Simulator() {
                        onStartNew={startNewSimulation}
                        persona={persona}
                      />
+                     {(isBusinessMode || isResearchMode) && (<>
                      <Card className="border-slate-200">
                        <CardContent className="p-6">
                          <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
@@ -1178,12 +1059,14 @@ export default function Simulator() {
                          </div>
                        </CardContent>
                      </Card>
+                     </>)}
                      <ComplianceAuditPanel
                        chemicals={chemicals}
                        persona={persona}
                        simulationData={simulationData}
                      />
 
+                     {(isBusinessMode || isResearchMode) && (<>
                      {/* Version Tracker */}
                      <FormulaVersionTracker
                        chemicals={chemicals}
@@ -1206,6 +1089,7 @@ export default function Simulator() {
                      />
 
                      <SupplierManager />
+                     </>)}
                    </motion.div>
                  )}
 
@@ -1228,6 +1112,8 @@ export default function Simulator() {
                   </motion.div>
                 )}
               </AnimatePresence>
+                </ResultsRail>
+              </WorkbenchGrid>
             </>
           ) : null}
         </div>
@@ -1302,7 +1188,7 @@ export default function Simulator() {
             ingredientName={selectedIngredientForSupplier}
           />
         )}
-      </div>
+      </ConsumerWorkbench>
       )}
     </AuthGate>
   );
