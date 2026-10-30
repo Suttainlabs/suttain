@@ -60,7 +60,7 @@ function getRecommendations(answers) {
   }
 
   if (answers.compute === "hpc") {
-    tools.push({ tool: "Research API", href: "APIPortal", reason: "Programmatic access for batch processing and HPC workflow integration." });
+    tools.push({ tool: "Engine reference", href: "APIPortal", reason: "Methods, licenses and citations for every engine used in your workflow." });
   }
   if (!tools.some((t) => t.tool === "Atomistic Simulation")) {
     tools.push({ tool: "Atomistic Simulation", href: "AtomisticSimulation", reason: "Unified workspace for all computational chemistry tasks." });
