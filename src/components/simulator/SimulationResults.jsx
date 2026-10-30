@@ -725,7 +725,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                 Safety Warnings
                             </h4>
                             <div className="space-y-2">
-                                {safety_status.warnings.map((warning, idx) => (
+                                {(Array.isArray(safety_status?.warnings) ? safety_status.warnings : []).map((warning, idx) => (
                                     <div key={idx} className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                                         <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2" />
                                         <p className="text-sm text-amber-900 flex-1">{warning}</p>
