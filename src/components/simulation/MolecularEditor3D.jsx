@@ -545,7 +545,7 @@ export default function MolecularEditor3D() {
 
           {/* Presets */}
           <div className="px-3 py-2 border-b border-[#30363d]">
-            <p className="text-[#8b949e] font-bold uppercase text-[10px] tracking-widest mb-2">Load Molecule</p>
+            <p className="text-[#8b949e] font-bold uppercase text-[11px] tracking-widest mb-2">Load Molecule</p>
             {PRESET_MOLECULES.map(p => (
               <button key={p.name} onClick={() => loadPreset(p)}
                 className="w-full text-left px-2 py-1.5 rounded hover:bg-[#21262d] text-[#c9d1d9] text-xs transition-colors mb-0.5">
@@ -556,11 +556,11 @@ export default function MolecularEditor3D() {
 
           {/* Cations */}
           <div className="px-3 py-2 border-b border-[#30363d]">
-            <p className="text-[#8b949e] font-bold uppercase text-[10px] tracking-widest mb-2">Add Cation</p>
+            <p className="text-[#8b949e] font-bold uppercase text-[11px] tracking-widest mb-2">Add Cation</p>
             <div className="grid grid-cols-2 gap-1">
               {CATIONS.map(c => (
                 <button key={c.symbol} onClick={() => addIon(c.elem, c.charge)}
-                  className="px-2 py-1.5 rounded text-[10px] font-bold bg-[#21262d] hover:bg-[#30363d] text-[#c9d1d9] border border-[#30363d] hover:border-[#58a6ff] transition-colors">
+                  className="px-2 py-1.5 rounded text-[11px] font-bold bg-[#21262d] hover:bg-[#30363d] text-[#c9d1d9] border border-[#30363d] hover:border-[#58a6ff] transition-colors">
                   {c.symbol}
                 </button>
               ))}
@@ -569,11 +569,11 @@ export default function MolecularEditor3D() {
 
           {/* Anions */}
           <div className="px-3 py-2 border-b border-[#30363d]">
-            <p className="text-[#8b949e] font-bold uppercase text-[10px] tracking-widest mb-2">Add Anion</p>
+            <p className="text-[#8b949e] font-bold uppercase text-[11px] tracking-widest mb-2">Add Anion</p>
             <div className="grid grid-cols-2 gap-1">
               {ANIONS.map(a => (
                 <button key={a.symbol} onClick={() => addIon(a.elem, a.charge)}
-                  className="px-2 py-1.5 rounded text-[10px] font-bold bg-[#21262d] hover:bg-[#30363d] text-[#c9d1d9] border border-[#30363d] hover:border-[#f85149] transition-colors">
+                  className="px-2 py-1.5 rounded text-[11px] font-bold bg-[#21262d] hover:bg-[#30363d] text-[#c9d1d9] border border-[#30363d] hover:border-[#f85149] transition-colors">
                   {a.symbol}
                 </button>
               ))}
@@ -582,7 +582,7 @@ export default function MolecularEditor3D() {
 
           {/* Water box */}
           <div className="px-3 py-2 border-b border-[#30363d]">
-            <p className="text-[#8b949e] font-bold uppercase text-[10px] tracking-widest mb-2">Add Water</p>
+            <p className="text-[#8b949e] font-bold uppercase text-[11px] tracking-widest mb-2">Add Water</p>
             {[1, 5, 10, 20].map(n => (
               <button key={n} onClick={() => addWaterBox(n)}
                 className="w-full text-left px-2 py-1.5 rounded hover:bg-[#21262d] text-[#79c0ff] text-xs transition-colors mb-0.5">
@@ -594,24 +594,24 @@ export default function MolecularEditor3D() {
           {/* Chains */}
           <div className="px-3 py-2 border-b border-[#30363d]">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-[#8b949e] font-bold uppercase text-[10px] tracking-widest">Chains</p>
-              <button onClick={addChain} className="text-[#58a6ff] text-[10px] hover:underline">+ Add</button>
+              <p className="text-[#8b949e] font-bold uppercase text-[11px] tracking-widest">Chains</p>
+              <button onClick={addChain} className="text-[#58a6ff] text-[11px] hover:underline">+ Add</button>
             </div>
             <div className="flex flex-wrap gap-1">
               {chains.map(c => (
                 <button key={c} onClick={() => assignChain(c)}
-                  className="px-2 py-1 rounded text-[10px] font-bold bg-[#21262d] border border-[#30363d] hover:border-[#58a6ff] text-[#c9d1d9] transition-colors">
+                  className="px-2 py-1 rounded text-[11px] font-bold bg-[#21262d] border border-[#30363d] hover:border-[#58a6ff] text-[#c9d1d9] transition-colors">
                   Chain {c}
                 </button>
               ))}
             </div>
-            <p className="text-[#484f58] text-[10px] mt-1">Select atom, then click chain to assign</p>
+            <p className="text-[#484f58] text-[11px] mt-1">Select atom, then click chain to assign</p>
           </div>
 
           {/* Selected atom info */}
           {selectedAtom && (
             <div className="px-3 py-2 bg-[#0d1117] border-b border-[#30363d]">
-              <p className="text-[#58a6ff] font-bold text-[10px] uppercase tracking-widest mb-1">Selected Atom</p>
+              <p className="text-[#58a6ff] font-bold text-[11px] uppercase tracking-widest mb-1">Selected Atom</p>
               <div className="space-y-0.5 text-[11px] text-[#c9d1d9]">
                 <div>ID: <span className="text-white">{selectedAtom.id}</span></div>
                 <div>Element: <span className="text-white">{selectedAtom.elem}: {ELEMENTS[selectedAtom.elem]?.name}</span></div>
@@ -621,11 +621,11 @@ export default function MolecularEditor3D() {
               </div>
               <div className="mt-2 flex gap-1">
                 <button onClick={() => setAtoms(prev => prev.map(a => a.id === selectedAtom.id ? { ...a, y: a.y + 0.5 } : a))}
-                  className="flex-1 py-1 rounded bg-[#21262d] text-[#8b949e] hover:text-white hover:bg-[#30363d] text-[10px]">
+                  className="flex-1 py-1 rounded bg-[#21262d] text-[#8b949e] hover:text-white hover:bg-[#30363d] text-[11px]">
                   Move Up
                 </button>
                 <button onClick={() => { setAtoms(p => p.filter(a => a.id !== selectedAtom.id)); setBonds(p => p.filter(b => b[0]!==selectedAtom.id&&b[1]!==selectedAtom.id)); setSelectedId(null); }}
-                  className="flex-1 py-1 rounded bg-[#21262d] text-[#f85149] hover:bg-[#30363d] text-[10px]">
+                  className="flex-1 py-1 rounded bg-[#21262d] text-[#f85149] hover:bg-[#30363d] text-[11px]">
                   Delete
                 </button>
               </div>
@@ -634,7 +634,7 @@ export default function MolecularEditor3D() {
 
           {/* Stats */}
           <div className="px-3 py-2 mt-auto">
-            <p className="text-[#8b949e] font-bold uppercase text-[10px] tracking-widest mb-1">Scene</p>
+            <p className="text-[#8b949e] font-bold uppercase text-[11px] tracking-widest mb-1">Scene</p>
             <div className="text-[11px] text-[#8b949e] space-y-0.5">
               <div>Atoms: <span className="text-white">{atoms.length}</span></div>
               <div>Bonds: <span className="text-white">{bonds.length}</span></div>
@@ -658,21 +658,21 @@ export default function MolecularEditor3D() {
           />
 
           {/* Viewport overlays */}
-          <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm rounded px-2 py-1 text-[10px] text-[#8b949e] pointer-events-none">
+          <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm rounded px-2 py-1 text-[11px] text-[#8b949e] pointer-events-none">
             Tool: <span className="text-white font-bold uppercase">{tool}</span>
             {tool === "add" && <span className="text-[#56d364] ml-2">[{addElement}]</span>}
             {tool === "bond" && bondStart !== null && <span className="text-yellow-400 ml-2">Click second atom</span>}
           </div>
 
-          <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded px-2 py-1 text-[10px] text-[#8b949e] pointer-events-none">
+          <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded px-2 py-1 text-[11px] text-[#8b949e] pointer-events-none">
             Left-drag: Orbit  |  Right-drag: Pan  |  Scroll: Zoom  |  Arrow keys: Move selected atom
           </div>
 
           {/* Element legend */}
           <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded px-2 py-2 pointer-events-none">
-            <p className="text-[9px] text-[#8b949e] mb-1 uppercase tracking-widest">CPK Colors</p>
+            <p className="text-[11px] text-[#8b949e] mb-1 uppercase tracking-widest">CPK Colors</p>
             {[["C","#404040"],["H","#ffffff"],["O","#ff0d0d"],["N","#3050f8"],["S","#ffff30"],["P","#ff8000"]].map(([s,c]) => (
-              <div key={s} className="flex items-center gap-1 text-[10px] text-[#c9d1d9]">
+              <div key={s} className="flex items-center gap-1 text-[11px] text-[#c9d1d9]">
                 <div className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: c }} />
                 {s}
               </div>
@@ -689,12 +689,12 @@ export default function MolecularEditor3D() {
         {/* ── Right Log Panel ── */}
         <div className="w-44 flex-shrink-0 bg-[#161b22] border-l border-[#30363d] overflow-y-auto">
           <div className="px-2 py-2 border-b border-[#30363d]">
-            <p className="text-[#8b949e] font-bold uppercase text-[10px] tracking-widest">Log</p>
+            <p className="text-[#8b949e] font-bold uppercase text-[11px] tracking-widest">Log</p>
           </div>
           <div className="px-2 py-1 space-y-0.5">
-            {log.length === 0 && <p className="text-[#484f58] text-[10px] py-2">No events yet</p>}
+            {log.length === 0 && <p className="text-[#484f58] text-[11px] py-2">No events yet</p>}
             {log.map((entry, i) => (
-              <div key={i} className="text-[10px] text-[#8b949e] py-0.5 border-b border-[#21262d] leading-tight">
+              <div key={i} className="text-[11px] text-[#8b949e] py-0.5 border-b border-[#21262d] leading-tight">
                 {entry}
               </div>
             ))}
