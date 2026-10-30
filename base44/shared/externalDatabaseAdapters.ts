@@ -142,8 +142,10 @@ export async function chebiDetail(identity) {
 export async function nistWebbook(identity) {
   const q = identity.cas || identity.name;
   if (!q) return null;
-  const key = identity.cas ? 'CAS' : 'Name';
-  const url = `https://webbook.nist.gov/cgi/cbook.cgi?${key}=${encodeURIComponent(q)}&Units=SI&cTG=on&cTP=on&cPI=on`;
+  // NIST expects CAS numbers as ID=C<digits> (e.g. C64175); ?CAS= returns HTTP 400.
+  const url = identity.cas
+    ? `https://webbook.nist.gov/cgi/cbook.cgi?ID=C${encodeURIComponent(String(identity.cas).replace(/-/g, ''))}&Units=SI&cTG=on&cTP=on&cPI=on`
+    : `https://webbook.nist.gov/cgi/cbook.cgi?Name=${encodeURIComponent(q)}&Units=SI&cTG=on&cTP=on&cPI=on`;
   const res = await timedFetch(url);
   if (!res.ok || !res.text) return null;
   const html = res.text;
@@ -164,8 +166,11 @@ export async function nistWebbook(identity) {
 
 // ─── 4. EPA Safer Chemical Ingredients List (via CompTox details) ───────────
 export async function epaSCIL(identity) {
-  if (!identity.dtxsid) return null;
-  const res = await timedFetch(`https://comptox.epa.gov/dashboard-api/ccdapp2/chemical/details/${identity.dtxsid}`);
+  // The CompTox dashboard details endpoint used here was retired (404). The supported route is the
+  // key-based CTX API (api-ccte.epa.gov); until a key is configured this adapter reports nothing.
+  const ctxKey = typeof Deno !== 'undefined' ? Deno.env.get('EPA_CTX_API_KEY') : null;
+  if (!identity.dtxsid || !ctxKey) return null;
+  const res = await timedFetch(`https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/${identity.dtxsid}`, { headers: { 'x-api-key': ctxKey, accept: 'application/json' } });
   if (!res.ok || !res.json) return null;
   const d = res.json;
   const sourceUrl = `https://comptox.epa.gov/dashboard/chemical/details/${identity.dtxsid}`;
@@ -210,7 +215,8 @@ export async function epaIRIS(identity) {
 
 // ─── 6. EPA ECOTOX aquatic / terrestrial toxicity ───────────────────────────
 export async function epaECOTOX(identity) {
-  if (!identity.cas) return null;
+  // ECOTOX has no public API and the scraped search URL now returns 404; skip rather than time out.
+  if (identity) return null;
   const url = `https://cfpub.epa.gov/ecotox/searchresult?cas=${encodeURIComponent(identity.cas)}`;
   const res = await timedFetch(url);
   if (!res.ok || !res.text) return null;
@@ -230,19 +236,21 @@ export async function epaECOTOX(identity) {
 // ─── 7. EPA Envirofacts (TRI release / facility data) ───────────────────────
 export async function epaEnvirofacts(identity) {
   if (!identity.cas) return null;
-  const url = `https://data.epa.gov/efservice/TRI_CHEMICAL_INFO/CAS/${encodeURIComponent(identity.cas)}/json`;
+  // Current Envirofacts syntax: /efservice/<schema.table>/<column>/equals/<value>/JSON
+  const url = `https://data.epa.gov/efservice/tri.tri_chem_info/cas_registry_number/equals/${encodeURIComponent(identity.cas)}/JSON`;
   const res = await timedFetch(url);
   if (!res.ok || !res.json) return null;
   const arr = Array.isArray(res.json) ? res.json : [];
   if (arr.length === 0) return null;
   const d = arr[0];
-  const sourceUrl = 'https://enviro.epa.gov/facts/tri/';
+  const sourceUrl = 'https://www.epa.gov/toxics-release-inventory-tri-program/tri-listed-chemicals';
+  const yesNo = value => (String(value) === '1' ? 'Yes' : 'No');
   const fields = [];
-  if (d.CARCINOGEN) fields.push({ field: 'TRI carcinogen flag', value: d.CARCINOGEN, units: '', source_url: sourceUrl });
-  if (d.PBT) fields.push({ field: 'TRI persistent bioaccumulative toxic (PBT)', value: d.PBT, units: '', source_url: sourceUrl });
-  if (d.CLEANUP_AIR) fields.push({ field: 'TRI air releases', value: d.CLEANUP_AIR, units: '', source_url: sourceUrl });
-  if (d.CLEANUP_WATER) fields.push({ field: 'TRI water releases', value: d.CLEANUP_WATER, units: '', source_url: sourceUrl });
-  if (d.CHRONIC_HUMAN_HEALTH) fields.push({ field: 'TRI chronic human health', value: d.CHRONIC_HUMAN_HEALTH, units: '', source_url: sourceUrl });
+  fields.push({ field: 'On TRI chemical list', value: `Yes (${d.chem_name || identity.cas})`, units: '', source_url: sourceUrl });
+  if (d.carc_ind != null) fields.push({ field: 'TRI OSHA carcinogen flag', value: yesNo(d.carc_ind), units: '', source_url: sourceUrl });
+  if (d.pbt_ind != null) fields.push({ field: 'TRI persistent bioaccumulative toxic (PBT)', value: yesNo(d.pbt_ind), units: '', source_url: sourceUrl });
+  if (d.pfas_ind != null) fields.push({ field: 'TRI PFAS chemical', value: yesNo(d.pfas_ind), units: '', source_url: sourceUrl });
+  if (d.caac_ind != null) fields.push({ field: 'Clean Air Act hazardous air pollutant', value: yesNo(d.caac_ind), units: '', source_url: sourceUrl });
   if (fields.length === 0) return null;
   return { source_db: 'EPA Envirofacts (TRI)', fields, retrieved_at: nowIso() };
 }
@@ -259,10 +267,8 @@ export async function epaUSEEIO(identity) {
     const name = (s.name || s.sectorName || s.description || '').toLowerCase();
     return keywords.some(k => name.includes(k)) || (q && name.includes(q));
   });
-  if (!match) {
-    // Fall back to the first sector as a representative reference rather than nothing
-    match = sectors.find(s => s.id === '221100' || /all industry|total/i.test(s.name || '')) || sectors[0];
-  }
+  // No keyword match means no relevant sector: return nothing rather than an unrelated sector.
+  if (!match) return null;
   const id = match.id || match.code || '';
   const sourceUrl = `https://api.edap-ord.com/useeio/api/sector/${id}`;
   const fields = [];
