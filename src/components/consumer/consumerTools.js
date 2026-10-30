@@ -46,13 +46,13 @@ export const CONSUMER_TOOLS = [
     handoffs: [],
   },
   {
-    id: 'carbon', step: '05', verb: 'Score', name: 'Carbon Tax Simulator', route: '/CarbonTaxSimulator', icon: Leaf,
-    question: 'What is the carbon cost?',
-    summary: 'Estimate ingredient CO2e per batch and per unit, and model carbon-tax exposure across markets.',
-    inputs: ['Ingredients and quantities', 'Units per month', 'Market and carbon price'],
-    outputs: ['CO2e per batch and per unit', 'Annual emissions', 'Low, base and high tax scenarios'],
-    sources: [],
-    handoffs: [],
+    id: 'carbon', step: '05', verb: 'Score', name: 'Carbon Ledger', route: '/CarbonTaxSimulator', icon: Leaf,
+    question: 'What is the real carbon footprint of my product?',
+    summary: 'A sourced, line-by-line carbon ledger for one product: ingredients and packaging on EPA supply-chain factors, fossil vs plant carbon from each molecule, carbon-cost scenarios and the carbon rules that actually apply to you.',
+    inputs: ['Formula in % w/w (or import a saved formula)', 'Ingredient and packaging prices', 'Unit size, volume and retail price'],
+    outputs: ['g CO2e per unit and tonnes per year', 'Biobased vs fossil carbon', 'Carbon-cost per unit and rule check', 'Like-for-like lower-carbon swaps'],
+    sources: ['US EPA supply-chain emission factors (USEEIO v1.3)', 'PubChem'],
+    handoffs: ['analysis', 'generator'],
   },
 ];
 

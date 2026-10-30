@@ -9,7 +9,7 @@ import ConsumerWorkbench, { WorkbenchGrid, SetupRail, ResultsRail } from '@/comp
 import GuidedSteps from '@/components/consumer/GuidedSteps';
 import {
   EPA_SOURCE, NAICS, ORIGINS, FUNCTIONS, INGREDIENT_NAMES, PACKAGING, PRICE_PRESETS,
-  lookupIngredient, fetchFormula, computeLedger, suggestSwaps, carbonFraction, CO2_PER_C,
+  lookupIngredient, fetchFormula, computeLedger, suggestSwaps, CO2_PER_C,
 } from '@/data/carbonLedger';
 
 let uid = 0;
@@ -240,7 +240,7 @@ export default function CarbonTaxSimulator() {
                     <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-research-border text-left text-xs text-research-muted"><th className="py-2 pr-3 font-medium">Ingredient</th><th className="py-2 pr-3 font-medium">Formula</th><th className="py-2 pr-3 font-medium text-right">Carbon %</th><th className="py-2 pr-3 font-medium">Origin</th><th className="py-2 pr-3 font-medium text-right">Fossil C</th><th className="py-2 font-medium text-right">Bio C</th></tr></thead><tbody>
                       {ledger.rows.map(r => <tr key={r.id} className="border-b border-research-border">
                         <td className="py-2 pr-3 capitalize">{r.name}</td>
-                        <td className="py-2 pr-3 font-mono text-xs">{r.origin === 'none' ? '—' : r.formula === null ? '…' : r.formula ? (r.cid ? <a href={`https://pubchem.ncbi.nlm.nih.gov/compound/${r.cid}`} target="_blank" rel="noreferrer" className="underline hover:text-research-accent">{r.formula}</a> : r.formula) : <span className="font-sans text-research-muted">Mixture</span>}</td>
+                        <td className="py-2 pr-3 font-mono text-xs">{r.origin === 'none' ? '—' : !r.pubchem ? <span className="font-sans text-research-muted">Mixture</span> : r.formula === null ? '…' : r.formula ? (r.cid ? <a href={`https://pubchem.ncbi.nlm.nih.gov/compound/${r.cid}`} target="_blank" rel="noreferrer" className="underline hover:text-research-accent">{r.formula}</a> : r.formula) : <span className="font-sans text-research-muted">Mixture</span>}</td>
                         <td className="py-2 pr-3 text-right font-mono">{r.wC != null ? (r.wC * 100).toFixed(1) : '—'}</td>
                         <td className="py-2 pr-3 text-xs">{ORIGINS[r.origin].label}</td>
                         <td className="py-2 pr-3 text-right font-mono">{r.fossilC != null ? `${(r.fossilC * 1000).toFixed(2)} g` : '—'}</td>
