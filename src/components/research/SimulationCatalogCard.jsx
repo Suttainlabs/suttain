@@ -10,7 +10,9 @@ export default function SimulationCatalogCard({ simulation, domain, index }) {
       <div className="flex items-start justify-between mb-6"><div className="research-icon bg-research-soft"><Icon className="h-5 w-5" strokeWidth={1.5} /></div><span className="research-label">{String(index + 1).padStart(2, '0')}</span></div>
       <h3 className="!text-lg mb-3">{sentenceLabel(simulation.label)}</h3>
       <p className="text-sm text-research-muted leading-relaxed mb-6">{simulation.description}</p>
-      <p className="research-label mb-4">{['dft','quantum_mechanics'].includes(simulation.id) ? 'Rowan compute · mapped molecular tasks' : 'Not yet runnable on Rowan'}</p>
+      {['dft','quantum_mechanics'].includes(simulation.id)
+        ? <p className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-research-accent bg-research-soft px-2.5 py-1 text-xs font-medium text-research-accent"><span className="h-1.5 w-1.5 rounded-full bg-research-accent" />Runs here on Rowan · results in minutes</p>
+        : <p className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-research-border px-2.5 py-1 text-xs text-research-muted">Prepares input files for your own computer or cluster{simulation.id === 'molecular_dynamics' ? ' · needs a PDB structure' : ''}</p>}
       <div className="flex flex-wrap gap-1.5 mt-auto" aria-label="Workflow input engines">
         {simulation.engines.map(engine => <span key={engine} className="rounded border border-research-border px-2 py-1 font-mono text-xs text-research-muted">{engine}</span>)}
       </div>
