@@ -76,17 +76,17 @@ export default function RecentActivityList() {
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Recent activity</h2>
+        <h2 className="!text-base">Recent activity</h2>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl divide-y divide-slate-100 overflow-hidden">
+      <div className="bg-research-card border border-research-border rounded-xl divide-y divide-research-border overflow-hidden">
         {loading ? (
           [0, 1, 2, 3].map(i => (
             <div key={i} className="flex items-center gap-3 px-4 py-3.5">
-              <div className="w-9 h-9 rounded-xl bg-slate-100 animate-pulse" />
+              <div className="w-9 h-9 rounded-xl bg-research-soft animate-pulse" />
               <div className="flex-1 space-y-1.5">
                 <div className="h-3.5 w-1/3 bg-slate-100 rounded animate-pulse" />
-                <div className="h-3 w-1/4 bg-slate-50 rounded animate-pulse" />
+                <div className="h-3 w-1/4 bg-research-soft rounded animate-pulse" />
               </div>
             </div>
           ))
@@ -97,27 +97,27 @@ export default function RecentActivityList() {
               <Link
                 key={`${item.type}-${item.id}`}
                 to={item.href}
-                className="flex items-center gap-3 px-4 py-3.5 hover:bg-slate-50 transition-colors group"
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-research-soft/60 transition-colors group min-h-11"
               >
-                <div className="w-9 h-9 rounded-xl bg-teal-50 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-4 h-4 text-[#02988C]" />
+                <div className="w-9 h-9 rounded-xl bg-research-soft flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-4 h-4 text-research-accent" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-800 truncate">{item.title}</p>
-                  <p className="text-xs text-slate-400 truncate">{item.subtitle}</p>
+                  <p className="text-sm font-medium text-research-text truncate">{item.title}</p>
+                  <p className="text-xs text-research-muted truncate">{item.subtitle}</p>
                 </div>
-                <span className="text-xs text-slate-400 flex-shrink-0">{timeAgo(item.date)}</span>
-                <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#02988C] transition-colors flex-shrink-0" />
+                <span className="text-xs text-research-muted flex-shrink-0">{timeAgo(item.date)}</span>
+                <ArrowRight className="w-4 h-4 text-research-muted group-hover:text-research-accent transition-colors flex-shrink-0" />
               </Link>
             );
           })
         ) : (
           <div className="px-4 py-10 text-center">
             <div className="w-11 h-11 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-3">
-              <TestTube className="w-5 h-5 text-slate-300" />
+              <TestTube className="w-5 h-5 text-research-muted" />
             </div>
-            <p className="text-sm font-medium text-slate-600">No activity yet</p>
-            <p className="text-xs text-slate-400 mt-1">Run a simulation or scan a product to see it here.</p>
+            <p className="text-sm font-medium text-research-text">No activity yet</p>
+            <p className="text-xs text-research-muted mt-1">Run a simulation or scan a product to see it here.</p>
           </div>
         )}
       </div>
