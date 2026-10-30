@@ -2,9 +2,9 @@ import React from 'react';
 import { Shield, BookOpen, GitBranch } from 'lucide-react';
 
 const PRINCIPLES = [
-  { icon: Shield, title: 'Methods and limitations in view', detail: 'Review Atomistic Simulation settings and Drug Design source records. Distinguish generated setups, illustrative scores, and actual compute results.' },
+  { icon: Shield, title: 'Methods and limitations in view', detail: 'Every result names the engine or database it came from. Screening ranks, prepared input files and engine-computed predictions are labelled differently, so you always know what was actually calculated.' },
   { icon: BookOpen, title: 'Research context you can retain', detail: 'Keep available inputs, references, and exports with your work. Review original sources and validate findings before sharing or publishing.' },
-  { icon: GitBranch, title: 'Two complementary research paths', detail: 'Use Atomistic Simulation to prepare molecular calculations and Drug Design to investigate targets and candidates. Choose the method that fits your scientific question.' },
+  { icon: GitBranch, title: 'Three connected tools', detail: 'Drug Design finds candidates, Binding & ADME predicts how they bind and behave, and Atomistic Simulation calculates them in detail. Results carry over from one tool to the next.' },
 ];
 export default function ResearchPrinciples() {
   return (
