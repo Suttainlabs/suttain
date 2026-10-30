@@ -98,6 +98,9 @@ export default function BindingAndADME() {
 
   useEffect(() => { setGoal(null); setProvider('auto'); setJob(null); setFormError(''); }, [task]);
   useEffect(() => () => clearInterval(pollRef.current), []);
+  // On phones the result panel sits below the form: show it as soon as a job starts.
+  const jobId = job?.id;
+  useEffect(() => { if (jobId && window.innerWidth < 1024) document.getElementById('binding-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, [jobId]);
 
   const startPolling = jobId => {
     clearInterval(pollRef.current);
@@ -190,7 +193,7 @@ export default function BindingAndADME() {
               <ol className="space-y-2">{engines.map((e, i) => <li key={e.provider} className="flex items-start gap-3 text-sm"><span className="font-mono text-xs text-research-muted mt-0.5">{String(i + 1).padStart(2, '0')}</span><span className="min-w-0 flex-1"><span className={e.configured ? '' : 'text-research-muted'}>{e.label}</span><span className="block text-xs text-research-muted">{e.model}</span></span>{!e.configured && <span className="rounded border border-research-border px-2 py-0.5 text-xs text-research-muted">Not connected</span>}</li>)}</ol>
             </>}
           </div>
-          <Results job={job} firstSmiles={task === 'binding' ? ligand.trim() : smilesList[0]} />
+          <div id="binding-results" className="scroll-mt-32" /><Results job={job} firstSmiles={task === 'binding' ? ligand.trim() : smilesList[0]} />
           <p className="text-xs text-research-muted">Machine-learning predictions, not experimental measurements. Scores from different engines or model versions are not interchangeable; compare candidates within one engine.</p>
         </aside>
       </div>
