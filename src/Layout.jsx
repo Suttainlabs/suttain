@@ -266,6 +266,7 @@ export default function Layout({ children, currentPageName }) {
   const helpMenuItems = [];
 
   const consumerToolItems = [
+    { href: "ConsumerPortal", label: "Consumer overview", icon: LayoutDashboard, description: "How the five tools work together", category: "Start here" },
     { href: "Simulator", label: "Chemical Analysis", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
     { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", category: "Formulation" },
     { href: "BarcodeScanner", label: "Product Scanner", icon: QrCode, description: "Scan any product, toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
@@ -274,6 +275,8 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const researchToolItems = [
+    { href: "ResearchPortal", label: "Research overview", icon: FlaskConical, category: "Research" },
+    { href: "ResearchDashboard", label: "Research dashboard", icon: LayoutDashboard, category: "Research" },
     { href: "AtomisticSimulation", label: "Atomistic Simulation", icon: Atom, category: "Research" },
     { href: "DrugDesign", label: "Drug Design", icon: Target, category: "Research" },
   ];
@@ -380,7 +383,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Floating Nav Bar */}
       <header className="sticky top-0 z-50 px-4 pt-[env(safe-area-inset-top)] bg-[#FFFFFF]">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 h-14 overflow-hidden">
+          <div className="flex items-center justify-between lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-3 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-3 sm:px-4 h-14 overflow-hidden">
 
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 flex-shrink-0 justify-self-start min-w-0">
@@ -396,7 +399,7 @@ export default function Layout({ children, currentPageName }) {
               <Link to="/" className={getLinkClasses("Home")}>{t('nav_home')}</Link>
 
               {/* Single smart Tools dropdown, groups Consumer and Research */}
-              <NavToolCombobox items={allToolItems} label="Cb" isActive={isConsumerToolsActive} accent="#02988C" />
+              <NavToolCombobox items={allToolItems} label="Consumer" isActive={isConsumerToolsActive} accent="#02988C" />
 
               <NavToolCombobox items={researchToolItems} label="Research" isActive={isResearchToolsActive} accent="hsl(var(--accent))" openOnHover />
 
@@ -500,7 +503,7 @@ export default function Layout({ children, currentPageName }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-[70] bg-black/40 backdrop-blur-sm"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <motion.div
@@ -508,7 +511,7 @@ export default function Layout({ children, currentPageName }) {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed inset-y-0 left-0 w-4/5 max-w-sm bg-white shadow-2xl flex flex-col"
+              className="fixed inset-y-0 left-0 w-[85%] max-w-sm bg-white shadow-2xl flex flex-col pb-[env(safe-area-inset-bottom)]"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center p-4 border-b border-slate-200">
@@ -566,7 +569,7 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <div className="flex items-center gap-4">
                         <TestTube className="w-5 h-5" />
-                        Cb
+                        Consumer
                       </div>
                       <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isProductSuiteOpen ? 'rotate-180' : ''}`} />
                     </button>
@@ -775,7 +778,7 @@ export default function Layout({ children, currentPageName }) {
           )}
       
       {/* Bottom Navigation Bar - Mobile Only */}
-      {user && <BottomNavBar />}
+      <BottomNavBar user={user} />
 
 
       
