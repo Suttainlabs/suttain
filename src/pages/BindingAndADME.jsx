@@ -6,6 +6,8 @@ import AuthContext from '@/components/auth/AuthContext';
 import useTrialStatus from '@/hooks/useTrialStatus';
 import SubscriptionLock from '@/components/shared/SubscriptionLock';
 import SimulationStatusBanner from '@/components/shared/SimulationStatusBanner';
+import ResearchProductNav, { NextStepLink } from '@/components/research/ResearchProductNav';
+import { handoffUrl } from '@/components/research/researchProducts';
 
 const TASKS = [
   { id: 'binding', label: 'Protein–ligand binding', icon: Crosshair, blurb: 'Predict the complex structure and binding affinity of one ligand against one protein.' },
@@ -29,7 +31,7 @@ function Choice({ active, onClick, children, disabled }) {
   return <button type="button" aria-pressed={active} disabled={disabled} onClick={onClick} className={`min-h-11 rounded-lg border px-4 py-3 text-left text-sm transition-colors disabled:opacity-50 ${active ? 'border-research-accent bg-research-soft text-research-accent' : 'border-research-border bg-research-card text-research-text hover:border-research-accent'}`}>{children}</button>;
 }
 
-function Results({ job }) {
+function Results({ job, firstSmiles }) {
   const r = job?.result || {};
   if (!job) return null;
   if (job.status === 'failed') return <div role="alert" className="rounded-xl border border-research-border bg-research-card p-5 sm:p-6"><div className="flex items-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-destructive" /><h3 className="!text-lg">Calculation did not run</h3></div><p className="text-sm text-research-muted">{job.error || 'The provider reported a failure.'}</p>{!!r.attempts?.length && <ul className="mt-3 space-y-1 text-xs text-research-muted">{r.attempts.map((a, i) => <li key={i}><span className="font-mono">{a.provider}</span>: {a.message}</li>)}</ul>}</div>;
@@ -46,17 +48,25 @@ function Results({ job }) {
     {r.task === 'adme' && <div className="space-y-3">{(r.adme || []).map((row, i) => <div key={i} className="rounded-lg border border-research-border p-3"><p className="font-mono text-xs break-all mb-2">{row.smiles}</p>{row.status === 'failed' ? <p className="text-sm text-destructive">{row.error || 'Prediction failed for this molecule.'}</p> : <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 text-sm">{Object.entries(row.properties || {}).map(([k, v]) => <div key={k} className="min-w-0"><dt className="text-xs text-research-muted truncate">{k.replace(/_/g, ' ')}</dt><dd className="font-mono">{fmt(v)}</dd></div>)}</dl>}</div>)}<p className="text-xs text-research-muted">Reported by {job.engine}; not an AI estimate. Property names differ between engines.</p></div>}
     {r.limitations && <p className="text-xs text-research-muted">{r.limitations}</p>}
     {!!r.citations?.length && <div className="border-t border-research-border pt-3"><p className="research-label mb-1">Cite</p>{r.citations.map((c, i) => <p key={i} className="text-xs text-research-muted">{c.text}</p>)}</div>}
+    <div className="border-t border-research-border pt-4"><p className="research-label mb-3">Next step</p><div className="grid gap-2">
+      {firstSmiles && <NextStepLink to={handoffUrl.atomistic(firstSmiles)} step="03" title="Calculate it in Atomistic Simulation" text="Run DFT geometry and energies on this ligand, pre-filled." />}
+      <NextStepLink to="/DrugDesign" step="01" title="Back to Drug Design" text="Review your shortlist or screen another target." />
+    </div></div>
   </div>;
 }
 
 export default function BindingAndADME() {
   const { user } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
-  const [task, setTask] = useState('binding');
+  const initial = useMemo(() => {
+    const p = new URLSearchParams(window.location.search);
+    return { task: p.get('task') === 'adme' ? 'adme' : 'binding', smiles: p.get('smiles') || '', ligand: p.get('ligand') || '', sequence: p.get('sequence') || '' };
+  }, []);
+  const [task, setTask] = useState(initial.task);
   const [goal, setGoal] = useState(null);
-  const [sequence, setSequence] = useState('');
-  const [ligand, setLigand] = useState('');
-  const [admeText, setAdmeText] = useState('');
+  const [sequence, setSequence] = useState(initial.sequence);
+  const [ligand, setLigand] = useState(initial.ligand);
+  const [admeText, setAdmeText] = useState(initial.smiles);
   const [provider, setProvider] = useState('auto');
   const [autoFallback, setAutoFallback] = useState(true);
   const [rec, setRec] = useState(null);
@@ -113,19 +123,21 @@ export default function BindingAndADME() {
     finally { setSubmitting(false); }
   };
 
-  if (user && !trialStatus.canRunResearchSim) return <div className="research-surface min-h-screen"><div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-12"><SimulationStatusBanner user={user} className="mb-6" /><SubscriptionLock pillar="research" featureName="Binding & ADME" limit /></div></div>;
+  if (user && !trialStatus.canRunResearchSim) return <div className="research-surface min-h-screen"><ResearchProductNav /><div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-12"><SimulationStatusBanner user={user} className="mb-6" /><SubscriptionLock pillar="research" featureName="Binding & ADME" limit /></div></div>;
 
   const engines = rec?.engines || [];
   const recommendedLabel = engines.find(e => e.provider === rec?.recommended)?.label;
   const running = job && ['pending', 'running'].includes(job.status);
 
   return <div className="research-surface min-h-screen">
+    <ResearchProductNav />
     <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-12">
-      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs text-research-muted mb-8"><Link to="/ResearchPortal" className="hover:text-research-accent">Research</Link><ChevronRight className="h-3 w-3" /><span aria-current="page">Binding &amp; ADME</span></nav>
+      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs text-research-muted mb-8"><Link to="/ResearchPortal" className="hover:text-research-accent">Research</Link><ChevronRight className="h-3 w-3" /><span aria-current="page">02 · Binding &amp; ADME</span></nav>
+      {(initial.smiles || initial.ligand) && <div role="status" className="mb-6 flex gap-2 rounded-lg border border-research-border bg-research-soft p-3 text-sm"><Info className="h-4 w-4 shrink-0 mt-0.5 text-research-accent" /><p>Molecules carried over from your previous step are filled in below. Check them, choose a goal, then run.</p></div>}
       <div className="mb-9 max-w-3xl">
-        <p className="research-label mb-4">Research / Binding &amp; ADME</p>
+        <p className="research-label mb-4">Research / Step 02 · Predict</p>
         <div className="flex items-center gap-3 mb-4"><Crosshair className="h-6 w-6 text-research-accent" strokeWidth={1.5} /><h1>Binding &amp; ADME</h1></div>
-        <p className="text-research-muted">Predict protein–ligand binding and ADME properties on hosted engines (Rowan, Boltz API, Tamarind Bio). Suttain recommends the best engine for your goal and switches to the next one if it is unavailable. Results are reported by the engine, never estimated. For quantum chemistry, use <Link to="/AtomisticSimulation" className="underline hover:text-research-accent">Atomistic Simulation</Link>.</p>
+        <p className="text-research-muted">Predict protein–ligand binding and ADME properties on hosted engines (Rowan, Boltz API, Tamarind Bio). Suttain recommends the best engine for your goal and switches to the next one if it is unavailable. Results are reported by the engine, never estimated. Bring candidates from your <Link to="/DrugDesign" className="underline hover:text-research-accent">Drug Design</Link> shortlist, and take the best one on to <Link to="/AtomisticSimulation" className="underline hover:text-research-accent">Atomistic Simulation</Link> for quantum chemistry.</p>
       </div>
       <SimulationStatusBanner user={user} className="mb-6" />
 
@@ -178,7 +190,7 @@ export default function BindingAndADME() {
               <ol className="space-y-2">{engines.map((e, i) => <li key={e.provider} className="flex items-start gap-3 text-sm"><span className="font-mono text-xs text-research-muted mt-0.5">{String(i + 1).padStart(2, '0')}</span><span className="min-w-0 flex-1"><span className={e.configured ? '' : 'text-research-muted'}>{e.label}</span><span className="block text-xs text-research-muted">{e.model}</span></span>{!e.configured && <span className="rounded border border-research-border px-2 py-0.5 text-xs text-research-muted">Not connected</span>}</li>)}</ol>
             </>}
           </div>
-          <Results job={job} />
+          <Results job={job} firstSmiles={task === 'binding' ? ligand.trim() : smilesList[0]} />
           <p className="text-xs text-research-muted">Machine-learning predictions, not experimental measurements. Scores from different engines or model versions are not interchangeable; compare candidates within one engine.</p>
         </aside>
       </div>
