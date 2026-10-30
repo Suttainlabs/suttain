@@ -35,7 +35,7 @@ export default function FolderSidebar({ folders, selectedFolderId, onSelectFolde
   };
 
   return (
-    <div className="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col h-full">
+    <div className="w-full md:w-64 flex-shrink-0 bg-white border-b md:border-b-0 md:border-r border-slate-200 flex flex-col max-h-60 md:max-h-none md:h-full overflow-y-auto">
       <div className="p-4 border-b border-slate-200">
         <h2 className="font-bold text-slate-800 text-sm uppercase tracking-wide">Folders</h2>
       </div>

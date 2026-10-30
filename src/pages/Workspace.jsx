@@ -83,7 +83,7 @@ export default function Workspace() {
 
   return (
     <AuthGate featureName="Workspace" featureDescription="Save and organize your analysis sessions.">
-      <div className="flex h-[calc(100vh-64px)] bg-slate-50 overflow-hidden">
+      <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] md:h-[calc(100vh-64px)] bg-slate-50 md:overflow-hidden">
         {/* Sidebar */}
         <FolderSidebar
           folders={folders}
@@ -93,12 +93,12 @@ export default function Workspace() {
         />
 
         {/* Main */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 min-w-0 flex flex-col md:overflow-hidden">
           {/* Tabs */}
-        <div className="bg-white border-b border-slate-200 px-4 flex items-center gap-1 pt-1">
+        <div className="bg-white border-b border-slate-200 px-4 flex items-center gap-1 pt-1 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab('sessions')}
-            className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
+            className={`shrink-0 whitespace-nowrap px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
               activeTab === 'sessions' ? 'border-violet-600 text-violet-700' : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
@@ -106,7 +106,7 @@ export default function Workspace() {
           </button>
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-1.5 ${
+            className={`shrink-0 whitespace-nowrap px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-1.5 ${
               activeTab === 'dashboard' ? 'border-violet-600 text-violet-700' : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
@@ -114,7 +114,7 @@ export default function Workspace() {
           </button>
           <button
             onClick={() => window.location.href = '/ChemicalLibrary'}
-            className="px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-1.5 border-transparent text-slate-500 hover:text-slate-700 ml-auto"
+            className="shrink-0 whitespace-nowrap px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors flex items-center gap-1.5 border-transparent text-slate-500 hover:text-slate-700 ml-auto"
           >
             <Library className="w-3.5 h-3.5" /> Chemical Library
           </button>
@@ -122,8 +122,8 @@ export default function Workspace() {
 
         {/* Toolbar sessions only */}
         {activeTab === 'sessions' && (
-        <div className="bg-white border-b border-slate-200 px-6 py-3 flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[180px] max-w-xs">
+        <div className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex flex-wrap items-center gap-3">
+          <div className="relative w-full sm:w-auto sm:flex-1 sm:min-w-[180px] sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Search sessions..."
@@ -133,7 +133,7 @@ export default function Workspace() {
             />
           </div>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-36 h-8 text-sm"><SelectValue placeholder="Type" /></SelectTrigger>
+            <SelectTrigger className="w-[calc(50%-0.375rem)] sm:w-36 h-9 text-sm"><SelectValue placeholder="Type" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="simulation">Simulation</SelectItem>
@@ -143,14 +143,14 @@ export default function Workspace() {
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-32 h-8 text-sm"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-[calc(50%-0.375rem)] sm:w-32 h-9 text-sm"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="newest">Newest</SelectItem>
               <SelectItem value="oldest">Oldest</SelectItem>
               <SelectItem value="pinned">Pinned first</SelectItem>
             </SelectContent>
           </Select>
-          <div className="flex items-center gap-1 ml-auto">
+          <div className="hidden sm:flex items-center gap-1 ml-auto">
             <Button variant={viewMode === 'grid' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setViewMode('grid')}>
               <LayoutGrid className="w-4 h-4" />
             </Button>
@@ -163,14 +163,14 @@ export default function Workspace() {
 
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 md:overflow-y-auto">
             <WorkspaceDashboard sessions={sessions} />
           </div>
         )}
 
         {/* Sessions Tab */}
         {activeTab === 'sessions' && (
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 md:overflow-y-auto p-4">
             {isLoading ? (
               <div className="flex items-center justify-center h-32">
                 <div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin" />
