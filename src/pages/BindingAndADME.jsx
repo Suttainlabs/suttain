@@ -84,7 +84,7 @@ export default function BindingAndADME() {
       } catch { if (!cancelled) setRecError('Engine recommendation could not load. You can still choose an engine.'); }
     }, 300);
     return () => { cancelled = true; clearTimeout(t); };
-  }, [task, goal, admeCount]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [task, goal, admeCount]);
 
   useEffect(() => { setGoal(null); setProvider('auto'); setJob(null); setFormError(''); }, [task]);
   useEffect(() => () => clearInterval(pollRef.current), []);

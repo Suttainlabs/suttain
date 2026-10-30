@@ -202,7 +202,7 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
 
                         {error && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
 
-                        <Link to="/MobileScanner" className="flex items-center gap-2 rounded-lg border border-dashed border-research-border px-3 py-3 text-sm text-research-muted hover:border-research-accent hover:text-research-accent">
+                        <Link to="/MobileScan" className="flex items-center gap-2 rounded-lg border border-dashed border-research-border px-3 py-3 text-sm text-research-muted hover:border-research-accent hover:text-research-accent">
                             <Smartphone className="w-4 h-4" /> Full-screen mobile scanner <ArrowRight className="w-4 h-4 ml-auto" />
                         </Link>
 
