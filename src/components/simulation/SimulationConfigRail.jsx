@@ -6,6 +6,7 @@ import SimulationEngineSelector from '@/components/research/SimulationEngineSele
 import SimulationWorkflowField from '@/components/research/SimulationWorkflowField';
 import EngineParameterFields from '@/components/simulation/EngineParameterFields';
 import SimulationRunActions from '@/components/simulation/SimulationRunActions';
+import PdbFetch from '@/components/simulation/PdbFetch';
 
 function Step({ n, title, hint, children }) {
   return (
@@ -19,7 +20,11 @@ function Step({ n, title, hint, children }) {
 
 // Setup rail for one Atomistic Simulation workflow: engine → structure → method → run.
 export default function SimulationConfigRail({ sim, engine, catalogue, inputs, onChange, onEngine, fields, onCompound, onPreset, onUpload, onDraw, uploadKeys, drawKeys, onAdvanced, summary, actions }) {
-  const inputFields = fields.filter(f => uploadKeys.includes(f.key));
+  const md = !!actions?.isMdEngine;
+  // Classical MD needs PDB coordinates with residue topology, not a name or SMILES.
+  const inputFields = fields.filter(f => uploadKeys.includes(f.key)).map(f => md && f.key === 'system'
+    ? { ...f, label: 'Structure (PDB coordinates)', keepLabel: true, multiline: true, rows: 6, placeholder: 'Paste PDB text (ATOM/HETATM lines), upload a .pdb file, or fetch by PDB ID below', hint: 'Molecular dynamics needs atom coordinates with residue names. A name, SMILES or description is not enough.' }
+    : f);
   const methodFields = fields.filter(f => !uploadKeys.includes(f.key));
   const [searchOpen, setSearchOpen] = useState(true);
   const [presetsOpen, setPresetsOpen] = useState(false);
@@ -31,11 +36,17 @@ export default function SimulationConfigRail({ sim, engine, catalogue, inputs, o
         <SimulationEngineSelector compact engines={sim.engines} selected={engine} onSelect={onEngine} simType={sim.id} />
       </Step>
 
-      <Step n="02" title="Structure" hint="Type a name, SMILES or PDB ID, upload a file, draw it, or find it in a database.">
+      <Step n="02" title="Structure" hint={md ? 'Fetch a protein from RCSB PDB, upload a .pdb file, or paste coordinates.' : 'Type a name or SMILES, upload a file, draw it, or find it in a database.'}>
         {inputFields.map(field => (
           <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]} onChange={value => onChange(field.key, value)}
             canUpload canDraw={drawKeys.includes(field.key)} onUpload={() => onUpload(field.key)} onDraw={() => onDraw(field.key)} />
         ))}
+        {md ? (
+          <div className="rounded-lg border border-research-border p-3 space-y-2">
+            <p className="flex items-center gap-2 text-sm font-medium"><Search className="h-4 w-4 text-research-accent" />Fetch from RCSB PDB</p>
+            <PdbFetch onLoad={pdb => onChange(inputFields.find(f => f.key === 'system')?.key || 'system', pdb)} />
+          </div>
+        ) : (
         <div className="rounded-lg border border-research-border">
           <button type="button" onClick={() => setSearchOpen(o => !o)} aria-expanded={searchOpen}
             className="flex w-full items-center justify-between gap-2 px-3 py-3 text-left text-sm font-medium">
@@ -44,6 +55,7 @@ export default function SimulationConfigRail({ sim, engine, catalogue, inputs, o
           </button>
           {searchOpen && <div className="border-t border-research-border p-3"><DatabaseSearch compact onSelect={onCompound} /></div>}
         </div>
+        )}
       </Step>
 
       <Step n="03" title="Method and conditions">
