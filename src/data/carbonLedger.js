@@ -242,7 +242,7 @@ export function computeLedger(product, ingredients, packaging) {
     const price = Number(i.price) || 0;
     const spend = price > 0 && ef != null ? massKg * price * ef : null; // kg CO2e per unit
     const indicativeCO2 = i.indicative != null ? massKg * i.indicative : null;
-    const method = spend != null ? 'epa' : indicativeCO2 != null ? 'indicative' : i.origin === 'none' && !i.naics ? 'zero' : 'missing';
+    const method = !i.naics && i.origin === 'none' ? 'zero' : spend != null ? 'epa' : indicativeCO2 != null ? 'indicative' : 'missing';
     const co2 = method === 'epa' ? spend : method === 'indicative' ? indicativeCO2 : 0;
     const wC = i.origin === 'none' ? 0 : carbonFraction(i.formula);
     const carbonKg = wC != null ? massKg * wC : null;
