@@ -52,7 +52,7 @@ const faqData = [
   },
   {
     question: "Can Suttain help with sustainability and carbon reporting?",
-    answer: "Yes. Suttain provides detailed eco-impact analysis, biodegradability scores, carbon footprint calculations per formula, and a Carbon Tax Simulator to model decarbonization ROI. You can generate exportable sustainability and comparative impact reports."
+    answer: "Yes. Suttain provides detailed eco-impact analysis, biodegradability scores, carbon footprint calculations per formula, and a Carbon Ledger that gives a sourced per-unit carbon footprint (US EPA supply-chain factors), the fossil vs plant-based carbon in your formula, and which carbon rules apply to you. You can generate exportable sustainability and comparative impact reports."
   },
   {
     question: "How can I partner with Suttain?",

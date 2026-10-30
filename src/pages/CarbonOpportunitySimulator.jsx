@@ -1,4 +1,4 @@
-// Redirects to the unified Carbon Tax & Opportunity Simulator
+// Redirects to the Carbon Ledger
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
