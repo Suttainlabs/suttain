@@ -29,7 +29,7 @@ export default function GuidedResultStyles() {
     .guided-result th { font-weight:500; font-size:11px; white-space:normal; line-height:1.4; }
     .guided-result td { font-size:11px; }
     .guided-energy > section > div.overflow-auto { border:1px solid hsl(var(--research-border)); border-radius:6px; max-height:260px; }
-    .guided-result caption { padding:10px; font-size:10px; caption-side:bottom; }
+    .guided-result caption { padding:10px; font-size:12px; caption-side:bottom; }
     .guided-result-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; border-top:1px solid hsl(var(--research-border)); padding-top:18px; margin-top:24px; }
     .guided-result-metrics dt { font-size:12px; color:hsl(var(--research-muted)); }
     .guided-result-metrics dd { font-size:13px; margin-top:6px; overflow-wrap:anywhere; }
