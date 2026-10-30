@@ -144,7 +144,7 @@ function isWHOEssential(name) {
 async function searchPubChem(resolvedName, originalQuery) {
   try {
     const pubchemUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(resolvedName)}/property/IUPACName,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON`;
-    const res = await fetch(pubchemUrl);
+    const res = await fetch(pubchemUrl, { signal: AbortSignal.timeout(9000) });
     if (!res.ok) return [];
     const data = await res.json();
     const props = data?.PropertyTable?.Properties?.[0];
@@ -291,7 +291,7 @@ async function searchChemSpider(query) {
 async function searchPubChemAutocomplete(query) {
   try {
     const autoUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${encodeURIComponent(query)}/json?limit=8`;
-    const res = await fetch(autoUrl);
+    const res = await fetch(autoUrl, { signal: AbortSignal.timeout(9000) });
     if (!res.ok) return [];
     const data = await res.json();
     const terms = data?.dictionary_terms?.compound || [];
