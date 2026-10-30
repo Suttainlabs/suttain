@@ -27,7 +27,7 @@ export default function AtomisticSimulation() {
           <div className="col-span-12 lg:col-span-9">
             <p className="research-label mb-4">Research / Step 03 · Calculate</p>
             <div className="flex items-center gap-3 mb-4"><Gauge className="h-6 w-6 text-research-accent" strokeWidth={1.5} /><h1>Atomistic Simulation</h1></div>
-            <p className="text-research-muted max-w-2xl">Run mapped small-molecule quantum chemistry tasks on Rowan and inspect genuine computed geometry and properties. All catalog workflows can be configured; unsupported tasks report a clear failure rather than illustrative results. Coming from <Link to="/BindingAndADME" className="underline hover:text-research-accent">Binding &amp; ADME</Link>? Your ligand is filled in when you open a workflow from there.</p>
+            <p className="text-research-muted max-w-2xl">Run mapped small-molecule quantum chemistry tasks on Rowan and inspect genuine computed geometry and properties. All catalog workflows can be configured; unsupported tasks report a clear failure rather than illustrative results. Coming from <Link to="/BindingAndADME" className="underline hover:text-research-accent">Binding &amp; ADME</Link>? Its results link straight into a DFT run with your ligand already filled in.</p>
           </div>
 
         </div>
