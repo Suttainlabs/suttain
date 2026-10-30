@@ -704,7 +704,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 pb-16 lg:pb-0 relative z-10">
+      <main className="flex-1 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0 relative z-10">
         <AuthContext.Provider value={{ user, isAuthLoading, openAuthModal, refreshUser: () => fetchUserAndSetState({ background: true }) }}>
           {children}
 
@@ -720,7 +720,7 @@ export default function Layout({ children, currentPageName }) {
       
       {/* Footer - Home page only */}
       {['Home'].includes(currentPageName) && (
-      <footer data-no-translate className="bg-white border-t border-slate-200 text-sm pb-[env(safe-area-inset-bottom)]">
+      <footer data-no-translate className="bg-white border-t border-slate-200 text-sm -mt-[calc(4.5rem+env(safe-area-inset-bottom))] lg:mt-0 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             {/* Brand */}
