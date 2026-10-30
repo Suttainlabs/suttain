@@ -1,70 +1,54 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { Home, TestTube, Atom, QrCode, User } from 'lucide-react';
+import { Home, ShoppingBag, FlaskConical, User } from 'lucide-react';
+
+// Mobile tab bar: Home · Consumer · Research · Profile.
+// `match` decides which tab is highlighted, so every tool page lights up its pillar.
+const CONSUMER_PATHS = ['/ConsumerPortal', '/Simulator', '/generator', '/BarcodeScanner', '/SDSAnalyzer', '/CarbonTaxSimulator', '/SustainabilityImpact', '/BulkScan', '/CompareIngredients', '/MobileScan'];
+const RESEARCH_PATHS = ['/ResearchPortal', '/ResearchDashboard', '/AtomisticSimulation', '/SimulationRunner', '/DrugDesign', '/APIPortal', '/ComputationalSimulation'];
+const PROFILE_PATHS = ['/Dashboard', '/Profile', '/Settings', '/BillingDashboard', '/Workspace', '/login', '/register'];
+
+const startsWithAny = (pathname, paths) => paths.some(p => pathname === p || pathname.startsWith(`${p}/`));
 
 const TABS = [
-  { key: 'Home',               label: 'Home',     icon: Home,     root: '/' },
-  { key: 'Simulator',          label: 'Simulate', icon: TestTube, root: createPageUrl('Simulator') },
-  { key: 'BarcodeScanner',     label: 'Scan',     icon: QrCode,   root: createPageUrl('BarcodeScanner') },
-  { key: 'Profile',            label: 'Profile',  icon: User, root: createPageUrl('Dashboard') },
+  { key: 'home', label: 'Home', icon: Home, root: () => '/', match: p => p === '/' },
+  { key: 'consumer', label: 'Consumer', icon: ShoppingBag, root: () => '/ConsumerPortal', match: p => startsWithAny(p, CONSUMER_PATHS) },
+  { key: 'research', label: 'Research', icon: FlaskConical, root: () => '/ResearchPortal', match: p => startsWithAny(p, RESEARCH_PATHS) },
+  { key: 'profile', label: 'Profile', icon: User, root: user => (user ? '/Dashboard' : '/login'), match: p => startsWithAny(p, PROFILE_PATHS) },
 ];
 
-// Remember the last visited path per tab across renders (persists for the session)
+// Remember the last visited path per tab for the session, like native tab bars.
 const tabHistory = {};
 
-const getActiveTab = (pathname) => {
-  if (pathname === '/') return 'Home';
-  return TABS.find(t => t.key !== 'Home' && pathname.startsWith(t.root))?.key ?? null;
-};
-
-export default function BottomNavBar() {
+export default function BottomNavBar({ user }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const activeTab = getActiveTab(location.pathname);
+  const pathname = location.pathname;
+  const active = TABS.find(tab => tab.match(pathname))?.key ?? null;
+  if (active) tabHistory[active] = pathname + location.search;
 
-  // Keep tab history up to date
-  if (activeTab) tabHistory[activeTab] = location.pathname;
-
-  const handleTabPress = (tab) => {
-    const isActive = activeTab === tab.key;
-
-    if (isActive) {
-      // Re-tap: reset to root and scroll to top
-      navigate(tab.root, { replace: true });
+  const handlePress = tab => {
+    if (active === tab.key) {
+      navigate(tab.root(user), { replace: true });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      // Switch to last visited path for that tab, or root
-      const dest = tabHistory[tab.key] || tab.root;
-      navigate(dest);
+      navigate(tabHistory[tab.key] || tab.root(user));
     }
   };
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-t border-slate-200 lg:hidden bottom-nav"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-    >
-      <div className="flex items-center justify-around h-16">
-        {TABS.map((tab) => {
+    <nav aria-label="Primary" className="fixed bottom-0 inset-x-0 z-50 lg:hidden bottom-nav border-t border-slate-200 bg-white/95 backdrop-blur-md" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <div className="grid grid-cols-4 h-16 max-w-md mx-auto">
+        {TABS.map(tab => {
           const Icon = tab.icon;
-          const isActive = activeTab === tab.key;
+          const isActive = active === tab.key;
           return (
-            <button
-              key={tab.key}
-              onClick={() => handleTabPress(tab)}
-              className={`flex flex-col items-center justify-center flex-1 h-full transition-colors inline-touch ${
-                isActive
-                  ? 'text-[var(--suttain-teal)]'
-                  : 'text-slate-500 hover:text-slate-700'
-              }`}
-              aria-label={tab.label}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : ''}`} />
-              <span className={`text-[10px] mt-1 ${isActive ? 'font-semibold' : 'font-medium'}`}>
-                {tab.label}
+            <button key={tab.key} type="button" onClick={() => handlePress(tab)} aria-current={isActive ? 'page' : undefined}
+              className="relative flex flex-col items-center justify-center gap-1 transition-colors">
+              <span className={`flex items-center justify-center h-8 w-14 rounded-full transition-colors ${isActive ? 'bg-[#02988C]/10 text-[#02988C]' : 'text-slate-500'}`}>
+                <Icon className="w-5 h-5" strokeWidth={isActive ? 2.25 : 1.75} />
               </span>
+              <span className={`text-xs leading-none ${isActive ? 'font-semibold text-[#02988C]' : 'font-medium text-slate-500'}`}>{tab.label}</span>
             </button>
           );
         })}
