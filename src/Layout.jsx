@@ -269,7 +269,7 @@ export default function Layout({ children, currentPageName }) {
     { href: "Simulator", label: "Chemical Analysis", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
     { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", category: "Formulation" },
     { href: "BarcodeScanner", label: "Product Scanner", icon: QrCode, description: "Scan any product, toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
-    { href: "CarbonTaxSimulator", label: "Carbon Tax Simulator", icon: BarChart2, description: "Simulate carbon tax exposure and find greener alternatives with ROI", category: "Safety & Analysis" },
+    { href: "CarbonTaxSimulator", label: "Carbon Ledger", icon: BarChart2, description: "Sourced carbon footprint per unit, biobased carbon and the rules that apply" },
     { href: "SDSAnalyzer", label: "SDS Analyzer", icon: FileText, description: "Extract hazard data & GHS classifications from safety data sheets", category: "Safety & Analysis" },
   ];
 
