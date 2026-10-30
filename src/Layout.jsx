@@ -275,8 +275,6 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const researchToolItems = [
-    { href: "ResearchPortal", label: "Research overview", icon: FlaskConical, category: "Research" },
-    { href: "ResearchDashboard", label: "Research dashboard", icon: LayoutDashboard, category: "Research" },
     { href: "AtomisticSimulation", label: "Atomistic Simulation", icon: Atom, category: "Research" },
     { href: "BindingAndADME", label: "Binding & ADME", icon: FlaskConical, category: "Research" },
     { href: "DrugDesign", label: "Drug Design", icon: Target, category: "Research" },
@@ -286,7 +284,8 @@ export default function Layout({ children, currentPageName }) {
   const allToolItems = [...consumerToolItems];
 
   const isConsumerToolsActive = consumerToolItems.some(tool => location.pathname === createPageUrl(tool.href));
-  const isResearchToolsActive = researchToolItems.some(tool => location.pathname === `/${tool.href}` || location.pathname.startsWith(`/${tool.href}/`));
+  // Overview and dashboard are not menu items, but the Research tab still highlights on them.
+  const isResearchToolsActive = [...researchToolItems.map(tool => tool.href), 'ResearchPortal', 'ResearchDashboard'].some(href => location.pathname === `/${href}` || location.pathname.startsWith(`/${href}/`));
 
 
   const getLinkClasses = (href) => {
