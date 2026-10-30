@@ -173,7 +173,7 @@ async function searchPubChem(resolvedName, originalQuery) {
 async function searchChEMBL(query) {
   try {
     const url = `https://www.ebi.ac.uk/chembl/api/data/molecule/search.json?q=${encodeURIComponent(query)}&limit=5`;
-    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(9000) });
     if (!res.ok) return [];
     const data = await res.json();
     const molecules = data?.molecules || [];
@@ -203,11 +203,11 @@ async function searchChEMBL(query) {
 
 async function searchChEBI(query) {
   try {
-    const response = await fetch(`https://www.ebi.ac.uk/ols4/api/search?q=${encodeURIComponent(query)}&ontology=chebi&rows=5`);
+    const response = await fetch(`https://www.ebi.ac.uk/ols4/api/search?q=${encodeURIComponent(query)}&ontology=chebi&rows=5`, { signal: AbortSignal.timeout(9000) });
     if (!response.ok) return [];
     const data = await response.json();
     return await Promise.all((data.response?.docs || []).map(async doc => {
-      const detail = await fetch(`https://www.ebi.ac.uk/ols4/api/ontologies/chebi/terms?iri=${encodeURIComponent(doc.iri)}`);
+      const detail = await fetch(`https://www.ebi.ac.uk/ols4/api/ontologies/chebi/terms?iri=${encodeURIComponent(doc.iri)}`, { signal: AbortSignal.timeout(9000) });
       const term = detail.ok ? (await detail.json())._embedded?.terms?.[0] : null;
       const annotations = term?.annotation || {};
       const get = key => { const entry = Object.entries(annotations).find(([name]) => name.toLowerCase().includes(key)); return entry ? (Array.isArray(entry[1]) ? entry[1][0] : entry[1]) : ''; };

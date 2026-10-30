@@ -62,7 +62,7 @@ function inferTypeAndCategory(term = "") {
 }
 
 async function fetchJSON(url) {
-  const res = await fetch(url, { headers: { 'accept': 'application/json' } });
+  const res = await fetch(url, { headers: { 'accept': 'application/json' }, signal: AbortSignal.timeout(9000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return await res.json();
 }

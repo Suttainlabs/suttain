@@ -5,7 +5,7 @@ async function pubchemLookup(query) {
   const baseUrl = isSmiles
     ? `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(query)}/property/MolecularFormula,MolecularWeight,CanonicalSMILES,IUPACName,XLogP,TPSA,HBondDonorCount,HBondAcceptorCount/JSON`
     : `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(query)}/property/MolecularFormula,MolecularWeight,CanonicalSMILES,IUPACName,XLogP,TPSA,HBondDonorCount,HBondAcceptorCount/JSON`;
-  const res = await fetch(baseUrl);
+  const res = await fetch(baseUrl, { signal: AbortSignal.timeout(12000) });
   if (!res.ok) throw new Error(`PubChem lookup failed (${res.status})`);
   const data = await res.json();
   const props = data?.PropertyTable?.Properties?.[0];
@@ -17,10 +17,10 @@ async function pubchemLookup(query) {
 
 async function chemblLookup(query) {
   const url = `https://www.ebi.ac.uk/chembl/api/data/molecule/${encodeURIComponent(query)}.json`;
-  const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+  const res = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(12000) });
   if (!res.ok) {
     const searchUrl = `https://www.ebi.ac.uk/chembl/api/data/molecule/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
-    const searchRes = await fetch(searchUrl);
+    const searchRes = await fetch(searchUrl, { signal: AbortSignal.timeout(12000) });
     if (!searchRes.ok) throw new Error(`ChEMBL lookup failed (${res.status})`);
     const searchData = await searchRes.json();
     const hit = searchData?.molecules?.[0];
