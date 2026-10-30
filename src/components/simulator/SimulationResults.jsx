@@ -731,7 +731,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                         <p className="text-sm text-amber-900 flex-1">{warning}</p>
                                     </div>
                                 ))}
-                                {safety_status.warnings.length === 0 && (
+                                {!(safety_status?.warnings?.length) && (
                                     <p className="text-sm text-slate-600">No specific warnings at this time.</p>
                                 )}
                             </div>
