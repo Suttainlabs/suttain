@@ -64,6 +64,18 @@ import SourcingTab from "./SourcingTab";
 import MixingInstructions from "./MixingInstructions";
 import BusinessLockedTab from "./BusinessLockedTab";
 import ComplianceTracker from "./ComplianceTracker";
+import GuidedSteps from "@/components/consumer/GuidedSteps";
+
+const EDITOR_STEPS = [
+  { value: 'formulation', label: 'Formula', intro: 'Ingredients, percentages and phases. Edit any line and the checks update.' },
+  { value: 'instructions', label: 'How to make it', intro: 'Step-by-step preparation, in order.' },
+  { value: 'safety', label: 'Safety', intro: 'Hazards, safe handling and ingredient-level warnings.' },
+  { value: 'sustainability', label: 'Environmental impact', intro: 'Biodegradability and footprint of the ingredients.' },
+  { value: 'compliance', label: 'Compliance', intro: 'Regulatory limits and labelling checks for your market.' },
+  { value: 'cost', label: 'Cost', intro: 'Estimated ingredient cost per batch and per unit.' },
+  { value: 'batch', label: 'Batch scaling', intro: 'Scale the formula to a production batch size.' },
+  { value: 'sourcing', label: 'Sourcing', intro: 'Where to buy each ingredient.' },
+];
 
 const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
@@ -202,6 +214,7 @@ export default function FormulaEditor({
 
   // Batch / container scaling state
   const [batchSize, setBatchSize] = useState(100);
+  const [editorStep, setEditorStep] = useState('formulation');
   const [batchUnit, setBatchUnit] = useState('g');
 
   // Container scaling state
@@ -780,37 +793,14 @@ export default function FormulaEditor({
       <motion.div 
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start"
+        className="grid grid-cols-1 2xl:grid-cols-3 gap-6 items-start"
       >
         {/* Left Column - Main Content (2/3 width) */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-             <Tabs defaultValue="formulation" className="w-full">
-               <CardHeader className="pb-3 px-3 sm:px-6">
-                 <TabsList className="flex flex-wrap gap-1.5 h-auto p-1.5 bg-slate-100 rounded-xl">
-                   {[
-                     { value: 'formulation', icon: Beaker, label: 'Formula' },
-                     { value: 'instructions', icon: FileText, label: 'Steps' },
-                     { value: 'safety', icon: ShieldCheck, label: 'Safety' },
-                     { value: 'sustainability', icon: Leaf, label: 'Impact' },
-                     { value: 'compliance', icon: AlertTriangle, label: 'Comply' },
-                     { value: 'cost', icon: Calculator, label: 'Cost' },
-                     { value: 'batch', icon: Boxes, label: 'Batch' },
-                     { value: 'sourcing', icon: Boxes, label: 'Sourcing' },
-                   ].map(({ value, icon: Icon, label }) => (
-                     <TabsTrigger
-                       key={value}
-                       value={value}
-                       className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:text-teal-700 hover:bg-white transition-all duration-150 cursor-pointer data-[state=active]:bg-[#02988C] data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:shadow-teal-200"
-                     >
-                       <Icon className="w-3.5 h-3.5 flex-shrink-0" />
-                       <span>{label}</span>
-                     </TabsTrigger>
-                   ))}
-                 </TabsList>
-               </CardHeader>
-
+        <div className="2xl:col-span-2 space-y-6 min-w-0">
+          <Card className="bg-white border border-slate-200 shadow-none">
+             <Tabs value={editorStep} onValueChange={setEditorStep} className="w-full">
               <CardContent className="p-4 sm:p-6">
+               <GuidedSteps label="Formula steps" steps={EDITOR_STEPS} value={editorStep} onChange={setEditorStep}>
                 <TabsContent value="formulation" className="mt-0 space-y-6">
                   {/* Smart Container & Batch Scaler */}
                    <Card className="bg-gradient-to-br from-teal-50 to-white border border-teal-200">
@@ -1355,13 +1345,14 @@ export default function FormulaEditor({
                     />
                   )}
                 </TabsContent>
+               </GuidedSteps>
                     </CardContent>
                     </Tabs>
           </Card>
         </div>
 
         {/* Right Column - Live Analysis (1/3 width) */}
-        <div className="lg:col-span-1">
+        <div className="2xl:col-span-1 min-w-0">
           <FormulaAssistant 
             formula={formula}
             productType={productType}
