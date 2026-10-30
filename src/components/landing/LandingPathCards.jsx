@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import LandingElementBadge from '@/components/landing/LandingElementBadge';
 
 const paths = [
-  { number: '01', symbol: 'Cb', title: 'Consumer and brand', description: 'Safer, greener products. Scan products, generate validated formulas, and check compliance, no lab required.', items: ['Scan a product', 'Test interactions', 'Build a formula', 'Score sustainability'], link: '/BarcodeScanner', label: 'Explore consumer tools' },
+  { number: '01', symbol: 'Cb', title: 'Consumer and brand', description: 'Safer, greener products. Scan products, generate validated formulas, and check compliance, no lab required.', items: ['Scan a product', 'Test interactions', 'Build a formula', 'Score sustainability'], link: '/ConsumerPortal', label: 'Explore consumer tools' },
   { number: '02', symbol: 'Rs', research: true, title: 'Research', description: 'Atomistic Simulation and Drug Design for chemists, scientists, and R&D teams. Prepare molecular calculations, explore targets, and review the evidence behind your next step.', items: ['Atomistic Simulation', 'Drug Design'], link: '/ResearchPortal', label: 'Explore research tools' },
 ];
 export default function LandingPathCards() {
