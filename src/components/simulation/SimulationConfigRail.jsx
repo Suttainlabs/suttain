@@ -1,25 +1,69 @@
-import React from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import React, { useState } from 'react';
+import { SlidersHorizontal, ChevronDown, Search, Sparkles } from 'lucide-react';
 import DatabaseSearch from '@/components/computational/DatabaseSearch';
 import SimulationPresets from '@/components/computational/SimulationPresets';
 import SimulationEngineSelector from '@/components/research/SimulationEngineSelector';
 import SimulationWorkflowField from '@/components/research/SimulationWorkflowField';
 import EngineParameterFields from '@/components/simulation/EngineParameterFields';
 import SimulationRunActions from '@/components/simulation/SimulationRunActions';
-export default function SimulationConfigRail({sim,engine,catalogue,inputs,onChange,onEngine,fields,onCompound,onPreset,onUpload,onDraw,uploadKeys,drawKeys,onAdvanced,summary,actions}) {
-  return <aside className="min-w-0 rounded-xl border border-research-border bg-research-card p-5 self-start lg:sticky lg:top-20 space-y-6">
-    <div><p className="research-label mb-1">Configuration</p><h2 className="!text-lg">Set up your workflow</h2></div>
-    <SimulationEngineSelector compact engines={sim.engines} selected={engine} onSelect={onEngine} simType={sim.id}/>
-    <section className="space-y-4"><h3>Input source</h3>
-      {fields.filter(f=>uploadKeys.includes(f.key)).map(field=><SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]} onChange={value=>onChange(field.key,value)} canUpload canDraw={drawKeys.includes(field.key)} onUpload={()=>onUpload(field.key)} onDraw={()=>onDraw(field.key)}/>)}
-      <details><summary className="cursor-pointer text-sm text-research-accent py-2">Search a database</summary><DatabaseSearch onSelect={onCompound}/></details>
+
+function Step({ n, title, hint, children }) {
+  return (
+    <section className="space-y-3 border-t border-research-border pt-5 first:border-0 first:pt-0">
+      <div className="flex items-baseline gap-2"><span className="font-mono text-xs text-research-accent">{n}</span><h3 className="!text-base">{title}</h3></div>
+      {hint && <p className="-mt-1 text-xs text-research-muted">{hint}</p>}
+      {children}
     </section>
-    <section><EngineParameterFields section="core" engine={catalogue} inputs={inputs} onChange={onChange} simType={sim.id}/>
-      <div className="space-y-4">{fields.filter(f=>!uploadKeys.includes(f.key)).map(field=><SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]} onChange={value=>onChange(field.key,value)}/>)}</div>
-    </section>
-    <button type="button" onClick={onAdvanced} className="w-full flex items-start gap-3 rounded-lg border border-research-border p-4 text-left hover:bg-research-soft"><SlidersHorizontal className="h-4 w-4 mt-1 shrink-0"/><span><span className="block text-sm font-medium">Advanced settings</span><span className="block text-xs text-research-muted mt-1">{summary}</span></span></button>
-    <details><summary className="cursor-pointer text-sm text-research-muted py-2">Start from a preset</summary><SimulationPresets onSelectPreset={onPreset}/></details>
-    <div className="hidden lg:block"><SimulationRunActions {...actions}/></div>
-    <div className="h-20 lg:hidden" aria-hidden="true"/>
-  </aside>;
+  );
+}
+
+// Setup rail for one Atomistic Simulation workflow: engine → structure → method → run.
+export default function SimulationConfigRail({ sim, engine, catalogue, inputs, onChange, onEngine, fields, onCompound, onPreset, onUpload, onDraw, uploadKeys, drawKeys, onAdvanced, summary, actions }) {
+  const inputFields = fields.filter(f => uploadKeys.includes(f.key));
+  const methodFields = fields.filter(f => !uploadKeys.includes(f.key));
+  const [searchOpen, setSearchOpen] = useState(true);
+  const [presetsOpen, setPresetsOpen] = useState(false);
+  return (
+    <aside className="min-w-0 rounded-xl border border-research-border bg-research-card p-5 self-start lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto space-y-5">
+      <div><p className="research-label mb-1">Configuration</p><h2 className="!text-lg">Set up your workflow</h2></div>
+
+      <Step n="01" title="Compute engine">
+        <SimulationEngineSelector compact engines={sim.engines} selected={engine} onSelect={onEngine} simType={sim.id} />
+      </Step>
+
+      <Step n="02" title="Structure" hint="Type a name, SMILES or PDB ID, upload a file, draw it, or find it in a database.">
+        {inputFields.map(field => (
+          <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]} onChange={value => onChange(field.key, value)}
+            canUpload canDraw={drawKeys.includes(field.key)} onUpload={() => onUpload(field.key)} onDraw={() => onDraw(field.key)} />
+        ))}
+        <div className="rounded-lg border border-research-border">
+          <button type="button" onClick={() => setSearchOpen(o => !o)} aria-expanded={searchOpen}
+            className="flex w-full items-center justify-between gap-2 px-3 py-3 text-left text-sm font-medium">
+            <span className="flex items-center gap-2"><Search className="h-4 w-4 text-research-accent" />Find in a database</span>
+            <ChevronDown className={`h-4 w-4 text-research-muted transition-transform ${searchOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {searchOpen && <div className="border-t border-research-border p-3"><DatabaseSearch compact onSelect={onCompound} /></div>}
+        </div>
+      </Step>
+
+      <Step n="03" title="Method and conditions">
+        <EngineParameterFields section="core" engine={catalogue} inputs={inputs} onChange={onChange} simType={sim.id} />
+        {methodFields.length > 0 && <div className="space-y-4">{methodFields.map(field => <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]} onChange={value => onChange(field.key, value)} />)}</div>}
+        <button type="button" onClick={onAdvanced} className="w-full flex items-start gap-3 rounded-lg border border-research-border p-3 text-left hover:bg-research-soft">
+          <SlidersHorizontal className="h-4 w-4 mt-0.5 shrink-0 text-research-accent" />
+          <span className="min-w-0"><span className="block text-sm font-medium">Advanced settings</span><span className="block text-xs text-research-muted mt-0.5 break-words">{summary}</span></span>
+        </button>
+        <div className="rounded-lg border border-research-border">
+          <button type="button" onClick={() => setPresetsOpen(o => !o)} aria-expanded={presetsOpen} className="flex w-full items-center justify-between gap-2 px-3 py-3 text-left text-sm">
+            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-research-accent" />Start from a preset</span>
+            <ChevronDown className={`h-4 w-4 text-research-muted transition-transform ${presetsOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {presetsOpen && <div className="border-t border-research-border p-3"><SimulationPresets onSelectPreset={onPreset} /></div>}
+        </div>
+      </Step>
+
+      <div className="hidden lg:block border-t border-research-border pt-5"><SimulationRunActions {...actions} /></div>
+      <div className="h-20 lg:hidden" aria-hidden="true" />
+    </aside>
+  );
 }
