@@ -155,7 +155,7 @@ const ComparisonPanel = React.forwardRef(function ComparisonPanel({ side, onLoad
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === "Enter" && loadMolecule()}
           placeholder="PDB ID, molecule name, or SMILES…"
-          className="flex-1 bg-slate-700 text-white text-xs border border-slate-600 rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-400 placeholder-slate-500"
+          className="flex-1 min-w-0 bg-slate-700 text-white text-xs border border-slate-600 rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-400 placeholder-slate-500"
         />
         <Button size="sm" onClick={loadMolecule} disabled={loading}
           className="h-7 px-3 text-xs bg-cyan-600 hover:bg-cyan-700 text-white rounded flex-shrink-0">
@@ -252,12 +252,12 @@ export default function ComparisonViewer() {
   return (
     <div className="bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-slate-800 border-b border-slate-700">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-slate-800 border-b border-slate-700">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-cyan-400" />
           <span className="text-sm font-semibold text-white">Structure Comparison</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             onClick={handleAlign}
             disabled={!leftLoaded || !rightLoaded}

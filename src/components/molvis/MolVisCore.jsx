@@ -206,10 +206,10 @@ const MolVisCore = forwardRef(function MolVisCore(
   return (
     <div className="flex flex-col h-full">
       {/* PDB Search Bar */}
-      <div className="flex items-center gap-2 p-3 bg-slate-900 border-b border-slate-700">
-        <div className="flex-1 flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-900 border-b border-slate-700">
+        <div className="flex-1 min-w-0 flex items-center gap-2">
           <input
-            className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-sm text-white placeholder-slate-400 w-36 focus:outline-none focus:border-teal-500"
+            className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-sm text-white placeholder-slate-400 min-w-0 flex-1 sm:flex-none sm:w-36 focus:outline-none focus:border-teal-500"
             placeholder="PDB ID (e.g. 1CRN)"
             value={pdbId}
             onChange={e => setPdbId(e.target.value.toUpperCase())}
