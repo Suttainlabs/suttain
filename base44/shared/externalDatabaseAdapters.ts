@@ -70,7 +70,8 @@ export async function resolveChemicalIdentity(query) {
   // EPA CompTox Dashboard, DTXSID resolution (best-effort; endpoint availability varies)
   const compToxQuery = isCas ? trimmed : name;
   if (compToxQuery) {
-    const epa = await timedFetch(`https://comptox.epa.gov/dashboard-api/ccdapp2/chemical/search/equal/${encodeURIComponent(compToxQuery)}`, { headers: pubchemHeaders, timeout: 5000 });
+    // ccdapp2/chemical/search/equal was retired (404); ccdapp1/search/chemical/equal returns [{dtxsid, dtxcid, searchWord}].
+    const epa = await timedFetch(`https://comptox.epa.gov/dashboard-api/ccdapp1/search/chemical/equal/${encodeURIComponent(compToxQuery)}`, { headers: pubchemHeaders, timeout: 6000 });
     if (epa.ok && epa.json) {
       const hit = Array.isArray(epa.json) ? epa.json[0] : (epa.json?.results?.[0] || epa.json);
       if (hit) {
@@ -113,26 +114,26 @@ export async function pubchemGHS(identity) {
 export async function chebiDetail(identity) {
   const term = identity.name || identity.cas;
   if (!term) return null;
-  const searchRes = await timedFetch(`https://www.ebi.ac.uk/chebi/web-services2/rest/search?search=${encodeURIComponent(term)}&searchCategory=ALL&maximumResults=1`);
+  // ChEBI 2.0 backend (the legacy web-services2 REST API was retired and now returns 404).
+  const searchRes = await timedFetch(`https://www.ebi.ac.uk/chebi/backend/api/public/es_search/?term=${encodeURIComponent(term)}&size=1`);
   if (!searchRes.ok || !searchRes.json) return null;
-  const hit = searchRes.json?.searchResults?.results?.[0];
-  if (!hit?.chebiId) return null;
-  const id = hit.chebiId;
-  const sourceUrl = `https://www.ebi.ac.uk/chebi/searchId.do?chebiId=${id}`;
+  const hit = searchRes.json?.results?.[0]?._source;
+  const accession = hit?.chebi_accession;
+  if (!accession) return null;
+  const numericId = String(accession).replace(/^CHEBI:/i, '');
+  const sourceUrl = `https://www.ebi.ac.uk/chebi/searchId.do?chebiId=${accession}`;
   const fields = [];
-  if (hit.chebiAsciiName) fields.push({ field: 'ChEBI name', value: hit.chebiAsciiName, units: '', source_url: sourceUrl });
-  const formula = hit.formulae?.[0]?.data || (hit.formulae?.data);
+  const entRes = await timedFetch(`https://www.ebi.ac.uk/chebi/backend/api/public/compound/${numericId}/`);
+  const e = entRes.ok && entRes.json ? entRes.json : {};
+  const name = e.ascii_name || e.name || hit.ascii_name || hit.name;
+  if (name) fields.push({ field: 'ChEBI name', value: name, units: '', source_url: sourceUrl });
+  const formula = e.chemical_data?.formula || hit.formula;
   if (formula) fields.push({ field: 'Molecular formula', value: formula, units: '', source_url: sourceUrl });
-  if (hit.mass != null) fields.push({ field: 'Mass', value: String(hit.mass), units: 'Da', source_url: sourceUrl });
-  if (hit.iupacNames?.length) fields.push({ field: 'IUPAC name', value: hit.iupacNames[0], units: '', source_url: sourceUrl });
-  // Fetch full entity for definition + roles
-  const entRes = await timedFetch(`https://www.ebi.ac.uk/chebi/web-services2/rest/entity/${id}`);
-  if (entRes.ok && entRes.json) {
-    const e = entRes.json;
-    if (e.definition) fields.push({ field: 'Definition', value: e.definition, units: '', source_url: sourceUrl });
-    const roles = (e.Roles || e.Functions || []).map(r => r?.chebiAsciiName || r?.name).filter(Boolean);
-    if (roles.length) fields.push({ field: 'Biochemical role', value: roles.slice(0, 4).join(', '), units: '', source_url: sourceUrl });
-  }
+  const mass = e.chemical_data?.mass ?? hit.mass;
+  if (mass != null) fields.push({ field: 'Mass', value: String(mass), units: 'Da', source_url: sourceUrl });
+  if (e.definition) fields.push({ field: 'Definition', value: String(e.definition).replace(/<[^>]+>/g, ''), units: '', source_url: sourceUrl });
+  const roles = (e.roles_classification || []).map(r => r?.name).filter(Boolean);
+  if (roles.length) fields.push({ field: 'Biochemical role', value: roles.slice(0, 4).join(', '), units: '', source_url: sourceUrl });
   if (fields.length === 0) return null;
   return { source_db: 'ChEBI', fields, retrieved_at: nowIso() };
 }
