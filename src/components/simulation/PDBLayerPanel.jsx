@@ -205,8 +205,8 @@ function PDBSearchPanel({ onLoad }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-teal-700 text-xs">{id}</span>
-                    {m?.resolution && <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">{m.resolution}</span>}
-                    {m?.method && <span className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{m.method}</span>}
+                    {m?.resolution && <span className="text-[11px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">{m.resolution}</span>}
+                    {m?.method && <span className="text-[11px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{m.method}</span>}
                   </div>
                   {m?.title && <p className="text-xs text-slate-500 truncate mt-0.5">{m.title}</p>}
                 </div>
@@ -282,7 +282,7 @@ export default function PDBLayerPanel({ viewerRef, loadedPdbId, onLoadPdb }) {
             <LayerRow key={layer.id} layer={layer} viewerRef={viewerRef} onRemove={removeLayer} />
           ))}
           <div className="px-3 py-2 mt-1">
-            <p className="text-[10px] text-slate-400">Click a layer name to focus · Eye icon toggles visibility</p>
+            <p className="text-[11px] text-slate-400">Click a layer name to focus · Eye icon toggles visibility</p>
           </div>
         </div>
       )}

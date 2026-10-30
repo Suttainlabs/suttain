@@ -90,7 +90,7 @@ export default function ChainResiduePanel({ chains = [], atoms = [], onFocusResi
                   key={i}
                   title={`${r.resn} ${r.resi}`}
                   onClick={() => onFocusResidue?.(r.chain, r.resi)}
-                  className={`w-6 h-6 rounded text-white text-[9px] font-bold hover:ring-2 hover:ring-white transition-all ${color}`}
+                  className={`w-6 h-6 rounded text-white text-[11px] font-bold hover:ring-2 hover:ring-white transition-all ${color}`}
                 >
                   {r.resn?.slice(0, 1)}
                 </button>

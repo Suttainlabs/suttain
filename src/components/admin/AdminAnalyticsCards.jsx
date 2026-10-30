@@ -152,7 +152,7 @@ export default function AdminAnalyticsCards({ stats }) {
                   <div className="text-right flex-shrink-0">
                     <p className="text-xs text-slate-400">{moment(u.date).fromNow()}</p>
                     {u.role === 'admin' && (
-                      <Badge className="text-[10px] bg-violet-100 text-violet-700 mt-0.5">Admin</Badge>
+                      <Badge className="text-[11px] bg-violet-100 text-violet-700 mt-0.5">Admin</Badge>
                     )}
                   </div>
                 </div>

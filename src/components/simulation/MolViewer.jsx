@@ -309,14 +309,14 @@ const SinglePanel = React.forwardRef(function SinglePanel({ initialIdentifier, v
 
         {/* Source badge */}
         {source && loaded && (
-          <div className="absolute bottom-2 right-2 max-w-[calc(100%-8rem)] truncate z-10 bg-slate-900/70 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">
+          <div className="absolute bottom-2 right-2 max-w-[calc(100%-8rem)] truncate z-10 bg-slate-900/70 text-slate-400 text-[11px] px-2 py-0.5 rounded-full">
             {source}
           </div>
         )}
 
         {/* Inspector mode overlay hint */}
         {inspectorMode && loaded && !selectedAtom && !selectedBond && (
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-fuchsia-900/80 text-fuchsia-200 text-[10px] px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-fuchsia-900/80 text-fuchsia-200 text-[11px] px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
             Click an atom to inspect
           </div>
         )}

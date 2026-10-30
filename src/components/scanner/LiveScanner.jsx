@@ -386,18 +386,18 @@ const LiveScanner = ({ isOpen, onClose, onScanSuccess }) => {
                                             >
                                                 {entry.code}
                                             </button>
-                                            <span className="text-slate-500 text-[10px] shrink-0">{entry.format}</span>
+                                            <span className="text-slate-500 text-[11px] shrink-0">{entry.format}</span>
                                             {entry.confidence !== null && (
-                                                <span className={`text-[10px] font-semibold shrink-0 ${entry.confidence >= 75 ? 'text-green-400' : entry.confidence >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
+                                                <span className={`text-[11px] font-semibold shrink-0 ${entry.confidence >= 75 ? 'text-green-400' : entry.confidence >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
                                                     {entry.confidence}%
                                                 </span>
                                             )}
-                                            <span className="text-slate-600 text-[10px] shrink-0">{entry.time}</span>
+                                            <span className="text-slate-600 text-[11px] shrink-0">{entry.time}</span>
                                         </div>
                                     ))
                                 )}
                             </div>
-                            <p className="text-slate-600 text-[10px] text-center py-1.5">Tap a code to use it directly</p>
+                            <p className="text-slate-600 text-[11px] text-center py-1.5">Tap a code to use it directly</p>
                         </motion.div>
                     )}
                 </AnimatePresence>

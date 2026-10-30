@@ -288,7 +288,7 @@ export default function CostProductionPanel({ formula, batchSize, batchUnit, cos
                 </div>
                 {ing.source && (
                   <Badge
-                    className={`text-[10px] flex-shrink-0 ml-2 ${
+                    className={`text-[11px] flex-shrink-0 ml-2 ${
                       ing.sourceType === 'high'
                         ? 'bg-emerald-100 text-emerald-700'
                         : ing.sourceType === 'manual'
@@ -336,7 +336,7 @@ export default function CostProductionPanel({ formula, batchSize, batchUnit, cos
                   )}
                 </Button>
                 {ing.source && (
-                  <span className="text-[10px] text-slate-400">
+                  <span className="text-[11px] text-slate-400">
                     {ing.source} {ing.updated ? `| ${new Date(ing.updated).toLocaleDateString()}` : ''}
                   </span>
                 )}
@@ -361,7 +361,7 @@ export default function CostProductionPanel({ formula, batchSize, batchUnit, cos
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {PACKAGING_TYPES.map((pkg) => (
                 <div key={pkg.key}>
-                  <label className="text-[10px] text-slate-400 block mb-1">{pkg.label}</label>
+                  <label className="text-[11px] text-slate-400 block mb-1">{pkg.label}</label>
                   <div className="flex items-center gap-0.5">
                     <span className="text-xs text-slate-400">$</span>
                     <Input
@@ -465,7 +465,7 @@ export default function CostProductionPanel({ formula, batchSize, batchUnit, cos
               onChange={(e) => { setScaleMultiplier(parseFloat(e.target.value)); setCustomBatchMl(null); }}
               className="w-full accent-teal-600"
             />
-            <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+            <div className="flex justify-between text-[11px] text-slate-400 mt-1">
               <span>1x</span><span>5x</span><span>10x</span>
             </div>
           </div>
@@ -543,19 +543,19 @@ export default function CostProductionPanel({ formula, batchSize, batchUnit, cos
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-              <p className="text-[10px] text-slate-400 mb-1">Total Cost</p>
+              <p className="text-[11px] text-slate-400 mb-1">Total Cost</p>
               <p className="text-lg font-bold text-slate-800">{fmt(totalBatchCost)}</p>
             </div>
             <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-              <p className="text-[10px] text-slate-400 mb-1">Revenue ({effectiveUnits} units)</p>
+              <p className="text-[11px] text-slate-400 mb-1">Revenue ({effectiveUnits} units)</p>
               <p className="text-lg font-bold text-blue-700">{fmt(totalRevenue)}</p>
             </div>
             <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-200">
-              <p className="text-[10px] text-slate-400 mb-1">Gross Profit</p>
+              <p className="text-[11px] text-slate-400 mb-1">Gross Profit</p>
               <p className={`text-lg font-bold ${grossProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>{fmt(grossProfit)}</p>
             </div>
             <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
-              <p className="text-[10px] text-slate-400 mb-1">Break-even Units</p>
+              <p className="text-[11px] text-slate-400 mb-1">Break-even Units</p>
               <p className="text-lg font-bold text-amber-700">{breakEvenUnits}</p>
             </div>
           </div>

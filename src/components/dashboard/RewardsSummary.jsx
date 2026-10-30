@@ -51,12 +51,12 @@ export default function RewardsSummary({ user }) {
           <div className="bg-white/60 rounded-lg p-2.5 text-center">
             <Trophy className="w-4 h-4 text-amber-600 mx-auto mb-1" />
             <p className="text-xs font-medium text-amber-800">Earn More</p>
-            <p className="text-[10px] text-amber-600">Complete activities</p>
+            <p className="text-[11px] text-amber-600">Complete activities</p>
           </div>
           <div className="bg-white/60 rounded-lg p-2.5 text-center">
             <Target className="w-4 h-4 text-amber-600 mx-auto mb-1" />
             <p className="text-xs font-medium text-amber-800">Next Goal</p>
-            <p className="text-[10px] text-amber-600">{nextMilestone - points} pts away</p>
+            <p className="text-[11px] text-amber-600">{nextMilestone - points} pts away</p>
           </div>
         </div>
 

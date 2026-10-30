@@ -160,7 +160,7 @@ function SupplierSourcingPanel({ formula, batchSize, batchUnit }) {
                   <div className="hidden md:grid grid-cols-12 gap-2 items-center">
                     <div className="col-span-3">
                       <p className="font-medium text-slate-900 text-sm truncate">{ing.chemical_name}</p>
-                      <p className="text-[10px] text-slate-400">{ing.percentage}%</p>
+                      <p className="text-[11px] text-slate-400">{ing.percentage}%</p>
                     </div>
                     <div className="col-span-2">
                       {data?.loading ? (
@@ -168,7 +168,7 @@ function SupplierSourcingPanel({ formula, batchSize, batchUnit }) {
                       ) : bestSupplier ? (
                         <div>
                           <p className="font-bold text-teal-700 text-sm">{fmt(bestSupplier.pricePer100g)}</p>
-                          <p className="text-[10px] text-slate-400">per 100g</p>
+                          <p className="text-[11px] text-slate-400">per 100g</p>
                         </div>
                       ) : (
                         <span className="text-xs text-slate-400">--</span>
@@ -179,7 +179,7 @@ function SupplierSourcingPanel({ formula, batchSize, batchUnit }) {
                         <div className="flex items-center gap-1.5">
                           <span className="text-sm text-slate-700 truncate">{bestSupplier.supplier}</span>
                           {isPartnerSupplier(bestSupplier.supplier) && (
-                            <Badge className="text-[9px] bg-violet-100 text-violet-700 flex-shrink-0">Partner</Badge>
+                            <Badge className="text-[11px] bg-violet-100 text-violet-700 flex-shrink-0">Partner</Badge>
                           )}
                         </div>
                       ) : (
@@ -229,7 +229,7 @@ function SupplierSourcingPanel({ formula, batchSize, batchUnit }) {
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0">
                         <p className="font-medium text-slate-900 text-sm truncate">{ing.chemical_name}</p>
-                        <p className="text-[10px] text-slate-400">{ing.percentage}%</p>
+                        <p className="text-[11px] text-slate-400">{ing.percentage}%</p>
                       </div>
                       {data?.loading ? (
                         <Loader2 className="w-4 h-4 animate-spin text-teal-500 flex-shrink-0" />
@@ -243,14 +243,14 @@ function SupplierSourcingPanel({ formula, batchSize, batchUnit }) {
                     </div>
                     {bestSupplier && (
                       <div className="flex items-center gap-2 flex-wrap">
-                        <Badge className={`text-[10px] ${isPartnerSupplier(bestSupplier.supplier) ? 'bg-violet-100 text-violet-700' : 'bg-slate-100 text-slate-600'}`}>
+                        <Badge className={`text-[11px] ${isPartnerSupplier(bestSupplier.supplier) ? 'bg-violet-100 text-violet-700' : 'bg-slate-100 text-slate-600'}`}>
                           {isPartnerSupplier(bestSupplier.supplier) ? 'Partner' : 'Supplier'}: {bestSupplier.supplier}
                         </Badge>
-                        <Badge className={`text-[10px] ${bestSupplier.confidence === 'high' ? 'bg-emerald-100 text-emerald-700' : bestSupplier.confidence === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                        <Badge className={`text-[11px] ${bestSupplier.confidence === 'high' ? 'bg-emerald-100 text-emerald-700' : bestSupplier.confidence === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
                           {bestSupplier.confidence === 'high' ? 'High' : bestSupplier.confidence === 'medium' ? 'Est.' : 'Low'}
                         </Badge>
-                        <span className="text-[10px] text-slate-500 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" /> {bestSupplier.leadTime}</span>
-                        <span className="text-[10px] text-slate-500 flex items-center gap-0.5"><Package className="w-2.5 h-2.5" /> {bestSupplier.moq}</span>
+                        <span className="text-[11px] text-slate-500 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" /> {bestSupplier.leadTime}</span>
+                        <span className="text-[11px] text-slate-500 flex items-center gap-0.5"><Package className="w-2.5 h-2.5" /> {bestSupplier.moq}</span>
                       </div>
                     )}
                     {bestSupplier && (
@@ -299,7 +299,7 @@ function SupplierSourcingPanel({ formula, batchSize, batchUnit }) {
               <div key={i} className="flex items-center justify-between text-sm py-1.5 border-b border-teal-100 last:border-0">
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-slate-800 truncate">{item.ingredientName}</p>
-                  <p className="text-[10px] text-slate-500">
+                  <p className="text-[11px] text-slate-500">
                     {item.supplierData.supplier} | {item.gramsNeeded.toFixed(1)}g @ {fmt(item.supplierData.pricePer100g)}/100g
                   </p>
                 </div>
@@ -316,7 +316,7 @@ function SupplierSourcingPanel({ formula, batchSize, batchUnit }) {
               <span className="text-xl font-extrabold text-teal-700">{fmt(totalSourcingCost)}</span>
             </div>
             {unassignedIngredients.length > 0 && (
-              <p className="text-[10px] text-slate-400 pt-1">
+              <p className="text-[11px] text-slate-400 pt-1">
                 {unassignedIngredients.length} ingredient(s) not yet added to cart
               </p>
             )}

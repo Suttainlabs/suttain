@@ -46,7 +46,7 @@ export default function WarningsBanner({ warnings }) {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <p className={`text-sm font-bold ${s.title}`}>{w.ingredient_pair}</p>
-                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${s.container} ${s.title}`}>{s.label}</span>
+                    <span className={`text-[11px] font-bold uppercase px-1.5 py-0.5 rounded ${s.container} ${s.title}`}>{s.label}</span>
                   </div>
                   <p className={`text-xs ${s.body} mt-0.5`}>{w.message}</p>
                 </div>
@@ -73,7 +73,7 @@ export default function WarningsBanner({ warnings }) {
                   <div>
                     <div className="flex items-center gap-2">
                       <p className={`text-xs font-semibold ${s.title}`}>{w.ingredient_pair}</p>
-                      <span className={`text-[9px] font-bold uppercase ${s.body}`}>{s.label}</span>
+                      <span className={`text-[11px] font-bold uppercase ${s.body}`}>{s.label}</span>
                     </div>
                     <p className={`text-xs ${s.body}`}>{w.message}</p>
                   </div>

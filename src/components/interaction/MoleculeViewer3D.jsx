@@ -134,7 +134,7 @@ export default function MoleculeViewer3D({ ingredientName, index }) {
             <Atom className="w-4 h-4 text-teal-600 flex-shrink-0" />
             <CardTitle className="text-sm truncate">{ingredientName}</CardTitle>
             {molInfo && (
-              <Badge variant="secondary" className="text-[10px] flex-shrink-0">
+              <Badge variant="secondary" className="text-[11px] flex-shrink-0">
                 {molInfo.MolecularFormula}
               </Badge>
             )}
@@ -160,7 +160,7 @@ export default function MoleculeViewer3D({ ingredientName, index }) {
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 rounded-lg">
                 <AlertCircle className="w-6 h-6 text-slate-300 mb-2" />
                 <p className="text-xs text-slate-500">3D structure not available</p>
-                <p className="text-[10px] text-slate-400 mt-1">PubChem may not have this compound</p>
+                <p className="text-[11px] text-slate-400 mt-1">PubChem may not have this compound</p>
               </div>
             )}
             {status === 'ready' && (
@@ -178,7 +178,7 @@ export default function MoleculeViewer3D({ ingredientName, index }) {
             )}
           </div>
           {molInfo && (
-            <p className="text-[10px] text-slate-400 mt-1">
+            <p className="text-[11px] text-slate-400 mt-1">
               MW: {molInfo.MolecularWeight} g/mol | Source: PubChem CID
             </p>
           )}

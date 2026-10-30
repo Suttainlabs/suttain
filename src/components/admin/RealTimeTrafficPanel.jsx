@@ -350,7 +350,7 @@ export default function RealTimeTrafficPanel() {
                 {countries.map(({ country, count }, i) => (
                   <div key={country} className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-6 h-6 rounded-md bg-violet-100 flex items-center justify-center text-[10px] font-bold text-violet-700">
+                      <div className="w-6 h-6 rounded-md bg-violet-100 flex items-center justify-center text-[11px] font-bold text-violet-700">
                         {i + 1}
                       </div>
                       <span className="text-sm font-medium text-slate-700">{country}</span>

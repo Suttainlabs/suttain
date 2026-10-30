@@ -213,7 +213,7 @@ export default function BatchScalingPanel({ formula, batchSize, batchUnit, onBat
                   </td>
                   <td className="text-center py-2 pl-3">
                     {q.safeRange ? (
-                      <Badge className={`text-[10px] ${q.warning ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                      <Badge className={`text-[11px] ${q.warning ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
                         {q.safeRange.min}-{q.safeRange.max}{q.safeRange.unit}
                       </Badge>
                     ) : (

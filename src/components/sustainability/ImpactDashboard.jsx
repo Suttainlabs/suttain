@@ -43,7 +43,7 @@ function BadgeCard({ badge, earned }) {
                 <Icon className="w-7 h-7 text-white" />
             </div>
             <p className="text-xs font-bold text-slate-800 text-center leading-tight">{badge.label}</p>
-            <p className="text-[10px] text-slate-500 text-center leading-tight">{badge.desc}</p>
+            <p className="text-[11px] text-slate-500 text-center leading-tight">{badge.desc}</p>
             {earned && (
                 <span className="absolute top-2 right-2">
                     <CheckCircle2 className="w-4 h-4 text-green-500" />

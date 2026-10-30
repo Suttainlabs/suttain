@@ -69,7 +69,7 @@ export default function LotTrackingPanel({ formula, batchSize, batchUnit, onLots
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
           <Package className="w-5 h-5 text-teal-600" /> Lot Tracking
-          <Badge className="text-[10px] bg-slate-100 text-slate-600 ml-auto">{filledLots}/{totalIngredients} lots linked</Badge>
+          <Badge className="text-[11px] bg-slate-100 text-slate-600 ml-auto">{filledLots}/{totalIngredients} lots linked</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

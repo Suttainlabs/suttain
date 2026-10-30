@@ -147,7 +147,7 @@ export default function ProfilePage({ children }) {
           <div className="flex items-center gap-2">
             <button onClick={() => setShowNotifications(true)} aria-label="Notifications" className="relative flex h-11 w-11 items-center justify-center rounded-lg border border-research-border bg-research-card hover:bg-research-soft">
               <Bell className="h-4 w-4 text-research-muted" />
-              {unreadCount > 0 && <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-semibold text-white">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+              {unreadCount > 0 && <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-semibold text-white">{unreadCount > 9 ? '9+' : unreadCount}</span>}
             </button>
             <button onClick={() => navigate(createPageUrl('Settings'))} aria-label="Settings" className="flex h-11 w-11 items-center justify-center rounded-lg border border-research-border bg-research-card hover:bg-research-soft">
               <Settings className="h-4 w-4 text-research-muted" />

@@ -162,7 +162,7 @@ export default function IngredientInteractionAnalyzer({ ingredients, productType
                         <span className="text-sm font-medium">
                           {interaction.ingredients_involved?.join(' + ')}
                         </span>
-                        <Badge variant="outline" className="text-[10px] capitalize">
+                        <Badge variant="outline" className="text-[11px] capitalize">
                           {interaction.interaction_type}
                         </Badge>
                       </div>

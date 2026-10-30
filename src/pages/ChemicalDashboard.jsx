@@ -60,7 +60,7 @@ const StatCard = ({ label, value, sub, color, Icon }) => (
     <div className="min-w-0">
       <p className="text-xl font-bold text-slate-900 leading-tight">{value}</p>
       <p className="text-xs text-slate-500 truncate">{label}</p>
-      {sub && <p className="text-[10px] text-slate-400 mt-0.5">{sub}</p>}
+      {sub && <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>}
     </div>
   </div>
 );
@@ -68,7 +68,7 @@ const StatCard = ({ label, value, sub, color, Icon }) => (
 // ── Section wrapper ────────────────────────────────────────────────
 const Section = ({ title, children, span = 1 }) => (
   <div className={`bg-white border border-slate-200 rounded-xl p-5 ${span === 2 ? 'lg:col-span-2' : ''}`}>
-    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">{title}</p>
+    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-4">{title}</p>
     {children}
   </div>
 );
@@ -197,7 +197,7 @@ export default function ChemicalDashboard() {
           <span className="text-[11px] font-bold text-slate-500 tracking-widest uppercase">Chemical Intelligence Dashboard</span>
           <div className="ml-auto flex items-center gap-3">
             {lastUpdated && (
-              <span className="hidden sm:block text-[10px] text-slate-400 font-mono">Updated {lastUpdated}</span>
+              <span className="hidden sm:block text-[11px] text-slate-400 font-mono">Updated {lastUpdated}</span>
             )}
             <button
               onClick={load}
@@ -247,7 +247,7 @@ export default function ChemicalDashboard() {
                     <Bar dataKey="count" name="Compounds" fill={COLORS.teal} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-                <p className="text-[10px] text-slate-400 mt-2 text-center">Molecular weight ranges (g/mol)</p>
+                <p className="text-[11px] text-slate-400 mt-2 text-center">Molecular weight ranges (g/mol)</p>
               </Section>
 
               <Section title="Safety Level Breakdown">
@@ -276,7 +276,7 @@ export default function ChemicalDashboard() {
                     />
                   </PieChart>
                 </ResponsiveContainer>
-                <p className="text-[10px] text-slate-400 mt-2 text-center">
+                <p className="text-[11px] text-slate-400 mt-2 text-center">
                   Hazard classifications sourced from PubChem GHS &amp; curated rules
                 </p>
               </Section>
@@ -365,7 +365,7 @@ export default function ChemicalDashboard() {
                     </ScatterChart>
                   </ResponsiveContainer>
                 )}
-                <p className="text-[10px] text-slate-400 mt-2 text-center">Higher LogP = more lipophilic (fat-soluble)</p>
+                <p className="text-[11px] text-slate-400 mt-2 text-center">Higher LogP = more lipophilic (fat-soluble)</p>
               </Section>
 
               <Section title="Data Coverage by Property Domain">
@@ -390,7 +390,7 @@ export default function ChemicalDashboard() {
                     <Tooltip content={<ChartTooltip />} />
                   </RadarChart>
                 </ResponsiveContainer>
-                <p className="text-[10px] text-slate-400 mt-2 text-center">Percentage of compounds with each data domain populated</p>
+                <p className="text-[11px] text-slate-400 mt-2 text-center">Percentage of compounds with each data domain populated</p>
               </Section>
             </div>
           </>

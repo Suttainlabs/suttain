@@ -89,7 +89,7 @@ export default function ExternalDataSourcePanel({ enrichment, loading, compact =
                   <p className="text-xs text-slate-900 break-words mt-0.5">{String(f.value)}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  {f.units && <span className="text-[10px] text-slate-500 font-mono">{f.units}</span>}
+                  {f.units && <span className="text-[11px] text-slate-500 font-mono">{f.units}</span>}
                   {f.source_url && (
                     <a href={f.source_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#02988C] transition-colors">
                       <ExternalLink className="w-3 h-3" />
@@ -98,7 +98,7 @@ export default function ExternalDataSourcePanel({ enrichment, loading, compact =
                 </div>
               </div>
             ))}
-            <p className="text-[10px] text-slate-400 pt-1">
+            <p className="text-[11px] text-slate-400 pt-1">
               Retrieved {new Date(activeSourceData.retrieved_at).toLocaleString()} from {activeSourceData.source_db}
             </p>
           </div>

@@ -163,11 +163,11 @@ export default function BatchRecords() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-bold text-slate-800 text-sm">{batch.batch_number}</p>
-                          <Badge className={`text-[10px] ${STATUS_COLORS[batch.status] || 'bg-slate-100 text-slate-600'}`}>{batch.status}</Badge>
+                          <Badge className={`text-[11px] ${STATUS_COLORS[batch.status] || 'bg-slate-100 text-slate-600'}`}>{batch.status}</Badge>
                           {expStatus && (
-                            <Badge className={`text-[10px] ${expStatus.color}`}>{expStatus.label}</Badge>
+                            <Badge className={`text-[11px] ${expStatus.color}`}>{expStatus.label}</Badge>
                           )}
-                          <Badge className={`text-[10px] ${riskColor}`}>Risk: {risk}</Badge>
+                          <Badge className={`text-[11px] ${riskColor}`}>Risk: {risk}</Badge>
                         </div>
                         <p className="text-sm text-slate-700 mt-1">{batch.batch_name}</p>
                         <div className="flex items-center gap-4 mt-2 text-xs text-slate-500 flex-wrap">

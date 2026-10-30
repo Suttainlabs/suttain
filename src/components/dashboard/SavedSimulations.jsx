@@ -29,7 +29,7 @@ const SimulationCard = ({ simulation }) => {
           {simulation.chemicals?.length > 2 && ` +${simulation.chemicals.length - 2}`}
         </p>
         <div className="flex items-center gap-2 mt-1">
-          <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${riskBadge.color}`}>
+          <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${riskBadge.color}`}>
             <RiskIcon className="w-3 h-3 mr-1" />
             {riskBadge.label}
           </Badge>

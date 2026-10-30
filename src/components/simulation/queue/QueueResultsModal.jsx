@@ -100,7 +100,7 @@ export default function QueueResultsModal({ job, onClose }) {
                       <thead>
                         <tr className="bg-slate-50 border-b border-slate-200">
                           {["Property", "Value", "Unit", "Interpretation"].map(h => (
-                            <th key={h} className="text-left px-3 py-2 font-semibold text-slate-500 uppercase text-[10px]">{h}</th>
+                            <th key={h} className="text-left px-3 py-2 font-semibold text-slate-500 uppercase text-[11px]">{h}</th>
                           ))}
                         </tr>
                       </thead>
@@ -132,7 +132,7 @@ export default function QueueResultsModal({ job, onClose }) {
                   <ul className="space-y-1.5">
                     {result.next_steps.map((s, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                        <span className="w-4 h-4 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">{i+1}</span>
+                        <span className="w-4 h-4 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 mt-0.5">{i+1}</span>
                         {s}
                       </li>
                     ))}

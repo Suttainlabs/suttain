@@ -191,7 +191,7 @@ const ExternalSourcesCard = ({ sources }) => {
             >
                 <Database className="w-4 h-4 text-[#02988C]" />
                 <h4 className="text-sm font-semibold text-slate-800">External data sources</h4>
-                <Badge variant="outline" className="text-[10px] ml-1">{grouped.length} databases</Badge>
+                <Badge variant="outline" className="text-[11px] ml-1">{grouped.length} databases</Badge>
                 <ChevronRight className={`w-4 h-4 ml-auto text-slate-400 transition-transform ${expanded ? 'rotate-90' : ''}`} />
             </button>
             {expanded && (
@@ -204,7 +204,7 @@ const ExternalSourcesCard = ({ sources }) => {
                                     <div className="min-w-0">
                                         <span className="text-[11px] text-slate-500">{f.field}: </span>
                                         <span className="text-[11px] text-slate-900 break-words">{String(f.value)}</span>
-                                        {f.units && <span className="text-[10px] text-slate-500 ml-1">{f.units}</span>}
+                                        {f.units && <span className="text-[11px] text-slate-500 ml-1">{f.units}</span>}
                                     </div>
                                     {f.source_url && (
                                         <a href={f.source_url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#02988C] flex-shrink-0">
@@ -583,7 +583,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                         <div className="grid grid-cols-3 gap-2 sm:gap-4">
                             <div className={`p-2 sm:p-4 ${styling.bg} border ${styling.border} rounded-xl text-center`}>
                                 <Thermometer className={`w-5 h-5 mx-auto mb-1 sm:mb-2 ${styling.text}`} />
-                                <p className="text-[10px] sm:text-xs text-slate-600 mb-0.5 sm:mb-1">Reaction Type</p>
+                                <p className="text-[11px] sm:text-xs text-slate-600 mb-0.5 sm:mb-1">Reaction Type</p>
                                 <p className={`font-bold text-xs sm:text-sm leading-tight ${styling.text}`}>{energy_profile?.type || 'Unknown'}</p>
                             </div>
                             <div className={`p-2 sm:p-4 ${styling.bg} border ${styling.border} rounded-xl text-center`}>
@@ -592,12 +592,12 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                 ) : (
                                     <TrendingUp className={`w-5 h-5 mx-auto mb-1 sm:mb-2 ${styling.text}`} />
                                 )}
-                                <p className="text-[10px] sm:text-xs text-slate-600 mb-0.5 sm:mb-1">Energy Change</p>
+                                <p className="text-[11px] sm:text-xs text-slate-600 mb-0.5 sm:mb-1">Energy Change</p>
                                 <p className={`font-bold text-xs sm:text-sm leading-tight ${styling.text}`}>{energy_profile?.energy_change || 0} kJ/mol</p>
                             </div>
                             <div className={`p-2 sm:p-4 ${styling.bg} border ${styling.border} rounded-xl text-center`}>
                                 <Zap className={`w-5 h-5 mx-auto mb-1 sm:mb-2 ${styling.text}`} />
-                                <p className="text-[10px] sm:text-xs text-slate-600 mb-0.5 sm:mb-1">Activation Energy</p>
+                                <p className="text-[11px] sm:text-xs text-slate-600 mb-0.5 sm:mb-1">Activation Energy</p>
                                 <p className={`font-bold text-xs sm:text-sm leading-tight ${styling.text}`}>{energy_profile?.activation_energy || 0} kJ/mol</p>
                             </div>
                         </div>
@@ -1013,7 +1013,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                         Analyzed {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </p>
                                     {data?.audit?.attribution && (
-                                        <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
+                                        <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
                                             <Shield className="w-2.5 h-2.5" />
                                             {data.audit.attribution}
                                             {data.audit.overridden && (

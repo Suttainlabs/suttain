@@ -25,7 +25,7 @@ const FormulaCard = ({ formula }) => {
         <div className="flex items-center gap-2 mb-0.5">
           <p className="text-sm font-semibold text-slate-800 truncate">{formula.name || 'Unnamed Formula'}</p>
           {formula.status === 'draft' && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-amber-50 text-amber-700 border-amber-200">
+            <Badge variant="outline" className="text-[11px] px-1.5 py-0 bg-amber-50 text-amber-700 border-amber-200">
               Draft
             </Badge>
           )}

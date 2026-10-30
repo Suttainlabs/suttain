@@ -85,7 +85,7 @@ function MatrixCell({ rowChem, colChem, riskData, isLoading, onClick }) {
       whileHover={{ scale: 1.08, zIndex: 10 }}
       whileTap={{ scale: 0.95 }}
       onClick={() => onClick(rowChem, colChem, riskData)}
-      className="w-full h-full flex items-center justify-center text-[10px] font-bold rounded transition-all relative"
+      className="w-full h-full flex items-center justify-center text-[11px] font-bold rounded transition-all relative"
       style={{ background: cfg.bg, color: cfg.text, border: `2px solid ${cfg.border}` }}
       title={`${rowChem} + ${colChem}: ${cfg.label}`}
     >
@@ -463,7 +463,7 @@ Return JSON with:
             {/* Column labels */}
             <div className="flex" style={{ paddingLeft: "120px" }}>
               {chemicals.map(chem => (
-                <div key={chem} className="w-24 text-center text-[10px] font-semibold text-slate-500 px-1 pb-1 truncate" title={chem}>
+                <div key={chem} className="w-24 text-center text-[11px] font-semibold text-slate-500 px-1 pb-1 truncate" title={chem}>
                   {chem.replace(/\s*\(.*?\)/g, "").trim().substring(0, 14)}
                 </div>
               ))}
@@ -472,7 +472,7 @@ Return JSON with:
             {chemicals.map(rowChem => (
               <div key={rowChem} className="flex items-center mb-1">
                 {/* Row label */}
-                <div className="w-28 text-right pr-2 text-[10px] font-semibold text-slate-600 truncate flex-shrink-0" title={rowChem}>
+                <div className="w-28 text-right pr-2 text-[11px] font-semibold text-slate-600 truncate flex-shrink-0" title={rowChem}>
                   {rowChem.replace(/\s*\(.*?\)/g, "").trim().substring(0, 16)}
                 </div>
                 {/* Cells */}

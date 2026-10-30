@@ -169,7 +169,7 @@ Provide comprehensive suggestions in JSON format:
                       <Plus className="w-3.5 h-3.5 text-white" />
                     </div>
                     <span className="text-sm font-medium text-slate-900">Complementary Ingredients</span>
-                    <Badge className={`${modeColors.badgeBg} ${modeColors.badgeText} text-[10px]`}>
+                    <Badge className={`${modeColors.badgeBg} ${modeColors.badgeText} text-[11px]`}>
                       {suggestions.complementary_ingredients.length}
                     </Badge>
                   </div>
@@ -195,17 +195,17 @@ Provide comprehensive suggestions in JSON format:
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="font-medium text-sm text-slate-900">{ing.name}</span>
-                                  <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                                  <Badge variant="outline" className="text-[11px] px-1.5 py-0">
                                     {ing.suggested_percentage}%
                                   </Badge>
                                 </div>
                                 <p className="text-[11px] text-slate-600 mt-1">{ing.purpose}</p>
-                                <p className="text-[10px] text-emerald-700 mt-1">
+                                <p className="text-[11px] text-emerald-700 mt-1">
                                   <Lightbulb className="w-3 h-3 inline mr-1" />
                                   {ing.why_add}
                                 </p>
                                 {ing.safety_notes && (
-                                  <p className="text-[10px] text-amber-700 mt-1">
+                                  <p className="text-[11px] text-amber-700 mt-1">
                                     <Shield className="w-3 h-3 inline mr-1" />
                                     {ing.safety_notes}
                                   </p>
@@ -305,7 +305,7 @@ Provide comprehensive suggestions in JSON format:
                         {suggestions.improvement_tips.map((tip, idx) => (
                           <div key={idx} className="p-2 bg-blue-50 rounded-lg">
                             <div className="flex items-center gap-2 mb-1">
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">
+                              <Badge variant="outline" className="text-[11px] px-1.5 py-0 capitalize">
                                 {tip.category === 'cost' && <DollarSign className="w-2.5 h-2.5 mr-0.5" />}
                                 {tip.category === 'safety' && <Shield className="w-2.5 h-2.5 mr-0.5" />}
                                 {tip.category === 'efficacy' && <Beaker className="w-2.5 h-2.5 mr-0.5" />}
@@ -315,7 +315,7 @@ Provide comprehensive suggestions in JSON format:
                             </div>
                             <p className="text-xs text-slate-700">{tip.tip}</p>
                             {tip.impact && (
-                              <p className="text-[10px] text-blue-700 mt-1">
+                              <p className="text-[11px] text-blue-700 mt-1">
                                 <Check className="w-3 h-3 inline mr-1" />
                                 Impact: {tip.impact}
                               </p>
@@ -341,7 +341,7 @@ Provide comprehensive suggestions in JSON format:
                       <Beaker className="w-3.5 h-3.5 text-white" />
                     </div>
                     <span className="text-sm font-medium text-slate-900">Formula Variations</span>
-                    <Badge className={`${modeColors.badgeBg} ${modeColors.badgeText} text-[10px]`}>
+                    <Badge className={`${modeColors.badgeBg} ${modeColors.badgeText} text-[11px]`}>
                       {suggestions.potential_formulations.length}
                     </Badge>
                   </div>
@@ -368,10 +368,10 @@ Provide comprehensive suggestions in JSON format:
                             
                             {form.key_changes?.length > 0 && (
                               <div className="mb-2">
-                                <p className="text-[10px] font-medium text-slate-700 mb-1">Key Changes:</p>
+                                <p className="text-[11px] font-medium text-slate-700 mb-1">Key Changes:</p>
                                 <ul className="space-y-0.5">
                                   {form.key_changes.map((change, i) => (
-                                    <li key={i} className="text-[10px] text-slate-600 flex items-start gap-1">
+                                    <li key={i} className="text-[11px] text-slate-600 flex items-start gap-1">
                                       <span className={modeColors.text}>•</span>
                                       <span>{change}</span>
                                     </li>
@@ -383,7 +383,7 @@ Provide comprehensive suggestions in JSON format:
                             {form.benefits?.length > 0 && (
                               <div className="flex flex-wrap gap-1">
                                 {form.benefits.map((benefit, i) => (
-                                  <Badge key={i} variant="outline" className="text-[9px] px-1.5 py-0">
+                                  <Badge key={i} variant="outline" className="text-[11px] px-1.5 py-0">
                                     ✓ {benefit}
                                   </Badge>
                                 ))}

@@ -535,14 +535,14 @@ export default function BusinessChemicalInput({
                                 onClick={() => updateChemical(chemical.id, 'concentration', parseFloat(Math.min(100, (parseFloat(chemical.concentration) || 0) + 0.1).toFixed(2)))}
                                 className="h-3 px-1 text-slate-600 hover:bg-slate-100 rounded-t flex items-center justify-center"
                               >
-                                <span className="text-[10px]">▲</span>
+                                <span className="text-[11px]">▲</span>
                               </button>
                               <button
                                 type="button"
                                 onClick={() => updateChemical(chemical.id, 'concentration', parseFloat(Math.max(0, (parseFloat(chemical.concentration) || 0) - 0.1).toFixed(2)))}
                                 className="h-3 px-1 text-slate-600 hover:bg-slate-100 rounded-b flex items-center justify-center"
                               >
-                                <span className="text-[10px]">▼</span>
+                                <span className="text-[11px]">▼</span>
                               </button>
                             </div>
                           </div>
@@ -574,14 +574,14 @@ export default function BusinessChemicalInput({
                                 onClick={() => updateChemical(chemical.id, 'costPerKg', parseFloat(((parseFloat(chemical.costPerKg) || 0) + 0.1).toFixed(2)))}
                                 className="h-3 px-1 text-slate-600 hover:bg-slate-100 rounded-t flex items-center justify-center"
                               >
-                                <span className="text-[10px]">▲</span>
+                                <span className="text-[11px]">▲</span>
                               </button>
                               <button
                                 type="button"
                                 onClick={() => updateChemical(chemical.id, 'costPerKg', Math.max(0, parseFloat(((parseFloat(chemical.costPerKg) || 0) - 0.1).toFixed(2))))}
                                 className="h-3 px-1 text-slate-600 hover:bg-slate-100 rounded-b flex items-center justify-center"
                               >
-                                <span className="text-[10px]">▼</span>
+                                <span className="text-[11px]">▼</span>
                               </button>
                             </div>
                           </div>

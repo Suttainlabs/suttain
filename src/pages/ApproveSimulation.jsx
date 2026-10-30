@@ -8,7 +8,7 @@ import { Loader2, CheckCircle2, XCircle, ShieldCheck, AlertTriangle, FlaskConica
 function Stat({ label, value }) {
   return (
     <div className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
-      <p className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">{label}</p>
+      <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{label}</p>
       <p className="text-sm font-bold text-slate-800 mt-0.5">{value || ':'}</p>
     </div>
   );
@@ -176,14 +176,14 @@ export default function ApproveSimulation() {
 
               {risk.recommendation && (
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-                  <p className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold mb-1">Recommendation</p>
+                  <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-1">Recommendation</p>
                   <p className="text-sm text-slate-700">{risk.recommendation}</p>
                 </div>
               )}
 
               {reaction.balanced_equation && (
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-                  <p className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold mb-1">Balanced equation</p>
+                  <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-1">Balanced equation</p>
                   <p className="text-sm text-slate-700 font-mono">{reaction.balanced_equation}</p>
                 </div>
               )}

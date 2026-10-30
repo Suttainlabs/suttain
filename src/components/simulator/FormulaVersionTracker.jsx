@@ -125,7 +125,7 @@ export default function FormulaVersionTracker({ chemicals, simulationData, onRev
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="font-semibold text-slate-800 text-sm">{v.label}</span>
                         {v.metrics.safety_level && (
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${safeLevelColor(v.metrics.safety_level)}`}>
+                          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${safeLevelColor(v.metrics.safety_level)}`}>
                             {v.metrics.safety_level}
                           </span>
                         )}
@@ -136,15 +136,15 @@ export default function FormulaVersionTracker({ chemicals, simulationData, onRev
                       </div>
                       <div className="flex flex-wrap gap-1">
                         {v.chemicals.slice(0, 4).map((c, i) => (
-                          <span key={i} className="inline-flex items-center gap-1 text-[10px] bg-white border border-slate-200 text-slate-600 px-1.5 py-0.5 rounded-md">
+                          <span key={i} className="inline-flex items-center gap-1 text-[11px] bg-white border border-slate-200 text-slate-600 px-1.5 py-0.5 rounded-md">
                             <FlaskConical className="w-2.5 h-2.5 text-teal-500" />
                             {c.name || c.scientific_name}
                           </span>
                         ))}
-                        {v.chemicals.length > 4 && <span className="text-[10px] text-slate-400">+{v.chemicals.length - 4} more</span>}
+                        {v.chemicals.length > 4 && <span className="text-[11px] text-slate-400">+{v.chemicals.length - 4} more</span>}
                       </div>
                       {v.metrics.environmental_impact != null && (
-                        <div className="flex gap-3 mt-2 text-[10px] text-slate-500">
+                        <div className="flex gap-3 mt-2 text-[11px] text-slate-500">
                           <span>Env Impact: <strong className="text-slate-700">{v.metrics.environmental_impact}</strong></span>
                           <span>Risk: <strong className="text-slate-700">{v.metrics.overall_risk}</strong></span>
                         </div>

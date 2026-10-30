@@ -24,7 +24,7 @@ export default function GreenAlternatives({ alternatives }) {
                 {alt.certifications?.length > 0 && (
                   <div className="flex gap-1 mt-1.5">
                     {alt.certifications.map((c, j) => (
-                      <Badge key={j} variant="outline" className="text-[10px]">{c}</Badge>
+                      <Badge key={j} variant="outline" className="text-[11px]">{c}</Badge>
                     ))}
                   </div>
                 )}

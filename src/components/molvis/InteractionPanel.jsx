@@ -103,7 +103,7 @@ export default function InteractionPanel({ interactions = MOCK_INTERACTIONS }) {
                       <span className="text-slate-400">{typeInfo?.label}</span>
                     </div>
                   </td>
-                  <td className="px-2 py-1 text-slate-300 font-mono text-[10px]">
+                  <td className="px-2 py-1 text-slate-300 font-mono text-[11px]">
                     {i.atom1}<br />{i.atom2}
                   </td>
                   <td className="px-2 py-1 text-right text-slate-300">{i.distance}</td>

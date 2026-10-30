@@ -41,10 +41,10 @@ export default function KanbanBoard({ projects, onStatusChange, onNewProject, on
                         className="w-2 h-2 rounded-full"
                         style={{ backgroundColor: col.color }}
                       />
-                      <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                      <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">
                         {col.title}
                       </span>
-                      <span className="text-[10px] text-slate-600 font-semibold">
+                      <span className="text-[11px] text-slate-600 font-semibold">
                         {colProjects.length}
                       </span>
                     </div>
@@ -81,21 +81,21 @@ export default function KanbanBoard({ projects, onStatusChange, onNewProject, on
                               </p>
                             </div>
                             {p.description && (
-                              <p className="text-[10px] text-slate-500 leading-snug mb-2 line-clamp-2">
+                              <p className="text-[11px] text-slate-500 leading-snug mb-2 line-clamp-2">
                                 {p.description}
                               </p>
                             )}
                             <div className="flex items-center justify-between gap-1.5">
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 {p.project_type && (
-                                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-700/60 text-slate-400 font-medium capitalize">
+                                  <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-slate-700/60 text-slate-400 font-medium capitalize">
                                     {p.project_type.replace(/_/g, ' ')}
                                   </span>
                                 )}
                                 {p.tags?.slice(0, 2).map((tag) => (
                                   <span
                                     key={tag}
-                                    className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-700/40 text-slate-500 font-medium"
+                                    className="text-[11px] px-1.5 py-0.5 rounded-full bg-slate-700/40 text-slate-500 font-medium"
                                   >
                                     {tag}
                                   </span>
@@ -117,7 +117,7 @@ export default function KanbanBoard({ projects, onStatusChange, onNewProject, on
                     ))}
                     {provided.placeholder}
                     {colProjects.length === 0 && !snapshot.isDraggingOver && (
-                      <p className="text-[10px] text-slate-700 text-center py-6">
+                      <p className="text-[11px] text-slate-700 text-center py-6">
                         Drop projects here
                       </p>
                     )}

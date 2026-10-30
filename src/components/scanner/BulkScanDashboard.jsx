@@ -65,10 +65,10 @@ function ProductCard({ item, onRemove, index }) {
                         <p className="text-xs text-slate-500 truncate">{item.product?.brand}</p>
                         {item.healthRating && (
                             <div className="flex gap-1 mt-1 flex-wrap">
-                                <Badge className={`text-[10px] px-1.5 py-0 ${RATING_CONFIG[item.healthRating]?.bg ?? 'bg-slate-100'} ${RATING_CONFIG[item.healthRating]?.color ?? 'text-slate-700'} border-0`}>
+                                <Badge className={`text-[11px] px-1.5 py-0 ${RATING_CONFIG[item.healthRating]?.bg ?? 'bg-slate-100'} ${RATING_CONFIG[item.healthRating]?.color ?? 'text-slate-700'} border-0`}>
                                     ❤️ {item.healthRating}
                                 </Badge>
-                                <Badge className={`text-[10px] px-1.5 py-0 ${cfg.color} border-0`}>
+                                <Badge className={`text-[11px] px-1.5 py-0 ${cfg.color} border-0`}>
                                     🛡 {cfg.label}
                                 </Badge>
                             </div>

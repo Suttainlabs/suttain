@@ -289,12 +289,12 @@ export default function ComputationalSimulation() {
                   <p className="text-xs text-slate-500 leading-relaxed mb-3">{s.description}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {s.engines.slice(0, 3).map(e => (
-                      <span key={e} className="inline-block bg-slate-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                      <span key={e} className="inline-block bg-slate-100 text-slate-600 text-[11px] font-semibold px-2 py-0.5 rounded-full">
                         {e}
                       </span>
                     ))}
                     {s.engines.length > 3 && (
-                      <span className="inline-block bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full">
+                      <span className="inline-block bg-slate-100 text-slate-500 text-[11px] px-2 py-0.5 rounded-full">
                         +{s.engines.length - 3}
                       </span>
                     )}

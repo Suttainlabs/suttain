@@ -305,12 +305,12 @@ export default function ComparativeImpactReport() {
                         <div>
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <p className="font-bold text-slate-900 text-sm">{rec.title}</p>
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${impactColor[rec.impact] || impactColor.low}`}>
+                            <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${impactColor[rec.impact] || impactColor.low}`}>
                               {rec.impact?.toUpperCase()} IMPACT
                             </span>
                           </div>
                           <p className="text-slate-600 text-xs leading-relaxed">{rec.detail}</p>
-                          {rec.category && <p className="text-teal-600 text-[10px] font-semibold mt-1">{rec.category}</p>}
+                          {rec.category && <p className="text-teal-600 text-[11px] font-semibold mt-1">{rec.category}</p>}
                         </div>
                       </div>
                     </CardContent>

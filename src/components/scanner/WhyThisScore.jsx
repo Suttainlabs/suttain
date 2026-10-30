@@ -56,7 +56,7 @@ export default function WhyThisScore({ ingredientName, doseAnalysis, onLoad, loa
               {/* Confidence badge + dose-adjusted score */}
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 {conf && (
-                  <Badge className={`text-[10px] ${conf.bg} ${conf.text} ${conf.border} border`}>
+                  <Badge className={`text-[11px] ${conf.bg} ${conf.text} ${conf.border} border`}>
                     {conf.label}
                   </Badge>
                 )}
@@ -73,10 +73,10 @@ export default function WhyThisScore({ ingredientName, doseAnalysis, onLoad, loa
 
               {/* Concentration context */}
               <div className="p-2.5 bg-slate-50 rounded-lg">
-                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-0.5">Concentration Context</p>
+                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-0.5">Concentration Context</p>
                 <p className="text-xs text-slate-700">{analysis.typical_concentration}</p>
                 {!analysis.concentration_known && (
-                  <p className="text-[10px] text-amber-600 mt-1 italic">
+                  <p className="text-[11px] text-amber-600 mt-1 italic">
                     Score is based on presence only and may overstate risk.
                   </p>
                 )}
@@ -85,17 +85,17 @@ export default function WhyThisScore({ ingredientName, doseAnalysis, onLoad, loa
               {/* Safe-use level */}
               {analysis.safe_use_level && (
                 <div className="p-2.5 bg-emerald-50 rounded-lg">
-                  <p className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wide mb-0.5">Safe-Use Level</p>
+                  <p className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wide mb-0.5">Safe-Use Level</p>
                   <p className="text-xs text-emerald-800">{analysis.safe_use_level}</p>
                   {analysis.regulatory_source && (
-                    <p className="text-[10px] text-emerald-600 mt-0.5">{analysis.regulatory_source}</p>
+                    <p className="text-[11px] text-emerald-600 mt-0.5">{analysis.regulatory_source}</p>
                   )}
                 </div>
               )}
 
               {/* Reasoning */}
               <div className="p-2.5 bg-blue-50 rounded-lg">
-                <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide mb-0.5">Reasoning</p>
+                <p className="text-[11px] font-semibold text-blue-600 uppercase tracking-wide mb-0.5">Reasoning</p>
                 <p className="text-xs text-blue-800 leading-relaxed">{analysis.reasoning}</p>
               </div>
 

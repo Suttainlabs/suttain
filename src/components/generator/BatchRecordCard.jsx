@@ -82,7 +82,7 @@ export default function BatchRecordCard({ formula, batchName, batchSize, batchUn
           </div>
           <div className="qr text-center">
             <img src={qrCodeUrl} alt="Batch QR Code" className="w-24 h-24" />
-            <p className="text-[9px] text-slate-400 mt-1">Scan for traceability</p>
+            <p className="text-[11px] text-slate-400 mt-1">Scan for traceability</p>
           </div>
         </div>
       </CardHeader>
@@ -125,12 +125,12 @@ export default function BatchRecordCard({ formula, batchName, batchSize, batchUn
               Risk: {overallRisk}
             </Badge>
             {complianceData?.regional_compliance?.map((r, i) => (
-              <Badge key={i} className={`text-[10px] ${r.status === 'compliant' ? 'bg-emerald-100 text-emerald-700' : r.status === 'restricted' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+              <Badge key={i} className={`text-[11px] ${r.status === 'compliant' ? 'bg-emerald-100 text-emerald-700' : r.status === 'restricted' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
                 {r.region}: {r.status}
               </Badge>
             ))}
             {complianceData?.allergen_declarations?.length > 0 && (
-              <Badge className="text-[10px] bg-orange-100 text-orange-700">
+              <Badge className="text-[11px] bg-orange-100 text-orange-700">
                 {complianceData.allergen_declarations.length} allergen(s)
               </Badge>
             )}

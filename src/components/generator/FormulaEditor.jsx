@@ -862,7 +862,7 @@ export default function FormulaEditor({
                                  setContainerUnit(isL ? 'L' : 'ml');
                                  setContainerScaled(false);
                                }}
-                               className="text-[10px] font-semibold px-2 py-1 rounded-full border border-teal-200 text-teal-700 hover:bg-teal-100 transition-colors"
+                               className="text-[11px] font-semibold px-2 py-1 rounded-full border border-teal-200 text-teal-700 hover:bg-teal-100 transition-colors"
                              >
                                {p.label}
                              </button>
@@ -969,12 +969,12 @@ export default function FormulaEditor({
                                   <div className="flex items-center gap-2 flex-wrap">
                                     <span className="font-semibold text-slate-900">{ingredient.name}</span>
                                     {ingredient.category && (
-                                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 capitalize">
+                                      <Badge variant="secondary" className="text-[11px] px-1.5 py-0 capitalize">
                                         {ingredient.category.replace(/_/g, ' ')}
                                       </Badge>
                                     )}
                                     {ingredient.safety_level && (
-                                      <Badge className={`text-[10px] px-1.5 py-0 ${
+                                      <Badge className={`text-[11px] px-1.5 py-0 ${
                                         ingredient.safety_level === 'safe' ? 'bg-green-100 text-green-700' :
                                         ingredient.safety_level === 'moderate' ? 'bg-amber-100 text-amber-700' :
                                         ingredient.safety_level === 'hazardous' ? 'bg-red-100 text-red-700' :
@@ -989,7 +989,7 @@ export default function FormulaEditor({
                                   <p className="text-xs text-slate-600 mt-1 line-clamp-2">
                                     {ingredient.function_description || 'General purpose ingredient'}
                                   </p>
-                                  <div className="flex items-center gap-3 mt-1.5 text-[10px] text-slate-500">
+                                  <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-500">
                                     {ingredient.typical_percentage_range && (
                                       <span className="flex items-center gap-1">
                                         <Droplets className="w-3 h-3" />
@@ -1156,7 +1156,7 @@ export default function FormulaEditor({
                           {updatingOption === 'preservative' ? <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 animate-spin"/> : <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2"/>}
                           Suggest Preservative
                         </Button>
-                        <p className="text-[10px] sm:text-xs text-slate-500">Adds a preservative to extend shelf life and prevent microbial growth.</p>
+                        <p className="text-[11px] sm:text-xs text-slate-500">Adds a preservative to extend shelf life and prevent microbial growth.</p>
                       </div>
                       <div className="p-2 sm:p-3 bg-white/60 rounded-lg border border-slate-200">
                         <Button 
@@ -1169,7 +1169,7 @@ export default function FormulaEditor({
                           {updatingOption === 'ph_adjuster' ? <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 animate-spin"/> : <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2"/>}
                           Suggest pH Adjuster
                         </Button>
-                        <p className="text-[10px] sm:text-xs text-slate-500">Balances formula acidity for skin compatibility and stability.</p>
+                        <p className="text-[11px] sm:text-xs text-slate-500">Balances formula acidity for skin compatibility and stability.</p>
                       </div>
                     </CardContent>
                   </Card>

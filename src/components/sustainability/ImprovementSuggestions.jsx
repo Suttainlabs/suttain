@@ -21,7 +21,7 @@ export default function ImprovementSuggestions({ improvements }) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-slate-700">{imp.suggestion}</p>
-                {imp.category && <Badge variant="outline" className="text-[10px] mt-1 capitalize">{imp.category}</Badge>}
+                {imp.category && <Badge variant="outline" className="text-[11px] mt-1 capitalize">{imp.category}</Badge>}
               </div>
               <div className="flex-shrink-0">
                 <span className="text-sm font-bold text-green-600">+{imp.impact_percentage}%</span>

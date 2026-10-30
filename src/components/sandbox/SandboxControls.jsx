@@ -61,7 +61,7 @@ export default function SandboxControls({
               />
               <div className="min-w-0">
                 <p className="text-xs font-bold leading-tight">{a.id}</p>
-                <p className="text-[10px] text-slate-400 truncate leading-tight">{a.label}</p>
+                <p className="text-[11px] text-slate-400 truncate leading-tight">{a.label}</p>
               </div>
             </button>
           ))}
@@ -126,7 +126,7 @@ export default function SandboxControls({
           className="w-full accent-violet-500 cursor-pointer"
           aria-label="Temperature"
         />
-        <div className="flex justify-between text-[10px] text-slate-500 mt-1">
+        <div className="flex justify-between text-[11px] text-slate-500 mt-1">
           <span>0 K</span><span>500 K</span><span>1000 K</span>
         </div>
       </div>

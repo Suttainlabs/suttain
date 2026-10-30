@@ -32,7 +32,7 @@ export default function SupplierOptionsModal({ isOpen, onClose, ingredientName, 
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="font-semibold text-slate-900 text-sm">{s.supplier}</p>
                       <Badge
-                        className={`text-[10px] ${
+                        className={`text-[11px] ${
                           s.confidence === 'high'
                             ? 'bg-emerald-100 text-emerald-700'
                             : s.confidence === 'medium'
@@ -43,7 +43,7 @@ export default function SupplierOptionsModal({ isOpen, onClose, ingredientName, 
                         {s.confidence === 'high' ? 'High confidence' : s.confidence === 'medium' ? 'Estimate' : 'Low confidence'}
                       </Badge>
                       {s.sourcingScore !== undefined && (
-                        <Badge className="text-[10px] bg-teal-100 text-teal-700">
+                        <Badge className="text-[11px] bg-teal-100 text-teal-700">
                           <Leaf className="w-2.5 h-2.5 mr-0.5 inline" /> {s.sourcingScore}/100
                         </Badge>
                       )}
@@ -64,7 +64,7 @@ export default function SupplierOptionsModal({ isOpen, onClose, ingredientName, 
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="text-lg font-bold text-teal-700">{fmt(s.pricePer100g)}</p>
-                    <p className="text-[10px] text-slate-400">per 100g</p>
+                    <p className="text-[11px] text-slate-400">per 100g</p>
                   </div>
                 </div>
                 <div className="mt-2">

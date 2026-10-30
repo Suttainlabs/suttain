@@ -64,7 +64,7 @@ const ActivityItem = ({ item }) => {
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                    <Badge variant="outline" className={`text-[10px] px-1.5 py-0 font-medium ${config.badgeColor}`}>
+                    <Badge variant="outline" className={`text-[11px] px-1.5 py-0 font-medium ${config.badgeColor}`}>
                         {config.label}
                     </Badge>
                 </div>

@@ -210,7 +210,7 @@ const ComparisonPanel = React.forwardRef(function ComparisonPanel({ side, onLoad
         )}
 
         {loaded && (
-          <div className="absolute bottom-2 left-2 bg-slate-900/70 text-green-400 text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
+          <div className="absolute bottom-2 left-2 bg-slate-900/70 text-green-400 text-[11px] px-2 py-0.5 rounded-full flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3" /> Ready
           </div>
         )}

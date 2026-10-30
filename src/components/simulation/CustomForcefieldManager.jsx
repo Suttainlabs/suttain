@@ -54,7 +54,7 @@ function ParamSection({ title, rows, cols, emptyRow, onChange }) {
           {cols && (
             <div className="flex gap-1.5 px-1">
               {cols.map(c => (
-                <span key={c.key} className="flex-1 min-w-0 text-[10px] font-semibold text-slate-400 uppercase truncate">{c.label}</span>
+                <span key={c.key} className="flex-1 min-w-0 text-[11px] font-semibold text-slate-400 uppercase truncate">{c.label}</span>
               ))}
               <span className="w-6 flex-shrink-0" />
             </div>
@@ -295,7 +295,7 @@ export default function CustomForcefieldManager({ isOpen, onClose, onSelect, ini
                                 { label: "Angles", count: ff.angle_parameters?.length },
                                 { label: "Dihedrals", count: ff.dihedral_parameters?.length },
                               ].map(p => p.count > 0 && (
-                                <span key={p.label} className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                                <span key={p.label} className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 text-[11px] font-semibold px-2 py-0.5 rounded-full">
                                   {p.count} {p.label}
                                 </span>
                               ))}

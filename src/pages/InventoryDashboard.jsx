@@ -61,7 +61,7 @@ function StatCard({ label, value, sub, color, Icon }) {
       <div className="min-w-0">
         <p className="text-xl font-bold text-white leading-tight">{value}</p>
         <p className="text-xs text-slate-400 truncate">{label}</p>
-        {sub && <p className="text-[10px] text-slate-600 mt-0.5">{sub}</p>}
+        {sub && <p className="text-[11px] text-slate-600 mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -149,7 +149,7 @@ export default function InventoryDashboard() {
           </span>
           <div className="ml-auto flex items-center gap-3">
             {lastUpdated && (
-              <span className="hidden sm:block text-[10px] text-slate-600 font-mono">
+              <span className="hidden sm:block text-[11px] text-slate-600 font-mono">
                 Updated {lastUpdated}
               </span>
             )}
@@ -218,7 +218,7 @@ export default function InventoryDashboard() {
             <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <BarChart2 className="w-4 h-4 text-slate-500" />
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
                   Total Quantity by Chemical Type
                 </p>
               </div>
@@ -254,7 +254,7 @@ export default function InventoryDashboard() {
             <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <FlaskConical className="w-4 h-4 text-slate-500" />
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
                   Breakdown by Chemical Type
                 </p>
               </div>
@@ -262,16 +262,16 @@ export default function InventoryDashboard() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-700/50 text-left">
-                      <th className="py-2.5 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                      <th className="py-2.5 px-3 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
                         Type
                       </th>
-                      <th className="py-2.5 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">
+                      <th className="py-2.5 px-3 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-right">
                         Items
                       </th>
-                      <th className="py-2.5 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">
+                      <th className="py-2.5 px-3 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-right">
                         Total Quantity
                       </th>
-                      <th className="py-2.5 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">
+                      <th className="py-2.5 px-3 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-right">
                         Low Stock
                       </th>
                     </tr>
@@ -323,7 +323,7 @@ export default function InventoryDashboard() {
               <div className="bg-red-950/30 border border-red-800/40 rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <AlertTriangle className="w-4 h-4 text-red-400" />
-                  <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">
+                  <p className="text-[11px] font-bold text-red-400 uppercase tracking-widest">
                     Low Stock Items
                   </p>
                 </div>
@@ -338,13 +338,13 @@ export default function InventoryDashboard() {
                           {item.name}
                         </p>
                         {item.location && (
-                          <p className="text-[10px] text-slate-600 mt-0.5">
+                          <p className="text-[11px] text-slate-600 mt-0.5">
                             {item.location}
                           </p>
                         )}
                       </div>
                       <div className="flex items-center gap-3 flex-shrink-0 ml-3">
-                        <span className="text-[10px] text-slate-500">
+                        <span className="text-[11px] text-slate-500">
                           Threshold: {item.low_stock_threshold}
                         </span>
                         <span className="text-xs font-bold text-red-400">

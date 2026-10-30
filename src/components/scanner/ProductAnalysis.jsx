@@ -65,7 +65,7 @@ const ScoreRing = ({ score, size = 72, label, color }) => {
           {score}
         </text>
       </svg>
-      {label && <span className="text-[10px] text-slate-500 font-medium text-center leading-tight">{label}</span>}
+      {label && <span className="text-[11px] text-slate-500 font-medium text-center leading-tight">{label}</span>}
     </div>
   );
 };
@@ -116,12 +116,12 @@ const IngredientItem = ({ ingredient, doseAnalysis, onLoadDose, doseLoading, dos
           <div className="flex items-center gap-2 flex-wrap">
             <p className="truncate">{ingredient.name}</p>
             {isGood && (
-              <Badge className="text-[10px] bg-emerald-100 text-emerald-700 border-emerald-200 px-1.5 py-0">
+              <Badge className="text-[11px] bg-emerald-100 text-emerald-700 border-emerald-200 px-1.5 py-0">
                 ✓ Safe
               </Badge>
             )}
             {isBad && (
-              <Badge className="text-[10px] bg-red-100 text-red-700 border-red-200 px-1.5 py-0">
+              <Badge className="text-[11px] bg-red-100 text-red-700 border-red-200 px-1.5 py-0">
                 ⚠ Caution
               </Badge>
             )}
@@ -611,8 +611,8 @@ export default function ProductAnalysis({ product, onClear, user }) {
             {/* Score ring */}
             <div className="flex-shrink-0 flex flex-col items-center gap-0.5 p-2 bg-white rounded-xl shadow border border-slate-100">
               <ScoreRing score={overallScore} size={64} />
-              <span className="text-[10px] font-semibold text-slate-500 leading-tight">Overall</span>
-              <Badge className={`text-[9px] px-1.5 py-0 ${getRatingLabel(overallScore).bg} ${getRatingLabel(overallScore).color} border-0`}>
+              <span className="text-[11px] font-semibold text-slate-500 leading-tight">Overall</span>
+              <Badge className={`text-[11px] px-1.5 py-0 ${getRatingLabel(overallScore).bg} ${getRatingLabel(overallScore).color} border-0`}>
                 {getRatingLabel(overallScore).label}
               </Badge>
             </div>
@@ -811,7 +811,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                         <p className="text-xs text-violet-600">Get notified when products contain ingredients you prefer to avoid.</p>
                       </div>
                     </div>
-                    <Badge className="bg-violet-600 text-white text-[10px] shrink-0">PRO</Badge>
+                    <Badge className="bg-violet-600 text-white text-[11px] shrink-0">PRO</Badge>
                   </CardContent>
                 </Card>
               )}
@@ -881,7 +881,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                         <Search className="w-4 h-4 text-violet-500" />
                         <span className="text-sm font-semibold text-slate-700">Search by Ingredients</span>
                       </div>
-                      <Badge className="bg-violet-600 text-white text-[10px]">PRO</Badge>
+                      <Badge className="bg-violet-600 text-white text-[11px]">PRO</Badge>
                     </div>
                     <p className="text-xs text-slate-500 mt-1">Find all products in our database containing a specific ingredient.</p>
                   </CardContent>

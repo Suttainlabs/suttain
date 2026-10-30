@@ -550,7 +550,7 @@ export default function ChemicalInput({
                             </div>
                             {chemical.source_db && (
                               <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] font-bold text-white bg-slate-600 rounded px-1.5 py-0.5 leading-tight">
+                                <span className="text-[11px] font-bold text-white bg-slate-600 rounded px-1.5 py-0.5 leading-tight">
                                   {chemical.source_db}
                                 </span>
                               </div>
@@ -753,7 +753,7 @@ export default function ChemicalInput({
                           step={1}
                           className="w-full"
                         />
-                        <div className="flex justify-between text-[10px] text-slate-400">
+                        <div className="flex justify-between text-[11px] text-slate-400">
                           <span>-50°C</span>
                           <span className="text-green-600">Room (25°C)</span>
                           <span>200°C</span>
@@ -782,7 +782,7 @@ export default function ChemicalInput({
                           step={0.5}
                           className="w-full"
                         />
-                        <div className="flex justify-between text-[10px] text-slate-400">
+                        <div className="flex justify-between text-[11px] text-slate-400">
                           <span className="text-red-500">Acidic</span>
                           <span className="text-green-500">Neutral (7)</span>
                           <span className="text-purple-500">Basic</span>

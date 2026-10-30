@@ -259,7 +259,7 @@ export default function CarbonTaxSimulator() {
                       className={cn('px-2.5 py-1 rounded-lg border text-xs font-semibold transition-all', selectedMarkets.includes(m.id) ? 'border-[#02988C] bg-[#F0FAF5] text-[#02988C]' : 'border-slate-200 text-slate-500 hover:border-[#02988C]/40')}
                     >
                       {m.name}
-                      {m.cbam && <span className="ml-1 text-amber-500 text-[9px]">CBAM</span>}
+                      {m.cbam && <span className="ml-1 text-amber-500 text-[11px]">CBAM</span>}
                     </button>
                   ))}
                 </div>

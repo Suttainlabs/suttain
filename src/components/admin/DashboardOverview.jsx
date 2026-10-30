@@ -175,7 +175,7 @@ export default function DashboardOverview() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-slate-800 leading-tight">{tool.label}</p>
-                <p className="text-[10px] text-slate-400 leading-tight mt-0.5 hidden sm:block">{tool.desc}</p>
+                <p className="text-[11px] text-slate-400 leading-tight mt-0.5 hidden sm:block">{tool.desc}</p>
               </div>
             </div>
           ))}

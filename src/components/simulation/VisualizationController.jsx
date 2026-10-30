@@ -204,7 +204,7 @@ export default function VisualizationController({ viewerRef, viewer: viewerProp,
                           />
                           <div className="min-w-0 flex-1">
                             <p className="text-xs font-semibold text-slate-900">{item.name}</p>
-                            <p className="text-[10px] text-slate-500">{item.smiles}</p>
+                            <p className="text-[11px] text-slate-500">{item.smiles}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-1 flex-shrink-0">

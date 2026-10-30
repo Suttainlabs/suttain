@@ -54,7 +54,7 @@ export default function HazardBadge({ safetyLevel, dataSource, size = 'sm', show
   const sourceLabel = SOURCE_LABELS[dataSource] || (dataSource ? dataSource : null);
 
   const sizeClasses = size === 'xs'
-    ? 'text-[10px] px-1.5 py-0.5 gap-1'
+    ? 'text-[11px] px-1.5 py-0.5 gap-1'
     : 'text-xs px-2 py-0.5 gap-1.5';
 
   return (
@@ -65,7 +65,7 @@ export default function HazardBadge({ safetyLevel, dataSource, size = 'sm', show
         {config.label}
       </span>
       {showSource && sourceLabel && (
-        <span className="text-[10px] text-slate-400 font-medium">
+        <span className="text-[11px] text-slate-400 font-medium">
           {sourceLabel}
         </span>
       )}

@@ -120,7 +120,7 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
                               {onSelectResult && <button className="text-xs text-research-accent underline px-2" onClick={() => onSelectResult(record)}>Open results</button>}
                               <button
                                 onClick={() => setCompareA(isA ? null : record)}
-                                className={`text-[10px] font-bold px-2 py-1 rounded-lg transition-colors ${
+                                className={`text-[11px] font-bold px-2 py-1 rounded-lg transition-colors ${
                                   isA ? "bg-violet-600 text-white" : "bg-violet-100 text-violet-700 hover:bg-violet-200"
                                 }`}
                               >
@@ -128,7 +128,7 @@ export default function SimulationHistoryPanel({ currentResults, currentInputs, 
                               </button>
                               <button
                                 onClick={() => setCompareB(isB ? null : record)}
-                                className={`text-[10px] font-bold px-2 py-1 rounded-lg transition-colors ${
+                                className={`text-[11px] font-bold px-2 py-1 rounded-lg transition-colors ${
                                   isB ? "bg-teal-600 text-white" : "bg-teal-100 text-teal-700 hover:bg-teal-200"
                                 }`}
                               >

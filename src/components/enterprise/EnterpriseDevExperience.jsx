@@ -68,7 +68,7 @@ export default function EnterpriseDevExperience() {
             >
               {tab.label}
               {tab.primary && (
-                <span className="ml-2 px-1.5 py-0.5 text-[10px] font-bold rounded bg-violet-100 text-violet-600 uppercase tracking-wider">
+                <span className="ml-2 px-1.5 py-0.5 text-[11px] font-bold rounded bg-violet-100 text-violet-600 uppercase tracking-wider">
                   Primary
                 </span>
               )}

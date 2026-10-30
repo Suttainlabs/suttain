@@ -228,7 +228,7 @@ Return JSON with suggested changes.`;
                     className="pointer-events-none h-3.5 w-3.5 sm:h-4 sm:w-4"
                   />
                   <target.icon className={`w-3 h-3 flex-shrink-0 ${selectedTargets.includes(target.id) ? modeColors.text : 'text-slate-500'}`} />
-                  <span className="text-[10px] sm:text-xs font-medium leading-tight">{target.label}</span>
+                  <span className="text-[11px] sm:text-xs font-medium leading-tight">{target.label}</span>
                 </div>
               </div>
             ))}
@@ -298,7 +298,7 @@ Return JSON with suggested changes.`;
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1 mb-1">
-                            <Badge variant="outline" className="text-[10px] px-1 py-0">
+                            <Badge variant="outline" className="text-[11px] px-1 py-0">
                               {change.type}
                             </Badge>
                             {change.type === 'replace' && (
@@ -320,7 +320,7 @@ Return JSON with suggested changes.`;
                               <span className="text-xs font-medium text-red-700">- {change.original_ingredient}</span>
                             )}
                           </div>
-                          <p className="text-[10px] text-slate-500">{change.benefit}</p>
+                          <p className="text-[11px] text-slate-500">{change.benefit}</p>
                         </div>
                         <Button
                           size="sm"
@@ -338,8 +338,8 @@ Return JSON with suggested changes.`;
 
               {suggestions.expected_improvements?.length > 0 && (
                 <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-lg">
-                  <p className="text-[10px] font-medium text-emerald-800 mb-1">Expected Improvements:</p>
-                  <ul className="text-[10px] text-emerald-700 space-y-0.5">
+                  <p className="text-[11px] font-medium text-emerald-800 mb-1">Expected Improvements:</p>
+                  <ul className="text-[11px] text-emerald-700 space-y-0.5">
                     {suggestions.expected_improvements.map((imp, i) => (
                       <li key={i}>• {imp}</li>
                     ))}

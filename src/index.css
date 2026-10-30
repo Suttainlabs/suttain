@@ -726,3 +726,13 @@
 .consumer-setup-rail [class*="bg-gradient-to-"]:not(button) [class*="bg-white/"] { background-color: hsl(var(--research-card)) !important; }
 .consumer-setup-rail :is(.shadow-xl, .shadow-2xl, .shadow-lg, .shadow-md) { box-shadow: none !important; }
 .consumer-theme.simulation-workspace button[class*="bg-gradient-to-"] { background-image: none !important; background-color: hsl(var(--research-accent)) !important; color: hsl(var(--research-card)) !important; }
+
+/* Mobile safety net: long words and wide content never push past the screen edge. */
+@media (max-width: 639px) {
+  main :is(h1, h2, h3, h4, p, li, dd, td) { overflow-wrap: anywhere; }
+  main table:not(.keep-table) { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  main pre { white-space: pre-wrap; word-break: break-word; }
+  main img, main video, main canvas, main svg:not([width]) { max-width: 100%; }
+  main img { height: auto; }
+  main [role="tablist"] { scrollbar-width: none; }
+}

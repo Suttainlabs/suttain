@@ -176,7 +176,7 @@ export default function PersonalRiskCard({ product, healthProfile, onFindAlterna
             <div key={i} className="bg-white rounded-xl p-3 border border-red-200">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span className="font-semibold text-red-900 text-sm">{f.ingredient}</span>
-                <Badge className="bg-red-100 text-red-800 border-red-200 text-[10px] flex-shrink-0">
+                <Badge className="bg-red-100 text-red-800 border-red-200 text-[11px] flex-shrink-0">
                   {f.reason}
                 </Badge>
               </div>

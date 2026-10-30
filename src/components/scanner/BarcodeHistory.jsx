@@ -53,14 +53,14 @@ const BarcodeHistory = ({ history, onSelect, onDelete }) => {
                                 <div className="flex items-center gap-2 mt-0.5">
                                     <p className="text-xs text-slate-400 font-mono">{item.barcode}</p>
                                     {item.created_date && (
-                                        <span className="flex items-center gap-0.5 text-[10px] text-slate-400">
+                                        <span className="flex items-center gap-0.5 text-[11px] text-slate-400">
                                             <Clock className="w-2.5 h-2.5" />
                                             {formatDistanceToNow(new Date(item.created_date), { addSuffix: true })}
                                         </span>
                                     )}
                                 </div>
                                 {item.ingredient_count > 0 && (
-                                    <p className="text-[10px] text-slate-400">{item.ingredient_count} ingredients</p>
+                                    <p className="text-[11px] text-slate-400">{item.ingredient_count} ingredients</p>
                                 )}
                             </div>
                         </button>

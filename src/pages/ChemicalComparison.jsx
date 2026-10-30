@@ -62,14 +62,14 @@ function Mol3DViewer({ cid, name, smiles }) {
       {status === 'loading' && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-white">
           <Loader2 className="w-5 h-5 text-[#007850] animate-spin" />
-          <p className="text-[10px] text-slate-400">Fetching 3D structure...</p>
+          <p className="text-[11px] text-slate-400">Fetching 3D structure...</p>
         </div>
       )}
       {status === 'error' && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-white">
           <Atom className="w-6 h-6 text-slate-300" />
-          <p className="text-[10px] text-slate-400">3D structure unavailable</p>
-          <button onClick={load} className="text-[10px] text-[#007850] flex items-center gap-1 hover:underline">
+          <p className="text-[11px] text-slate-400">3D structure unavailable</p>
+          <button onClick={load} className="text-[11px] text-[#007850] flex items-center gap-1 hover:underline">
             <RefreshCw className="w-3 h-3" /> Retry
           </button>
         </div>
@@ -88,17 +88,17 @@ function PropRow({ label, valA, valB, unit, numeric }) {
 
   const fmt = (v) => {
     if (v == null) return <span className="text-slate-300">:</span>;
-    if (numeric) return <span>{Number(v).toFixed(3)}{unit ? <span className="text-slate-400 ml-1 text-[10px]">{unit}</span> : null}</span>;
-    return <span>{v}{unit ? <span className="text-slate-400 ml-1 text-[10px]">{unit}</span> : null}</span>;
+    if (numeric) return <span>{Number(v).toFixed(3)}{unit ? <span className="text-slate-400 ml-1 text-[11px]">{unit}</span> : null}</span>;
+    return <span>{v}{unit ? <span className="text-slate-400 ml-1 text-[11px]">{unit}</span> : null}</span>;
   };
 
   return (
     <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 py-1.5 border-b border-slate-100 last:border-0">
       <div className="text-right">{fmt(valA)}</div>
       <div className="text-center flex flex-col items-center gap-0.5 min-w-[100px]">
-        <span className="text-[10px] text-slate-400 font-mono">{label}</span>
+        <span className="text-[11px] text-slate-400 font-mono">{label}</span>
         {showDelta && (
-          <span className={`text-[9px] font-bold flex items-center gap-0.5 ${delta > 0 ? 'text-emerald-600' : delta < 0 ? 'text-red-500' : 'text-slate-400'}`}>
+          <span className={`text-[11px] font-bold flex items-center gap-0.5 ${delta > 0 ? 'text-emerald-600' : delta < 0 ? 'text-red-500' : 'text-slate-400'}`}>
             {delta > 0 ? <ChevronUp className="w-2.5 h-2.5" /> : delta < 0 ? <ChevronDown className="w-2.5 h-2.5" /> : <Minus className="w-2.5 h-2.5" />}
             {delta === 0 ? 'equal' : `${delta > 0 ? '+' : ''}${delta.toFixed(3)}`}
           </span>
@@ -180,8 +180,8 @@ function CompoundSelector({ slot, selected, onSelect }) {
         <div className="flex items-center justify-between bg-white border border-[#007850]/30 rounded-xl px-4 py-3 shadow-sm">
           <div>
             <p className="text-sm font-bold text-slate-900">{selected.name}</p>
-            {selected.molecular_formula && <p className="text-[10px] font-mono text-slate-400 mt-0.5">{selected.molecular_formula}</p>}
-            {selected._source === 'pubchem' && <span className="text-[9px] text-[#007850] font-bold uppercase">PubChem</span>}
+            {selected.molecular_formula && <p className="text-[11px] font-mono text-slate-400 mt-0.5">{selected.molecular_formula}</p>}
+            {selected._source === 'pubchem' && <span className="text-[11px] text-[#007850] font-bold uppercase">PubChem</span>}
           </div>
           <button onClick={clear} className="text-slate-400 hover:text-slate-600 ml-3">
             <X className="w-4 h-4" />
@@ -209,9 +209,9 @@ function CompoundSelector({ slot, selected, onSelect }) {
                 >
                   <div>
                     <p className="text-xs font-semibold text-slate-700">{c.name}</p>
-                    {c.molecular_formula && <p className="text-[10px] font-mono text-slate-400">{c.molecular_formula}</p>}
+                    {c.molecular_formula && <p className="text-[11px] font-mono text-slate-400">{c.molecular_formula}</p>}
                   </div>
-                  <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${c._source === 'local' ? 'bg-slate-100 text-slate-500' : 'bg-[#007850]/10 text-[#007850]'}`}>
+                  <span className={`text-[11px] font-bold uppercase px-1.5 py-0.5 rounded ${c._source === 'local' ? 'bg-slate-100 text-slate-500' : 'bg-[#007850]/10 text-[#007850]'}`}>
                     {c._source === 'local' ? 'Local' : 'PubChem'}
                   </span>
                 </button>
@@ -255,11 +255,11 @@ export default function ChemicalComparison() {
         {/* Selectors */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Compound A</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Compound A</p>
             <CompoundSelector slot="A" selected={compA} onSelect={setCompA} />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Compound B</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Compound B</p>
             <CompoundSelector slot="B" selected={compB} onSelect={setCompB} />
           </div>
         </div>
@@ -283,21 +283,21 @@ export default function ChemicalComparison() {
             <div className="grid grid-cols-[1fr_120px_1fr] gap-2 items-center">
               <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
                 <p className="text-sm font-bold text-slate-900">{compA.name}</p>
-                {compA.iupac_name && <p className="text-[10px] font-mono text-slate-400 mt-0.5 truncate">{compA.iupac_name}</p>}
+                {compA.iupac_name && <p className="text-[11px] font-mono text-slate-400 mt-0.5 truncate">{compA.iupac_name}</p>}
                 {compA.pubchem_cid && (
-                  <a href={`https://pubchem.ncbi.nlm.nih.gov/compound/${compA.pubchem_cid}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-[#007850] hover:underline mt-1">
+                  <a href={`https://pubchem.ncbi.nlm.nih.gov/compound/${compA.pubchem_cid}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-[#007850] hover:underline mt-1">
                     PubChem <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 )}
               </div>
               <div className="flex items-center justify-center">
-                <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">vs</span>
+                <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">vs</span>
               </div>
               <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
                 <p className="text-sm font-bold text-slate-900">{compB.name}</p>
-                {compB.iupac_name && <p className="text-[10px] font-mono text-slate-400 mt-0.5 truncate">{compB.iupac_name}</p>}
+                {compB.iupac_name && <p className="text-[11px] font-mono text-slate-400 mt-0.5 truncate">{compB.iupac_name}</p>}
                 {compB.pubchem_cid && (
-                  <a href={`https://pubchem.ncbi.nlm.nih.gov/compound/${compB.pubchem_cid}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-[#007850] hover:underline mt-1">
+                  <a href={`https://pubchem.ncbi.nlm.nih.gov/compound/${compB.pubchem_cid}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-[#007850] hover:underline mt-1">
                     PubChem <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 )}
@@ -377,12 +377,12 @@ export default function ChemicalComparison() {
                 <SectionHeader label="SMILES" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
-                    <p className="text-[10px] font-mono text-slate-500 break-all leading-relaxed">
+                    <p className="text-[11px] font-mono text-slate-500 break-all leading-relaxed">
                       {compA.canonical_smiles || compA.smiles || ':'}
                     </p>
                   </div>
                   <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
-                    <p className="text-[10px] font-mono text-slate-500 break-all leading-relaxed">
+                    <p className="text-[11px] font-mono text-slate-500 break-all leading-relaxed">
                       {compB.canonical_smiles || compB.smiles || ':'}
                     </p>
                   </div>
@@ -400,7 +400,7 @@ export default function ChemicalComparison() {
 function SectionHeader({ label }) {
   return (
     <div className="flex items-center gap-2 mb-3">
-      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</span>
+      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{label}</span>
       <div className="flex-1 h-px bg-slate-200" />
     </div>
   );

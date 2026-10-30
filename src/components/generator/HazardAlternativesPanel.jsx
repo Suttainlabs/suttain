@@ -162,7 +162,7 @@ export default function HazardAlternativesPanel({ ingredients, onReplaceIngredie
                         <div className="flex items-center gap-2">
                           {getHazardIcon(ing.hazard_level)}
                           <span className="font-medium text-sm">{ing.name}</span>
-                          <Badge className={`text-[10px] ${getHazardColor(ing.hazard_level)}`}>
+                          <Badge className={`text-[11px] ${getHazardColor(ing.hazard_level)}`}>
                             {ing.hazard_level?.replace('_', ' ')}
                           </Badge>
                         </div>
@@ -171,7 +171,7 @@ export default function HazardAlternativesPanel({ ingredients, onReplaceIngredie
                       {ing.hazard_types?.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
                           {ing.hazard_types.map((type, i) => (
-                            <Badge key={i} variant="outline" className="text-[9px] text-slate-500">
+                            <Badge key={i} variant="outline" className="text-[11px] text-slate-500">
                               {type}
                             </Badge>
                           ))}
@@ -195,13 +195,13 @@ export default function HazardAlternativesPanel({ ingredients, onReplaceIngredie
                             <div className="flex items-center gap-2">
                               <ArrowRight className="w-3 h-3 text-green-600 flex-shrink-0" />
                               <span className="font-medium text-sm text-green-800">{alt.name}</span>
-                              <Badge className="bg-green-100 text-green-700 text-[10px]">
+                              <Badge className="bg-green-100 text-green-700 text-[11px]">
                                 {alt.effectiveness}% effective
                               </Badge>
                             </div>
                             <p className="text-xs text-green-600 mt-1 ml-5">{alt.reason}</p>
                             {alt.tradeoffs && (
-                              <p className="text-[10px] text-slate-500 mt-1 ml-5 italic">
+                              <p className="text-[11px] text-slate-500 mt-1 ml-5 italic">
                                 Tradeoff: {alt.tradeoffs}
                               </p>
                             )}
@@ -240,7 +240,7 @@ export default function HazardAlternativesPanel({ ingredients, onReplaceIngredie
                   {analysis.ingredients
                     .filter(i => i.hazard_level === 'safe')
                     .map((ing, idx) => (
-                      <Badge key={idx} className="bg-green-50 text-green-700 text-[10px]">
+                      <Badge key={idx} className="bg-green-50 text-green-700 text-[11px]">
                         <CheckCircle className="w-2 h-2 mr-1" />
                         {ing.name}
                       </Badge>

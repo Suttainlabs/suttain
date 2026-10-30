@@ -32,7 +32,7 @@ export default function MetricBreakdown({ metrics }) {
               <div className="flex items-center gap-2">
                 <m.icon className="w-4 h-4 text-slate-500" />
                 <span className="text-sm font-medium text-slate-700">{m.label}</span>
-                <Badge variant="outline" className="text-[10px] text-slate-400">{m.weight}</Badge>
+                <Badge variant="outline" className="text-[11px] text-slate-400">{m.weight}</Badge>
               </div>
               <div className="flex items-center gap-2">
                 <span className={`text-sm font-bold ${colors.text}`}>{score}</span>

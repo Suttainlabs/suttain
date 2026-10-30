@@ -174,7 +174,7 @@ Return the compliance scan as JSON with this exact structure:
                   <Globe className="w-4 h-4 text-slate-500" />
                   {region.region}
                 </CardTitle>
-                <Badge className={`text-[10px] ${statusBadge[region.status] || 'bg-slate-100 text-slate-600'}`}>
+                <Badge className={`text-[11px] ${statusBadge[region.status] || 'bg-slate-100 text-slate-600'}`}>
                   {region.status}
                 </Badge>
               </div>
@@ -183,10 +183,10 @@ Return the compliance scan as JSON with this exact structure:
               <p className="text-xs text-slate-600 mb-2">{region.details}</p>
               {region.labeling_requirements?.length > 0 && (
                 <div className="pt-1 border-t border-slate-100">
-                  <p className="text-[10px] font-semibold text-slate-500 uppercase mb-1">Labeling</p>
+                  <p className="text-[11px] font-semibold text-slate-500 uppercase mb-1">Labeling</p>
                   <ul className="space-y-0.5">
                     {region.labeling_requirements.map((req, j) => (
-                      <li key={j} className="text-[10px] text-slate-500 flex items-start gap-1">
+                      <li key={j} className="text-[11px] text-slate-500 flex items-start gap-1">
                         <FileText className="w-2.5 h-2.5 mt-0.5 flex-shrink-0" /> {req}
                       </li>
                     ))}

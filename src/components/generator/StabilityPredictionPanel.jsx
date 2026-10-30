@@ -125,7 +125,7 @@ export default function StabilityPredictionPanel({ formula, onStabilityResult })
                   <Icon className="w-3.5 h-3.5 text-slate-400" />
                   <span className="text-xs text-slate-700">{f.name}</span>
                 </div>
-                <Badge className={`text-[10px] ${impactColor[f.impact]}`}>{f.status}</Badge>
+                <Badge className={`text-[11px] ${impactColor[f.impact]}`}>{f.status}</Badge>
               </div>
             );
           })}
@@ -136,14 +136,14 @@ export default function StabilityPredictionPanel({ formula, onStabilityResult })
           <div className="p-3 rounded-lg bg-teal-50 border border-teal-200 space-y-2">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-teal-800">AI Predicted Shelf Life: {prediction.predicted_months} months</p>
-              <Badge className={`text-[10px] ${prediction.confidence === 'high' ? 'bg-emerald-100 text-emerald-700' : prediction.confidence === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+              <Badge className={`text-[11px] ${prediction.confidence === 'high' ? 'bg-emerald-100 text-emerald-700' : prediction.confidence === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
                 {prediction.confidence} confidence
               </Badge>
             </div>
             <div className="space-y-1">
               {prediction.degradation_risks?.map((r, i) => (
                 <div key={i} className="text-xs text-slate-600">
-                  <Badge className={`text-[9px] mr-1 ${r.risk === 'high' ? 'bg-red-100 text-red-700' : r.risk === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>{r.risk}</Badge>
+                  <Badge className={`text-[11px] mr-1 ${r.risk === 'high' ? 'bg-red-100 text-red-700' : r.risk === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>{r.risk}</Badge>
                   <strong>{r.factor}</strong>: {r.mitigation}
                 </div>
               ))}

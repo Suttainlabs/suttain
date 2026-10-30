@@ -62,7 +62,7 @@ function PropertyRow({ label, value, unit, icon: IconComp, color = 'text-slate-6
       </div>
       <div className="flex items-center gap-1">
         <span className={`text-xs font-bold ${highlight ? 'text-fuchsia-700' : 'text-slate-800'}`}>{value}</span>
-        {unit && <span className="text-[10px] text-slate-400">{unit}</span>}
+        {unit && <span className="text-[11px] text-slate-400">{unit}</span>}
       </div>
     </div>
   );

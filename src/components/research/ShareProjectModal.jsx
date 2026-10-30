@@ -224,7 +224,7 @@ export default function ShareProjectModal({ project, isOpen, onClose }) {
         {/* Existing shares */}
         {shares.length > 0 && (
           <div className="pt-3 border-t border-slate-700/50">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">
               Shared with ({shares.length})
             </p>
             <div className="space-y-1.5 max-h-40 overflow-y-auto">
@@ -233,12 +233,12 @@ export default function ShareProjectModal({ project, isOpen, onClose }) {
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-medium text-slate-300 truncate">{s.shared_with_email}</p>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                      <span className={`text-[11px] px-1.5 py-0.5 rounded font-bold uppercase ${
                         s.permission === 'edit' ? 'bg-amber-500/15 text-amber-400' : 'bg-slate-700 text-slate-400'
                       }`}>
                         {s.permission}
                       </span>
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                      <span className={`text-[11px] px-1.5 py-0.5 rounded font-bold uppercase ${
                         s.status === 'accepted' ? 'bg-emerald-500/15 text-emerald-400' :
                         s.status === 'revoked' ? 'bg-red-500/15 text-red-400' :
                         'bg-slate-700 text-slate-500'

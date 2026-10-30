@@ -106,7 +106,7 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }) {
                       {t.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
                           {t.tags.slice(0, 3).map(tag => (
-                            <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-medium">
+                            <span key={tag} className="text-[11px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-medium">
                               {tag}
                             </span>
                           ))}
@@ -160,7 +160,7 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }) {
               {/* Auto-populated preview */}
               {selected.id !== 'blank' && (
                 <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Auto-populated from template</p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Auto-populated from template</p>
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2 text-xs">
                       <span className="text-slate-500 w-16">Type</span>
@@ -176,7 +176,7 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }) {
                         <span className="text-slate-500 w-16 mt-0.5">Tags</span>
                         <div className="flex flex-wrap gap-1">
                           {selected.tags.map(tag => (
-                            <span key={tag} className="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 font-medium">
+                            <span key={tag} className="flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 font-medium">
                               <Check className="w-2.5 h-2.5" />{tag}
                             </span>
                           ))}

@@ -198,7 +198,7 @@ export default function SmartChemicalSearch() {
                 <span className="font-mono text-[11px] text-[#4B5563] flex-shrink-0">{s.molecular_formula}</span>
               )}
               <span
-                className="text-[10px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0"
+                className="text-[11px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0"
                 style={{
                   background: s.source_db === "PubChem" ? "#EEF6FF" : "#F0FDFA",
                   color: s.source_db === "PubChem" ? "#2563EB" : "#02988C",

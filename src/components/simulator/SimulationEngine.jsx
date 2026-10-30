@@ -198,8 +198,8 @@ export default function SimulationEngine() {
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="font-semibold text-sm text-slate-800 truncate">{ing.chemical_name}</span>
-                          {ing.purpose && <Badge className="bg-slate-100 text-slate-500 text-[10px] font-medium hidden sm:inline-flex">{ing.purpose}</Badge>}
-                          {changed && <Badge className="bg-violet-100 text-violet-700 text-[10px]">modified</Badge>}
+                          {ing.purpose && <Badge className="bg-slate-100 text-slate-500 text-[11px] font-medium hidden sm:inline-flex">{ing.purpose}</Badge>}
+                          {changed && <Badge className="bg-violet-100 text-violet-700 text-[11px]">modified</Badge>}
                         </div>
                         <div className="flex items-center gap-3 flex-shrink-0">
                           <span className={`text-xs font-bold ${ecoColor}`}>Eco {eco}</span>
@@ -218,7 +218,7 @@ export default function SimulationEngine() {
                           style={{ background: `linear-gradient(to right, #9531F5 0%, #9531F5 ${adjustedPercentages[ing.chemical_name] ?? ing.percentage}%, #e2e8f0 ${adjustedPercentages[ing.chemical_name] ?? ing.percentage}%, #e2e8f0 100%)` }}
                         />
                       </div>
-                      <div className="flex justify-between text-[10px] text-slate-400">
+                      <div className="flex justify-between text-[11px] text-slate-400">
                         <span>0%</span>
                         <span className="text-slate-400">Original: {ing.percentage}%</span>
                         <span>100%</span>

@@ -427,7 +427,7 @@ export default function TrajectoryViewer({ initialPdbId = null, compact = false 
 
         {/* Frame counter badge */}
         {loaded && frameCount > 0 && (
-          <div className="absolute bottom-2 right-2 z-10 bg-slate-900/80 text-cyan-300 text-[10px] px-2 py-1 rounded-lg font-mono">
+          <div className="absolute bottom-2 right-2 z-10 bg-slate-900/80 text-cyan-300 text-[11px] px-2 py-1 rounded-lg font-mono">
             Frame {currentFrame + 1} / {frameCount}
           </div>
         )}

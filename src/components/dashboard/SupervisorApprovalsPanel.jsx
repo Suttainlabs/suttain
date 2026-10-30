@@ -83,7 +83,7 @@ export default function SupervisorApprovalsPanel() {
         <CardTitle className="text-sm flex items-center gap-2">
           <Mail className="w-4 h-4 text-[#02988C]" />
           Supervisor approvals
-          <Badge variant="outline" className="text-[10px] ml-1">{items.length}</Badge>
+          <Badge variant="outline" className="text-[11px] ml-1">{items.length}</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">

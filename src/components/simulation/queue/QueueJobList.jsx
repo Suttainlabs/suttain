@@ -115,7 +115,7 @@ export default function QueueJobList({ queue, runningQueueId, onViewResult, onRe
                     {/* Show key input params inline */}
                     <div className="flex flex-wrap gap-2 mt-1">
                       {Object.entries(job.inputs || {}).slice(0, 4).map(([k, v]) => (
-                        <span key={k} className="text-[10px] bg-slate-50 border border-slate-200 text-slate-500 px-2 py-0.5 rounded-full">
+                        <span key={k} className="text-[11px] bg-slate-50 border border-slate-200 text-slate-500 px-2 py-0.5 rounded-full">
                           {k}: <span className="font-semibold text-slate-700">{v}</span>
                         </span>
                       ))}
@@ -124,7 +124,7 @@ export default function QueueJobList({ queue, runningQueueId, onViewResult, onRe
                     {job.status === "completed" && keyValues.length > 0 && (
                       <div className="flex flex-wrap gap-2 mt-2">
                         {keyValues.slice(0, 3).map((kv, i) => (
-                          <span key={i} className="text-[10px] bg-green-50 border border-green-200 text-green-700 px-2 py-0.5 rounded-full font-mono">
+                          <span key={i} className="text-[11px] bg-green-50 border border-green-200 text-green-700 px-2 py-0.5 rounded-full font-mono">
                             {kv.property}: <b>{kv.value}</b> {kv.unit}
                           </span>
                         ))}

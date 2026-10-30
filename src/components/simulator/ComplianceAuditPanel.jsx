@@ -149,7 +149,7 @@ export default function ComplianceAuditPanel({ chemicals, persona, simulationDat
             <div key={i} className="flex items-center gap-2">
               {getStatusIcon(status)}
               <span className="text-xs text-slate-700 font-medium flex-1 truncate capitalize">{name}</span>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATUS_COLORS[status]}`}>
+              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${STATUS_COLORS[status]}`}>
                 {status}
               </span>
             </div>
@@ -165,7 +165,7 @@ export default function ComplianceAuditPanel({ chemicals, persona, simulationDat
         </div>
         <div className="flex flex-wrap gap-1.5">
           {regs.map(reg => (
-            <span key={reg} className="text-[10px] font-semibold px-2 py-0.5 bg-teal-50 text-teal-700 rounded-full border border-teal-200">
+            <span key={reg} className="text-[11px] font-semibold px-2 py-0.5 bg-teal-50 text-teal-700 rounded-full border border-teal-200">
               {reg}
             </span>
           ))}
