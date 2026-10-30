@@ -266,7 +266,6 @@ export default function Layout({ children, currentPageName }) {
   const helpMenuItems = [];
 
   const consumerToolItems = [
-    { href: "ConsumerPortal", label: "Consumer overview", icon: LayoutDashboard, description: "How the five tools work together", category: "Start here" },
     { href: "Simulator", label: "Chemical Analysis", icon: TestTube, description: "Safety analysis, compliance & sustainability built in", category: "Safety & Analysis" },
     { href: "generator", label: "Formula Generator", icon: Atom, description: "Create formulas with safety, compliance & eco scoring", category: "Formulation" },
     { href: "BarcodeScanner", label: "Product Scanner", icon: QrCode, description: "Scan any product, toxicity, sustainability & ingredient deep-dive", category: "Safety & Analysis" },
