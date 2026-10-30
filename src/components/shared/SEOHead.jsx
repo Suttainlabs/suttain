@@ -22,7 +22,7 @@ export default function SEOHead({
   noIndex = false 
 }) {
   const meta = {
-    title: title ? `${title} | Suttain` : defaultMeta.title,
+    title: title ? (/\|\s*Suttain\s*$/i.test(title) ? title : `${title} | Suttain`) : defaultMeta.title,
     description: description || defaultMeta.description,
     keywords: keywords || defaultMeta.keywords,
     image: image || defaultMeta.image,
