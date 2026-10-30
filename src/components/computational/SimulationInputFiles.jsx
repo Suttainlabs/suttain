@@ -9,7 +9,8 @@ const kb = s => `${Math.max(1, Math.round((s || '').length / 1024))} KB`;
 // Prepared input package: how to run it, then one file at a time instead of every file printed in full.
 export default function SimulationInputFiles({ result, simTypeLabel, linkedJobId }) {
   const files = result?.files || [];
-  const [active, setActive] = useState(0);
+  const firstScript = Math.max(0, files.findIndex(f => !/^input\./i.test(f.filename) && !/README/i.test(f.filename)));
+  const [active, setActive] = useState(firstScript);
   if (!files.length) return null;
   const runner = files.find(f => /^run\.sh$/i.test(f.filename));
   const command = result.command || (runner ? 'bash run.sh' : null);
