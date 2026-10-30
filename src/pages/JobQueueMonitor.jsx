@@ -66,11 +66,11 @@ export default function JobQueueMonitor() {
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {[
-            { label: 'Total', value: data.summary.total, color: 'from-slate-500 to-slate-600' },
-            { label: 'Queued', value: data.summary.queued, color: 'from-blue-500 to-blue-600' },
-            { label: 'Running', value: data.summary.running, color: 'from-purple-500 to-purple-600' },
-            { label: 'Completed', value: data.summary.completed, color: 'from-green-500 to-green-600' },
-            { label: 'Failed', value: data.summary.failed, color: 'from-red-500 to-red-600' },
+            { label: 'Total', value: (data?.summary?.total ?? 0), color: 'from-slate-500 to-slate-600' },
+            { label: 'Queued', value: (data?.summary?.queued ?? 0), color: 'from-blue-500 to-blue-600' },
+            { label: 'Running', value: (data?.summary?.running ?? 0), color: 'from-purple-500 to-purple-600' },
+            { label: 'Completed', value: (data?.summary?.completed ?? 0), color: 'from-green-500 to-green-600' },
+            { label: 'Failed', value: (data?.summary?.failed ?? 0), color: 'from-red-500 to-red-600' },
           ].map(stat => (
             <motion.div
               key={stat.label}
