@@ -49,7 +49,7 @@ export default function DatabaseSearch({ onSelect, compact = false }) {
             className="simulation-control !h-12 !pl-10 !pr-10 w-full text-base" />
           {query && <button type="button" aria-label="Clear search" onClick={() => { setQuery(''); setResults(null); setError(''); inputRef.current?.focus(); }} className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-md text-research-muted hover:bg-research-soft"><X className="h-4 w-4" /></button>}
         </div>
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+        <div className="grid grid-cols-1 min-[360px]:grid-cols-[minmax(0,1fr)_auto] gap-2">
           <select aria-label="Database to search" disabled={loading} value={database} onChange={e => { setDatabase(e.target.value); if (results) run(query, e.target.value); }} className="simulation-control !h-11 min-w-0">
             {DATABASES.map(db => <option key={db} value={db}>{db === 'All' ? 'All databases' : db}</option>)}
           </select>
