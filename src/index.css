@@ -683,3 +683,36 @@
 /* Darken slate-400/500 for WCAG 2.1 text contrast */
 .text-slate-400 { color: #64748B; }
 .text-slate-500 { color: #475569; }
+/* ── Guided results (shared by consumer tools; mirrors Atomistic Simulation guided results) ── */
+.guided-steps { display: grid; grid-template-columns: minmax(180px, 220px) minmax(0, 1fr); border: 1px solid hsl(var(--research-border)); border-radius: 14px; background: hsl(var(--research-card)); overflow: hidden; }
+.guided-steps-nav { background: hsl(var(--research-soft)); border-right: 1px solid hsl(var(--research-border)); padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+.guided-steps-item { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 8px 12px; border-radius: 9px; font-size: 14px; line-height: 1.35; text-align: left; width: 100%; color: hsl(var(--research-text)); transition: background-color .15s; }
+.guided-steps-item:hover { background: hsl(var(--research-card)); }
+.guided-steps-num { color: hsl(var(--research-muted)); flex-shrink: 0; }
+.guided-steps-item[aria-current="step"] { background: hsl(var(--research-accent)); color: hsl(var(--research-card)); }
+.guided-steps-item[aria-current="step"] .guided-steps-num { color: inherit; opacity: .85; }
+.guided-steps-body { min-width: 0; padding: 24px 28px 24px; }
+.guided-steps-intro { font-size: 14px; line-height: 1.6; color: hsl(var(--research-muted)); margin: 0 0 18px; }
+.guided-steps-pager { display: flex; justify-content: space-between; gap: 10px; margin-top: 28px; padding-top: 16px; border-top: 1px solid hsl(var(--research-border)); }
+.guided-steps-prev, .guided-steps-next { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 8px 14px; border-radius: 8px; font-size: 14px; max-width: 48%; }
+.guided-steps-prev { border: 1px solid hsl(var(--research-border)); background: hsl(var(--research-card)); color: hsl(var(--research-text)); }
+.guided-steps-next { margin-left: auto; border: 1px solid hsl(var(--research-accent)); background: hsl(var(--research-accent)); color: hsl(var(--research-card)); }
+.guided-steps-pager button:disabled { opacity: .4; cursor: not-allowed; }
+@media (max-width: 767px) {
+  .guided-steps { grid-template-columns: 1fr; }
+  .guided-steps-nav { flex-direction: row; overflow-x: auto; gap: 6px; padding: 10px; border-right: 0; border-bottom: 1px solid hsl(var(--research-border)); scrollbar-width: none; }
+  .guided-steps-nav::-webkit-scrollbar { display: none; }
+  .guided-steps-item { width: auto; flex-shrink: 0; gap: 8px; padding: 8px 12px; font-size: 13px; }
+  .guided-steps-body { padding: 18px 16px; }
+}
+
+/* Inputs placed in the narrow setup rail collapse their internal multi-column grids. */
+@media (min-width: 1024px) {
+  .consumer-setup-rail :is([class*="md:grid-cols-"], [class*="lg:grid-cols-"], [class*="sm:grid-cols-3"], [class*="sm:grid-cols-4"]) { grid-template-columns: minmax(0, 1fr) !important; }
+  .consumer-setup-rail :is([class*="lg:col-span-"], [class*="md:col-span-"]) { grid-column: auto !important; }
+}
+.consumer-setup-rail :is(.max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl, .max-w-3xl) { max-width: 100%; }
+
+/* Consumer workspace: keep hazard colours, calm the legacy gradients. */
+.consumer-theme.simulation-workspace :is(.shadow-xl, .shadow-lg) { box-shadow: 0 1px 2px rgb(15 23 42 / .06); }
+.consumer-theme.simulation-workspace :is(.rounded-3xl) { border-radius: 14px; }

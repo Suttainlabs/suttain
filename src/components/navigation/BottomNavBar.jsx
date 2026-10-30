@@ -5,7 +5,7 @@ import { Home, ShoppingBag, FlaskConical, User } from 'lucide-react';
 // Mobile tab bar: Home · Consumer · Research · Profile.
 // `match` decides which tab is highlighted, so every tool page lights up its pillar.
 const CONSUMER_PATHS = ['/ConsumerPortal', '/Simulator', '/generator', '/BarcodeScanner', '/SDSAnalyzer', '/CarbonTaxSimulator', '/SustainabilityImpact', '/BulkScan', '/CompareIngredients', '/MobileScan'];
-const RESEARCH_PATHS = ['/ResearchPortal', '/ResearchDashboard', '/AtomisticSimulation', '/SimulationRunner', '/DrugDesign', '/APIPortal', '/ComputationalSimulation'];
+const RESEARCH_PATHS = ['/ResearchPortal', '/ResearchDashboard', '/AtomisticSimulation', '/BindingAndADME', '/SimulationRunner', '/DrugDesign', '/APIPortal', '/ComputationalSimulation'];
 const PROFILE_PATHS = ['/Dashboard', '/Profile', '/Settings', '/BillingDashboard', '/Workspace', '/login', '/register'];
 
 const startsWithAny = (pathname, paths) => paths.some(p => pathname === p || pathname.startsWith(`${p}/`));

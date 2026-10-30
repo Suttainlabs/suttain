@@ -45,6 +45,7 @@ const APIPortal = lazy(() => import('./pages/APIPortal'));
 const ChemicalComparison = lazy(() => import('./pages/ChemicalComparison'));
 
 const AtomisticSimulation = lazy(() => import('@/pages/AtomisticSimulation'));
+const BindingAndADME = lazy(() => import('@/pages/BindingAndADME'));
 const DrugDesign = lazy(() => import('@/pages/DrugDesign'));
 const ChemicalLibrary = lazy(() => import('./pages/ChemicalLibrary'));
 const AboutUs = lazy(() => import('./pages/AboutUs'));
@@ -204,6 +205,7 @@ const AuthenticatedApp = () => {
 
 
         <Route path="/AtomisticSimulation" element={<LayoutWrapper currentPageName="AtomisticSimulation"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><AtomisticSimulation /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
+        <Route path="/BindingAndADME" element={<LayoutWrapper currentPageName="BindingAndADME"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-violet-500 rounded-full animate-spin"/></div>}><ResearchGuard><PageTransition><BindingAndADME /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/AtomisticSimulation/Simulations" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />
         <Route path="/DrugDesign" element={<LayoutWrapper currentPageName="DrugDesign"><Suspense fallback={<div role="status" className="py-16 text-center text-muted-foreground">Loading Drug Design…</div>}><ResearchGuard><PageTransition><DrugDesign /></PageTransition></ResearchGuard></Suspense></LayoutWrapper>} />
         <Route path="/ComputationalStudio" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />

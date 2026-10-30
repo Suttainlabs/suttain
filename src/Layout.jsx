@@ -72,6 +72,7 @@ const PAGE_META_DESCRIPTIONS = {
   ExternalDatabases: 'Explore external chemical databases integrated with Suttain, PubChem, ChEMBL, ChEBI, RCSB PDB, UniProt, AlphaFold DB, and more scientific data sources.',
   BookADemo: 'Book a demo of the Suttain chemical safety and compliance platform. See how our tools can streamline your formulation and regulatory workflows.',
   AtomisticSimulation: 'Suttain Atomistic Simulation: configure quantum chemistry, QM/MM, molecular dynamics, and materials workflows with reviewable engine-specific inputs.',
+  BindingAndADME: 'Suttain Binding & ADME: predict protein–ligand binding affinity and ADME properties on Rowan, Boltz and Tamarind, with engine recommendations by goal.',
   DrugDesign: 'Suttain Drug Design: search biological targets, explore screening methods, and save candidate shortlists with clear limits on illustrative results.',
 };
 
@@ -140,7 +141,7 @@ export default function Layout({ children, currentPageName }) {
           || ['/ChemicalDashboard', '/ResearchPortal',
               '/ResearchDashboard', '/APIPortal', '/ChemicalComparison', '/SDSAnalyzer',
               '/ComputationalSimulation', '/SimulationEngine', '/ChemicalLibrary', '/SimulationRunner',
-              '/AtomisticSimulation', '/AtomisticSimulation/Simulations', '/DrugDesign', '/ComputationalStudio', '/ComputationalStudio/Simulations', '/DrugDiscovery', '/Simulator', '/generator', '/CarbonTaxSimulator', '/Workspace', '/Pricing'].includes(window.location.pathname);
+              '/AtomisticSimulation', '/AtomisticSimulation/Simulations', '/BindingAndADME', '/DrugDesign', '/ComputationalStudio', '/ComputationalStudio/Simulations', '/DrugDiscovery', '/Simulator', '/generator', '/CarbonTaxSimulator', '/Workspace', '/Pricing'].includes(window.location.pathname);
         if (!isOnResearchPage) {
           navigate(createPageUrl('ResearchDashboard'));
         }
@@ -277,6 +278,7 @@ export default function Layout({ children, currentPageName }) {
     { href: "ResearchPortal", label: "Research overview", icon: FlaskConical, category: "Research" },
     { href: "ResearchDashboard", label: "Research dashboard", icon: LayoutDashboard, category: "Research" },
     { href: "AtomisticSimulation", label: "Atomistic Simulation", icon: Atom, category: "Research" },
+    { href: "BindingAndADME", label: "Binding & ADME", icon: FlaskConical, category: "Research" },
     { href: "DrugDesign", label: "Drug Design", icon: Target, category: "Research" },
   ];
 

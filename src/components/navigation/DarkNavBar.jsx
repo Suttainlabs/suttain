@@ -10,6 +10,7 @@ import { base44 } from "@/api/base44Client";
 
 const TOOLS_MENU = [
   { href: "/AtomisticSimulation", label: "Atomistic Simulation", icon: Cpu, desc: "Quantum chemistry, molecular dynamics & QM/MM" },
+  { href: "/BindingAndADME", label: "Binding & ADME", icon: Dna, desc: "Protein–ligand affinity & ADME on Rowan, Boltz, Tamarind" },
   { href: "/ChemicalComparison", label: "Chemical Comparison", icon: Layers, desc: "Side-by-side compound evaluation" },
   { href: "/SimulationEngine", label: "Simulation Engine", icon: FlaskConical, desc: "Formula cost & sustainability modeling" },
   { href: "/AtomisticSimulation", label: "Proteins", icon: Microscope, desc: "AlphaFold protein structures & binding analysis" },
