@@ -43,7 +43,7 @@ export const CONSUMER_TOOLS = [
     inputs: ['Product type', 'Plain-language description', 'Ingredients from a scan, SDS or alternative'],
     outputs: ['Three formula options', 'Editable formula with percentages', 'Safety, compliance, impact and cost tabs', 'Batch scaling'],
     sources: ['pubchem'],
-    handoffs: [{ to: 'carbon', label: 'Check the carbon footprint of the ingredients you chose' }],
+    handoffs: [],
   },
   {
     id: 'carbon', step: '05', verb: 'Score', name: 'Carbon Tax Simulator', route: '/CarbonTaxSimulator', icon: Leaf,
