@@ -55,7 +55,7 @@ export default function ToolFeedbackToast({ isOpen, onClose, feature, featureLab
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 80, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300, damping: 28 }}
-          className="fixed bottom-6 right-6 z-50 w-80"
+          className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:bottom-6 right-4 left-4 sm:left-auto lg:right-6 z-50 sm:w-80"
         >
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             {/* Top accent */}

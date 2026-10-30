@@ -1368,7 +1368,7 @@ export default function FormulaEditor({
             initial={{ opacity: 0, y: 100, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
-            className="fixed bottom-6 right-6 z-50 max-w-sm"
+            className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:bottom-6 right-4 left-4 sm:left-auto lg:right-6 z-50 sm:max-w-sm"
           >
             <Card className={`bg-white/95 backdrop-blur-sm border ${modeColors.accentCardBorder} shadow-lg`}>
               <CardContent className="p-4">

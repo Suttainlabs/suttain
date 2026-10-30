@@ -108,7 +108,7 @@ If you're unsure about specific chemical data, recommend consulting official saf
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:bottom-6 right-4 lg:right-6 z-50"
       >
         <Button
           onClick={() => setIsOpen(true)}
@@ -126,7 +126,7 @@ If you're unsure about specific chemical data, recommend consulting official saf
             initial={{ opacity: 0, y: 100, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.8 }}
-            className="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-2rem)] z-50"
+            className="fixed bottom-[calc(9rem+env(safe-area-inset-bottom))] lg:bottom-24 right-4 lg:right-6 w-96 max-w-[calc(100vw-2rem)] z-50"
           >
             <Card className="bg-white/95 backdrop-blur-sm shadow-2xl border-0 h-[500px] flex flex-col">
               <CardHeader className="border-b border-slate-200 p-4">
