@@ -17,6 +17,7 @@ import ToolFeedbackToast from '../shared/ToolFeedbackToast';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
 import { incrementUsage } from '../../utils/usageTracker';
 import useTrialStatus from '../../hooks/useTrialStatus';
+import ConsumerWorkbench, { ModeTabs, WorkbenchGrid, SetupRail, ResultsRail } from '@/components/consumer/ConsumerWorkbench';
 
 const BarcodeHint = ({ barcode }) => {
     if (!barcode) return null;
@@ -146,228 +147,118 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
         }
     };
 
+    const subMode = QUICK_SUB_MODES.find(m => m.id === quickSubMode);
+
     return (
         <>
         <ToolFeedbackToast isOpen={showFeedback} onClose={() => setShowFeedback(false)} feature="scanner" featureLabel="Product Scanner" user={user} pointsToAward={0} />
         <LiveScanner isOpen={isLiveScannerOpen} onClose={() => setIsLiveScannerOpen(false)} onScanSuccess={handleScanSuccess} />
         <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
 
-        <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-50 via-teal-50/30 to-cyan-50/20 pb-24">
+        <ConsumerWorkbench toolId="scanner" tag={subMode?.label}>
+            <ModeTabs label="Scanner mode" modes={QUICK_SUB_MODES} value={quickSubMode} onChange={(id) => { setQuickSubMode(id); if (id === 'scan') { setProductInfo(null); setError(''); } }} />
 
-            {/* Hero header */}
-            <div className="relative overflow-hidden bg-white text-slate-800 pt-12 pb-20 px-4 text-center border-b border-slate-100">
+            {quickSubMode === 'bulk' && <BulkScanDashboard user={user} />}
+            {quickSubMode === 'compare' && <div className="pb-12"><CompareProducts user={user} /></div>}
 
-                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="relative z-10">
-                    <div className="inline-flex items-center gap-2 bg-teal-50 text-teal-700 border border-teal-200 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
-                        <Zap className="w-3.5 h-3.5" />
-                        Instant Ingredient Analysis
-                    </div>
-                    <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 tracking-tight gradient-text">Product Scanner</h1>
-                    <p className="text-slate-500 text-lg max-w-xl mx-auto">
-                        Scan any product barcode to instantly reveal its safety, sustainability, and ingredient profile.
-                    </p>
-                </motion.div>
-            </div>
-
-            {/* Mode tabs: floating over the hero */}
-            <div className="flex justify-center -mt-5 px-4 z-20 relative mb-6">
-                <div className="inline-flex bg-white border border-slate-200 rounded-2xl p-1.5 shadow-lg gap-1">
-                    {MODES.map(({ id, label, icon: Icon }) => (
-                        <button
-                            key={id}
-                            onClick={() => setMode(id)}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                                mode === id
-                                    ? 'bg-teal-500 text-white shadow-md'
-                                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                            }`}
-                        >
-                            <Icon className="w-4 h-4" />
-                            {label}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Quick / Product Scanner mode */}
-            {mode === 'quick' && (
-                <div className="max-w-lg mx-auto px-4">
-                    {/* Sub-mode tabs */}
-                    <div className="flex bg-white border border-slate-200 rounded-2xl p-1 shadow-sm gap-1 mb-5">
-                        {QUICK_SUB_MODES.map(({ id, label, icon: Icon }) => (
-                            <button
-                                key={id}
-                                onClick={() => { setQuickSubMode(id); if (id === 'scan') { setProductInfo(null); setError(''); } }}
-                                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
-                                    quickSubMode === id
-                                        ? 'bg-slate-800 text-white shadow'
-                                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
-                                }`}
-                            >
-                                <Icon className="w-3.5 h-3.5" />
-                                {label}
+            {quickSubMode === 'scan' && (
+                <WorkbenchGrid>
+                    <SetupRail label="Input" title="Scan a product">
+                        <form onSubmit={handleManualSubmit} className="space-y-2">
+                            <label htmlFor="barcode-input" className="block text-sm font-medium">Barcode</label>
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-research-muted" />
+                                <Input
+                                    id="barcode-input"
+                                    type="text"
+                                    inputMode="numeric"
+                                    placeholder="UPC, EAN or PLU code"
+                                    value={barcodeInput}
+                                    onChange={(e) => setBarcode(e.target.value.replace(/[^0-9]/g, ''))}
+                                    className="pl-9"
+                                    disabled={isLoading || isUploading}
+                                />
+                            </div>
+                            <BarcodeHint barcode={barcodeInput} />
+                            <button type="submit" className="research-primary w-full disabled:opacity-50" disabled={isLoading || isUploading || !barcodeInput}>
+                                {isLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing…</> : <><Scan className="w-4 h-4" /> Analyze product</>}
                             </button>
-                        ))}
-                    </div>
+                        </form>
 
-                    {/* Bulk Scan sub-mode */}
-                    {quickSubMode === 'bulk' && <BulkScanDashboard user={user} />}
+                        <div className="flex items-center gap-3"><div className="flex-1 h-px bg-research-border" /><span className="research-label">or scan with</span><div className="flex-1 h-px bg-research-border" /></div>
 
-                    {/* Compare sub-mode */}
-                    {quickSubMode === 'compare' && (
-                        <div className="pb-12">
-                            <CompareProducts user={user} />
+                        <div className="grid grid-cols-2 gap-3">
+                            <button type="button" onClick={() => setIsLiveScannerOpen(true)} disabled={isUploading} className="flex flex-col items-center gap-2 rounded-lg border border-research-border p-4 hover:border-research-accent hover:bg-research-soft transition-colors">
+                                <Camera className="w-5 h-5 text-research-accent" />
+                                <span className="text-sm font-medium">Camera</span>
+                                <span className="text-xs text-research-muted">Scan live</span>
+                            </button>
+                            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="flex flex-col items-center gap-2 rounded-lg border border-research-border p-4 hover:border-research-accent hover:bg-research-soft transition-colors">
+                                {isUploading ? <Loader2 className="w-5 h-5 text-research-accent animate-spin" /> : <UploadCloud className="w-5 h-5 text-research-accent" />}
+                                <span className="text-sm font-medium">Upload image</span>
+                                <span className="text-xs text-research-muted">Photo of barcode</span>
+                            </button>
                         </div>
-                    )}
 
-                    {/* Scan sub-mode */}
-                    {quickSubMode === 'scan' && <AnimatePresence mode="wait">
-                        {productInfo ? (
+                        {error && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
 
-                            <motion.div key="analysis" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="pb-6">
-                                <BarcodeAnalysis product={productInfo} onClear={clearSearch} user={user} />
-                            </motion.div>
-                        ) : (
-                            <motion.div key="scanner" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                                <AnimatePresence mode="wait">
-                                    {view === 'main' ? (
-                                        <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                            {/* Main scan card */}
-                                            <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-                                                {/* Card header */}
-                                                <div className="px-6 pt-6 pb-4 border-b border-slate-100">
-                                                    <h2 className="text-xl font-bold text-slate-800 text-center">Scan or Enter a Barcode</h2>
-                                                    <p className="text-sm text-slate-500 text-center mt-1">UPC, EAN, or PLU code (fresh produce)</p>
-                                                </div>
+                        <Link to="/MobileScanner" className="flex items-center gap-2 rounded-lg border border-dashed border-research-border px-3 py-3 text-sm text-research-muted hover:border-research-accent hover:text-research-accent">
+                            <Smartphone className="w-4 h-4" /> Full-screen mobile scanner <ArrowRight className="w-4 h-4 ml-auto" />
+                        </Link>
 
-                                                <div className="p-6 space-y-5">
-                                                    {/* Manual input */}
-                                                    <form onSubmit={handleManualSubmit} className="space-y-2">
-                                                        <div className="relative">
-                                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                                            <Input
-                                                                type="text"
-                                                                placeholder="UPC, EAN, or PLU code (e.g. 4011)..."
-                                                                value={barcodeInput}
-                                                                onChange={(e) => setBarcode(e.target.value.replace(/[^0-9]/g, ''))}
-                                                                className="h-13 pl-11 pr-4 text-base rounded-xl border-slate-200 focus:border-teal-400 focus:ring-teal-400"
-                                                                autoFocus
-                                                                disabled={isLoading || isUploading}
-                                                            />
-                                                        </div>
-                                                        <BarcodeHint barcode={barcodeInput} />
-                                                        <Button
-                                                            type="submit"
-                                                            className="w-full h-12 text-base rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-semibold gap-2"
-                                                            disabled={isLoading || isUploading || !barcodeInput}
-                                                        >
-                                                            {isLoading
-                                                                ? <><Loader2 className="w-5 h-5 animate-spin" /> Analyzing...</>
-                                                                : <><Scan className="w-5 h-5" /> Analyze Product</>
-                                                            }
-                                                        </Button>
-                                                    </form>
-
-                                                    {/* Divider */}
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="flex-1 h-px bg-slate-200" />
-                                                        <span className="text-xs text-slate-400 font-medium">OR SCAN WITH</span>
-                                                        <div className="flex-1 h-px bg-slate-200" />
-                                                    </div>
-
-                                                    {/* Camera / Upload */}
-                                                    <div className="grid grid-cols-2 gap-3">
-                                                        <button
-                                                            onClick={() => setIsLiveScannerOpen(true)}
-                                                            disabled={isUploading}
-                                                            className="flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-slate-200 hover:border-teal-400 hover:bg-teal-50 transition-all group"
-                                                        >
-                                                            <div className="w-10 h-10 rounded-xl bg-teal-100 group-hover:bg-teal-200 flex items-center justify-center transition-colors">
-                                                                <Camera className="w-5 h-5 text-teal-600" />
-                                                            </div>
-                                                            <span className="text-sm font-semibold text-slate-700">Camera</span>
-                                                            <span className="text-xs text-slate-400">Scan live</span>
-                                                        </button>
-                                                        <button
-                                                            onClick={() => fileInputRef.current?.click()}
-                                                            disabled={isUploading}
-                                                            className="flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-slate-200 hover:border-cyan-400 hover:bg-cyan-50 transition-all group"
-                                                        >
-                                                            <div className="w-10 h-10 rounded-xl bg-cyan-100 group-hover:bg-cyan-200 flex items-center justify-center transition-colors">
-                                                                {isUploading
-                                                                    ? <Loader2 className="w-5 h-5 text-cyan-600 animate-spin" />
-                                                                    : <UploadCloud className="w-5 h-5 text-cyan-600" />
-                                                                }
-                                                            </div>
-                                                            <span className="text-sm font-semibold text-slate-700">Upload Image</span>
-                                                            <span className="text-xs text-slate-400">Photo of barcode</span>
-                                                        </button>
-                                                    </div>
-
-                                                    {error && (
-                                                        <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl">
-                                                            <span className="text-sm text-red-700">{error}</span>
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Footer actions */}
-                                                <div className="px-6 pb-6 space-y-3">
-                                                    <Link to="/MobileScan" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border-2 border-dashed border-slate-200 text-slate-600 hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50 transition-all text-sm font-semibold">
-                                                        <Smartphone className="w-4 h-4" />
-                                                        Open Full-Screen Mobile Scanner
-                                                        <ArrowRight className="w-4 h-4 ml-auto" />
-                                                    </Link>
-
-                                                    {history.length > 0 && (
-                                                        <button
-                                                            onClick={() => setView('history')}
-                                                            className="flex items-center justify-center gap-2 w-full py-2.5 text-sm text-slate-500 hover:text-teal-600 transition-colors font-medium"
-                                                        >
-                                                            <History className="w-4 h-4" />
-                                                            View Scan History ({history.length})
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {/* Feature hints */}
-                                            <div className="grid grid-cols-3 gap-3 mt-5">
-                                                {[
-                                                    { label: 'Safety Score', icon: ShieldCheck, color: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-100' },
-                                                    { label: 'Eco Rating', icon: Recycle, color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-100' },
-                                                    { label: 'Ingredient Breakdown', icon: FlaskConical, color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-100' },
-                                                ].map(({ label, icon: Icon, color, bg, border }) => (
-                                                    <div key={label} className={`${bg} rounded-2xl p-3 text-center border ${border} shadow-sm flex flex-col items-center gap-1.5`}>
-                                                        <Icon className={`w-5 h-5 ${color}`} />
-                                                        <span className={`text-xs font-semibold ${color}`}>{label}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div key="history" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                            <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-                                                <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100">
-                                                    <button onClick={() => setView('main')} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
-                                                        <ChevronLeft className="w-5 h-5 text-slate-600" />
-                                                    </button>
-                                                    <h2 className="text-lg font-bold text-slate-800">Scan History</h2>
-                                                    <span className="ml-auto text-xs text-slate-400 font-medium">{history.length} scans</span>
-                                                </div>
-                                                <div className="p-4">
-                                                    <PremiumFeatureGate featureName="Saved scan history"><BarcodeHistory history={history} onSelect={handleHistorySelect} onDelete={handleDeleteHistory} /></PremiumFeatureGate>
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
+                        {history.length > 0 && (
+                            <div className="border-t border-research-border pt-4">
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="research-label">Recent scans</p>
+                                    <button type="button" onClick={() => { setProductInfo(null); setView('history'); }} className="text-xs text-research-accent hover:underline">View all ({history.length})</button>
+                                </div>
+                                <ul className="space-y-1">
+                                    {history.slice(0, 4).map(item => (
+                                        <li key={item.id}>
+                                            <button type="button" onClick={() => handleHistorySelect(item.barcode)} className="w-full flex items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-research-soft">
+                                                <History className="w-3.5 h-3.5 text-research-muted shrink-0" />
+                                                <span className="text-sm truncate flex-1">{item.product_name || item.barcode}</span>
+                                                <span className="font-mono text-[11px] text-research-muted">{item.barcode}</span>
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         )}
-                    </AnimatePresence>}
-                </div>
+                    </SetupRail>
+
+                    <ResultsRail
+                        hasOutput={!!productInfo || view === 'history'}
+                        isRunning={isLoading || isUploading}
+                        runningText={isUploading ? 'Reading the barcode from your photo…' : 'Looking up the product and rating its ingredients…'}
+                        emptyTitle="Your product analysis will appear here"
+                        emptyText="Enter a barcode, scan with your camera or upload a photo. You'll get an overall score, safety and eco ratings, and every ingredient rated."
+                        tag={productInfo?.source && productInfo.source !== 'Not Found' ? productInfo.source : undefined}
+                        emptyExtra={
+                            <div className="mt-6 grid grid-cols-3 gap-3 max-w-md mx-auto text-left">
+                                {[['01', 'Overall score'], ['02', 'What’s inside'], ['03', 'Safety & impact']].map(([n, t]) => (
+                                    <div key={n} className="rounded-lg border border-research-border p-3"><p className="font-mono text-[11px] text-research-accent">{n}</p><p className="text-xs mt-1">{t}</p></div>
+                                ))}
+                            </div>
+                        }
+                    >
+                        {productInfo && !isLoading && <BarcodeAnalysis product={productInfo} onClear={clearSearch} user={user} />}
+                        {!productInfo && view === 'history' && (
+                            <div className="rounded-xl border border-research-border bg-research-card overflow-hidden">
+                                <div className="flex items-center gap-3 px-5 py-4 border-b border-research-border">
+                                    <button type="button" onClick={() => setView('main')} className="p-1.5 rounded-lg hover:bg-research-soft" aria-label="Back"><ChevronLeft className="w-5 h-5" /></button>
+                                    <h3 className="!text-base">Scan history</h3>
+                                    <span className="ml-auto text-xs text-research-muted">{history.length} scans</span>
+                                </div>
+                                <div className="p-4">
+                                    <PremiumFeatureGate featureName="Saved scan history"><BarcodeHistory history={history} onSelect={handleHistorySelect} onDelete={handleDeleteHistory} /></PremiumFeatureGate>
+                                </div>
+                            </div>
+                        )}
+                    </ResultsRail>
+                </WorkbenchGrid>
             )}
-        </div>
+        </ConsumerWorkbench>
         </>
     );
 }
