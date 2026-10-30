@@ -24,6 +24,7 @@ import RiskExplanationModal from './RiskExplanationModal';
 import useDoseAnalysis from './useDoseAnalysis';
 import WhyThisScore from './WhyThisScore';
 import PersonalRiskCard from './PersonalRiskCard';
+import GuidedSteps from '@/components/consumer/GuidedSteps';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -341,6 +342,7 @@ const FeedbackSection = ({ product, user }) => {
 // ── Main Component ────────────────────────────────────────────────────────
 export default function ProductAnalysis({ product, onClear, user }) {
   const [imageError, setImageError] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
   const [imageSrc, setImageSrc] = useState(null);
   const [similarProducts, setSimilarProducts] = useState(null);
   const [isFindingSimilar, setIsFindingSimilar] = useState(false);
@@ -531,6 +533,22 @@ export default function ProductAnalysis({ product, onClear, user }) {
     );
   };
 
+  const scanSteps = [
+    { value: 'overview', label: 'Overview', intro: 'The overall score, average safety and eco ratings, and any hazards found.' },
+    { value: 'ingredients', label: "What's inside", intro: 'Every listed ingredient, its role in the product and its rating.' },
+    { value: 'safety', label: 'Safety', intro: 'Hazards and safety considerations for the ingredients in this product.' },
+    { value: 'compliance', label: 'Compliance', intro: 'Regulatory notes across the EU, US and Canada.' },
+    { value: 'sustainability', label: 'Environmental impact', intro: 'How the ingredients score for environmental impact.' },
+    { value: 'health', label: 'Health notes', intro: 'Health and nutrition context for this product.' },
+    ...(product.isMedicine ? [] : [{ value: 'diy', label: 'Make it yourself', intro: 'Simple alternatives you can make, with safety notes.' }]),
+  ];
+  const changeTab = (v) => {
+    setActiveTab(v);
+    if (v === 'compliance') handleLoadCompliance();
+    if (v === 'sustainability') handleLoadSustainability();
+    if (v === 'health') handleLoadHealth();
+  };
+
   const showFeedbackSection = product.source?.includes('AI Estimation') || product.source === 'UPC Database' || product.source === 'Not Found';
 
   return (
@@ -601,20 +619,9 @@ export default function ProductAnalysis({ product, onClear, user }) {
           </div>
 
           {/* Tabs */}
-          <Tabs defaultValue="overview" className="w-full" onValueChange={(v) => {
-            if (v === 'compliance') handleLoadCompliance();
-            if (v === 'sustainability') handleLoadSustainability();
-            if (v === 'health') handleLoadHealth();
-          }}>
-            <div className="sticky top-16 z-10 bg-[#EDF7F2] py-1.5 -mx-4 sm:-mx-6 px-4 sm:px-6">
-              <TabsList className="flex w-full overflow-x-auto bg-slate-100/80 rounded-xl no-scrollbar gap-0 p-1" style={{ scrollbarWidth: 'none' }}>
-                {['overview', 'ingredients', 'safety', 'compliance', 'sustainability', 'health', ...(product.isMedicine ? [] : ['diy'])].map(tab => (
-                  <TabsTrigger key={tab} value={tab} className="text-[11px] capitalize flex-shrink-0 px-2.5 py-1.5 data-[state=active]:bg-white data-[state=active]:text-[var(--suttain-teal)] data-[state=active]:shadow-md">
-                    {tab === 'sustainability' ? 'Eco' : tab}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </div>
+          {/* Guided results: same step-by-step presentation as Atomistic Simulation */}
+          <Tabs value={activeTab} onValueChange={changeTab} className="w-full">
+            <GuidedSteps steps={scanSteps} value={activeTab} onChange={changeTab} label="Product analysis steps">
 
             {/* OVERVIEW TAB */}
             <TabsContent value="overview" className="pt-4 space-y-4">
@@ -1181,6 +1188,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                 </Card>
               )}
             </TabsContent>
+            </GuidedSteps>
           </Tabs>
         </CardContent>
       </Card>
