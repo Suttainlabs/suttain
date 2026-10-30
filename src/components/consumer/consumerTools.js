@@ -43,7 +43,7 @@ export const CONSUMER_TOOLS = [
     inputs: ['Product type', 'Plain-language description', 'Ingredients from a scan, SDS or alternative'],
     outputs: ['Three formula options', 'Editable formula with percentages', 'Safety, compliance, impact and cost tabs', 'Batch scaling'],
     sources: ['pubchem'],
-    handoffs: [],
+    handoffs: [{ to: 'carbon', label: 'Import a saved formula into the Carbon Ledger' }],
   },
   {
     id: 'carbon', step: '05', verb: 'Score', name: 'Carbon Ledger', route: '/CarbonTaxSimulator', icon: Leaf,
@@ -52,7 +52,7 @@ export const CONSUMER_TOOLS = [
     inputs: ['Formula in % w/w (or import a saved formula)', 'Ingredient and packaging prices', 'Unit size, volume and retail price'],
     outputs: ['g CO2e per unit and tonnes per year', 'Biobased vs fossil carbon', 'Carbon-cost per unit and rule check', 'Like-for-like lower-carbon swaps'],
     sources: ['US EPA supply-chain emission factors (USEEIO v1.3)', 'PubChem'],
-    handoffs: ['analysis', 'generator'],
+    handoffs: [{ to: 'analysis', label: 'Check a lower-carbon swap for safety in Chemical Analysis' }, { to: 'generator', label: 'Rebuild the recipe with the new ingredient' }],
   },
 ];
 
