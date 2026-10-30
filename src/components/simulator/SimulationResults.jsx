@@ -35,6 +35,19 @@ import AdvancedAnalysisPanel from './AdvancedAnalysisPanel';
 import SafetyAdvisor from './SafetyAdvisor';
 import ShareButton from '../shared/ShareButton';
 import ShareSimulationModal from './ShareSimulationModal';
+import GuidedSteps from '@/components/consumer/GuidedSteps';
+
+const STEP_INTROS = {
+  "overview": "The headline result: whether this mixture reacts, how risky it is, and what to do.",
+  "visualization": "Structures of the chemicals in your mixture.",
+  "reaction": "What is predicted to happen when these chemicals meet, and what forms.",
+  "health": "Exposure routes, symptoms to watch for and first-aid guidance.",
+  "analysis": "Detailed scores, properties and the reasoning behind the result.",
+  "experimental": "Conditions and variables that change the outcome.",
+  "protocols": "Handling, storage and disposal protocols.",
+  "calculations": "Stoichiometry and quantitative calculations.",
+  "documentation": "A report you can save, share or send for approval."
+};
 
 // Lazy load visualization component
 const ChemicalVisualization = lazy(() => import('./ChemicalVisualization'));
@@ -1089,63 +1102,23 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                 </Card>
 
                 {/* Main Content */}
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 items-start">
-                    {/* Left: Tabs Content (3 columns) */}
-                    <div className="lg:col-span-3">
-                        <Card className="border-slate-200 shadow-md">
-                            {/* Compact Tab Navigation */}
-                            <div className="border-b border-slate-200 bg-slate-50/50">
-                                <div className="relative">
-                                    {showLeftArrow && (
-                                        <button
-                                            onClick={() => scrollTabs('left')}
-                                            className="absolute left-0 top-0 bottom-0 z-10 bg-gradient-to-r from-slate-50 to-transparent pr-4 pl-2 flex items-center hover:from-slate-100 transition-all"
-                                        >
-                                            <ChevronLeft className="w-4 h-4 text-slate-600" />
-                                        </button>
-                                    )}
-
-                                    <nav
-                                        ref={tabsContainerRef}
-                                        className="flex overflow-x-auto scrollbar-hide"
-                                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                                    >
-                                        {tabs.map(tab => (
-                                            <button
-                                                key={tab.id}
-                                                onClick={() => setActiveTab(tab.id)}
-                                                className={`flex items-center gap-1.5 px-3 py-3 text-xs font-medium whitespace-nowrap transition-all border-b-2 ${
-                                                    activeTab === tab.id
-                                                        ? 'border-indigo-600 text-indigo-600 bg-white'
-                                                        : 'border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-                                                }`}
-                                            >
-                                                {tab.icon}
-                                                <span className="sr-only sm:not-sr-only sm:inline">{tab.label}</span>
-                                            </button>
-                                        ))}
-                                    </nav>
-
-                                    {showRightArrow && (
-                                        <button
-                                            onClick={() => scrollTabs('right')}
-                                            className="absolute right-0 top-0 bottom-0 z-10 bg-gradient-to-l from-slate-50 to-transparent pl-4 pr-2 flex items-center hover:from-slate-100 transition-all"
-                                        >
-                                            <ChevronRight className="w-4 h-4 text-slate-600" />
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Tab Content */}
-                            <div className="bg-white rounded-b-xl border border-slate-200 border-t-0 p-4 sm:p-6">
+                <div className="grid grid-cols-1 2xl:grid-cols-4 gap-3 sm:gap-4 items-start">
+                    {/* Left: guided steps (3 columns) */}
+                    <div className="2xl:col-span-3 min-w-0">
+                        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
+                            <GuidedSteps
+                                label="Analysis steps"
+                                steps={tabs.map(t => ({ value: t.id, label: t.label, intro: STEP_INTROS[t.id] }))}
+                                value={activeTab}
+                                onChange={setActiveTab}
+                            >
                                 {renderTabContent()}
-                            </div>
-                        </Card>
+                            </GuidedSteps>
+                        </div>
                     </div>
 
                     {/* Right: Sidebar (1 column) */}
-                     <div className="space-y-3 sm:space-y-4">
+                     <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-1 2xl:space-y-0 items-start">
                         {/* Risk Metrics - Compact */}
                         <Card className="border-slate-200 shadow-md">
                             <CardHeader className="pb-3">
