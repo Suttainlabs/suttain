@@ -716,3 +716,13 @@
 /* Consumer workspace: keep hazard colours, calm the legacy gradients. */
 .consumer-theme.simulation-workspace :is(.shadow-xl, .shadow-lg) { box-shadow: 0 1px 2px rgb(15 23 42 / .06); }
 .consumer-theme.simulation-workspace :is(.rounded-3xl) { border-radius: 14px; }
+
+/* Flatten existing input cards hosted inside a flush setup rail. */
+.consumer-setup-rail.is-flush :is(.max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl) { max-width: 100%; margin-left: 0; margin-right: 0; }
+.consumer-setup-rail.is-flush > :not(:first-child) > :is(.rounded-lg, .rounded-xl, .rounded-2xl) { border: 0; border-radius: 0; background: transparent; }
+.consumer-setup-rail [class*="bg-gradient-to-"]:not(button) { background-image: none !important; background-color: hsl(var(--research-soft)) !important; color: hsl(var(--research-text)) !important; }
+.consumer-setup-rail [class*="bg-gradient-to-"]:not(button) :is([class*="text-white"], [class*="text-slate-100"], [class*="text-slate-200"]) { color: hsl(var(--research-text)) !important; }
+.consumer-setup-rail [class*="bg-gradient-to-"]:not(button) :is([class*="text-white/"]) { color: hsl(var(--research-muted)) !important; }
+.consumer-setup-rail [class*="bg-gradient-to-"]:not(button) [class*="bg-white/"] { background-color: hsl(var(--research-card)) !important; }
+.consumer-setup-rail :is(.shadow-xl, .shadow-2xl, .shadow-lg, .shadow-md) { box-shadow: none !important; }
+.consumer-theme.simulation-workspace button[class*="bg-gradient-to-"] { background-image: none !important; background-color: hsl(var(--research-accent)) !important; color: hsl(var(--research-card)) !important; }
