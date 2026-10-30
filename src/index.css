@@ -736,3 +736,18 @@
   main img { height: auto; }
   main [role="tablist"] { scrollbar-width: none; }
 }
+
+/* Mobile: never cut text off. Single-line truncation becomes wrapping on phones,
+   except in horizontal tab/nav rows where items scroll sideways instead. */
+@media (max-width: 639px) {
+  main .truncate:not(nav .truncate):not([role="tablist"] .truncate):not(.guided-steps-nav .truncate):not(.keep-truncate) {
+    white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: break-word;
+  }
+  main :is(.line-clamp-1):not(.keep-truncate) { -webkit-line-clamp: 3; }
+  /* Buttons may wrap instead of pushing icons off-screen. */
+  main button[class*="whitespace-nowrap"]:not([role="tab"]):not(.guided-steps-item),
+  main a[class*="whitespace-nowrap"]:not([role="tab"]) {
+    white-space: normal; height: auto; min-height: 2.5rem; padding-top: 0.5rem; padding-bottom: 0.5rem;
+  }
+  main button svg, main a svg { flex-shrink: 0; }
+}
