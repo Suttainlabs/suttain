@@ -751,3 +751,4 @@
   }
   main button svg, main a svg { flex-shrink: 0; }
 }
+@media (max-width: 639px) { .home-element-number { font-size: 11px; } }
