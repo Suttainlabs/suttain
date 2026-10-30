@@ -88,6 +88,7 @@ export default function CarbonTaxSimulator() {
     setIngredients(EXAMPLE.ingredients.map(([n, p, pr]) => makeIngredient(n, p, pr)));
     setPackaging(EXAMPLE.packaging.map(([t, gr, c]) => makePack(t, gr, c)));
     setStep('footprint');
+    if (window.innerWidth < 1024) setTimeout(() => document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
   };
   const loadFormulas = async () => {
     try { setFormulas(await base44.entities.Formula.filter({ created_by: user.email }, '-created_date', 20)); } catch { setFormulas([]); }
@@ -192,10 +193,11 @@ export default function CarbonTaxSimulator() {
             </ul>
             <button type="button" onClick={() => setPackaging(prev => [...prev, makePack()])} className="mt-2 inline-flex items-center gap-1.5 text-sm text-research-accent"><Package className="h-4 w-4" />Add packaging</button>
           </fieldset>
+          {hasInput && <a href="#results" className="lg:hidden research-primary w-full justify-center">See results · {g(ledger.perUnit)} CO2e per unit</a>}
         </SetupRail>
 
         {/* ── Results ─────────────────────────────────────── */}
-        <ResultsRail hasOutput={hasInput} tag={hasInput ? `${g(ledger.perUnit)} CO2e per unit` : null}
+        <ResultsRail autoScroll={false} hasOutput={hasInput} tag={hasInput ? `${g(ledger.perUnit)} CO2e per unit` : null}
           emptyText="Add your formula and packaging on the left, or load the example. Your ledger builds live as you type."
           emptyExtra={<button type="button" onClick={loadExample} className="research-primary mt-5">Load a body wash example</button>}>
           {hasInput && (

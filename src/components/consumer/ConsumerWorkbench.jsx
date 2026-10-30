@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, FileText, LayoutGrid, Loader2 } from 'lucide-react';
 import { CONSUMER_TOOLS, toolById } from '@/components/consumer/consumerTools';
@@ -92,9 +92,17 @@ export function SetupRail({ label = 'Configuration', title = 'Set up your analys
   );
 }
 
-export function ResultsRail({ hasOutput, isRunning, runningText = 'Working on it…', emptyTitle = 'Your results will appear here', emptyText, tag, children, emptyExtra }) {
+// On phones the results sit below the setup panel, so bring them into view when they first arrive.
+export function ResultsRail({ hasOutput, isRunning, runningText = 'Working on it…', emptyTitle = 'Your results will appear here', emptyText, tag, children, emptyExtra, autoScroll = true }) {
+  const ref = useRef(null);
+  const had = useRef(hasOutput);
+  useEffect(() => {
+    const arrived = (hasOutput && !had.current) || isRunning;
+    had.current = hasOutput;
+    if (autoScroll && arrived && window.innerWidth < 1024) ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [hasOutput, isRunning, autoScroll]);
   return (
-    <section aria-label="Results" className="min-w-0 space-y-5">
+    <section ref={ref} id="results" aria-label="Results" className="min-w-0 space-y-5 scroll-mt-32">
       <div className="flex items-center justify-between gap-3"><h2 className="!text-lg">Results &amp; activity</h2>{tag && <span className="research-label">{tag}</span>}</div>
       {!hasOutput && !isRunning && (
         <div className="rounded-xl border border-dashed border-research-border bg-research-card px-6 py-14 text-center">
