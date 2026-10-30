@@ -10,9 +10,9 @@ export default function ResearchWorkflowMap() {
   return (
     <section id="research-workflow" aria-labelledby="research-workflow-title" className="scroll-mt-20 border-b border-research-border py-12 sm:py-16">
       <div className="mb-8 max-w-2xl">
-        <p className="research-label mb-3">Atomistic Simulation and Drug Design / Step by step</p>
+        <p className="research-label mb-3">All three tools / Step by step</p>
         <h2 id="research-workflow-title" className="mb-3">From a molecular question to a reviewed next step</h2>
-        <p className="text-research-muted">Choose Atomistic Simulation for molecular calculations or Drug Design for target and candidate exploration. Define inputs, review preparation, and check limitations. Select a step to see the evidence and researcher decisions involved.</p>
+        <p className="text-research-muted">The same five stages apply whichever tool you use. Define inputs, review the setup, and check limitations. Select a step to see the evidence and researcher decisions involved.</p>
       </div>
       <ol aria-label="Research processing stages" className="grid grid-cols-1 gap-7 lg:grid-cols-5">
         {researchWorkflowStages.map(({ title, icon, summary, artifact, mode }, i) => {
@@ -32,7 +32,7 @@ export default function ResearchWorkflowMap() {
         ); })}
       </ol>
       <ResearchWorkflowDetail step={researchWorkflowStages[active]} active={active} />
-      <p className="mt-5 text-sm text-research-muted">Workflow guide, not live execution status. Preparing files does not run a calculation: engine execution requires separately configured compute, and final findings require researcher validation.</p>
+      <p className="mt-5 text-sm text-research-muted">Workflow guide, not live execution status. Hosted runs (Binding & ADME, Rowan in Atomistic Simulation) compute results; prepared input files do not. Final findings require researcher validation.</p>
     </section>
   );
 }

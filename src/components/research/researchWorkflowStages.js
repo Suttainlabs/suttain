@@ -2,7 +2,7 @@ export const researchWorkflowStages = [
   {
     title: 'Research trigger', mode: 'You initiate', icon: 'trigger',
     summary: 'Define the question, scope and conditions.', artifact: 'Research brief',
-    action: 'Choose Atomistic Simulation for molecular calculations or Drug Design for target exploration. Specify the system, scientific question, and intended method.',
+    action: 'Choose the tool that matches your question: Drug Design to find a target and candidates, Binding & ADME to predict affinity and drug-likeness, or Atomistic Simulation for quantum chemistry on a molecule.',
     human: 'You set the scope and decide when to request preparation.',
     provenance: 'Retain your research question and initial configuration as the starting context.',
     uncertainty: 'A clear question does not guarantee a suitable method. Check that the selected workflow fits your system.',
@@ -11,7 +11,7 @@ export const researchWorkflowStages = [
   {
     title: 'Inputs and sources', mode: 'You select · agent uses your inputs', icon: 'sources',
     summary: 'Ground the task in molecular inputs and source records.', artifact: 'Source-backed inputs',
-    action: 'For Atomistic Simulation, select molecular inputs, an engine, and environmental or forcefield parameters. For Drug Design, find a biological target and choose library and screening settings.',
+    action: 'Drug Design: find a target and choose library and screening settings. Binding & ADME: paste a protein sequence and ligand, or a list of SMILES (often straight from your shortlist). Atomistic Simulation: enter a molecule, method and basis set.',
     human: 'Confirm compound identity, source records, units and parameter choices.',
     provenance: 'Keep the selected database record, original files and configuration together.',
     uncertainty: 'Missing properties and ambiguous structures need investigation. A database match is not scientific validation.',
@@ -20,10 +20,10 @@ export const researchWorkflowStages = [
   {
     title: 'Agent preparation', mode: 'Automated after your request', icon: 'prepare',
     summary: 'Assemble the analysis and engine-specific setup.', artifact: 'Analysis and input files',
-    action: 'Atomistic Simulation prepares analysis and engine-specific input files from your configuration. Drug Design guides screening setup and candidate exploration; its example scores are fixed illustrations, not computed results.',
-    human: 'Inspect the generated setup. Preparing files does not execute an engine; compute must be configured separately.',
-    provenance: 'Review engine settings, conditions, forcefield choices and method explanations alongside the output.',
-    uncertainty: 'Generated files can need correction. Predicted values are estimates, not measured or engine-executed results.',
+    action: 'Drug Design ranks candidates by similarity to known ligands. Binding & ADME recommends an engine for your goal and submits the job, switching engines if one is unavailable. Atomistic Simulation runs hosted quantum chemistry on Rowan or prepares input files for other engines.',
+    human: 'Check the engine, model and settings before you run. Hosted runs compute real results; prepared input files still need to be run on your own compute.',
+    provenance: 'Each result records the engine, model version and citation alongside the output.',
+    uncertainty: 'Similarity ranks are not affinity. Machine-learning predictions are not measurements. Prepared files can need correction.',
     output: 'Reviewable analysis and files for the selected engine.'
   },
   {
@@ -38,7 +38,7 @@ export const researchWorkflowStages = [
   {
     title: 'Traceable output', mode: 'Saved context · human validation', icon: 'output',
     summary: 'Keep the configuration, explanation and files together.', artifact: 'Research record and exports',
-    action: 'Save supported Atomistic Simulation analyses and available exports. In Drug Design, retain a personal candidate shortlist and review real compute submissions separately from demonstration activity.',
+    action: 'Keep a private Drug Design shortlist, saved Binding & ADME jobs and Atomistic Simulation runs and exports. Pass a promising molecule to the next tool with one click.',
     human: 'Validate final results before sharing or publishing. Run prepared files in your separately configured compute environment when needed.',
     provenance: 'Use saved configurations, references and job IDs to trace what was prepared. These are reviewable records, not certified audits.',
     uncertainty: 'An export does not validate a prediction. Keep limitations and assumptions with every result.',
