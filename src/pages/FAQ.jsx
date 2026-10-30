@@ -20,7 +20,7 @@ const faqData = [
   },
   {
     question: "Can I use Suttain for professional research?",
-    answer: "Yes. Our Research Portal offers advanced computational tools including DFT and molecular dynamics simulations, AlphaFold-powered protein structure exploration, and a comprehensive Chemical Intelligence API for enterprise-scale integration with PubChem, ChEMBL, and EPA CompTox data."
+    answer: "Yes. Our Research Portal offers advanced computational tools including DFT and molecular dynamics simulations, AlphaFold-powered protein structure exploration, and Drug Design with live targets from ChEMBL, UniProt, RCSB PDB and AlphaFold DB."
   },
   {
     question: "How does the ingredient safety scoring work?",
@@ -32,7 +32,7 @@ const faqData = [
   },
   {
     question: "Is there an API for my organization?",
-    answer: "Yes. Suttain offers an Enterprise API that provides programmatic access to our chemical database (130M+ records), simulation engine, and compliance tools with native SDKs for Python, JavaScript, and R. Visit the Enterprise API page to join the waitlist."
+    answer: "Not yet. The API page documents the research engines Suttain uses, with citations. Programmatic access with keys is not open at the moment; contact us if you need it."
   },
   {
     question: "Do I need to be a chemist to use Suttain?",
@@ -44,7 +44,7 @@ const faqData = [
   },
   {
     question: "What data sources power Suttain?",
-    answer: "Suttain integrates with the world's leading scientific databases including PubChem (130M+ compounds), ChEMBL (bioactivity data), EPA CompTox (toxicity predictions), and RCSB PDB (3D biomolecular structures). All results are citation-ready."
+    answer: "Suttain integrates with the world's leading scientific databases including PubChem (119M+ compounds), ChEMBL (2.9M+ compounds), ChEBI, ChemSpider, RCSB PDB (261k+ structures), UniProt, AlphaFold DB, Open Food Facts and Open Beauty Facts. All results are citation-ready."
   },
   {
     question: "Is Suttain free to use?",

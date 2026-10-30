@@ -69,7 +69,7 @@ const PAGE_META_DESCRIPTIONS = {
   Blog: 'Suttain blog: insights on chemical safety, sustainable formulation, regulatory compliance, and the science behind safer products.',
   ComplianceGuide: 'Suttain compliance guide, understand FDA, EU, REACH, and global regulatory requirements for cosmetics, cleaning products, and chemical formulations.',
   LearningSuite: 'Suttain learning center, tutorials and guides on chemical safety, product formulation, and sustainable manufacturing from basics to advanced techniques.',
-  ExternalDatabases: 'Explore external chemical databases integrated with Suttain, PubChem, ChEMBL, EPA CompTox, RCSB PDB, and more scientific data sources.',
+  ExternalDatabases: 'Explore external chemical databases integrated with Suttain, PubChem, ChEMBL, ChEBI, RCSB PDB, UniProt, AlphaFold DB, and more scientific data sources.',
   BookADemo: 'Book a demo of the Suttain chemical safety and compliance platform. See how our tools can streamline your formulation and regulatory workflows.',
   AtomisticSimulation: 'Suttain Atomistic Simulation: configure quantum chemistry, QM/MM, molecular dynamics, and materials workflows with reviewable engine-specific inputs.',
   DrugDesign: 'Suttain Drug Design: search biological targets, explore screening methods, and save candidate shortlists with clear limits on illustrative results.',

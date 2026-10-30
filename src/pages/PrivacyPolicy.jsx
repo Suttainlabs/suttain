@@ -48,7 +48,7 @@ const SECTIONS = [
     paragraphs: [
       { type: 'p', text: 'We rely on these third-party services to operate the platform:' },
       { type: 'list', items: [
-        'PubChem, ChEMBL, EPA CompTox, RCSB PDB, and AlphaFold DB for chemical and protein data',
+        'PubChem, ChEMBL, ChEBI, ChemSpider, RCSB PDB, UniProt and AlphaFold DB for chemical and protein data; Open Food Facts, Open Beauty Facts, openFDA, DailyMed and RxNorm for product and medicine data',
         'Google, Microsoft, or Apple for authentication (if you use social sign-in)',
         'Our payment processor for billing (card data never touches our servers)',
         'Open-Meteo for weather data (Suttain Farm, if applicable)',

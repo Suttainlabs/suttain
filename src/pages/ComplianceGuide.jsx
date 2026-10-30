@@ -4,11 +4,11 @@ import { ClipboardCheck, AlertOctagon, ListChecks, Code2, Mail } from 'lucide-re
 const COVERAGE = [
   {
     title: 'GHS Classification',
-    body: 'Our Regulatory API and SDS Analyzer extract and display Globally Harmonized System (GHS) hazard classifications, including signal words (Danger, Warning), H-statements, and pictograms for compounds in our 130M+ database. Data is sourced directly from PubChem PUG-View, which aggregates GHS labels from authoritative bodies.',
+    body: 'Our Regulatory API and SDS Analyzer extract and display Globally Harmonized System (GHS) hazard classifications, including signal words (Danger, Warning), H-statements, and pictograms for the 119M+ compounds in PubChem. Data is sourced directly from PubChem PUG-View, which aggregates GHS labels from authoritative bodies.',
   },
   {
-    title: 'EPA CompTox Dashboard',
-    body: 'We cross-reference compounds against the EPA CompTox Chemistry Dashboard, providing access to toxicity, environmental fate, and regulatory status data curated by the US Environmental Protection Agency.',
+    title: 'Drug and medicine labels',
+    body: 'For medicines and drug ingredients, we query openFDA, DailyMed and RxNorm (US FDA and National Library of Medicine) for label information and normalised drug names.',
   },
   {
     title: 'REACH and ECHA',
@@ -34,7 +34,7 @@ const NOT_COVERED = [
 const WORKFLOW = [
   'Identify your compound: Use the Chemical Analysis or API to look up any compound by name, SMILES, InChI, or CAS number.',
   'Check hazard classification: Review GHS signal words, H-statements, and pictograms. Use the SDS Analyzer to extract data from existing Safety Data Sheets.',
-  'Cross-reference regulatory databases: Our tools surface EPA CompTox, ECHA/REACH, and FDA data where available, all with source citations.',
+  'Cross-reference regulatory databases: Our tools surface PubChem GHS, ECHA/REACH, and FDA data where available, all with source citations.',
   'Export citation-ready reports: Download results in CSV, JSON, or PDF with full source attribution for your compliance file.',
   'Flag restricted ingredients: Use the Formula Generator to check whether any ingredient in your formulation has known regulatory restrictions before you go to production.',
 ];

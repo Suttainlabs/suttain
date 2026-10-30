@@ -271,7 +271,7 @@ export default function ChemicalComparison() {
             </div>
             <p className="text-sm font-semibold text-slate-500">Select two compounds to compare</p>
             <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-              Search your local database or PubChem's 130M+ compounds to load side-by-side properties, 3D structures, and toxicity data.
+              Search your local database or PubChem's 119M+ compounds to load side-by-side properties, 3D structures, and toxicity data.
             </p>
           </div>
         )}
