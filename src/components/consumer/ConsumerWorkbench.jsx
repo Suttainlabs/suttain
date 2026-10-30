@@ -81,10 +81,11 @@ export function WorkbenchGrid({ children, wide = false }) {
   return <div className={`grid grid-cols-1 gap-6 items-start ${wide ? 'lg:grid-cols-[400px_minmax(0,1fr)]' : 'lg:grid-cols-[360px_minmax(0,1fr)]'}`}>{children}</div>;
 }
 
-export function SetupRail({ label = 'Configuration', title = 'Set up your analysis', children, footer }) {
+// `flush` hosts an existing input component that brings its own padding (e.g. the Chemical Analysis inputs).
+export function SetupRail({ label = 'Configuration', title = 'Set up your analysis', children, footer, flush = false, sticky = true }) {
   return (
-    <aside className="consumer-setup-rail min-w-0 rounded-xl border border-research-border bg-research-card p-5 self-start lg:sticky lg:top-32 space-y-5">
-      <div><p className="research-label mb-1">{label}</p><h2 className="!text-lg">{title}</h2></div>
+    <aside className={`consumer-setup-rail ${flush ? 'is-flush overflow-hidden' : 'p-5 space-y-5'} min-w-0 rounded-xl border border-research-border bg-research-card self-start ${sticky ? 'lg:sticky lg:top-32 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto' : ''}`}>
+      <div className={flush ? 'px-5 pt-5 pb-1' : ''}><p className="research-label mb-1">{label}</p><h2 className="!text-lg">{title}</h2></div>
       {children}
       {footer}
     </aside>
