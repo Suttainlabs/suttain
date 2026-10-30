@@ -3,12 +3,12 @@ import BasisSetSelect from '@/components/simulation/BasisSetSelect';
 import MdParameterFields from '@/components/simulation/MdParameterFields';
 import RowanParameterFields from '@/components/simulation/RowanParameterFields';
 import MaceParameterFields from '@/components/simulation/MaceParameterFields';
-export default function EngineParameterFields({engine,inputs,onChange,simType,section='all'}) {
+export default function EngineParameterFields({engine,inputs,onChange,simType,section='all',hidePdb}) {
   if(!engine) return null;
   if(engine.id==='mace') return <MaceParameterFields engine={engine} inputs={inputs} onChange={onChange} simType={simType} section={section}/>;
   if(engine.id==='rowan') return section==='advanced'?null:<RowanParameterFields engine={engine} inputs={inputs} onChange={onChange} simType={simType}/>;
   const update=(key,value)=>onChange(key,value);
-  if(engine.md) return <MdParameterFields engine={engine} inputs={inputs} onChange={onChange} simType={simType} section={section}/>;
+  if(engine.md) return <MdParameterFields engine={engine} inputs={inputs} onChange={onChange} simType={simType} section={section} hidePdb={hidePdb}/>;
   if(engine.id==='pubchem') return section==='advanced'?null: <section className="mb-7 grid gap-4 sm:grid-cols-2"><div><label htmlFor="lookup-query">Compound query</label><input id="lookup-query" className="simulation-control" value={inputs.query || ''} onChange={e=>update('query',e.target.value)} placeholder="aspirin, CID or SMILES"/></div><div><label htmlFor="lookup-namespace">Query type</label><select id="lookup-namespace" className="simulation-control" value={inputs.namespace || 'name'} onChange={e=>update('namespace',e.target.value)}>{['name','smiles','cid'].map(x=><option key={x}>{x}</option>)}</select></div><p className="sm:col-span-2 text-sm text-research-muted">PubChem retrieves existing chemical properties; it does not execute your selected simulation.</p></section>;
   return <section className="mb-7 space-y-4">
     <h3>{engine.label} preparation parameters</h3>

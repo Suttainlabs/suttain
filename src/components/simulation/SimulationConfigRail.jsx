@@ -37,6 +37,8 @@ export default function SimulationConfigRail({ sim, engine, catalogue, inputs, o
       </Step>
 
       <Step n="02" title="Structure" hint={md ? 'Fetch a protein from RCSB PDB, upload a .pdb file, or paste coordinates.' : 'Type a name or SMILES, upload a file, draw it, or find it in a database.'}>
+        {md && <SimulationWorkflowField field={{ key: 'pdb_content', label: 'Structure (PDB coordinates)', keepLabel: true, multiline: true, rows: 6, placeholder: 'Paste PDB text with ATOM/HETATM records, or fetch by PDB ID below', hint: 'Molecular dynamics needs atom coordinates with residue names. A name, SMILES or description is not enough.' }}
+          value={inputs.pdb_content} onChange={value => onChange('pdb_content', value)} canUpload onUpload={() => onUpload('pdb_content')} />}
         {inputFields.map(field => (
           <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]} onChange={value => onChange(field.key, value)}
             canUpload canDraw={drawKeys.includes(field.key)} onUpload={() => onUpload(field.key)} onDraw={() => onDraw(field.key)} />
@@ -44,7 +46,7 @@ export default function SimulationConfigRail({ sim, engine, catalogue, inputs, o
         {md ? (
           <div className="rounded-lg border border-research-border p-3 space-y-2">
             <p className="flex items-center gap-2 text-sm font-medium"><Search className="h-4 w-4 text-research-accent" />Fetch from RCSB PDB</p>
-            <PdbFetch onLoad={pdb => onChange(inputFields.find(f => f.key === 'system')?.key || 'system', pdb)} />
+            <PdbFetch onLoad={pdb => onChange('pdb_content', pdb)} />
           </div>
         ) : (
         <div className="rounded-lg border border-research-border">
@@ -59,7 +61,7 @@ export default function SimulationConfigRail({ sim, engine, catalogue, inputs, o
       </Step>
 
       <Step n="03" title="Method and conditions">
-        <EngineParameterFields section="core" engine={catalogue} inputs={inputs} onChange={onChange} simType={sim.id} />
+        <EngineParameterFields section="core" engine={catalogue} inputs={inputs} onChange={onChange} simType={sim.id} hidePdb={md} />
         {methodFields.length > 0 && <div className="space-y-4">{methodFields.map(field => <SimulationWorkflowField key={field.key} field={field} value={inputs[field.key]} onChange={value => onChange(field.key, value)} />)}</div>}
         <button type="button" onClick={onAdvanced} className="w-full flex items-start gap-3 rounded-lg border border-research-border p-3 text-left hover:bg-research-soft">
           <SlidersHorizontal className="h-4 w-4 mt-0.5 shrink-0 text-research-accent" />
