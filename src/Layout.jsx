@@ -487,7 +487,7 @@ export default function Layout({ children, currentPageName }) {
               )}
 
               {/* Mobile hamburger */}
-              <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100">
+              <button type="button" aria-label="Open menu" onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100">
                 <Menu className="w-5 h-5" />
               </button>
             </div>
