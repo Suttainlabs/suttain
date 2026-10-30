@@ -185,10 +185,10 @@ export default function SimulationRunner() {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const content = ev.target.result;
-      if (content.length <= 24000) {
+      if (content.length <= 90000) {
         handleInputChange(fileAutoFillTarget, content);
       } else {
-        handleInputChange(fileAutoFillTarget, file.name);
+        setInputGenerationError(`${file.name} is ${Math.round(content.length / 1024)} KB. The limit is 90 KB (about 1,000 atoms). Remove water and unneeded chains, then upload again.`);
       }
     };
     reader.readAsText(file);

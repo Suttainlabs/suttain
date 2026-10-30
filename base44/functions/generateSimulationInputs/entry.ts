@@ -501,7 +501,7 @@ export default async function(req) {
 
     const body = await req.json();
     const { sim_type, engine, inputs, environmental_params } = body;
-    if (!engine || typeof sim_type !== 'string' || !inputs || typeof inputs !== 'object' || Array.isArray(inputs) || JSON.stringify(body).length > 32000) return Response.json({ error: 'Supply engine, sim_type and bounded inputs (maximum 32 KB).' }, { status: 400 });
+    if (!engine || typeof sim_type !== 'string' || !inputs || typeof inputs !== 'object' || Array.isArray(inputs) || JSON.stringify(body).length > 110000) return Response.json({ error: 'Supply engine, sim_type and bounded inputs (maximum 32 KB).' }, { status: 400 });
     const registered = findEngine(engine);
     if (registered) {
       const result = await prepareEnginePackage(body);

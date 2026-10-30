@@ -29,7 +29,7 @@ export default function mdSettings(engine, inputs, env) {
   if(!['none','water','tip3p'].includes(solvent)) invalid('These MD templates support explicit TIP3P water or no added solvent. Choose water, TIP3P, or none.');
   if(solvent!=='none' && boundary!=='periodic') invalid('Automatic water solvation requires periodic boundaries.');
   const pdb=String(inputs.pdb_content || (/^(ATOM  |HETATM|HEADER|CRYST1)/m.test(inputs.system || '') ? inputs.system : '')).trim();
-  if(!pdb || pdb.length>24000 || !/^(ATOM  |HETATM)/m.test(pdb)) invalid('Provide PDB coordinate text (maximum 24 KB). A description, SMILES, or XYZ does not contain the MD residue topology.');
+  if(!pdb || pdb.length>90000 || !/^(ATOM  |HETATM)/m.test(pdb)) invalid('Provide PDB coordinate text (maximum 90 KB, up to 1,000 atoms). A description, SMILES, or XYZ does not contain the MD residue topology.');
   if(pdb.split(/\r?\n/).filter(line=>/^(ATOM  |HETATM)/.test(line)).length>1000) invalid('The downloadable MD preparer accepts at most 1,000 input PDB atoms (solvent is added locally).');
   const timestep=number(inputs.md_timestep_fs,1,0.1,1,'Timestep (fs; flexible bonds)');
   if(custom.lj_parameters?.length && !attachment && !openmm && forcefield==='GROMOS54A7') invalid('GROMOS uses additional nonbonded conventions. Supply a validated native topology for LJ overrides rather than converting its interaction rules implicitly.');
