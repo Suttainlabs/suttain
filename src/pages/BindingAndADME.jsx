@@ -1,27 +1,26 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Crosshair, FlaskConical, Info, Loader2, Sparkles, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, Crosshair, FlaskConical, Info, Loader2, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import AuthContext from '@/components/auth/AuthContext';
 import useTrialStatus from '@/hooks/useTrialStatus';
 import SubscriptionLock from '@/components/shared/SubscriptionLock';
 import SimulationStatusBanner from '@/components/shared/SimulationStatusBanner';
-import ResearchProductNav, { NextStepLink } from '@/components/research/ResearchProductNav';
-import { handoffUrl } from '@/components/research/researchProducts';
+import ResearchProductNav from '@/components/research/ResearchProductNav';
+import HostedResults from '@/components/binding/HostedResults';
+import useEngineRecommendation from '@/components/binding/useEngineRecommendation';
+import useHostedPolling from '@/components/binding/useHostedPolling';
 
 const TASKS = [
   { id: 'binding', label: 'Protein–ligand binding', icon: Crosshair, blurb: 'Predict the complex structure and binding affinity of one ligand against one protein.' },
-  { id: 'adme', label: 'ADME prediction', icon: FlaskConical, blurb: 'Predict absorption, distribution, metabolism and excretion properties for up to 128 molecules.' },
+  { id: 'adme', label: 'ADME', icon: FlaskConical, blurb: 'Predict absorption, distribution, metabolism and excretion properties for up to 128 molecules.' },
 ];
 const ADME_EXAMPLE = ['CC(=O)Oc1ccccc1C(=O)O', 'Cn1cnc2c1c(=O)n(C)c(=O)n2C', 'CC(C)Cc1ccc(cc1)C(C)C(=O)O'].join('\n');
-const POLL_MS = 15000;
 
 const call = async (name, payload) => {
   try { return (await base44.functions.invoke(name, payload)).data; }
   catch (error) { const data = error?.response?.data; if (data) return data; throw error; }
 };
-const fmt = value => typeof value === 'number' ? (Number.isInteger(value) ? String(value) : value.toFixed(3)) : String(value ?? '—');
-const prettyKey = key => key.split('.').pop().replace(/_/g, ' ');
 
 function Section({ step, title, children }) {
   return <section className="border-b border-research-border pb-7 mb-7"><p className="research-label mb-2">{step}</p><h2 className="!text-lg mb-4">{title}</h2>{children}</section>;
@@ -29,30 +28,6 @@ function Section({ step, title, children }) {
 
 function Choice({ active, onClick, children, disabled }) {
   return <button type="button" aria-pressed={active} disabled={disabled} onClick={onClick} className={`min-h-11 rounded-lg border px-4 py-3 text-left text-sm transition-colors disabled:opacity-50 ${active ? 'border-research-accent bg-research-soft text-research-accent' : 'border-research-border bg-research-card text-research-text hover:border-research-accent'}`}>{children}</button>;
-}
-
-function Results({ job, firstSmiles }) {
-  const r = job?.result || {};
-  if (!job) return null;
-  if (job.status === 'failed') return <div role="alert" className="rounded-xl border border-research-border bg-research-card p-5 sm:p-6"><div className="flex items-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-destructive" /><h3 className="!text-lg">Calculation did not run</h3></div><p className="text-sm text-research-muted">{job.error || 'The provider reported a failure.'}</p>{!!r.attempts?.length && <ul className="mt-3 space-y-1 text-xs text-research-muted">{r.attempts.map((a, i) => <li key={i}><span className="font-mono">{a.provider}</span>: {a.message}</li>)}</ul>}</div>;
-  if (job.status !== 'completed') return <div role="status" aria-live="polite" className="flex items-center gap-3 rounded-xl border border-research-border bg-research-card p-5 sm:p-6"><Loader2 className="h-5 w-5 animate-spin text-research-accent" /><div><p className="text-sm font-medium">Running on {job.engine}…</p><p className="text-xs text-research-muted">{r.model}. This page checks for results every 15 seconds; you can leave and come back.</p></div></div>;
-  return <div className="rounded-xl border border-research-border bg-research-card p-5 sm:p-6 space-y-5">
-    <div className="flex flex-wrap items-start justify-between gap-3">
-      <div><p className="research-label mb-1">Result</p><h3 className="!text-lg">{job.job_name}</h3></div>
-      <div className="text-right"><span className="inline-flex items-center gap-1.5 rounded-full border border-research-accent bg-research-soft px-3 py-1 text-xs text-research-accent"><CheckCircle2 className="h-3.5 w-3.5" />Ran on {job.engine}</span><p className="mt-1 text-xs text-research-muted">{r.model}</p></div>
-    </div>
-    {r.fallback && <div className="flex gap-2 rounded-lg border border-research-border bg-research-soft p-3 text-sm"><Info className="h-4 w-4 shrink-0 mt-0.5 text-research-accent" /><p>{r.fallback.notice}</p></div>}
-    {r.task === 'binding' && (r.metrics?.length
-      ? <div className="overflow-x-auto"><table className="w-full text-sm"><caption className="text-left text-xs text-research-muted mb-2">Reported by {job.engine}; not an AI estimate.</caption><thead><tr className="border-b border-research-border text-left text-xs text-research-muted"><th className="py-2 pr-4 font-medium">Metric</th><th className="py-2 pr-4 font-medium">Value</th><th className="py-2 font-medium">Field</th></tr></thead><tbody>{r.metrics.map(m => <tr key={m.key} className="border-b border-research-border last:border-0"><td className="py-2 pr-4 capitalize">{prettyKey(m.key)}</td><td className="py-2 pr-4 font-mono">{fmt(m.value)}</td><td className="py-2 font-mono text-xs text-research-muted">{m.key}</td></tr>)}</tbody></table></div>
-      : <p className="text-sm text-research-muted">The provider completed the job but returned no affinity or confidence values. The full output is saved with this job.</p>)}
-    {r.task === 'adme' && <div className="space-y-3">{(r.adme || []).map((row, i) => <div key={i} className="rounded-lg border border-research-border p-3"><p className="font-mono text-xs break-all mb-2">{row.smiles}</p>{row.status === 'failed' ? <p className="text-sm text-destructive">{row.error || 'Prediction failed for this molecule.'}</p> : <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 text-sm">{Object.entries(row.properties || {}).map(([k, v]) => <div key={k} className="min-w-0"><dt className="text-xs text-research-muted truncate">{k.replace(/_/g, ' ')}</dt><dd className="font-mono">{fmt(v)}</dd></div>)}</dl>}</div>)}<p className="text-xs text-research-muted">Reported by {job.engine}; not an AI estimate. Property names differ between engines.</p></div>}
-    {r.limitations && <p className="text-xs text-research-muted">{r.limitations}</p>}
-    {!!r.citations?.length && <div className="border-t border-research-border pt-3"><p className="research-label mb-1">Cite</p>{r.citations.map((c, i) => <p key={i} className="text-xs text-research-muted">{c.text}</p>)}</div>}
-    <div className="border-t border-research-border pt-4"><p className="research-label mb-3">Next step</p><div className="grid gap-2">
-      {firstSmiles && <NextStepLink to={handoffUrl.atomistic(firstSmiles)} step="03" title="Calculate it in Atomistic Simulation" text="Run DFT geometry and energies on this ligand, pre-filled." />}
-      <NextStepLink to="/DrugDesign" step="01" title="Back to Drug Design" text="Review your shortlist or screen another target." />
-    </div></div>
-  </div>;
 }
 
 export default function BindingAndADME() {
@@ -69,48 +44,22 @@ export default function BindingAndADME() {
   const [admeText, setAdmeText] = useState(initial.smiles);
   const [provider, setProvider] = useState('auto');
   const [autoFallback, setAutoFallback] = useState(true);
-  const [rec, setRec] = useState(null);
-  const [recError, setRecError] = useState('');
+
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
   const [job, setJob] = useState(null);
-  const pollRef = useRef(null);
+  const pollError = useHostedPolling(job, setJob);
 
   const smilesList = useMemo(() => admeText.split('\n').map(s => s.trim()).filter(Boolean), [admeText]);
   const input = task === 'binding' ? { protein_sequence: sequence, ligand_smiles: ligand } : { smiles: smilesList };
   const admeCount = task === 'adme' ? smilesList.length : 0;
 
-  // Recommendation follows task, goal and (for ADME) batch size. No compute is run.
-  useEffect(() => {
-    let cancelled = false;
-    setRecError('');
-    const t = setTimeout(async () => {
-      try {
-        const data = await call('recommendEngine', { task, goal, input: task === 'adme' ? { smiles: smilesList } : {} });
-        if (cancelled) return;
-        if (data?.error) { setRecError(data.error); return; }
-        setRec(data);
-        if (!goal && data.goal) setGoal(data.goal);
-      } catch { if (!cancelled) setRecError('Engine recommendation could not load. You can still choose an engine.'); }
-    }, 300);
-    return () => { cancelled = true; clearTimeout(t); };
-  }, [task, goal, admeCount]);
-
-  useEffect(() => { setGoal(null); setProvider('auto'); setJob(null); setFormError(''); }, [task]);
-  useEffect(() => () => clearInterval(pollRef.current), []);
-  // On phones the result panel sits below the form: show it as soon as a job starts.
+  const { rec, goals, recError } = useEngineRecommendation(task, goal, input, admeCount);
+  const changeTask = nextTask => {
+    setTask(nextTask); setGoal(null); setProvider('auto'); setJob(null); setFormError('');
+  };
   const jobId = job?.id;
   useEffect(() => { if (jobId && window.innerWidth < 1024) document.getElementById('binding-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, [jobId]);
-
-  const startPolling = jobId => {
-    clearInterval(pollRef.current);
-    pollRef.current = setInterval(async () => {
-      try {
-        const data = await call('pollHostedPredictions', { job_id: jobId });
-        if (data?.job) { setJob(data.job); if (['completed', 'failed'].includes(data.job.status)) clearInterval(pollRef.current); }
-      } catch { /* transient network error: keep polling */ }
-    }, POLL_MS);
-  };
 
   const submit = async event => {
     event.preventDefault();
@@ -119,8 +68,8 @@ export default function BindingAndADME() {
     if (task === 'adme' && (!smilesList.length || smilesList.length > 128)) { setFormError('Enter between 1 and 128 SMILES, one per line.'); return; }
     setSubmitting(true); setJob(null);
     try {
-      const data = await call('runHostedPrediction', { task, goal, provider, auto_fallback: autoFallback, input });
-      if (data?.job) { setJob(data.job); if (['pending', 'running'].includes(data.job.status)) startPolling(data.job.id); }
+      const data = await call('runHostedPrediction', { task, goal: rec?.goal || goal, provider, auto_fallback: autoFallback, input });
+      if (data?.job) setJob(data.job);
       else setFormError(data?.error || 'The calculation could not be submitted.');
     } catch { setFormError('The calculation could not be submitted. Check your connection and try again.'); }
     finally { setSubmitting(false); }
@@ -148,14 +97,14 @@ export default function BindingAndADME() {
         <form onSubmit={submit} className="col-span-12 lg:col-span-7 min-w-0">
           <Section step="01 / Calculation" title="What do you want to calculate?">
             <div role="group" aria-label="Calculation type" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {TASKS.map(({ id, label, icon: Icon, blurb }) => <Choice key={id} active={task === id} onClick={() => setTask(id)}><span className="flex items-center gap-2 font-medium"><Icon className="h-4 w-4" />{label}</span><span className="block mt-1 text-xs text-research-muted">{blurb}</span></Choice>)}
+              {TASKS.map(({ id, label, icon: Icon, blurb }) => <Choice key={id} active={task === id} disabled={submitting || running} onClick={() => changeTask(id)}><span className="flex items-center gap-2 font-medium"><Icon className="h-4 w-4" />{label}</span><span className="block mt-1 text-xs text-research-muted">{blurb}</span></Choice>)}
             </div>
           </Section>
 
           <Section step="02 / Goal" title="What do you want to find out?">
             <div role="group" aria-label="Goal" className="grid grid-cols-1 gap-2">
-              {(rec?.goals || []).map(g => <Choice key={g.id} active={rec?.goal === g.id} disabled={task === 'adme' && admeCount > 10 && g.id === 'full_profile'} onClick={() => setGoal(g.id)}><span className="font-medium">{g.label}</span><span className="block text-xs text-research-muted">{g.hint}{task === 'adme' && admeCount > 10 && g.id === 'full_profile' ? ' (up to 10 molecules)' : ''}</span></Choice>)}
-              {!rec && !recError && <p role="status" className="text-sm text-research-muted">Loading goals…</p>}
+              {goals.map(g => <Choice key={g.id} active={(rec?.goal || goal) === g.id} disabled={task === 'adme' && admeCount > 10 && g.id === 'full_profile'} onClick={() => setGoal(g.id)}><span className="font-medium">{g.label}</span><span className="block text-xs text-research-muted">{g.hint}{task === 'adme' && admeCount > 10 && g.id === 'full_profile' ? ' (up to 10 molecules)' : ''}</span></Choice>)}
+              {!goals.length && !recError && <p role="status" className="text-sm text-research-muted">Loading goals…</p>}
             </div>
           </Section>
 
@@ -173,27 +122,30 @@ export default function BindingAndADME() {
           <Section step="04 / Engine" title="Compute engine">
             <label htmlFor="engine" className="block text-sm font-medium mb-2">Engine</label>
             <select id="engine" value={provider} onChange={e => setProvider(e.target.value)} className="simulation-control">
-              <option value="auto">Auto (use recommendation{recommendedLabel ? `: ${recommendedLabel}` : ''})</option>
+              <option value="auto">Auto (use recommendation)</option>
               {engines.map(e => <option key={e.provider} value={e.provider} disabled={!e.configured}>{e.label}{e.configured ? '' : ' (not connected)'}</option>)}
             </select>
             <label className="mt-3 flex items-start gap-2 text-sm"><input type="checkbox" checked={autoFallback} onChange={e => setAutoFallback(e.target.checked)} className="mt-1" /><span>Switch engines automatically if this one is unavailable<span className="block text-xs text-research-muted">Only out-of-credit or offline engines trigger a switch. Invalid input stops the run.</span></span></label>
           </Section>
 
           {formError && <p role="alert" className="mb-4 text-sm text-destructive">{formError}</p>}
-          <button type="submit" disabled={submitting || running || (task === 'adme' && admeCount > 128)} className="research-primary inline-flex items-center gap-2 disabled:opacity-50">{(submitting || running) && <Loader2 className="h-4 w-4 animate-spin" />}{submitting ? 'Submitting…' : running ? 'Running…' : 'Run calculation'}</button>
+          <button type="submit" disabled={submitting || running || !rec || !!recError || (task === 'adme' && admeCount > 128)} className="research-primary inline-flex items-center gap-2 disabled:opacity-50">{(submitting || running) && <Loader2 className="h-4 w-4 animate-spin" />}{submitting ? 'Submitting…' : running ? 'Running…' : 'Run calculation'}</button>
         </form>
 
         <aside className="col-span-12 lg:col-span-5 min-w-0 space-y-6">
           <div aria-live="polite" className="rounded-xl border border-research-border bg-research-card p-5 sm:p-6">
             <div className="flex items-center gap-2 mb-3"><Sparkles className="h-4 w-4 text-research-accent" /><p className="research-label">Recommended engine</p></div>
             {recError ? <p className="text-sm text-research-muted">{recError}</p> : !rec ? <p role="status" className="text-sm text-research-muted">Choosing the best engine…</p> : <>
-              <h3 className="!text-lg mb-2">{recommendedLabel}</h3>
+              <h3 className="!text-lg mb-2">Recommended: {recommendedLabel}</h3>
               <p className="text-sm text-research-muted mb-4">{rec.reason}</p>
               <p className="research-label mb-2">Order Auto will try</p>
               <ol className="space-y-2">{engines.map((e, i) => <li key={e.provider} className="flex items-start gap-3 text-sm"><span className="font-mono text-xs text-research-muted mt-0.5">{String(i + 1).padStart(2, '0')}</span><span className="min-w-0 flex-1"><span className={e.configured ? '' : 'text-research-muted'}>{e.label}</span><span className="block text-xs text-research-muted">{e.model}</span></span>{!e.configured && <span className="rounded border border-research-border px-2 py-0.5 text-xs text-research-muted">Not connected</span>}</li>)}</ol>
             </>}
           </div>
-          <div id="binding-results" className="scroll-mt-32" /><Results job={job} firstSmiles={task === 'binding' ? ligand.trim() : smilesList[0]} />
+          <div id="binding-results" className="scroll-mt-32">
+            <HostedResults job={job} />
+            {pollError && <p role="alert" className="mt-3 rounded-lg border border-research-border bg-research-soft p-3 text-sm text-research-text">{pollError}</p>}
+          </div>
           <p className="text-xs text-research-muted">Machine-learning predictions, not experimental measurements. Scores from different engines or model versions are not interchangeable; compare candidates within one engine.</p>
         </aside>
       </div>
