@@ -111,7 +111,7 @@ const SECTIONS = [
     icon: Mail,
     title: '11. Contact',
     paragraphs: [
-      { type: 'p', text: 'Questions? Email contact@suttain.com or write to Suttain LLC, 8539 Alma Lily Dr, Richmond, TX 77469.' },
+      { type: 'p', text: 'Questions? Email contact@suttain.com. We reply to all privacy and legal requests by email.' },
     ]
   },
 ];
