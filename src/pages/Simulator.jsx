@@ -16,11 +16,10 @@ import SaferAlternatives from "../components/simulator/SaferAlternatives";
 import PersonaSelector from "../components/simulator/PersonaSelector";
 import SupplierManager from "../components/suppliers/SupplierManager";
 import SupplierLinkModal from "../components/suppliers/SupplierLinkModal";
-import HazardInteractionMatrix from "../components/simulator/HazardInteractionMatrix";
 import ComplianceAuditPanel from "../components/simulator/ComplianceAuditPanel";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { MessageSquare, Star, X, DollarSign, Grid3X3, FlaskConical, FileText, Package } from "lucide-react";
+import { MessageSquare, Star, X, DollarSign, FlaskConical, FileText, Package } from "lucide-react";
 import FormulaVersionTracker from "../components/simulator/FormulaVersionTracker";
 import FormulaComparisonChart from "../components/simulator/FormulaComparisonChart";
 import ChemicalInventoryManager from "../components/simulator/ChemicalInventoryManager";
@@ -522,7 +521,7 @@ const ADVANCED_PERSONAS = new Set(['business', 'teacher', 'researcher']);
 export default function Simulator() {
   const { user, refreshUser } = useContext(AuthContext);
   const trialStatus = useTrialStatus(user);
-  const [activeMode, setActiveMode] = useState("simulator"); // "simulator" | "matrix" | "sds"
+  const [activeMode, setActiveMode] = useState("simulator"); // "simulator" | "sds" | "inventory"
   const [persona, setPersona] = useState(null);
   const [step, setStep] = useState(1);
   const [chemicals, setChemicals] = useState([]);
@@ -887,22 +886,10 @@ export default function Simulator() {
             onChange={setActiveMode}
             modes={[
               { id: "simulator", label: "Interaction check", icon: FlaskConical },
-              { id: "matrix", label: "Hazard matrix", icon: Grid3X3 },
               { id: "sds", label: "SDS analyzer", icon: FileText },
               { id: "inventory", label: "Inventory", icon: Package },
             ]}
           />
-
-          {/* Hazard Interaction Matrix mode */}
-          {activeMode === "matrix" && (
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-              <Card className="border-2 border-red-100">
-                <CardContent className="p-6">
-                  <HazardInteractionMatrix />
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
 
           {/* Chemical Inventory mode */}
           {activeMode === "inventory" && (
