@@ -20,7 +20,8 @@ export default function JobQueueMonitor() {
     queryKey: ['jobQueue'],
     queryFn: async () => {
       const response = await base44.functions.invoke('getJobQueueStatus', {});
-      return response;
+      const payload = response?.data ?? response;
+      return { summary: payload?.summary || {}, jobs: Array.isArray(payload?.jobs) ? payload.jobs : [] };
     },
     refetchInterval: 30000, // Refresh every 30 seconds
     initialData: { summary: { queued: 0, running: 0, completed: 0, failed: 0, total: 0 }, jobs: [] },
@@ -28,8 +29,8 @@ export default function JobQueueMonitor() {
 
   // Filter jobs based on selected status
   const filteredJobs = selectedFilter === 'All'
-    ? data.jobs
-    : data.jobs.filter(j => j.status === selectedFilter);
+    ? (data?.jobs || [])
+    : (data?.jobs || []).filter(j => j.status === selectedFilter);
 
   const toggleJobExpand = (jobId) => {
     setExpandedJobs(prev => {
