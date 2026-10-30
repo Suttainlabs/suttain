@@ -24,7 +24,7 @@ export default function SimulationConfigRail({ sim, engine, catalogue, inputs, o
   const [searchOpen, setSearchOpen] = useState(true);
   const [presetsOpen, setPresetsOpen] = useState(false);
   return (
-    <aside className="min-w-0 rounded-xl border border-research-border bg-research-card p-5 self-start lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto space-y-5">
+    <aside className="min-w-0 rounded-xl border border-research-border bg-research-card p-5 self-start lg:sticky lg:top-32 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto space-y-5">
       <div><p className="research-label mb-1">Configuration</p><h2 className="!text-lg">Set up your workflow</h2></div>
 
       <Step n="01" title="Compute engine">

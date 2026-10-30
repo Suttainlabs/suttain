@@ -14,10 +14,12 @@ export default function SimulationWorkflowField({ field, value, onChange, canUpl
           {field.options.map(option => <option key={option} value={option}>{option}</option>)}
         </select>
       ) : (
-        <div className="flex flex-wrap gap-2">
-          <input id={id} type="text" value={value ?? ''} onChange={event => onChange(event.target.value)} placeholder={field.placeholder} className="simulation-control flex-1 basis-48 min-w-0" />
-          {canUpload && <button type="button" onClick={onUpload} className="research-secondary !px-3 !py-2" aria-label={`Upload file for ${field.label}`}><Upload className="h-4 w-4" />Upload file</button>}
-          {canDraw && <button type="button" onClick={onDraw} className="research-secondary !px-3 !py-2" aria-label={`Draw ${field.label}`}><Pencil className="h-4 w-4" />Draw</button>}
+        <div className="space-y-2">
+          <input id={id} type="text" value={value ?? ''} onChange={event => onChange(event.target.value)} placeholder={field.placeholder} className="simulation-control w-full min-w-0" />
+          {(canUpload || canDraw) && <div className={`grid gap-2 ${canUpload && canDraw ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            {canUpload && <button type="button" onClick={onUpload} className="research-secondary !px-3 !py-2 justify-center" aria-label={`Upload file for ${field.label}`}><Upload className="h-4 w-4" />Upload file</button>}
+            {canDraw && <button type="button" onClick={onDraw} className="research-secondary !px-3 !py-2 justify-center" aria-label={`Draw ${field.label}`}><Pencil className="h-4 w-4" />Draw</button>}
+          </div>}
         </div>
       )}
     </div>
