@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { Gauge, Hexagon } from 'lucide-react';
 import StudioLayout from '@/components/studio/StudioLayout';
 import AuthContext from '@/components/auth/AuthContext';
@@ -24,9 +25,9 @@ export default function AtomisticSimulation() {
       <section className="pt-3 sm:pt-5">
         <div className="grid grid-cols-12 gap-4 mb-9">
           <div className="col-span-12 lg:col-span-9">
-            <p className="research-label mb-4">Research / Atomistic Simulation / Workflow catalog</p>
+            <p className="research-label mb-4">Research / Step 03 · Calculate</p>
             <div className="flex items-center gap-3 mb-4"><Gauge className="h-6 w-6 text-research-accent" strokeWidth={1.5} /><h1>Atomistic Simulation</h1></div>
-            <p className="text-research-muted max-w-2xl">Run mapped small-molecule quantum chemistry tasks on Rowan and inspect genuine computed geometry and properties. All catalog workflows can be configured; unsupported tasks report a clear failure rather than illustrative results.</p>
+            <p className="text-research-muted max-w-2xl">Run mapped small-molecule quantum chemistry tasks on Rowan and inspect genuine computed geometry and properties. All catalog workflows can be configured; unsupported tasks report a clear failure rather than illustrative results. Coming from <Link to="/BindingAndADME" className="underline hover:text-research-accent">Binding &amp; ADME</Link>? Your ligand is filled in when you open a workflow from there.</p>
           </div>
 
         </div>

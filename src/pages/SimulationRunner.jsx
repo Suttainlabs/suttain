@@ -46,6 +46,8 @@ import SimulationConfigRail from '@/components/simulation/SimulationConfigRail';
 import SimulationResultsRail from '@/components/simulation/SimulationResultsRail';
 import SimulationAdvancedSettings from '@/components/simulation/SimulationAdvancedSettings';
 import SimulationRunActions from '@/components/simulation/SimulationRunActions';
+import ResearchProductNav, { NextStepLink } from '@/components/research/ResearchProductNav';
+import { handoffUrl } from '@/components/research/researchProducts';
 
 export default function SimulationRunner() {
   const { user, refreshUser } = useContext(AuthContext);
@@ -67,6 +69,8 @@ export default function SimulationRunner() {
   const [inputs, setInputs] = useState(() => {
     const defaults = {};
     sim?.fields.forEach(f => { if (f.default) defaults[f.key] = f.default; });
+    const carried = params.get('molecule');
+    if (carried && sim?.fields.some(f => f.key === 'molecule')) defaults.molecule = carried;
     return defaults;
   });
 
@@ -334,6 +338,7 @@ export default function SimulationRunner() {
   if (!isRunning && !results && !trialStatus.canRunResearchSim) return <SubscriptionLock pillar="research" featureName="Research simulations" limit />;
   return (
     <div className="simulation-workspace research-surface min-h-screen">
+      <ResearchProductNav />
       {!isRunning && results && !trialStatus.canRunResearchSim && <SubscriptionLock pillar="research" featureName="Research simulations" limit />}
       <ToolFeedbackToast
         isOpen={showFeedback}
@@ -356,6 +361,7 @@ export default function SimulationRunner() {
         {(rowan.error || rowan.job?.status === 'failed') && <div role="alert" className="mb-6 rounded-xl border border-destructive bg-card p-5 text-destructive">{rowan.error || rowan.job.error}</div>}
         {isRunning && rowan.job?.provider_job_id && <div role="status" className="mb-6 rounded-xl border border-research-border bg-research-card p-5"><p className="research-label">Real Rowan compute run · {rowan.job.status}</p><p className="font-mono text-xs break-all mt-2">{rowan.job.provider_job_id}</p><p className="text-sm text-research-muted mt-2">Tracking completion notifications with polling fallback. You can return to this workflow later.</p></div>}
         {results?.execution_mode === 'real' && results.result_kind!=='lookup' && <RowanResults result={results} onReset={reset} onRun={handleRun} isRunning={isRunning}/>}
+        {results?.execution_mode === 'real' && results.result_kind!=='lookup' && /^[^\s]+$/.test(String(inputs.molecule || '').trim()) && <div className="mt-6"><p className="research-label mb-3">Next step</p><NextStepLink to={handoffUrl.bindingLigand(String(inputs.molecule).trim())} step="02" title="Check binding or ADME for this molecule" text="Opens Binding & ADME with this structure as the ligand. Add a protein sequence, or switch to ADME." /></div>}
         {results?.execution_mode==='local_pending' && <LocalEngineResults result={results} onReset={reset}/>}
         {results?.result_kind==='lookup' && <SourceLookupResults result={results} onReset={reset}/>}
         {/* Previous demonstration results remain readable. */}
