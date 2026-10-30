@@ -143,20 +143,25 @@ function isWHOEssential(name) {
 
 async function searchPubChem(resolvedName, originalQuery) {
   try {
-    const pubchemUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(resolvedName)}/property/IUPACName,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON`;
+    const pubchemUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(resolvedName)}/property/Title,IUPACName,MolecularFormula,MolecularWeight,SMILES,ConnectivitySMILES,InChIKey/JSON`;
     const res = await fetch(pubchemUrl, { signal: AbortSignal.timeout(9000) });
     if (!res.ok) return [];
     const data = await res.json();
     const props = data?.PropertyTable?.Properties?.[0];
     if (!props?.CID) return [];
-    const name = originalQuery;
+    const isCas = /^\d{2,7}-\d{2}-\d$/.test(String(originalQuery).trim());
+    const name = props.Title || originalQuery;
     return [{
       name,
+      cid: props.CID,
+      inchikey: props.InChIKey,
+      cas_number: isCas ? String(originalQuery).trim() : undefined,
+      exact: true,
       scientific_name: props.IUPACName || resolvedName,
       iupac_name: props.IUPACName,
       molecular_formula: props.MolecularFormula,
       molecular_weight: props.MolecularWeight,
-      smiles: props.ConnectivitySMILES || props.CanonicalSMILES || props.SMILES,
+      smiles: props.SMILES || props.ConnectivitySMILES || props.CanonicalSMILES,
       chemical_type: 'compound',
       category: 'other',
       safety_level: 'unknown',
@@ -310,6 +315,52 @@ async function searchPubChemAutocomplete(query) {
   }
 }
 
+// Rank by how well a record answers the query, and make sure the top results carry a structure (SMILES),
+// because a record without one cannot be used to set up a simulation.
+async function finaliseResults(results, query) {
+  const q = String(query || '').trim().toLowerCase();
+  const usable = results.filter(r => r && r.name && String(r.name).length <= 90);
+  const missing = usable.filter(r => !r.smiles).slice(0, 6);
+  await Promise.allSettled(missing.map(async r => {
+    try {
+      const lookup = r.scientific_name && r.scientific_name.length < 80 ? r.scientific_name : r.name;
+      const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(lookup)}/property/SMILES,ConnectivitySMILES,MolecularFormula,MolecularWeight,InChIKey/JSON`, { signal: AbortSignal.timeout(6000) });
+      if (!res.ok) return;
+      const p = (await res.json())?.PropertyTable?.Properties?.[0];
+      if (!p) return;
+      r.smiles = p.SMILES || p.ConnectivitySMILES || r.smiles;
+      r.molecular_formula = r.molecular_formula || p.MolecularFormula;
+      r.molecular_weight = r.molecular_weight || (p.MolecularWeight ? Number(p.MolecularWeight) : null);
+      r.inchikey = r.inchikey || p.InChIKey;
+      r.cid = r.cid || p.CID;
+    } catch { /* keep the record without a structure */ }
+  }));
+  const score = r => {
+    const n = String(r.name || '').toLowerCase();
+    const sci = String(r.scientific_name || '').toLowerCase();
+    let s = 0;
+    if (r.exact) s += 120;
+    if (n === q || sci === q || String(r.cas_number || '').toLowerCase() === q) s += 100;
+    else if (n.startsWith(q) || sci.startsWith(q)) s += 40;
+    else if (n.includes(q) || sci.includes(q)) s += 15;
+    if (r.smiles) s += 20;
+    if (r.source_db === 'Suttain DB') s += 10;
+    s -= Math.min(30, Math.floor(n.length / 10));
+    return s;
+  };
+  const seen = new Set();
+  return usable
+    .map(r => ({ ...r, _score: score(r) }))
+    .sort((a, b) => b._score - a._score)
+    .filter(r => {
+      const key = r.inchikey || (r.smiles ? `s:${r.smiles}` : `n:${String(r.name).toLowerCase()}`);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .map(({ _score, exact, ...r }) => r);
+}
+
 export default async function(req) {
  try {
   const base44 = await operationClient(req,'comprehensiveChemicalSearch');
@@ -344,6 +395,7 @@ export default async function(req) {
       const term = query.trim().toLowerCase();
       results = chemicals.filter(c => [c.name, c.scientific_name, c.cas_number].some(v => v?.toLowerCase().includes(term))).map(c => ({ ...c, source_db: 'Suttain DB' }));
     }
+    results = await finaliseResults(results, query);
     return Response.json({ results: results.slice(0, 25), sources: [database] });
   }
   const searchTerm = query.trim().toLowerCase();
@@ -354,10 +406,11 @@ export default async function(req) {
 
   try {
     // 1. Built-in chemicals (instant)
+    const wordStart = new RegExp('(^|[\\s,(-])' + searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
     const builtinResults = BUILTIN_CHEMICALS.filter(c =>
-      c.keywords.some(kw => kw.includes(searchTerm) || searchTerm.includes(kw)) ||
-      c.name.toLowerCase().includes(searchTerm) ||
-      c.scientific_name.toLowerCase().includes(searchTerm)
+      c.keywords.some(kw => kw === searchTerm || wordStart.test(kw)) ||
+      wordStart.test(c.name.toLowerCase()) ||
+      wordStart.test(c.scientific_name.toLowerCase())
     ).map(c => ({
       ...c,
       source: 'builtin',
@@ -415,7 +468,7 @@ export default async function(req) {
       who_essential: c.who_essential || isWHOEssential(c.name) || isWHOEssential(c.scientific_name),
     }));
 
-    finalResults = finalResults.slice(0, 25);
+    finalResults = (await finaliseResults(finalResults, query)).slice(0, 25);
 
     const sources = [...new Set(finalResults.map(r => r.source_db).filter(Boolean))];
     console.log(`Found ${finalResults.length} results from: ${sources.join(', ')}`);
