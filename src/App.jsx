@@ -153,6 +153,7 @@ const AuthenticatedApp = () => {
 
       {/* ── Redirects for deprecated routes ── */}
       <Route path="/research" element={<Navigate to="/ResearchPortal" replace />} />
+      <Route path="/consumer" element={<Navigate to="/ConsumerPortal" replace />} />
 
       <Route path="/Home" element={<Navigate to="/" replace />} />
       <Route path="/StructuralBiology" element={<Navigate to={`/AtomisticSimulation${location.search}${location.hash}`} replace />} />

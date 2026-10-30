@@ -398,6 +398,11 @@
   --research-soft: 160 22% 94%;
   --research-border: 220 14% 91%;
 }
+/* Consumer & Brand: same workbench system as Research, with the Suttain teal accent. */
+.consumer-theme {
+  --research-accent: 175 97% 30%;
+  --research-soft: 172 45% 94%;
+}
 @layer components {
   .research-surface {
     @apply bg-research-page text-research-text;

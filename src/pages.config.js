@@ -11,6 +11,7 @@ import Articles from './pages/Articles';
 import BarcodeScanner from './pages/BarcodeScanner';
 import Blog from './pages/Blog';
 import Careers from './pages/Careers';
+import ConsumerPortal from './pages/ConsumerPortal';
 import ComplianceGuide from './pages/ComplianceGuide';
 import FAQ from './pages/FAQ';
 import Pricing from './pages/Pricing';
@@ -31,6 +32,7 @@ export const PAGES = {
     "BarcodeScanner": BarcodeScanner,
     "Blog": Blog,
     "Careers": Careers,
+    "ConsumerPortal": ConsumerPortal,
     "ComplianceGuide": ComplianceGuide,
     "FAQ": FAQ,
     "Pricing": Pricing,
