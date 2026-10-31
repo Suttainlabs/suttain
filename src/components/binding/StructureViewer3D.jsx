@@ -75,9 +75,9 @@ export default function StructureViewer3D({ text, format = 'cif', selected, onPi
     {state === 'loading' && <div className="absolute inset-0 flex items-center justify-center gap-2 text-sm text-research-muted"><Loader2 className="h-4 w-4 animate-spin" />Loading 3D structure…</div>}
     {state === 'error' && <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-research-muted">The 3D viewer could not start in this browser. You can still download the structure file.</div>}
 
-    {colorMode === 'plddt' && <div className="absolute left-3 top-3 rounded-xl border border-research-border bg-white/95 p-3 shadow-sm">
-      <p className="mb-2 text-sm font-semibold text-research-text">pLDDT confidence</p>
-      <ul className="space-y-1.5">{PLDDT_BANDS.map(b => <li key={b.label} className="flex items-center gap-2 text-xs sm:text-sm text-research-text"><span className="h-3 w-3 rounded-full" style={{ background: b.color }} /><span className="w-20">{b.label}</span><span className="ml-auto pl-3 font-mono text-research-muted">{b.range}</span></li>)}</ul>
+    {colorMode === 'plddt' && <div className="absolute left-2 top-14 rounded-xl border border-research-border bg-white/95 p-2 shadow-sm sm:left-3 sm:top-3 sm:p-3">
+      <p className="mb-1.5 text-xs font-semibold text-research-text sm:mb-2 sm:text-sm">pLDDT confidence</p>
+      <ul className="space-y-1 sm:space-y-1.5">{PLDDT_BANDS.map(b => <li key={b.label} className="flex items-center gap-2 text-xs sm:text-sm text-research-text"><span className="h-2.5 w-2.5 rounded-full sm:h-3 sm:w-3" style={{ background: b.color }} /><span className="w-16 sm:w-20">{b.label}</span><span className="ml-auto pl-3 font-mono text-research-muted">{b.range}</span></li>)}</ul>
     </div>}
 
     <div className="absolute right-2 top-2 flex items-center gap-0.5 rounded-xl border border-research-border bg-white/95 p-1 shadow-sm">

@@ -64,7 +64,7 @@ function SequencePanel({ sequence, chain = 'A', selected, onSelect }) {
         {[...g.residues].map((aa, i) => {
           const resi = g.start + i + 1;
           const on = selected?.chain === chain && Number(selected?.resi) === resi;
-          return <button key={resi} type="button" onClick={() => onSelect(on ? null : { chain, resi })} aria-pressed={on} aria-label={`Residue ${aa}${resi}`} className={`inline-block w-[1.1ch] rounded-sm text-center hover:bg-research-soft ${on ? 'bg-[#E64980] text-white hover:bg-[#E64980]' : ''}`}>{aa}</button>;
+          return <button key={resi} type="button" onClick={() => onSelect(on ? null : { chain, resi })} aria-pressed={on} aria-label={`Residue ${aa}${resi}`} className={`inline-block !h-auto !min-h-0 !w-[1.1ch] !min-w-0 !p-0 rounded-sm text-center leading-none hover:bg-research-soft ${on ? 'bg-[#E64980] text-white hover:bg-[#E64980]' : ''}`}>{aa}</button>;
         })}
       </div>)}</div>
     </div>
@@ -146,7 +146,7 @@ export default function BindingJobView({ job }) {
         </div>
       </div>
 
-      <div className="min-w-0">
+      <div className="min-w-0 order-first lg:order-none">
         {text ? <Suspense fallback={<div className="flex h-[420px] items-center justify-center rounded-xl border border-research-border text-sm text-research-muted"><Loader2 className="mr-2 h-4 w-4 animate-spin" />Loading viewer…</div>}>
           <StructureViewer3D text={text} format={ext} selected={selected} onPick={setSelected} downloads={[
             { label: `Complex structure (.${ext})`, href: fileUrl, name: `${id}.${ext}` },
