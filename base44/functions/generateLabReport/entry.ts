@@ -36,17 +36,19 @@ Deno.serve(async (req) => {
             });
         }
 
-        const { simulationData: bodySimulationData, persona: bodyPersona, customization, approval_token } = body;
+        const { simulationData: bodySimulationData, persona: bodyPersona, customization, approval_id } = body;
 
         let simulationData;
         let persona;
         let supervisor = null;
 
-        // Email-approved path: load the snapshot from the SupervisorApproval record
-        if (approval_token) {
-            const approvals = await base44.asServiceRole.entities.SupervisorApproval.filter({ token: approval_token });
+        // Email-approved path: load the snapshot from the requester's own approval record.
+        if (approval_id) {
+            const approvals = typeof approval_id === 'string' && approval_id.length <= 100
+                ? await base44.asServiceRole.entities.SupervisorApproval.filter({ id: approval_id, requester_user_id: user.id }, undefined, 1)
+                : [];
             if (!approvals || approvals.length === 0) {
-                return new Response(JSON.stringify({ error: 'Invalid approval token' }), {
+                return new Response(JSON.stringify({ error: 'Approval request not found' }), {
                     status: 404,
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -60,7 +62,7 @@ Deno.serve(async (req) => {
             }
             simulationData = approval.simulation_snapshot;
             persona = approval.persona || bodyPersona;
-            supervisor = { name: approval.supervisor_name, date: approval.decided_date };
+            supervisor = { name: approval.supervisor_name, date: approval.decided_date, verified: true };
         } else {
             simulationData = bodySimulationData;
             persona = bodyPersona;
@@ -70,7 +72,11 @@ Deno.serve(async (req) => {
                     headers: { 'Content-Type': 'application/json' }
                 });
             }
-            supervisor = simulationData.supervisorSignature;
+            // Client-supplied signatures cannot be verified; they are shown as self-attested.
+            const sig = simulationData.supervisorSignature;
+            supervisor = sig && typeof sig.name === 'string' && sig.name.trim()
+                ? { name: sig.name.trim().slice(0, 120), date: sig.date || new Date().toISOString(), verified: false }
+                : null;
         }
 
         // Default customization if not provided
@@ -319,7 +325,9 @@ Deno.serve(async (req) => {
             doc.setFont('helvetica', 'normal');
             
             if (supervisor) {
-                doc.text(`Status: APPROVED`, 15, y);
+                doc.text(supervisor.verified
+                    ? 'Status: APPROVED (verified by email link sent to the supervisor)'
+                    : 'Status: SELF-ATTESTED (signature entered by the requester, not verified)', 15, y);
                 y += 10;
                 doc.text(`Name: ${supervisor.name}`, 15, y);
                 y += 10;
