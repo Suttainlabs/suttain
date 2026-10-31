@@ -12,17 +12,23 @@ export default function SuggestInput({ label, placeholder, fetchSuggestions, onP
   const [active, setActive] = useState(-1);
   const listId = useId();
   const box = useRef(null);
+  const skip = useRef(false);
 
   useEffect(() => {
     const term = q.trim();
+    if (skip.current) { skip.current = false; return; }
     if (term.length < minChars) { setItems([]); setBusy(false); setError(''); return; }
     const ctrl = new AbortController();
     const t = setTimeout(async () => {
       setBusy(true); setError('');
       try {
         const res = await fetchSuggestions(term, ctrl.signal);
-        const sorted = [...res].sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base', numeric: true }));
-        setItems(sorted); setActive(-1); setOpen(true);
+        // Names containing what was typed come first; each group is A–Z.
+        const t = term.toLowerCase();
+        const az = (a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base', numeric: true });
+        const hit = res.filter(r => r.label.toLowerCase().includes(t)).sort(az);
+        const rest = res.filter(r => !r.label.toLowerCase().includes(t)).sort(az);
+        setItems([...hit, ...rest]); setActive(-1);
       } catch (e) { if (e.name !== 'AbortError') { setItems([]); setError('Search is unavailable right now. Try again in a moment.'); } }
       finally { if (!ctrl.signal.aborted) setBusy(false); }
     }, 350);
@@ -35,7 +41,7 @@ export default function SuggestInput({ label, placeholder, fetchSuggestions, onP
     return () => document.removeEventListener('mousedown', close);
   }, []);
 
-  const pick = item => { setOpen(false); setQ(item.label); onPick(item); };
+  const pick = item => { skip.current = true; setOpen(false); setItems([]); setQ(item.label); onPick(item); };
   const onKey = e => {
     if (!open || !items.length) return;
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive(a => Math.min(items.length - 1, a + 1)); }
@@ -58,11 +64,11 @@ export default function SuggestInput({ label, placeholder, fetchSuggestions, onP
       </div>
       {hint && <p className="mt-1 text-xs text-research-muted">{hint}</p>}
       {error && <p role="alert" className="mt-1 text-xs text-destructive">{error}</p>}
-      {open && q.trim().length >= minChars && !busy && (
+      {open && q.trim().length >= minChars && !busy && (items.length > 0 || !error) && (
         <div className="absolute z-40 mt-1 w-full overflow-hidden rounded-lg border border-research-border bg-research-card shadow-lg">
           {items.length ? (
             <>
-              <p className="flex justify-between border-b border-research-border px-3 py-1.5 text-[11px] text-research-muted"><span>{items.length} suggestions · A–Z</span>{sourceNote && <span>{sourceNote}</span>}</p>
+              <p className="flex justify-between gap-2 border-b border-research-border px-3 py-1.5 text-[11px] text-research-muted"><span>{items.length} suggestions · best matches first, A–Z</span>{sourceNote && <span>{sourceNote}</span>}</p>
               <ul id={listId} role="listbox" className="max-h-72 overflow-y-auto py-1">
                 {items.map((it, i) => (
                   <li key={it.id} id={`${listId}-${i}`} role="option" aria-selected={i === active}
