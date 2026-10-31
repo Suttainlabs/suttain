@@ -50,8 +50,99 @@ const activeIngredientFor = (name) => {
   return hit ? hit[1] : null;
 };
 
-const pubchemPng = (query) =>
-  `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(query)}/PNG?image_size=300x300`;
+// --- Structure rendering: SMILES from PubChem, drawn as vector SVG by RDKit ---
+const RDKIT_VERSION = "2026.9.1";
+const RDKIT_BASE = `https://unpkg.com/@rdkit/rdkit@${RDKIT_VERSION}/dist`;
+let rdkitPromise = null;
+
+const loadRDKit = () => {
+  if (rdkitPromise) return rdkitPromise;
+  rdkitPromise = new Promise((resolve, reject) => {
+    const start = () =>
+      window
+        .initRDKitModule({ locateFile: () => `${RDKIT_BASE}/RDKit_minimal.wasm` })
+        .then(resolve, reject);
+    if (window.initRDKitModule) return start();
+    const s = document.createElement("script");
+    s.src = `${RDKIT_BASE}/RDKit_minimal.js`;
+    s.async = true;
+    s.onload = start;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  }).catch((e) => {
+    rdkitPromise = null; // allow a retry on the next render
+    throw e;
+  });
+  return rdkitPromise;
+};
+
+const smilesCache = new Map();
+const fetchSmiles = (name) => {
+  const k = name.toLowerCase();
+  if (!smilesCache.has(k)) {
+    smilesCache.set(
+      k,
+      fetch(
+        `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/property/SMILES/JSON`
+      )
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => {
+          const p = j?.PropertyTable?.Properties?.[0];
+          return p?.SMILES || p?.IsomericSMILES || p?.CanonicalSMILES || null;
+        })
+        .catch(() => null)
+    );
+  }
+  return smilesCache.get(k);
+};
+
+const DRAW_OPTS = JSON.stringify({
+  width: 240,
+  height: 240,
+  bondLineWidth: 2.5,
+  minFontSize: 24,
+  maxFontSize: 36,
+  padding: 0.12,
+  clearBackground: false,
+});
+
+// Resolves the first candidate name PubChem knows, then renders it.
+// status: loading | ready | missing
+const useStructure = (candidates) => {
+  const key = candidates.join("|");
+  const [state, setState] = useState({ status: "loading", svg: null, matched: null });
+  useEffect(() => {
+    let cancelled = false;
+    setState({ status: "loading", svg: null, matched: null });
+    (async () => {
+      for (const name of candidates) {
+        const smiles = await fetchSmiles(name);
+        if (!smiles) continue;
+        try {
+          const RDKit = await loadRDKit();
+          const mol = RDKit.get_mol(smiles);
+          if (!mol) continue;
+          let svg = mol.get_svg_with_highlights(DRAW_OPTS);
+          mol.delete();
+          svg = svg
+            .replace(/width='\d+px'/, "width='100%'")
+            .replace(/height='\d+px'/, "height='100%'");
+          if (!cancelled) setState({ status: "ready", svg, matched: name });
+          return;
+        } catch (e) {
+          console.warn("Structure render failed", e);
+          break;
+        }
+      }
+      if (!cancelled) setState({ status: "missing", svg: null, matched: null });
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  return state;
+};
 
 // Subscript digits that follow an element/bracket; leave coefficients (2 NH3) alone.
 export const FormulaText = ({ text }) => {
@@ -77,45 +168,30 @@ const MoleculeTile = ({ name, scientificName, formula, isProduct = false, hazard
       [scientificName, name, active].filter(Boolean).map((s) => String(s).trim()).filter(Boolean)
     ),
   ];
-  const key = candidates.join("|");
-  const [idx, setIdx] = useState(0);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setIdx(0);
-    setLoaded(false);
-  }, [key]);
-
-  const query = candidates[idx];
-  const usedActive = loaded && active && query === active && active.toLowerCase() !== String(name || "").toLowerCase();
-  const exhausted = idx >= candidates.length;
+  const { status, svg, matched } = useStructure(candidates);
+  const usedActive =
+    status === "ready" && active && matched === active && active.toLowerCase() !== String(name || "").toLowerCase();
   const isHazardous = isProduct && hazards.length > 0;
 
   return (
     <figure className="flex flex-col items-center text-center min-w-0">
       <div
-        className={`relative w-full max-w-[170px] aspect-square rounded-xl border bg-white overflow-hidden flex items-center justify-center ${
+        className={`relative w-full max-w-[200px] aspect-square rounded-xl border bg-white overflow-hidden flex items-center justify-center ${
           isHazardous ? "border-red-300" : "border-slate-200"
         }`}
       >
-        {!exhausted && query && (
-          <img
-            key={query}
-            src={pubchemPng(query)}
-            alt={`2D structure of ${query}`}
-            crossOrigin="anonymous"
-            loading="lazy"
-            className={`w-full h-full object-contain p-2 transition-opacity ${loaded ? "opacity-100" : "opacity-0"}`}
-            onLoad={() => setLoaded(true)}
-            onError={() => {
-              setLoaded(false);
-              setIdx((i) => i + 1);
-            }}
+        {status === "ready" && (
+          <div
+            role="img"
+            aria-label={`2D structure of ${matched}`}
+            className="w-full h-full p-1"
+            // SVG is generated locally by RDKit from a SMILES string, not external HTML
+            dangerouslySetInnerHTML={{ __html: svg }}
           />
         )}
-        {!loaded && (
+        {status !== "ready" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-3 gap-1">
-            {exhausted ? (
+            {status === "missing" ? (
               <>
                 <span className="font-mono text-lg text-slate-700">
                   {formula ? <FormulaText text={formula} /> : "—"}
