@@ -140,7 +140,7 @@ function Pocket({ analysis, selected, onSelect }) {
     </div>
     {!!mix.length && <div className="mt-3"><div className="flex h-2 overflow-hidden rounded-full">{mix.map(([c, k]) => <span key={c} style={{ width: `${(k / pocket.length) * 100}%`, background: CLASS_STYLE[c].color }} title={`${CLASS_STYLE[c].label}: ${k}`} />)}</div>
       <p className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-research-muted">{mix.map(([c, k]) => <span key={c} className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full" style={{ background: CLASS_STYLE[c].color }} />{CLASS_STYLE[c].label} {k}</span>)}</p></div>}
-    {pocket.length ? <ul className="mt-3 max-h-[300px] flex-1 space-y-1 overflow-y-auto pr-1 lg:max-h-none" aria-label="Residues in contact with the ligand">
+    {pocket.length ? <ul className="mt-3 max-h-[300px] min-h-0 flex-1 space-y-1 overflow-y-auto pr-1 lg:max-h-none" aria-label="Residues in contact with the ligand">
       {pocket.map(p => { const on = selected?.chain === p.chain && Number(selected?.resi) === p.resi; return <li key={`${p.chain}${p.resi}`}>
         <button type="button" onClick={() => onSelect(on ? null : { chain: p.chain, resi: p.resi })} aria-pressed={on} className={`flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition ${on ? 'bg-research-text text-white' : 'hover:bg-research-soft'}`}>
           <span className="h-8 w-1 shrink-0 rounded-full" style={{ background: CLASS_STYLE[p.cls].color }} />
@@ -230,14 +230,14 @@ export default function BindingJobView({ job }) {
             { label: `Predicted complex (.${ext})`, href: fileUrl, name: `${runId}-${providerId || 'complex'}.${ext}` },
             { label: 'Posed ligand (.sdf)', href: info?.sdf_url, name: `${runId}-ligand.sdf` },
           ]} />
-        </Suspense> : <div className="flex h-[360px] flex-col items-center justify-center gap-2 rounded-2xl bg-[#08201D] p-6 text-center text-sm text-white/75 lg:h-full lg:min-h-[600px]">
+        </Suspense> : <div className="flex h-[360px] flex-col items-center justify-center gap-2 rounded-2xl bg-[#08201D] p-6 text-center text-sm text-white/75 lg:h-[640px]">
           {error ? <p role="alert">{error}</p> : info && !info.available ? <p className="max-w-sm">{info.reason}</p> : <><Loader2 className="h-5 w-5 animate-spin" /><p>Fetching the predicted structure…</p></>}
         </div>}
       </div>
-      <div className="min-w-0 rounded-2xl border border-research-border p-4 sm:p-5">
+      <div className="flex min-w-0 flex-col rounded-2xl border border-research-border p-4 sm:p-5 lg:h-[640px]">
         <h3 className="!text-base !font-semibold">Binding pocket</h3>
         <p className="mb-4 text-xs text-research-muted">Where the model placed the ligand, residue by residue. Click one to fly to it.</p>
-        {analysis ? <Pocket analysis={analysis} selected={selected} onSelect={setSelected} /> : <p className="text-sm text-research-muted">{text || !info?.available ? 'Pocket analysis needs the structure file.' : 'Analysing…'}</p>}
+        {analysis ? <div className="min-h-0 flex-1"><Pocket analysis={analysis} selected={selected} onSelect={setSelected} /></div> : <p className="text-sm text-research-muted">{text || !info?.available ? 'Pocket analysis needs the structure file.' : 'Analysing…'}</p>}
       </div>
     </div>
 
