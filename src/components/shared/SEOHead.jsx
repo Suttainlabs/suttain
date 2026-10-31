@@ -105,8 +105,7 @@ export default function SEOHead({
       "description": "Chemical safety and product formulation platform",
       "sameAs": [
         "https://www.linkedin.com/company/suttainlabs/",
-        "https://www.instagram.com/suttainlabs/",
-        "https://www.youtube.com/channel/UCOgVoog8K35lkY9VCsNWqAg"
+        "https://www.instagram.com/suttainlabs/"
       ],
       "contactPoint": {
         "@type": "ContactPoint",
