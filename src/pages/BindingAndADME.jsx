@@ -58,7 +58,8 @@ export default function BindingAndADME() {
   // Remember a running job so leaving the page doesn't lose it.
   const RESUME_KEY = 'suttain-hosted-job';
   useEffect(() => {
-    let id = null; try { id = localStorage.getItem(RESUME_KEY); } catch { /* storage unavailable */ }
+    let id = new URLSearchParams(window.location.search).get('job');
+    if (!id) { try { id = localStorage.getItem(RESUME_KEY); } catch { /* storage unavailable */ } }
     if (!id) return;
     call('pollHostedPredictions', { job_id: id }).then(data => {
       if (data?.job) { setJob(data.job); setTask(data.job.sim_type === 'adme' ? 'adme' : 'binding'); }

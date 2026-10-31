@@ -23,6 +23,7 @@ export default function StructureViewer3D({ text, format = 'cif', selected, onPi
   const [hover, setHover] = useState(null);
   const [state, setState] = useState('loading');
   const [menu, setMenu] = useState(false);
+  const [selName, setSelName] = useState('');
 
   useEffect(() => {
     let dead = false;
@@ -55,7 +56,8 @@ export default function StructureViewer3D({ text, format = 'cif', selected, onPi
     v.removeAllSurfaces?.();
     if (selected) {
       v.addStyle({ chain: selected.chain, resi: selected.resi }, { stick: { radius: 0.22, color: SELECT }, cartoon: { color: SELECT } });
-      v.zoomTo({ chain: selected.chain, resi: selected.resi }, 600);
+      v.center({ chain: selected.chain, resi: selected.resi }, 600);
+      setSelName(v.selectedAtoms({ chain: selected.chain, resi: selected.resi })[0]?.resn || '');
     }
     v.render();
   }, [state, colorMode, repr, selected]);
@@ -92,7 +94,7 @@ export default function StructureViewer3D({ text, format = 'cif', selected, onPi
     </div>
 
     {(hover || selected) && <div className="absolute bottom-3 right-3 max-w-[calc(100%-1.5rem)] truncate rounded-md bg-[#FFF4E6] px-3 py-1.5 font-mono text-xs sm:text-sm text-[#B4540A]" aria-live="polite">
-      {hover ? `${hover.het ? 'Ligand' : 'Residue'} | ${hover.chain} | ${hover.resn} ${hover.resi}${hover.het ? ` | ${hover.atom}` : ''}${Number.isFinite(hover.b) ? ` | pLDDT ${(hover.b > 1 ? hover.b : hover.b * 100).toFixed(1)}` : ''}` : `Selected | ${selected.chain} | residue ${selected.resi}`}
+      {hover ? `${hover.het ? 'Ligand' : 'Residue'} | ${hover.chain} | ${hover.resn} ${hover.resi}${hover.het ? ` | ${hover.atom}` : ''}${Number.isFinite(hover.b) ? ` | pLDDT ${(hover.b > 1 ? hover.b : hover.b * 100).toFixed(1)}` : ''}` : `Selected | ${selected.chain} | ${selName ? `${selName} ` : 'residue '}${selected.resi}`}
     </div>}
     <p className="pointer-events-none absolute bottom-3 left-3 hidden text-xs text-research-muted sm:block">Drag to rotate · scroll to zoom · click a residue</p>
   </div>;
