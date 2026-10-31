@@ -5,14 +5,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   Shield, Leaf, Beaker, CheckCircle, AlertTriangle, HelpCircle,
-  ImageOff, ChevronLeft, ExternalLink, ChevronDown, TestTube, FlaskConical,
-  ListChecks, ShieldCheck, ThumbsUp, MessageSquareWarning, Loader2, Sparkles,
-  HeartPulse, Apple, Salad, Star, Users, Baby, Home, Droplets,
-  Lock, Info, Award, Search, Bell, Pill
+  ImageOff, ChevronLeft, ExternalLink, ChevronDown, TestTube, FlaskConical, ThumbsUp, MessageSquareWarning, Loader2, Sparkles,
+  HeartPulse, Apple, Users, Baby, Home, Droplets,
+  Lock, Info, Search, Bell, Pill
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
