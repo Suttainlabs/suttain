@@ -100,6 +100,8 @@ export default function BindingAndADME() {
     setTask(nextTask); setGoal(null); setProvider('auto'); setJob(null); setFormError('');
   };
   const jobId = job?.id;
+  const doneBinding = job?.status === 'completed' && (job.result?.task || job.sim_type) === 'binding' ? job.id : null;
+  useEffect(() => { if (doneBinding) setTimeout(() => document.getElementById('binding-structure')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150); }, [doneBinding]);
   useEffect(() => { if (jobId && window.innerWidth < 1024) document.getElementById('binding-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, [jobId]);
 
   const submit = async event => {

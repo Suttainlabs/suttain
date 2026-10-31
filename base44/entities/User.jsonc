@@ -1,40 +1,189 @@
 {
   "name": "User",
-  "type": "object",
   "properties": {
-    "role": {
-      "type": "string",
-      "enum": [
-        "admin",
-        "user"
-      ]
+    "admin_granted_access": {
+      "default": false,
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "boolean"
     },
     "display_name": {
       "type": "string"
     },
-    "profile_image_url": {
+    "experience_level": {
+      "enum": [
+        "beginner",
+        "intermediate",
+        "expert"
+      ],
       "type": "string"
     },
-    "trial_start_date": {
-      "type": "string",
-      "format": "date-time"
+    "first_login": {
+      "default": true,
+      "type": "boolean"
+    },
+    "formulation_goals": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "generator_category": {
+      "enum": [
+        "individual",
+        "business"
+      ],
+      "type": "string"
+    },
+    "industry": {
+      "type": "string"
+    },
+    "language": {
+      "default": "en",
+      "description": "User's preferred UI language code",
+      "enum": [
+        "en",
+        "hi",
+        "sw",
+        "es"
+      ],
+      "type": "string"
+    },
+    "last_active_date": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "onboarding_goals": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
     },
     "product_access": {
-      "type": "array",
+      "default": [],
+      "description": "Product lines the user has paid access to",
       "items": {
-        "type": "string",
         "enum": [
           "core",
           "research",
           "api",
           "farm"
-        ]
+        ],
+        "type": "string"
       },
-      "default": [],
-      "description": "Product lines the user has paid access to"
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "array"
+    },
+    "profile_image_url": {
+      "type": "string"
+    },
+    "referral_code": {
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "referred_by": {
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "research_usage_period_start": {
+      "format": "date-time",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "admin",
+        "user"
+      ],
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "simulator_category": {
+      "type": "string"
+    },
+    "stripe_customer_id": {
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "stripe_subscription_id": {
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "subscription_billing": {
+      "enum": [
+        "monthly",
+        "yearly",
+        "lifetime"
+      ],
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "string"
+    },
+    "subscription_end_date": {
+      "format": "date-time",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "string"
     },
     "subscription_plan": {
-      "type": "string",
+      "default": "trial",
       "enum": [
         "free",
         "trial",
@@ -44,10 +193,17 @@
         "academic",
         "lifetime"
       ],
-      "default": "trial"
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "string"
     },
     "subscription_status": {
-      "type": "string",
+      "default": "trialing",
       "enum": [
         "none",
         "active",
@@ -59,119 +215,89 @@
         "incomplete",
         "incomplete_expired"
       ],
-      "default": "trialing"
-    },
-    "subscription_billing": {
-      "type": "string",
-      "enum": [
-        "monthly",
-        "yearly",
-        "lifetime"
-      ]
-    },
-    "subscription_end_date": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "stripe_customer_id": {
-      "type": "string"
-    },
-    "stripe_subscription_id": {
-      "type": "string"
-    },
-    "admin_granted_access": {
-      "type": "boolean",
-      "default": false
-    },
-    "usage_period_start": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "usage_simulations": {
-      "type": "number",
-      "default": 0
-    },
-    "usage_formulas": {
-      "type": "number",
-      "default": 0
-    },
-    "usage_scans": {
-      "type": "number",
-      "default": 0
-    },
-    "research_usage_period_start": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "usage_research_simulations": {
-      "type": "number",
-      "default": 0
-    },
-    "first_login": {
-      "type": "boolean",
-      "default": true
-    },
-    "onboarding_goals": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "formulation_goals": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "experience_level": {
-      "type": "string",
-      "enum": [
-        "beginner",
-        "intermediate",
-        "expert"
-      ]
-    },
-    "generator_category": {
-      "type": "string",
-      "enum": [
-        "individual",
-        "business"
-      ]
-    },
-    "simulator_category": {
-      "type": "string"
-    },
-    "industry": {
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
       "type": "string"
     },
     "target_markets": {
-      "type": "array",
+      "description": "Markets the user sells in (e.g. usa, eu, africa)",
       "items": {
         "type": "string"
       },
-      "description": "Markets the user sells in (e.g. usa, eu, africa)"
+      "type": "array"
     },
-    "referral_code": {
+    "trial_start_date": {
+      "format": "date-time",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
       "type": "string"
     },
-    "referred_by": {
+    "usage_formulas": {
+      "default": 0,
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "number"
+    },
+    "usage_period_start": {
+      "format": "date-time",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
       "type": "string"
     },
-    "last_active_date": {
-      "type": "string",
-      "format": "date-time"
+    "usage_research_simulations": {
+      "default": 0,
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "number"
     },
-    "language": {
-      "type": "string",
-      "enum": [
-        "en",
-        "hi",
-        "sw",
-        "es"
-      ],
-      "default": "en",
-      "description": "User's preferred UI language code"
+    "usage_scans": {
+      "default": 0,
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "number"
+    },
+    "usage_simulations": {
+      "default": 0,
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "number"
     }
   },
-  "required": []
+  "required": [],
+  "type": "object"
 }
