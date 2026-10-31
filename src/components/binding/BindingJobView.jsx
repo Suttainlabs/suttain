@@ -71,7 +71,6 @@ function TrustMap({ current, others }) {
   return <figure className="w-full">
     <svg viewBox="0 0 100 100" className="aspect-square w-full max-w-[280px] overflow-visible" role="img" aria-label={`Trust map. Pose reliability ${fmt(x)}, ${yLabel.toLowerCase()} ${fmt(y)}.`}>
       <rect x="8" y="8" width="84" height="84" rx="3" fill="rgba(255,255,255,0.06)" />
-      <rect x={P(xCut)} y="8" width={92 - P(xCut)} height={92 - P(yCut) - 8 + 8 - (92 - P(1 - yCut) - 8) * 0} fill="none" />
       <rect x={P(xCut)} y="8" width={92 - P(xCut)} height={(1 - yCut) * 84} rx="2" fill="rgba(54,226,196,0.22)" />
       <line x1={P(xCut)} y1="8" x2={P(xCut)} y2="92" stroke="rgba(255,255,255,0.25)" strokeDasharray="1.5 1.5" strokeWidth="0.4" />
       <line x1="8" y1={8 + (1 - yCut) * 84} x2="92" y2={8 + (1 - yCut) * 84} stroke="rgba(255,255,255,0.25)" strokeDasharray="1.5 1.5" strokeWidth="0.4" />
