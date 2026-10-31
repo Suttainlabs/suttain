@@ -16,7 +16,7 @@ const SECTIONS = [
 
 function Metric({ value, label }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 min-w-0">
+    <div className="rounded-xl border border-white/25 bg-white/10 px-4 py-3 min-w-0">
       <p className="font-mono text-2xl sm:text-3xl text-white leading-none">{value}</p>
       <p className="mt-2 text-xs text-white/80">{label}</p>
     </div>
