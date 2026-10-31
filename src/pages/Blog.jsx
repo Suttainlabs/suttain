@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { BookOpen, Mail, Bell, Sparkles } from 'lucide-react';
+import { Mail, Bell, Sparkles } from 'lucide-react';
 import useDualBlogEmbeds from '@/components/blog/useDualBlogEmbeds';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -65,17 +64,11 @@ export default function Blog() {
         description="Stay updated with the latest insights on chemical safety, sustainable formulation, and industry trends."
       />
 
-      {/* Hero Section */}
-      <section className="py-20 px-4 text-center border-b border-slate-100">
-        <div className="max-w-2xl mx-auto">
-          <Badge className="mb-5 bg-[var(--suttain-teal)]/10 text-[var(--suttain-teal)] border-[var(--suttain-teal)]/20 px-3 py-1">
-            <BookOpen className="w-3 h-3 mr-1.5" />
-            Suttain Blog
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-5 leading-tight">
-            Insights & <span className="gradient-text">Knowledge</span>
-          </h1>
-          <p className="text-lg text-slate-500 leading-relaxed">
+      {/* Hero Section — matches the homepage hero typography and spacing */}
+      <section className="screenshot-home">
+        <div className="home-hero home-container text-center">
+          <h1>Insights and knowledge.</h1>
+          <p className="home-hero-copy">
             Stay informed with the latest in chemical safety, sustainable formulation, and industry best practices.
           </p>
         </div>
