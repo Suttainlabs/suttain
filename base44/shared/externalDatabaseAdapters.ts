@@ -167,8 +167,8 @@ export async function nistWebbook(identity) {
 // ─── 4. EPA Safer Chemical Ingredients List (via CompTox details) ───────────
 export async function epaSCIL(identity) {
   // The CompTox dashboard details endpoint used here was retired (404). The supported route is the
-  // key-based CTX API (api-ccte.epa.gov); until a key is configured this adapter reports nothing.
-  const ctxKey = typeof Deno !== 'undefined' ? Deno.env.get('EPA_CTX_API_KEY') : null;
+  // key-based CTX API (api-ccte.epa.gov). It is disabled until an EPA CTX key is registered as an app secret.
+  const ctxKey = null;
   if (!identity.dtxsid || !ctxKey) return null;
   const res = await timedFetch(`https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/${identity.dtxsid}`, { headers: { 'x-api-key': ctxKey, accept: 'application/json' } });
   if (!res.ok || !res.json) return null;
