@@ -44,8 +44,10 @@ export default async function (req: Request): Promise<Response> {
     const token = crypto.randomUUID() + '-' + crypto.randomUUID();
     const now = new Date().toISOString();
 
-    // Persist the approval request (user-scoped → created_by_id auto-set)
-    const record = await base44.entities.SupervisorApproval.create({
+    // Created server-side only: the requester can never set status or see the
+    // token, so they cannot approve their own request. Ownership is recorded in
+    // requester_user_id, which the entity's read rule checks.
+    const record = await base44.asServiceRole.entities.SupervisorApproval.create({
       token,
       simulation_snapshot,
       chemicals_summary: chemicals_summary || '',
@@ -108,16 +110,16 @@ export default async function (req: Request): Promise<Response> {
       console.warn('createSupervisorApprovalRequest: supervisor email failed:', emailError);
     }
 
+    // Never return the token or approval link to the requester; only the
+    // supervisor receives it, by email.
     return Response.json({
       status: 'success',
       id: record.id,
-      token,
-      approval_url: approvalUrl,
       email_sent: emailSent,
-      email_error: emailError
+      email_error: emailSent ? null : 'The approval email could not be sent.'
     });
   } catch (error) {
     console.error('createSupervisorApprovalRequest error:', error);
-    return Response.json({ error: error.message }, { status: error.status || 500 });
+    return Response.json({ error: error.status ? error.message : 'Unable to create the approval request.' }, { status: error.status || 500 });
   }
 }
