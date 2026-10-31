@@ -48,7 +48,7 @@ const RiskGaugeArc = ({ score }) => {
       </svg>
       <div className="-mt-6 flex items-baseline gap-1">
         <span className="text-5xl font-bold text-white">{score}</span>
-        <span className="text-lg text-white/60 font-medium">/ 100</span>
+        <span className="text-lg text-white/80 font-medium">/ 100</span>
       </div>
       <span className="text-sm font-semibold text-white/80 mt-1">{label}</span>
     </div>
@@ -91,14 +91,14 @@ export default function SDSResults({ data, fileName, onReset }) {
       {/* Header: Glassmorphism */}
       <div
         className="rounded-2xl p-7 text-white relative overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #133a37 0%, #0d4a46 45%, #0a5c52 100%)" }}
+        style={{ background: "linear-gradient(135deg, #0A1F1D 0%, #01544E 55%, #02786F 100%)" }}
       >
         <div className="relative z-10 flex items-start gap-6 flex-wrap">
           {/* Left: info + summary + buttons */}
           <div className="flex-1 min-w-0">
-            <p className="text-white/55 text-sm font-medium tracking-wide mb-3">SDS Analysis Complete</p>
+            <p className="text-white/80 text-sm font-medium tracking-wide mb-3">SDS analysis complete</p>
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <h2 className="text-3xl font-bold text-white">{data.product_name || "Unknown Product"}</h2>
+              <h2 className="text-3xl font-bold !text-white break-words">{data.product_name || "Unknown Product"}</h2>
               {data.manufacturer && (
                 <span className="px-3 py-1 rounded-md text-sm font-medium text-white/75" style={{ background: "rgba(255,255,255,0.1)" }}>
                   {data.manufacturer.split(",")[0]}

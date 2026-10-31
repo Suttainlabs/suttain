@@ -257,7 +257,7 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="w-full p-6 sm:p-7 rounded-2xl bg-slate-800 text-left shadow-lg hover:shadow-xl hover:bg-slate-900 transition-all duration-300 group"
+        className="w-full p-6 sm:p-7 rounded-2xl text-left shadow-lg hover:shadow-xl hover:brightness-110 transition-all duration-300 group" style={{ background: "linear-gradient(135deg, #01544E 0%, #02786F 60%, #02988C 100%)" }}
       >
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 bg-white/15 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -265,12 +265,12 @@ export default function GeneratorDashboard({ onModeSelect, onFormulaSelect }) {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <h3 className="text-xl font-bold text-white">New Here? Let Us Guide You</h3>
-              <span className="px-2 py-0.5 rounded-full bg-slate-600 text-white text-xs font-semibold">
+              <h3 className="text-xl font-bold !text-white">New here? Let us guide you</h3>
+              <span className="px-2 py-0.5 rounded-full bg-white text-[#01544E] text-xs font-semibold">
                 Recommended
               </span>
             </div>
-            <p className="text-white/80 text-sm">
+            <p className="text-white/90 text-sm">
               No chemistry knowledge needed. Answer a few simple questions and we'll create the perfect formula for you.
             </p>
           </div>

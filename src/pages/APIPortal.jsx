@@ -18,7 +18,7 @@ function Metric({ value, label }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 min-w-0">
       <p className="font-mono text-2xl sm:text-3xl text-white leading-none">{value}</p>
-      <p className="mt-2 text-xs text-white/60">{label}</p>
+      <p className="mt-2 text-xs text-white/80">{label}</p>
     </div>
   );
 }
@@ -38,15 +38,15 @@ export default function APIPortal() {
     <div className="research-surface min-h-screen">
       <SEOHead title="API & engine reference | Suttain" description="Engines, methods and scientific data services behind Suttain's Atomistic Simulation, Drug Design and consumer tools, with citations." />
 
-      <section className="bg-[#0E1A19] text-white">
+      <section className="text-white" style={{ background: "linear-gradient(135deg, #0A1F1D 0%, #01544E 60%, #02786F 100%)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <p className="font-mono text-xs text-white/50 mb-5">Suttain / API &amp; engine reference</p>
+          <p className="font-mono text-xs text-white/75 mb-5">Suttain / API &amp; engine reference</p>
           <div className="grid lg:grid-cols-12 gap-10 items-end">
             <div className="lg:col-span-7">
               <h1 className="!text-white text-3xl sm:text-4xl lg:text-[44px] leading-tight font-medium tracking-tight">The compute and data layer behind Suttain.</h1>
-              <p className="mt-5 text-white/70 max-w-xl leading-relaxed">Every engine, method and database a Suttain result can come from, with what actually runs, what is only prepared, and how to cite it.</p>
+              <p className="mt-5 text-white/85 max-w-xl leading-relaxed">Every engine, method and database a Suttain result can come from, with what actually runs, what is only prepared, and how to cite it.</p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <a href="#engines" className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-white px-5 text-sm font-medium text-[#0E1A19] hover:bg-white/90">Browse engines<ArrowRight className="h-4 w-4" /></a>
+                <a href="#engines" className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-white px-5 text-sm font-medium text-[#01544E] hover:bg-white/90">Browse engines<ArrowRight className="h-4 w-4" /></a>
                 <Link to="/ResearchPortal" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-white/20 px-5 text-sm font-medium text-white hover:bg-white/5">Research overview</Link>
               </div>
             </div>
