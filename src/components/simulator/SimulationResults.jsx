@@ -681,7 +681,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                             <span className="ml-3 text-slate-600">Loading visualization...</span>
                         </div>
                     }>
-                        <ChemicalVisualization data={data} />
+                        <ChemicalVisualization data={{ ...data, chemicals }} />
                     </Suspense>
                 );
             case 'reaction':
@@ -980,6 +980,40 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                 animate={{ opacity: 1 }}
                 className="max-w-7xl mx-auto space-y-4"
             >
+                {/* Hazard verdict, always first when the mixture is dangerous */}
+                {['DANGEROUS', 'CRITICAL', 'FATAL'].includes(String(safety_status.level || '').toUpperCase()) && (() => {
+                    const formed = reaction_details?.products_formed || [];
+                    const flagged = formed.filter(p => p?.hazards?.length);
+                    const named = (flagged.length ? flagged : formed.slice(0, 1)).map(p => p.name).filter(Boolean);
+                    const isHousehold = !persona || persona === 'household';
+                    return (
+                        <div role="alert" className="rounded-2xl border-2 border-red-300 bg-red-50 p-4 sm:p-5">
+                            <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center flex-shrink-0">
+                                    <AlertTriangle className="w-5 h-5 text-white" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <h2 className="text-lg sm:text-xl font-bold text-red-900">
+                                        {isHousehold ? "Don't mix these." : 'Hazardous combination.'}
+                                    </h2>
+                                    <p className="text-sm text-red-900 mt-1">
+                                        {chemicals.map(c => c.name || c.scientific_name).join(' + ')}
+                                        {named.length > 0 ? <> is predicted to form <strong>{named.join(', ')}</strong>, which can harm your health.</> : <> is predicted to be dangerous.</>}
+                                    </p>
+                                    <div className="mt-3 rounded-xl bg-white border border-red-200 p-3">
+                                        <p className="text-sm font-semibold text-slate-900 mb-1">If you've already mixed them</p>
+                                        <ul className="text-sm text-slate-700 space-y-0.5 list-disc pl-5">
+                                            <li>Leave the area and get to fresh air right away.</li>
+                                            <li>Open windows and doors only if you can do so without staying in the fumes.</li>
+                                            <li>Call Poison Control (US): <a href="tel:18002221222" className="font-semibold text-red-700 underline">1-800-222-1222</a>. If anyone has trouble breathing, call <a href="tel:911" className="font-semibold text-red-700 underline">911</a>.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })()}
+
                 {/* Compact Modern Header */}
                 <Card className="border-0 shadow-lg bg-white overflow-hidden">
                     <div className={`h-2 bg-gradient-to-r ${styling.gradient}`}></div>
