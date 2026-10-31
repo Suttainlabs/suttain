@@ -25,6 +25,10 @@ import useDoseAnalysis from './useDoseAnalysis';
 import WhyThisScore from './WhyThisScore';
 import PersonalRiskCard from './PersonalRiskCard';
 import GuidedSteps from '@/components/consumer/GuidedSteps';
+import {
+  unwrapInvoke, errorMessage, normalizeCompliance, normalizeSustainability, normalizeHealth,
+  InsightState, ComplianceView, SustainabilityView, HealthView
+} from './ScanInsightPanels';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -45,11 +49,14 @@ const ScoreBar = ({ score, color }) => {
 };
 
 // Circular score ring for hero metrics
+// Ring colour uses the same thresholds as getRatingLabel so the colour and the word always agree.
+const scoreColor = (score) => (score >= 85 ? '#10b981' : score >= 70 ? '#02988C' : score >= 50 ? '#f59e0b' : '#ef4444');
+
 const ScoreRing = ({ score, size = 72, label, color }) => {
   const radius = (size - 8) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
-  const ringColor = color || (score >= 85 ? '#10b981' : score >= 60 ? '#f59e0b' : '#ef4444');
+  const ringColor = color || scoreColor(score);
   return (
     <div className="flex flex-col items-center gap-1">
       <svg width={size} height={size}>
@@ -163,49 +170,39 @@ const IngredientItem = ({ ingredient, doseAnalysis, onLoadDose, doseLoading, dos
   );
 };
 
-// ── Community Score Widget ─────────────────────────────────────────────────
+// ── "Would buy again" ─────────────────────────────────────────────────────
+// There is no shared vote store yet, so this shows no community percentage (the old one was
+// derived from the risk level, not from real votes). The user's own answer is kept on this device.
 const CommunityScore = ({ product }) => {
-  const [voted, setVoted] = useState(false);
-  const [wouldBuy, setWouldBuy] = useState(null);
-  const { toast } = useToast();
+  const key = `suttain_buy_again_${product.barcode || product.name}`;
+  const read = () => { try { return localStorage.getItem(key); } catch { return null; } };
+  const [answer, setAnswer] = useState(read);
+  useEffect(() => { setAnswer(read()); }, [key]);
 
-  // Simulate a community score derived from the product's safety profile
-  const baseScore = product.riskAssessment?.overallRisk === 'low' ? 78
-    : product.riskAssessment?.overallRisk === 'medium' ? 55 : 32;
-  const displayScore = wouldBuy === true ? Math.min(baseScore + 2, 100) : baseScore;
-
-  const handleVote = async (vote) => {
-    setWouldBuy(vote);
-    setVoted(true);
-    toast({ title: "Thanks for your vote!", description: "Your community feedback has been recorded.", duration: 3000 });
+  const handleVote = (vote) => {
+    const v = vote ? 'yes' : 'no';
+    setAnswer(v);
+    try { localStorage.setItem(key, v); } catch {}
   };
 
   return (
-    <Card className="bg-white/60 border border-slate-200">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-violet-500" />
-            <span className="text-sm font-semibold text-slate-700">Community "Would Buy Again"</span>
-          </div>
-          <Badge className="bg-violet-100 text-violet-800 text-xs">{displayScore}% Yes</Badge>
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+      <div className="flex items-center gap-2">
+        <Users className="w-4 h-4 text-[#02988C]" />
+        <span className="text-sm font-medium text-slate-700">Would you buy this again?</span>
+      </div>
+      {answer ? (
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-500">You said <strong className="text-slate-700">{answer === 'yes' ? 'yes' : 'no'}</strong></span>
+          <button type="button" className="text-xs text-[#02988C] hover:underline" onClick={() => { setAnswer(null); try { localStorage.removeItem(key); } catch {} }}>Change</button>
         </div>
-        <ScoreBar score={displayScore} color="bg-violet-500" />
-        {!voted ? (
-          <div className="mt-3 flex items-center gap-2">
-            <span className="text-xs text-slate-500 mr-1">Would you buy again?</span>
-            <Button size="sm" variant="outline" className="h-7 text-xs px-2" onClick={() => handleVote(true)}>
-              👍 Yes
-            </Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs px-2" onClick={() => handleVote(false)}>
-              👎 No
-            </Button>
-          </div>
-        ) : (
-          <p className="text-xs text-slate-500 mt-2">✓ Your vote has been counted.</p>
-        )}
-      </CardContent>
-    </Card>
+      ) : (
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" className="h-8 px-3 text-xs" onClick={() => handleVote(true)}>Yes</Button>
+          <Button size="sm" variant="outline" className="h-8 px-3 text-xs" onClick={() => handleVote(false)}>No</Button>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -353,6 +350,9 @@ export default function ProductAnalysis({ product, onClear, user }) {
   const [isLoadingSustainability, setIsLoadingSustainability] = useState(false);
   const [healthData, setHealthData] = useState(null);
   const [isLoadingHealth, setIsLoadingHealth] = useState(false);
+  const [complianceError, setComplianceError] = useState(null);
+  const [sustainabilityError, setSustainabilityError] = useState(null);
+  const [healthError, setHealthError] = useState(null);
   const [showRiskModal, setShowRiskModal] = useState(false);
   const [healthProfile, setHealthProfile] = useState(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
@@ -377,6 +377,9 @@ export default function ProductAnalysis({ product, onClear, user }) {
     setComplianceData(null);
     setSustainabilityData(null);
     setHealthData(null);
+    setComplianceError(null);
+    setSustainabilityError(null);
+    setHealthError(null);
     checkSafetyProfile();
   }, [product]);
 
@@ -408,50 +411,48 @@ export default function ProductAnalysis({ product, onClear, user }) {
     healthProfile.life_stage === 'pregnant'
   );
 
-  const handleLoadCompliance = async () => {
-    if (complianceData || isLoadingCompliance) return;
-    setIsLoadingCompliance(true);
+  const isFood = /food|nutrition|drink|beverage|snack|supplement|vitamin/i.test(product.category || '');
+  const ingredientText = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
+
+  // Runs one AI-backed step. On failure it shows an error with Retry instead of inventing values.
+  const runInsight = async ({ operation, data, normalize, setData, setLoading, setError }) => {
+    setLoading(true); setError(null);
     try {
-      const ingredients = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
-      const result = await base44.functions.invoke('runConsumerLLM', {
-        operation: 'productCompliance',
-        data: { productName: product.name, category: product.category, ingredients }
-      });
-      setComplianceData(result);
-    } catch {
-      setComplianceData({ overall_status: 'Requires Review', summary: 'Could not complete analysis. Please try again.', flagged_ingredients: [], recommendations: [] });
-    } finally { setIsLoadingCompliance(false); }
+      const res = await base44.functions.invoke('runConsumerLLM', { operation, data });
+      setData(normalize(unwrapInvoke(res)));
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally { setLoading(false); }
   };
 
-  const handleLoadHealth = async () => {
-    if (healthData || isLoadingHealth) return;
-    setIsLoadingHealth(true);
-    try {
-      const ingredients = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
-      const nutritionText = product.nutritionFacts ? JSON.stringify(product.nutritionFacts) : 'not available';
-      const result = await base44.functions.invoke('runConsumerLLM', {
-        operation: 'productHealth',
-        data: { productName: product.name, brand: product.brand, category: product.category, ingredients, nutritionFacts: nutritionText }
-      });
-      setHealthData(result);
-    } catch {
-      setHealthData({ health_summary: 'Could not complete health analysis.', overall_health_rating: 'Fair', dietary_suitability: [], health_warnings: [], nutritional_highlights: [], healthier_alternatives: [], consumption_tips: [] });
-    } finally { setIsLoadingHealth(false); }
+  const handleLoadCompliance = (force = false) => {
+    if (isLoadingCompliance || (!force && complianceData)) return;
+    runInsight({
+      operation: 'productCompliance',
+      data: { productName: product.name, category: product.category, ingredients: ingredientText },
+      normalize: normalizeCompliance, setData: setComplianceData, setLoading: setIsLoadingCompliance, setError: setComplianceError,
+    });
   };
 
-  const handleLoadSustainability = async () => {
-    if (sustainabilityData || isLoadingSustainability) return;
-    setIsLoadingSustainability(true);
-    try {
-      const ingredients = product.ingredients?.map(i => i.name).join(', ') || 'unknown ingredients';
-      const result = await base44.functions.invoke('runConsumerLLM', {
-        operation: 'productSustainability',
-        data: { productName: product.name, category: product.category, ingredients }
-      });
-      setSustainabilityData(result);
-    } catch {
-      setSustainabilityData({ overall_score: 0, grade: 'C', summary: 'Could not complete analysis.', eco_concerns: [], green_positives: [], improvement_tips: [] });
-    } finally { setIsLoadingSustainability(false); }
+  const handleLoadHealth = (force = false) => {
+    if (isLoadingHealth || (!force && healthData)) return;
+    runInsight({
+      operation: 'productHealth',
+      data: {
+        productName: product.name, brand: product.brand, category: product.category, ingredients: ingredientText,
+        nutritionFacts: product.nutritionFacts ? JSON.stringify(product.nutritionFacts) : 'not available'
+      },
+      normalize: normalizeHealth, setData: setHealthData, setLoading: setIsLoadingHealth, setError: setHealthError,
+    });
+  };
+
+  const handleLoadSustainability = (force = false) => {
+    if (isLoadingSustainability || (!force && sustainabilityData)) return;
+    runInsight({
+      operation: 'productSustainability',
+      data: { productName: product.name, category: product.category, ingredients: ingredientText },
+      normalize: normalizeSustainability, setData: setSustainabilityData, setLoading: setIsLoadingSustainability, setError: setSustainabilityError,
+    });
   };
 
   const checkSafetyProfile = async () => {
@@ -485,7 +486,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
         operation: 'findSimilarProducts',
         data: { productName: product.name, category: product.category, brand: product.brand, ingredients: product.ingredients?.slice(0, 5).map(i => i.name) }
       });
-      setSimilarProducts(result?.similar_products || []);
+      setSimilarProducts(unwrapInvoke(result)?.similar_products || []);
     } catch { setSimilarProducts([]); }
     finally { setIsFindingSimilar(false); }
   };
@@ -509,6 +510,16 @@ export default function ProductAnalysis({ product, onClear, user }) {
     averageScores.sustainability * 0.3 +
     Math.max(0, 100 - (product.hazards?.length || 0) * 15) * 0.2
   );
+
+  // One verdict that accounts for both the ingredient score and the hazard level, so the page
+  // never says "Good" in green next to a "Medium Risk" warning without explanation.
+  const riskLevel = product.riskAssessment?.overallRisk;
+  const verdict = (() => {
+    const base = getRatingLabel(overallScore);
+    if (riskLevel === 'high') return { label: 'Use with care', color: 'text-red-700', bg: 'bg-red-100' };
+    if (riskLevel === 'medium' && overallScore >= 70) return { label: `${base.label}, some cautions`, color: 'text-amber-800', bg: 'bg-amber-100' };
+    return base;
+  })();
 
   const getRiskBadge = (risk) => {
     const config = {
@@ -539,7 +550,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
     { value: 'safety', label: 'Safety', intro: 'Hazards and safety considerations for the ingredients in this product.' },
     { value: 'compliance', label: 'Compliance', intro: 'Regulatory notes across the EU, US and Canada.' },
     { value: 'sustainability', label: 'Environmental impact', intro: 'How the ingredients score for environmental impact.' },
-    { value: 'health', label: 'Health notes', intro: 'Health and nutrition context for this product.' },
+    { value: 'health', label: 'Health notes', intro: isFood ? 'Health and nutrition context for this product.' : 'Skin, sensitivity and safe-use notes for this product.' },
     ...(product.isMedicine ? [] : [{ value: 'diy', label: 'Make it yourself', intro: 'Simple alternatives you can make, with safety notes.' }]),
   ];
   const changeTab = (v) => {
@@ -611,9 +622,9 @@ export default function ProductAnalysis({ product, onClear, user }) {
             {/* Score ring */}
             <div className="flex-shrink-0 flex flex-col items-center gap-0.5 p-2 bg-white rounded-xl shadow border border-slate-100">
               <ScoreRing score={overallScore} size={64} />
-              <span className="text-[11px] font-semibold text-slate-500 leading-tight">Overall</span>
-              <Badge className={`text-[11px] px-1.5 py-0 ${getRatingLabel(overallScore).bg} ${getRatingLabel(overallScore).color} border-0`}>
-                {getRatingLabel(overallScore).label}
+              <span className="text-[11px] font-semibold text-slate-500 leading-tight">Ingredient score</span>
+              <Badge className={`text-[11px] px-1.5 py-0 text-center ${verdict.bg} ${verdict.color} border-0`}>
+                {verdict.label}
               </Badge>
             </div>
           </div>
@@ -730,10 +741,10 @@ export default function ProductAnalysis({ product, onClear, user }) {
                     <div>
                       <p className="text-sm font-semibold text-blue-800 mb-1">How We Rate Products</p>
                       <ul className="text-xs text-blue-700 space-y-0.5 list-disc list-inside">
-                        <li>Beauty-specific rating methodology for personal care, household & baby products</li>
-                        <li>Peer-reviewed scientific sources cited (PubChem, EWG, EU CosIng, FDA)</li>
-                        <li>Full ratings for every ingredient, good and bad</li>
-                        <li>Personalized alerts based on your safety profile</li>
+                        <li>Ingredient score blends average ingredient safety (50%), eco rating (30%) and hazards found (20%)</li>
+                        <li>The risk level reflects the most serious hazard, so a well-scored product can still carry cautions</li>
+                        <li>Reference data from public sources such as PubChem, EU CosIng and FDA</li>
+                        <li>Compliance, environmental and health steps are AI-assisted and labelled as such</li>
                       </ul>
                     </div>
                   </div>
