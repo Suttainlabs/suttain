@@ -1,9 +1,6 @@
 import { reserveSecurityAction } from './securityGuards.ts';
 import { planAccess } from './usageEntitlements.ts';
 
-// Per-user daily cap for features that spend AI credits or send mail.
-// Paying users (and admins) get 5x the free allowance. Returns a 429 Response
-// when the cap is reached, otherwise null.
 // Per-user hourly cap for lookups that proxy free public databases (PubChem etc.),
 // generous for people, but stops scripted abuse from getting Suttain blocked upstream.
 export async function limitHourlyLookups(base44, user, channel, limit = 300) {
@@ -19,6 +16,9 @@ export async function limitHourlyLookups(base44, user, channel, limit = 300) {
   }
 }
 
+// Per-user daily cap for features that spend AI credits or send mail.
+// Paying users (and admins) get 5x the free allowance. Returns a 429 Response
+// when the cap is reached, otherwise null.
 export async function limitDailyUse(base44, user, channel, freeLimit) {
   const limit = planAccess(user).core ? freeLimit * 5 : freeLimit;
   try {
