@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
 
     // 1. Delete simulations
     try {
-      const simulations = await base44.asServiceRole.entities.Simulation.filter({ created_by: userEmail });
+      const simulations = await base44.asServiceRole.entities.Simulation.filter({ created_by_id: userId });
       for (const sim of simulations) {
         await base44.asServiceRole.entities.Simulation.delete(sim.id);
       }
@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
 
     // 2. Delete formulas
     try {
-      const formulas = await base44.asServiceRole.entities.Formula.filter({ created_by: userEmail });
+      const formulas = await base44.asServiceRole.entities.Formula.filter({ created_by_id: userId });
       for (const formula of formulas) {
         await base44.asServiceRole.entities.Formula.delete(formula.id);
       }
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
 
     // 3. Delete safety profiles
     try {
-      const safetyProfiles = await base44.asServiceRole.entities.SafetyProfile.filter({ created_by: userEmail });
+      const safetyProfiles = await base44.asServiceRole.entities.SafetyProfile.filter({ created_by_id: userId });
       for (const profile of safetyProfiles) {
         await base44.asServiceRole.entities.SafetyProfile.delete(profile.id);
       }
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
 
     // 4. Delete safety alerts
     try {
-      const safetyAlerts = await base44.asServiceRole.entities.SafetyAlert.filter({ created_by: userEmail });
+      const safetyAlerts = await base44.asServiceRole.entities.SafetyAlert.filter({ created_by_id: userId });
       for (const alert of safetyAlerts) {
         await base44.asServiceRole.entities.SafetyAlert.delete(alert.id);
       }
@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
 
     // 5. Delete notifications
     try {
-      const notifications = await base44.asServiceRole.entities.Notification.filter({ created_by: userEmail });
+      const notifications = await base44.asServiceRole.entities.Notification.filter({ created_by_id: userId });
       for (const notif of notifications) {
         await base44.asServiceRole.entities.Notification.delete(notif.id);
       }
@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
 
     // 6. Delete reviews
     try {
-      const reviews = await base44.asServiceRole.entities.Review.filter({ created_by: userEmail });
+      const reviews = await base44.asServiceRole.entities.Review.filter({ created_by_id: userId });
       for (const review of reviews) {
         await base44.asServiceRole.entities.Review.delete(review.id);
       }
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
 
     // 7. Delete learning progress
     try {
-      const progress = await base44.asServiceRole.entities.LearningProgress.filter({ created_by: userEmail });
+      const progress = await base44.asServiceRole.entities.LearningProgress.filter({ created_by_id: userId });
       for (const p of progress) {
         await base44.asServiceRole.entities.LearningProgress.delete(p.id);
       }
@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
 
     // 8. Delete compliance checks
     try {
-      const checks = await base44.asServiceRole.entities.ComplianceCheck.filter({ created_by: userEmail });
+      const checks = await base44.asServiceRole.entities.ComplianceCheck.filter({ created_by_id: userId });
       for (const check of checks) {
         await base44.asServiceRole.entities.ComplianceCheck.delete(check.id);
       }
@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
 
     // 9. Delete shared simulations
     try {
-      const sharedSims = await base44.asServiceRole.entities.SharedSimulation.filter({ created_by: userEmail });
+      const sharedSims = await base44.asServiceRole.entities.SharedSimulation.filter({ created_by_id: userId });
       for (const ss of sharedSims) {
         await base44.asServiceRole.entities.SharedSimulation.delete(ss.id);
       }
@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
 
     // 10. Delete custom libraries
     try {
-      const libraries = await base44.asServiceRole.entities.CustomLibrary.filter({ created_by: userEmail });
+      const libraries = await base44.asServiceRole.entities.CustomLibrary.filter({ created_by_id: userId });
       for (const lib of libraries) {
         await base44.asServiceRole.entities.CustomLibrary.delete(lib.id);
       }
@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
 
     // 11. Delete comments
     try {
-      const comments = await base44.asServiceRole.entities.Comment.filter({ created_by: userEmail });
+      const comments = await base44.asServiceRole.entities.Comment.filter({ created_by_id: userId });
       for (const comment of comments) {
         await base44.asServiceRole.entities.Comment.delete(comment.id);
       }
@@ -128,7 +128,7 @@ Deno.serve(async (req) => {
 
     // 12. Delete reports
     try {
-      const reports = await base44.asServiceRole.entities.Report.filter({ created_by: userEmail });
+      const reports = await base44.asServiceRole.entities.Report.filter({ created_by_id: userId });
       for (const report of reports) {
         await base44.asServiceRole.entities.Report.delete(report.id);
       }
@@ -138,7 +138,7 @@ Deno.serve(async (req) => {
 
     // 13. Delete barcode history
     try {
-      const barcodeHistory = await base44.asServiceRole.entities.BarcodeHistory.filter({ created_by: userEmail });
+      const barcodeHistory = await base44.asServiceRole.entities.BarcodeHistory.filter({ created_by_id: userId });
       for (const bh of barcodeHistory) {
         await base44.asServiceRole.entities.BarcodeHistory.delete(bh.id);
       }
@@ -148,7 +148,7 @@ Deno.serve(async (req) => {
 
     // 14. Delete sustainability profiles
     try {
-      const sustainabilityProfiles = await base44.asServiceRole.entities.SustainabilityProfile.filter({ created_by: userEmail });
+      const sustainabilityProfiles = await base44.asServiceRole.entities.SustainabilityProfile.filter({ created_by_id: userId });
       for (const sp of sustainabilityProfiles) {
         await base44.asServiceRole.entities.SustainabilityProfile.delete(sp.id);
       }

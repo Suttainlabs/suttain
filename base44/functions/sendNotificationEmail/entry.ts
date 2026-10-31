@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { limitDailyUse } from '../../shared/dailyFeatureLimit.ts';
 
 // Narrow app-specific operation: sends a critical Suttain notification email to
 // the calling user only (recipient derived from auth, never caller-supplied).
@@ -8,6 +9,8 @@ export default async function(req) {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const limited = await limitDailyUse(base44, user, 'notification_email', 20);
+    if (limited) return limited;
 
     const { title, message, action_url } = await req.json();
     if (!title || !message) {
