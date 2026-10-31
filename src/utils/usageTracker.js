@@ -14,18 +14,9 @@ export function getCurrentUsage(user) {
     researchSimulations: researchActive ? (user?.usage_research_simulations || 0) : 0,
   };
 }
-export async function incrementUsage(user, type) {
-  const latest = await base44.auth.me();
-  const usage = getCurrentUsage(latest);
-  const now = new Date().toISOString();
-  if (type === 'researchSimulations') {
-    return base44.auth.updateMe({ research_usage_period_start: now, usage_research_simulations: usage.researchSimulations + 1 });
-  }
-  return base44.auth.updateMe({
-    usage_period_start: now,
-    usage_simulations: usage.simulations,
-    usage_formulas: usage.formulas,
-    usage_scans: usage.scans,
-    [`usage_${type}`]: usage[type] + 1,
-  });
+// Usage is counted on the server when a metered feature runs. The usage
+// fields are write-protected on the User record, so the browser no longer
+// writes them; this stays as a harmless no-op for existing callers.
+export async function incrementUsage() {
+  return null;
 }
