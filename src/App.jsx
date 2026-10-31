@@ -144,6 +144,7 @@ const AuthenticatedApp = () => {
       <Route path="/AboutUs" element={<LayoutWrapper currentPageName="AboutUs"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><AboutUs /></PageTransition></Suspense></LayoutWrapper>} />
       <Route path="/ResearchLanding" element={<Navigate to="/ResearchPortal" replace />} />
       <Route path="/Generator" element={<Navigate to="/generator" replace />} />
+      <Route path="/Articles" element={<Navigate to={`/Blog${location.search}${location.hash}`} replace />} />
       <Route path="/FormulaComparison" element={<LayoutWrapper currentPageName="FormulaComparison"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin"/></div>}><PageTransition><FormulaComparison /></PageTransition></Suspense></LayoutWrapper>} />
 
       {/* ── Auth Pages (outside Layout) ── */}

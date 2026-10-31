@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { BookOpen, Mail, Bell, Sparkles, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
+import React, { useState } from 'react';
+import { BookOpen, Mail, Bell, Sparkles } from 'lucide-react';
+import useDualBlogEmbeds from '@/components/blog/useDualBlogEmbeds';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -27,23 +26,8 @@ export default function Blog() {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
 
-  // Inject Soro embed script after the #soro-blog div is in the DOM
-  useEffect(() => {
-    // Remove any stale script so it re-runs on navigation back to this page
-    const existing = document.querySelector('script[src*="trysoro.com"]');
-    if (existing) existing.remove();
-
-    const script = document.createElement('script');
-    // Cache-bust so newly published posts appear immediately instead of after the 1-hour browser cache.
-    script.src = `https://app.trysoro.com/api/embed/39f34335-ade3-4339-96ec-dd251a44a8dc?v=${Date.now()}`;
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      const s = document.querySelector('script[src*="trysoro.com"]');
-      if (s) s.remove();
-    };
-  }, []);
+  // Loads the Soro and Holo embeds together; `activeEmbed` is whichever is showing an article.
+  const activeEmbed = useDualBlogEmbeds();
 
 
 
@@ -97,26 +81,15 @@ export default function Blog() {
         </div>
       </section>
 
-      {/* Soro Blog Embed */}
-      <section className="py-16 px-4">
+      {/* Holo + Soro embeds: when one shows an article, the other is hidden */}
+      <section className={`pt-16 px-4 ${activeEmbed === 'soro' ? 'hidden' : ''}`}>
         <div className="max-w-3xl mx-auto">
-          <div id="soro-blog" className="space-y-6"></div>
+          <div id="holo-blog"></div>
         </div>
       </section>
-
-      {/* Link to the Holo-powered Articles page (separate page: both embeds use ?post=) */}
-      <section className="pb-16 px-4">
+      <section className={`py-16 px-4 ${activeEmbed === 'holo' ? 'hidden' : ''}`}>
         <div className="max-w-3xl mx-auto">
-          <Link
-            to={createPageUrl('Articles')}
-            className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-6 hover:border-[var(--suttain-teal)] transition-colors"
-          >
-            <div>
-              <p className="text-lg font-semibold text-slate-900">More articles from Suttain</p>
-              <p className="text-slate-500">Guides on product safety, ingredients and chemical analysis.</p>
-            </div>
-            <ArrowRight className="w-5 h-5 text-[var(--suttain-teal)] shrink-0" />
-          </Link>
+          <div id="soro-blog" className="space-y-6"></div>
         </div>
       </section>
 
