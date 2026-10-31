@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertTriangle, CheckCircle2, Info, Loader2 } from 'lucide-react';
 import HostedMetrics from '@/components/binding/HostedMetrics';
+import HostedDownloads from '@/components/binding/HostedDownloads';
 import { reportedValue } from '@/components/binding/ReportedValues';
 import { NextStepLink } from '@/components/research/ResearchProductNav';
 import { handoffUrl } from '@/components/research/researchProducts';
@@ -43,6 +44,7 @@ export default function HostedResults({ job }) {
     </div>
     {result.fallback?.notice && <div role="status" className="flex gap-2 rounded-lg border border-research-border bg-research-soft p-3 text-sm text-research-text"><Info className="h-4 w-4 shrink-0 mt-0.5 text-research-accent" /><p>{result.fallback.notice}</p></div>}
     {failed ? <div role="alert" className="space-y-2"><h3 className="flex items-center gap-2 !text-lg"><AlertTriangle className="h-5 w-5 text-research-accent" />Calculation failed</h3><p className="text-sm text-research-text break-words">{job.error || 'The provider reported a failure.'}</p>{!!result.attempts?.length && <ul className="space-y-1 text-xs text-research-muted">{result.attempts.map((attempt, index) => <li key={index}>{attempt.provider}: {attempt.message}</li>)}</ul>}</div> : completed ? <HostedMetrics job={job} /> : <RunningState job={job} />}
+    {completed && <HostedDownloads job={job} />}
     {result.limitations && <div><h4 className="research-label mb-1">Limitations</h4><p className="text-xs text-research-muted whitespace-pre-wrap">{reportedValue(result.limitations)}</p></div>}
     {!!result.citations?.length && <div className="border-t border-research-border pt-3"><h4 className="research-label mb-1">Citations</h4>{result.citations.map((citation, index) => <p key={index} className="text-xs text-research-muted break-words">{typeof citation === 'string' ? citation : citation.text || reportedValue(citation)}</p>)}</div>}
     {completed && <div className="border-t border-research-border pt-4"><p className="research-label mb-3">Next step</p><div className="grid gap-2">
