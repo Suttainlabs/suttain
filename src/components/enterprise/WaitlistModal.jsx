@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { CheckCircle, Mail, User, Briefcase, Loader2, Send } from 'lucide-react';
 
-const ADMIN_EMAIL = "contact@suttain.com";
 
 export default function WaitlistModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({ name: '', email: '', company_name: '', role: '' });
