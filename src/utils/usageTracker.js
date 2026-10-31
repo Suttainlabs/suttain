@@ -1,4 +1,3 @@
-import { base44 } from '@/api/base44Client';
 
 // Calendar-month budgets, with independent Core and Research windows.
 export const FREE_LIMITS = { simulations: 3, formulas: 5, scans: Infinity, researchSimulations: 3 };
