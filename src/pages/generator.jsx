@@ -21,6 +21,10 @@ import AtelierLayout from "../components/generator/AtelierLayout";
 import LabLayout from "../components/generator/LabLayout";
 import { sendFeatureUsageEmail } from "../components/shared/featureNotifications";
 import { useToast } from "@/components/ui/use-toast";
+import PathProfileForm from "../components/generator/PathProfileForm";
+import IndividualDeliverables from "../components/generator/IndividualDeliverables";
+import BusinessDeliverables from "../components/generator/BusinessDeliverables";
+import { DEFAULT_INDIVIDUAL, DEFAULT_BUSINESS } from "../components/generator/pathProfile";
 
 export default function Generator() {
   const { user, refreshUser } = useContext(AuthContext);
@@ -31,6 +35,8 @@ export default function Generator() {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [businessMode, setBusinessMode] = useState(false);
+  const [individualProfile, setIndividualProfile] = useState(DEFAULT_INDIVIDUAL);
+  const [businessProfile, setBusinessProfile] = useState(DEFAULT_BUSINESS);
   const [selectedProductType, setSelectedProductType] = useState(null);
   const [productDescription, setProductDescription] = useState('');
   const [formulaOptions, setFormulaOptions] = useState([]);
@@ -242,7 +248,7 @@ export default function Generator() {
 
       const response = await base44.functions.invoke('runConsumerLLM', {
         operation: 'formulaOptions',
-        data: { productTypeName: activeProductType.name, description, businessMode: isBusinessMode }
+        data: { productTypeName: activeProductType.name, description, businessMode: isBusinessMode, profile: isBusinessMode ? businessProfile : individualProfile }
       });
 
       const formulas = response?.data?.formulas ?? response?.formulas;
@@ -372,7 +378,7 @@ export default function Generator() {
 
       const response = await base44.functions.invoke('runConsumerLLM', {
         operation: 'formulaRecipe',
-        data: { variant: formula.variant, description: productDescription, businessMode, ingredients: formula.ingredients }
+        data: { variant: formula.variant, description: productDescription, businessMode, ingredients: formula.ingredients, profile: businessMode ? businessProfile : individualProfile }
       });
 
       const fullRecipe = {
@@ -480,6 +486,14 @@ export default function Generator() {
       <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${businessMode ? 'border-research-border bg-research-soft text-research-accent' : 'border-research-border bg-research-soft text-research-accent'}`}>
         {businessMode ? 'Business mode · commercial formulation' : 'Individual mode · home-made recipe'}
       </div>
+      {currentStep <= 3 && (
+        <div role="group" aria-label="Formulation path" className="grid grid-cols-2 gap-1 rounded-lg border border-research-border p-1">
+          {[[false, 'Individual'], [true, 'Business']].map(([val, label]) => (
+            <button key={label} type="button" aria-pressed={businessMode === val} onClick={() => setBusinessMode(val)}
+              className={`min-h-9 rounded-md text-sm ${businessMode === val ? 'bg-research-accent text-research-card' : 'text-research-text hover:bg-research-soft'}`}>{label}</button>
+          ))}
+        </div>
+      )}
       <ol className="space-y-1" aria-label="Formula steps">
         {FLOW_STEPS.map(({ step, label, hint, value }, i) => {
           const done = currentStep > step;
@@ -598,6 +612,9 @@ export default function Generator() {
 
             {/* Step 3: Product Description */}
             {currentStep === 3 && (
+              <PathProfileForm businessMode={businessMode} individual={individualProfile} business={businessProfile} onIndividual={setIndividualProfile} onBusiness={setBusinessProfile} />
+            )}
+            {currentStep === 3 && (
               <ProductDescriptionStep
                 businessMode={businessMode}
                 productType={selectedProductType}
@@ -630,6 +647,9 @@ export default function Generator() {
                 onResetGenerator={resetGenerator}
               />
             )}
+            {currentStep === 5 && selectedFormula && (businessMode
+              ? <BusinessDeliverables recipe={selectedFormula} profile={businessProfile} />
+              : <IndividualDeliverables recipe={selectedFormula} profile={individualProfile} />)}
               </section>
             </WorkbenchGrid>
             )}

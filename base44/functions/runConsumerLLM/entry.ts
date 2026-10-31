@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { planAccess, reserveUsage } from '../../shared/usageEntitlements.ts';
+import { pathContext } from '../../shared/formulaPathContext.ts';
 
 // Narrow, app-specific LLM operations for the consumer/sustainability/carbon
 // domain. Accepts a known `operation` enum + structured domain `data` (never a
@@ -536,6 +537,7 @@ FOR EACH VARIANT PROVIDE:
 - Difficulty: beginner/intermediate
 - Simple tips for making it at home`;
         }
+        prompt += pathContext(data.profile, isBusiness);
         prompt += `\n\nReturn as JSON with this exact structure:\n{\n"formulas": [\n{\n  "variant": "string",\n  "name": "string",\n  "description": "string",\n  "benefits": ["string", "string", "string"],\n  "ingredients": [{"chemical_name": "string", "percentage": number, "purpose": "string"}],\n  "cost_level": "low|medium|high",\n  "difficulty": "beginner|intermediate|advanced|professional"\n}\n]\n}`;
         const result = await call({
           prompt, add_context_from_internet: true,
@@ -599,6 +601,7 @@ Produce a BEGINNER-FRIENDLY SOP with these sections:
 
 Use clear, accessible language with specific measurements. Return as JSON.`;
         }
+        prompt += pathContext(data.profile, isBusiness);
         prompt += `\n\nUse this JSON structure:\n{\n"apparatus": ["string"],\n"reagents": [{"name": "string", "function": "string", "quantity": "string"}],\n"batch_size_note": "string",\n"instructions": [{"phase": "Phase Name", "steps": ["step 1", "step 2"]}],\n"properties": {"ph_level": "string", "shelf_life": "string", "difficulty": "string", "time_to_make": "string"},\n"safety_precautions": ["string"],\n"waste_disposal": ["string"],\n"sustainability_score": number\n}`;
         const result = await call({
           prompt,
