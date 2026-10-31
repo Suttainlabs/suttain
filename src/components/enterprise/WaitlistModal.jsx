@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { EnterpriseWaitlist } from '@/entities/EnterpriseWaitlist';
-import { SendEmail } from '@/integrations/Core';
+import { notifyEnterpriseWaitlist } from '@/api/secureAI';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -34,22 +34,11 @@ export default function WaitlistModal({ isOpen, onClose }) {
       
       // --- Send Admin Notification Email ---
       try {
-        await SendEmail({
-          to: ADMIN_EMAIL,
-          subject: `🏢 New Enterprise Waitlist Signup: ${formData.company_name}`,
-          from_name: "Suttain Notifications",
-          body: `
-            <p>A new user has joined the enterprise waitlist.</p>
-            <h3>User Details:</h3>
-            <ul>
-              <li><strong>Name:</strong> ${formData.name}</li>
-              <li><strong>Company:</strong> ${formData.company_name}</li>
-              <li><strong>Email:</strong> ${formData.email}</li>
-              <li><strong>Role:</strong> ${formData.role || 'Not provided'}</li>
-            </ul>
-            <br/>
-            <p>You can view this submission in the admin dashboard.</p>
-          `
+        await notifyEnterpriseWaitlist({
+          name: formData.name,
+          company_name: formData.company_name,
+          email: formData.email,
+          role: formData.role,
         });
       } catch (emailError) {
         console.error("Failed to send admin notification email:", emailError);

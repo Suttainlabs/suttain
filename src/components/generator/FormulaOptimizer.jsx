@@ -8,7 +8,7 @@ import {
   Sparkles, Loader2, Check, X, DollarSign, Shield, 
   Leaf, Droplets, Clock, Zap, ChevronRight, AlertCircle
 } from "lucide-react";
-import { InvokeLLM } from "@/integrations/Core";
+import { InvokeLLM } from "@/api/secureAI";
 
 const OPTIMIZATION_TARGETS = [
   { id: 'cost', label: 'Reduce Cost', icon: DollarSign, description: 'Find cheaper ingredient alternatives' },

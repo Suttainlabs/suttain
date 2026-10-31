@@ -2,7 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, UploadCloud, FileText, Loader2, AlertTriangle } from 'lucide-react';
-import { UploadFile, ExtractDataFromUploadedFile } from '@/integrations/Core';
+import { UploadFile } from '@/integrations/Core';
+import { ExtractDataFromUploadedFile } from '@/api/secureAI';
 import { Chemical } from '@/entities/Chemical';
 
 export default function UploadPantryModal({ isOpen, onClose, onUploadComplete }) {

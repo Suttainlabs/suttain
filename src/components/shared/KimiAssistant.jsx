@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Loader2, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { InvokeLLM } from "@/integrations/Core";
+import { InvokeLLM } from "@/api/secureAI";
 import ReactMarkdown from "react-markdown";
 
 export default function KimiAssistant({ prompt }) {

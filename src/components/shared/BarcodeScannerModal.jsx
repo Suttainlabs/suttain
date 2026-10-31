@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { ScanLine, Search, Loader2, AlertTriangle, Check, Copy, PlusCircle } from 'lucide-react';
 import { lookupBarcode } from '@/functions/lookupBarcode';
-import { InvokeLLM } from '@/integrations/Core';
+import { InvokeLLM } from '@/api/secureAI';
 
 export default function BarcodeScannerModal({ isOpen, onClose, onScanSuccess }) {
     const [barcode, setBarcode] = useState('');

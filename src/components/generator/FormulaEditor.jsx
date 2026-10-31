@@ -35,7 +35,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { InvokeLLM } from "@/integrations/Core";
+import { InvokeLLM } from "@/api/secureAI";
 import { base44 } from "@/api/base44Client";
 import { Formula } from "@/entities/Formula";
 import { User } from "@/entities/User";

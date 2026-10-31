@@ -8,7 +8,7 @@ import {
   ArrowLeft, ChevronRight, Sparkles, DollarSign, 
   GraduationCap, Leaf, Clock, Beaker, Info, CheckCircle2, ShieldCheck, Crown, AlertTriangle
 } from "lucide-react";
-import { InvokeLLM } from "@/integrations/Core";
+import { InvokeLLM } from "@/api/secureAI";
 import { base44 } from '@/api/base44Client';
 import ComplianceUpsellModal from "./ComplianceUpsellModal";
 import { analyzeAndCreateAlerts } from '../safety/safetyAlertUtils';

@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   MessageCircle, X, Send, Bot, User, Loader2
 } from "lucide-react";
-import { InvokeLLM } from "@/integrations/Core";
+import { InvokeLLM } from "@/api/secureAI";
 
 export default function ABChemistAssistant() {
   const [isOpen, setIsOpen] = useState(false);
