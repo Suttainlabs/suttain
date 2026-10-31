@@ -17,7 +17,6 @@ import FAQ from './pages/FAQ';
 import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Profile from './pages/Profile';
-import ReviewRewards from './pages/ReviewRewards';
 import Settings from './pages/Settings';
 import Simulator from './pages/Simulator';
 import TermsOfService from './pages/TermsOfService';
@@ -38,7 +37,6 @@ export const PAGES = {
     "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
     "Profile": Profile,
-    "ReviewRewards": ReviewRewards,
     "Settings": Settings,
     "Simulator": Simulator,
     "TermsOfService": TermsOfService,

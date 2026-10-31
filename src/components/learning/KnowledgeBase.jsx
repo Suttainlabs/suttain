@@ -47,7 +47,6 @@ Don't worry about picking wrong - you can always change it!`
 
 • Unlimited safety checks
 • Save your results
-• Earn reward points
 • Access to all basic features
 
 You can try it once without signing up to see how it works.`
@@ -161,17 +160,6 @@ The scanner shows you:
 • Tips for safe use
 
 It's a quick way to check products while shopping or at home.`
-      },
-      {
-        question: 'How do reward points work?',
-        answer: `Earn points just by using the app!
-
-How to earn:
-• Run a simulation = 5 points
-• Leave a review = 5-10 points
-• Complete a tutorial = varies
-
-Points show up on your profile. Check back for ways to use them!`
       }
     ]
   },
@@ -206,21 +194,10 @@ Most checks take just 5-15 seconds. Common combinations are even faster!`
         question: 'Something seems wrong with my results',
         answer: `We want to get it right! Here's how to help:
 
-• Use the feedback button after any simulation
-• Tell us what seemed off
+• Email us and tell us what seemed off
 • Include which products you checked
 
 We review all feedback to keep improving. For urgent safety questions, email contact@suttain.com`
-      },
-      {
-        question: 'My points aren\'t showing up',
-        answer: `Points should appear within a few moments. If not:
-
-• Make sure you're logged in
-• Refresh the page
-• Check your profile dashboard
-
-Still missing after 24 hours? Contact us with the date and what you did.`
       }
     ]
   }

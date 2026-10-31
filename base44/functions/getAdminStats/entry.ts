@@ -47,11 +47,10 @@ Deno.serve(async (req) => {
     const entities = base44.asServiceRole.entities;
 
     // Fetch all records from each entity with pagination
-    const [users, formulas, simulations, reviews, waitlist, demos, contacts, barcodeHistory, complianceChecks, safetyProfiles] = await Promise.all([
+    const [users, formulas, simulations, waitlist, demos, contacts, barcodeHistory, complianceChecks, safetyProfiles] = await Promise.all([
       fetchAll(entities.User).catch(() => []),
       fetchAll(entities.Formula).catch(() => []),
       fetchAll(entities.Simulation).catch(() => []),
-      fetchAll(entities.Review).catch(() => []),
       fetchAll(entities.EnterpriseWaitlist).catch(() => []),
       fetchAll(entities.DemoRequest).catch(() => []),
       fetchAll(entities.ContactSubmission).catch(() => []),
@@ -72,7 +71,6 @@ Deno.serve(async (req) => {
       user: users.length,
       formula: formulas.length,
       simulation: simulations.length,
-      review: reviews.length,
       enterprise_waitlist: waitlist.length,
       demo_request: demos.length,
       contact_submission: contacts.length,
@@ -114,17 +112,6 @@ Deno.serve(async (req) => {
       return acc;
     }, {});
 
-    // Review ratings distribution
-    const ratingDistribution = [0, 0, 0, 0, 0]; // 1-5 stars
-    reviews.forEach(r => {
-      if (r.rating >= 1 && r.rating <= 5) {
-        ratingDistribution[r.rating - 1]++;
-      }
-    });
-    const avgRating = reviews.length > 0
-      ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
-      : 0;
-
     // Recent signups (last 10)
     const recentSignups = users
       .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
@@ -148,8 +135,6 @@ Deno.serve(async (req) => {
       activityData,
       weeklyGrowth: { weekUsers, weekFormulas, weekSimulations, weekScans, weekSubscribers: weekSubscribers.length },
       formulaStatuses,
-      ratingDistribution,
-      avgRating,
       recentSignups,
       demoStatuses,
     }), {

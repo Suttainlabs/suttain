@@ -34,14 +34,14 @@ Deno.serve(async (req) => {
 
     const users = await base44.asServiceRole.entities.User.filter({}, '-created_date', null, false, [
       'id', 'full_name', 'email', 'role', 'subscription_plan',
-      'trial_start_date', 'reward_points', 'created_date'
+      'trial_start_date', 'created_date'
     ]);
 
     const headers = [
       'user_id', 'full_name', 'email', 'role',
       'subscription_status', 'subscription_plan',
       'trial_start_date', 'trial_end_date',
-      'reward_points', 'signup_date'
+      'signup_date'
     ];
 
     const rows = users.map(u => {
@@ -56,7 +56,6 @@ Deno.serve(async (req) => {
         subscription_plan: u.subscription_plan || 'trial',
         trial_start_date: trialStart ? trialStart.toISOString().split('T')[0] : '',
         trial_end_date: trialEnd ? trialEnd.toISOString().split('T')[0] : '',
-        reward_points: u.reward_points || 0,
         signup_date: u.created_date ? new Date(u.created_date).toISOString().split('T')[0] : ''
       };
     });

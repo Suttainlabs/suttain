@@ -66,16 +66,6 @@ Deno.serve(async (req) => {
       console.log('No notifications to delete or error:', e.message);
     }
 
-    // 6. Delete reviews
-    try {
-      const reviews = await base44.asServiceRole.entities.Review.filter({ created_by_id: userId });
-      for (const review of reviews) {
-        await base44.asServiceRole.entities.Review.delete(review.id);
-      }
-    } catch (e) {
-      console.log('No reviews to delete or error:', e.message);
-    }
-
     // 7. Delete learning progress
     try {
       const progress = await base44.asServiceRole.entities.LearningProgress.filter({ created_by_id: userId });

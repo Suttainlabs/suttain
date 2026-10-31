@@ -15,7 +15,6 @@ import { format } from 'date-fns';
 
 const submissionTypes = [
   { id: 'contact', label: 'Contact Messages', icon: Mail, entityName: 'ContactSubmission' },
-  { id: 'reviews', label: 'Product Reviews', icon: Star, entityName: 'Review' },
   { id: 'demos', label: 'Demo Requests', icon: CalendarCheck, entityName: 'DemoRequest' },
   { id: 'waitlist', label: 'Enterprise Waitlist', icon: ListChecks, entityName: 'EnterpriseWaitlist' },
 ];
@@ -156,23 +155,6 @@ export default function SubmissionsManagement() {
                         <p className="text-sm font-medium text-slate-700 mt-0.5">{item.subject}</p>
                         <p className="text-sm text-slate-500 mt-1 line-clamp-2">{item.message}</p>
                         {!item.is_read && <Badge variant="destructive" className="mt-2 text-xs">New</Badge>}
-                      </>
-                    )}
-                    {activeTab === 'reviews' && (
-                      <>
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="font-semibold text-slate-800 text-sm">{item.created_by}</p>
-                          <p className="text-xs text-slate-400 flex-shrink-0">{format(new Date(item.created_date), 'MMM d, yyyy')}</p>
-                        </div>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} className={`w-3.5 h-3.5 ${i < item.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-300'}`} />
-                            ))}
-                          </div>
-                          <span className="text-xs text-slate-500 capitalize">{item.feature_used} Review</span>
-                        </div>
-                        {item.feedback && <p className="text-sm text-slate-500 mt-1 italic line-clamp-2">"{item.feedback}"</p>}
                       </>
                     )}
                     {activeTab === 'demos' && (

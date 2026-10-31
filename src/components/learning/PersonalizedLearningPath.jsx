@@ -82,9 +82,6 @@ const ModuleCard = ({ module, isCompleted, isLocked, onStart, progress }) => {
           <Badge variant="secondary" className="flex items-center gap-1">
             <Clock className="w-3 h-3" /> {module.duration}
           </Badge>
-          <Badge variant="secondary" className="flex items-center gap-1">
-            <Zap className="w-3 h-3" /> {module.points} pts
-          </Badge>
         </div>
 
         {progress > 0 && progress < 100 && (
@@ -287,17 +284,7 @@ export default function PersonalizedLearningPath() {
 
       await base44.entities.LearningProgress.update(learningProgress.id, updateData);
       setLearningProgress(prev => ({ ...prev, ...updateData }));
-      
-      // Award user reward points
-      try {
-        const currentPoints = user.reward_points || 0;
-        await base44.auth.updateMe({ reward_points: currentPoints + activeModule.points });
-        if (refreshUser) refreshUser();
-        toast.success(`+${activeModule.points} points earned!`);
-      } catch (e) {
-        console.error('Failed to award points:', e);
-      }
-
+      toast.success('Module completed');
     } catch (error) {
       console.error('Failed to complete module:', error);
     }
@@ -577,9 +564,6 @@ export default function PersonalizedLearningPath() {
                   <Badge className="bg-white/20 text-white capitalize">
                     {learningProgress?.skill_level || 'beginner'}
                   </Badge>
-                  <span className="text-sm text-indigo-100">
-                    {learningProgress?.total_points || 0} points earned
-                  </span>
                 </div>
               </div>
             </div>

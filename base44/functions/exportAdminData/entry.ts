@@ -31,10 +31,9 @@ Deno.serve(async (req) => {
     }
 
     const entitiesToExport = [
-        { name: 'User', fields: ['id', 'full_name', 'email', 'role', 'reward_points', 'created_date'] },
+        { name: 'User', fields: ['id', 'full_name', 'email', 'role', 'created_date'] },
         { name: 'Formula', fields: ['id', 'name', 'product_type', 'difficulty_level', 'status', 'created_by', 'created_date'] },
         { name: 'Simulation', fields: ['id', 'chemicals', 'risk_score', 'created_by', 'created_date'] },
-        { name: 'Review', fields: ['id', 'feature_used', 'rating', 'helpful', 'created_by', 'created_date'] },
         { name: 'DemoRequest', fields: ['id', 'name', 'email', 'company_name', 'status', 'created_date'] },
         { name: 'JobPosting', fields: ['id', 'title', 'location', 'type', 'status', 'created_date'] },
         { name: 'ContactSubmission', fields: ['id', 'name', 'email', 'subject', 'is_read', 'created_date'] },

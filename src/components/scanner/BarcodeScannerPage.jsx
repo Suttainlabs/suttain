@@ -13,7 +13,6 @@ import { History, Camera, Loader2, Search, ChevronLeft, UploadCloud, QrCode, Sma
 import BulkScanDashboard from './BulkScanDashboard';
 import CompareProducts from './CompareProducts';
 import { Link } from 'react-router-dom';
-import ToolFeedbackToast from '../shared/ToolFeedbackToast';
 import { sendFeatureUsageEmail } from '../shared/featureNotifications';
 import { incrementUsage } from '../../utils/usageTracker';
 import useTrialStatus from '../../hooks/useTrialStatus';
@@ -52,7 +51,6 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
     const [isLiveScannerOpen, setIsLiveScannerOpen] = useState(false);
     const [barcodeInput, setBarcode] = useState(initialQuery || '');
     const [history, setHistory] = useState([]);
-    const [showFeedback, setShowFeedback] = useState(false);
     
     const [quickSubMode, setQuickSubMode] = useState('scan');
     const fileInputRef = useRef(null);
@@ -110,8 +108,6 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
                             snapshot: { barcode: scannedBarcode, product_name: data.name, brand: data.brand, risk_level: data.riskAssessment?.overallRisk, ingredient_count: data.ingredients?.length || 0 }
                         }).catch(() => {});
                         loadHistory();
-                        setShowFeedback(true);
-                        setTimeout(() => setShowFeedback(false), 12000);
                         sendFeatureUsageEmail(user, 'barcode_scan', { productName: data.name, brand: data.brand, barcode: scannedBarcode, riskLevel: data.riskAssessment?.overallRisk, ingredientCount: data.ingredients?.length || 0 });
                     } catch {}
                 }
@@ -151,7 +147,6 @@ export default function BarcodeScannerPage({ initialQuery } = {}) {
 
     return (
         <>
-        <ToolFeedbackToast isOpen={showFeedback} onClose={() => setShowFeedback(false)} feature="scanner" featureLabel="Product Scanner" user={user} pointsToAward={0} />
         <LiveScanner isOpen={isLiveScannerOpen} onClose={() => setIsLiveScannerOpen(false)} onScanSuccess={handleScanSuccess} />
         <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
 

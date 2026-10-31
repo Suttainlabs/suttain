@@ -71,15 +71,8 @@ export default function UserAnalytics() {
     const now = new Date();
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   }).length;
-  const avgRewardPoints = totalUsers > 0
-    ? Math.round(users.reduce((sum, u) => sum + (u.reward_points || 0), 0) / totalUsers)
-    : 0;
   const conversionRate = totalUsers > 0 ? ((proUsers / totalUsers) * 100).toFixed(1) : '0';
 
-  // Top users by reward points
-  const topUsers = [...users]
-    .sort((a, b) => (b.reward_points || 0) - (a.reward_points || 0))
-    .slice(0, 5);
 
   // New signups this week
   const oneWeekAgo = new Date();
@@ -92,7 +85,6 @@ export default function UserAnalytics() {
     { label: 'Active This Month', value: activeThisMonth, icon: Activity, color: 'bg-violet-600 text-white', bg: 'from-violet-50 to-purple-50' },
     { label: 'New This Week', value: newThisWeek, icon: TrendingUp, color: 'bg-blue-600 text-white', bg: 'from-blue-50 to-cyan-50' },
     { label: 'Conversion Rate', value: `${conversionRate}%`, icon: UserCheck, color: 'bg-amber-500 text-white', bg: 'from-amber-50 to-orange-50' },
-    { label: 'Avg Reward Points', value: avgRewardPoints, icon: Star, color: 'bg-yellow-500 text-white', bg: 'from-yellow-50 to-amber-50' },
   ];
 
   return (
@@ -165,40 +157,6 @@ export default function UserAnalytics() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Top Users by Engagement */}
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold text-slate-700">Top Users by Reward Points</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {loading ? (
-              <p className="text-sm text-slate-400 py-4 text-center">Loading...</p>
-            ) : topUsers.map((u, i) => {
-              const plan = u.subscription_plan || u.data?.subscription_plan || 'free';
-              const isPro = plan === 'pro' || plan === 'lifetime' || plan === 'enterprise';
-              return (
-                <div key={u.id} className="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0">
-                  <span className="text-sm font-bold text-slate-400 w-5">{i + 1}</span>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${isPro ? 'bg-teal-600' : 'bg-slate-400'}`}>
-                    {(u.full_name || u.email || '?')[0].toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-800 truncate">{u.full_name || u.email}</p>
-                    <p className="text-xs text-slate-400 truncate">{u.email}</p>
-                  </div>
-                  {isPro && <Badge className="bg-teal-100 text-teal-700 text-xs border-0">Pro</Badge>}
-                  <div className="flex items-center gap-1 text-yellow-600 font-semibold text-sm">
-                    <Star className="w-3.5 h-3.5" />
-                    {u.reward_points || 0}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

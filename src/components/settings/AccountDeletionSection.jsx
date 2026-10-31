@@ -140,7 +140,6 @@ export default function AccountDeletionSection({ user }) {
                     <li>• Your profile and personal information</li>
                     <li>• All saved simulations and formulas</li>
                     <li>• Safety profiles and alert history</li>
-                    <li>• Reward points and achievements</li>
                     <li>• Team memberships and shared data</li>
                   </ul>
                 </div>

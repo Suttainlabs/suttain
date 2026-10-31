@@ -8,11 +8,6 @@ import moment from 'moment';
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 export default function AdminAnalyticsCards({ stats }) {
-  // Rating distribution
-  const ratingData = (stats.ratingDistribution || []).map((count, i) => ({
-    name: `${i + 1} Star`,
-    value: count,
-  })).reverse();
 
   // Formula status
   const formulaStatusData = Object.entries(stats.formulaStatuses || {}).map(([key, value]) => ({
@@ -29,48 +24,7 @@ export default function AdminAnalyticsCards({ stats }) {
   const recentSignups = stats.recentSignups || [];
 
   return (
-    <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
-      {/* Rating Overview */}
-      <Card className="border border-slate-200 shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold text-slate-800 flex items-center gap-2">
-            <Star className="w-4 h-4 text-amber-500" />
-            Review Ratings
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4 mb-4">
-            <div className="text-4xl font-bold text-slate-900">{stats.avgRating || '0'}</div>
-            <div>
-              <div className="flex items-center gap-0.5">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <Star
-                    key={i}
-                    className={`w-4 h-4 ${i <= Math.round(stats.avgRating || 0) ? 'text-amber-400 fill-amber-400' : 'text-slate-200'}`}
-                  />
-                ))}
-              </div>
-              <p className="text-xs text-slate-500 mt-0.5">{stats.totals?.review || 0} total reviews</p>
-            </div>
-          </div>
-          <div className="space-y-1.5">
-            {ratingData.map((item, i) => {
-              const total = stats.totals?.review || 1;
-              const pct = Math.round((item.value / total) * 100) || 0;
-              return (
-                <div key={item.name} className="flex items-center gap-2 text-xs">
-                  <span className="w-10 text-slate-500">{item.name}</span>
-                  <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
-                  </div>
-                  <span className="w-6 text-right text-slate-600 font-medium">{item.value}</span>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
+    <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
       {/* Formula Status */}
       <Card className="border border-slate-200 shadow-sm">
         <CardHeader className="pb-2">

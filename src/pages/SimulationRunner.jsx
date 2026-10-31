@@ -6,7 +6,6 @@ import MolViewer from "../components/simulation/MolViewer";
 import TrajectoryViewer from "../components/simulation/TrajectoryViewer";
 import CustomForcefieldManager from "../components/simulation/CustomForcefieldManager";
 import EnvironmentalParametersPanel from "../components/simulation/EnvironmentalParametersPanel";
-import ToolFeedbackToast from "../components/shared/ToolFeedbackToast";
 import PlainLanguageSummary from "../components/computational/PlainLanguageSummary";
 import RelatedResearch from "../components/computational/RelatedResearch";
 import SimulationHistoryPanel from "../components/computational/SimulationHistoryPanel";
@@ -77,7 +76,6 @@ export default function SimulationRunner() {
   const [results, setResults] = useState(null);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("analysis");
-  const [showFeedback, setShowFeedback] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTargetKey, setDrawerTargetKey] = useState(null);
   const [ffManagerOpen, setFfManagerOpen] = useState(false);
@@ -340,14 +338,6 @@ export default function SimulationRunner() {
     <div className="simulation-workspace research-surface min-h-screen">
       <ResearchProductNav />
       {!isRunning && results && !trialStatus.canRunResearchSim && <SubscriptionLock pillar="research" featureName="Research simulations" limit />}
-      <ToolFeedbackToast
-        isOpen={showFeedback}
-        onClose={() => setShowFeedback(false)}
-        feature="computational"
-        featureLabel="Computational Simulation"
-        user={user}
-        pointsToAward={50}
-      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 pb-56 lg:pb-10">
         <SimulationWorkflowHeader simulation={sim} domain={domain} engine={selectedEngine} />

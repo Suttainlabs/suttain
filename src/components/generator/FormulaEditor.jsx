@@ -39,7 +39,6 @@ import { InvokeLLM } from "@/integrations/Core";
 import { base44 } from "@/api/base44Client";
 import { Formula } from "@/entities/Formula";
 import { User } from "@/entities/User";
-import { Review } from "@/entities/Review";
 import { createPageUrl } from "@/utils";
 import AuthContext from '../auth/AuthContext';
 
@@ -77,7 +76,6 @@ const EDITOR_STEPS = [
   { value: 'sourcing', label: 'Sourcing', intro: 'Where to buy each ingredient.' },
 ];
 
-const RatingModal = React.lazy(() => import('../shared/RatingModal'));
 
 export default function FormulaEditor({
   recipe,
@@ -269,8 +267,6 @@ export default function FormulaEditor({
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [saveStatus, setSaveStatus] = useState('idle'); // idle, saving, saved, error
   const [isSaving, setIsSaving] = useState(false); // New state for explicit saving status
-  const [showFeedbackNotification, setShowFeedbackNotification] = useState(false); // New state for feedback notification
-  const [showRatingModal, setShowRatingModal] = useState(false); // Existing state for rating modal
   const [showIngredientBrowser, setShowIngredientBrowser] = useState(false); // Ingredient browser modal
   const [showRegulatoryCheck, setShowRegulatoryCheck] = useState(false); // Regulatory compliance check
   const [showSupplierModal, setShowSupplierModal] = useState(false);
@@ -528,15 +524,7 @@ export default function FormulaEditor({
     });
   };
 
-  const triggerFeedback = () => {
-    setShowFeedbackNotification(true);
-    setTimeout(() => setShowFeedbackNotification(8000), 8000); // Hide after 8 seconds
-  };
-
-  const handleActionComplete = () => {
-    // showNextSteps state removed as per new outline, no longer needed here
-    triggerFeedback(); // Call feedback trigger
-  };
+  const handleActionComplete = () => {};
 
   const handleSaveFormula = async () => {
     if (user && !getPlanAccess(user).hasCoreAccess) { navigate('/Pricing?pillar=core'); return; }
@@ -584,19 +572,6 @@ export default function FormulaEditor({
         ingredients: savedFormula.ingredients // No need to map and preserve isDensityLoading
       }));
 
-      // Award points for creating/updating a formula
-      try {
-        const currentUser = await User.me();
-        if (currentUser) {
-          const pointsToAward = isUpdate ? 5 : 10;
-          const newPoints = (currentUser.reward_points || 0) + pointsToAward;
-          await User.updateMyUserData({ reward_points: newPoints });
-          console.log(`Awarded ${pointsToAward} points for formula ${isUpdate ? 'update' : 'creation'}`);
-        }
-      } catch (e) {
-        console.warn("Could not award formula points:", e);
-      }
-
       if (onSaveSuccess) {
           onSaveSuccess(savedFormula);
       }
@@ -615,7 +590,6 @@ export default function FormulaEditor({
       });
       
       // Show subtle feedback notification after successful save
-      triggerFeedback(); // Call feedback trigger
 
       setTimeout(() => setSaveStatus('idle'), 2500);
 
@@ -674,42 +648,6 @@ export default function FormulaEditor({
     onResetGenerator(); // Proceed directly to reset generator
   };
 
-  // New function to handle feedback submission (previously handleRatingSubmit)
-  const handleFeedbackSubmit = async (rating, feedback) => {
-    if (!user) {
-      openAuthModal('login');
-      return;
-    }
-    try {
-      // Award 5 points for feedback and create review entry
-      await Review.create({
-        feature_used: 'generator',
-        rating,
-        feedback: feedback || null,
-        formula_type: productType,
-        helpful: rating >= 4,
-        points_earned: 5
-      });
-
-      // Update user points
-      try {
-        const currentUser = await User.me();
-        if (currentUser) {
-          const newPoints = (currentUser.reward_points || 0) + 5;
-          await User.updateMyUserData({ reward_points: newPoints });
-          console.log("Awarded 5 points for formula generation feedback.");
-        }
-      } catch (e) {
-        console.warn("Could not award feedback points:", e);
-      }
-
-      setShowRatingModal(false);
-      setShowFeedbackNotification(false); // Hide the notification after feedback is given
-    } catch (error) {
-      console.error("Failed to submit feedback:", error);
-      setShowRatingModal(false);
-    }
-  };
 
   return (
     <div className="space-y-6 md:space-y-8 relative">
@@ -1361,53 +1299,6 @@ export default function FormulaEditor({
         </div>
       </motion.div>
 
-      {/* Subtle Feedback Notification - Bottom Right */}
-      <AnimatePresence>
-        {showFeedbackNotification && (
-          <motion.div
-            initial={{ opacity: 0, y: 100, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 100, scale: 0.9 }}
-            className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:bottom-6 right-4 left-4 sm:left-auto lg:right-6 z-50 sm:max-w-sm"
-          >
-            <Card className={`bg-white/95 backdrop-blur-sm border ${modeColors.accentCardBorder} shadow-lg`}>
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 bg-gradient-to-r ${modeColors.primaryAccentGradient} rounded-full flex items-center justify-center flex-shrink-0`}>
-                    <MessageSquare className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-slate-900 text-sm mb-1">
-                      How was this action?
-                    </h4>
-                    <p className="text-slate-600 text-xs mb-3">
-                      Share your experience and earn 5 bonus points
-                    </p>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={() => setShowRatingModal(true)}
-                        className={`${modeColors.primaryBtnClasses} text-white text-xs px-3 py-1 h-7`}
-                      >
-                        <Star className="w-3 h-3 mr-1" />
-                        Give Feedback
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setShowFeedbackNotification(false)}
-                        className="text-slate-500 hover:text-slate-700 text-xs px-2 py-1 h-7"
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-            </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <PDFExportModal
         isOpen={showPDFModal}
@@ -1424,19 +1315,6 @@ export default function FormulaEditor({
         onActionComplete={handleActionComplete}
       />
 
-      {/* Rating Modal - Now Optional */}
-      <Suspense fallback={null}>
-        {showRatingModal && (
-          <RatingModal
-            isOpen={showRatingModal}
-            onClose={() => setShowRatingModal(false)}
-            onSubmit={handleFeedbackSubmit}
-            featureType="formula"
-            title="Rate Your Experience"
-            description="Help us improve by rating your experience with this feature"
-          />
-        )}
-      </Suspense>
 
       {/* Export Dialog */}
       <FormulaExportDialog

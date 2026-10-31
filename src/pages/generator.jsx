@@ -42,7 +42,6 @@ export default function Generator() {
   const [formulaOptions, setFormulaOptions] = useState([]);
   const [selectedFormula, setSelectedFormula] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showPointsNotification, setShowPointsNotification] = useState(false);
   const [showSmartStart, setShowSmartStart] = useState(false);
   const [sdsSourceChemical, setSdsSourceChemical] = useState(null);
 
@@ -84,27 +83,6 @@ export default function Generator() {
     handleGenerateOptions(description, type, false);
   }, [location.state, user]);
 
-  const awardPoints = async (points, reason) => {
-    try {
-      const currentUser = await User.me();
-      if (!currentUser || !currentUser.id) {
-        return false;
-      }
-      const currentPoints = currentUser.reward_points || 0;
-      const newPoints = currentPoints + points;
-
-      await User.updateMyUserData({ reward_points: newPoints });
-      await refreshUser();
-
-      setShowPointsNotification(true);
-      setTimeout(() => setShowPointsNotification(false), 4000);
-
-      return true;
-    } catch (error) {
-      console.error('Failed to award points:', error);
-      return false;
-    }
-  };
 
   const handleModeSelected = (mode) => {
     if (mode === 'smart_start') {
@@ -257,7 +235,6 @@ export default function Generator() {
         setCurrentStep(4);
         // Increment usage for free tier users
         if (refreshUser) await refreshUser();
-        await awardPoints(10, "Formula options generated");
       } else {
         throw new Error("Invalid response format");
       }
@@ -399,7 +376,6 @@ export default function Generator() {
 
       setSelectedFormula(fullRecipe);
       setCurrentStep(5);
-      await awardPoints(15, "Full formula generated");
 
       // Track formula creation
       base44.analytics.track({
@@ -530,27 +506,6 @@ export default function Generator() {
     <ConsumerWorkbench toolId="generator" tag={currentStep > 1 ? (businessMode ? 'Business mode' : 'Individual mode') : null}>
       <div>
         {currentStep >= 4 && !isGenerating && !trialStatus.canFormulate && <SubscriptionLock featureName="Formula generations" limit />}
-            {/* Show points notification */}
-            <AnimatePresence>
-              {showPointsNotification && (
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="mt-6 mb-6 flex justify-center"
-                >
-                  <div className="bg-green-100 border border-green-300 rounded-lg px-4 py-2 flex items-center gap-2">
-                    <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">+</span>
-                    </div>
-                    <span className="text-green-800 font-semibold text-sm">
-                      Points earned! Total: {user.reward_points || 0} points
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
 
             {/* Smart Start Wizard */}
             {showSmartStart && (

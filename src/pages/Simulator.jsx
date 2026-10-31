@@ -27,8 +27,6 @@ import { sendFeatureUsageEmail } from "../components/shared/featureNotifications
 import SEOHead, { pageSEO } from "../components/shared/SEOHead";
 import ConsumerWorkbench, { ModeTabs, WorkbenchGrid, SetupRail, ResultsRail } from "@/components/consumer/ConsumerWorkbench";
 
-// Lazy load RatingModal
-const RatingModal = lazy(() => import("../components/shared/RatingModal"));
 // Lazy load ResearchChemicalInput
 const ResearchChemicalInput = lazy(() => import("../components/simulator/ResearchChemicalInput"));
 // Lazy load BusinessChemicalInput
@@ -573,8 +571,6 @@ export default function Simulator() {
   const [simulationData, setSimulationData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showFeedbackNotification, setShowFeedbackNotification] = useState(false);
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [selectedIngredientForSupplier, setSelectedIngredientForSupplier] = useState(null);
 
@@ -612,36 +608,6 @@ export default function Simulator() {
     setChemicals(prev => prev.filter(c => c.id !== id));
   };
   
-  const awardPointsMutation = useMutation({
-    mutationFn: async ({ points, reason }) => {
-        if (!user?.id) { // Ensure user is logged in before attempting to award points
-            throw new Error("User not authenticated for awarding points.");
-        }
-        
-        // Get current points and add new points
-        const currentPoints = user.reward_points || 0;
-        const newPoints = currentPoints + points;
-        
-        // Update user's reward points
-        return base44.auth.updateMe({ reward_points: newPoints });
-    },
-    onSuccess: () => {
-        queryClient.invalidateQueries(['user']); // Invalidate user query to refresh points
-        if(refreshUser) refreshUser(); // Refresh user context
-    },
-    onError: (err) => {
-        console.error('Failed to award points:', err);
-    }
-  });
-
-  const awardPoints = async (points, reason) => {
-      try {
-          await awardPointsMutation.mutateAsync({ points, reason });
-          console.log(`Awarded ${points} points for: ${reason}.`);
-      } catch (error) {
-          console.error('Failed to award points (mutation caller):', error.message);
-      }
-  };
 
   const handleSimulate = async (enhancedData, chemicalsOverride) => {
     if (isLoading) return;
@@ -744,7 +710,6 @@ export default function Simulator() {
         console.error('Failed to save simulation:', saveError);
       }
 
-      await awardPoints(5, "Chemical simulation completed");
 
       // Send email notification
       if (user) {
@@ -756,8 +721,6 @@ export default function Simulator() {
         });
       }
 
-      setShowFeedbackNotification(true);
-      setTimeout(() => setShowFeedbackNotification(false), 8000);
 
     } catch (error) {
       console.error("Simulation failed:", error);
@@ -768,40 +731,6 @@ export default function Simulator() {
     }
   };
 
-  const submitFeedbackMutation = useMutation({
-    mutationFn: async ({ rating, feedback, chemicals_tested, helpful, points_earned }) => {
-        return base44.entities.Review.create({
-            feature_used: 'simulator',
-            rating,
-            feedback: feedback || null,
-            chemicals_tested,
-            helpful,
-            points_earned
-        });
-    },
-    onSuccess: async (data, variables) => {
-        queryClient.invalidateQueries(['feedback']); // Invalidate feedback queries
-        if (variables.points_earned && user?.id) {
-            await awardPoints(variables.points_earned, 'Feedback submitted');
-        }
-        setShowFeedbackModal(false);
-        setShowFeedbackNotification(false);
-    },
-    onError: (err) => {
-        console.error("Failed to submit feedback:", err);
-        setShowFeedbackModal(false);
-    }
-  });
-
-  const handleFeedbackSubmit = async (rating, feedback) => {
-    await submitFeedbackMutation.mutateAsync({
-      rating,
-      feedback,
-      chemicals_tested: chemicals.map(c => c.name),
-      helpful: rating >= 4,
-      points_earned: 5
-    });
-  };
 
   // Auto-trigger simulation when arriving from SaferAlternatives with auto_simulate=true
   React.useEffect(() => {
@@ -1104,68 +1033,6 @@ export default function Simulator() {
             </>
           ) : null}
         </div>
-
-        {/* Subtle Feedback Notification - Bottom Right */}
-        <AnimatePresence>
-          {showFeedbackNotification && (
-            <motion.div
-              initial={{ opacity: 0, y: 100, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 100, scale: 0.9 }}
-              className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:bottom-6 right-4 left-4 sm:left-auto lg:right-6 z-50 sm:max-w-sm"
-            >
-              <Card className="bg-white/95 backdrop-blur-sm border border-green-200 shadow-lg">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-[var(--suttain-teal)] to-[var(--suttain-blue)] rounded-full flex items-center justify-center flex-shrink-0">
-                      <MessageSquare className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-slate-900 text-sm mb-1">
-                        How was your simulation?
-                      </h4>
-                      <p className="text-slate-600 text-xs mb-3">
-                        Help us improve by sharing your experience
-                      </p>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => setShowFeedbackModal(true)}
-                          className="bg-[var(--suttain-teal)] hover:bg-[#028a7f] text-white text-xs px-3 py-1 h-7"
-                        >
-                          <Star className="w-3 h-3 mr-1" />
-                          Give Feedback
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => setShowFeedbackNotification(false)}
-                          className="text-slate-500 hover:text-slate-700 text-xs px-2 py-1 h-7"
-                        >
-                          <X className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Optional Feedback Modal */}
-        <Suspense fallback={null}>
-          {showFeedbackModal && (
-            <RatingModal
-              isOpen={showFeedbackModal}
-              onClose={() => setShowFeedbackModal(false)}
-              onSubmit={handleFeedbackSubmit}
-              featureType="simulation"
-              title="Rate Your Simulation Experience"
-              description="Your feedback helps us improve the chemical analysis"
-            />
-          )}
-        </Suspense>
 
         {/* Supplier Link Modal */}
         {selectedIngredientForSupplier && (
