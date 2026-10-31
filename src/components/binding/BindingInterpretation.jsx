@@ -75,14 +75,14 @@ export default function BindingInterpretation({ job }) {
       {warnings.length > 0 && <div className="rounded-lg border border-amber-300 bg-amber-50 p-3"><p className="mb-1 flex items-center gap-2 text-sm font-medium text-amber-900"><AlertTriangle className="h-4 w-4" />Read with caution</p><ul className="list-disc space-y-1 pl-5 text-xs text-amber-900">{warnings.map(w => <li key={w}>{w}</li>)}</ul></div>}
 
       {(affinity != null || optimization != null) && (
-        <section><p className="research-label mb-1">Affinity</p>
+        <section><p className="research-label mb-1">{affinity != null ? 'Affinity' : 'Ranking'}</p>
           {affinity != null && <>
             <Row label="Predicted IC50" value={`≈ ${conc(Math.pow(10, affinity))}`} help={`From log10(IC50/µM) = ${f(affinity, 3)}. Lower IC50 = stronger.`} />
             <Row label="Predicted pIC50" value={f(6 - affinity)} help="Higher = stronger. Model estimate, not a measurement." />
             {6 - affinity > 0 && <Row label="Approx. binding free energy" value={`≈ −${f((6 - affinity) * 1.364, 1)} kcal/mol`} help="Conversion given by the Boltz-2 authors: (6 − value) × 1.364." />}
           </>}
           {optimization != null && <Row label="Optimization score" value={f(optimization)} help="Ranks candidates against each other within the same run. A single compound's score has no absolute meaning." />}
-          <p className="mt-2 text-xs text-research-muted">The Boltz-2 authors say to use affinity values to compare active compounds within one series (hit-to-lead, lead optimization), not to judge arbitrary molecules.</p>
+          {affinity != null && <p className="mt-2 text-xs text-research-muted">The Boltz-2 authors say to use affinity values to compare active compounds within one series (hit-to-lead, lead optimization), not to judge arbitrary molecules.</p>}
         </section>
       )}
 
