@@ -169,6 +169,21 @@ const productCatalog = [
   }
 ];
 
+export { productCatalog };
+
+// Best catalog match for a scanned product (name/category text); null when nothing fits.
+export function matchProductType(text) {
+  const t = String(text || '').toLowerCase();
+  const rules = [
+    [/shampoo/, 'shampoo'], [/body ?wash|shower gel|bath gel/, 'body_wash'], [/hand ?(soap|wash)|liquid soap|bar soap|\bsoap\b/, 'hand_soap'],
+    [/sunscreen|sun ?cream|spf/, 'sunscreen'], [/baby|infant|diaper/, 'baby_care'], [/moisturi[sz]|face cream|lotion|serum|night cream|day cream/, 'facial_moisturizer'],
+    [/glass|window/, 'glass_cleaner'], [/bathroom|toilet|shower cleaner|limescale/, 'bathroom_cleaner'], [/degreaser|kitchen|oven/, 'kitchen_degreaser'],
+    [/laundry|detergent|washing (liquid|powder)|fabric/, 'laundry_detergent'], [/car |auto|windshield|tyre|tire/, 'car_care'], [/cleaner|spray|surface|disinfect|multi.?purpose/, 'all_purpose_cleaner'],
+  ];
+  const hit = rules.find(([re]) => re.test(t));
+  return hit ? productCatalog.find(p => p.id === hit[1]) || null : null;
+}
+
 const categories = [
   { value: 'all', label: 'All Categories' },
   { value: 'cleaning', label: 'Cleaning Products' },

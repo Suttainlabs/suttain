@@ -12,7 +12,7 @@ import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import GeneratorDashboard from "../components/generator/GeneratorDashboard";
-import ProductTypeCatalog from "../components/generator/ProductTypeCatalog";
+import ProductTypeCatalog, { productCatalog, matchProductType } from "../components/generator/ProductTypeCatalog";
 import ProductDescriptionStep from "../components/generator/ProductDescriptionStep";
 import FormulaOptionsStep from "../components/generator/FormulaOptionsStep";
 import FormulaEditor from "../components/generator/FormulaEditor";
@@ -51,6 +51,32 @@ export default function Generator() {
       setSdsSourceChemical(ingredient);
     }
   }, [location.search]);
+
+  // Arriving from the Product Scanner ("make this yourself"): Individual mode, matching product type, generate straight away.
+  const scanStarted = React.useRef(false);
+  const [scanSource, setScanSource] = useState(null);
+  useEffect(() => {
+    const scan = location.state?.fromScan;
+    if (!scan || scanStarted.current || !user) return;
+    scanStarted.current = true;
+    navigate(location.pathname + location.search, { replace: true, state: null });
+    const type = matchProductType(`${scan.name} ${scan.category}`)
+      || { ...(productCatalog.find(p => p.id === 'custom_formula') || {}), id: 'custom_scan', name: scan.category || scan.name || 'Custom product' };
+    const avoid = [...new Set([...(scan.avoid || [])])].slice(0, 8);
+    const keep = (scan.recipe?.length ? scan.recipe.map(i => `${i.name}${i.percentage != null ? ` (${i.percentage}%)` : ''}`) : (scan.ingredients || []).slice(0, 8)).join(', ');
+    const description = [
+      `A homemade, safer version of "${scan.name}"${scan.brand ? ` by ${scan.brand}` : ''}${scan.category ? ` (${scan.category})` : ''} that does the same job.`,
+      avoid.length ? `Avoid these flagged ingredients: ${avoid.join(', ')}.` : '',
+      keep ? `${scan.recipe?.length ? 'Start from this suggested recipe' : 'For reference, the original contains'}: ${keep}.` : '',
+      'Use ingredients that are easy to buy at home.',
+    ].filter(Boolean).join(' ');
+    setScanSource({ name: scan.name, type: type.name });
+    setBusinessMode(false);
+    setSelectedProductType(type);
+    setProductDescription(description);
+    setCurrentStep(3);
+    handleGenerateOptions(description, type, false);
+  }, [location.state, user]);
 
   const awardPoints = async (points, reason) => {
     try {
