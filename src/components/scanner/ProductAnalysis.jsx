@@ -742,7 +742,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                       <p className="text-sm font-semibold text-blue-800 mb-1">How We Rate Products</p>
                       <ul className="text-xs text-blue-700 space-y-0.5 list-disc list-inside">
                         <li>Ingredient score blends average ingredient safety (50%), eco rating (30%) and hazards found (20%)</li>
-                        <li>The risk level reflects the most serious hazard, so a well-scored product can still carry cautions</li>
+                        <li>The risk level is assessed separately, so a well-scored product can still carry cautions</li>
                         <li>Reference data from public sources such as PubChem, EU CosIng and FDA</li>
                         <li>Compliance, environmental and health steps are AI-assisted and labelled as such</li>
                       </ul>
@@ -955,218 +955,39 @@ export default function ProductAnalysis({ product, onClear, user }) {
             </TabsContent>
 
             {/* COMPLIANCE TAB */}
-            <TabsContent value="compliance" className="pt-4 space-y-4">
-              {isLoadingCompliance && (
-                <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Running compliance checks across EU, US, and Canada...</span>
-                </div>
-              )}
-              {!isLoadingCompliance && complianceData && (
-                <>
-                  <Card className={`bg-white/60 border-2 ${complianceData.overall_status === 'Compliant' ? 'border-emerald-200' : complianceData.overall_status === 'Issues Found' ? 'border-red-200' : 'border-amber-200'}`}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Badge className={`text-sm px-3 py-1 ${complianceData.overall_status === 'Compliant' ? 'bg-emerald-100 text-emerald-800' : complianceData.overall_status === 'Issues Found' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'}`}>
-                          {complianceData.overall_status === 'Compliant' ? <CheckCircle className="w-3.5 h-3.5 mr-1 inline" /> : <AlertTriangle className="w-3.5 h-3.5 mr-1 inline" />}
-                          {complianceData.overall_status}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-slate-600">{complianceData.summary}</p>
-                    </CardContent>
-                  </Card>
-                  {complianceData.flagged_ingredients?.length > 0 && (
-                    <Card className="bg-white/60">
-                      <CardHeader><CardTitle className="text-base">Flagged Ingredients</CardTitle></CardHeader>
-                      <CardContent className="space-y-2">
-                        {complianceData.flagged_ingredients.map((f, i) => (
-                          <div key={i} className={`p-3 rounded-lg border ${f.severity === 'high' ? 'bg-red-50 border-red-200' : f.severity === 'medium' ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200'}`}>
-                            <p className="font-semibold text-sm text-slate-800">{f.name}</p>
-                            <p className="text-xs text-slate-500">{f.region} &bull; {f.issue}</p>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  )}
-                  {complianceData.recommendations?.length > 0 && (
-                    <Card className="bg-white/60">
-                      <CardHeader><CardTitle className="text-base">Recommendations</CardTitle></CardHeader>
-                      <CardContent>
-                        <ul className="space-y-2">
-                          {complianceData.recommendations.map((r, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                              <CheckCircle className="w-4 h-4 text-[var(--suttain-teal)] mt-0.5 flex-shrink-0" />{r}
-                            </li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  )}
-                </>
-              )}
+            <TabsContent value="compliance" className="pt-4">
+              <InsightState
+                loading={isLoadingCompliance} error={complianceError} hasData={!!complianceData}
+                onRun={() => handleLoadCompliance(true)}
+                loadingText="Checking ingredients against EU, US and Canada rules..."
+                idleText="Screen this product's ingredients against EU, US and Canadian rules."
+              >
+                {complianceData && <ComplianceView data={complianceData} />}
+              </InsightState>
             </TabsContent>
 
             {/* SUSTAINABILITY TAB */}
-            <TabsContent value="sustainability" className="pt-4 space-y-4">
-              {isLoadingSustainability && (
-                <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
-                  <Loader2 className="w-5 h-5 animate-spin" /><span>Analyzing environmental impact...</span>
-                </div>
-              )}
-              {!isLoadingSustainability && sustainabilityData && (
-                <>
-                  <Card className="bg-white/60">
-                    <CardContent className="p-4 flex items-center gap-6">
-                      <div className={`w-20 h-20 rounded-2xl flex flex-col items-center justify-center text-white font-bold ${sustainabilityData.overall_score >= 70 ? 'bg-emerald-500' : sustainabilityData.overall_score >= 45 ? 'bg-amber-500' : 'bg-red-500'}`}>
-                        <span className="text-3xl">{sustainabilityData.grade}</span>
-                        <span className="text-xs opacity-80">{sustainabilityData.overall_score}/100</span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm text-slate-600 mb-2">{sustainabilityData.summary}</p>
-                        <div className="flex gap-4 text-xs text-slate-500 flex-wrap">
-                          {sustainabilityData.biodegradability && <span>♻️ {sustainabilityData.biodegradability}</span>}
-                          {sustainabilityData.carbon_footprint && <span>🌍 {sustainabilityData.carbon_footprint}</span>}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  {sustainabilityData.green_positives?.length > 0 && (
-                    <Card className="bg-emerald-50/60 border border-emerald-200">
-                      <CardHeader><CardTitle className="text-base text-emerald-800">Eco Positives</CardTitle></CardHeader>
-                      <CardContent>
-                        <ul className="space-y-1.5">
-                          {sustainabilityData.green_positives.map((p, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-emerald-700"><Leaf className="w-4 h-4 mt-0.5 flex-shrink-0" />{p}</li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  )}
-                  {sustainabilityData.eco_concerns?.length > 0 && (
-                    <Card className="bg-white/60">
-                      <CardHeader><CardTitle className="text-base">Eco Concerns</CardTitle></CardHeader>
-                      <CardContent>
-                        <ul className="space-y-1.5">
-                          {sustainabilityData.eco_concerns.map((c, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600"><AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />{c}</li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  )}
-                  {sustainabilityData.improvement_tips?.length > 0 && (
-                    <Card className="bg-white/60">
-                      <CardHeader><CardTitle className="text-base">Improvement Tips</CardTitle></CardHeader>
-                      <CardContent>
-                        <ul className="space-y-1.5">
-                          {sustainabilityData.improvement_tips.map((t, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600"><CheckCircle className="w-4 h-4 text-[var(--suttain-teal)] mt-0.5 flex-shrink-0" />{t}</li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  )}
-                </>
-              )}
+            <TabsContent value="sustainability" className="pt-4">
+              <InsightState
+                loading={isLoadingSustainability} error={sustainabilityError} hasData={!!sustainabilityData}
+                onRun={() => handleLoadSustainability(true)}
+                loadingText="Estimating environmental impact..."
+                idleText="Estimate how this product's ingredients affect the environment."
+              >
+                {sustainabilityData && <SustainabilityView data={sustainabilityData} ingredientEcoAvg={averageScores.sustainability} />}
+              </InsightState>
             </TabsContent>
 
             {/* HEALTH TAB */}
-            <TabsContent value="health" className="pt-4 space-y-4">
-              {isLoadingHealth && (
-                <div className="flex items-center justify-center gap-3 py-12 text-slate-500">
-                  <Loader2 className="w-5 h-5 animate-spin" /><span>Analyzing nutritional & health insights...</span>
-                </div>
-              )}
-              {!isLoadingHealth && !healthData && (
-                <div className="text-center py-12">
-                  <HeartPulse className="w-12 h-12 text-rose-300 mx-auto mb-4" />
-                  <p className="text-slate-500 text-sm">Loading health analysis...</p>
-                </div>
-              )}
-              {!isLoadingHealth && healthData && (
-                <>
-                  <Card className={`bg-white/60 border-2 ${healthData.overall_health_rating === 'Excellent' ? 'border-emerald-200' : healthData.overall_health_rating === 'Good' ? 'border-teal-200' : healthData.overall_health_rating === 'Fair' ? 'border-amber-200' : 'border-red-200'}`}>
-                    <CardContent className="p-4 flex items-center gap-4">
-                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 ${healthData.overall_health_rating === 'Excellent' ? 'bg-emerald-500' : healthData.overall_health_rating === 'Good' ? 'bg-teal-500' : healthData.overall_health_rating === 'Fair' ? 'bg-amber-500' : 'bg-red-500'}`}>
-                        <HeartPulse className="w-8 h-8 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-slate-800 text-lg">{healthData.overall_health_rating}</p>
-                        <p className="text-sm text-slate-500">Health Rating</p>
-                        <p className="text-sm text-slate-600 mt-1">{healthData.health_summary}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  {healthData.dietary_suitability?.length > 0 && (
-                    <Card className="bg-white/60">
-                      <CardHeader><CardTitle className="text-base flex items-center gap-2"><Salad className="w-4 h-4 text-emerald-600" /> Dietary Suitability</CardTitle></CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-2 gap-2">
-                          {healthData.dietary_suitability.map((d, i) => (
-                            <div key={i} className={`p-3 rounded-lg border flex items-start gap-2 ${d.suitable ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
-                              <span className="text-base">{d.suitable ? '✅' : '❌'}</span>
-                              <div>
-                                <p className={`text-xs font-bold ${d.suitable ? 'text-emerald-800' : 'text-red-800'}`}>{d.diet}</p>
-                                <p className={`text-[11px] ${d.suitable ? 'text-emerald-600' : 'text-red-600'}`}>{d.reason}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                  {healthData.health_warnings?.length > 0 && (
-                    <Card className="bg-white/60">
-                      <CardHeader><CardTitle className="text-base flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-500" /> Health Warnings</CardTitle></CardHeader>
-                      <CardContent className="space-y-2">
-                        {healthData.health_warnings.map((w, i) => (
-                          <div key={i} className={`p-3 rounded-lg border ${w.severity === 'high' ? 'bg-red-50 border-red-200' : w.severity === 'medium' ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200'}`}>
-                            <p className="text-sm font-semibold text-slate-800">{w.warning}</p>
-                            {w.affected_groups && <p className="text-xs text-slate-500 mt-0.5">Affects: {w.affected_groups}</p>}
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  )}
-                  {healthData.nutritional_highlights?.length > 0 && (
-                    <Card className="bg-white/60">
-                      <CardHeader><CardTitle className="text-base flex items-center gap-2"><Apple className="w-4 h-4 text-rose-500" /> Nutritional Highlights</CardTitle></CardHeader>
-                      <CardContent>
-                        <ul className="space-y-1.5">
-                          {healthData.nutritional_highlights.map((h, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600"><CheckCircle className="w-4 h-4 text-teal-500 mt-0.5 flex-shrink-0" />{h}</li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  )}
-                  {healthData.healthier_alternatives?.length > 0 && (
-                    <Card className="bg-teal-50/60 border border-teal-200">
-                      <CardHeader><CardTitle className="text-base text-teal-800 flex items-center gap-2"><Sparkles className="w-4 h-4" /> Healthier Alternatives</CardTitle></CardHeader>
-                      <CardContent className="space-y-2">
-                        {healthData.healthier_alternatives.map((alt, i) => (
-                          <div key={i} className="flex items-start gap-2 text-sm">
-                            <Leaf className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
-                            <div><span className="font-semibold text-teal-800">{alt.name}</span><span className="text-teal-600">, {alt.benefit}</span></div>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  )}
-                  {healthData.consumption_tips?.length > 0 && (
-                    <Card className="bg-white/60">
-                      <CardHeader><CardTitle className="text-base">Consumption Tips</CardTitle></CardHeader>
-                      <CardContent>
-                        <ul className="space-y-1.5">
-                          {healthData.consumption_tips.map((t, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-slate-600"><CheckCircle className="w-4 h-4 text-violet-500 mt-0.5 flex-shrink-0" />{t}</li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  )}
-                </>
-              )}
+            <TabsContent value="health" className="pt-4">
+              <InsightState
+                loading={isLoadingHealth} error={healthError} hasData={!!healthData}
+                onRun={() => handleLoadHealth(true)}
+                loadingText={isFood ? 'Reviewing nutrition and health notes...' : 'Reviewing skin and sensitivity notes...'}
+                idleText="Get health and safe-use notes for this product."
+              >
+                {healthData && <HealthView data={healthData} isFood={isFood} />}
+              </InsightState>
             </TabsContent>
 
             {/* DIY TAB */}
