@@ -8,6 +8,7 @@ import SubscriptionLock from '@/components/shared/SubscriptionLock';
 import SimulationStatusBanner from '@/components/shared/SimulationStatusBanner';
 import ResearchProductNav from '@/components/research/ResearchProductNav';
 import HostedResults from '@/components/binding/HostedResults';
+import BindingJobView from '@/components/binding/BindingJobView';
 import useEngineRecommendation from '@/components/binding/useEngineRecommendation';
 import useHostedPolling from '@/components/binding/useHostedPolling';
 import SuggestInput from '@/components/binding/SuggestInput';
@@ -136,6 +137,8 @@ export default function BindingAndADME() {
         <p className="text-research-muted">Predict protein–ligand binding and ADME properties on hosted engines (Rowan, Boltz API, Tamarind Bio). Suttain recommends the best engine for your goal and switches to the next one if it is unavailable. Results are reported by the engine, never estimated. Bring candidates from your <Link to="/DrugDesign" className="underline hover:text-research-accent">Drug Design</Link> shortlist, and take the best one on to <Link to="/AtomisticSimulation" className="underline hover:text-research-accent">Atomistic Simulation</Link> for quantum chemistry.</p>
       </div>
       <SimulationStatusBanner user={user} className="mb-6" />
+
+      {job?.status === 'completed' && (job.result?.task || job.sim_type) === 'binding' && <div id="binding-structure" className="mb-10 scroll-mt-32"><BindingJobView job={job} /></div>}
 
       <div className="grid grid-cols-12 gap-6 lg:gap-10">
         <form onSubmit={submit} className="col-span-12 lg:col-span-7 min-w-0">
