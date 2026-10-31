@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, FileText, Table2, Braces, Loader2, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import HostedDownloads from '@/components/binding/HostedDownloads';
 import { rowanCsv, rowanPdf } from '@/components/simulation/RowanExports';
@@ -53,7 +54,7 @@ export default function ResearchResultsLibrary({ user }) {
                 <span className="min-w-0"><span className="block text-sm font-medium break-words">{job.job_name || job.sim_type_label || job.sim_type}</span><span className="block text-xs text-research-muted">{job.engine} · {when(job.created_date)}{hosted && job.inputs?.ligand_smiles ? ` · ${job.inputs.ligand_smiles}` : ''}</span></span>
                 <span className="flex shrink-0 items-center gap-1 text-xs text-research-accent">Downloads<ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} /></span>
               </button>
-              {isOpen && <div className="mt-3">{hosted ? <HostedDownloads job={job} /> : <ComputeDownloads job={job} />}</div>}
+              {isOpen && <div className="mt-3 space-y-3">{job.sim_type === 'binding' && <Link to={`/BindingAndADME?job=${encodeURIComponent(job.id)}`} className="inline-flex items-center rounded-lg border border-research-accent px-3 py-2 text-sm text-research-accent hover:bg-research-soft">Open full results with 3D structure</Link>}{hosted ? <HostedDownloads job={job} /> : <ComputeDownloads job={job} />}</div>}
             </li>;
           })}</ul>}
     </section>

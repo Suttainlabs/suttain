@@ -1,51 +1,59 @@
 {
   "name": "VisitorLog",
-  "type": "object",
   "properties": {
-    "country": {
-      "type": "string",
-      "description": "Country name of the visitor"
+    "city": {
+      "description": "City of the visitor",
+      "type": "string"
     },
-    "description": {
-      "type": "string",
-      "maxLength": 1000,
-      "description": "Optional short description for search visibility and previews"
+    "country": {
+      "description": "Country name of the visitor",
+      "type": "string"
     },
     "country_code": {
-      "type": "string",
-      "description": "ISO 2-letter country code"
-    },
-    "region": {
-      "type": "string",
-      "description": "Region / state of the visitor"
-    },
-    "city": {
-      "type": "string",
-      "description": "City of the visitor"
-    },
-    "page": {
-      "type": "string",
-      "description": "Page path visited"
-    },
-    "session_id": {
-      "type": "string",
-      "description": "Random session ID to deduplicate per-session"
-    },
-    "last_seen": {
-      "type": "string",
-      "format": "date-time",
-      "description": "Last heartbeat timestamp \u2014 updated every 30s while visitor is active"
+      "description": "ISO 2-letter country code",
+      "type": "string"
     },
     "current_page": {
-      "type": "string",
-      "description": "The page the visitor is currently viewing"
+      "description": "The page the visitor is currently viewing",
+      "type": "string"
+    },
+    "description": {
+      "description": "Optional short description for search visibility and previews",
+      "maxLength": 1000,
+      "type": "string"
+    },
+    "last_seen": {
+      "description": "Last heartbeat timestamp \u2014 updated every 30s while visitor is active",
+      "format": "date-time",
+      "type": "string"
+    },
+    "page": {
+      "description": "Page path visited",
+      "type": "string"
+    },
+    "region": {
+      "description": "Region / state of the visitor",
+      "type": "string"
+    },
+    "session_id": {
+      "description": "Random session ID to deduplicate per-session",
+      "type": "string"
     }
   },
   "required": [
     "country"
   ],
   "rls": {
-    "create": null,
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "read": {
       "user_condition": {
         "role": "admin"
@@ -55,11 +63,7 @@
       "user_condition": {
         "role": "admin"
       }
-    },
-    "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
     }
-  }
+  },
+  "type": "object"
 }
