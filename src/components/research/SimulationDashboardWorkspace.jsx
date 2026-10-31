@@ -7,6 +7,7 @@ import SimulationQuickAccess from '@/components/research/SimulationQuickAccess';
 import RecentResearchActivity from '@/components/research/RecentResearchActivity';
 import useResearchDashboardRecords from '@/components/research/useResearchDashboardRecords';
 import SimulationStatusBanner from '@/components/shared/SimulationStatusBanner';
+import ResearchResultsLibrary from '@/components/research/ResearchResultsLibrary';
 
 const SUPPORTED_TYPES = new Set(Object.values(DOMAIN_SIM_MAP).flat());
 export default function SimulationDashboardWorkspace({ user }) {
@@ -39,6 +40,7 @@ export default function SimulationDashboardWorkspace({ user }) {
       </div>
       <p className="text-xs text-research-muted mb-8">Activity totals cover the latest 50 works per tool; Drug Design counts only real compute submissions. Shortlist counts cover all saved candidates. Refreshes every 15 seconds.</p>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start"><div className="lg:col-span-2"><RecentResearchActivity activities={activities} loading={loading} error={activityError} onRetry={retryActivity} /></div><SimulationQuickAccess /></div>
+      <ResearchResultsLibrary user={user} />
     </div>
   );
 }
