@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { limitDailyUse } from '../../shared/dailyFeatureLimit.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -7,6 +8,8 @@ Deno.serve(async (req) => {
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const limited = await limitDailyUse(base44, user, 'ingredient_doses', 30);
+    if (limited) return limited;
 
     const body = await req.json();
     const ingredients = body?.ingredients;

@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { limitDailyUse } from '../../shared/dailyFeatureLimit.ts';
 
 const BLOCKED_PATTERNS = [
   /synthesize|synthesis of|how to make|manufacture of|production of|step.by.step.*make/i,
@@ -31,6 +32,8 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const limited = await limitDailyUse(base44, user, 'suttain_intelligence', 30);
+    if (limited) return limited;
 
     const body = await req.json();
     const { task, input, context } = body;

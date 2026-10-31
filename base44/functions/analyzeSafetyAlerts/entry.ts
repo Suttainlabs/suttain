@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { limitDailyUse } from '../../shared/dailyFeatureLimit.ts';
 
 // Server-side safety alert pipeline: loads the user's safety profile, runs the
 // LLM hazard analysis, creates the SafetyAlert + in-app Notification (user-scoped
@@ -9,6 +10,8 @@ export default async function(req) {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const limited = await limitDailyUse(base44, user, 'safety_alerts', 20);
+    if (limited) return limited;
 
     const body = await req.json();
     const { productName, ingredients, alertType, profileId, additionalContext = {} } = body || {};

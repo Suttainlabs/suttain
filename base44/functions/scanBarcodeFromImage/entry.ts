@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { limitDailyUse } from '../../shared/dailyFeatureLimit.ts';
 
 // Attempts to decode a barcode from an image URL using multiple strategies.
 // Strategy 1: zxing-wasm (proper barcode decoding library, most accurate)
@@ -108,6 +109,8 @@ export default async function(req) {
         if (!user) {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
+        const limited = await limitDailyUse(base44, user, 'barcode_image_scan', 20);
+        if (limited) return limited;
 
         const { file_url } = await req.json();
         let imageUrl;

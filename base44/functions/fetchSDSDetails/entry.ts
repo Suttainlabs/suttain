@@ -1,10 +1,13 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { limitDailyUse } from '../../shared/dailyFeatureLimit.ts';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const limited = await limitDailyUse(base44, user, 'fetch_sds', 20);
+    if (limited) return limited;
 
     const { cid, name } = await req.json();
 

@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { limitDailyUse } from '../../shared/dailyFeatureLimit.ts';
 
 function convertUpcEtoUpcA(upcE) {
     if (!/^\d{8}$/.test(upcE)) return upcE;
@@ -32,6 +33,8 @@ Deno.serve(async (req) => {
         if (!user) {
             return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
         }
+        const limited = await limitDailyUse(base44, user, 'barcode_lookup', 100);
+        if (limited) return limited;
 
         let { barcode } = await req.json();
 
