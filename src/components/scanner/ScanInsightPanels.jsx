@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 // base44.functions.invoke returns an axios-style response ({ data }). Unwrap it and
 // refuse empty/error payloads so the UI never renders blank shells or invented values.
 export function unwrapInvoke(res) {
-  const d = res && typeof res === 'object' && 'data' in res && 'status' in res ? res.data : (res?.data ?? res);
+  const d = res && typeof res === 'object' && res.data !== undefined ? res.data : res;
   if (!d || typeof d !== 'object' || Array.isArray(d)) throw new Error('The analysis came back empty.');
   if (d.error) throw new Error(typeof d.error === 'string' ? d.error : 'The analysis failed.');
   return d;
