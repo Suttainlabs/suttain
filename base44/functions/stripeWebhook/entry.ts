@@ -3,6 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { Resend } from 'npm:resend@4.0.0';
 import { subscriptionPillars } from '../../shared/subscriptionPillars.ts';
 import { escapeHtml } from '../../shared/securityGuards.ts';
+import { planFromSubscription } from '../../shared/stripePlans.ts';
 
 // Initialize clients lazily inside the handler so that missing secrets
 // cause a controlled 500 response rather than a module-level boot crash.
@@ -72,15 +73,6 @@ const PLAN_DETAILS = {
   },
 };
 
-// Reverse map: Stripe price ID -> plan name
-const PRICE_ID_TO_PLAN = {
-  'price_1Tn2eSI9tsZ7WvXe3JMrHrYf': 'starter',
-  'price_1Tn2eSI9tsZ7WvXeVksFLuTl': 'starter',
-  'price_1Tn2eSI9tsZ7WvXeJuOqhhJa': 'pro',
-  'price_1Tn2eSI9tsZ7WvXePJt1xh7M': 'pro',
-  'price_1Tn2eSI9tsZ7WvXemMKTBrgC': 'academic',
-  'price_1Tn2eSI9tsZ7WvXePwoaGUvP': 'academic',
-};
 
 async function sendPaymentConfirmationEmail(base44, email, userName, planKey) {
   const planInfo = PLAN_DETAILS[planKey] || PLAN_DETAILS['pro_monthly'];
@@ -326,7 +318,10 @@ export default async function(req) {
               newStatus = 'canceling';
             }
             const paidSubscriptions = await stripe.subscriptions.list({ customer: subscription.customer, status: 'all', limit: 100 });
+            // Plan changes only reach the user once Stripe has applied them (after payment for upgrades).
+            const current = planFromSubscription(subscription);
             const updateData = {
+              ...(current && { subscription_plan: current.plan, subscription_billing: current.billing }),
               product_access: subscriptionPillars(paidSubscriptions.data),
               subscription_status: paidSubscriptions.data.some(s => ['active', 'trialing'].includes(s.status)) ? (newStatus === 'canceling' ? 'canceling' : 'active') : newStatus,
               subscription_cancel_at: subscription.cancel_at_period_end && subscription.current_period_end
@@ -358,14 +353,11 @@ export default async function(req) {
           break;
         }
 
-        // Determine billing interval and plan from invoice line items
-        let billing = 'monthly';
-        let plan = 'pro';
-        const lineItem = invoice.lines?.data?.[0];
-        if (lineItem?.plan?.interval === 'year') billing = 'yearly';
-        if (lineItem?.price?.id && PRICE_ID_TO_PLAN[lineItem.price.id]) {
-          plan = PRICE_ID_TO_PLAN[lineItem.price.id];
-        }
+        // Read the plan from the subscription itself: proration invoices list the old price first.
+        const paidSub = await stripe.subscriptions.retrieve(invoiceSubId);
+        const current = planFromSubscription(paidSub);
+        const plan = current?.plan || 'pro';
+        const billing = current?.billing || 'monthly';
 
         let targetUserId = null;
 
@@ -399,9 +391,8 @@ export default async function(req) {
             const paidSubscriptions = await stripe.subscriptions.list({ customer: invoice.customer, status: 'all', limit: 100 });
             await base44.asServiceRole.entities.User.update(targetUserId, {
               product_access: subscriptionPillars(paidSubscriptions.data),
-              subscription_plan: plan,
+              ...(current && { subscription_plan: plan, subscription_billing: billing }),
               subscription_status: 'active',
-              subscription_billing: billing,
               stripe_subscription_id: invoiceSubId,
               stripe_customer_id: invoice.customer,
               ...(invoicePeriodEnd && { subscription_end_date: invoicePeriodEnd }),

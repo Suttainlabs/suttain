@@ -1,5 +1,6 @@
 import Stripe from 'npm:stripe@17.7.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { planFromSubscription } from '../../shared/stripePlans.ts';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
@@ -53,40 +54,62 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Subscription item not found' }, { status: 400 });
     }
 
-    // Determine if this is an upgrade or downgrade for proration behavior
-    // Upgrades: charge immediately (always_invoice)
-    // Downgrades: apply at next cycle (create_prorations) to avoid immediate charge
+    // A higher tier or a switch to yearly bills immediately. Those changes use
+    // pending_if_incomplete: Stripe applies the new price only once the invoice is paid.
     const tierRank = { starter: 1, pro: 2, academic: 3 };
     const currentPlan = user.subscription_plan || 'starter';
-    const targetPlanName = PLAN_NAMES[targetPlan];
-    const isUpgrade = (tierRank[targetPlanName] || 0) > (tierRank[currentPlan] || 0);
+    const newPlanName = PLAN_NAMES[targetPlan];
+    const newBilling = BILLING_CYCLES[targetPlan];
+    const currentInterval = subscription.items.data[0]?.price?.recurring?.interval;
+    const chargesNow = (tierRank[newPlanName] || 0) > (tierRank[currentPlan] || 0)
+      || (newBilling === 'yearly' && currentInterval !== 'year');
 
-    // Update subscription to new price, Stripe handles pro-rata credit automatically
+    if (!chargesNow) {
+      // Downgrades take effect without an immediate charge; credit applies to the next invoice.
+      const updated = await stripe.subscriptions.update(stripeSubscriptionId, {
+        items: [{ id: itemId, price: PRICE_MAP[targetPlan] }],
+        proration_behavior: 'create_prorations',
+      });
+      await base44.asServiceRole.entities.User.update(user.id, {
+        subscription_plan: newPlanName,
+        subscription_billing: newBilling,
+        ...(updated.current_period_end && {
+          subscription_end_date: new Date(updated.current_period_end * 1000).toISOString(),
+        }),
+      });
+      console.log(`Subscription downgraded to ${targetPlan} for user ${user.id}`);
+      return Response.json({ success: true, status: 'applied', plan: newPlanName, billing: newBilling });
+    }
+
     const updated = await stripe.subscriptions.update(stripeSubscriptionId, {
       items: [{ id: itemId, price: PRICE_MAP[targetPlan] }],
-      proration_behavior: isUpgrade ? 'always_invoice' : 'create_prorations',
+      proration_behavior: 'always_invoice',
+      payment_behavior: 'pending_if_incomplete',
+      expand: ['latest_invoice'],
     });
 
-    const newBilling = BILLING_CYCLES[targetPlan];
-    const newPlanName = PLAN_NAMES[targetPlan];
+    const current = planFromSubscription(updated);
+    if (current && current.plan === newPlanName && current.billing === newBilling) {
+      // Stripe collected payment and applied the change; the webhook confirms the same state.
+      await base44.asServiceRole.entities.User.update(user.id, {
+        subscription_plan: current.plan,
+        subscription_billing: current.billing,
+        ...(updated.current_period_end && {
+          subscription_end_date: new Date(updated.current_period_end * 1000).toISOString(),
+        }),
+      });
+      console.log(`Upgrade to ${targetPlan} paid and applied for user ${user.id}`);
+      return Response.json({ success: true, status: 'applied', plan: current.plan, billing: current.billing });
+    }
 
-    // Update user record
-    await base44.asServiceRole.entities.User.update(user.id, {
-      subscription_plan: newPlanName,
-      subscription_billing: newBilling,
-      subscription_status: 'active',
-      subscription_cancel_at: null,
-      ...(updated.current_period_end && {
-        subscription_end_date: new Date(updated.current_period_end * 1000).toISOString(),
-      }),
-    });
-
-    console.log(`Subscription changed to ${targetPlan} for user ${user.id} (upgrade: ${isUpgrade})`);
+    // Payment failed or needs the customer's confirmation. The current plan stays in place;
+    // paying the invoice applies the upgrade, and the webhook then switches the plan.
+    const invoice = updated.latest_invoice;
+    console.log(`Upgrade to ${targetPlan} awaiting payment for user ${user.id}, invoice ${invoice?.id}`);
     return Response.json({
-      success: true,
-      plan: newPlanName,
-      billing: newBilling,
-      prorated: isUpgrade,
+      success: false,
+      status: 'payment_required',
+      invoice_url: invoice?.hosted_invoice_url || null,
     });
   } catch (error) {
     console.error('changeSubscription error:', error);

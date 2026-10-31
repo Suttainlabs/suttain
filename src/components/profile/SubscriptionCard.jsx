@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Crown, Check, Sparkles, ArrowRight, Shield, Zap, HeartPulse, Star, Infinity, AlertTriangle, Loader2, XCircle, CalendarClock, Leaf, FlaskConical, QrCode, BarChart3, Cpu, FolderOpen, FileText, Atom, ArrowUpDown } from 'lucide-react';
 import AuthContext from '../auth/AuthContext';
+import PaymentPendingNotice from './PaymentPendingNotice';
 import { cancelSubscription } from '@/functions/cancelSubscription';
 import { changeSubscription } from '@/functions/changeSubscription';
 import {
@@ -53,6 +54,7 @@ export default function SubscriptionCard() {
   const [cancelResult, setCancelResult] = useState(null);
   const [changing, setChanging] = useState(false);
   const [changeResult, setChangeResult] = useState(null);
+  const [paymentPending, setPaymentPending] = useState(null);
 
   // If user just came back from a Stripe checkout (success=true in URL),
   // poll refreshUser to pick up webhook-updated subscription data.
@@ -98,6 +100,8 @@ export default function SubscriptionCard() {
       if (res.data?.success) {
         setChangeResult(res.data.billing);
         if (refreshUser) refreshUser();
+      } else if (res.data?.status === 'payment_required') {
+        setPaymentPending({ invoiceUrl: res.data.invoice_url });
       }
     } catch (e) {
       console.error('Change failed:', e);
@@ -202,6 +206,8 @@ export default function SubscriptionCard() {
                     <Check className="w-4 h-4 flex-shrink-0" />
                     Switched to {changeResult === 'yearly' ? 'annual' : 'monthly'} billing.
                   </div>
+                ) : paymentPending ? (
+                  <PaymentPendingNotice invoiceUrl={paymentPending.invoiceUrl} />
                 ) : (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -221,7 +227,7 @@ export default function SubscriptionCard() {
                         <AlertDialogTitle>Change billing cycle?</AlertDialogTitle>
                         <AlertDialogDescription className="text-sm text-slate-600">
                           {isMonthly
-                            ? 'You will be switched to annual billing at $49.99/year. A prorated invoice will be generated immediately for the difference.'
+                            ? 'You will be charged the prorated difference now. Annual billing at $49.99/year starts once the payment goes through.'
                             : 'You will be switched to monthly billing at $4.99/month. The change takes effect at the next billing cycle.'}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
