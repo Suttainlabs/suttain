@@ -5,7 +5,7 @@ import { toCsv, pdfReport, downloadText, fileName } from '@/components/research/
 
 const HARTREE_KCAL = 627.509474;
 const num = v => (typeof v === 'number' && Number.isFinite(v) ? v : null);
-function rowanCsv(dataset, result) {
+export function rowanCsv(dataset, result) {
   const m = dataset?.final_molecule;
   const energies = (dataset?.frames?.map(fr => fr.energy) || result.optimization_energies || []).map(num);
   const charges = m?.mulliken_charges ?? result.charges ?? [];
@@ -19,7 +19,7 @@ function rowanCsv(dataset, result) {
   if (Array.isArray(dip)) rows.push(['dipole_debye', '', '', '', '', '', '', dip.join(' '), Math.hypot(...dip).toFixed(4)]);
   return toCsv(['record', 'index', 'element', 'energy_hartree', 'relative_energy_kcal_mol', 'mulliken_charge', 'spin_density', 'xyz_angstrom', 'dipole_magnitude_debye'], rows);
 }
-function rowanPdf(dataset, result) {
+export function rowanPdf(dataset, result) {
   const m = dataset?.final_molecule;
   const s = dataset?.settings || result.settings || {};
   const energy = m?.energy ?? result.energy;
