@@ -41,7 +41,7 @@ export default function SupervisorApprovalsPanel() {
     setIsGenerating(true);
     try {
       const response = await base44.functions.invoke('generateLabReport', {
-        approval_token: reportFor.token,
+        approval_id: reportFor.id,
         persona: reportFor.persona,
         customization: options
       });
