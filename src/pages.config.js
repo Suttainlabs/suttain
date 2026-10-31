@@ -12,6 +12,7 @@ import Blog from './pages/Blog';
 import Careers from './pages/Careers';
 import ConsumerPortal from './pages/ConsumerPortal';
 import ComplianceGuide from './pages/ComplianceGuide';
+import Contact from './pages/Contact';
 import FAQ from './pages/FAQ';
 import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -31,6 +32,7 @@ export const PAGES = {
     "Careers": Careers,
     "ConsumerPortal": ConsumerPortal,
     "ComplianceGuide": ComplianceGuide,
+    "Contact": Contact,
     "FAQ": FAQ,
     "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
