@@ -135,7 +135,7 @@ function ResultPanel({ product, onReset }) {
         {/* Scan another */}
         <Button
           onClick={onReset}
-          className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold h-12 rounded-xl mt-2"
+          className="w-full bg-gradient-to-r from-[#01544E] to-[#02786F] text-white font-bold h-12 rounded-xl mt-2"
         >
           <RotateCcw className="w-4 h-4 mr-2" />
           Scan Another Product

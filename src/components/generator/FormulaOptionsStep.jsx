@@ -25,7 +25,7 @@ export default function FormulaOptionsStep({
         btnHover: 'from-violet-700 to-purple-700'
       }
     : {
-        iconBg: 'bg-gradient-to-br from-teal-500 to-cyan-500',
+        iconBg: 'bg-gradient-to-br from-[#01544E] to-[#02786F]',
         badgeBg: 'bg-teal-50',
         badgeText: 'text-teal-800',
         badgeBorder: 'border-teal-300',

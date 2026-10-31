@@ -122,7 +122,7 @@ export default function FormulaEditor({
         primaryBtnClasses: 'bg-teal-600 hover:bg-teal-700',
         primaryIconClasses: 'text-teal-600',
         primaryBgClasses: 'bg-teal-600',
-        primaryAccentGradient: 'from-teal-500 to-cyan-500',
+        primaryAccentGradient: 'from-[#01544E] to-[#02786F]',
         accentCardBg: 'bg-blue-50',
         accentCardBorder: 'border-blue-200',
         accentCardText: 'text-blue-800',

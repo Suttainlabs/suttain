@@ -647,7 +647,7 @@ export default function ChemicalImportWizard({ onClose, onImportComplete }) {
   return (
     <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="px-6 py-4 border-b bg-gradient-to-r from-teal-500 to-cyan-500 text-white">
+      <div className="px-6 py-4 border-b bg-gradient-to-r from-[#01544E] to-[#02786F] text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
@@ -726,7 +726,7 @@ export default function ChemicalImportWizard({ onClose, onImportComplete }) {
               (currentStep === 1 && (isAnalyzing || Object.keys(mappings).length === 0)) ||
               (currentStep === 2 && (!validationResults || validationResults.validRows.length === 0))
             }
-            className="gap-2 bg-gradient-to-r from-teal-500 to-cyan-500"
+            className="gap-2 bg-gradient-to-r from-[#01544E] to-[#02786F]"
           >
             {currentStep === 2 ? (
               <>

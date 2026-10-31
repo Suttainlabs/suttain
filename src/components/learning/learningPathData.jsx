@@ -418,7 +418,7 @@ export const LEARNING_PATHS = {
     name: 'Educator Path',
     description: 'Teaching chemical safety effectively',
     icon: 'GraduationCap',
-    color: 'from-teal-500 to-cyan-500',
+    color: 'from-[#01544E] to-[#02786F]',
     modules: ['safety-fundamentals', 'lab-safety-basics', 'mixing-hazards', 'reaction-kinetics', 'advanced-simulation'],
     certificationGoal: 'Chemical Safety Educator'
   },

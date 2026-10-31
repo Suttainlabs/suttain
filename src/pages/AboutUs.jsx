@@ -247,7 +247,7 @@ export default function AboutUsPage() {
               {
                 title: 'DIY Creators',
                 desc: 'Make safe skincare, soaps, and cleaners at home with instant safety analysis.',
-                color: 'from-teal-500 to-cyan-500'
+                color: 'from-[#01544E] to-[#02786F]'
               },
               {
                 title: 'Experts & Teams',

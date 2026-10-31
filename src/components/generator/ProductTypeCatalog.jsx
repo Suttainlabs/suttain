@@ -194,7 +194,7 @@ export default function ProductTypeCatalog({ businessMode, onBack, onSelectProdu
         suggestionHover: 'hover:bg-violet-50'
       }
     : {
-        iconBg: 'bg-gradient-to-br from-teal-500 to-cyan-500',
+        iconBg: 'bg-gradient-to-br from-[#01544E] to-[#02786F]',
         cardHover: 'hover:border-teal-300 hover:shadow-lg',
         btnBg: 'from-teal-600 to-cyan-600',
         btnHover: 'from-teal-700 to-cyan-700',

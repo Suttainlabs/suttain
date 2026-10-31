@@ -376,7 +376,7 @@ export default function BulkScanDashboard({ user }) {
                 {/* Analyze Button */}
                 {completedItems.length > 0 && (
                     <Button
-                        className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg"
+                        className="w-full bg-gradient-to-r from-[#01544E] to-[#02786F] text-white shadow-lg"
                         size="lg"
                         onClick={analyzeAll}
                         disabled={!canAnalyze}

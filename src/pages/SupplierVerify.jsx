@@ -239,7 +239,7 @@ export default function SupplierVerify() {
         <Button
           onClick={handleSubmit}
           disabled={submitting || uploading}
-          className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold py-3 rounded-xl text-base"
+          className="w-full bg-gradient-to-r from-[#01544E] to-[#02786F] text-white font-bold py-3 rounded-xl text-base"
         >
           {submitting ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <CheckCircle className="w-5 h-5 mr-2" />}
           Submit Verification

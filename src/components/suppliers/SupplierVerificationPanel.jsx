@@ -223,7 +223,7 @@ export default function SupplierVerificationPanel({ formula }) {
           <p className="text-xs text-slate-500 mt-0.5">Invite suppliers to verify ingredient data & submit documentation</p>
         </div>
         <Button size="sm" onClick={() => setShowInviteDialog(true)}
-          className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white">
+          className="bg-gradient-to-r from-[#01544E] to-[#02786F] text-white">
           <Plus className="w-4 h-4 mr-1" /> Invite Supplier
         </Button>
       </div>
@@ -341,7 +341,7 @@ export default function SupplierVerificationPanel({ formula }) {
 
             <div className="flex gap-2 pt-1">
               <Button variant="outline" onClick={() => setShowInviteDialog(false)} className="flex-1">Cancel</Button>
-              <Button onClick={handleSendInvite} disabled={sending} className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-500 text-white">
+              <Button onClick={handleSendInvite} disabled={sending} className="flex-1 bg-gradient-to-r from-[#01544E] to-[#02786F] text-white">
                 {sending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
                 Send Invitation
               </Button>

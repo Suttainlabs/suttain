@@ -26,7 +26,7 @@ export default function FormulaAssistant({ formula, productType, businessMode })
         primaryBg: 'bg-teal-500',
         primaryText: 'text-teal-600',
         primaryBorder: 'border-teal-200',
-        primaryGradient: 'from-teal-500 to-cyan-500'
+        primaryGradient: 'from-[#01544E] to-[#02786F]'
       };
 
   useEffect(() => {

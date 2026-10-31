@@ -62,14 +62,14 @@ export default function SDSUploader({ onResult }) {
         </>
       ) : (
         <>
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-lg">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#01544E] to-[#02786F] flex items-center justify-center shadow-lg">
             <FileText className="w-8 h-8 text-white" />
           </div>
           <div>
             <p className="font-bold text-slate-800 text-lg">Upload your Safety Data Sheet</p>
             <p className="text-slate-500 text-sm mt-1">Drag & drop or click to browse, PDF or image</p>
           </div>
-          <Button className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-6 rounded-full" onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}>
+          <Button className="bg-gradient-to-r from-[#01544E] to-[#02786F] text-white px-6 rounded-full" onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}>
             <Upload className="w-4 h-4 mr-2" />
             Choose SDS File
           </Button>

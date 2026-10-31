@@ -90,14 +90,14 @@ export default function SDSAnalyzer() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === tab.id
-                  ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow"
+                  ? "bg-gradient-to-r from-[#01544E] to-[#02786F] text-white shadow"
                   : "text-slate-600 hover:bg-slate-50"
               }`}
             >
               <tab.icon className="w-4 h-4" />
               <span>{tab.label}</span>
               <span className={`text-xs px-2 py-0.5 rounded-full ${
-                activeTab === tab.id ? "bg-white/20 text-white" : "bg-slate-100 text-slate-400"
+                activeTab === tab.id ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
               }`}>{tab.desc}</span>
             </button>
           ))}

@@ -1241,7 +1241,7 @@ export default function SimulationResults({ data, chemicals: chemicalsProp, onVi
                                 <Button
                                     onClick={onViewAlternatives}
                                     size="sm"
-                                    className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white"
+                                    className="w-full bg-gradient-to-r from-[#01544E] to-[#02786F] hover:from-[#0A1F1D] hover:to-[#01544E] text-white"
                                 >
                                     <Sparkles className="w-3.5 h-3.5 mr-2" />
                                     View Alternatives

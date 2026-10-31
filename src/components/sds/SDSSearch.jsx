@@ -79,7 +79,7 @@ export default function SDSSearch({ onResult, initialQuery }) {
           <Button
             onClick={() => handleSearch()}
             disabled={!query.trim() || searching}
-            className="h-12 px-6 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-xl font-semibold"
+            className="h-12 px-6 bg-gradient-to-r from-[#01544E] to-[#02786F] text-white rounded-xl font-semibold"
           >
             {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : "Search"}
           </Button>
@@ -177,7 +177,7 @@ export default function SDSSearch({ onResult, initialQuery }) {
                   size="sm"
                   onClick={() => handleAnalyze(compound)}
                   disabled={analyzing === compound.cid}
-                  className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg shrink-0 min-w-[100px]"
+                  className="bg-gradient-to-r from-[#01544E] to-[#02786F] text-white rounded-lg shrink-0 min-w-[100px]"
                 >
                   {analyzing === compound.cid ? (
                     <><Loader2 className="w-3 h-3 mr-1.5 animate-spin" />Analyzing...</>

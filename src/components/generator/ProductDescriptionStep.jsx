@@ -116,7 +116,7 @@ export default function ProductDescriptionStep({
         gradient: 'from-teal-600 to-cyan-600',
         gradientHover: 'from-teal-700 to-cyan-700',
         focus: 'focus:border-teal-500',
-        iconBg: 'bg-gradient-to-br from-teal-500 to-cyan-500',
+        iconBg: 'bg-gradient-to-br from-[#01544E] to-[#02786F]',
         hover: 'hover:bg-teal-50'
       };
 

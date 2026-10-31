@@ -487,7 +487,7 @@ Do not include any text or markdown formatting outside of the main JSON object.`
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                    className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4"
+                    className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-[#01544E] to-[#02786F] rounded-full flex items-center justify-center mx-auto mb-4"
                   >
                     <Beaker className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </motion.div>

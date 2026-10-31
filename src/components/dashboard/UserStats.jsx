@@ -15,7 +15,7 @@ const stats_config = [
         icon: TestTube,
         title: 'Simulations',
         key: 'totalSimulations',
-        gradient: 'from-teal-500 to-cyan-500',
+        gradient: 'from-[#01544E] to-[#02786F]',
         bg: 'bg-teal-50',
         text: 'text-teal-700',
     },

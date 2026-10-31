@@ -179,7 +179,7 @@ export default function ImpactDashboard() {
           <p className="text-slate-500 mb-6 text-sm">Your sustainability dashboard is waiting. Sign in to see aggregated green chemistry insights across your formula library.</p>
           <button
             onClick={() => navigate('/login')}
-            className="px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-xl shadow-md hover:opacity-90 transition"
+            className="px-6 py-3 bg-gradient-to-r from-[#01544E] to-[#02786F] text-white font-bold rounded-xl shadow-md hover:opacity-90 transition"
           >
             Sign In
           </button>
@@ -354,7 +354,7 @@ export default function ImpactDashboard() {
             <h3 className="text-xl font-bold text-slate-700 mb-2">No formulas in your library yet</h3>
             <p className="text-slate-400 mb-6 text-sm">Create your first formula to start tracking your sustainability impact.</p>
             <Link to="/generator"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-xl shadow hover:opacity-90 transition">
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#01544E] to-[#02786F] text-white font-bold rounded-xl shadow hover:opacity-90 transition">
               <FlaskConical className="w-4 h-4" /> Create a Formula
             </Link>
           </motion.div>

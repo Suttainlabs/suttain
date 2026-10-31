@@ -37,7 +37,7 @@ export default function AISuggestionsPanel({
         badgeText: 'text-violet-800'
       }
     : {
-        gradient: 'from-teal-500 to-cyan-500',
+        gradient: 'from-[#01544E] to-[#02786F]',
         bg: 'bg-teal-50',
         border: 'border-teal-200',
         text: 'text-teal-700',

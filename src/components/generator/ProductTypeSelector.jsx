@@ -295,13 +295,13 @@ export default function ProductTypeSelector({
         cardHover: 'hover:border-violet-300 hover:shadow-lg'
       }
     : {
-        gradient: 'from-teal-500 to-cyan-500',
+        gradient: 'from-[#01544E] to-[#02786F]',
         gradientButton: 'from-teal-600 to-cyan-600',
         gradientButtonHover: 'from-teal-700 to-cyan-700',
         focus: 'focus:border-teal-500',
         hover: 'hover:bg-teal-50',
         badge: 'bg-teal-50 text-teal-800 border-teal-300',
-        iconBg: 'bg-gradient-to-br from-teal-500 to-cyan-500',
+        iconBg: 'bg-gradient-to-br from-[#01544E] to-[#02786F]',
         cardHover: 'hover:border-teal-300 hover:shadow-lg'
       };
 

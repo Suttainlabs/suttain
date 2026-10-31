@@ -23,7 +23,7 @@ import {
 
 const PLAN_DISPLAY = {
   pro: {
-    monthly: { label: 'Pro Monthly', color: 'from-teal-500 to-cyan-500', badge: 'bg-teal-600 text-white', icon: Crown, price: '$4.99/mo' },
+    monthly: { label: 'Pro Monthly', color: 'from-[#01544E] to-[#02786F]', badge: 'bg-teal-600 text-white', icon: Crown, price: '$4.99/mo' },
     yearly: { label: 'Pro Yearly', color: 'from-teal-600 to-emerald-600', badge: 'bg-teal-700 text-white', icon: Crown, price: '$49.99/yr' },
     lifetime: { label: 'Pro Lifetime', color: 'from-violet-600 to-purple-700', badge: 'bg-violet-700 text-white', icon: Infinity, price: '$4.99 one-time' },
   },

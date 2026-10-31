@@ -169,7 +169,7 @@ export default function ExternalDatabaseIntegration({ chemical, onEnrich, compac
           <p className="text-sm text-slate-500">Fetch and enrich chemical data from scientific databases</p>
         </div>
         {searchResults && (
-          <Button onClick={applyEnrichment} className="gap-2 bg-gradient-to-r from-teal-500 to-cyan-500">
+          <Button onClick={applyEnrichment} className="gap-2 bg-gradient-to-r from-[#01544E] to-[#02786F]">
             <Download className="w-4 h-4" />
             Apply to Chemical
           </Button>

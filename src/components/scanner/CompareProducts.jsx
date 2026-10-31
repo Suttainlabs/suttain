@@ -210,7 +210,7 @@ function ComparisonTable({ productA, productB }) {
       {/* Winner banner */}
       {overallWinner && (
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-          className="p-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-2xl text-center shadow-lg">
+          className="p-4 bg-gradient-to-r from-[#01544E] to-[#02786F] text-white rounded-2xl text-center shadow-lg">
           <Trophy className="w-6 h-6 mx-auto mb-1" />
           <p className="font-bold text-lg">
             {overallWinner === 'A' ? productA.name : productB.name}

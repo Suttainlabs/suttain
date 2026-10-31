@@ -28,7 +28,7 @@ export default function FormulaOptimizer({ formula, onApplyOptimization, busines
 
   const modeColors = businessMode 
     ? { primary: 'violet', gradient: 'from-violet-500 to-purple-500', bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700' }
-    : { primary: 'teal', gradient: 'from-teal-500 to-cyan-500', bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700' };
+    : { primary: 'teal', gradient: 'from-[#01544E] to-[#02786F]', bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700' };
 
   const toggleTarget = (targetId) => {
     setSelectedTargets(prev => 
