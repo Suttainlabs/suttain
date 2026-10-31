@@ -45,7 +45,8 @@ export default async function(req) {
         // A submitted code is attribution only, not proof of a genuine referral.
         // Never award points from this caller-controlled flow, including for admins.
         // Future rewards must use independently verified, deduplicated evidence.
-        await base44.auth.updateMe({ referred_by: referral_code });
+        // referred_by is write-protected on User; set it server-side only.
+        await base44.asServiceRole.entities.User.update(user.id, { referred_by: referral_code });
 
         return Response.json({
             success: true,
