@@ -29,6 +29,8 @@ export async function reserveUsage(base44, user, type, count = 1) {
     update.usage_formulas = type === 'formulas' ? count : 0;
     update.usage_scans = 0;
   }
-  await base44.auth.updateMe(update);
+  // Usage counters are write-protected on the User entity (admin/service only),
+  // so the browser cannot reset its own quota. Write them server-side.
+  await base44.asServiceRole.entities.User.update(user.id, update);
   return null;
 }

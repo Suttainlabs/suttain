@@ -2,6 +2,7 @@
 import { operationClient } from '../../shared/researchApiContext.ts';
 import { requireUser } from '../../shared/securityGuards.ts';
 import { pollProvider, extractMetrics, PROVIDERS } from '../../shared/hostedProviders.ts';
+import { cacheHostedStructure } from '../../shared/hostedStructure.ts';
 
 async function syncHostedJob(client, job, service = false) {
   const entities = service ? client.asServiceRole.entities : client.entities;
@@ -28,6 +29,10 @@ async function syncHostedJob(client, job, service = false) {
     };
   }
   const updated = await entities.SimulationJob.update(job.id, update);
+  // Keep our own copy of the predicted structure: providers delete their files after a few days.
+  if (update.status === 'completed' && job.result.task === 'binding') {
+    try { const structure = await cacheHostedStructure(client, updated); if (structure) updated.result = { ...updated.result, structure }; } catch { /* the viewer retries on demand */ }
+  }
   if (job.draft_id) await entities.SimulationDraft.update(job.draft_id, { status: update.status === 'running' ? 'running' : update.status, ...(update.result ? { result: update.result } : {}), ...(update.error ? { error: update.error } : {}) });
   return updated;
 }

@@ -6,7 +6,11 @@
 //   output.best_sample.ligand_structure   signed S3 URL to the posed ligand as SDF
 //   output.binding_metrics                binding_confidence, optimization_score
 //   created_at / started_at / completed_at, expires_at (provider deletes data about 7 days after completion)
+// Tamarind Bio: POST /api/result {jobName} returns a signed link to a results zip of the Boltz-2 run.
+//   NOT YET VERIFIED on a live Suttain job: we take the best-ranked .cif (else .pdb) model, any .sdf ligand,
+//   and every numeric field in confidence_*.json / affinity_*.json files.
 import { secrets } from 'base44:runtime';
+import { unzipSync, strFromU8 } from 'npm:fflate@0.8.2';
 
 const BOLTZ = 'https://api.boltz.bio/compute/v1/predictions/structure-and-binding';
 
@@ -39,4 +43,54 @@ export async function cacheBoltzStructure(base44: any, job: any) {
   const latest = await base44.asServiceRole.entities.SimulationJob.get(job.id).catch(() => job);
   await base44.asServiceRole.entities.SimulationJob.update(job.id, { result: { ...(latest?.result || job.result), structure } });
   return structure;
+}
+
+const pickModel = (names: string[], ext: string) => names.filter(n => n.toLowerCase().endsWith(ext) && !n.startsWith('__MACOSX'))
+  .sort((a, b) => (/model_0|rank_?0*1|_0\./i.test(b) ? 1 : 0) - (/model_0|rank_?0*1|_0\./i.test(a) ? 1 : 0) || a.length - b.length)[0];
+
+function numericFields(obj: any, prefix = '', out: Record<string, number> = {}) {
+  for (const [k, v] of Object.entries(obj || {})) {
+    if (typeof v === 'number' && Number.isFinite(v)) out[prefix + k] = v;
+    else if (v && typeof v === 'object' && !Array.isArray(v) && Object.keys(out).length < 60) numericFields(v, `${prefix}${k}.`, out);
+  }
+  return out;
+}
+
+export async function cacheTamarindStructure(base44: any, job: any) {
+  const key = secrets.get('TAMARIND_API_KEY');
+  if (!key || !job?.provider_job_id) return null;
+  const res = await fetch('https://app.tamarind.bio/api/result', { method: 'POST', headers: { 'x-api-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ jobName: job.provider_job_id }), signal: AbortSignal.timeout(25000) });
+  if (!res.ok || res.status === 202) return null;
+  const url = (await res.text()).trim().replace(/^"|"$/g, '');
+  if (!/^https:\/\//.test(url)) return null;
+  const zipRes = await fetch(url, { signal: AbortSignal.timeout(60000) });
+  if (!zipRes.ok) return null;
+  const buf = new Uint8Array(await zipRes.arrayBuffer());
+  if (buf.byteLength > 60_000_000) return null;
+  const files = unzipSync(buf);
+  const names = Object.keys(files);
+  const model = pickModel(names, '.cif') || pickModel(names, '.pdb');
+  if (!model) return null;
+  const sdfName = pickModel(names, '.sdf');
+  const metrics: Record<string, number> = {};
+  for (const n of names.filter(n => /(confidence|affinity|score)[^/]*\.json$/i.test(n)).slice(0, 6)) {
+    try { Object.assign(metrics, numericFields(JSON.parse(strFromU8(files[n])))); } catch { /* skip unreadable json */ }
+  }
+  const upload = async (bytes: Uint8Array, name: string) => (await base44.asServiceRole.integrations.Core.UploadPrivateFile({ file: new File([bytes], name, { type: 'text/plain' }) })).file_uri;
+  const format = model.toLowerCase().endsWith('.pdb') ? 'pdb' : 'cif';
+  const structure = {
+    cif_uri: await upload(files[model], `${job.provider_job_id}.${format}`), format,
+    sdf_uri: sdfName ? await upload(files[sdfName], `${job.provider_job_id}-ligand.sdf`) : null,
+    metrics, timings: {}, prediction_id: job.provider_job_id, model: 'Boltz-2 (Tamarind Bio)', version: null, source_file: model,
+  };
+  const latest = await base44.asServiceRole.entities.SimulationJob.get(job.id).catch(() => job);
+  await base44.asServiceRole.entities.SimulationJob.update(job.id, { result: { ...(latest?.result || job.result), structure } });
+  return structure;
+}
+
+export async function cacheHostedStructure(base44: any, job: any) {
+  const provider = job?.result?.router_provider;
+  if (provider === 'boltz') return cacheBoltzStructure(base44, job);
+  if (provider === 'tamarind') return cacheTamarindStructure(base44, job);
+  return null;
 }
