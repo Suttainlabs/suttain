@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 async function lookupByBarcode(barcode) {
   const url = `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,brands,ingredients_text,allergens_tags,additives_tags,nova_group,nutriscore_grade,image_url,nutriments`;
@@ -45,6 +46,8 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_suttainProductData');
+    if (hourlyLimited) return hourlyLimited;
 
     const body = await req.json();
     const { barcode, name } = body;

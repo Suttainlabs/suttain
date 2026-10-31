@@ -1,4 +1,5 @@
 import { operationClient } from '../../shared/researchApiContext.ts';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 async function pubchemLookup(query) {
   const isSmiles = /[()=#\[\]\\]/.test(query) || /^\d+$/.test(query) === false && query.length > 30;
@@ -88,6 +89,8 @@ export default async function(req) {
     const base44 = await operationClient(req,'suttainScienceData');
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_suttainScienceData');
+    if (hourlyLimited) return hourlyLimited;
 
     const body = await req.json();
     const { source, query } = body;

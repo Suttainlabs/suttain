@@ -1,10 +1,13 @@
 import { operationClient } from '../../shared/researchApiContext.ts';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 export default async function(req) {
   try {
     const base44 = await operationClient(req,'suttainRegulatory');
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_suttainRegulatory');
+    if (hourlyLimited) return hourlyLimited;
 
     const body = await req.json().catch(() => ({}));
     const { query } = body;

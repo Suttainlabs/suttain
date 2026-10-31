@@ -1,5 +1,6 @@
 import { operationClient } from '../../shared/researchApiContext.ts';
 import { researchEntitlement } from '../../shared/usageEntitlements.ts';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 const PUBCHEM_PROPS = 'MolecularFormula,MolecularWeight,CanonicalSMILES,IUPACName,XLogP,TPSA,HBondDonorCount,HBondAcceptorCount,RotatableBondCount,HeavyAtomCount,Charge';
 
@@ -116,6 +117,8 @@ export default async function(req) {
     const base44 = await operationClient(req,'suttainCompute');
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_suttainCompute');
+    if (hourlyLimited) return hourlyLimited;
 
     const body = await req.json();
     const { mode, molecule, molecule_b, engine } = body;

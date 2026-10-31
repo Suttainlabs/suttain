@@ -1,4 +1,5 @@
 import { operationClient } from '../../shared/researchApiContext.ts';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 const COMMON_NAME_MAP = {
   'bleach': 'sodium hypochlorite',
@@ -369,6 +370,8 @@ export default async function(req) {
   if (!user) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_comprehensiveChemicalSearch');
+  if (hourlyLimited) return hourlyLimited;
 
   let body;
   try {

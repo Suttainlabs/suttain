@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 // Regulatory database endpoints
 const PUBCHEM_API = 'https://pubchem.ncbi.nlm.nih.gov/rest/pug';
@@ -12,6 +13,8 @@ Deno.serve(async (req) => {
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_fetchRegulatoryData');
+    if (hourlyLimited) return hourlyLimited;
 
     const { ingredients, regions } = await req.json();
 

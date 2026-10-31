@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { researchEntitlement } from '../../shared/usageEntitlements.ts';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 // ── Structure parsers ──────────────────────────────────────────────
 
@@ -389,6 +390,8 @@ export default async function(req) {
       return Response.json({ error: 'Authentication required. Please log in and try again.' }, { status: 401 });
     }
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_structureTools');
+    if (hourlyLimited) return hourlyLimited;
 
     const body = await req.json();
     const { action, file_content, format_in, format_out, build_params, pdb_id } = body;

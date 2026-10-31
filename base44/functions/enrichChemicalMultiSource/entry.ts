@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { enrichChemicalMultiSource } from '../../shared/externalDatabaseAdapters.ts';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 export default async function (req) {
   const appId = Deno.env.get('BASE44_APP_ID');
@@ -7,6 +8,8 @@ export default async function (req) {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_enrichChemicalMultiSource');
+    if (hourlyLimited) return hourlyLimited;
 
     const body = await req.json();
     const { query, adapters } = body;

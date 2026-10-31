@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 const ELEMENTS = new Set([
   'hydrogen', 'helium', 'lithium', 'beryllium', 'boron', 'carbon', 'nitrogen', 'oxygen', 'fluorine', 'neon', 'sodium', 'magnesium', 'aluminum', 'silicon', 'phosphorus', 'sulfur', 'chlorine', 'argon', 'potassium', 'calcium', 'scandium', 'titanium', 'vanadium', 'chromium', 'manganese', 'iron', 'cobalt', 'nickel', 'copper', 'zinc', 'gallium', 'germanium', 'arsenic', 'selenium', 'bromine', 'krypton', 'rubidium', 'strontium', 'yttrium', 'zirconium', 'niobium', 'molybdenum', 'technetium', 'ruthenium', 'rhodium', 'palladium', 'silver', 'cadmium', 'indium', 'tin', 'antimony', 'tellurium', 'iodine', 'xenon', 'cesium', 'barium', 'lanthanum', 'cerium', 'praseodymium', 'neodymium', 'promethium', 'samarium', 'europium', 'gadolinium', 'terbium', 'dysprosium', 'holmium', 'erbium', 'thulium', 'ytterbium', 'lutetium', 'hafnium', 'tantalum', 'tungsten', 'rhenium', 'osmium', 'iridium', 'platinum', 'gold', 'mercury', 'thallium', 'lead', 'bismuth', 'polonium', 'astatine', 'radon', 'francium', 'radium', 'actinium', 'thorium', 'protactinium', 'uranium', 'neptunium', 'plutonium', 'americium', 'curium', 'berkelium', 'californium', 'einsteinium', 'fermium', 'mendelevium', 'nobelium', 'lawrencium'
@@ -150,9 +151,12 @@ async function getAutocompleteTerms(query, limit) {
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
-  if (!(await base44.auth.isAuthenticated())) {
+  const user = await base44.auth.me().catch(() => null);
+  if (!user?.id) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_enhancedChemicalSearch');
+  if (hourlyLimited) return hourlyLimited;
 
   if (req.method !== 'POST') {
     return Response.json({ error: 'Use POST with JSON {query, limit?}' }, { status: 405 });

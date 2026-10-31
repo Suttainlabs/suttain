@@ -1,4 +1,5 @@
 import { operationClient } from '../../shared/researchApiContext.ts';
+import { limitHourlyLookups } from '../../shared/dailyFeatureLimit.ts';
 
 // Property mappings for ingredient search
 const PROPERTY_KEYWORDS = {
@@ -176,6 +177,8 @@ export default async function(req) {
   if (!user) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { "Content-Type": "application/json" } });
   }
+  const hourlyLimited = await limitHourlyLookups(base44, user, 'lookup_enhancedIngredientSearch');
+  if (hourlyLimited) return hourlyLimited;
 
   let body;
   try {
