@@ -474,8 +474,19 @@ export default function ProductAnalysis({ product, onClear, user }) {
     } catch {}
   };
 
-  const handleGoToGenerator = (ingredients) => {
-    navigate(createPageUrl('generator'), { state: { ingredientsToLoad: ingredients.map(ing => ({ name: ing.name, percentage: ing.percentage })) } });
+  // Hand the scanned product to the Formula Generator, which starts generating a safer homemade version in Individual mode.
+  const handleGoToGenerator = (recipe) => {
+    const flagged = [
+      ...(product.hazards || []),
+      ...(product.allergens || []),
+      ...(product.ingredients || []).filter(i => ['high', 'moderate'].includes(String(i.safety).toLowerCase()) || (Array.isArray(i.concerns) && i.concerns.length)).map(i => i.name),
+    ].map(String).filter(Boolean);
+    navigate(createPageUrl('generator'), { state: { fromScan: {
+      name: product.name || 'Scanned product', brand: product.brand || '', category: product.category || '',
+      ingredients: (product.ingredients || []).map(i => i.name).filter(Boolean),
+      avoid: flagged,
+      recipe: recipe?.length ? recipe.map(ing => ({ name: ing.name, percentage: ing.percentage })) : null,
+    } } });
   };
 
   const handleFindSimilar = async () => {
@@ -991,6 +1002,13 @@ export default function ProductAnalysis({ product, onClear, user }) {
 
             {/* DIY TAB */}
             <TabsContent value="diy" className="pt-4 space-y-4">
+              <div className="rounded-xl p-5 text-white" style={{ background: 'linear-gradient(135deg, #01544E 0%, #02786F 60%, #02988C 100%)' }}>
+                <p className="text-base font-semibold !text-white">Make a safer version of this product</p>
+                <p className="mt-1 text-sm text-white/90">Opens the Formula Generator in Individual mode and starts building a homemade version straight away, avoiding the ingredients flagged in this scan.</p>
+                <Button onClick={() => handleGoToGenerator(null)} className="mt-4 w-full sm:w-auto bg-white text-[#01544E] hover:bg-white/90">
+                  <TestTube className="w-4 h-4 mr-2" />Make it with Formula Generator
+                </Button>
+              </div>
               {product.diyFormulas?.length > 0 ? (
                 product.diyFormulas.map((formula, i) => (
                   <Card key={i} className="bg-white/60">
@@ -1004,7 +1022,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                         {formula.ingredients.map((ing, j) => <li key={j}>{ing.name} ({ing.percentage}%)</li>)}
                       </ul>
                       <Button onClick={() => handleGoToGenerator(formula.ingredients)} className="w-full bg-[var(--suttain-violet)] hover:bg-[var(--suttain-violet)]/90 text-white">
-                        <TestTube className="w-4 h-4 mr-2" />Customize in Formula Generator
+                        <TestTube className="w-4 h-4 mr-2" />Make this recipe in Formula Generator
                       </Button>
                     </CardContent>
                   </Card>
@@ -1014,7 +1032,7 @@ export default function ProductAnalysis({ product, onClear, user }) {
                   <CardContent className="text-center py-12">
                     <Beaker className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-slate-700">No DIY Alternatives Available</h3>
-                    <p className="text-slate-500">We don't have a DIY alternative for this product category yet.</p>
+                    <p className="text-slate-500">There's no ready-made recipe for this product yet. Use the button above to generate one.</p>
                   </CardContent>
                 </Card>
               )}

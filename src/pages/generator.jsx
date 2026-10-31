@@ -547,6 +547,13 @@ export default function Generator() {
             )}
 
             {/* SDS Source Banner */}
+            {scanSource && currentStep >= 3 && (
+              <div role="status" className="mb-5 flex items-start gap-3 rounded-xl border border-research-border bg-research-soft px-4 py-3">
+                <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-research-accent" />
+                <p className="text-sm text-research-text"><span className="font-semibold">From your scan:</span> building a safer homemade version of {scanSource.name} as a {scanSource.type} in Individual mode.{isGenerating ? ' Generating formula options now…' : ''}</p>
+              </div>
+            )}
+
             {sdsSourceChemical && currentStep === 1 && (
               <div className="mb-6 flex items-start gap-3 bg-teal-50 border border-teal-200 rounded-xl px-4 py-3">
                 <div className="w-9 h-9 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
