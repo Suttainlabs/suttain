@@ -12,7 +12,10 @@ const ACTIONS = [
 
 export default function SmartChemicalSearch() {
   const navigate = useNavigate();
-  const [q, setQ] = useState("");
+  // Pre-fill from ?q= (used by the 404 page's search box).
+  const [q, setQ] = useState(() => {
+    try { return (new URLSearchParams(window.location.search).get("q") || "").slice(0, 100); } catch { return ""; }
+  });
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
