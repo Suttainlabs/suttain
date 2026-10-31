@@ -3,7 +3,7 @@ import { Search, Loader2, X } from 'lucide-react';
 
 // Accessible type-ahead: debounced lookup, results sorted A–Z, arrow keys + Enter to pick.
 // `fetchSuggestions(query, signal)` returns [{ id, label, meta }].
-export default function SuggestInput({ label, placeholder, fetchSuggestions, onPick, minChars = 2, hint, sourceNote }) {
+export default function SuggestInput({ label, placeholder, fetchSuggestions, onPick, onClear, minChars = 2, hint, sourceNote }) {
   const [q, setQ] = useState('');
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
@@ -59,10 +59,10 @@ export default function SuggestInput({ label, placeholder, fetchSuggestions, onP
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-research-muted" aria-hidden="true" />
         <input id={`${listId}-input`} role="combobox" aria-expanded={open && items.length > 0} aria-controls={listId} aria-autocomplete="list"
           aria-activedescendant={active >= 0 ? `${listId}-${active}` : undefined}
-          value={q} onChange={e => { setQ(e.target.value); setOpen(true); }} onFocus={() => items.length && setOpen(true)} onKeyDown={onKey}
+          value={q} onChange={e => { const v = e.target.value; setQ(v); setOpen(true); if (!v.trim() && q.trim()) { setItems([]); onClear?.(); } }} onFocus={() => items.length && setOpen(true)} onKeyDown={onKey}
           placeholder={placeholder} autoComplete="off" spellCheck={false} className="simulation-control !h-11 !pl-10 !pr-10 w-full" />
         {busy ? <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-research-accent" />
-          : q && <button type="button" aria-label="Clear" onClick={() => { setQ(''); setItems([]); }} className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-md text-research-muted hover:bg-research-soft"><X className="h-4 w-4" /></button>}
+          : q && <button type="button" aria-label="Clear" onClick={() => { setQ(''); setItems([]); onClear?.(); }} className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-md text-research-muted hover:bg-research-soft"><X className="h-4 w-4" /></button>}
       </div>
       {hint && <p className="mt-1 text-xs text-research-muted">{hint}</p>}
       {error && <p role="alert" className="mt-1 text-xs text-destructive">{error}</p>}

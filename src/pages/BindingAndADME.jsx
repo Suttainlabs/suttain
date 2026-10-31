@@ -162,19 +162,19 @@ export default function BindingAndADME() {
             {task === 'binding' ? <div className="space-y-4">
               <SuggestInput label="Find a protein" placeholder="Name, gene or UniProt ID, e.g. lysozyme, EGFR, P00720" sourceNote="UniProtKB reviewed"
                 hint="Suggestions from UniProt (about 150 million protein entries; reviewed Swiss-Prot entries shown). Pick one to fill the sequence."
-                fetchSuggestions={searchProteins} onPick={loadProtein} />
+                fetchSuggestions={searchProteins} onPick={loadProtein} onClear={() => { if (picked.protein) { setSequence(''); setPicked(p => ({ ...p, protein: '' })); } }} />
               {lookupBusy === 'protein' && <p role="status" className="flex items-center gap-2 text-xs text-research-muted"><Loader2 className="h-3.5 w-3.5 animate-spin" />Loading sequence from UniProt…</p>}
               {picked.protein && lookupBusy !== 'protein' && <p role="status" className="rounded-lg bg-research-soft p-2.5 text-xs text-research-text">Loaded {picked.protein}</p>}
               <div><label htmlFor="protein-seq" className="block text-sm font-medium mb-2">Protein sequence</label><textarea id="protein-seq" rows={5} value={sequence} onChange={e => setSequence(e.target.value)} placeholder="One-letter amino acid codes, e.g. MKTAYIAKQR…" className="simulation-control font-mono text-xs" spellCheck={false} /><p className="text-xs text-research-muted mt-1">Up to 2,900 residues. Trim to the domain involved in binding.</p></div>
               <SuggestInput label="Find a ligand" placeholder="Compound name, e.g. ibuprofen, benzene, imatinib" sourceNote="PubChem"
                 hint="Suggestions from PubChem (about 119 million compounds). Pick one to fill the SMILES."
-                fetchSuggestions={searchCompounds} onPick={loadLigand} />
+                fetchSuggestions={searchCompounds} onPick={loadLigand} onClear={() => { if (picked.ligand) { setLigand(''); setPicked(p => ({ ...p, ligand: '' })); } }} />
               {lookupBusy === 'ligand' && <p role="status" className="flex items-center gap-2 text-xs text-research-muted"><Loader2 className="h-3.5 w-3.5 animate-spin" />Loading structure from PubChem…</p>}
               {picked.ligand && lookupBusy !== 'ligand' && <p role="status" className="rounded-lg bg-research-soft p-2.5 text-xs text-research-text">Loaded {picked.ligand}</p>}
               <div><label htmlFor="ligand-smiles" className="block text-sm font-medium mb-2">Ligand SMILES</label><input id="ligand-smiles" value={ligand} onChange={e => setLigand(e.target.value)} placeholder="e.g. CC(=O)Oc1ccccc1C(=O)O" className="simulation-control font-mono text-xs" spellCheck={false} /></div>
             </div> : <div>
               <div className="mb-4"><SuggestInput label="Add a molecule by name" placeholder="e.g. caffeine, paracetamol" sourceNote="PubChem"
-                hint="Each pick adds its SMILES as a new line below." fetchSuggestions={searchCompounds} onPick={addAdme} />
+                hint="Each pick adds its SMILES as a new line below." fetchSuggestions={searchCompounds} onPick={addAdme} onClear={() => setPicked(p => ({ ...p, adme: '' }))} />
                 {picked.adme && lookupBusy !== 'adme' && <p role="status" className="mt-2 text-xs text-research-muted">{picked.adme}</p>}</div>
               <div className="flex items-center justify-between mb-2"><label htmlFor="adme-smiles" className="block text-sm font-medium">SMILES, one per line</label><button type="button" onClick={() => setAdmeText(ADME_EXAMPLE)} className="text-xs text-research-accent hover:underline">Load example</button></div>
               <textarea id="adme-smiles" rows={7} value={admeText} onChange={e => setAdmeText(e.target.value)} placeholder={'CC(=O)Oc1ccccc1C(=O)O\nCn1cnc2c1c(=O)n(C)c(=O)n2C'} className="simulation-control font-mono text-xs" spellCheck={false} />
