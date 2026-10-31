@@ -255,7 +255,20 @@ const AuthenticatedApp = () => {
 
       <Route path="/ApproveSimulation" element={<Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-[#02988C] rounded-full animate-spin"/></div>}><ApproveSimulation /></Suspense>} />
 
-      <Route path="*" element={<PageNotFound />} />
+      {/* Friendly aliases for common URLs people type or link to */}
+      <Route path="/about" element={<Navigate to="/AboutUs" replace />} />
+      <Route path="/about-us" element={<Navigate to="/AboutUs" replace />} />
+      <Route path="/contact" element={<Navigate to="/Contact" replace />} />
+      <Route path="/contact-us" element={<Navigate to="/Contact" replace />} />
+      <Route path="/careers" element={<Navigate to="/Careers" replace />} />
+      <Route path="/pricing" element={<Navigate to="/Pricing" replace />} />
+      <Route path="/privacy" element={<Navigate to="/PrivacyPolicy" replace />} />
+      <Route path="/terms" element={<Navigate to="/TermsOfService" replace />} />
+      <Route path="/faq" element={<Navigate to="/FAQ" replace />} />
+      <Route path="/FormulaGenerator" element={<Navigate to={`/generator${location.search}`} replace />} />
+      <Route path="/simulator" element={<Navigate to={`/Simulator${location.search}`} replace />} />
+
+      <Route path="*" element={<LayoutWrapper currentPageName="NotFound"><PageNotFound /></LayoutWrapper>} />
     </Routes>
     </AnimatePresence>
   );
