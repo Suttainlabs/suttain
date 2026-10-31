@@ -17,11 +17,11 @@ export const WALKTHROUGH = [
   { view: 'shortlist', title: '6. Save a design shortlist', body: 'Save computed candidates privately with structures, estimated properties and source-job references. Compare records across visits and export them as CSV; older illustrative records remain labeled.' },
 ];
 export const RISK_STYLE = { low: 'bg-secondary text-secondary-foreground', moderate: 'bg-muted text-foreground', high: 'bg-destructive/10 text-destructive' };
-export function exportShortlist(items) {
+export function exportShortlist(items, name = 'suttain-screening-shortlist.csv') {
   const columns = ['id', 'drug', 'is_illustrative', 'source_job_id', 'target_chembl_id', 'smiles', 'binding_proxy_score', 'risk', 'molecular_weight', 'logp', 'tpsa', 'hbd', 'hba', 'rotatable_bonds', 'lipinski_violations', 'veber_violations', 'most_similar_known_ligand', 'reference_smiles', 'descriptor_method', 'target_uniprot_id', 'source', 'source_url', 'ranking_method', 'ranking_score', 'measured_affinity', 'evidence', 'score_components', 'screening_provenance'];
   const quote = value => { const text = typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value ?? ''); return `"${(/^[\s]*[=+@-]/.test(text) || /^[\t\r\n]/.test(text) ? "'" + text : text).replaceAll('"', '""')}"`; };
   const csv = [columns.join(','), ...items.map(item => columns.map(key => quote(item[key])).join(','))].join('\r\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  const link = document.createElement('a'); link.href = url; link.download = 'suttain-screening-shortlist.csv'; document.body.appendChild(link); link.click(); link.remove();
+  const link = document.createElement('a'); link.href = url; link.download = name; document.body.appendChild(link); link.click(); link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

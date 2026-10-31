@@ -24,6 +24,7 @@ export default function RowanResults({result,onReset,onRun,isRunning}) {
   const xyz=tab==='optimize' || tab==='overview' ? frames[frame]?.xyz || xyzFile(m) || result.final_xyz : xyzFile(m) || result.final_xyz;
   return <section className="mb-8 guided-result">
     <GuidedResultStyles/>
+    <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><p className="research-label">Computed by Rowan · {result.provider_job_id}</p><button type="button" onClick={() => setTab('notes')} className="research-secondary !min-h-9 !px-3 !py-1.5 text-sm">Download results</button></div>
     <div className="guided-result-layout"><GuidedResultNavigation tab={tab} onChange={setTab}/><div className="guided-result-body">
       {loading && <p role="status" className="text-sm mb-4">Loading private calculation results…</p>}
       {error && <div role="alert" className="text-sm text-destructive mb-4">{error} <button className="underline" onClick={reload}>Retry</button></div>}
