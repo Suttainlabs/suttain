@@ -1,0 +1,56 @@
+{
+  "description": "Deterministic result cache for chemical analyses. Server-written only.",
+  "name": "AnalysisCache",
+  "properties": {
+    "cache_key": {
+      "description": "Hash of normalised inputs + rules version",
+      "type": "string"
+    },
+    "inputs": {
+      "additionalProperties": true,
+      "description": "Normalised inputs used to build the key",
+      "type": "object"
+    },
+    "kind": {
+      "description": "Analysis type, e.g. interaction or sds",
+      "type": "string"
+    },
+    "result": {
+      "additionalProperties": true,
+      "description": "Stored result returned for repeat runs",
+      "type": "object"
+    },
+    "version": {
+      "description": "Rules/scoring version that produced the result",
+      "type": "string"
+    }
+  },
+  "required": [
+    "cache_key",
+    "kind",
+    "result"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}
