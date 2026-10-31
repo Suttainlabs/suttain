@@ -51,7 +51,7 @@ export default function HostedDownloads({ job }) {
       sections = [
         { heading: 'Result', text: s.verdict, note: s.warnings.length ? `Caution: ${s.warnings.join(' ')}` : undefined },
         { heading: 'Inputs', rows: [['Protein length', `${seq.replace(/\s/g, '').length} residues`], ['Ligand SMILES', job.inputs?.ligand_smiles]], note: `Sequence: ${seq.slice(0, 600)}${seq.length > 600 ? '…' : ''}` },
-        ...(s.affinityRows.length ? [{ heading: 'Binding and affinity', rows: s.affinityRows, note: 'Boltz-2 affinity is log10(IC50 in µM); use it to compare active compounds within one series. Binding confidence of 0.7+ is the documented high-confidence range.' }] : []),
+        ...(s.affinityRows.length ? [{ heading: 'Binding and affinity', rows: s.affinityRows, note: [s.affinityRows.some(([k]) => k === 'Predicted IC50') && 'Boltz-2 affinity is log10(IC50 in µM); use it to compare active compounds within one series.', s.affinityRows.some(([k]) => k === 'Binding confidence') && 'Binding confidence of 0.7+ is the documented high-confidence range.', s.affinityRows.some(([k]) => k.startsWith('Optimization')) && 'The optimization score only ranks candidates within the same run.'].filter(Boolean).join(' ') }] : []),
         ...(s.structureRows.length ? [{ heading: 'Structure confidence', rows: s.structureRows, note: 'Scores from 0 to 1; higher is more confident. They describe the predicted pose, not binding strength.' }] : []),
         { heading: 'All values reported by the engine', rows: (r.metrics || []).map(m => [m.key, typeof m.value === 'number' ? Number(m.value.toPrecision(4)) : m.value]) },
       ];
