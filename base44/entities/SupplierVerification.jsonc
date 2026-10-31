@@ -1,78 +1,98 @@
 {
   "name": "SupplierVerification",
-  "type": "object",
   "properties": {
-    "formula_id": {
-      "type": "string",
-      "description": "ID of the formula being verified"
-    },
-    "formula_name": {
-      "type": "string",
-      "description": "Name of the formula for display"
+    "admin_notes": {
+      "description": "Internal notes from the user reviewing the submission",
+      "type": "string"
     },
     "description": {
-      "type": "string",
+      "description": "Optional short description for search visibility and previews",
       "maxLength": 1000,
-      "description": "Optional short description for search visibility and previews"
+      "type": "string"
     },
-    "supplier_name": {
-      "type": "string",
-      "description": "Name of the supplier company"
-    },
-    "supplier_email": {
-      "type": "string",
-      "description": "Email of the supplier contact"
-    },
-    "ingredients_to_verify": {
-      "type": "array",
+    "document_urls": {
+      "description": "URLs of documents uploaded by the supplier",
       "items": {
         "type": "string"
       },
-      "description": "List of ingredient names the supplier needs to verify"
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "array"
+    },
+    "expires_at": {
+      "description": "When the verification link expires",
+      "format": "date-time",
+      "type": "string"
+    },
+    "formula_id": {
+      "description": "ID of the formula being verified",
+      "type": "string"
+    },
+    "formula_name": {
+      "description": "Name of the formula for display",
+      "type": "string"
+    },
+    "ingredients_to_verify": {
+      "description": "List of ingredient names the supplier needs to verify",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "invited_by": {
+      "description": "Email of the user who sent the invite",
+      "type": "string"
     },
     "status": {
-      "type": "string",
+      "default": "pending",
+      "description": "Current status of the verification request",
       "enum": [
         "pending",
         "submitted",
         "validated",
         "rejected"
       ],
-      "default": "pending",
-      "description": "Current status of the verification request"
-    },
-    "token": {
-      "type": "string",
-      "description": "Unique secure token for the supplier's verification link"
-    },
-    "invited_by": {
-      "type": "string",
-      "description": "Email of the user who sent the invite"
+      "type": "string"
     },
     "submitted_data": {
-      "type": "object",
       "additionalProperties": true,
-      "description": "Data submitted by the supplier (ingredient certs, COAs, safety sheets)"
+      "description": "Data submitted by the supplier (ingredient certs, COAs, safety sheets)",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "supplier_email": {
+      "description": "Email of the supplier contact",
+      "type": "string"
+    },
+    "supplier_name": {
+      "description": "Name of the supplier company",
+      "type": "string"
     },
     "supplier_notes": {
-      "type": "string",
-      "description": "Notes or comments submitted by the supplier"
-    },
-    "document_urls": {
-      "type": "array",
-      "items": {
-        "type": "string"
+      "description": "Notes or comments submitted by the supplier",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
       },
-      "description": "URLs of documents uploaded by the supplier"
+      "type": "string"
     },
-    "expires_at": {
-      "type": "string",
-      "format": "date-time",
-      "description": "When the verification link expires"
-    },
-    "admin_notes": {
-      "type": "string",
-      "description": "Internal notes from the user reviewing the submission"
+    "token": {
+      "description": "Unique secure token for the supplier's verification link",
+      "type": "string"
     }
   },
   "required": [
@@ -85,6 +105,18 @@
   "rls": {
     "create": {
       "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "read": {
       "$or": [
@@ -104,18 +136,6 @@
     "update": {
       "$or": [
         {
-          "data.supplier_email": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
-    "delete": {
-      "$or": [
-        {
           "created_by_id": "{{user.id}}"
         },
         {
@@ -125,5 +145,6 @@
         }
       ]
     }
-  }
+  },
+  "type": "object"
 }
