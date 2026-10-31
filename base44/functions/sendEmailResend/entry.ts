@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { Resend } from 'npm:resend@2.0.0';
 import { reserveIpAction } from '../../shared/ipRateLimit.ts';
-import { requireUser } from '../../shared/securityGuards.ts';
+import { requireUser, reserveSecurityAction } from '../../shared/securityGuards.ts';
 const ADMIN_EMAIL = Deno.env.get('ADMIN_EMAIL') || 'contact@suttain.com';
 
 function escapeHtml(str) {
@@ -415,7 +415,18 @@ export default async function(req) {
         const base44 = createClientFromRequest(req);
         // Every email operation requires a verified app session before parsing or sending.
         const user = await requireUser(base44);
-        const { type, to, subject, html, text, from, data } = await req.json();
+        const { type, to, subject, html, text, from, data: rawData } = await req.json();
+        const data = rawData && typeof rawData === 'object' ? rawData : {};
+
+        // Per-account caps so one account cannot burn the email quota or flood
+        // the admin inbox. Welcome mail is sent at most once per account.
+        if (user.role !== 'admin' && type !== 'demo_request' && type !== 'contact_form') {
+            const isWelcome = type === 'welcome';
+            const reserved = await reserveSecurityAction(base44, user, isWelcome
+                ? { channel: 'resend_welcome', limit: 1, dedupeKey: `resend-welcome:${user.id}` }
+                : { channel: 'resend_self_email', limit: 20 });
+            if (reserved === false) return Response.json({ success: true, already_sent: true });
+        }
 
         // Contact notifications remain pinned to ADMIN_EMAIL with the existing daily budget.
         if (type === 'demo_request' || type === 'contact_form') {
@@ -552,7 +563,7 @@ export default async function(req) {
             const userName = escapeHtml(data.userName || user.full_name || 'User');
             const downloadType = escapeHtml(data.downloadType);
             const fileName = escapeHtml(data.fileName);
-            const fileUrl = escapeHtml(data.fileUrl);
+            const fileUrl = typeof data.fileUrl === 'string' && /^https:\/\/[^\s<>"]+$/.test(data.fileUrl) && data.fileUrl.length <= 2048 ? escapeHtml(data.fileUrl) : '';
             await sendEmail(user.email, `Your ${data.downloadType || 'File'} is Ready - Suttain`, getDownloadNotificationHtml(userName, downloadType, fileName, { fileUrl }));
             return Response.json({ success: true, message: 'Download notification sent' });
         }
@@ -604,6 +615,7 @@ export default async function(req) {
 
         return Response.json({ success: true, data: emailData });
     } catch (error) {
-        return Response.json({ error: error.message }, { status: error.status || 500 });
+        console.error('sendEmailResend error:', error.message);
+        return Response.json({ error: error.status ? error.message : 'Unable to send email.' }, { status: error.status || 500 });
     }
 }
