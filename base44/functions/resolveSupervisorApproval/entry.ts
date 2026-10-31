@@ -20,8 +20,12 @@ export default async function (req: Request): Promise<Response> {
     const body = await req.json();
     const { token, action, reason } = body || {};
 
-    if (typeof token !== 'string' || !token || token.length > 200) {
+    // Tokens are two UUIDs joined by '-'; reject anything else before any lookup.
+    if (typeof token !== 'string' || !/^[0-9a-f-]{73}$/i.test(token)) {
       return Response.json({ error: 'Missing or invalid approval token' }, { status: 400 });
+    }
+    if (reason !== undefined && (typeof reason !== 'string' || reason.length > 2000)) {
+      return Response.json({ error: 'Reason must be text under 2,000 characters' }, { status: 400 });
     }
 
     // Public read by token, service role bypasses RLS (no login required for the supervisor)
@@ -31,12 +35,17 @@ export default async function (req: Request): Promise<Response> {
     }
     const record = records[0];
 
+    // Approval links expire 30 days after the request.
+    const requestedAt = Date.parse(record.requested_date || record.created_date);
+    if (!Number.isFinite(requestedAt) || Date.now() - requestedAt > 30 * 24 * 60 * 60 * 1000) {
+      return Response.json({ error: 'This approval link has expired. Ask the requester to send a new request.' }, { status: 410 });
+    }
+
     // PREVIEW: return a safe subset without mutating the record
     if (!action || action === 'preview') {
       return Response.json({
         status: record.status,
         supervisor_name: record.supervisor_name,
-        supervisor_email: record.supervisor_email,
         requester_name: record.requester_name,
         requested_date: record.requested_date,
         decided_date: record.decided_date,
@@ -131,7 +140,7 @@ export default async function (req: Request): Promise<Response> {
     });
   } catch (error) {
     console.error('resolveSupervisorApproval error:', error);
-    return Response.json({ error: error.message }, {
+    return Response.json({ error: error.status ? error.message : 'Unable to process this approval.' }, {
       status: error.status || 500,
       headers: error.status === 429 ? { 'Retry-After': String(3600 - (Math.floor(Date.now() / 1000) % 3600)) } : {}
     });
