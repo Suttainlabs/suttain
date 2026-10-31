@@ -34,7 +34,8 @@ export default function Blog() {
     if (existing) existing.remove();
 
     const script = document.createElement('script');
-    script.src = 'https://app.trysoro.com/api/embed/39f34335-ade3-4339-96ec-dd251a44a8dc';
+    // Cache-bust so newly published posts appear immediately instead of after the 1-hour browser cache.
+    script.src = `https://app.trysoro.com/api/embed/39f34335-ade3-4339-96ec-dd251a44a8dc?v=${Date.now()}`;
     script.async = true;
     document.body.appendChild(script);
 
