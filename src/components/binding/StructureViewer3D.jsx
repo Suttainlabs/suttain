@@ -79,7 +79,7 @@ export default function StructureViewer3D({ text, format = 'cif', selected, onPi
     ? `${hover.het ? 'Ligand' : `${hover.resn} ${hover.resi}`} · chain ${hover.chain}${hover.het ? ` · ${hover.atom}` : ''}${Number.isFinite(hover.b) ? ` · pLDDT ${(hover.b > 1 ? hover.b : hover.b * 100).toFixed(0)}` : ''}`
     : selected ? `${selName || 'Residue'} ${selected.resi} · chain ${selected.chain}` : null;
 
-  return <div className="relative flex h-[440px] flex-col overflow-hidden rounded-2xl sm:h-[540px] lg:h-[640px]" style={{ background: 'radial-gradient(120% 90% at 70% 15%, #FFFFFF 0%, #EEF8F6 55%, #E1F2EF 100%)' }}>
+  return <div className="relative flex h-[440px] flex-col overflow-hidden rounded-2xl sm:h-[540px] lg:h-[640px] border border-[#CFE7E3]" style={{ background: 'radial-gradient(120% 90% at 70% 15%, #FFFFFF 0%, #EEF8F6 55%, #E1F2EF 100%)' }}>
     <div className="relative z-10 flex flex-wrap items-center gap-1 border-b border-[#CFE7E3] bg-white/80 px-2 py-2 backdrop-blur">
       <button type="button" className={tool(!focus)} onClick={() => { setFocus(false); viewer.current?.zoomTo({}, 500); }} aria-pressed={!focus}><Maximize2 className="h-4 w-4" />Complex</button>
       <button type="button" className={tool(focus)} onClick={() => { pickRef.current?.(null); setFocus(true); }} aria-pressed={focus} disabled={!pocket.length}><Crosshair className="h-4 w-4" />Pocket</button>
