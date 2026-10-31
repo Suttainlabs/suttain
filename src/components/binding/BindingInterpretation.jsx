@@ -98,3 +98,37 @@ export default function BindingInterpretation({ job }) {
     </div>
   );
 }
+
+// Plain-text version of the same reading, for downloads and reports.
+export function bindingSummary(job) {
+  const r = job.result || {};
+  const metrics = r.metrics || [];
+  const bc = pick(metrics, 'binding_metrics.binding_confidence', 'binding_confidence');
+  const opt = pick(metrics, 'binding_metrics.optimization_score', 'optimization_score');
+  const pb = pick(metrics, 'affinity_score.probability_binary', 'affinity_probability_binary');
+  const aff = pick(metrics, 'affinity_score.pred_value', 'affinity_pred_value');
+  const iptm = pick(metrics, 'ligand_iptm', 'iptm');
+  const ptm = pick(metrics, 'ptm');
+  const plddt = pick(metrics, 'complex_plddt', 'avg_lddt');
+  const conf = pick(metrics, 'confidence_score');
+  const seqLen = String(job.inputs?.protein_sequence || '').replace(/\s/g, '').length;
+  const atoms = heavyAtoms(job.inputs?.ligand_smiles);
+  let verdict = 'No binding verdict reported by the engine.';
+  if (bc != null) verdict = bc >= 0.7 ? `Likely binder (binding confidence ${f(bc)}; 0.7+ is the documented high-confidence range).` : bc >= 0.4 ? `Uncertain (binding confidence ${f(bc)}; below the 0.7 high-confidence range).` : `Not predicted to bind (binding confidence ${f(bc)}; well below the 0.7 high-confidence range).`;
+  else if (pb != null) verdict = pb >= 0.5 ? `Predicted binder (binder probability ${f(pb)}).` : `Predicted non-binder (binder probability ${f(pb)}).`;
+  const warnings = [];
+  if (seqLen && seqLen < 20) warnings.push(`Protein is only ${seqLen} residues: too short for a meaningful prediction.`);
+  if (atoms >= 50) warnings.push(`Ligand has about ${atoms} heavy atoms; Boltz-2 is less reliable at 50+.`);
+  if (iptm != null && iptm < 0.5) warnings.push(`Low interface confidence (ipTM ${f(iptm)}): the pose and any affinity are uncertain.`);
+  if (aff != null && pb != null && pb < 0.5) warnings.push('Affinity values are only meaningful for binders; do not read this one as a potency.');
+  const affinityRows = [];
+  if (aff != null) {
+    affinityRows.push(['Predicted IC50', `~${conc(Math.pow(10, aff))}`], ['log10(IC50 / µM) (raw)', f(aff, 3)], ['Predicted pIC50', f(6 - aff)]);
+    if (6 - aff > 0) affinityRows.push(['Approx. binding free energy', `~-${f((6 - aff) * 1.364, 1)} kcal/mol`]);
+  }
+  if (pb != null) affinityRows.push(['Binder probability', f(pb)]);
+  if (bc != null) affinityRows.push(['Binding confidence', f(bc)]);
+  if (opt != null) affinityRows.push(['Optimization score (rank within a run)', f(opt)]);
+  const structureRows = [['Interface confidence (ipTM)', f(iptm)], ['Local accuracy (pLDDT)', f(plddt)], ['Overall fold (pTM)', f(ptm)], ...(conf != null ? [['Ranking score', f(conf)]] : [])].filter(([, v]) => v !== '—');
+  return { verdict, warnings, affinityRows, structureRows };
+}
