@@ -278,6 +278,36 @@ export default function AboutUsPage() {
         </div>
       </section>
 
+      {/* Who's behind Suttain + data sources (trust signals) */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white border-y border-slate-200">
+        <div className="max-w-5xl mx-auto grid gap-10 md:grid-cols-2">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Who's behind Suttain</h2>
+            <p className="mt-4 text-slate-600 leading-relaxed">
+              Suttain was founded by a research chemist with more than 10 years of laboratory and computational
+              experience, over 40 peer-reviewed publications and more than 800 citations.
+            </p>
+            <p className="mt-3 text-slate-600 leading-relaxed">
+              That background sets our standard: a result should be reproducible, traceable to a source, and honest
+              about what it doesn't know. Where we can't verify something, we say so rather than guess.
+            </p>
+            <Link to="/Contact" className="inline-flex items-center gap-2 mt-5 text-[#02988C] font-medium">
+              Contact the team <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Where our data comes from</h2>
+            <ul className="mt-4 space-y-3 text-sm text-slate-600">
+              <li><span className="font-medium text-slate-800">PubChem</span> (US National Library of Medicine): identifiers, structures and GHS hazard classifications.</li>
+              <li><span className="font-medium text-slate-800">EPA CompTox Chemicals Dashboard</span>: toxicity and regulatory data.</li>
+              <li><span className="font-medium text-slate-800">ChEMBL, BindingDB, UniProt and RCSB PDB</span>: bioactivity, targets and protein structures for research tools.</li>
+              <li><span className="font-medium text-slate-800">Open Food Facts, Open Beauty Facts and Open Products Facts</span>: product ingredient lists for the scanner.</li>
+              <li><span className="font-medium text-slate-800">Rowan, Boltz and Tamarind</span>: external compute engines for atomistic simulation and structure prediction.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
