@@ -70,11 +70,11 @@ function TrustMap({ current, others }) {
   const yLabel = yKind === 'prob' ? 'Binder probability' : 'Binding confidence';
   return <figure className="w-full">
     <svg viewBox="0 0 100 100" className="aspect-square w-full max-w-[280px] overflow-visible" role="img" aria-label={`Trust map. Pose reliability ${fmt(x)}, ${yLabel.toLowerCase()} ${fmt(y)}.`}>
-      <rect x="8" y="8" width="84" height="84" rx="3" fill="rgba(255,255,255,0.06)" />
-      <rect x={P(xCut)} y="8" width={92 - P(xCut)} height={(1 - yCut) * 84} rx="2" fill="rgba(54,226,196,0.22)" />
+      <rect x="8" y="8" width="84" height="84" rx="3" fill="rgba(255,255,255,0.12)" />
+      <rect x={P(xCut)} y="8" width={92 - P(xCut)} height={(1 - yCut) * 84} rx="2" fill="rgba(255,255,255,0.22)" />
       <line x1={P(xCut)} y1="8" x2={P(xCut)} y2="92" stroke="rgba(255,255,255,0.25)" strokeDasharray="1.5 1.5" strokeWidth="0.4" />
       <line x1="8" y1={8 + (1 - yCut) * 84} x2="92" y2={8 + (1 - yCut) * 84} stroke="rgba(255,255,255,0.25)" strokeDasharray="1.5 1.5" strokeWidth="0.4" />
-      <text x="90" y="13" textAnchor="end" fontSize="3.6" fill="#BFF5EB">Confident binder</text>
+      <text x="90" y="13" textAnchor="end" fontSize="3.6" fill="#FFFFFF" fontWeight="600">Confident binder</text>
       <text x="10" y="13" fontSize="3.6" fill="rgba(255,255,255,0.6)">Signal, shaky pose</text>
       <text x="90" y="89" textAnchor="end" fontSize="3.6" fill="rgba(255,255,255,0.6)">Good pose, no signal</text>
       <text x="10" y="89" fontSize="3.6" fill="rgba(255,255,255,0.6)">Low confidence</text>
@@ -95,7 +95,7 @@ function Timeline({ queued, ran }) {
   if (!total) return null;
   const qw = Math.max(12, Math.min(88, (queued / total) * 100));
   return <div className="mt-6">
-    <div className="flex h-2 overflow-hidden rounded-full bg-white/10" aria-hidden="true"><span className="bg-white/35" style={{ width: `${qw}%` }} /><span className="bg-[#36E2C4]" style={{ width: `${100 - qw}%` }} /></div>
+    <div className="flex h-2 overflow-hidden rounded-full bg-white/15" aria-hidden="true"><span className="bg-white/40" style={{ width: `${qw}%` }} /><span className="bg-white" style={{ width: `${100 - qw}%` }} /></div>
     <div className="mt-2 flex justify-between text-xs text-white/75"><span>Waiting for a GPU · <b className="font-medium text-white">{dur(queued)}</b></span><span>Computing · <b className="font-medium text-white">{dur(ran)}</b></span></div>
   </div>;
 }
@@ -201,12 +201,12 @@ export default function BindingJobView({ job }) {
   const runId = `SR-${String(job.id).slice(-6).toUpperCase()}`;
   const model = info?.model ? info.model.replace(/^boltz-/i, 'Boltz-') : job.result?.model;
   const metricRows = Object.entries(m).sort(([a], [b]) => (ORDER.indexOf(a) + 1 || 99) - (ORDER.indexOf(b) + 1 || 99));
-  const dot = verdict.tone === 'good' ? '#36E2C4' : verdict.tone === 'mid' ? '#FFD166' : verdict.tone === 'low' ? '#FF7A59' : '#8CC8FF';
+  const dot = verdict.tone === 'good' ? '#7CF2DC' : verdict.tone === 'mid' ? '#FFD166' : verdict.tone === 'low' ? '#FF8A6B' : '#BFE6FF';
 
   return <section aria-label="Suttain run report" className="overflow-hidden rounded-3xl border border-research-border bg-research-card">
     {/* Verdict + trust map */}
-    <div className="relative overflow-hidden px-5 py-6 text-white sm:px-8 sm:py-8" style={{ background: 'linear-gradient(135deg, #0A1F1D 0%, #01544E 58%, #02786F 100%)' }}>
-      <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full opacity-30 blur-3xl" style={{ background: LIGAND }} aria-hidden="true" />
+    <div className="relative overflow-hidden px-5 py-6 text-white sm:px-8 sm:py-8" style={{ background: 'linear-gradient(120deg, #01695F 0%, #02786F 50%, #0A8C81 100%)' }}>
+      <div className="pointer-events-none absolute -right-20 -top-28 h-80 w-80 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
       <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
         <div className="min-w-0">
           <p className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-white/70"><span>Suttain run report</span><span className="rounded-full bg-white/10 px-2 py-0.5 font-mono normal-case tracking-normal text-white">{runId}</span></p>
@@ -225,12 +225,12 @@ export default function BindingJobView({ job }) {
     {/* Structure + pocket */}
     <div className="grid gap-5 p-4 sm:p-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
       <div className="min-w-0">
-        {text ? <Suspense fallback={<div className="flex h-[440px] items-center justify-center rounded-2xl bg-[#08201D] text-sm text-white/70"><Loader2 className="mr-2 h-4 w-4 animate-spin" />Loading viewer…</div>}>
+        {text ? <Suspense fallback={<div className="flex h-[440px] items-center justify-center rounded-2xl bg-[#EEF8F6] text-sm text-research-muted"><Loader2 className="mr-2 h-4 w-4 animate-spin" />Loading viewer…</div>}>
           <StructureViewer3D text={text} format={ext} selected={selected} onPick={setSelected} pocket={analysis?.pocket || []} downloads={[
             { label: `Predicted complex (.${ext})`, href: fileUrl, name: `${runId}-${providerId || 'complex'}.${ext}` },
             { label: 'Posed ligand (.sdf)', href: info?.sdf_url, name: `${runId}-ligand.sdf` },
           ]} />
-        </Suspense> : <div className="flex h-[360px] flex-col items-center justify-center gap-2 rounded-2xl bg-[#08201D] p-6 text-center text-sm text-white/75 lg:h-[640px]">
+        </Suspense> : <div className="flex h-[360px] flex-col items-center justify-center gap-2 rounded-2xl border border-[#CFE7E3] bg-[#EEF8F6] p-6 text-center text-sm text-research-muted lg:h-[640px]">
           {error ? <p role="alert">{error}</p> : info && !info.available ? <p className="max-w-sm">{info.reason}</p> : <><Loader2 className="h-5 w-5 animate-spin" /><p>Fetching the predicted structure…</p></>}
         </div>}
       </div>
