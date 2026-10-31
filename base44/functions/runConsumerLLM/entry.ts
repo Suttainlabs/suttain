@@ -632,7 +632,8 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
               summary: { type: 'string' },
               flagged_ingredients: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, region: { type: 'string' }, issue: { type: 'string' }, severity: { type: 'string', enum: ['low', 'medium', 'high'] } } } },
               recommendations: { type: 'array', items: { type: 'string' } }
-            }
+            },
+            required: ['overall_status', 'summary', 'flagged_ingredients', 'recommendations']
           }
         });
         return Response.json(result);
@@ -644,8 +645,12 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
         const category = (data.category || '').toString().slice(0, 100);
         const ingredients = (data.ingredients || '').toString().slice(0, 4000);
         const nutritionText = (data.nutritionFacts || 'not available').toString().slice(0, 2000);
+        const isIngestible = /food|nutrition|drink|beverage|snack|supplement|vitamin/i.test(category);
+        const prompt = isIngestible
+          ? `You are a certified nutritionist. Analyze this product for health and dietary insights:\n\nProduct: ${productName}\nBrand: ${brand}\nCategory: ${category}\nIngredients: ${ingredients}\nNutritional Info: ${nutritionText}\n\nProvide a comprehensive health analysis.`
+          : `You are a cosmetic and consumer-product safety scientist. This product is NOT eaten. Give practical health notes for using it as intended:\n\nProduct: ${productName}\nBrand: ${brand}\nCategory: ${category}\nIngredients: ${ingredients}\n\nCover skin/eye irritation and sensitization potential, suitability for sensitive skin, pregnancy and children where relevant. Use dietary_suitability for user groups (e.g. "Sensitive skin", "Fragrance-sensitive", "Pregnancy") with suitable true/false. Do not discuss nutrition or calories; leave nutritional_highlights empty or use it for beneficial ingredients. Be measured: do not overstate hazards from ingredients at typical cosmetic concentrations.`;
         const result = await call({
-          prompt: `You are a certified nutritionist. Analyze this product for health and dietary insights:\n\nProduct: ${productName}\nBrand: ${brand}\nCategory: ${category}\nIngredients: ${ingredients}\nNutritional Info: ${nutritionText}\n\nProvide a comprehensive health analysis.`,
+          prompt,
           response_json_schema: {
             type: 'object',
             properties: {
@@ -656,7 +661,8 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
               nutritional_highlights: { type: 'array', items: { type: 'string' } },
               healthier_alternatives: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, benefit: { type: 'string' } } } },
               consumption_tips: { type: 'array', items: { type: 'string' } }
-            }
+            },
+            required: ['overall_health_rating', 'health_summary', 'health_warnings']
           }
         });
         return Response.json(result);
@@ -667,7 +673,7 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
         const category = (data.category || '').toString().slice(0, 100);
         const ingredients = (data.ingredients || '').toString().slice(0, 4000);
         const result = await call({
-          prompt: `You are an environmental sustainability expert. Analyze the eco-impact of these product ingredients:\n\nProduct: ${productName}\nCategory: ${category}\nIngredients: ${ingredients}\n\nAssess biodegradability, bioaccumulation, carbon footprint, and overall sustainability.`,
+          prompt: `You are an environmental sustainability expert. Analyze the eco-impact of these product ingredients:\n\nProduct: ${productName}\nCategory: ${category}\nIngredients: ${ingredients}\n\nAssess biodegradability, bioaccumulation, carbon footprint, and overall sustainability. overall_score is 0-100 where 100 is the lowest environmental impact.`,
           response_json_schema: {
             type: 'object',
             properties: {
@@ -679,7 +685,8 @@ Use clear, accessible language with specific measurements. Return as JSON.`;
               eco_concerns: { type: 'array', items: { type: 'string' } },
               green_positives: { type: 'array', items: { type: 'string' } },
               improvement_tips: { type: 'array', items: { type: 'string' } }
-            }
+            },
+            required: ['overall_score', 'summary', 'eco_concerns', 'green_positives']
           }
         });
         return Response.json(result);
