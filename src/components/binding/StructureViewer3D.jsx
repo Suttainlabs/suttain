@@ -63,7 +63,7 @@ export default function StructureViewer3D({ text, format = 'cif', selected, onPi
       setSelName(v.selectedAtoms({ chain: selected.chain, resi: selected.resi })[0]?.resn || '');
     }
     if (selected) v.center({ chain: selected.chain, resi: selected.resi }, 600);
-    else if (focus && pocket.length) v.zoomTo({ or: [{ hetflag: true }, { chain: pocket[0].chain, resi: pocket.map(r => r.resi) }] }, 700);
+    else if (focus) { v.zoomTo({ hetflag: true }); v.zoom(0.55); }
     v.render();
   }, [state, colorMode, focus, surface, selected, pocket]);
 
