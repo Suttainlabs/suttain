@@ -11,7 +11,7 @@ import { AlertTriangle, CheckCircle2, CircleDashed, Info } from 'lucide-react';
 
 const pick = (metrics, ...suffixes) => {
   for (const s of suffixes) {
-    const m = metrics.find(x => x.key === s || x.key.endsWith(`.${s}`) || x.key.endsWith(s));
+    const m = metrics.find(x => x.key === s || x.key.endsWith(`.${s}`));
     if (m && typeof m.value === 'number' && Number.isFinite(m.value)) return m.value;
   }
   return null;
@@ -79,7 +79,7 @@ export default function BindingInterpretation({ job }) {
           {affinity != null && <>
             <Row label="Predicted IC50" value={`≈ ${conc(Math.pow(10, affinity))}`} help={`From log10(IC50/µM) = ${f(affinity, 3)}. Lower IC50 = stronger.`} />
             <Row label="Predicted pIC50" value={f(6 - affinity)} help="Higher = stronger. Model estimate, not a measurement." />
-            <Row label="Approx. binding free energy" value={`≈ −${f((6 - affinity) * 1.364, 1)} kcal/mol`} help="Conversion given by the Boltz-2 authors: (6 − value) × 1.364." />
+            {6 - affinity > 0 && <Row label="Approx. binding free energy" value={`≈ −${f((6 - affinity) * 1.364, 1)} kcal/mol`} help="Conversion given by the Boltz-2 authors: (6 − value) × 1.364." />}
           </>}
           {optimization != null && <Row label="Optimization score" value={f(optimization)} help="Ranks candidates against each other within the same run. A single compound's score has no absolute meaning." />}
           <p className="mt-2 text-xs text-research-muted">The Boltz-2 authors say to use affinity values to compare active compounds within one series (hit-to-lead, lead optimization), not to judge arbitrary molecules.</p>
