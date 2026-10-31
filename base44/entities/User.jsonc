@@ -15,10 +15,6 @@
     "profile_image_url": {
       "type": "string"
     },
-    "reward_points": {
-      "type": "number",
-      "default": 0
-    },
     "trial_start_date": {
       "type": "string",
       "format": "date-time"
