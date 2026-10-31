@@ -408,7 +408,8 @@
     @apply bg-research-page text-research-text;
     font-family: var(--font-body);
   }
-  .research-surface h1, .research-surface h2, .research-surface h3 {
+  /* :where() keeps this default weak, so a heading's own colour class (e.g. text-white on a dark card) wins. */
+  .research-surface :where(h1, h2, h3) {
     color: hsl(var(--research-text));
     font-weight: 500;
   }
