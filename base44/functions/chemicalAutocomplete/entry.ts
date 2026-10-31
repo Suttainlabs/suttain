@@ -43,7 +43,7 @@ export default async function(req) {
     const body = await req.json().catch(() => ({}));
     const query = (body.query || '').trim().toLowerCase();
 
-    if (!query || query.length < 2) {
+    if (!query || query.length < 2 || query.length > 100) {
       return Response.json({ suggestions: [] });
     }
 
@@ -63,7 +63,7 @@ export default async function(req) {
     let pubchemMatches = [];
     try {
       const url = `https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${encodeURIComponent(query)}/json?limit=8`;
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
       if (res.ok) {
         const data = await res.json();
         const terms = data?.dictionary_terms?.compound || [];
@@ -91,6 +91,6 @@ export default async function(req) {
     return Response.json({ suggestions: merged.slice(0, 8) });
   } catch (error) {
     console.error('chemicalAutocomplete error:', error);
-    return Response.json({ error: error.message, suggestions: [] }, { status: 500 });
+    return Response.json({ error: 'Autocomplete unavailable', suggestions: [] }, { status: 500 });
   }
 }
