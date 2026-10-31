@@ -500,66 +500,51 @@ export default function ChemicalInput({
                     Searching chemicals...
                   </div>
                 ) : suggestions.length > 0 ? (
-                  <div className="overflow-x-auto pb-2">
-                    <div className="flex gap-3 p-3 min-w-max">
-                      {suggestions.map((chemical, index) => {
-                        const scientificName = (chemical.scientific_name || chemical.name).toLowerCase();
-                        const shouldUseCommonName = ['household', 'diy', 'student'].includes(persona);
-                        const displayName = shouldUseCommonName && COMMON_NAME_MAP[scientificName]
-                          ? COMMON_NAME_MAP[scientificName]
-                          : chemical.name;
-
-                        return (
+                  <ul role="listbox" aria-label="Chemical suggestions" className="max-h-72 overflow-y-auto p-1">
+                    {suggestions.map((chemical, index) => {
+                      const scientificName = (chemical.scientific_name || chemical.name).toLowerCase();
+                      const shouldUseCommonName = ['household', 'diy', 'student'].includes(persona);
+                      const displayName = shouldUseCommonName && COMMON_NAME_MAP[scientificName]
+                        ? COMMON_NAME_MAP[scientificName]
+                        : chemical.name;
+                      const secondary = chemical.scientific_name && chemical.scientific_name.toLowerCase() !== String(displayName).toLowerCase()
+                        ? chemical.scientific_name
+                        : null;
+                      return (
+                        <li key={index}>
                           <button
-                            key={index}
+                            type="button"
+                            role="option"
+                            aria-selected="false"
                             onClick={() => handleSelectChemical(chemical)}
-                            className="flex-shrink-0 w-56 p-3 hover:bg-slate-50 rounded-lg border border-slate-200 hover:border-[var(--suttain-teal)] transition-all flex flex-col gap-2"
+                            className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-md hover:bg-slate-50 focus-visible:bg-slate-50 transition-colors"
                           >
-                            <div className="flex items-start gap-2">
-                              <div className="w-8 h-8 bg-gradient-to-br from-teal-100 to-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <Atom className="w-4 h-4 text-[var(--suttain-teal)]" />
-                              </div>
-                              <div className="flex-1 min-w-0 text-left">
-                                <p className="font-semibold text-xs text-slate-900 truncate capitalize">
-                                  {displayName}
-                                </p>
-                                {shouldUseCommonName && COMMON_NAME_MAP[scientificName] && (
-                                  <p className="text-xs text-slate-500 truncate mt-0.5">
-                                    {chemical.scientific_name || chemical.name}
-                                  </p>
-                                )}
-                                {chemical.molecular_formula && (
-                                  <p className="text-xs text-slate-600 font-mono mt-0.5">
-                                    {formatSubscripts(chemical.molecular_formula)}
-                                  </p>
-                                )}
-                              </div>
-                              {chemical.safety_level && chemical.safety_level !== 'unknown' && (
-                                <Badge
-                                  variant="outline"
-                                  className={`text-xs flex-shrink-0 ${
-                                    chemical.safety_level === 'safe' ? 'bg-green-50 text-green-700 border-green-200' :
-                                    chemical.safety_level === 'moderate' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                                    chemical.safety_level === 'highly_hazardous' ? 'bg-red-100 text-red-800 border-red-300' :
-                                    'bg-red-50 text-red-700 border-red-200'
-                                  }`}
-                                >
-                                  {chemical.safety_level.replace(/_/g, ' ')}
-                                </Badge>
-                              )}
-                            </div>
-                            {chemical.source_db && (
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-[11px] font-bold text-white bg-slate-600 rounded px-1.5 py-0.5 leading-tight">
-                                  {chemical.source_db}
-                                </span>
-                              </div>
+                            <Atom className="w-4 h-4 text-[var(--suttain-teal)] flex-shrink-0" aria-hidden="true" />
+                            <span className="flex-1 min-w-0">
+                              <span className="block text-sm font-medium text-slate-900 truncate capitalize">{displayName}</span>
+                              {secondary && <span className="block text-xs text-slate-500 truncate">{secondary}</span>}
+                            </span>
+                            {chemical.molecular_formula && (
+                              <span className="font-mono text-xs text-slate-600 flex-shrink-0">{formatSubscripts(chemical.molecular_formula)}</span>
+                            )}
+                            {chemical.safety_level && chemical.safety_level !== 'unknown' && (
+                              <Badge
+                                variant="outline"
+                                className={`text-[11px] px-1.5 py-0 flex-shrink-0 capitalize ${
+                                  chemical.safety_level === 'safe' ? 'bg-green-50 text-green-700 border-green-200' :
+                                  chemical.safety_level === 'moderate' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                                  chemical.safety_level === 'highly_hazardous' ? 'bg-red-100 text-red-800 border-red-300' :
+                                  'bg-red-50 text-red-700 border-red-200'
+                                }`}
+                              >
+                                {chemical.safety_level.replace(/_/g, ' ')}
+                              </Badge>
                             )}
                           </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 ) : null}
               </motion.div>
             )}

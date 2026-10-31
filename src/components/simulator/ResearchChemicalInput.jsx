@@ -333,38 +333,38 @@ export default function ResearchChemicalInput({
                           Searching comprehensive database...
                         </div>
                       ) : suggestions.length > 0 ? (
-                        <div className="overflow-x-auto pb-2">
-                          <div className="flex gap-3 p-3 min-w-max">
-                            {suggestions.map((suggestion, index) => (
-                              <button
-                                key={`${suggestion.name}-${index}`}
-                                onClick={() => handleAddChemical(suggestion)}
-                                className="flex-shrink-0 w-64 p-3 hover:bg-indigo-50 rounded-lg border border-transparent hover:border-indigo-200 transition-colors"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <Atom className="w-5 h-5 text-indigo-600" />
-                                  </div>
-                                  <div className="flex-1 min-w-0 text-left">
-                                    <p className="font-semibold text-sm text-slate-900 truncate">
-                                      {suggestion.scientific_name || suggestion.name}
-                                    </p>
-                                    <div className="flex items-center gap-2 text-xs text-slate-600 mt-0.5">
-                                      <span className="font-mono">
-                                        {suggestion.molecular_formula ? formatSubscripts(suggestion.molecular_formula) : 'Formula unavailable'}
+                        <ul role="listbox" aria-label="Chemical suggestions" className="max-h-72 overflow-y-auto">
+                          {suggestions.map((suggestion, index) => {
+                            const primary = suggestion.name || suggestion.scientific_name;
+                            const secondary = suggestion.scientific_name && suggestion.scientific_name.toLowerCase() !== String(primary).toLowerCase()
+                              ? suggestion.scientific_name
+                              : null;
+                            return (
+                              <li key={`${suggestion.name}-${index}`}>
+                                <button
+                                  type="button"
+                                  role="option"
+                                  aria-selected="false"
+                                  onClick={() => handleAddChemical(suggestion)}
+                                  className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-md hover:bg-slate-50 focus-visible:bg-slate-50 transition-colors"
+                                >
+                                  <Atom className="w-4 h-4 text-[var(--suttain-teal)] flex-shrink-0" aria-hidden="true" />
+                                  <span className="flex-1 min-w-0">
+                                    <span className="block text-sm font-medium text-slate-900 truncate capitalize">{primary}</span>
+                                    {(secondary || suggestion.cas_number) && (
+                                      <span className="block text-xs text-slate-500 truncate">
+                                        {[secondary, suggestion.cas_number && `CAS ${suggestion.cas_number}`].filter(Boolean).join(' · ')}
                                       </span>
-                                    </div>
-                                    {suggestion.cas_number && (
-                                      <p className="text-xs text-slate-500 mt-0.5">
-                                        CAS: {suggestion.cas_number}
-                                      </p>
                                     )}
-                                  </div>
-                                </div>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+                                  </span>
+                                  <span className="font-mono text-xs text-slate-600 flex-shrink-0">
+                                    {suggestion.molecular_formula ? formatSubscripts(suggestion.molecular_formula) : '—'}
+                                  </span>
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
                       ) : (
                         <div className="p-4 text-center text-sm text-slate-500">
                           <p>No results found for "{searchQuery}"</p>
