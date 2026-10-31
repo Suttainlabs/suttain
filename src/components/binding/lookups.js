@@ -29,11 +29,20 @@ export async function fetchProteinSequence(accession) {
 
 // PubChem compound name autocomplete (about 119 million compounds).
 export async function searchCompounds(q, signal) {
-  const res = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${encodeURIComponent(q)}/json?limit=25`, { signal });
-  if (!res.ok) throw new Error('PubChem search failed');
-  const data = await res.json();
-  const terms = [...new Set((data.dictionary_terms?.compound || []).map(t => String(t)))];
-  return terms.map(t => ({ id: t.toLowerCase(), label: t, meta: 'PubChem' }));
+  // Autocomplete skips the exact term itself (typing "ibuprofen" does not return "ibuprofen"), so check it separately.
+  const [auto, exact] = await Promise.all([
+    fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/${encodeURIComponent(q)}/json?limit=25`, { signal }),
+    q.length >= 3 ? fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(q)}/cids/JSON`, { signal }).catch(() => null) : null,
+  ]);
+  if (!auto.ok) throw new Error('PubChem search failed');
+  const data = await auto.json();
+  const terms = [...new Set((data.dictionary_terms?.compound || []).map(t => String(t)))].filter(t => t.toLowerCase() !== q.toLowerCase());
+  const items = terms.map(t => ({ id: t.toLowerCase(), label: t, meta: 'PubChem' }));
+  if (exact?.ok) {
+    const cid = (await exact.json())?.IdentifierList?.CID?.[0];
+    if (cid) items.unshift({ id: `exact-${cid}`, label: q.charAt(0).toUpperCase() + q.slice(1), meta: `PubChem CID ${cid} · exact name match`, exact: true });
+  }
+  return items;
 }
 
 export async function fetchCompoundSmiles(name) {

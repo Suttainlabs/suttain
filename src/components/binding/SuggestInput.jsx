@@ -26,9 +26,11 @@ export default function SuggestInput({ label, placeholder, fetchSuggestions, onP
         // Names containing what was typed come first; each group is A–Z.
         const t = term.toLowerCase();
         const az = (a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base', numeric: true });
-        const hit = res.filter(r => r.label.toLowerCase().includes(t)).sort(az);
-        const rest = res.filter(r => !r.label.toLowerCase().includes(t)).sort(az);
-        setItems([...hit, ...rest]); setActive(-1);
+        const exact = res.filter(r => r.exact || r.label.toLowerCase() === t);
+        const others = res.filter(r => !exact.includes(r));
+        const hit = others.filter(r => r.label.toLowerCase().includes(t)).sort(az);
+        const rest = others.filter(r => !r.label.toLowerCase().includes(t)).sort(az);
+        setItems([...exact, ...hit, ...rest]); setActive(-1);
       } catch (e) { if (e.name !== 'AbortError') { setItems([]); setError('Search is unavailable right now. Try again in a moment.'); } }
       finally { if (!ctrl.signal.aborted) setBusy(false); }
     }, 350);
