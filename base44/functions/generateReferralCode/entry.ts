@@ -16,16 +16,16 @@ Deno.serve(async (req) => {
 
         // Generate a unique 8-char code from name + random
         const prefix = (user.full_name || 'S').replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase();
-        const suffix = Math.random().toString(36).substring(2, 7).toUpperCase();
+        const bytes = crypto.getRandomValues(new Uint8Array(5));
+        const suffix = Array.from(bytes, b => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 32]).join('');
         const referral_code = `${prefix}${suffix}`;
 
-        await base44.auth.updateMe({ referral_code });
-
-        console.log(`Generated referral code ${referral_code} for ${user.email}`);
+        // referral_code is write-protected on User; set it server-side only.
+        await base44.asServiceRole.entities.User.update(user.id, { referral_code });
 
         return Response.json({ referral_code });
     } catch (error) {
         console.error('generateReferralCode error:', error.message);
-        return Response.json({ error: error.message }, { status: 500 });
+        return Response.json({ error: 'Unable to create a referral code.' }, { status: 500 });
     }
 });
