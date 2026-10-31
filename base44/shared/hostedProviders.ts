@@ -233,11 +233,12 @@ export function recommend(task: Task, rawInput: any, goal?: Goal | null) {
     } else if (chosenGoal === 'pose') {
       // Rowan returns PoseBusters pose validity; Tamarind returns full structure files.
       order = ['rowan', 'tamarind', 'boltz'];
-      reason = 'Rowan returns the predicted complex with a PoseBusters pose-validity check, so you can trust the pose before reading into it.';
+      reason = 'Rowan returns the predicted protein–ligand complex structure with structure-confidence scores.';
     } else {
-      // Rowan SDK docs: Boltz-2 pred_value is a predicted pIC50 (-log10 IC50).
+      // Boltz-2 affinity_pred_value (Rowan: affinity_score.pred_value) is log10(IC50 in µM); lower = stronger.
+      // pIC50 = 6 - value. Rowan's FAQ: use it to rank analogs within a series, not across arbitrary chemistry.
       order = ['rowan', 'boltz', 'tamarind'];
-      reason = 'Rowan runs Boltz-2, which reports a predicted pIC50, an interpretable potency number for ranking analogs.';
+      reason = 'Rowan runs Boltz-2, which predicts an affinity (log10 IC50 in µM) for ranking analogs within one compound series.';
     }
   } else {
     chosenGoal = n > ROWAN_ADME_MAX ? 'quick_screen' : (goal && GOALS.adme.some(g => g.id === goal) ? goal : 'full_profile');
